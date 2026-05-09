@@ -1,0 +1,149 @@
+/* Стили ленты новостей */
+.feed {
+  min-height: 100%;
+}
+
+.feed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.feed-header h1 {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.posts-container {
+  padding: 16px;
+}
+
+.loading, .empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+}
+
+/* Карточка поста */
+.post-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.post-author {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.avatar, .avatar-placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 12px;
+}
+
+.avatar-placeholder {
+  background: #007aff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.author-name {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.post-media {
+  margin: 12px -16px;
+}
+
+.post-media img, .post-media video {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+}
+
+.post-content {
+  margin-top: 12px;
+  line-height: 1.5;
+}
+
+.post-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.comments-section {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.comment {
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.comment strong {
+  margin-right: 8px;
+}
+
+.add-comment {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.add-comment input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  margin-bottom: 0;
+}
+
+.add-comment button {
+  background: #007aff;
+  color: white;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* Модальное окно */
+.preview {
+  margin: 12px 0;
+}
+
+.preview img, .preview video {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 8px;
+}
