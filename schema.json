@@ -1,0 +1,95 @@
+[
+  {
+    "id": "users",
+    "name": "users",
+    "type": "auth",
+    "fields": [
+      { "name": "avatar", "type": "file", "options": { "maxSelect": 1, "maxSize": 5242880, "mimeTypes": ["image/jpeg", "image/png", "image/webp"] } },
+      { "name": "birth_year", "type": "number", "options": {} },
+      { "name": "hand", "type": "select", "options": { "maxSelect": 1, "values": ["Правая", "Левая"] } },
+      { "name": "rating_points", "type": "number", "options": {} },
+      { "name": "games_count", "type": "number", "options": {} },
+      { "name": "wins", "type": "number", "options": {} },
+      { "name": "losses", "type": "number", "options": {} },
+      { "name": "max_id", "type": "text", "options": { "unique": true } },
+      { "name": "full_name", "type": "text", "options": {} },
+      { "name": "role", "type": "select", "options": { "maxSelect": 1, "values": ["user", "moderator"], "default": "user" } }
+    ]
+  },
+  {
+    "id": "posts",
+    "name": "posts",
+    "type": "base",
+    "fields": [
+      { "name": "content", "type": "text", "options": {} },
+      { "name": "media", "type": "file", "options": { "maxSelect": 5, "maxSize": 10485760, "mimeTypes": ["image/jpeg", "image/png", "video/mp4"] } },
+      { "name": "author", "type": "relation", "options": { "collectionId": "users", "cascadeDelete": false } }
+    ]
+  },
+  {
+    "id": "comments",
+    "name": "comments",
+    "type": "base",
+    "fields": [
+      { "name": "post", "type": "relation", "options": { "collectionId": "posts", "cascadeDelete": true } },
+      { "name": "author", "type": "relation", "options": { "collectionId": "users", "cascadeDelete": false } },
+      { "name": "text", "type": "text", "options": {} }
+    ]
+  },
+  {
+    "id": "trainings",
+    "name": "trainings",
+    "type": "base",
+    "fields": [
+      { "name": "date", "type": "date", "options": {} },
+      { "name": "start_time", "type": "text", "options": {} },
+      { "name": "end_time", "type": "text", "options": {} },
+      { "name": "max_players", "type": "number", "options": {} },
+      { "name": "booked_users", "type": "relation", "options": { "collectionId": "users", "cascadeDelete": false, "maxSelect": 999 } }
+    ]
+  },
+  {
+    "id": "products",
+    "name": "products",
+    "type": "base",
+    "fields": [
+      { "name": "title", "type": "text", "options": {} },
+      { "name": "description", "type": "text", "options": {} },
+      { "name": "price", "type": "number", "options": {} },
+      { "name": "sizes", "type": "text", "options": {} },
+      { "name": "images", "type": "file", "options": { "maxSelect": 5, "maxSize": 5242880 } }
+    ]
+  },
+  {
+    "id": "championships",
+    "name": "championships",
+    "type": "base",
+    "fields": [
+      { "name": "name", "type": "text", "options": {} },
+      { "name": "is_active", "type": "bool", "options": {} }
+    ]
+  },
+  {
+    "id": "matches",
+    "name": "matches",
+    "type": "base",
+    "fields": [
+      { "name": "championship", "type": "relation", "options": { "collectionId": "championships", "cascadeDelete": false } },
+      { "name": "player1", "type": "relation", "options": { "collectionId": "users", "cascadeDelete": false } },
+      { "name": "player2", "type": "relation", "options": { "collectionId": "users", "cascadeDelete": false } },
+      { "name": "date_time", "type": "date", "options": {} },
+      { "name": "status", "type": "select", "options": { "values": ["scheduled", "finished", "cancelled"] } },
+      { "name": "score_p1", "type": "number", "options": {} },
+      { "name": "score_p2", "type": "number", "options": {} },
+      { "name": "sets", "type": "text", "options": {} } 
+    ]
+  },
+  {
+    "id": "gallery",
+    "name": "gallery",
+    "type": "base",
+    "fields": [
+      { "name": "image", "type": "file", "options": { "maxSelect": 1, "maxSize": 5242880 } }
+    ]
+  }
+]
