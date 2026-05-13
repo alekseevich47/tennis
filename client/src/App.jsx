@@ -5,33 +5,27 @@ import Shop from './pages/Shop';
 import Rating from './pages/Rating';
 import Competitions from './pages/Competitions';
 import Gallery from './pages/Gallery';
+import Profile from './pages/Profile'; // Новый компонент профиля
 import BottomNav from './components/BottomNav';
-import { initMaxAuth } from './services/pocketbase';
+import { initMaxAuth, getCurrentUser } from './services/pocketbase';
 import './styles/global.css';
 
-/**
- * Главный компонент приложения
- * Управляет навигацией между разделами через нижнюю панель
- * Инициализирует авторизацию через MAX SDK
- */
 function App() {
-  // Текущий активный раздел (по умолчанию Лента = 0)
   const [activeTab, setActiveTab] = useState(0);
-  // Состояние загрузки авторизации
   const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState(null);
 
-  // Инициализация авторизации при запуске приложения
+  // Инициализация при старте
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        // Строго по документации dev.max.ru/docs/webapps/bridge
         const initData = window.WebApp?.initData;
-
         if (initData) {
-          // Если запуск внутри iframe MAX, отправляем строку на валидацию и регистрацию
-          await initMaxAuth(initData);
+          const loggedUser = await initMaxAuth(initData);
+          setUser(loggedUser);
         } else {
-          console.warn('Приложение запущено вне мессенджера MAX. Доступен только просмотр.');
+          console.warn('MAX SDK не обнаружен. Доступ ограничен гостевым режимом.');
+          setUser(getCurrentUser()); // Проверка локальной сессии
         }
       } catch (error) {
         console.error('Ошибка автоматической авторизации:', error);
@@ -39,50 +33,64 @@ function App() {
         setIsLoading(false);
       }
     };
-
     initializeAuth();
   }, []);
 
-  // Показываем индикатор загрузки во время инициализации
+  // Функция для обновления локального состояния пользователя после редактирования
+  const handleUserUpdate = () => {
+    setUser(getCurrentUser());
+  };
+
   if (isLoading) {
     return (
-      <div className="app">
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-          <div>Загрузка...</div>
-        </div>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#111', color: '#fff' }}>
+        <div>Инициализация профиля MAX...</div>
       </div>
     );
   }
 
-  // Рендеринг контента в зависимости от выбранного раздела
+  // Рендеринг контента (включая вкладку профиля)
   const renderContent = () => {
     switch (activeTab) {
-      case 0:
-        return <Feed />;
-      case 1:
-        return <Trainings />;
-      case 2:
-        return <Shop />;
-      case 3:
-        return <Rating />;
-      case 4:
-        return <Competitions />;
-      case 5:
-        return <Gallery />;
-      default:
-        return <Feed />;
+      case 0: return <Feed />;
+      case 1: return <Trainings />;
+      case 2: return <Shop />;
+      case 3: return <Rating />;
+      case 4: return <Competitions />;
+      case 5: return <Gallery />;
+      case 6: return <Profile onUpdate={handleUserUpdate} />; // Переход в профиль
+      default: return <Feed />;
     }
   };
 
+  // Получаем первую букву для дефолтной аватарки
+  const userInitial = user?.full_name ? user.full_name.charAt(0).toUpperCase() : 'U';
+
   return (
     <div className="app">
-      {/* Основной контент */}
-      <main className="content">
-        {renderContent()}
-      </main>
+      {/* Сквозной Header по ТЗ */}
+      <header className="app-header">
+        <h1 className="header-title">
+          {activeTab === 0 && "Лента новостей"}
+          {activeTab === 1 && "Тренировки"}
+          {activeTab === 2 && "Магазин"}
+          {activeTab === 3 && "Рейтинг"}
+          {activeTab === 4 && "Соревнования"}
+          {activeTab === 5 && "Галерея"}
+          {activeTab === 6 && "Мой профиль"}
+        </h1>
+        
+        <div className="header-profile-badge" onClick={() => setActiveTab(6)}>
+          <div className="profile-avatar-mini">{userInitial}</div>
+          <span className="profile-name-mini">{user?.full_name || "Гость"}</span>
+        </div>
+      </header>
 
-      {/* Нижняя навигационная панель */}
-      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+      {/* Основной контент */}
+      <main className="content-with-header">{renderContent()}</main>
+
+      {/* Нижняя навигация */}
+      <BottomNav activeTab={activeTab === 6 ? -1 : activeTab} onTabChange={setActiveTab} />
     </div>
   );
 }

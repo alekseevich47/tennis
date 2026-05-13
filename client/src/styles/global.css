@@ -126,3 +126,65 @@ input[type="file"] {
     padding: 16px;
   }
 }
+
+/* Сквозные стили верхней панели (Header) */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #ffffff;
+  border-bottom: 1px solid #eaeaea;
+  height: 56px;
+  box-sizing: border-box;
+}
+
+.header-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.header-profile-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 20px;
+  transition: background 0.2s;
+}
+
+.header-profile-badge:hover {
+  background: #f5f5f5;
+}
+
+.profile-avatar-mini {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ff5722;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.profile-name-mini {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  max-width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.content-with-header {
+  height: calc(100vh - 116px); /* Вычитаем высоту шапки и нижнего меню */
+  overflow-y: auto;
+  background: #ffffff;
+}

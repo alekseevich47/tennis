@@ -1,0 +1,194 @@
+/* /home/sa/tt_bot/client/src/styles/Profile.css */
+
+.profile-container {
+  padding: 20px;
+  position: relative;
+  color: #333;
+}
+
+/* Кнопка редактирования (Карандаш) */
+.edit-profile-btn {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.1s ease;
+}
+
+.edit-profile-btn:active {
+  transform: scale(0.9);
+}
+
+/* Аватарка в профиле */
+.avatar-large {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: #ff5722;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 36px;
+  font-weight: bold;
+  margin: 20px auto 12px auto;
+  box-shadow: 0 4px 10px rgba(255, 87, 34, 0.2);
+}
+
+.profile-user-name {
+  text-align: center;
+  font-size: 22px;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+/* Карточка с текстовой инфой (Возраст, Рука) */
+.profile-meta-info {
+  background: #f9f9f9;
+  padding: 14px 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #f0f0f0;
+}
+
+.profile-meta-info p {
+  margin: 8px 0;
+  font-size: 15px;
+  color: #444;
+}
+
+/* Блок статистики X/Y/Z */
+.profile-stats-block {
+  background: #1a1a1a;
+  color: white;
+  padding: 18px;
+  border-radius: 16px;
+  text-align: center;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.profile-stats-block h3 {
+  margin-top: 0;
+  font-size: 13px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.stats-counter {
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin: 12px 0;
+  color: #4caf50;
+}
+
+.stats-labels {
+  display: flex;
+  justify-content: space-around;
+  font-size: 12px;
+  color: #888;
+}
+
+.stats-labels span {
+  flex: 1;
+  text-align: center;
+}
+
+/* Блок забронированных тренировок */
+.profile-trainings-block h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #1a1a1a;
+}
+
+.no-data-text {
+  color: #888;
+  font-size: 14px;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.profile-trainings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.profile-training-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  background: #ffffff;
+  border: 1px solid #eaeaea;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.training-date {
+  color: #888;
+  font-size: 14px;
+}
+
+.training-title {
+  font-weight: 600;
+  color: #222;
+}
+
+/* Форма редактирования */
+.profile-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+}
+
+.form-group input, .form-group select {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  background: #fff;
+  color: #333;
+  outline: none;
+}
+
+.form-group input:focus, .form-group select:focus {
+  border-color: #ff5722;
+}
+
+.save-profile-btn {
+  background: #ff5722;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.2s;
+}
+
+.save-profile-btn:hover {
+  background: #e64a19;
+}
