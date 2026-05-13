@@ -6,7 +6,7 @@ import Rating from './pages/Rating';
 import Competitions from './pages/Competitions';
 import Gallery from './pages/Gallery';
 import BottomNav from './components/BottomNav';
-import { isModerator, initMaxAuth } from './services/pocketbase';
+import { initMaxAuth } from './services/pocketbase';
 import './styles/global.css';
 
 /**
@@ -24,17 +24,17 @@ function App() {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        // Проверяем наличие MAX SDK и initData
-        if (window.MaxWebApp && window.MaxWebApp.initData) {
-          await initMaxAuth(window.MaxWebApp.initData);
-        } else if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData) {
-          // Fallback для Telegram WebApp (если MAX использует совместимый формат)
-          await initMaxAuth(window.Telegram.WebApp.initData);
+        // Строго по документации dev.max.ru/docs/webapps/bridge
+        const initData = window.WebApp?.initData;
+
+        if (initData) {
+          // Если запуск внутри iframe MAX, отправляем строку на валидацию и регистрацию
+          await initMaxAuth(initData);
+        } else {
+          console.warn('Приложение запущено вне мессенджера MAX. Доступен только просмотр.');
         }
-        // Если нет initData, пользователь будет работать как гость
-        // PocketBase позволяет читать публичные данные без авторизации
       } catch (error) {
-        console.error('Ошибка инициализации авторизации:', error);
+        console.error('Ошибка автоматической авторизации:', error);
       } finally {
         setIsLoading(false);
       }
