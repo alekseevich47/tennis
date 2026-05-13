@@ -1,0 +1,82 @@
+/* Стили раздела тренировок */
+.trainings {
+  min-height: 100%;
+}
+
+.trainings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.trainings-header h1 {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.loading, .empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+}
+
+.trainings-list {
+  padding: 16px;
+}
+
+.training-day {
+  margin-bottom: 24px;
+}
+
+.training-day h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  text-transform: capitalize;
+}
+
+.training-slot {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.time {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.spots {
+  color: #666;
+  font-size: 14px;
+}
+
+.book-btn, .cancel-btn {
+  background: #007aff;
+  color: white;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cancel-btn {
+  background: #ff3b30;
+}
