@@ -38,15 +38,22 @@ function Profile({ user: initialUser, onUpdate }) {
     if (!user) return;
 
     try {
+      // 1. Обновляем запись в базе данных
       const updatedRecord = await pb.collection('users').update(user.id, {
         full_name: fullName,
         age: age ? parseInt(age) : null,
         dominant_hand: dominantHand
       });
 
+      // 2. КРИТИЧЕСКИЙ ФИКС: Принудительно обновляем запись в локальном хранилище PocketBase
+      // Это предотвратит автоматический сброс сессии в "Гость"
+      pb.authStore.save(pb.authStore.token, updatedRecord);
+
       setUser(updatedRecord);
       setIsEditing(false);
-      if (onUpdate) onUpdate(); 
+      
+      // 3. Передаем обновленного пользователя в App.jsx, чтобы обновить хедер без перезагрузки
+      if (onUpdate) onUpdate(updatedRecord); 
     } catch (error) {
       console.error('Ошибка сохранения профиля:', error);
       alert('Не удалось сохранить изменения');
