@@ -1,33 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import pb, { getCurrentUser, getTrainings } from '../services/pocketbase';
+import pb, { getTrainings } from '../services/pocketbase';
 import './Profile.css';
 
-function Profile({ onUpdate }) {
-  const [user, setUser] = useState(null);
+// Принимаем user из пропсов
+function Profile({ user: initialUser, onUpdate }) {
+  const [user, setUser] = useState(initialUser);
   const [myTrainings, setMyTrainings] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   
-  // Поля формы редактирования
   const [fullName, setFullName] = useState('');
   const [age, setAge] = useState('');
   const [dominantHand, setDominantHand] = useState('Правая');
 
+  // Синхронизируем пропс со стейтом при изменении или загрузке
   useEffect(() => {
-    const currentUser = getCurrentUser();
-    if (currentUser) {
-      setUser(currentUser);
-      setFullName(currentUser.full_name || '');
-      setAge(currentUser.age || '');
-      setDominantHand(currentUser.dominant_hand || 'Правая');
-      loadUserTrainings(currentUser.id);
+    if (initialUser) {
+      setUser(initialUser);
+      setFullName(initialUser.full_name || '');
+      setAge(initialUser.age || '');
+      setDominantHand(initialUser.dominant_hand || 'Правая');
+      loadUserTrainings(initialUser.id);
     }
-  }, []);
+  }, [initialUser]);
 
-  // Загрузка тренировок, на которые записан игрок
   const loadUserTrainings = async (userId) => {
     try {
       const allTrainings = await getTrainings();
-      // Фильтруем тренировки, где booked_users содержит ID текущего пользователя
       const filtered = allTrainings.filter(t => t.booked_users && t.booked_users.includes(userId));
       setMyTrainings(filtered);
     } catch (error) {
@@ -40,7 +38,6 @@ function Profile({ onUpdate }) {
     if (!user) return;
 
     try {
-      // Обновляем запись пользователя в PocketBase
       const updatedRecord = await pb.collection('users').update(user.id, {
         full_name: fullName,
         age: age ? parseInt(age) : null,
@@ -49,7 +46,7 @@ function Profile({ onUpdate }) {
 
       setUser(updatedRecord);
       setIsEditing(false);
-      if (onUpdate) onUpdate(); // Уведомляем App.jsx для обновления хедера
+      if (onUpdate) onUpdate(); 
     } catch (error) {
       console.error('Ошибка сохранения профиля:', error);
       alert('Не удалось сохранить изменения');
@@ -64,13 +61,11 @@ function Profile({ onUpdate }) {
 
   return (
     <div className="profile-container">
-      {/* Кнопка редактирования (Карандаш) */}
       <button className="edit-profile-btn" onClick={() => setIsEditing(!isEditing)}>
         {isEditing ? '✕' : '✏️'}
       </button>
 
       {isEditing ? (
-        /* Режим редактирования */
         <form onSubmit={handleSave} className="profile-edit-form">
           <div className="avatar-large">{userInitial}</div>
           
@@ -96,7 +91,6 @@ function Profile({ onUpdate }) {
           <button type="submit" className="save-profile-btn">Сохранить</button>
         </form>
       ) : (
-        /* Режим просмотра */
         <div className="profile-view">
           <div className="avatar-large">{userInitial}</div>
           <h2 className="profile-user-name">{user.full_name}</h2>
@@ -106,7 +100,6 @@ function Profile({ onUpdate }) {
             <p><strong>Рука:</strong> {user.dominant_hand || 'Не указана'}</p>
           </div>
 
-          {/* Блок статистики X/Y/Z */}
           <div className="profile-stats-block">
             <h3>Статистика игр</h3>
             <div className="stats-counter">
@@ -119,7 +112,6 @@ function Profile({ onUpdate }) {
             </div>
           </div>
 
-          {/* Блок тренировок */}
           <div className="profile-trainings-block">
             <h3>Мои тренировки ({myTrainings.length})</h3>
             {myTrainings.length === 0 ? (
