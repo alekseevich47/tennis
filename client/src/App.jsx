@@ -49,7 +49,7 @@ function App() {
     );
   }
 
-  // Рендеринг контента (включая вкладку профиля)
+   // Найди метод renderContent() внутри App.jsx и замени кейс 6:
   const renderContent = () => {
     switch (activeTab) {
       case 0: return <Feed />;
@@ -58,7 +58,8 @@ function App() {
       case 3: return <Rating />;
       case 4: return <Competitions />;
       case 5: return <Gallery />;
-      case 6: return <Profile onUpdate={handleUserUpdate} />; // Переход в профиль
+      // ПЕРЕДАЕМ объект user в компонент Профиля
+      case 6: return <Profile user={user} onUpdate={handleUserUpdate} />; 
       default: return <Feed />;
     }
   };
