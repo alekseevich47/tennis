@@ -3,14 +3,10 @@
 node_modules/
 
 # Build artifacts
-dist/
 build/
 target/
 
 # Environment variables
-.env
-.env.local
-*.env.*
 
 # IDE files
 .vscode/
