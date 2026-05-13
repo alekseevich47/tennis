@@ -37,8 +37,13 @@ function App() {
   }, []);
 
   // Функция для обновления локального состояния пользователя после редактирования
-  const handleUserUpdate = () => {
-    setUser(getCurrentUser());
+  // Изменяем функцию, чтобы она принимала обновленный объект пользователя
+  const handleUserUpdate = (updatedUser) => {
+    if (updatedUser) {
+      setUser(updatedUser);
+    } else {
+      setUser(getCurrentUser());
+    }
   };
 
   if (isLoading) {
