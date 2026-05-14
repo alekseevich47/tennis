@@ -1,16 +1,14 @@
 import PocketBase from 'pocketbase';
 import { PB_URL, MAX_AUTH_URL } from '../config';
 
-// Создаем экземпляр PocketBase
+// Единый инстанс для всего приложения, автоматически сохраняющий сессию в localStorage
 const pb = new PocketBase(PB_URL);
 
 /**
  * Инициализация авторизации через MAX
- * Получает initData от MAX SDK и отправляет на сервер для аутентификации
  */
 export const initMaxAuth = async (initData) => {
   try {
-    // Отправляем initData в Cloud Function PocketBase
     const response = await fetch(MAX_AUTH_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -18,37 +16,31 @@ export const initMaxAuth = async (initData) => {
     });
 
     if (!response.ok) {
-      throw new Error('Ошибка авторизации через MAX');
+      throw new Error('Сервер авторизации MAX вернул ошибку');
     }
 
     const data = await response.json();
     
-    // Сохраняем токен авторизации в PocketBase
-    if (data.token) {
-      pb.authStore.save(data.token);
-      document.cookie = pb.authStore.exportToCookie({ httpOnly: false });
+    if (data.token && data.user) {
+      // Сохраняем токен и модель пользователя в глобальный authStore
+      pb.authStore.save(data.token, data.user);
+      console.log('Авторизация в PocketBase успешно зафиксирована для текущего сеанса.');
     }
     
     return data.user;
   } catch (error) {
-    console.error('Ошибка инициализации авторизации MAX:', error);
+    console.error('Ошибка initMaxAuth:', error);
     throw error;
   }
 };
 
-// Автоматически получаем токен аутентификации из localStorage
-pb.authStore.loadFromCookie(document.cookie);
-pb.authStore.onChange(() => {
-  document.cookie = pb.authStore.exportToCookie({ httpOnly: false });
-}, true);
-
 /**
- * Получение текущего пользователя
- * @returns {Object|null} Данные пользователя или null
+ * Получение текущего авторизованного пользователя из локального хранилища
  */
 export const getCurrentUser = () => {
   return pb.authStore.model;
 };
+
 
 /**
  * Проверка, является ли пользователь модератором
