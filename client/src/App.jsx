@@ -19,37 +19,37 @@ function App() {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
+        // Забираем initData строго по спецификации MAX Bridge
         const initData = window.WebApp?.initData;
+
         if (initData) {
+          // Ждем завершения записи токена в СУБД
           const loggedUser = await initMaxAuth(initData);
           setUser(loggedUser);
         } else {
-          console.warn('MAX SDK не обнаружен. Доступ ограничен гостевым режимом.');
-          setUser(getCurrentUser()); // Проверка локальной сессии
+          console.warn('Запуск вне мессенджера MAX. Используем локальную сессию.');
+          setUser(getCurrentUser());
         }
       } catch (error) {
-        console.error('Ошибка автоматической авторизации:', error);
+        console.error('Критическая ошибка инициализации сессии:', error);
       } finally {
         setIsLoading(false);
       }
     };
+
     initializeAuth();
   }, []);
 
   // Функция для обновления локального состояния пользователя после редактирования
   // Изменяем функцию, чтобы она принимала обновленный объект пользователя
-  const handleUserUpdate = (updatedUser) => {
-    if (updatedUser) {
-      setUser(updatedUser);
-    } else {
-      setUser(getCurrentUser());
-    }
+   const handleUserUpdate = (updatedUser) => {
+    setUser(updatedUser || getCurrentUser());
   };
 
   if (isLoading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#111', color: '#fff' }}>
-        <div>Инициализация профиля MAX...</div>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#ffffff', color: '#1a1a1a' }}>
+        <div style={{ fontSize: '16px', fontWeight: '600' }}>Загрузка профиля MAX...</div>
       </div>
     );
   }
@@ -57,15 +57,14 @@ function App() {
    // Найди метод renderContent() внутри App.jsx и замени кейс 6:
   const renderContent = () => {
     switch (activeTab) {
-      case 0: return <Feed />;
-      case 1: return <Trainings />;
-      case 2: return <Shop />;
-      case 3: return <Rating />;
-      case 4: return <Competitions />;
-      case 5: return <Gallery />;
-      // ПЕРЕДАЕМ объект user в компонент Профиля
-      case 6: return <Profile user={user} onUpdate={handleUserUpdate} />; 
-      default: return <Feed />;
+      case 0: return <Feed user={user} />;
+      case 1: return <Trainings user={user} />;
+      case 2: return <Shop user={user} />;
+      case 3: return <Rating user={user} />;
+      case 4: return <Competitions user={user} />;
+      case 5: return <Gallery user={user} />;
+      case 6: return <Profile user={user} onUpdate={handleUserUpdate} />;
+      default: return <Feed user={user} />;
     }
   };
 

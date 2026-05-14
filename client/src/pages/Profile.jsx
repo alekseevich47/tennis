@@ -33,6 +33,7 @@ function Profile({ user: initialUser, onUpdate }) {
     }
   };
 
+
   const handleSave = async (e) => {
     e.preventDefault();
     if (!user) return;
