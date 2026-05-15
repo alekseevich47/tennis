@@ -192,3 +192,18 @@
 .save-profile-btn:hover {
   background: #e64a19;
 }
+
+.avatar-wrapper-large {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  margin: 20px auto 12px auto;
+}
+img.profile-avatar-large {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}

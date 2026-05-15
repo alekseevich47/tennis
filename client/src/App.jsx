@@ -7,7 +7,7 @@ import Competitions from './pages/Competitions';
 import Gallery from './pages/Gallery';
 import Profile from './pages/Profile'; // Новый компонент профиля
 import BottomNav from './components/BottomNav';
-import { initMaxAuth, getCurrentUser } from './services/pocketbase';
+import { initMaxAuth, getCurrentUser, getUserAvatarData } from './services/pocketbase';
 import './styles/global.css';
 
 function App() {
@@ -85,8 +85,17 @@ function App() {
           {activeTab === 6 && "Мой профиль"}
         </h1>
         
-        <div className="header-profile-badge" onClick={() => setActiveTab(6)}>
-          <div className="profile-avatar-mini">{userInitial}</div>
+          <div className="header-profile-badge" onClick={() => setActiveTab(6)}>
+          <div className="avatar-wrapper-mini">
+            {(() => {
+              const av = getUserAvatarData(user);
+              return av.hasAvatar ? (
+                <img src={av.src} alt="Avatar" className="profile-avatar-mini" />
+              ) : (
+                <div className="profile-avatar-mini text-fallback-avatar">{av.initial}</div>
+              );
+            })()}
+          </div>
           <span className="profile-name-mini">{user?.full_name || "Гость"}</span>
         </div>
       </header>

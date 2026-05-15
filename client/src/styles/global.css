@@ -188,3 +188,24 @@ input[type="file"] {
   overflow-y: auto;
   background: #ffffff;
 }
+
+.avatar-wrapper-mini {
+  position: relative;
+  width: 28px;
+  height: 28px;
+}
+img.profile-avatar-mini {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+.text-fallback-avatar {
+  background: #ff5722;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
