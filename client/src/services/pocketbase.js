@@ -439,6 +439,19 @@ const updatePlayerStats = async (player1Id, player2Id, score1, score2) => {
 };
 
 /**
+ * Получение данных для формирования аватарки пользователя MAX
+ * @param {Object} userObj - Объект пользователя из базы данных
+ * @returns {Object} { hasAvatar: boolean, src: string, initial: string }
+ */
+export const getUserAvatarData = (userObj) => {
+  const initial = userObj?.full_name ? userObj.full_name.charAt(0).toUpperCase() : 'U';
+  const src = userObj?.avatar_url || '';
+  const hasAvatar = src.length > 0;
+  
+  return { hasAvatar, src, initial };
+};
+
+/**
  * Получение фотографий галереи
  * @returns {Promise<Array>}
  */
