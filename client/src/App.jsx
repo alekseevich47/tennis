@@ -7,13 +7,14 @@ import Competitions from './pages/Competitions';
 import Gallery from './pages/Gallery';
 import Profile from './pages/Profile'; // Новый компонент профиля
 import BottomNav from './components/BottomNav';
-import { initMaxAuth, getCurrentUser, getUserAvatarData } from './services/pocketbase';
+import pb, { initMaxAuth, getCurrentUser, getUserAvatarData } from './services/pocketbase';
 import './styles/global.css';
 
 function App() {
   const [activeTab, setActiveTab] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [pendingDeleteIds, setPendingDeleteIds] = useState([]);
 
   // Инициализация при старте
   useEffect(() => {
@@ -57,7 +58,7 @@ function App() {
    // Найди метод renderContent() внутри App.jsx и замени кейс 6:
   const renderContent = () => {
     switch (activeTab) {
-      case 0: return <Feed user={user} />;
+      case 0: return <Feed user={user} onDeletedIdsChange={setPendingDeleteIds} />;
       case 1: return <Trainings user={user} />;
       case 2: return <Shop user={user} />;
       case 3: return <Rating user={user} />;
@@ -67,6 +68,21 @@ function App() {
       default: return <Feed user={user} />;
     }
   };
+
+  const handleTabChange = async (newTab) => {
+  // Если модератор уходит из ленты и у него есть скрытые посты — стираем их из БД навсегда
+  if (pendingDeleteIds.length > 0) {
+    pendingDeleteIds.forEach((postId) => {
+      pb.collection('posts').delete(postId).catch((err) => {
+        console.error('Критическая ошибка окончательной зачистки поста:', err);
+      });
+    });
+    // Очищаем буфер
+    setPendingDeleteIds([]);
+  }
+  // Переключаем вкладку
+  setActiveTab(newTab);
+};
 
   // Получаем первую букву для дефолтной аватарки
   const userInitial = user?.full_name ? user.full_name.charAt(0).toUpperCase() : 'U';
@@ -104,7 +120,7 @@ function App() {
       <main className="content-with-header">{renderContent()}</main>
 
       {/* Нижняя навигация */}
-      <BottomNav activeTab={activeTab === 6 ? -1 : activeTab} onTabChange={setActiveTab} />
+      <BottomNav activeTab={activeTab === 6 ? -1 : activeTab} onTabChange={handleTabChange} />
     </div>
   );
 }
