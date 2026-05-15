@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import pb, { getTrainings } from '../services/pocketbase';
+import pb, { getTrainings, getUserAvatarData } from '../services/pocketbase';
 import './Profile.css';
 
 // Принимаем user из пропсов
@@ -75,7 +75,16 @@ function Profile({ user: initialUser, onUpdate }) {
 
       {isEditing ? (
         <form onSubmit={handleSave} className="profile-edit-form">
-          <div className="avatar-large">{userInitial}</div>
+        <div className="avatar-wrapper-large">
+        {(() => {
+          const av = getUserAvatarData(user);
+          return av.hasAvatar ? (
+            <img src={av.src} alt="Large Avatar" className="profile-avatar-large" />
+          ) : (
+            <div className="avatar-large text-fallback-avatar">{av.initial}</div>
+          );
+        })()}
+      </div>
           
           <div className="form-group">
             <label>Имя фамилия:</label>
@@ -100,7 +109,16 @@ function Profile({ user: initialUser, onUpdate }) {
         </form>
       ) : (
         <div className="profile-view">
-          <div className="avatar-large">{userInitial}</div>
+                <div className="avatar-wrapper-large">
+        {(() => {
+          const av = getUserAvatarData(user);
+          return av.hasAvatar ? (
+            <img src={av.src} alt="Large Avatar" className="profile-avatar-large" />
+          ) : (
+            <div className="avatar-large text-fallback-avatar">{av.initial}</div>
+          );
+        })()}
+      </div>
           <h2 className="profile-user-name">{user.full_name}</h2>
           
           <div className="profile-meta-info">

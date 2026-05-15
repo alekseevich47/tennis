@@ -75,16 +75,6 @@ function Feed() {
 
   return (
     <div className="feed">
-      {/* Заголовок с кнопкой добавления для модератора */}
-      <header className="feed-header">
-        <h1>Лента новостей</h1>
-        {moderator && (
-          <button className="add-btn" onClick={() => setShowAddModal(true)}>
-            +
-          </button>
-        )}
-      </header>
-
       {/* Список постов */}
       <div className="posts-container">
         {loading ? (
