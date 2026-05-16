@@ -14,8 +14,6 @@ function Feed({ user, onDeletedIdsChange }) {
 
   // Состояния для полноэкранного просмотра фото с зумом и перемещением
   const [fullscreenImage, setFullscreenImage] = useState(null);
-  const [scale, setScale] = useState(1);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
 
   // Стейты для детального просмотра поста и комментариев
   const [selectedPost, setSelectedPost] = useState(null);
@@ -29,9 +27,6 @@ function Feed({ user, onDeletedIdsChange }) {
 
   const containerRef = useRef(null);
   const scrollTimeoutRef = useRef(null);
-  const startTouchRef = useRef({ x: 0, y: 0 });
-  const startDistRef = useRef(0);
-  const isDraggingRef = useRef(false);
   const userIsModerator = isModerator();
   const commentsBottomRef = useRef(null);
 
@@ -51,11 +46,11 @@ function Feed({ user, onDeletedIdsChange }) {
     if (!userIsModerator || !container) return;
 
     const handleScroll = () => {
-      setIsButtomVisible(false);
+      setIsButtonVisible(false);
       if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
       scrollTimeoutRef.current = setTimeout(() => {
         setIsButtonVisible(true);
-      }, 200);
+      }, 300);
     };
 
     container.addEventListener('scroll', handleScroll, { passive: true });
@@ -340,41 +335,92 @@ function Feed({ user, onDeletedIdsChange }) {
     }
   };
 
-  // --- МАТЕМАТИКА ЖЕСТОВ ДЛЯ СДВИГА И ЗУМА (TOUCH PAN & ZOOM) ---
-  
+   // --- МАТЕМАТИКА ЖЕСТОВ С ЗУМОМ, ИНЕРЦИЕЙ И SWIPE-TO-CLOSE ---
+  const [scale, setScale] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [bgOpacity, setBgOpacity] = useState(1); // Стейт прозрачности фона при свайпе
+
+  const startTouchRef = useRef({ x: 0, y: 0 });
+  const startDistRef = useRef(0);
+  const isDraggingRef = useRef(false);
+
+  // Рефы для инерции и свайпа вниз/вверх
+  const lastTouchRef = useRef({ x: 0, y: 0, time: 0 });
+  const velocityRef = useRef({ x: 0, y: 0 });
+  const animationFrameRef = useRef(null);
+  const isSwipingToCloseRef = useRef(false); // Флаг режима закрытия
+
   const getTouchDistance = (t1, t2) => {
     return Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
   };
 
   const handleTouchStart = (e) => {
+    if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+
     if (e.touches.length === 1) {
-      // Один палец — активируем режим перетаскивания (сдвига)
       isDraggingRef.current = true;
+      isSwipingToCloseRef.current = false;
+      const touch = e.touches[0];
+      
       startTouchRef.current = {
-        x: e.touches[0].clientX - position.x,
-        y: e.touches[0].clientY - position.y
+        x: touch.clientX - position.x,
+        y: touch.clientY - position.y
       };
+      
+      lastTouchRef.current = {
+        x: touch.clientX,
+        y: touch.clientY,
+        time: performance.now()
+      };
+      velocityRef.current = { x: 0, y: 0 };
+
     } else if (e.touches.length === 2) {
-      // Два пальца — переходим в режим Pinch-to-Zoom
       isDraggingRef.current = false;
+      isSwipingToCloseRef.current = false;
       startDistRef.current = getTouchDistance(e.touches[0], e.touches[1]);
     }
   };
 
   const handleTouchMove = (e) => {
-    if (e.touches.length === 1 && isDraggingRef.current && scale > 1) {
-      // Сдвигаем фото, только если масштаб увеличен (scale > 1)
-      const nextX = e.touches[0].clientX - startTouchRef.current.x;
-      const nextY = e.touches[0].clientY - startTouchRef.current.y;
+    if (e.touches.length === 1 && isDraggingRef.current) {
+      const touch = e.touches[0];
+      const now = performance.now();
+      const dt = now - lastTouchRef.current.time;
+
+      const nextX = touch.clientX - startTouchRef.current.x;
+      const nextY = touch.clientY - startTouchRef.current.y;
       
-      // Ограничиваем сдвиг, чтобы фото не улетало далеко за пределы экрана
-      const limit = (scale - 1) * 200;
-      setPosition({
-        x: Math.min(Math.max(nextX, -limit), limit),
-        y: Math.min(Math.max(nextY, -limit), limit)
-      });
+      const limitX = (scale - 1) * 200;
+      const limitY = (scale - 1) * 200;
+
+      // ОПРЕДЕЛЯЕМ РЕЖИМ: Если картинка не зумирована ИЛИ мы уже уперлись в вертикальный край фотографии
+      if (scale === 1 || isSwipingToCloseRef.current || nextY > limitY || nextY < -limitY) {
+        isSwipingToCloseRef.current = true;
+        
+        // Тянем картинку по вертикали без ограничений лимита
+        const dragY = nextY;
+        setPosition({ x: scale === 1 ? 0 : Math.min(Math.max(nextX, -limitX), limitX), y: dragY });
+        
+        // Динамически уменьшаем прозрачность заднего фона в зависимости от расстояния свайпа
+        const currentOpacity = Math.max(1 - Math.abs(dragY) / 400, 0.2);
+        setBgOpacity(currentOpacity);
+      } else {
+        // Стандартное панорамирование внутри увеличенной фотографии
+        const boundedX = Math.min(Math.max(nextX, -limitX), limitX);
+        const boundedY = Math.min(Math.max(nextY, -limitY), limitY);
+        setPosition({ x: boundedX, y: boundedY });
+      }
+
+      if (dt > 0 && !isSwipingToCloseRef.current) {
+        velocityRef.current = {
+          x: (touch.clientX - lastTouchRef.current.x) / dt,
+          y: (touch.clientY - lastTouchRef.current.y) / dt
+        };
+      }
+
+      lastTouchRef.current = { x: touch.clientX, y: touch.clientY, time: now };
+
     } else if (e.touches.length === 2 && startDistRef.current > 0) {
-      // Логика зума двумя пальцами
       const currentDist = getTouchDistance(e.touches[0], e.touches[1]);
       const factor = currentDist / startDistRef.current;
       const newScale = Math.min(Math.max(scale * factor, 1), 4);
@@ -382,9 +428,10 @@ function Feed({ user, onDeletedIdsChange }) {
       setScale(newScale);
       startDistRef.current = currentDist;
 
-      // Если вернулись к масштабу 1:1, сбрасываем координаты сдвига в центр
       if (newScale === 1) {
         setPosition({ x: 0, y: 0 });
+        setBgOpacity(1);
+        velocityRef.current = { x: 0, y: 0 };
       }
     }
   };
@@ -392,12 +439,54 @@ function Feed({ user, onDeletedIdsChange }) {
   const handleTouchEnd = () => {
     isDraggingRef.current = false;
     startDistRef.current = 0;
+
+    // ФИКС ЗАКРЫТИЯ: Если мы были в режиме свайпа на закрытие и протащили больше 120 пикселей — закрываем оверлей
+    if (isSwipingToCloseRef.current) {
+      if (Math.abs(position.y) > 120) {
+        closeFullscreen();
+        return;
+      } else {
+        // Иначе плавно возвращаем картинку в центр
+        setPosition({ x: 0, y: 0 });
+        setBgOpacity(1);
+        isSwipingToCloseRef.current = false;
+        return;
+      }
+    }
+
+    if (scale > 1 && (Math.abs(velocityRef.current.x) > 0.1 || Math.abs(velocityRef.current.y) > 0.1)) {
+      animateInertia();
+    }
+  };
+
+  const animateInertia = () => {
+    const friction = 0.94;
+    velocityRef.current.x *= friction;
+    velocityRef.current.y *= friction;
+
+    setPosition((prev) => {
+      const nextX = prev.x + velocityRef.current.x * 16;
+      const nextY = prev.y + velocityRef.current.y * 16;
+      const limitX = (scale - 1) * 200;
+      const limitY = (scale - 1) * 200;
+      return {
+        x: Math.min(Math.max(nextX, -limitX), limitX),
+        y: Math.min(Math.max(nextY, -limitY), limitY)
+      };
+    });
+
+    if (Math.abs(velocityRef.current.x) > 0.01 || Math.abs(velocityRef.current.y) > 0.01) {
+      animationFrameRef.current = requestAnimationFrame(animateInertia);
+    }
   };
 
   const closeFullscreen = () => {
+    if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
     setFullscreenImage(null);
     setScale(1);
-    setPosition({ x: 0, y: 0 }); // Полный сброс параметров
+    setBgOpacity(1);
+    setPosition({ x: 0, y: 0 });
+    velocityRef.current = { x: 0, y: 0 };
   };
 
   return (
@@ -551,21 +640,24 @@ function Feed({ user, onDeletedIdsChange }) {
 
                       <div className="modal-comments-list">
                         {displayed.map((c) => {
+                          const isCommentOwner = c.author === user?.id;
                           const isCommentSoftDeleted = deletedCommentIds.includes(c.id) || c.is_deleted === true;
-                           // Если комментарий скрыт и юзер не модератор — убираем из верстки совсем
-                          if (isCommentSoftDeleted && !userIsModerator) return null;
 
-                          // ТЗ: Текстовая плашка мягкого удаления для модератора/владельца
-                          if (isCommentSoftDeleted && userIsModerator) {
-                            return (
-                              <div key={c.id} className="modal-comment-item comment-soft-deleted">
-                                <span className="soft-del-msg">Вы удалили комментарий. </span>
-                                <span className="soft-restore-link" onClick={(e) => handleRestoreComment(c.id, e)}>Восстановить</span>
-                              </div>
-                            );
+                          // Если комментарий скрыт:
+                          if (isCommentSoftDeleted) {
+                            // Показываем плашку восстановления ТОЛЬКО автору комментария или модератору
+                            if (isCommentOwner || userIsModerator) {
+                              return (
+                                <div key={c.id} className="modal-comment-item comment-soft-deleted">
+                                  <span className="soft-del-msg">Вы удалили комментарий. </span>
+                                  <span className="soft-restore-link" onClick={(e) => handleRestoreComment(c.id, e)}>Восстановить</span>
+                                </div>
+                              );
+                            }
+                            // Для всех остальных обычных пользователей чужой скрытый комментарий полностью исчезает
+                            return null;
                           }
 
-                          const isCommentOwner = c.author === user?.id;
                           const canDelete = isCommentOwner || userIsModerator;
 
                           return (
@@ -656,7 +748,11 @@ function Feed({ user, onDeletedIdsChange }) {
 
       {/* ПОЛНОЭКРАННЫЙ ОВЕРЛЕЙ ПРОСМОТРА ФОТО С ЗУМОМ И ПЕРЕМЕЩЕНИЕМ */}
       {fullscreenImage && (
-        <div className="fullscreen-overlay" onClick={closeFullscreen}>
+        <div 
+          className="fullscreen-overlay" 
+          onClick={closeFullscreen}
+          style={{ backgroundColor: `rgba(0, 0, 0, ${bgOpacity})` }} // Передаем прозрачность фона
+        >
           <button className="fullscreen-close-btn" onClick={closeFullscreen}>✕</button>
           <div 
             className="fullscreen-image-wrapper"
