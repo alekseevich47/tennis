@@ -1,82 +1,364 @@
-/* Стили раздела тренировок */
-.trainings {
-  min-height: 100%;
-}
-
-.trainings-header {
+.trainings-container {
+  padding: 16px;
+  background: #ffffff;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  background: white;
-  border-bottom: 1px solid #e0e0e0;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
 }
 
-.trainings-header h1 {
-  font-size: 20px;
-  font-weight: 700;
+/* 14-дневная горизонтальная плашка календаря */
+.calendar-strip {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+  scrollbar-width: none; /* Скрываем скроллбар в Firefox */
+  -webkit-overflow-scrolling: touch;
+}
+.calendar-strip::-webkit-scrollbar {
+  display: none; /* Скрываем скроллбар в Chrome/Safari */
 }
 
-.loading, .empty {
-  text-align: center;
-  padding: 40px 20px;
-  color: #999;
-}
-
-.trainings-list {
-  padding: 16px;
-}
-
-.training-day {
-  margin-bottom: 24px;
-}
-
-.training-day h3 {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 12px;
-  text-transform: capitalize;
-}
-
-.training-slot {
-  background: white;
+.calendar-day-item {
+  flex: 0 0 calc(100% / 7 - 9px); /* Строго 7 дней помещаются на один экран в ряд */
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
   border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 12px;
+  padding: 8px 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  justify-content: center;
   cursor: pointer;
+  outline: none;
+  transition: background 0.15s ease, transform 0.1s ease;
 }
 
-.time {
+/* Цвет дат чуть темнее белого по ТЗ для различия */
+.day-name-label {
+  font-size: 11px;
   font-weight: 600;
+  color: #868e96;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.day-num-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #495057;
+}
+
+/* Подсветка активного выбранного дня */
+.calendar-day-item.active-day {
+  background: #eef2ff;
+  border-color: #007aff;
+  transform: scale(0.96);
+}
+.calendar-day-item.active-day .day-num-label {
+  color: #007aff;
+}
+
+/* Шапка выбранного дня */
+.selected-day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.selected-day-header h3 {
+  margin: 0;
   font-size: 16px;
+  font-weight: 700;
+  color: #212529;
 }
-
-.spots {
-  color: #666;
-  font-size: 14px;
-}
-
-.book-btn, .cancel-btn {
-  background: #007aff;
-  color: white;
+.add-training-context-btn {
+  background: #f1f3f5;
   border: none;
+  color: #007aff;
+  font-size: 20px;
+  font-weight: 600;
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  font-size: 20px;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Карточки тренировок в столбик */
+.trainings-list-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+  overflow-y: auto;
+}
+.empty-trainings-msg {
+  text-align: center;
+  color: #868e96;
+  font-size: 14px;
+  margin-top: 30px;
+}
+
+.training-row-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid #f1f3f5;
+}
+
+/* ТЗ: Приятное неоновое анимированное градиентное свечение нижней линии карточки */
+.training-row-card::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 4px;
+  background-size: 200% auto;
+  animation: neonGlowAnimation 3s linear infinite;
+}
+
+/* Синий неоновый градиент для групповых встреч */
+.training-row-card.neon-border-group::after {
+  background-image: linear-gradient(to right, #007aff 0%, #3498db 50%, #007aff 100%);
+  box-shadow: 0 -2px 10px rgba(0, 122, 255, 0.4);
+}
+
+/* Красный неоновый градиент для турниров */
+.training-row-card.neon-border-tournament::after {
+  background-image: linear-gradient(to right, #e63946 0%, #ff6b6b 50%, #e63946 100%);
+  box-shadow: 0 -2px 10px rgba(230, 57, 70, 0.4);
+}
+
+@keyframes neonGlowAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Контент карточки */
+.card-main-info-col {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.card-row-date {
+  font-size: 11px;
+  color: #868e96;
+  font-weight: 500;
+}
+.card-row-time {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+.card-row-type-label {
+  font-size: 13px;
+  color: #495057;
+  font-weight: 500;
+}
+
+.card-actions-info-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+.card-slots-counter {
+  font-size: 12px;
+  font-weight: 600;
+  color: #007aff;
+  background: #eef2ff;
+  padding: 3px 8px;
+  border-radius: 8px;
+}
+.card-slots-counter.no-limit-label {
+  color: #2b8a3e;
+  background: #ebfbee;
+}
+
+.card-buttons-wrapper {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Круглые экшн-кнопки по ТЗ (+ и крестик отмены) */
+.action-circle-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  outline: none;
+}
+.btn-add-plus {
+  background: #007aff;
+  color: #ffffff;
+}
+.btn-cancel-cross {
+  background: #e63946;
+  color: #ffffff;
+}
+.btn-delete-trash {
+  background: #f1f3f5;
+  font-size: 13px;
+}
+.text-status-full-label {
+  background: #e9ecef;
+  color: #868e96;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Модалка описания и участников */
+.modal-content.trainings-detail-modal {
+  height: 75vh;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.detail-scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+.detail-badge-type {
+  font-size: 11px;
+  background: #f1f3f5;
+  color: #495057;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+.detail-title-date {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 10px 0 6px 0;
+}
+.detail-time-range, .detail-location-text {
+  font-size: 14px;
+  margin: 4px 0;
+  color: #495057;
+}
+.detail-desc-box {
+  background: #f8f9fa;
+  padding: 12px;
+  border-radius: 12px;
+  margin-top: 14px;
+}
+.detail-desc-box h4 { margin: 0 0 4px 0; font-size: 13px; color: #868e96; }
+.detail-desc-box p { margin: 0; font-size: 14px; color: #212529; }
+
+/* Список участников для модератора */
+.detail-participants-section h4 {
+  margin: 20px 0 10px 0;
+  font-size: 14px;
+  border-top: 1px solid #eee;
+  padding-top: 14px;
+}
+.player-list-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f3f5;
+}
+.player-meta-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.player-avatar-mini {
+  width: 24px;
+  height: 24px;
+  background: #e9ecef;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 12px;
+}
+.player-name-label {
+  font-size: 13px;
+  font-weight: 500;
+}
+.kick-player-btn {
+  background: none;
+  border: none;
+  color: #e63946;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
 }
 
-.cancel-btn {
-  background: #ff3b30;
+/* Формы модалки создания */
+.form-group-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
 }
+.form-group-row label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #495057;
+}
+.form-group-row input, .form-group-row select, .form-group-row textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  outline: none;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+.form-group-row textarea {
+  height: 60px;
+  resize: none;
+}
+.fade-in-input {
+  animation: fadeInAlert 0.2s ease-out;
+}
+
+.dots-indicator-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3px; /* Отступ между точками */
+  margin-top: 5px;
+  height: 6px;
+  width: 100%;
+}
+
+.date-status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.date-status-dot.dot-gray { background: #ced4da; }
+.date-status-dot.dot-blue { background: #007aff; box-shadow: 0 0 6px rgba(0,122,255,0.6); }
+.date-status-dot.dot-red { background: #e63946; box-shadow: 0 0 6px rgba(230,57,70,0.6); }
