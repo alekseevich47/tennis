@@ -22,15 +22,37 @@ function App() {
       try {
         // Забираем initData строго по спецификации MAX Bridge
         const initData = window.WebApp?.initData;
+        let loggedUser = null;
 
         if (initData) {
           // Ждем завершения записи токена в СУБД
-          const loggedUser = await initMaxAuth(initData);
+          loggedUser = await initMaxAuth(initData);
           setUser(loggedUser);
         } else {
           console.warn('Запуск вне мессенджера MAX. Используем локальную сессию.');
+          loggedUser = getCurrentUser();
           setUser(getCurrentUser());
         }
+
+        // === СЕНИОР ФИКС: АВТОЗАЧИСТКА БРОШЕННЫХ КОММЕНТАРИЕВ ПРИ ЗАПУСКЕ ===
+        if (loggedUser?.id) {
+          try {
+            // Находим все комментарии текущего юзера, которые были мягко удалены, но не стерты физически
+            const abandonedComments = await pb.collection('comments').getFullList({
+              filter: `author = "${loggedUser.id}" && is_deleted = true`
+            });
+
+            if (abandonedComments.length > 0) {
+              abandonedComments.forEach((comment) => {
+                pb.collection('comments').delete(comment.id).catch(err => console.error(err));
+              });
+              console.log(`[Очистка сессии]: Успешно удалено ${abandonedComments.length} брошенных комментариев.`);
+            }
+          } catch (cleanError) {
+            console.error('Ошибка автозачистки старых комментариев при старте:', cleanError);
+          }
+        }
+
       } catch (error) {
         console.error('Критическая ошибка инициализации сессии:', error);
       } finally {
