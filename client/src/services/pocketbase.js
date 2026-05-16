@@ -57,11 +57,11 @@ export const isModerator = () => {
  */
 export const getPosts = async () => {
   try {
-    const records = await pb.collection('posts').getFullList({
+    // Вытягиваем посты, а также вложенные комментарии и профили их авторов
+    return await pb.collection('posts').getFullList({
       sort: '-created',
-      expand: 'author,comments.author'
+      expand: 'comments_id.author,author' 
     });
-    return records;
   } catch (error) {
     console.error('Ошибка получения постов:', error);
     throw error;
