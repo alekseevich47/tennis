@@ -103,22 +103,6 @@ export const addComment = async (postId, text) => {
   }
 };
 
-/**
- * Получение тренировок
- * @returns {Promise<Array>}
- */
-export const getTrainings = async () => {
-  try {
-    const records = await pb.collection('trainings').getFullList({
-      sort: 'date',
-      expand: 'booked_users'
-    });
-    return records;
-  } catch (error) {
-    console.error('Ошибка получения тренировок:', error);
-    throw error;
-  }
-};
 
 /**
  * Создание тренировки
@@ -499,3 +483,16 @@ export const deleteFromGallery = async (imageId) => {
 };
 
 export default pb;
+
+// Получение полного списка тренировок для календаря
+export const getTrainings = async () => {
+  try {
+    return await pb.collection('trainings').getFullList({
+      sort: 'date',
+      expand: 'booked_users' // Подтягиваем данные записавшихся игроков
+    });
+  } catch (error) {
+    console.error('Ошибка получения тренировок:', error);
+    throw error;
+  }
+};
