@@ -80,6 +80,24 @@ function App() {
     // Очищаем буфер
     setPendingDeleteIds([]);
   }
+
+  // 2. ФИКС: Физическое безвозвратное удаление скрытых комментариев из ленты
+    // Мы добавим глобальный буфер для скрытых комментариев, чтобы чистить их при смене вкладок
+    const savedCommentsJson = sessionStorage.getItem('pending_delete_comments');
+    if (savedCommentsJson) {
+      try {
+        const commentIds = JSON.parse(savedCommentsJson);
+        commentIds.forEach((commentId) => {
+          pb.collection('comments').delete(commentId).catch((err) => {
+            console.error('Ошибка зачистки комментария при смене таба:', err);
+          });
+        });
+        sessionStorage.removeItem('pending_delete_comments');
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
   // Переключаем вкладку
   setActiveTab(newTab);
 };
