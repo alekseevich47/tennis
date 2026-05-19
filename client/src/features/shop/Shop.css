@@ -1,0 +1,172 @@
+.shop {
+  min-height: 100%;
+}
+
+.shop-header-bar {
+  padding: 12px 16px;
+  display: flex;
+  justify-content: flex-end;
+  border-bottom: 1px solid #f1f3f5;
+  background: #ffffff;
+}
+
+.shop-add-btn {
+  background: #007aff;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 12px;
+}
+
+.product-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+}
+
+.product-card:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: 2px;
+}
+
+.product-image {
+  width: 100%;
+  aspect-ratio: 1;
+  background: #f5f5f5;
+}
+
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.no-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #999;
+  font-size: 13px;
+}
+
+.product-info {
+  padding: 12px;
+}
+
+.product-info h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.price {
+  font-weight: 700;
+  color: #007aff;
+  font-size: 16px;
+}
+
+.product-detail .product-images {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.product-detail .product-images img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.product-article {
+  background: #f5f5f5;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  border: none;
+  text-align: left;
+  width: 100%;
+  font: inherit;
+  min-height: 44px;
+}
+
+.product-description {
+  margin: 12px 0;
+  line-height: 1.5;
+}
+
+.product-price {
+  font-size: 24px;
+  font-weight: 700;
+  color: #007aff;
+  margin: 16px 0;
+}
+
+.buy-btn {
+  background: #34c759;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  width: 100%;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.moderator-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.edit-btn,
+.delete-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.edit-btn {
+  background: #007aff;
+  color: white;
+}
+
+.delete-btn {
+  background: #ff3b30;
+  color: white;
+}

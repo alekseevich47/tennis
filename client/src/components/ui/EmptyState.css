@@ -1,0 +1,24 @@
+.ui-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6c757d;
+}
+
+.ui-empty-icon {
+  font-size: 36px;
+  margin-bottom: 8px;
+  opacity: 0.6;
+}
+
+.ui-empty-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #495057;
+  margin: 0 0 4px 0;
+}
+
+.ui-empty-desc {
+  font-size: 13px;
+  color: #868e96;
+  margin: 0;
+}
