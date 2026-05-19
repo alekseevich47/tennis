@@ -1,166 +1,140 @@
-import React, { useState, useEffect } from 'react';
-import Feed from './pages/Feed';
-import Trainings from './pages/Trainings';
-import Shop from './pages/Shop';
-import Rating from './pages/Rating';
-import Competitions from './pages/Competitions';
-import Gallery from './pages/Gallery';
-import Profile from './pages/Profile'; // Новый компонент профиля
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import pb from './services/pb';
+import { useMaxAuth } from './hooks/useMaxAuth';
+import AppHeader from './components/AppHeader';
 import BottomNav from './components/BottomNav';
-import pb, { initMaxAuth, getCurrentUser, getUserAvatarData } from './services/pocketbase';
+import Spinner from './components/ui/Spinner';
+import FeedPage from './features/feed/FeedPage';
+import TrainingsPage from './features/trainings/TrainingsPage';
+import ShopPage from './features/shop/ShopPage';
+import RatingPage from './features/rating/RatingPage';
+import CompetitionsPage from './features/competitions/CompetitionsPage';
+import GalleryPage from './features/gallery/GalleryPage';
+import ProfilePage from './features/profile/ProfilePage';
+import { error } from './lib/log';
 import './styles/global.css';
+
+const TAB_TITLES = [
+  'Лента новостей',
+  'Тренировки',
+  'Магазин',
+  'Рейтинг',
+  'Соревнования',
+  'Галерея',
+  'Мой профиль'
+];
+
+const PROFILE_TAB_INDEX = 6;
 
 function App() {
   const [activeTab, setActiveTab] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState(null);
-  const [pendingDeleteIds, setPendingDeleteIds] = useState([]);
+  const { user, isLoading } = useMaxAuth();
 
-  // Инициализация при старте
-  useEffect(() => {
-    const initializeAuth = async () => {
+  // ID-буферы pending soft-delete. Передаются дочерним фичам через колбэки.
+  const [pendingDeletePostIds, setPendingDeletePostIds] = useState([]);
+  const pendingDeletePostIdsRef = useRef([]);
+  pendingDeletePostIdsRef.current = pendingDeletePostIds;
+
+  // Окончательное удаление мягко-скрытых постов / комментариев в БД.
+  const flushPendingDeletes = useCallback(async () => {
+    const postIds = pendingDeletePostIdsRef.current;
+    const commentJson = sessionStorage.getItem('pending_delete_comments');
+
+    const tasks = [];
+
+    if (postIds.length > 0) {
+      tasks.push(
+        ...postIds.map((id) =>
+          pb.collection('posts').delete(id).catch((e) => error('flush post:', e))
+        )
+      );
+      setPendingDeletePostIds([]);
+    }
+
+    if (commentJson) {
       try {
-        // Забираем initData строго по спецификации MAX Bridge
-        const initData = window.WebApp?.initData;
-        let loggedUser = null;
-
-        if (initData) {
-          // Ждем завершения записи токена в СУБД
-          loggedUser = await initMaxAuth(initData);
-          setUser(loggedUser);
-        } else {
-          console.warn('Запуск вне мессенджера MAX. Используем локальную сессию.');
-          loggedUser = getCurrentUser();
-          setUser(getCurrentUser());
+        const commentIds = JSON.parse(commentJson);
+        if (Array.isArray(commentIds)) {
+          tasks.push(
+            ...commentIds.map((id) =>
+              pb.collection('comments').delete(id).catch((e) => error('flush comment:', e))
+            )
+          );
         }
-
-        // === СЕНИОР ФИКС: АВТОЗАЧИСТКА БРОШЕННЫХ КОММЕНТАРИЕВ ПРИ ЗАПУСКЕ ===
-        if (loggedUser?.id) {
-          try {
-            // Находим все комментарии текущего юзера, которые были мягко удалены, но не стерты физически
-            const abandonedComments = await pb.collection('comments').getFullList({
-              filter: `author = "${loggedUser.id}" && is_deleted = true`
-            });
-
-            if (abandonedComments.length > 0) {
-              abandonedComments.forEach((comment) => {
-                pb.collection('comments').delete(comment.id).catch(err => console.error(err));
-              });
-              console.log(`[Очистка сессии]: Успешно удалено ${abandonedComments.length} брошенных комментариев.`);
-            }
-          } catch (cleanError) {
-            console.error('Ошибка автозачистки старых комментариев при старте:', cleanError);
-          }
-        }
-
-      } catch (error) {
-        console.error('Критическая ошибка инициализации сессии:', error);
-      } finally {
-        setIsLoading(false);
+      } catch (e) {
+        error('Не удалось распарсить pending_delete_comments:', e);
       }
-    };
+      sessionStorage.removeItem('pending_delete_comments');
+    }
 
-    initializeAuth();
+    if (tasks.length > 0) {
+      await Promise.all(tasks);
+    }
   }, []);
 
-  // Функция для обновления локального состояния пользователя после редактирования
-  // Изменяем функцию, чтобы она принимала обновленный объект пользователя
-   const handleUserUpdate = (updatedUser) => {
-    setUser(updatedUser || getCurrentUser());
-  };
+  // Очистка при смене таба (старое поведение) + при закрытии webview (фикс C5).
+  const handleTabChange = useCallback(
+    (newTab) => {
+      flushPendingDeletes();
+      setActiveTab(newTab);
+    },
+    [flushPendingDeletes]
+  );
+
+  useEffect(() => {
+    const onHide = () => {
+      // Используется `keepalive: true`-style: запросы уходят, мы их не дожидаемся.
+      flushPendingDeletes();
+    };
+    window.addEventListener('pagehide', onHide);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') onHide();
+    });
+    return () => {
+      window.removeEventListener('pagehide', onHide);
+    };
+  }, [flushPendingDeletes]);
+
+  const handleUserUpdate = useCallback(() => {
+    // useMaxAuth слушает pb.authStore.onChange — состояние обновится автоматически.
+  }, []);
 
   if (isLoading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#ffffff', color: '#1a1a1a' }}>
-        <div style={{ fontSize: '16px', fontWeight: '600' }}>Загрузка профиля MAX...</div>
+      <div className="app-boot">
+        <Spinner label="Загрузка профиля MAX..." />
       </div>
     );
   }
 
-   // Найди метод renderContent() внутри App.jsx и замени кейс 6:
-  const renderContent = () => {
-    switch (activeTab) {
-      case 0: return <Feed user={user} onDeletedIdsChange={setPendingDeleteIds} />;
-      case 1: return <Trainings user={user} />;
-      case 2: return <Shop user={user} />;
-      case 3: return <Rating user={user} />;
-      case 4: return <Competitions user={user} />;
-      case 5: return <Gallery user={user} />;
-      case 6: return <Profile user={user} onUpdate={handleUserUpdate} />;
-      default: return <Feed user={user} />;
-    }
-  };
-
-  const handleTabChange = async (newTab) => {
-  // Если модератор уходит из ленты и у него есть скрытые посты — стираем их из БД навсегда
-  if (pendingDeleteIds.length > 0) {
-    pendingDeleteIds.forEach((postId) => {
-      pb.collection('posts').delete(postId).catch((err) => {
-        console.error('Критическая ошибка окончательной зачистки поста:', err);
-      });
-    });
-    // Очищаем буфер
-    setPendingDeleteIds([]);
-  }
-
-  // 2. ФИКС: Физическое безвозвратное удаление скрытых комментариев из ленты
-    // Мы добавим глобальный буфер для скрытых комментариев, чтобы чистить их при смене вкладок
-    const savedCommentsJson = sessionStorage.getItem('pending_delete_comments');
-    if (savedCommentsJson) {
-      try {
-        const commentIds = JSON.parse(savedCommentsJson);
-        commentIds.forEach((commentId) => {
-          pb.collection('comments').delete(commentId).catch((err) => {
-            console.error('Ошибка зачистки комментария при смене таба:', err);
-          });
-        });
-        sessionStorage.removeItem('pending_delete_comments');
-      } catch (e) {
-        console.error(e);
-      }
-    }
-
-  // Переключаем вкладку
-  setActiveTab(newTab);
-};
-
-  // Получаем первую букву для дефолтной аватарки
-  const userInitial = user?.full_name ? user.full_name.charAt(0).toUpperCase() : 'U';
+  const headerTitle = TAB_TITLES[activeTab] || TAB_TITLES[0];
 
   return (
     <div className="app">
-      {/* Сквозной Header по ТЗ */}
-      <header className="app-header">
-        <h1 className="header-title">
-          {activeTab === 0 && "Лента новостей"}
-          {activeTab === 1 && "Тренировки"}
-          {activeTab === 2 && "Магазин"}
-          {activeTab === 3 && "Рейтинг"}
-          {activeTab === 4 && "Соревнования"}
-          {activeTab === 5 && "Галерея"}
-          {activeTab === 6 && "Мой профиль"}
-        </h1>
-        
-          <div className="header-profile-badge" onClick={() => setActiveTab(6)}>
-          <div className="avatar-wrapper-mini">
-            {(() => {
-              const av = getUserAvatarData(user);
-              return av.hasAvatar ? (
-                <img src={av.src} alt="Avatar" className="profile-avatar-mini" />
-              ) : (
-                <div className="profile-avatar-mini text-fallback-avatar">{av.initial}</div>
-              );
-            })()}
-          </div>
-          <span className="profile-name-mini">{user?.full_name || "Гость"}</span>
-        </div>
-      </header>
+      <AppHeader
+        title={headerTitle}
+        user={user}
+        onProfileClick={() => setActiveTab(PROFILE_TAB_INDEX)}
+      />
 
-      {/* Основной контент */}
-      <main className="content-with-header">{renderContent()}</main>
+      <main className="content-with-header">
+        {activeTab === 0 && (
+          <FeedPage user={user} onDeletedIdsChange={setPendingDeletePostIds} />
+        )}
+        {activeTab === 1 && <TrainingsPage user={user} />}
+        {activeTab === 2 && <ShopPage user={user} />}
+        {activeTab === 3 && <RatingPage user={user} />}
+        {activeTab === 4 && <CompetitionsPage user={user} />}
+        {activeTab === 5 && <GalleryPage user={user} />}
+        {activeTab === PROFILE_TAB_INDEX && (
+          <ProfilePage user={user} onUpdate={handleUserUpdate} />
+        )}
+      </main>
 
-      {/* Нижняя навигация */}
-      <BottomNav activeTab={activeTab === 6 ? -1 : activeTab} onTabChange={handleTabChange} />
+      <BottomNav
+        activeTab={activeTab === PROFILE_TAB_INDEX ? -1 : activeTab}
+        onTabChange={handleTabChange}
+      />
     </div>
   );
 }

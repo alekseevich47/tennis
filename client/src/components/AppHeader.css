@@ -1,0 +1,49 @@
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #ffffff;
+  border-bottom: 1px solid #eaeaea;
+  height: 56px;
+  box-sizing: border-box;
+}
+
+.header-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.header-profile-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 20px;
+  transition: background 0.2s;
+  background: transparent;
+  border: none;
+  min-height: 44px;
+}
+
+.header-profile-badge:hover {
+  background: #f5f5f5;
+}
+
+.header-profile-badge:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: 2px;
+}
+
+.profile-name-mini {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  max-width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

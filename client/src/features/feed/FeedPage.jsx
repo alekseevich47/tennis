@@ -1,0 +1,193 @@
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import clsx from 'clsx';
+import { usePosts } from '../../hooks/usePosts';
+import { updatePost } from '../../services/posts';
+import { isModerator } from '../../services/auth';
+import Spinner from '../../components/ui/Spinner';
+import EmptyState from '../../components/ui/EmptyState';
+import PostCard from './PostCard';
+import CreatePostModal from './CreatePostModal';
+import PostDetailModal from './PostDetailModal';
+import FullscreenImageViewer from './FullscreenImageViewer';
+import { error } from '../../lib/log';
+import './Feed.css';
+
+const SCROLL_HIDE_DEBOUNCE_MS = 300;
+
+/**
+ * @param {{
+ *   user: any,
+ *   onDeletedIdsChange?: (ids: string[]) => void
+ * }} props
+ */
+function FeedPage({ user, onDeletedIdsChange }) {
+  const userIsModerator = isModerator();
+  const { data: posts, isLoading, mutate } = usePosts({ includeDeleted: userIsModerator });
+
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [fullscreenImage, setFullscreenImage] = useState(null);
+  const [deletedPostIds, setDeletedPostIds] = useState([]);
+  const [isButtonVisible, setIsButtonVisible] = useState(true);
+
+  const containerRef = useRef(null);
+  const scrollTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    onDeletedIdsChange?.(deletedPostIds);
+  }, [deletedPostIds, onDeletedIdsChange]);
+
+  // Scroll listener: зависит только от модераторского флага (фикс C6).
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!userIsModerator || !container) return undefined;
+
+    const handleScroll = () => {
+      setIsButtonVisible(false);
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+      scrollTimeoutRef.current = window.setTimeout(() => {
+        setIsButtonVisible(true);
+      }, SCROLL_HIDE_DEBOUNCE_MS);
+    };
+
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+        scrollTimeoutRef.current = null;
+      }
+    };
+  }, [userIsModerator]);
+
+  const visiblePosts = useMemo(() => {
+    if (!posts) return [];
+    if (userIsModerator) return posts;
+    return posts.filter(
+      (p) => !p.is_deleted && !deletedPostIds.includes(p.id)
+    );
+  }, [posts, userIsModerator, deletedPostIds]);
+
+  const handleDeletePost = useCallback(
+    async (postId) => {
+      // Optimistic update в SWR-кэше + точечный апдейт без полной перезагрузки (H10).
+      setDeletedPostIds((prev) => [...prev, postId]);
+      try {
+        await updatePost(postId, { is_deleted: true });
+        mutate(
+          (curr = []) =>
+            curr.map((p) => (p.id === postId ? { ...p, is_deleted: true } : p)),
+          false
+        );
+      } catch (err) {
+        error('soft delete post:', err);
+      }
+    },
+    [mutate]
+  );
+
+  const handleRestorePost = useCallback(
+    async (postId) => {
+      setDeletedPostIds((prev) => prev.filter((id) => id !== postId));
+      try {
+        await updatePost(postId, { is_deleted: false });
+        mutate(
+          (curr = []) =>
+            curr.map((p) => (p.id === postId ? { ...p, is_deleted: false } : p)),
+          false
+        );
+      } catch (err) {
+        error('restore post:', err);
+      }
+    },
+    [mutate]
+  );
+
+  const handleOpenDetail = useCallback((post) => {
+    setSelectedPost(post);
+  }, []);
+
+  const handleCloseDetail = useCallback(() => {
+    setSelectedPost(null);
+  }, []);
+
+  const handleOpenFullscreen = useCallback((url) => {
+    setFullscreenImage(url);
+  }, []);
+
+  const handleCloseFullscreen = useCallback(() => {
+    setFullscreenImage(null);
+  }, []);
+
+  const handleCreated = useCallback(() => {
+    setShowAddModal(false);
+    mutate();
+  }, [mutate]);
+
+  return (
+    <div className="feed-scroll-container" ref={containerRef}>
+      {userIsModerator && (
+        <div className="floating-btn-wrapper">
+          <button
+            type="button"
+            className={clsx('floating-add-btn', isButtonVisible ? 'visible' : 'hidden')}
+            onClick={() => setShowAddModal(true)}
+          >
+            Добавить
+          </button>
+        </div>
+      )}
+
+      <div className="feed-list">
+        {isLoading && <Spinner label="Загрузка ленты..." />}
+
+        {!isLoading && visiblePosts.length === 0 && (
+          <EmptyState
+            title="Пока ничего нет"
+            description="Здесь появятся первые публикации секции."
+          />
+        )}
+
+        {visiblePosts.map((post) => {
+          const isSoftDeleted =
+            deletedPostIds.includes(post.id) || post.is_deleted === true;
+          return (
+            <PostCard
+              key={post.id}
+              post={post}
+              isSoftDeleted={isSoftDeleted}
+              userIsModerator={userIsModerator}
+              onOpenDetail={handleOpenDetail}
+              onDelete={handleDeletePost}
+              onRestore={handleRestorePost}
+              onOpenFullscreen={handleOpenFullscreen}
+            />
+          );
+        })}
+      </div>
+
+      <PostDetailModal
+        isOpen={Boolean(selectedPost)}
+        post={selectedPost}
+        user={user}
+        userIsModerator={userIsModerator}
+        onClose={handleCloseDetail}
+        onAfterClose={() => mutate()}
+      />
+
+      <CreatePostModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onCreated={handleCreated}
+        user={user}
+      />
+
+      <FullscreenImageViewer
+        imageUrl={fullscreenImage}
+        onClose={handleCloseFullscreen}
+      />
+    </div>
+  );
+}
+
+export default FeedPage;
