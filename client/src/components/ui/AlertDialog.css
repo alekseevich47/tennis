@@ -1,0 +1,42 @@
+.ui-alert-message {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #495057;
+  margin: 0 0 20px 0;
+  text-align: center;
+}
+
+.ui-alert-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.ui-alert-btn {
+  flex: 1;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.ui-alert-btn--confirm {
+  background: #007aff;
+  color: #ffffff;
+}
+
+.ui-alert-btn--confirm:hover {
+  background: #0063cc;
+}
+
+.ui-alert-btn--cancel {
+  background: #f1f3f5;
+  color: #495057;
+}
+
+.ui-alert-btn--cancel:hover {
+  background: #e2e6ea;
+}
