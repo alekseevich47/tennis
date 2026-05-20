@@ -6,17 +6,19 @@ import { getMediaUrl, isVideoMediaName, mediaNames, videoPreviewUrl } from '../.
  * @param {{
  *   post: import('../../services/posts').PostRecord,
  *   variant?: 'card' | 'detail',
- *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, isVideo: boolean }>, index: number, originRect?: DOMRect) => void
+ *   hiddenMediaKey?: string | null,
+ *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void
  * }} props
  */
-function PostMedia({ post, variant = 'card', onOpenFullscreen }) {
-  const items = mediaNames(post.media).flatMap((filename) => {
+function PostMedia({ post, variant = 'card', hiddenMediaKey = null, onOpenFullscreen }) {
+  const items = mediaNames(post.media).flatMap((filename, index) => {
     const url = getMediaUrl(post, 'posts', filename);
     return url
       ? [{
         filename,
         url,
-        isVideo: isVideoMediaName(filename)
+        isVideo: isVideoMediaName(filename),
+        originKey: `${variant}-${post.id}-${index}`
       }]
       : [];
   });
@@ -25,7 +27,8 @@ function PostMedia({ post, variant = 'card', onOpenFullscreen }) {
 
   const count = Math.min(items.length, 5);
   const openFullscreen = (event, index) => {
-    onOpenFullscreen?.(items, index, event.currentTarget.getBoundingClientRect());
+    const item = items[index];
+    onOpenFullscreen?.(items, index, event.currentTarget.getBoundingClientRect(), item?.originKey);
   };
 
   return (
@@ -66,7 +69,11 @@ function PostMedia({ post, variant = 'card', onOpenFullscreen }) {
             <button
               key={item.filename}
               type="button"
-              className="post-media-btn post-media-video-btn"
+              className={clsx(
+                'post-media-btn post-media-video-btn',
+                hiddenMediaKey === item.originKey && 'is-returning-origin'
+              )}
+              data-media-origin-key={item.originKey}
               onClick={(event) => openFullscreen(event, index)}
               aria-label={`Открыть видео ${index + 1} на весь экран`}
             >
@@ -91,7 +98,11 @@ function PostMedia({ post, variant = 'card', onOpenFullscreen }) {
           <button
             key={item.filename}
             type="button"
-            className="post-media-btn"
+            className={clsx(
+              'post-media-btn',
+              hiddenMediaKey === item.originKey && 'is-returning-origin'
+            )}
+            data-media-origin-key={item.originKey}
             onClick={(event) => openFullscreen(event, index)}
             aria-label={`Открыть медиа ${index + 1} на весь экран`}
           >

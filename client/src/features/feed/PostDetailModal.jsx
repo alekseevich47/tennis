@@ -21,7 +21,8 @@ const SCROLL_INTO_VIEW_DELAY_MS = 200;
  *   userIsModerator: boolean,
  *   onOpenEdit: (post: any) => void,
  *   onDeletePost: (postId: string) => void,
- *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, isVideo: boolean }>, index: number) => void,
+ *   hiddenMediaKey?: string | null,
+ *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void,
  *   onClose: () => void,
  *   onAfterClose: () => void
  * }} props
@@ -33,6 +34,7 @@ function PostDetailModal({
   userIsModerator,
   onOpenEdit,
   onDeletePost,
+  hiddenMediaKey,
   onOpenFullscreen,
   onClose,
   onAfterClose
@@ -222,7 +224,12 @@ function PostDetailModal({
       </div>
 
       <p className="post-text-detail">{post.content || post.text}</p>
-      <PostMedia post={post} variant="detail" onOpenFullscreen={onOpenFullscreen} />
+      <PostMedia
+        post={post}
+        variant="detail"
+        hiddenMediaKey={hiddenMediaKey}
+        onOpenFullscreen={onOpenFullscreen}
+      />
 
       <div className="modal-comments-section">
         <h3>Комментарии ({comments.length})</h3>

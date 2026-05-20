@@ -7,9 +7,17 @@ const NAV_CLICK_DRIFT_PX = 8;
 const NAV_ZOOM_MAX_SCALE = 1.05;
 const GESTURE_LOCK_PX = 10;
 const SLIDE_ANIMATION_MS = 240;
+const RIPPLE_ANIMATION_MS = 360;
 
 function getWindowWidth() {
   return window.innerWidth || document.documentElement.clientWidth || 360;
+}
+
+function getOriginRect(originKey) {
+  if (!originKey) return null;
+  const escapedKey = window.CSS?.escape ? window.CSS.escape(originKey) : originKey;
+  const element = document.querySelector(`[data-media-origin-key="${escapedKey}"]`);
+  return element?.getBoundingClientRect?.() || null;
 }
 
 /**
@@ -17,30 +25,48 @@ function getWindowWidth() {
  *   items: Array<{ filename: string, url: string, isVideo: boolean }>,
  *   initialIndex?: number,
  *   originRect?: DOMRect | null,
+ *   originKey?: string | null,
+ *   onCloseStart?: (originKey?: string | null) => void,
  *   onClose: () => void
  * }} props
  */
-function FullscreenImageViewer({ items, initialIndex = 0, originRect = null, onClose }) {
+function FullscreenImageViewer({
+  items,
+  initialIndex = 0,
+  originRect = null,
+  originKey = null,
+  onCloseStart,
+  onClose
+}) {
   const [activeIndex, setActiveIndex] = useState(initialIndex);
   const [swipeOffset, setSwipeOffset] = useState(0);
   const [isSliding, setIsSliding] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const [returnRect, setReturnRect] = useState(null);
+  const [ripple, setRipple] = useState(null);
   const touchStartRef = useRef({ x: 0, y: 0 });
   const pointerDownRef = useRef({ x: 0, y: 0 });
   const gestureModeRef = useRef('idle');
   const wheelTargetRef = useRef(null);
   const slideTimerRef = useRef(null);
   const closeTimerRef = useRef(null);
+  const rippleTimerRef = useRef(null);
   const requestClose = useCallback(() => {
     if (isClosing) return;
-    if (!originRect) {
+    const closingItem = items[activeIndex] || null;
+    const closingOriginKey = closingItem?.originKey || originKey;
+    const nextReturnRect = getOriginRect(closingOriginKey) || originRect;
+
+    if (!nextReturnRect) {
       onClose();
       return;
     }
+    onCloseStart?.(closingOriginKey);
+    setReturnRect(nextReturnRect);
     setIsClosing(true);
     window.clearTimeout(closeTimerRef.current);
     closeTimerRef.current = window.setTimeout(onClose, SLIDE_ANIMATION_MS);
-  }, [isClosing, onClose, originRect]);
+  }, [activeIndex, isClosing, items, onClose, onCloseStart, originKey, originRect]);
   const {
     scale,
     position,
@@ -59,6 +85,7 @@ function FullscreenImageViewer({ items, initialIndex = 0, originRect = null, onC
   const activeItem = items[activeIndex] || null;
   const hasMultiple = items.length > 1;
   const isImage = activeItem && !activeItem.isVideo;
+  const showNavControls = hasMultiple && scale <= NAV_ZOOM_MAX_SCALE && !isClosing;
 
   const goTo = useCallback((nextIndex, { animated = false } = {}) => {
     if (items.length === 0) return;
@@ -93,6 +120,8 @@ function FullscreenImageViewer({ items, initialIndex = 0, originRect = null, onC
     setActiveIndex(Math.min(initialIndex, Math.max(items.length - 1, 0)));
     setSwipeOffset(0);
     setIsSliding(false);
+    setReturnRect(null);
+    setRipple(null);
     gestureModeRef.current = 'idle';
     reset();
   }, [initialIndex, items, reset]);
@@ -118,6 +147,7 @@ function FullscreenImageViewer({ items, initialIndex = 0, originRect = null, onC
     return () => {
       window.clearTimeout(slideTimerRef.current);
       window.clearTimeout(closeTimerRef.current);
+      window.clearTimeout(rippleTimerRef.current);
     };
   }, []);
 
@@ -157,6 +187,12 @@ function FullscreenImageViewer({ items, initialIndex = 0, originRect = null, onC
     const touch = event.touches[0];
     const dx = touch.clientX - touchStartRef.current.x;
     const dy = touch.clientY - touchStartRef.current.y;
+
+    if (isImage && scale > NAV_ZOOM_MAX_SCALE) {
+      gestureModeRef.current = 'pan';
+      handleTouchMove(event);
+      return;
+    }
 
     if (gestureModeRef.current === 'pending') {
       if (
@@ -204,7 +240,7 @@ function FullscreenImageViewer({ items, initialIndex = 0, originRect = null, onC
       return;
     }
 
-    if ((isImage || activeItem?.isVideo) && gestureModeRef.current === 'vertical') {
+    if ((isImage || activeItem?.isVideo) && (gestureModeRef.current === 'vertical' || gestureModeRef.current === 'pan')) {
       handleTouchEnd();
     }
     gestureModeRef.current = 'idle';
@@ -232,22 +268,37 @@ function FullscreenImageViewer({ items, initialIndex = 0, originRect = null, onC
     if (x > rect.width * 0.62) goNext({ animated: true });
   };
 
+  const handleNavClick = (event, direction) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    window.clearTimeout(rippleTimerRef.current);
+    setRipple({
+      id: `${direction}-${performance.now()}`,
+      direction,
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top
+    });
+    rippleTimerRef.current = window.setTimeout(() => setRipple(null), RIPPLE_ANIMATION_MS);
+    if (direction === 'prev') goPrev({ animated: true });
+    else goNext({ animated: true });
+  };
+
   const prevItem = items[(activeIndex - 1 + items.length) % items.length];
   const nextItem = items[(activeIndex + 1) % items.length];
   const trackItems = hasMultiple ? [prevItem, activeItem, nextItem] : [activeItem];
   const trackTranslate = hasMultiple ? `calc(-100% + ${swipeOffset}px)` : `${swipeOffset}px`;
   const returnTransform = useMemo(() => {
-    if (!originRect) return null;
+    const rect = returnRect || originRect;
+    if (!rect) return null;
     const viewportWidth = getWindowWidth();
     const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 640;
-    const dx = originRect.left + originRect.width / 2 - viewportWidth / 2;
-    const dy = originRect.top + originRect.height / 2 - viewportHeight / 2;
+    const dx = rect.left + rect.width / 2 - viewportWidth / 2;
+    const dy = rect.top + rect.height / 2 - viewportHeight / 2;
     const targetScale = Math.max(
       0.12,
-      Math.min(originRect.width / viewportWidth, originRect.height / viewportHeight)
+      Math.min(rect.width / viewportWidth, rect.height / viewportHeight)
     );
     return `translate(${dx}px, ${dy}px) scale(${targetScale})`;
-  }, [originRect]);
+  }, [originRect, returnRect]);
 
   if (!activeItem) return null;
 
@@ -267,7 +318,10 @@ function FullscreenImageViewer({ items, initialIndex = 0, originRect = null, onC
         size="md"
         variant="ghost"
         className="fullscreen-close-btn"
-        onClick={requestClose}
+        onClick={(event) => {
+          event.stopPropagation();
+          requestClose();
+        }}
       >
         <span aria-hidden="true">✕</span>
       </IconButton>
@@ -283,22 +337,36 @@ function FullscreenImageViewer({ items, initialIndex = 0, originRect = null, onC
         onTouchMove={handleViewerTouchMove}
         onTouchEnd={handleViewerTouchEnd}
       >
-        {hasMultiple && (
+        {showNavControls && (
           <>
             <button
               type="button"
               className="fullscreen-nav-zone fullscreen-nav-zone--left"
-              onClick={() => goPrev({ animated: true })}
+              onClick={(event) => handleNavClick(event, 'prev')}
               aria-label="Предыдущее медиа"
             >
+              {ripple?.direction === 'prev' && (
+                <span
+                  key={ripple.id}
+                  className="fullscreen-nav-ripple"
+                  style={{ left: ripple.x, top: ripple.y }}
+                />
+              )}
               <span aria-hidden="true">‹</span>
             </button>
             <button
               type="button"
               className="fullscreen-nav-zone fullscreen-nav-zone--right"
-              onClick={() => goNext({ animated: true })}
+              onClick={(event) => handleNavClick(event, 'next')}
               aria-label="Следующее медиа"
             >
+              {ripple?.direction === 'next' && (
+                <span
+                  key={ripple.id}
+                  className="fullscreen-nav-ripple"
+                  style={{ left: ripple.x, top: ripple.y }}
+                />
+              )}
               <span aria-hidden="true">›</span>
             </button>
           </>
