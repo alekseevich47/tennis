@@ -21,6 +21,7 @@ const SCROLL_INTO_VIEW_DELAY_MS = 200;
  *   userIsModerator: boolean,
  *   onOpenEdit: (post: any) => void,
  *   onDeletePost: (postId: string) => void,
+ *   onOpenFullscreen?: (url: string) => void,
  *   onClose: () => void,
  *   onAfterClose: () => void
  * }} props
@@ -32,6 +33,7 @@ function PostDetailModal({
   userIsModerator,
   onOpenEdit,
   onDeletePost,
+  onOpenFullscreen,
   onClose,
   onAfterClose
 }) {
@@ -172,7 +174,9 @@ function PostDetailModal({
           <input
             id="post-detail-comment-input"
             type="text"
-            placeholder="Написать комментарий..."
+            name="post-comment"
+            autoComplete="off"
+            placeholder="Написать комментарий…"
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
             required
@@ -218,7 +222,7 @@ function PostDetailModal({
       </div>
 
       <p className="post-text-detail">{post.content || post.text}</p>
-      <PostMedia post={post} variant="detail" />
+      <PostMedia post={post} variant="detail" onOpenFullscreen={onOpenFullscreen} />
 
       <div className="modal-comments-section">
         <h3>Комментарии ({comments.length})</h3>
