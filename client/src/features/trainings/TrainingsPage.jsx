@@ -4,8 +4,14 @@ import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { isModerator } from '../../services/auth';
 import {
   bookTraining,
+  bookUserToTraining,
   cancelTrainingBooking,
-  deleteTraining
+  closeTraining,
+  markAttendance,
+  reopenTraining,
+  restoreTraining,
+  softDeleteTraining,
+  unmarkAttendance
 } from '../../services/trainings';
 import Spinner from '../../components/ui/Spinner';
 import EmptyState from '../../components/ui/EmptyState';
@@ -14,6 +20,8 @@ import CalendarStrip from './CalendarStrip';
 import TrainingCard from './TrainingCard';
 import CreateTrainingModal from './CreateTrainingModal';
 import TrainingDetailModal from './TrainingDetailModal';
+import EditTrainingModal from './components/EditTrainingModal';
+import UserPickerModal from './components/UserPickerModal';
 import { dayKey, generateNextDays, isSameDay } from '../../lib/format';
 import { error } from '../../lib/log';
 import './Trainings.css';
@@ -33,6 +41,9 @@ function TrainingsPage({ user }) {
   const [selectedDate, setSelectedDate] = useState(() => days[0]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedTrainingId, setSelectedTrainingId] = useState(null);
+  const [editingTraining, setEditingTraining] = useState(null);
+  const [bookingTraining, setBookingTraining] = useState(null);
+  const [deletedTrainingIds, setDeletedTrainingIds] = useState([]);
 
   // Индекс «день → статус» построен один раз на массив тренировок (H9, H13).
   const dayStatusMap = useMemo(() => {
@@ -52,8 +63,12 @@ function TrainingsPage({ user }) {
 
   const filteredTrainings = useMemo(() => {
     if (!trainings) return [];
-    return trainings.filter((t) => isSameDay(new Date(t.date), selectedDate));
-  }, [trainings, selectedDate]);
+    return trainings.filter((t) => {
+      if (!isSameDay(new Date(t.date), selectedDate)) return false;
+      if (userIsModerator) return true;
+      return !t.is_deleted && !deletedTrainingIds.includes(t.id);
+    });
+  }, [deletedTrainingIds, trainings, selectedDate, userIsModerator]);
 
   // Selected training всегда актуален из SWR-кэша (H15).
   const selectedTraining = useMemo(() => {
@@ -111,23 +126,162 @@ function TrainingsPage({ user }) {
     [user?.id, mutate, alert, confirm]
   );
 
-  const handleDelete = useCallback(
+  const handleRestore = useCallback(
     async (trainingId) => {
-      const ok = await confirm({
-        title: 'Удаление',
-        message: 'Удалить эту тренировку из расписания навсегда?',
-        confirmText: 'Удалить'
-      });
-      if (!ok) return;
+      setDeletedTrainingIds((prev) => prev.filter((id) => id !== trainingId));
+      mutate(
+        (curr = []) =>
+          curr.map((t) => (t.id === trainingId ? { ...t, is_deleted: false } : t)),
+        false
+      );
       try {
-        await deleteTraining(trainingId);
-        mutate();
+        await restoreTraining(trainingId);
       } catch (err) {
-        error('delete training:', err);
-        await alert({ title: 'Ошибка', message: 'Не удалось удалить тренировку.' });
+        setDeletedTrainingIds((prev) =>
+          prev.includes(trainingId) ? prev : [...prev, trainingId]
+        );
+        mutate(
+          (curr = []) =>
+            curr.map((t) => (t.id === trainingId ? { ...t, is_deleted: true } : t)),
+          false
+        );
+        error('restore training:', err);
+        await alert({ title: 'Ошибка', message: 'Не удалось восстановить тренировку.' });
       }
     },
-    [mutate, alert, confirm]
+    [mutate, alert]
+  );
+
+  const handleSoftDelete = useCallback(
+    async (trainingId) => {
+      setDeletedTrainingIds((prev) =>
+        prev.includes(trainingId) ? prev : [...prev, trainingId]
+      );
+      mutate(
+        (curr = []) =>
+          curr.map((t) => (t.id === trainingId ? { ...t, is_deleted: true } : t)),
+        false
+      );
+      try {
+        await softDeleteTraining(trainingId);
+      } catch (err) {
+        setDeletedTrainingIds((prev) => prev.filter((id) => id !== trainingId));
+        mutate(
+          (curr = []) =>
+            curr.map((t) => (t.id === trainingId ? { ...t, is_deleted: false } : t)),
+          false
+        );
+        error('soft delete training:', err);
+        await alert({ title: 'Ошибка', message: 'Не удалось удалить тренировку.' });
+        return;
+      }
+
+      const shouldRestore = await confirm({
+        title: 'Удалено',
+        message: 'Тренировка удалена из расписания.',
+        confirmText: 'Восстановить',
+        cancelText: 'ОК'
+      });
+      if (shouldRestore) await handleRestore(trainingId);
+    },
+    [mutate, alert, confirm, handleRestore]
+  );
+
+  const handleToggleClose = useCallback(
+    async (training) => {
+      const nextIsClosed = !training.is_closed;
+      mutate(
+        (curr = []) =>
+          curr.map((t) => (t.id === training.id ? { ...t, is_closed: nextIsClosed } : t)),
+        false
+      );
+      try {
+        if (nextIsClosed) await closeTraining(training.id);
+        else await reopenTraining(training.id);
+        mutate();
+      } catch (err) {
+        mutate(
+          (curr = []) =>
+            curr.map((t) => (t.id === training.id ? { ...t, is_closed: training.is_closed } : t)),
+          false
+        );
+        error('toggle training close:', err);
+        await alert({ title: 'Ошибка', message: 'Не удалось изменить статус записи.' });
+      }
+    },
+    [mutate, alert]
+  );
+
+  const handleEdit = useCallback((training) => {
+    setEditingTraining(training);
+  }, []);
+
+  const handleSaved = useCallback(
+    (updatedTraining) => {
+      mutate(
+        (curr = []) =>
+          curr.map((t) =>
+            t.id === updatedTraining.id ? { ...t, ...updatedTraining } : t
+          ),
+        false
+      );
+      setEditingTraining(null);
+    },
+    [mutate]
+  );
+
+  const handleBookUser = useCallback((training) => {
+    setBookingTraining(training);
+  }, []);
+
+  const handleSelectBookingUser = useCallback(
+    async (userId) => {
+      if (!bookingTraining) return;
+      try {
+        await bookUserToTraining(bookingTraining, userId);
+        setBookingTraining(null);
+        mutate();
+      } catch (err) {
+        error('book user to training:', err);
+        await alert({
+          title: 'Ошибка',
+          message: /** @type {Error} */ (err).message || 'Не удалось записать игрока.'
+        });
+      }
+    },
+    [bookingTraining, mutate, alert]
+  );
+
+  const handleToggleAttendance = useCallback(
+    async (training, userId) => {
+      const attendedUserIds = training.attended_users || [];
+      const nextAttendedUserIds = attendedUserIds.includes(userId)
+        ? attendedUserIds.filter((id) => id !== userId)
+        : [...attendedUserIds, userId];
+      mutate(
+        (curr = []) =>
+          curr.map((t) =>
+            t.id === training.id ? { ...t, attended_users: nextAttendedUserIds } : t
+          ),
+        false
+      );
+      try {
+        if (attendedUserIds.includes(userId)) await unmarkAttendance(training, userId);
+        else await markAttendance(training, userId);
+        mutate();
+      } catch (err) {
+        mutate(
+          (curr = []) =>
+            curr.map((t) =>
+              t.id === training.id ? { ...t, attended_users: attendedUserIds } : t
+            ),
+          false
+        );
+        error('toggle attendance:', err);
+        await alert({ title: 'Ошибка', message: 'Не удалось изменить посещаемость.' });
+      }
+    },
+    [mutate, alert]
   );
 
   return (
@@ -175,8 +329,12 @@ function TrainingsPage({ user }) {
             userIsModerator={userIsModerator}
             onOpen={handleOpenDetail}
             onBook={handleBook}
+            onBookUser={handleBookUser}
             onCancelBooking={handleCancelBooking}
-            onDelete={handleDelete}
+            onToggleClose={handleToggleClose}
+            onEdit={handleEdit}
+            onDelete={handleSoftDelete}
+            onRestore={handleRestore}
           />
         ))}
       </div>
@@ -194,9 +352,28 @@ function TrainingsPage({ user }) {
       <TrainingDetailModal
         isOpen={Boolean(selectedTraining)}
         training={selectedTraining}
+        userId={user?.id}
         userIsModerator={userIsModerator}
         onClose={handleCloseDetail}
         onMutated={() => mutate()}
+        onToggleClose={handleToggleClose}
+        onEdit={handleEdit}
+        onDelete={handleSoftDelete}
+        onToggleAttendance={handleToggleAttendance}
+      />
+
+      <EditTrainingModal
+        isOpen={Boolean(editingTraining)}
+        training={editingTraining}
+        onClose={() => setEditingTraining(null)}
+        onSaved={handleSaved}
+      />
+
+      <UserPickerModal
+        isOpen={Boolean(bookingTraining)}
+        onClose={() => setBookingTraining(null)}
+        onSelect={handleSelectBookingUser}
+        excludeIds={bookingTraining?.booked_users || []}
       />
     </div>
   );

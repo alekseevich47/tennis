@@ -1,5 +1,6 @@
 // @ts-check
 import pb from './pb';
+import { isModerator } from './auth';
 import { error } from '../lib/log';
 
 /**
@@ -13,7 +14,10 @@ import { error } from '../lib/log';
  * @property {number | null} [max_slots]
  * @property {string} [location]
  * @property {string} [description]
+ * @property {boolean} [is_deleted]
+ * @property {boolean} [is_closed]
  * @property {string[]} [booked_users]
+ * @property {string[]} [attended_users]
  * @property {Record<string, unknown>} [expand]
  */
 
@@ -25,7 +29,8 @@ export async function listTrainings({ signal } = {}) {
   try {
     return /** @type {TrainingRecord[]} */ (await pb.collection('trainings').getFullList({
       sort: 'date',
-      expand: 'booked_users',
+      filter: isModerator() ? '' : 'is_deleted != true',
+      expand: 'booked_users,attended_users',
       requestKey: null,
       signal
     }));
@@ -59,6 +64,34 @@ export async function deleteTraining(trainingId) {
 }
 
 /**
+ * @param {string} trainingId
+ */
+export async function softDeleteTraining(trainingId) {
+  return pb.collection('trainings').update(trainingId, { is_deleted: true });
+}
+
+/**
+ * @param {string} trainingId
+ */
+export async function restoreTraining(trainingId) {
+  return pb.collection('trainings').update(trainingId, { is_deleted: false });
+}
+
+/**
+ * @param {string} trainingId
+ */
+export async function closeTraining(trainingId) {
+  return pb.collection('trainings').update(trainingId, { is_closed: true });
+}
+
+/**
+ * @param {string} trainingId
+ */
+export async function reopenTraining(trainingId) {
+  return pb.collection('trainings').update(trainingId, { is_closed: false });
+}
+
+/**
  * Записать пользователя на тренировку.
  * @param {TrainingRecord} training
  * @param {string} userId
@@ -76,6 +109,23 @@ export async function bookTraining(training, userId) {
 }
 
 /**
+ * Записать произвольного пользователя на тренировку.
+ * @param {TrainingRecord} training
+ * @param {string} userId
+ */
+export async function bookUserToTraining(training, userId) {
+  if (!userId) throw new Error('Не выбран пользователь');
+  const current = training.booked_users || [];
+  if (current.includes(userId)) throw new Error('Игрок уже записан на эту тренировку');
+  if (training.max_slots && current.length >= training.max_slots) {
+    throw new Error('Нет свободных мест');
+  }
+  return pb.collection('trainings').update(training.id, {
+    booked_users: [...current, userId]
+  });
+}
+
+/**
  * @param {TrainingRecord} training
  * @param {string} userId
  */
@@ -83,5 +133,29 @@ export async function cancelTrainingBooking(training, userId) {
   const current = training.booked_users || [];
   return pb.collection('trainings').update(training.id, {
     booked_users: current.filter((id) => id !== userId)
+  });
+}
+
+/**
+ * @param {TrainingRecord} training
+ * @param {string} userId
+ */
+export async function markAttendance(training, userId) {
+  if (!userId) throw new Error('Не выбран пользователь');
+  const current = training.attended_users || [];
+  if (current.includes(userId)) return training;
+  return pb.collection('trainings').update(training.id, {
+    attended_users: [...current, userId]
+  });
+}
+
+/**
+ * @param {TrainingRecord} training
+ * @param {string} userId
+ */
+export async function unmarkAttendance(training, userId) {
+  const current = training.attended_users || [];
+  return pb.collection('trainings').update(training.id, {
+    attended_users: current.filter((id) => id !== userId)
   });
 }
