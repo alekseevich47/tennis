@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { usePosts } from '../../hooks/usePosts';
-import { createPostWithProgress, updatePost } from '../../services/posts';
+import { updatePost } from '../../services/posts';
 import { isModerator } from '../../services/auth';
+import { usePostUpload } from '../../components/PostUploadProvider';
 import Spinner from '../../components/ui/Spinner';
 import EmptyState from '../../components/ui/EmptyState';
 import PostCard from './PostCard';
@@ -32,19 +33,14 @@ function FeedPage({ user, onDeletedIdsChange }) {
   const [hiddenMediaKey, setHiddenMediaKey] = useState(null);
   const [deletedPostIds, setDeletedPostIds] = useState([]);
   const [isButtonVisible, setIsButtonVisible] = useState(true);
-  const [uploadTask, setUploadTask] = useState(null);
+  const { startUpload } = usePostUpload();
 
   const containerRef = useRef(null);
   const scrollTimeoutRef = useRef(null);
-  const uploadAbortRef = useRef(null);
 
   useEffect(() => {
     onDeletedIdsChange?.(deletedPostIds);
   }, [deletedPostIds, onDeletedIdsChange]);
-
-  useEffect(() => {
-    return () => uploadAbortRef.current?.abort();
-  }, []);
 
   // Scroll listener: зависит только от модераторского флага (фикс C6).
   useEffect(() => {
@@ -160,47 +156,13 @@ function FeedPage({ user, onDeletedIdsChange }) {
     setHiddenMediaKey(originKey || null);
   }, []);
 
-  const handleCreated = useCallback((payload) => {
-    setShowAddModal(false);
-    uploadAbortRef.current?.abort();
-
-    const controller = new AbortController();
-    uploadAbortRef.current = controller;
-    setUploadTask({ progress: 0, status: 'uploading', message: 'Загружаем публикацию…' });
-
-    createPostWithProgress(payload, {
-      signal: controller.signal,
-      onProgress: (progress) => {
-        setUploadTask((current) =>
-          current ? { ...current, progress, message: `Загрузка медиа: ${progress}%` } : current
-        );
-      }
-    })
-      .then((createdPost) => {
-        mutate((current = []) => [createdPost, ...current], false);
-        mutate();
-        setUploadTask({ progress: 100, status: 'done', message: 'Публикация добавлена' });
-        window.setTimeout(() => setUploadTask(null), 1400);
-      })
-      .catch((err) => {
-        if (err?.name === 'AbortError') {
-          setUploadTask(null);
-          return;
-        }
-        error('create post upload:', err);
-        setUploadTask({
-          progress: 0,
-          status: 'error',
-          message: 'Не удалось опубликовать. Проверьте соединение.'
-        });
-      });
-  }, [mutate]);
-
-  const handleCancelUpload = useCallback(() => {
-    uploadAbortRef.current?.abort();
-    uploadAbortRef.current = null;
-    setUploadTask(null);
-  }, []);
+  const handleCreated = useCallback(
+    (payload) => {
+      setShowAddModal(false);
+      startUpload(payload);
+    },
+    [startUpload]
+  );
 
   return (
     <div className="feed-scroll-container" ref={containerRef}>
@@ -213,22 +175,6 @@ function FeedPage({ user, onDeletedIdsChange }) {
           >
             Добавить
           </button>
-        </div>
-      )}
-
-      {uploadTask && (
-        <div className="post-upload-progress" role="status" aria-live="polite">
-          <div className="post-upload-progress-text">
-            <span>{uploadTask.message}</span>
-            {uploadTask.status === 'uploading' && (
-              <button type="button" onClick={handleCancelUpload}>
-                Отменить
-              </button>
-            )}
-          </div>
-          <div className="post-upload-progress-track" aria-hidden="true">
-            <span style={{ width: `${uploadTask.progress}%` }} />
-          </div>
         </div>
       )}
 

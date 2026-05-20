@@ -4,6 +4,7 @@ import { SWRConfig } from 'swr';
 import { ErrorBoundary } from 'react-error-boundary';
 import App from './App';
 import { AlertDialogProvider } from './components/ui/AlertDialog';
+import { PostUploadProvider } from './components/PostUploadProvider';
 import './styles/global.css';
 
 function GlobalErrorFallback({ error, resetErrorBoundary }) {
@@ -32,7 +33,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         }}
       >
         <AlertDialogProvider>
-          <App />
+          <PostUploadProvider>
+            <App />
+          </PostUploadProvider>
         </AlertDialogProvider>
       </SWRConfig>
     </ErrorBoundary>
