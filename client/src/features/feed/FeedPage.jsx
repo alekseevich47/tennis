@@ -7,6 +7,7 @@ import Spinner from '../../components/ui/Spinner';
 import EmptyState from '../../components/ui/EmptyState';
 import PostCard from './PostCard';
 import CreatePostModal from './CreatePostModal';
+import EditPostModal from './EditPostModal';
 import PostDetailModal from './PostDetailModal';
 import FullscreenImageViewer from './FullscreenImageViewer';
 import { error } from '../../lib/log';
@@ -26,6 +27,7 @@ function FeedPage({ user, onDeletedIdsChange }) {
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
+  const [editingPost, setEditingPost] = useState(null);
   const [fullscreenImage, setFullscreenImage] = useState(null);
   const [deletedPostIds, setDeletedPostIds] = useState([]);
   const [isButtonVisible, setIsButtonVisible] = useState(true);
@@ -107,6 +109,32 @@ function FeedPage({ user, onDeletedIdsChange }) {
     setSelectedPost(post);
   }, []);
 
+  const handleOpenEdit = useCallback((post) => {
+    if (!userIsModerator) return;
+    setEditingPost(post);
+  }, [userIsModerator]);
+
+  const handleCloseEdit = useCallback(() => {
+    setEditingPost(null);
+  }, []);
+
+  const handlePostSaved = useCallback(
+    (updatedPost) => {
+      mutate(
+        (curr = []) =>
+          curr.map((post) =>
+            post.id === updatedPost.id ? { ...post, ...updatedPost } : post
+          ),
+        false
+      );
+      setSelectedPost((current) =>
+        current?.id === updatedPost.id ? { ...current, ...updatedPost } : current
+      );
+      setEditingPost(null);
+    },
+    [mutate]
+  );
+
   const handleCloseDetail = useCallback(() => {
     setSelectedPost(null);
   }, []);
@@ -158,6 +186,7 @@ function FeedPage({ user, onDeletedIdsChange }) {
               isSoftDeleted={isSoftDeleted}
               userIsModerator={userIsModerator}
               onOpenDetail={handleOpenDetail}
+              onOpenEdit={handleOpenEdit}
               onDelete={handleDeletePost}
               onRestore={handleRestorePost}
               onOpenFullscreen={handleOpenFullscreen}
@@ -171,8 +200,17 @@ function FeedPage({ user, onDeletedIdsChange }) {
         post={selectedPost}
         user={user}
         userIsModerator={userIsModerator}
+        onOpenEdit={handleOpenEdit}
+        onDeletePost={handleDeletePost}
         onClose={handleCloseDetail}
         onAfterClose={() => mutate()}
+      />
+
+      <EditPostModal
+        isOpen={Boolean(editingPost)}
+        post={editingPost}
+        onClose={handleCloseEdit}
+        onSaved={handlePostSaved}
       />
 
       <CreatePostModal

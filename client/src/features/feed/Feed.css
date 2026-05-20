@@ -113,6 +113,18 @@
   color: #999;
 }
 
+.post-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.edit-post-btn {
+  color: #007aff !important;
+  width: 36px;
+  height: 36px;
+}
+
 .delete-post-btn {
   color: #aaa !important;
   width: 36px;
@@ -281,6 +293,72 @@
 .submit-btn-full:disabled {
   background: #b3d4fc;
   cursor: not-allowed;
+}
+
+.edit-post-modal {
+  background: #f4f7fb;
+}
+
+.edit-post-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.edit-post-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #5c6670;
+}
+
+.edit-post-bubble {
+  background: #ffffff;
+  border: 1px solid #dce6f2;
+  border-radius: 18px 18px 18px 6px;
+  box-shadow: 0 4px 14px rgba(24, 93, 160, 0.08);
+  padding: 12px;
+}
+
+.edit-post-bubble textarea {
+  display: block;
+  width: 100%;
+  min-height: 132px;
+  border: none;
+  background: transparent;
+  resize: vertical;
+  outline: none;
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.45;
+  color: #1f2933;
+}
+
+.edit-post-hint {
+  margin: 0;
+  color: #7a8794;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.edit-post-actions {
+  align-items: center;
+}
+
+.edit-post-cancel-btn {
+  min-height: 44px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 12px;
+  background: #e9eef5;
+  color: #3f4a56;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.edit-post-save-btn {
+  width: auto;
+  min-width: 132px;
+  margin-top: 0;
 }
 
 .fullscreen-overlay {
