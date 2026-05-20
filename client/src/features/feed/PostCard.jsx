@@ -21,6 +21,7 @@ function readComments(post) {
  *   isSoftDeleted: boolean,
  *   userIsModerator: boolean,
  *   onOpenDetail: (post: any) => void,
+ *   onOpenEdit: (post: any) => void,
  *   onDelete: (postId: string) => void,
  *   onRestore: (postId: string) => void,
  *   onOpenFullscreen: (url: string) => void
@@ -31,6 +32,7 @@ function PostCard({
   isSoftDeleted,
   userIsModerator,
   onOpenDetail,
+  onOpenEdit,
   onDelete,
   onRestore,
   onOpenFullscreen
@@ -67,15 +69,26 @@ function PostCard({
           <span className="post-date">{formatPostDate(post.created)}</span>
         </div>
         {userIsModerator && (
-          <IconButton
-            ariaLabel="Удалить публикацию"
-            variant="ghost"
-            size="sm"
-            className="delete-post-btn"
-            onClick={() => onDelete(post.id)}
-          >
-            <span aria-hidden="true">✕</span>
-          </IconButton>
+          <div className="post-card-actions" role="group" aria-label="Действия с публикацией">
+            <IconButton
+              ariaLabel="Редактировать публикацию"
+              variant="ghost"
+              size="sm"
+              className="edit-post-btn"
+              onClick={() => onOpenEdit(post)}
+            >
+              <span aria-hidden="true">✎</span>
+            </IconButton>
+            <IconButton
+              ariaLabel="Удалить публикацию"
+              variant="ghost"
+              size="sm"
+              className="delete-post-btn"
+              onClick={() => onDelete(post.id)}
+            >
+              <span aria-hidden="true">✕</span>
+            </IconButton>
+          </div>
         )}
       </div>
 

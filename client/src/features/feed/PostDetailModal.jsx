@@ -19,11 +19,22 @@ const SCROLL_INTO_VIEW_DELAY_MS = 200;
  *   post: any | null,
  *   user: any,
  *   userIsModerator: boolean,
+ *   onOpenEdit: (post: any) => void,
+ *   onDeletePost: (postId: string) => void,
  *   onClose: () => void,
  *   onAfterClose: () => void
  * }} props
  */
-function PostDetailModal({ isOpen, post, user, userIsModerator, onClose, onAfterClose }) {
+function PostDetailModal({
+  isOpen,
+  post,
+  user,
+  userIsModerator,
+  onOpenEdit,
+  onDeletePost,
+  onClose,
+  onAfterClose
+}) {
   const postId = post?.id || null;
   const { data: comments = [], mutate: mutateComments } = useComments(postId);
 
@@ -175,6 +186,34 @@ function PostDetailModal({ isOpen, post, user, userIsModerator, onClose, onAfter
           <span className="section-title-name">Секция Миленьких</span>
           <span className="post-date">{formatPostDate(post.created)}</span>
         </div>
+        {userIsModerator && (
+          <div className="post-card-actions" role="group" aria-label="Действия с публикацией">
+            <IconButton
+              ariaLabel="Редактировать публикацию"
+              variant="ghost"
+              size="sm"
+              className="edit-post-btn"
+              onClick={() => {
+                onOpenEdit(post);
+                handleClose();
+              }}
+            >
+              <span aria-hidden="true">✎</span>
+            </IconButton>
+            <IconButton
+              ariaLabel="Удалить публикацию"
+              variant="ghost"
+              size="sm"
+              className="delete-post-btn"
+              onClick={() => {
+                onDeletePost(post.id);
+                handleClose();
+              }}
+            >
+              <span aria-hidden="true">✕</span>
+            </IconButton>
+          </div>
+        )}
       </div>
 
       <p className="post-text-detail">{post.content || post.text}</p>
