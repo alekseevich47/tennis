@@ -14,13 +14,19 @@ import {
 } from '../lib/gestures';
 
 const WHEEL_ZOOM_STEP = 0.0015;
+const ZOOM_EDGE_CLOSE_ARM_PX = 18;
+const ZOOM_EDGE_EPSILON_PX = 2;
 
 /**
  * Управление pinch-zoom + swipe-to-close. Решает C7/C8 (cleanup RAF и таймеров).
  *
- * @param {{ onClose: () => void }} params
+ * @param {{
+ *   onClose: () => void,
+ *   onSwipeCloseStart?: () => void,
+ *   onSwipeCloseCancel?: () => void
+ * }} params
  */
-export function usePinchZoom({ onClose }) {
+export function usePinchZoom({ onClose, onSwipeCloseStart, onSwipeCloseCancel }) {
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [bgOpacity, setBgOpacity] = useState(1);
@@ -112,12 +118,20 @@ export function usePinchZoom({ onClose }) {
       const nextY = touch.clientY - startTouchRef.current.y;
       const currentScale = scaleRef.current;
       const limit = maxPan(currentScale);
+      const isAtZoomEdge =
+        currentScale > MIN_SCALE &&
+        limit > 0 &&
+        (
+          (nextY > limit + ZOOM_EDGE_CLOSE_ARM_PX && positionRef.current.y >= limit - ZOOM_EDGE_EPSILON_PX) ||
+          (nextY < -limit - ZOOM_EDGE_CLOSE_ARM_PX && positionRef.current.y <= -limit + ZOOM_EDGE_EPSILON_PX)
+        );
 
-      if (currentScale === MIN_SCALE || isSwipingToCloseRef.current) {
+      if (currentScale === MIN_SCALE || isSwipingToCloseRef.current || isAtZoomEdge) {
+        if (!isSwipingToCloseRef.current) onSwipeCloseStart?.();
         isSwipingToCloseRef.current = true;
         const dragY = nextY;
         setPosition({
-          x: 0,
+          x: currentScale === MIN_SCALE ? 0 : clamp(nextX, -limit, limit),
           y: dragY
         });
         setBgOpacity(backdropOpacityForDrag(dragY));
@@ -150,20 +164,29 @@ export function usePinchZoom({ onClose }) {
         velocityRef.current = { x: 0, y: 0 };
       }
     }
-  }, []);
+  }, [onSwipeCloseStart]);
 
   const handleTouchEnd = useCallback(() => {
     isDraggingRef.current = false;
     startDistRef.current = 0;
 
     if (isSwipingToCloseRef.current) {
-      if (Math.abs(positionRef.current.y) > SWIPE_CLOSE_THRESHOLD) {
+      const limit = maxPan(scaleRef.current);
+      const closeDistance = scaleRef.current > MIN_SCALE
+        ? Math.max(0, Math.abs(positionRef.current.y) - limit)
+        : Math.abs(positionRef.current.y);
+
+      if (closeDistance > SWIPE_CLOSE_THRESHOLD) {
         onClose();
         return;
       }
-      setPosition({ x: 0, y: 0 });
+      setPosition({
+        x: scaleRef.current === MIN_SCALE ? 0 : clamp(positionRef.current.x, -limit, limit),
+        y: scaleRef.current === MIN_SCALE ? 0 : clamp(positionRef.current.y, -limit, limit)
+      });
       setBgOpacity(1);
       isSwipingToCloseRef.current = false;
+      onSwipeCloseCancel?.();
       return;
     }
 
@@ -173,7 +196,7 @@ export function usePinchZoom({ onClose }) {
     ) {
       animationFrameRef.current = requestAnimationFrame(animateInertia);
     }
-  }, [animateInertia, onClose]);
+  }, [animateInertia, onClose, onSwipeCloseCancel]);
 
   const panBy = useCallback((deltaX, deltaY) => {
     const limit = maxPan(scaleRef.current);
