@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import clsx from 'clsx';
 import { useTrainings } from '../../hooks/useTrainings';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { isModerator } from '../../services/auth';
@@ -30,6 +31,7 @@ import { error } from '../../lib/log';
 import './Trainings.css';
 
 const DAYS_COUNT = 14;
+const LIST_SWIPE_THRESHOLD = 40;
 
 /**
  * @param {{
@@ -42,6 +44,7 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
   const userIsModerator = isModerator();
   const { data: trainings, isLoading, mutate } = useTrainings();
   const { alert, confirm } = useAlertDialog();
+  const listTouchStartYRef = useRef(null);
 
   // Lazy init — устраняет H2/H6.
   const days = useMemo(() => generateNextDays(DAYS_COUNT), []);
@@ -50,6 +53,8 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
   const [selectedTrainingId, setSelectedTrainingId] = useState(null);
   const [editingTraining, setEditingTraining] = useState(null);
   const [bookingTraining, setBookingTraining] = useState(null);
+  const [deletingTrainingIds, setDeletingTrainingIds] = useState(() => new Set());
+  const [isListExpanded, setIsListExpanded] = useState(false);
   const [hiddenDeletedTrainingIds, setHiddenDeletedTrainingIds] = useState(() =>
     readPendingDeleteTrainingIds()
   );
@@ -101,6 +106,32 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
   }, []);
 
   const handleCloseDetail = useCallback(() => setSelectedTrainingId(null), []);
+
+  const handleListTouchStart = useCallback((event) => {
+    listTouchStartYRef.current = event.touches[0]?.clientY ?? null;
+  }, []);
+
+  const handleListTouchEnd = useCallback((event) => {
+    if (listTouchStartYRef.current === null) return;
+    const touchEndY = event.changedTouches[0]?.clientY;
+    if (touchEndY === undefined) return;
+
+    const deltaY = touchEndY - listTouchStartYRef.current;
+    listTouchStartYRef.current = null;
+
+    if (deltaY < -LIST_SWIPE_THRESHOLD) setIsListExpanded(true);
+    else if (deltaY > LIST_SWIPE_THRESHOLD) setIsListExpanded(false);
+  }, []);
+
+  const handleListWheel = useCallback((event) => {
+    if (event.deltaY < 0) {
+      setIsListExpanded(true);
+      return;
+    }
+    if (event.deltaY > 0 && event.currentTarget.scrollTop === 0) {
+      setIsListExpanded(false);
+    }
+  }, []);
 
   const handleBook = useCallback(
     async (training) => {
@@ -174,6 +205,7 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
 
   const handleSoftDelete = useCallback(
     async (trainingId) => {
+      setDeletingTrainingIds((prev) => new Set(prev).add(trainingId));
       addPendingDeleteTrainingId(trainingId);
       setHiddenDeletedTrainingIds((prev) =>
         prev.includes(trainingId) ? prev : [...prev, trainingId]
@@ -195,18 +227,15 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
         );
         error('soft delete training:', err);
         await alert({ title: 'Ошибка', message: 'Не удалось удалить тренировку.' });
-        return;
+      } finally {
+        setDeletingTrainingIds((prev) => {
+          const next = new Set(prev);
+          next.delete(trainingId);
+          return next;
+        });
       }
-
-      const shouldRestore = await confirm({
-        title: 'Удалено',
-        message: 'Тренировка удалена из расписания.',
-        confirmText: 'Восстановить',
-        cancelText: 'ОК'
-      });
-      if (shouldRestore) await handleRestore(trainingId);
     },
-    [mutate, alert, confirm, handleRestore]
+    [mutate, alert]
   );
 
   const handleToggleClose = useCallback(
@@ -333,7 +362,14 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
         )}
       </div>
 
-      <div className="trainings-list-layout">
+      <div
+        className={clsx('trainings-list-layout', {
+          'trainings-list-layout--expanded': isListExpanded
+        })}
+        onTouchStart={handleListTouchStart}
+        onTouchEnd={handleListTouchEnd}
+        onWheel={handleListWheel}
+      >
         {isLoading && <Spinner label="Загрузка расписания..." />}
 
         {!isLoading && filteredTrainings.length === 0 && (
@@ -357,6 +393,7 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
             onEdit={handleEdit}
             onDelete={handleSoftDelete}
             onRestore={handleRestore}
+            isDeleting={deletingTrainingIds.has(training.id)}
           />
         ))}
       </div>
