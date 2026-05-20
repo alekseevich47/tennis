@@ -7,7 +7,7 @@ const NAV_CLICK_DRIFT_PX = 8;
 const NAV_ZOOM_MAX_SCALE = 1.05;
 const GESTURE_LOCK_PX = 10;
 const SLIDE_ANIMATION_MS = 240;
-const RIPPLE_ANIMATION_MS = 360;
+const RIPPLE_ANIMATION_MS = 420;
 
 function getWindowWidth() {
   return window.innerWidth || document.documentElement.clientWidth || 360;
@@ -22,7 +22,7 @@ function getOriginRect(originKey) {
 
 /**
  * @param {{
- *   items: Array<{ filename: string, url: string, isVideo: boolean }>,
+ *   items: Array<{ filename: string, url: string, isVideo: boolean, originKey?: string }>,
  *   initialIndex?: number,
  *   originRect?: DOMRect | null,
  *   originKey?: string | null,
@@ -51,22 +51,30 @@ function FullscreenImageViewer({
   const slideTimerRef = useRef(null);
   const closeTimerRef = useRef(null);
   const rippleTimerRef = useRef(null);
+  const hasItems = items.length > 0;
+  const activeItem = items[activeIndex] || null;
+  const hasMultiple = items.length > 1;
+  const hideActiveOrigin = useCallback(() => {
+    onCloseStart?.(activeItem?.originKey || originKey || null);
+  }, [activeItem?.originKey, onCloseStart, originKey]);
+  const showActiveOrigin = useCallback(() => {
+    onCloseStart?.(null);
+  }, [onCloseStart]);
   const requestClose = useCallback(() => {
     if (isClosing) return;
-    const closingItem = items[activeIndex] || null;
-    const closingOriginKey = closingItem?.originKey || originKey;
+    const closingOriginKey = activeItem?.originKey || originKey;
     const nextReturnRect = getOriginRect(closingOriginKey) || originRect;
 
     if (!nextReturnRect) {
       onClose();
       return;
     }
-    onCloseStart?.(closingOriginKey);
+    hideActiveOrigin();
     setReturnRect(nextReturnRect);
     setIsClosing(true);
     window.clearTimeout(closeTimerRef.current);
     closeTimerRef.current = window.setTimeout(onClose, SLIDE_ANIMATION_MS);
-  }, [activeIndex, isClosing, items, onClose, onCloseStart, originKey, originRect]);
+  }, [activeItem?.originKey, hideActiveOrigin, isClosing, onClose, originKey, originRect]);
   const {
     scale,
     position,
@@ -79,11 +87,12 @@ function FullscreenImageViewer({
     handleTouchStart,
     handleTouchMove,
     handleTouchEnd
-  } = usePinchZoom({ onClose: requestClose });
+  } = usePinchZoom({
+    onClose: requestClose,
+    onSwipeCloseStart: hideActiveOrigin,
+    onSwipeCloseCancel: showActiveOrigin
+  });
 
-  const hasItems = items.length > 0;
-  const activeItem = items[activeIndex] || null;
-  const hasMultiple = items.length > 1;
   const isImage = activeItem && !activeItem.isVideo;
   const showNavControls = hasMultiple && scale <= NAV_ZOOM_MAX_SCALE && !isClosing;
 
