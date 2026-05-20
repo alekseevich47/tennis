@@ -167,7 +167,7 @@ function FeedPage({ user, onDeletedIdsChange }) {
       )}
 
       <div className="feed-list">
-        {isLoading && <Spinner label="Загрузка ленты..." />}
+        {isLoading && <Spinner label="Загрузка ленты…" />}
 
         {!isLoading && visiblePosts.length === 0 && (
           <EmptyState
@@ -202,6 +202,7 @@ function FeedPage({ user, onDeletedIdsChange }) {
         userIsModerator={userIsModerator}
         onOpenEdit={handleOpenEdit}
         onDeletePost={handleDeletePost}
+        onOpenFullscreen={handleOpenFullscreen}
         onClose={handleCloseDetail}
         onAfterClose={() => mutate()}
       />
