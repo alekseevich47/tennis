@@ -29,6 +29,7 @@ function FeedPage({ user, onDeletedIdsChange }) {
   const [selectedPost, setSelectedPost] = useState(null);
   const [editingPost, setEditingPost] = useState(null);
   const [fullscreenMedia, setFullscreenMedia] = useState(null);
+  const [hiddenMediaKey, setHiddenMediaKey] = useState(null);
   const [deletedPostIds, setDeletedPostIds] = useState([]);
   const [isButtonVisible, setIsButtonVisible] = useState(true);
   const [uploadTask, setUploadTask] = useState(null);
@@ -145,12 +146,18 @@ function FeedPage({ user, onDeletedIdsChange }) {
     setSelectedPost(null);
   }, []);
 
-  const handleOpenFullscreen = useCallback((items, index = 0, originRect = null) => {
-    setFullscreenMedia({ items, index, originRect });
+  const handleOpenFullscreen = useCallback((items, index = 0, originRect = null, originKey = null) => {
+    setHiddenMediaKey(null);
+    setFullscreenMedia({ items, index, originRect, originKey });
   }, []);
 
   const handleCloseFullscreen = useCallback(() => {
     setFullscreenMedia(null);
+    setHiddenMediaKey(null);
+  }, []);
+
+  const handleFullscreenCloseStart = useCallback((originKey) => {
+    setHiddenMediaKey(originKey || null);
   }, []);
 
   const handleCreated = useCallback((payload) => {
@@ -248,6 +255,7 @@ function FeedPage({ user, onDeletedIdsChange }) {
               onOpenEdit={handleOpenEdit}
               onDelete={handleDeletePost}
               onRestore={handleRestorePost}
+              hiddenMediaKey={hiddenMediaKey}
               onOpenFullscreen={handleOpenFullscreen}
             />
           );
@@ -261,6 +269,7 @@ function FeedPage({ user, onDeletedIdsChange }) {
         userIsModerator={userIsModerator}
         onOpenEdit={handleOpenEdit}
         onDeletePost={handleDeletePost}
+        hiddenMediaKey={hiddenMediaKey}
         onOpenFullscreen={handleOpenFullscreen}
         onClose={handleCloseDetail}
         onAfterClose={() => mutate()}
@@ -285,6 +294,8 @@ function FeedPage({ user, onDeletedIdsChange }) {
           items={fullscreenMedia.items}
           initialIndex={fullscreenMedia.index}
           originRect={fullscreenMedia.originRect}
+          originKey={fullscreenMedia.originKey}
+          onCloseStart={handleFullscreenCloseStart}
           onClose={handleCloseFullscreen}
         />
       )}

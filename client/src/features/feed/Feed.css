@@ -230,6 +230,11 @@
   border-radius: 12px;
 }
 
+.post-media-btn.is-returning-origin .telegram-post-media-item,
+.post-media-btn.is-returning-origin .post-media-play-badge {
+  opacity: 0;
+}
+
 .post-media-video-btn {
   position: relative;
 }
@@ -768,6 +773,7 @@
   font-size: 56px;
   line-height: 1;
   opacity: 0.72;
+  overflow: hidden;
   transition: opacity 0.15s ease, background-color 0.15s ease;
   touch-action: manipulation;
 }
@@ -794,11 +800,23 @@
   outline-offset: -6px;
 }
 
+.fullscreen-nav-ripple {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.24);
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.4);
+  animation: fullscreenNavRipple 0.36s ease-out forwards;
+}
+
 @media (hover: none) {
   .fullscreen-nav-zone {
-    opacity: 0.38;
-    font-size: 44px;
-    width: 18%;
+    opacity: 0.24;
+    font-size: 38px;
+    width: 10%;
+    padding: 0 8px;
   }
 }
 
@@ -807,7 +825,8 @@
   .fullscreen-overlay[data-closing="true"],
   .fullscreen-carousel-track.is-sliding,
   .fullscreen-overlay[data-closing="true"] .fullscreen-target-img,
-  .fullscreen-overlay[data-closing="true"] .fullscreen-target-video {
+  .fullscreen-overlay[data-closing="true"] .fullscreen-target-video,
+  .fullscreen-nav-ripple {
     animation: none;
     transition-duration: 0.01ms;
   }
@@ -816,6 +835,17 @@
 @keyframes fadeInOverlay {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+@keyframes fullscreenNavRipple {
+  from {
+    opacity: 0.45;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(8);
+  }
 }
 
 .feed-card.soft-deleted-card {
