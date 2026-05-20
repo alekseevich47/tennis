@@ -92,8 +92,18 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  flex: 1;
+  flex: 0 0 auto;
+  max-height: min(320px, 46vh);
   overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  touch-action: pan-y;
+  transition: max-height 0.3s ease;
+}
+
+.trainings-list-layout--expanded {
+  flex: 1;
+  max-height: 100vh;
 }
 
 .training-row-card {
@@ -265,6 +275,29 @@
   border-radius: 12px;
   font-size: 14px;
   color: #ffffff;
+}
+
+.restore-button-spinner {
+  min-height: 44px;
+  min-width: 148px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.restore-button-spinner .ui-spinner-inline {
+  gap: 8px;
+  padding: 6px 12px;
+}
+
+.restore-button-spinner .ui-spinner {
+  width: 18px;
+  height: 18px;
+}
+
+.restore-button-spinner .ui-spinner-label {
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .training-row-card--deleted {
