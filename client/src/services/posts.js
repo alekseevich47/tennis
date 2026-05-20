@@ -1,6 +1,7 @@
 // @ts-check
 import pb from './pb';
 import { error } from '../lib/log';
+import { PB_URL } from '../config';
 
 /**
  * @typedef {Object} PostRecord
@@ -76,6 +77,77 @@ export async function listCommentsForPost(postId, { signal } = {}) {
  */
 export async function createPost(payload) {
   return pb.collection('posts').create(/** @type {Record<string, unknown>} */ (payload));
+}
+
+/**
+ * PocketBase SDK uses fetch, which does not expose upload progress. This XHR path is
+ * only for media publishing so moderators can keep using the app and cancel upload.
+ *
+ * @param {FormData} payload
+ * @param {{ signal?: AbortSignal, onProgress?: (percent: number) => void }} [options]
+ * @returns {Promise<PostRecord>}
+ */
+export function createPostWithProgress(payload, { signal, onProgress } = {}) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    let settled = false;
+
+    const rejectAbort = () => {
+      if (settled) return;
+      settled = true;
+      reject(new DOMException('Загрузка публикации отменена', 'AbortError'));
+    };
+
+    if (signal?.aborted) {
+      rejectAbort();
+      return;
+    }
+
+    xhr.open('POST', `${PB_URL}/api/collections/posts/records`);
+    if (pb.authStore.token) {
+      xhr.setRequestHeader('Authorization', pb.authStore.token);
+    }
+
+    xhr.upload.onprogress = (event) => {
+      if (!event.lengthComputable || !onProgress) return;
+      onProgress(Math.min(98, Math.round((event.loaded / event.total) * 100)));
+    };
+
+    xhr.onload = () => {
+      if (settled) return;
+      settled = true;
+      signal?.removeEventListener('abort', abortUpload);
+      if (xhr.status >= 200 && xhr.status < 300) {
+        onProgress?.(100);
+        try {
+          resolve(/** @type {PostRecord} */ (JSON.parse(xhr.responseText)));
+        } catch (parseErr) {
+          reject(parseErr);
+        }
+        return;
+      }
+      reject(new Error(`Не удалось опубликовать запись (${xhr.status})`));
+    };
+
+    xhr.onerror = () => {
+      if (settled) return;
+      settled = true;
+      signal?.removeEventListener('abort', abortUpload);
+      reject(new Error('Сеть прервала загрузку публикации'));
+    };
+
+    xhr.onabort = () => {
+      signal?.removeEventListener('abort', abortUpload);
+      rejectAbort();
+    };
+
+    function abortUpload() {
+      xhr.abort();
+    }
+
+    signal?.addEventListener('abort', abortUpload, { once: true });
+    xhr.send(payload);
+  });
 }
 
 /**
