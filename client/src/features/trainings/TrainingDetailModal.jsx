@@ -3,7 +3,7 @@ import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { formatCardDate, formatTimeRange } from '../../lib/format';
-import { updateTraining, bookUserToTraining } from '../../services/trainings';
+import { updateTraining, bookUsersToTraining } from '../../services/trainings';
 import { getCurrentUser } from '../../services/auth';
 import { error } from '../../lib/log';
 import UserPickerModal from './components/UserPickerModal';
@@ -68,13 +68,13 @@ function TrainingDetailModal({
     }
   };
 
-  const handleSelectUser = async (selectedUserId) => {
+  const handleConfirmBookingUsers = async (selectedUserIds) => {
     try {
-      await bookUserToTraining(training, selectedUserId);
-      setIsUserPickerOpen(false);
+      await bookUsersToTraining(training, selectedUserIds);
       onMutated();
+      setIsUserPickerOpen(false);
     } catch (err) {
-      error('book user to training:', err);
+      error('book users to training:', err);
       await alert({
         title: 'Ошибка',
         message: /** @type {Error} */ (err).message || 'Не удалось записать игрока.'
@@ -200,7 +200,7 @@ function TrainingDetailModal({
       <UserPickerModal
         isOpen={isUserPickerOpen}
         onClose={() => setIsUserPickerOpen(false)}
-        onSelect={handleSelectUser}
+        onConfirm={handleConfirmBookingUsers}
         excludeIds={bookedUserIds}
       />
     </>
