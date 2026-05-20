@@ -2,26 +2,43 @@ import React, { memo, useCallback } from 'react';
 import clsx from 'clsx';
 import IconButton from '../../components/ui/IconButton';
 import { formatCardDate, formatTimeRange } from '../../lib/format';
+import { isModerator } from '../../services/auth';
 
 /**
  * @param {{
  *   training: import('../../services/trainings').TrainingRecord,
  *   userId?: string,
- *   userIsModerator: boolean,
  *   onOpen: (training: any) => void,
  *   onBook: (training: any) => void,
+ *   onBookUser?: (training: any) => void,
  *   onCancelBooking: (training: any) => void,
- *   onDelete: (trainingId: string) => void
+ *   onToggleClose?: (training: any) => void,
+ *   onEdit?: (training: any) => void,
+ *   onDelete: (trainingId: string) => void,
+ *   onRestore?: (trainingId: string) => void
  * }} props
  */
-function TrainingCard({ training, userId, userIsModerator, onOpen, onBook, onCancelBooking, onDelete }) {
+function TrainingCard({
+  training,
+  userId,
+  onOpen,
+  onBook,
+  onBookUser,
+  onCancelBooking,
+  onToggleClose,
+  onEdit,
+  onDelete,
+  onRestore
+}) {
+  const userIsModerator = isModerator();
   const handleOpen = useCallback(() => onOpen(training), [onOpen, training]);
   const handleBook = useCallback(
     (e) => {
       e.stopPropagation();
-      onBook(training);
+      if (userIsModerator) onBookUser?.(training);
+      else onBook(training);
     },
-    [onBook, training]
+    [onBook, onBookUser, training, userIsModerator]
   );
   const handleCancel = useCallback(
     (e) => {
@@ -36,6 +53,27 @@ function TrainingCard({ training, userId, userIsModerator, onOpen, onBook, onCan
       onDelete(training.id);
     },
     [onDelete, training.id]
+  );
+  const handleRestore = useCallback(
+    (e) => {
+      e.stopPropagation();
+      onRestore?.(training.id);
+    },
+    [onRestore, training.id]
+  );
+  const handleToggleClose = useCallback(
+    (e) => {
+      e.stopPropagation();
+      onToggleClose?.(training);
+    },
+    [onToggleClose, training]
+  );
+  const handleEdit = useCallback(
+    (e) => {
+      e.stopPropagation();
+      onEdit?.(training);
+    },
+    [onEdit, training]
   );
 
   const handleKeyDown = useCallback(
@@ -52,10 +90,13 @@ function TrainingCard({ training, userId, userIsModerator, onOpen, onBook, onCan
   const totalBooked = training.booked_users?.length || 0;
   const hasLimit = training.max_slots !== null && training.max_slots !== undefined && training.max_slots > 0;
   const isFull = hasLimit && totalBooked >= (training.max_slots || 0);
+  const isBookingLocked = training.is_closed === true || new Date(training.date) <= new Date();
 
   return (
     <div
-      className={clsx('training-row-card', `neon-border-${training.type}`)}
+      className={clsx('training-row-card', `neon-border-${training.type}`, {
+        'training-row-card--deleted': training.is_deleted
+      })}
       onClick={handleOpen}
       onKeyDown={handleKeyDown}
       role="button"
@@ -80,7 +121,15 @@ function TrainingCard({ training, userId, userIsModerator, onOpen, onBook, onCan
         )}
 
         <div className="card-buttons-wrapper">
-          {isUserBooked ? (
+          {training.is_deleted && userIsModerator ? (
+            <button
+              type="button"
+              className="text-status-full-label btn-restore"
+              onClick={handleRestore}
+            >
+              Восстановить
+            </button>
+          ) : !userIsModerator && isUserBooked ? (
             <IconButton
               ariaLabel="Отменить запись на тренировку"
               variant="ghost"
@@ -100,22 +149,43 @@ function TrainingCard({ training, userId, userIsModerator, onOpen, onBook, onCan
               variant="ghost"
               size="sm"
               className="action-circle-btn btn-add-plus"
+              disabled={isBookingLocked}
               onClick={handleBook}
             >
               <span aria-hidden="true">+</span>
             </IconButton>
           )}
 
-          {userIsModerator && (
-            <IconButton
-              ariaLabel="Удалить тренировку"
-              variant="ghost"
-              size="sm"
-              className="action-circle-btn btn-delete-trash"
-              onClick={handleDelete}
-            >
-              <span aria-hidden="true">🗑️</span>
-            </IconButton>
+          {userIsModerator && !training.is_deleted && (
+            <>
+              <IconButton
+                ariaLabel={training.is_closed ? 'Открыть запись на тренировку' : 'Закрыть запись на тренировку'}
+                variant="ghost"
+                size="sm"
+                className="action-circle-btn btn-stop"
+                onClick={handleToggleClose}
+              >
+                <span aria-hidden="true">■</span>
+              </IconButton>
+              <IconButton
+                ariaLabel="Редактировать тренировку"
+                variant="ghost"
+                size="sm"
+                className="action-circle-btn btn-edit"
+                onClick={handleEdit}
+              >
+                <span aria-hidden="true">✏️</span>
+              </IconButton>
+              <IconButton
+                ariaLabel="Удалить тренировку"
+                variant="ghost"
+                size="sm"
+                className="action-circle-btn btn-delete-trash"
+                onClick={handleDelete}
+              >
+                <span aria-hidden="true">🗑️</span>
+              </IconButton>
+            </>
           )}
         </div>
       </div>

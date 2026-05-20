@@ -32,9 +32,18 @@ export {
   createTraining,
   updateTraining,
   deleteTraining,
+  softDeleteTraining,
+  restoreTraining,
+  closeTraining,
+  reopenTraining,
   bookTraining,
-  cancelTrainingBooking
+  bookUserToTraining,
+  cancelTrainingBooking,
+  markAttendance,
+  unmarkAttendance
 } from './trainings';
+
+export { listUsers } from './users';
 
 export {
   listProducts,
