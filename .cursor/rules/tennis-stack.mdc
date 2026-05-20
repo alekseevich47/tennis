@@ -1,0 +1,57 @@
+---
+description: React + JS + PocketBase + MAX Mini App — архитектура и конвенции
+globs: client/**/*.{js,jsx,css},schema.json,config/**/*
+alwaysApply: false
+---
+
+# Стек: Секция Миленьких (MAX Mini App)
+
+## Контекст
+
+- **React 18 + Vite 5**, только **JavaScript (JSX)**, без TypeScript-файлов.
+- **PocketBase** — единственный backend; схема в `schema.json`.
+- **MAX Bridge**: `window.WebApp.initData` → `initMaxAuth` → PocketBase token; SDK в `client/index.html`.
+- **SWR** для данных (`dedupingInterval: 5000`, без revalidate on focus — webview).
+- `base: '/tt-api/'` в production.
+
+## Структура `client/src`
+
+| Путь | Назначение |
+|------|------------|
+| `App.jsx` | Shell: табы, `flushPendingDeletes`, soft-delete буферы |
+| `features/*` | Страницы по разделам (feed, trainings, shop, …) |
+| `hooks/*` | `useMaxAuth`, `usePosts`, … — SWR + побочные эффекты |
+| `services/*` | API: `pb.js`, `auth.js`, `posts.js`, … |
+| `components/ui/*` | `Modal`, `AlertDialog`, `Avatar` — переиспользовать |
+| `lib/*` | `format`, `media`, `gestures`, `log` |
+
+## Правила кода
+
+- Импорты PB: новый код — из `./pb`, `./auth`, `./posts`; `pocketbase.js` — только legacy re-export.
+- **Не** `window.alert` / `confirm` — `useAlertDialog`.
+- Модалки — `Modal` (focus-trap, `aria-modal`).
+- Роли: `user` / `moderator` — проверять через `isModerator` из `auth`.
+- Логи: `lib/log` (`warn`, `error`), не `console.log` в прод-путях.
+- `useMaxAuth`: идемпотентный init (`startedRef`), `AbortController`, не блокировать UI тяжёлой зачисткой.
+- Soft-delete постов/комментариев + `flush` на смене таба / `pagehide` / `visibilitychange`.
+- Touch/жесты: `lib/gestures.js`, `usePinchZoom`; цель — плавный UI в webview.
+- Стили: CSS рядом с фичей (`Feed.css`, …), глобально — `styles/global.css`.
+- Env: `VITE_POCKETBASE_URL`, `VITE_MAX_AUTH_URL`, `VITE_MAX_APP_ID` — не коммитить секреты.
+
+## PocketBase
+
+- Коллекции и поля — по `schema.json`; не выдумывать имена.
+- Загрузка файлов — через PB file fields; URL медиа — `lib/media.js` / `config.js` (`MEDIA_BASE_URL`).
+- Ошибки API — ловить в `services/*`, в UI показывать коротко через AlertDialog.
+
+## MAX / webview
+
+- Вне MAX: fallback на `localStorage` / `getCurrentUser()` (см. `useMaxAuth`).
+- Не полагаться на `focus`/`blur` окна как в обычном браузере.
+- Тест авторизации — только из MAX или с уже сохранённой сессией.
+
+## Ограничения при правках
+
+- Минимальный diff; не трогать `client/dist/`, `node_modules`, `.env`.
+- Не переводить проект на TS, не добавлять UI-библиотеки без запроса.
+- Коммиты и push — только по явной просьбе пользователя.

@@ -1,0 +1,109 @@
+﻿# Vite + React — исключения из индекса Cursor (экономия контекста)
+# Синтаксис как у .gitignore
+
+# --- Зависимости ---
+node_modules/
+**/node_modules/
+
+# --- Сборка Vite / артефакты ---
+dist/
+**/dist/
+build/
+**/build/
+.vite/
+**/.vite/
+*.local
+
+# Source maps (тяжёлые, дублируют исходники)
+**/*.map
+
+# --- Кэш инструментов ---
+.turbo/
+**/.turbo/
+.cache/
+**/.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
+
+# --- Логи и временные файлы ---
+logs/
+**/logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# --- Тесты / отчёты (если появятся) ---
+coverage/
+**/coverage/
+.nyc_output/
+test-results/
+playwright-report/
+storybook-static/
+
+# --- Медиа и бинарные ассеты ---
+# Локальные файлы; в приложении медиа из PocketBase
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/*.gif
+**/*.webp
+**/*.avif
+**/*.ico
+**/*.svg
+**/*.mp4
+**/*.webm
+**/*.mov
+**/*.mp3
+**/*.wav
+**/*.ogg
+**/*.pdf
+**/*.zip
+**/*.gz
+**/*.tar
+**/*.tgz
+**/*.7z
+**/*.rar
+
+# Шрифты (если положите в public/)
+**/*.woff
+**/*.woff2
+**/*.ttf
+**/*.eot
+**/*.otf
+
+# --- Секреты и локальный env ---
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+
+# --- IDE / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# --- Git (объекты не нужны агенту) ---
+.git/
+
+# --- Lock-файлы (большие, редко нужны для правок кода) ---
+package-lock.json
+**/package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# --- PocketBase runtime (если появится в репо) ---
+pocketbase
+pocketbase.exe
+pb_data/
+**/pb_data/

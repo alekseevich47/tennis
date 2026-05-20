@@ -25,14 +25,19 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
   const fileInputId = useId();
   const [text, setText] = useState('');
   const [mediaFiles, setMediaFiles] = useState(/** @type {File[]} */ ([]));
-  const [selectedPreviewItems, setSelectedPreviewItems] = useState([]);
+  const [removedMediaNames, setRemovedMediaNames] = useState(/** @type {string[]} */ ([]));
+  const [newPreviewItems, setNewPreviewItems] = useState([]);
   const [submitting, setSubmitting] = useState(false);
 
   const existingMediaNames = useMemo(() => mediaNames(post?.media), [post?.media]);
+  const keptExistingMediaNames = useMemo(
+    () => existingMediaNames.filter((filename) => !removedMediaNames.includes(filename)),
+    [existingMediaNames, removedMediaNames]
+  );
   const existingPreviewItems = useMemo(
     () =>
       post
-        ? existingMediaNames.flatMap((filename) => {
+        ? keptExistingMediaNames.flatMap((filename) => {
           const url = getMediaUrl(post, 'posts', filename);
           return url
             ? [{
@@ -44,7 +49,15 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
             : [];
         })
         : [],
-    [post, existingMediaNames]
+    [post, keptExistingMediaNames]
+  );
+  const previewItems = useMemo(
+    () => [...existingPreviewItems, ...newPreviewItems],
+    [existingPreviewItems, newPreviewItems]
+  );
+  const remainingMediaSlots = Math.max(
+    0,
+    MAX_POST_MEDIA_FILES - keptExistingMediaNames.length - mediaFiles.length
   );
 
   useEffect(() => {
@@ -54,7 +67,7 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
       name: file.name,
       isVideo: isVideoFile(file)
     }));
-    setSelectedPreviewItems(items);
+    setNewPreviewItems(items);
     return () => {
       items.forEach((item) => URL.revokeObjectURL(item.url));
     };
@@ -64,6 +77,7 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
     if (!isOpen || !post) return;
     setText(post.content || post.text || '');
     setMediaFiles([]);
+    setRemovedMediaNames([]);
   }, [isOpen, post]);
 
   const handleSubmit = async (event) => {
@@ -75,12 +89,13 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
 
     setSubmitting(true);
     try {
+      const hasMediaChanges = removedMediaNames.length > 0 || mediaFiles.length > 0;
       let payload = /** @type {FormData | { content: string }} */ ({ content: nextContent });
 
-      if (mediaFiles.length > 0) {
+      if (hasMediaChanges) {
         payload = new FormData();
         payload.append('content', nextContent);
-        existingMediaNames.forEach((filename) => payload.append('media-', filename));
+        removedMediaNames.forEach((filename) => payload.append('media-', filename));
         mediaFiles.forEach((file) => payload.append('media', file));
       }
 
@@ -119,36 +134,45 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
         </div>
 
         <MediaPreviewGrid
-          items={mediaFiles.length > 0 ? selectedPreviewItems : existingPreviewItems}
+          items={previewItems}
           className="edit-post-media-preview-grid"
-          getAction={
-            mediaFiles.length > 0
-              ? (item) => (
-                <button
-                  type="button"
-                  className="media-remove-btn"
-                  onClick={() => setMediaFiles((current) => current.filter((file) => `${file.name}-${file.lastModified}` !== item.key))}
-                  aria-label={`Убрать файл ${item.name}`}
-                >
-                  <span aria-hidden="true">×</span>
-                </button>
-              )
-              : undefined
-          }
+          getAction={(item) => (
+            <button
+              type="button"
+              className="media-remove-btn"
+              onClick={() => {
+                if (item.key.startsWith('existing-')) {
+                  const filename = item.key.slice('existing-'.length);
+                  setRemovedMediaNames((current) =>
+                    current.includes(filename) ? current : [...current, filename]
+                  );
+                  return;
+                }
+                setMediaFiles((current) =>
+                  current.filter((file) => `${file.name}-${file.lastModified}` !== item.key)
+                );
+              }}
+              aria-label={`Убрать файл ${item.name}`}
+            >
+              <span aria-hidden="true">×</span>
+            </button>
+          )}
         />
 
         <div className="edit-post-media-controls">
           <label className="media-input-label">
             <span aria-hidden="true">📎</span>{' '}
-            {existingPreviewItems.length > 0 || mediaFiles.length > 0 ? 'Заменить медиа' : 'Добавить медиа'}
+            Добавить медиа
             <input
               id={fileInputId}
               name="edit-post-media"
               type="file"
               accept="image/*,video/mp4"
               multiple
+              disabled={remainingMediaSlots === 0}
               onChange={(event) => {
-                setMediaFiles(readSelectedFiles(event.target.files, MAX_POST_MEDIA_FILES));
+                const incoming = readSelectedFiles(event.target.files, remainingMediaSlots);
+                setMediaFiles((current) => [...current, ...incoming].slice(0, MAX_POST_MEDIA_FILES));
                 event.currentTarget.value = '';
               }}
               className="visually-hidden"
@@ -161,12 +185,12 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
               onClick={() => setMediaFiles([])}
               disabled={submitting}
             >
-              Вернуть текущее
+              Убрать новые файлы
             </button>
           )}
         </div>
         <p className="edit-post-hint">
-          Можно выбрать до {MAX_POST_MEDIA_FILES} файлов. Новые файлы заменят текущее медиа после сохранения.
+          До {MAX_POST_MEDIA_FILES} файлов в публикации. Удалённые и новые файлы применятся после сохранения.
         </p>
 
         <div className="modal-actions edit-post-actions">
