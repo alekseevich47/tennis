@@ -802,13 +802,14 @@
 
 .fullscreen-nav-ripple {
   position: absolute;
-  width: 18px;
-  height: 18px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.46);
+  box-shadow: 0 0 22px rgba(255, 255, 255, 0.32);
   pointer-events: none;
   transform: translate(-50%, -50%) scale(0.4);
-  animation: fullscreenNavRipple 0.36s ease-out forwards;
+  animation: fullscreenNavRipple 0.42s ease-out forwards;
 }
 
 @media (hover: none) {
@@ -839,12 +840,15 @@
 
 @keyframes fullscreenNavRipple {
   from {
-    opacity: 0.45;
+    opacity: 0.78;
     transform: translate(-50%, -50%) scale(0.4);
+  }
+  45% {
+    opacity: 0.32;
   }
   to {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(8);
+    transform: translate(-50%, -50%) scale(10);
   }
 }
 
