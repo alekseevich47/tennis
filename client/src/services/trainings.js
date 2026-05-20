@@ -3,6 +3,8 @@ import pb from './pb';
 import { isModerator } from './auth';
 import { error } from '../lib/log';
 
+export const PENDING_DELETE_TRAININGS_KEY = 'pending_delete_trainings';
+
 /**
  * @typedef {Object} TrainingRecord
  * @property {string} id
@@ -61,6 +63,48 @@ export async function updateTraining(trainingId, patch) {
  */
 export async function deleteTraining(trainingId) {
   return pb.collection('trainings').delete(trainingId);
+}
+
+export function readPendingDeleteTrainingIds() {
+  try {
+    const raw = sessionStorage.getItem(PENDING_DELETE_TRAININGS_KEY);
+    if (!raw) return [];
+    const ids = JSON.parse(raw);
+    if (!Array.isArray(ids)) return [];
+    return Array.from(new Set(ids.filter((id) => typeof id === 'string' && id)));
+  } catch (err) {
+    error('Не удалось распарсить pending_delete_trainings:', err);
+    return [];
+  }
+}
+
+/**
+ * @param {string[]} ids
+ */
+export function writePendingDeleteTrainingIds(ids) {
+  const nextIds = Array.from(new Set(ids.filter((id) => typeof id === 'string' && id)));
+  if (nextIds.length > 0) {
+    sessionStorage.setItem(PENDING_DELETE_TRAININGS_KEY, JSON.stringify(nextIds));
+  } else {
+    sessionStorage.removeItem(PENDING_DELETE_TRAININGS_KEY);
+  }
+  return nextIds;
+}
+
+/**
+ * @param {string} trainingId
+ */
+export function addPendingDeleteTrainingId(trainingId) {
+  return writePendingDeleteTrainingIds([...readPendingDeleteTrainingIds(), trainingId]);
+}
+
+/**
+ * @param {string} trainingId
+ */
+export function removePendingDeleteTrainingId(trainingId) {
+  return writePendingDeleteTrainingIds(
+    readPendingDeleteTrainingIds().filter((id) => id !== trainingId)
+  );
 }
 
 /**
@@ -122,6 +166,28 @@ export async function bookUserToTraining(training, userId) {
   }
   return pb.collection('trainings').update(training.id, {
     booked_users: [...current, userId]
+  });
+}
+
+/**
+ * Записать несколько пользователей на тренировку одним обновлением.
+ * @param {TrainingRecord} training
+ * @param {string[]} userIds
+ */
+export async function bookUsersToTraining(training, userIds) {
+  const selectedUserIds = Array.from(new Set(userIds.filter(Boolean)));
+  if (selectedUserIds.length === 0) throw new Error('Не выбраны игроки');
+
+  const current = training.booked_users || [];
+  const currentSet = new Set(current);
+  const nextUserIds = selectedUserIds.filter((userId) => !currentSet.has(userId));
+  if (nextUserIds.length === 0) throw new Error('Игроки уже записаны на эту тренировку');
+  if (training.max_slots && current.length + nextUserIds.length > training.max_slots) {
+    throw new Error('Недостаточно свободных мест');
+  }
+
+  return pb.collection('trainings').update(training.id, {
+    booked_users: [...current, ...nextUserIds]
   });
 }
 

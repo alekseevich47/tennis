@@ -1,13 +1,16 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTrainings } from '../../hooks/useTrainings';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { isModerator } from '../../services/auth';
 import {
+  addPendingDeleteTrainingId,
   bookTraining,
-  bookUserToTraining,
+  bookUsersToTraining,
   cancelTrainingBooking,
   closeTraining,
   markAttendance,
+  readPendingDeleteTrainingIds,
+  removePendingDeleteTrainingId,
   reopenTraining,
   restoreTraining,
   softDeleteTraining,
@@ -29,9 +32,13 @@ import './Trainings.css';
 const DAYS_COUNT = 14;
 
 /**
- * @param {{ user: any }} props
+ * @param {{
+ *   user: any,
+ *   onDeletedIdsChange?: (ids: string[]) => void,
+ *   onFlushPendingDeletes?: () => void
+ * }} props
  */
-function TrainingsPage({ user }) {
+function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
   const userIsModerator = isModerator();
   const { data: trainings, isLoading, mutate } = useTrainings();
   const { alert, confirm } = useAlertDialog();
@@ -43,7 +50,18 @@ function TrainingsPage({ user }) {
   const [selectedTrainingId, setSelectedTrainingId] = useState(null);
   const [editingTraining, setEditingTraining] = useState(null);
   const [bookingTraining, setBookingTraining] = useState(null);
-  const [deletedTrainingIds, setDeletedTrainingIds] = useState([]);
+  const [hiddenDeletedTrainingIds, setHiddenDeletedTrainingIds] = useState(() =>
+    readPendingDeleteTrainingIds()
+  );
+
+  useEffect(() => {
+    onDeletedIdsChange?.(hiddenDeletedTrainingIds);
+  }, [hiddenDeletedTrainingIds, onDeletedIdsChange]);
+
+  useEffect(() => {
+    if (hiddenDeletedTrainingIds.length === 0) return;
+    onFlushPendingDeletes?.();
+  }, []);
 
   // Индекс «день → статус» построен один раз на массив тренировок (H9, H13).
   const dayStatusMap = useMemo(() => {
@@ -66,9 +84,9 @@ function TrainingsPage({ user }) {
     return trainings.filter((t) => {
       if (!isSameDay(new Date(t.date), selectedDate)) return false;
       if (userIsModerator) return true;
-      return !t.is_deleted && !deletedTrainingIds.includes(t.id);
+      return !t.is_deleted && !hiddenDeletedTrainingIds.includes(t.id);
     });
-  }, [deletedTrainingIds, trainings, selectedDate, userIsModerator]);
+  }, [hiddenDeletedTrainingIds, trainings, selectedDate, userIsModerator]);
 
   // Selected training всегда актуален из SWR-кэша (H15).
   const selectedTraining = useMemo(() => {
@@ -128,7 +146,8 @@ function TrainingsPage({ user }) {
 
   const handleRestore = useCallback(
     async (trainingId) => {
-      setDeletedTrainingIds((prev) => prev.filter((id) => id !== trainingId));
+      removePendingDeleteTrainingId(trainingId);
+      setHiddenDeletedTrainingIds((prev) => prev.filter((id) => id !== trainingId));
       mutate(
         (curr = []) =>
           curr.map((t) => (t.id === trainingId ? { ...t, is_deleted: false } : t)),
@@ -137,7 +156,8 @@ function TrainingsPage({ user }) {
       try {
         await restoreTraining(trainingId);
       } catch (err) {
-        setDeletedTrainingIds((prev) =>
+        addPendingDeleteTrainingId(trainingId);
+        setHiddenDeletedTrainingIds((prev) =>
           prev.includes(trainingId) ? prev : [...prev, trainingId]
         );
         mutate(
@@ -154,7 +174,8 @@ function TrainingsPage({ user }) {
 
   const handleSoftDelete = useCallback(
     async (trainingId) => {
-      setDeletedTrainingIds((prev) =>
+      addPendingDeleteTrainingId(trainingId);
+      setHiddenDeletedTrainingIds((prev) =>
         prev.includes(trainingId) ? prev : [...prev, trainingId]
       );
       mutate(
@@ -165,7 +186,8 @@ function TrainingsPage({ user }) {
       try {
         await softDeleteTraining(trainingId);
       } catch (err) {
-        setDeletedTrainingIds((prev) => prev.filter((id) => id !== trainingId));
+        removePendingDeleteTrainingId(trainingId);
+        setHiddenDeletedTrainingIds((prev) => prev.filter((id) => id !== trainingId));
         mutate(
           (curr = []) =>
             curr.map((t) => (t.id === trainingId ? { ...t, is_deleted: false } : t)),
@@ -234,15 +256,15 @@ function TrainingsPage({ user }) {
     setBookingTraining(training);
   }, []);
 
-  const handleSelectBookingUser = useCallback(
-    async (userId) => {
+  const handleConfirmBookingUsers = useCallback(
+    async (userIds) => {
       if (!bookingTraining) return;
       try {
-        await bookUserToTraining(bookingTraining, userId);
-        setBookingTraining(null);
+        await bookUsersToTraining(bookingTraining, userIds);
         mutate();
+        setBookingTraining(null);
       } catch (err) {
-        error('book user to training:', err);
+        error('book users to training:', err);
         await alert({
           title: 'Ошибка',
           message: /** @type {Error} */ (err).message || 'Не удалось записать игрока.'
@@ -372,7 +394,7 @@ function TrainingsPage({ user }) {
       <UserPickerModal
         isOpen={Boolean(bookingTraining)}
         onClose={() => setBookingTraining(null)}
-        onSelect={handleSelectBookingUser}
+        onConfirm={handleConfirmBookingUsers}
         excludeIds={bookingTraining?.booked_users || []}
       />
     </div>

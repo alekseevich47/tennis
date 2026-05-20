@@ -7,21 +7,25 @@ import { error } from '../../../lib/log';
  * @param {{
  *   isOpen: boolean,
  *   onClose: () => void,
- *   onSelect: (userId: string) => void,
+ *   onConfirm: (userIds: string[]) => void | Promise<void>,
  *   excludeIds?: string[]
  * }} props
  */
-function UserPickerModal({ isOpen, onClose, onSelect, excludeIds = [] }) {
+function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
   const searchId = useId();
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [selectedIds, setSelectedIds] = useState(() => new Set());
+  const [confirming, setConfirming] = useState(false);
 
   useEffect(() => {
     if (!isOpen) {
       setSearch('');
       setErrorMessage('');
+      setSelectedIds(new Set());
+      setConfirming(false);
       return undefined;
     }
 
@@ -58,13 +62,44 @@ function UserPickerModal({ isOpen, onClose, onSelect, excludeIds = [] }) {
     });
   }, [excludedUserIds, search, users]);
 
-  const handleSelect = (userId) => {
-    onSelect(userId);
-    onClose();
+  const selectedCount = selectedIds.size;
+
+  const handleToggleUser = (userId) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(userId)) next.delete(userId);
+      else next.add(userId);
+      return next;
+    });
+  };
+
+  const handleConfirm = async () => {
+    if (selectedIds.size === 0 || confirming) return;
+    setConfirming(true);
+    try {
+      await onConfirm(Array.from(selectedIds));
+    } finally {
+      setConfirming(false);
+    }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Выберите игрока" size="tall">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Выберите игроков"
+      size="tall"
+      footer={
+        <button
+          type="button"
+          className="submit-btn-full user-picker-confirm-btn"
+          disabled={selectedCount === 0 || confirming}
+          onClick={handleConfirm}
+        >
+          {confirming ? 'Записываем...' : `Записать (${selectedCount})`}
+        </button>
+      }
+    >
       <div className="user-picker-modal">
         <div className="form-group-row">
           <label htmlFor={searchId}>Поиск по имени</label>
@@ -87,15 +122,18 @@ function UserPickerModal({ isOpen, onClose, onSelect, excludeIds = [] }) {
             <p className="user-picker-status">Подходящих игроков нет.</p>
           ) : (
             filteredUsers.map((user) => (
-              <button
+              <label
                 key={user.id}
-                type="button"
-                className="user-picker-option"
-                onClick={() => handleSelect(user.id)}
+                className={`user-picker-option${selectedIds.has(user.id) ? ' is-selected' : ''}`}
               >
+                <input
+                  type="checkbox"
+                  checked={selectedIds.has(user.id)}
+                  onChange={() => handleToggleUser(user.id)}
+                />
                 <span className="player-avatar-mini" aria-hidden="true">👤</span>
                 <span>{user.full_name || 'Теннисист'}</span>
-              </button>
+              </label>
             ))
           )}
         </div>

@@ -11,6 +11,11 @@ import RatingPage from './features/rating/RatingPage';
 import CompetitionsPage from './features/competitions/CompetitionsPage';
 import GalleryPage from './features/gallery/GalleryPage';
 import ProfilePage from './features/profile/ProfilePage';
+import {
+  deleteTraining,
+  readPendingDeleteTrainingIds,
+  writePendingDeleteTrainingIds
+} from './services/trainings';
 import { error } from './lib/log';
 import './styles/global.css';
 
@@ -32,12 +37,21 @@ function App() {
 
   // ID-буферы pending soft-delete. Передаются дочерним фичам через колбэки.
   const [pendingDeletePostIds, setPendingDeletePostIds] = useState([]);
+  const [pendingDeleteTrainingIds, setPendingDeleteTrainingIds] = useState([]);
   const pendingDeletePostIdsRef = useRef([]);
+  const pendingDeleteTrainingIdsRef = useRef([]);
   pendingDeletePostIdsRef.current = pendingDeletePostIds;
+  pendingDeleteTrainingIdsRef.current = pendingDeleteTrainingIds;
 
-  // Окончательное удаление мягко-скрытых постов / комментариев в БД.
+  // Окончательное удаление мягко-скрытых сущностей в БД.
   const flushPendingDeletes = useCallback(async () => {
     const postIds = pendingDeletePostIdsRef.current;
+    const trainingIds = Array.from(
+      new Set([
+        ...pendingDeleteTrainingIdsRef.current,
+        ...readPendingDeleteTrainingIds()
+      ])
+    );
     const commentJson = sessionStorage.getItem('pending_delete_comments');
 
     const tasks = [];
@@ -49,6 +63,15 @@ function App() {
         )
       );
       setPendingDeletePostIds([]);
+    }
+
+    if (trainingIds.length > 0) {
+      trainingIds.forEach((id) => {
+        deleteTraining(id).catch((e) => error('flush training:', e));
+      });
+      pendingDeleteTrainingIdsRef.current = [];
+      setPendingDeleteTrainingIds([]);
+      writePendingDeleteTrainingIds([]);
     }
 
     if (commentJson) {
@@ -121,7 +144,13 @@ function App() {
         {activeTab === 0 && (
           <FeedPage user={user} onDeletedIdsChange={setPendingDeletePostIds} />
         )}
-        {activeTab === 1 && <TrainingsPage user={user} />}
+        {activeTab === 1 && (
+          <TrainingsPage
+            user={user}
+            onDeletedIdsChange={setPendingDeleteTrainingIds}
+            onFlushPendingDeletes={flushPendingDeletes}
+          />
+        )}
         {activeTab === 2 && <ShopPage user={user} />}
         {activeTab === 3 && <RatingPage user={user} />}
         {activeTab === 4 && <CompetitionsPage user={user} />}

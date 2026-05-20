@@ -90,7 +90,8 @@ function TrainingCard({
   const totalBooked = training.booked_users?.length || 0;
   const hasLimit = training.max_slots !== null && training.max_slots !== undefined && training.max_slots > 0;
   const isFull = hasLimit && totalBooked >= (training.max_slots || 0);
-  const isBookingLocked = training.is_closed === true || new Date(training.date) <= new Date();
+  const isClosed = training.is_closed === true;
+  const isBookingLocked = isClosed || new Date(training.date) <= new Date();
 
   return (
     <div
@@ -117,7 +118,9 @@ function TrainingCard({
             {totalBooked} / {training.max_slots} мест
           </span>
         ) : (
-          <span className="card-slots-counter no-limit-label">Запись открыта</span>
+          <span className={clsx('card-slots-counter', { 'no-limit-label': !isClosed })}>
+            {isClosed ? 'Запись закрыта' : 'Запись открыта'}
+          </span>
         )}
 
         <div className="card-buttons-wrapper">
