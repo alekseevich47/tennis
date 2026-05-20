@@ -6,7 +6,7 @@ import { getMediaUrl, isVideoMediaName, mediaNames } from '../../lib/media';
  * @param {{
  *   post: import('../../services/posts').PostRecord,
  *   variant?: 'card' | 'detail',
- *   onOpenFullscreen?: (url: string) => void
+ *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, isVideo: boolean }>, index: number) => void
  * }} props
  */
 function PostMedia({ post, variant = 'card', onOpenFullscreen }) {
@@ -37,18 +37,38 @@ function PostMedia({ post, variant = 'card', onOpenFullscreen }) {
         const alt = `Медиа ${index + 1} к посту от ${post.created}`;
 
         if (item.isVideo) {
-          return (
+          const video = (
             <video
-              key={item.filename}
               src={item.url}
               className="telegram-post-media-item"
-              controls
               preload="metadata"
               playsInline
+              muted
               aria-label={alt}
               width="800"
               height="600"
             />
+          );
+
+          if (!onOpenFullscreen) {
+            return (
+              <div key={item.filename} className="post-media-static">
+                {video}
+              </div>
+            );
+          }
+
+          return (
+            <button
+              key={item.filename}
+              type="button"
+              className="post-media-btn post-media-video-btn"
+              onClick={() => onOpenFullscreen(items, index)}
+              aria-label={`Открыть видео ${index + 1} на весь экран`}
+            >
+              {video}
+              <span className="post-media-play-badge" aria-hidden="true">▶</span>
+            </button>
           );
         }
 
@@ -68,7 +88,7 @@ function PostMedia({ post, variant = 'card', onOpenFullscreen }) {
             key={item.filename}
             type="button"
             className="post-media-btn"
-            onClick={() => onOpenFullscreen(item.url)}
+            onClick={() => onOpenFullscreen(items, index)}
             aria-label={`Открыть медиа ${index + 1} на весь экран`}
           >
             {image}

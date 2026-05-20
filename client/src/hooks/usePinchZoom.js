@@ -13,6 +13,8 @@ import {
   maxPan
 } from '../lib/gestures';
 
+const WHEEL_ZOOM_STEP = 0.0015;
+
 /**
  * Управление pinch-zoom + swipe-to-close. Решает C7/C8 (cleanup RAF и таймеров).
  *
@@ -37,6 +39,8 @@ export function usePinchZoom({ onClose }) {
     setBgOpacity(1);
     velocityRef.current = { x: 0, y: 0 };
     isSwipingToCloseRef.current = false;
+    isDraggingRef.current = false;
+    startDistRef.current = 0;
   }, []);
 
   // Используем рефы для актуальных значений внутри RAF-цикла без re-binding.
@@ -174,6 +178,28 @@ export function usePinchZoom({ onClose }) {
     }
   }, [animateInertia, onClose]);
 
+  const handleWheel = useCallback((/** @type {React.WheelEvent} */ e) => {
+    e.preventDefault();
+    const nextScale = clamp(
+      scaleRef.current - e.deltaY * WHEEL_ZOOM_STEP,
+      MIN_SCALE,
+      MAX_SCALE
+    );
+
+    setScale(nextScale);
+    if (nextScale === MIN_SCALE) {
+      setPosition({ x: 0, y: 0 });
+      setBgOpacity(1);
+      velocityRef.current = { x: 0, y: 0 };
+    } else {
+      const limit = maxPan(nextScale);
+      setPosition((prev) => ({
+        x: clamp(prev.x, -limit, limit),
+        y: clamp(prev.y, -limit, limit)
+      }));
+    }
+  }, []);
+
   // Глобальный cleanup на unmount (фикс C8).
   useEffect(() => {
     return () => {
@@ -189,6 +215,7 @@ export function usePinchZoom({ onClose }) {
     position,
     bgOpacity,
     reset,
+    handleWheel,
     handleTouchStart,
     handleTouchMove,
     handleTouchEnd

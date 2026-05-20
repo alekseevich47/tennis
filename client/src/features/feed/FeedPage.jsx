@@ -28,7 +28,7 @@ function FeedPage({ user, onDeletedIdsChange }) {
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const [editingPost, setEditingPost] = useState(null);
-  const [fullscreenImage, setFullscreenImage] = useState(null);
+  const [fullscreenMedia, setFullscreenMedia] = useState(null);
   const [deletedPostIds, setDeletedPostIds] = useState([]);
   const [isButtonVisible, setIsButtonVisible] = useState(true);
 
@@ -139,12 +139,12 @@ function FeedPage({ user, onDeletedIdsChange }) {
     setSelectedPost(null);
   }, []);
 
-  const handleOpenFullscreen = useCallback((url) => {
-    setFullscreenImage(url);
+  const handleOpenFullscreen = useCallback((items, index = 0) => {
+    setFullscreenMedia({ items, index });
   }, []);
 
   const handleCloseFullscreen = useCallback(() => {
-    setFullscreenImage(null);
+    setFullscreenMedia(null);
   }, []);
 
   const handleCreated = useCallback(() => {
@@ -222,7 +222,8 @@ function FeedPage({ user, onDeletedIdsChange }) {
       />
 
       <FullscreenImageViewer
-        imageUrl={fullscreenImage}
+        items={fullscreenMedia?.items || []}
+        initialIndex={fullscreenMedia?.index || 0}
         onClose={handleCloseFullscreen}
       />
     </div>
