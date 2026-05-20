@@ -1,6 +1,7 @@
 import React, { memo, useCallback } from 'react';
 import clsx from 'clsx';
 import IconButton from '../../components/ui/IconButton';
+import Spinner from '../../components/ui/Spinner';
 import { formatCardDate, formatTimeRange } from '../../lib/format';
 import { isModerator } from '../../services/auth';
 
@@ -8,6 +9,7 @@ import { isModerator } from '../../services/auth';
  * @param {{
  *   training: import('../../services/trainings').TrainingRecord,
  *   userId?: string,
+ *   isDeleting?: boolean,
  *   onOpen: (training: any) => void,
  *   onBook: (training: any) => void,
  *   onBookUser?: (training: any) => void,
@@ -21,6 +23,7 @@ import { isModerator } from '../../services/auth';
 function TrainingCard({
   training,
   userId,
+  isDeleting = false,
   onOpen,
   onBook,
   onBookUser,
@@ -125,13 +128,19 @@ function TrainingCard({
 
         <div className="card-buttons-wrapper">
           {training.is_deleted && userIsModerator ? (
-            <button
-              type="button"
-              className="text-status-full-label btn-restore"
-              onClick={handleRestore}
-            >
-              Восстановить
-            </button>
+            isDeleting ? (
+              <div className="restore-button-spinner" onClick={(e) => e.stopPropagation()}>
+                <Spinner label="Удаляем..." inline />
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="text-status-full-label btn-restore"
+                onClick={handleRestore}
+              >
+                Восстановить
+              </button>
+            )
           ) : !userIsModerator && isUserBooked ? (
             <IconButton
               ariaLabel="Отменить запись на тренировку"
