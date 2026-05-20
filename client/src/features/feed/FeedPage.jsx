@@ -280,12 +280,14 @@ function FeedPage({ user, onDeletedIdsChange }) {
         user={user}
       />
 
-      <FullscreenImageViewer
-        items={fullscreenMedia?.items || []}
-        initialIndex={fullscreenMedia?.index || 0}
-        originRect={fullscreenMedia?.originRect || null}
-        onClose={handleCloseFullscreen}
-      />
+      {fullscreenMedia && (
+        <FullscreenImageViewer
+          items={fullscreenMedia.items}
+          initialIndex={fullscreenMedia.index}
+          originRect={fullscreenMedia.originRect}
+          onClose={handleCloseFullscreen}
+        />
+      )}
     </div>
   );
 }
