@@ -2,7 +2,9 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { usePinchZoom } from '../../hooks/usePinchZoom';
 import IconButton from '../../components/ui/IconButton';
 
-const SWIPE_NAV_THRESHOLD_PX = 56;
+const SWIPE_NAV_THRESHOLD_PX = 36;
+const NAV_CLICK_DRIFT_PX = 8;
+const NAV_ZOOM_MAX_SCALE = 1.05;
 
 /**
  * @param {{
@@ -14,6 +16,7 @@ const SWIPE_NAV_THRESHOLD_PX = 56;
 function FullscreenImageViewer({ items, initialIndex = 0, onClose }) {
   const [activeIndex, setActiveIndex] = useState(initialIndex);
   const touchStartRef = useRef({ x: 0, y: 0 });
+  const pointerDownRef = useRef({ x: 0, y: 0 });
   const { scale, position, bgOpacity, reset, handleWheel, handleTouchStart, handleTouchMove, handleTouchEnd } =
     usePinchZoom({ onClose });
 
@@ -80,7 +83,7 @@ function FullscreenImageViewer({ items, initialIndex = 0, onClose }) {
 
     if (
       hasMultiple &&
-      scale === 1 &&
+      scale <= NAV_ZOOM_MAX_SCALE &&
       Math.abs(dx) > SWIPE_NAV_THRESHOLD_PX &&
       Math.abs(dx) > Math.abs(dy) * 1.25
     ) {
@@ -90,6 +93,25 @@ function FullscreenImageViewer({ items, initialIndex = 0, onClose }) {
     }
 
     if (isImage) handleTouchEnd();
+  };
+
+  const handlePointerDown = (event) => {
+    pointerDownRef.current = { x: event.clientX, y: event.clientY };
+  };
+
+  const handleContentClick = (event) => {
+    event.stopPropagation();
+    if (!hasMultiple) return;
+    if (event.target instanceof Element && event.target.closest('button')) return;
+
+    const dx = Math.abs(event.clientX - pointerDownRef.current.x);
+    const dy = Math.abs(event.clientY - pointerDownRef.current.y);
+    if (dx > NAV_CLICK_DRIFT_PX || dy > NAV_CLICK_DRIFT_PX) return;
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    if (x < rect.width * 0.38) goPrev();
+    if (x > rect.width * 0.62) goNext();
   };
 
   if (!activeItem) return null;
@@ -115,7 +137,8 @@ function FullscreenImageViewer({ items, initialIndex = 0, onClose }) {
       </IconButton>
       <div
         className="fullscreen-image-wrapper"
-        onClick={(e) => e.stopPropagation()}
+        onClick={handleContentClick}
+        onPointerDown={handlePointerDown}
         onWheel={isImage ? handleWheel : undefined}
         onTouchStart={handleViewerTouchStart}
         onTouchMove={handleViewerTouchMove}
