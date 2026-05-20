@@ -88,7 +88,12 @@ function FullscreenImageViewer({ items, initialIndex = 0, originRect = null, onC
   const goPrev = useCallback((options) => goTo(activeIndex - 1, options), [activeIndex, goTo]);
 
   useEffect(() => {
+    setIsClosing(false);
+    window.clearTimeout(closeTimerRef.current);
     setActiveIndex(Math.min(initialIndex, Math.max(items.length - 1, 0)));
+    setSwipeOffset(0);
+    setIsSliding(false);
+    gestureModeRef.current = 'idle';
     reset();
   }, [initialIndex, items, reset]);
 
