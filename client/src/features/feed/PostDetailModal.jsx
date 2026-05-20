@@ -21,7 +21,7 @@ const SCROLL_INTO_VIEW_DELAY_MS = 200;
  *   userIsModerator: boolean,
  *   onOpenEdit: (post: any) => void,
  *   onDeletePost: (postId: string) => void,
- *   onOpenFullscreen?: (url: string) => void,
+ *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, isVideo: boolean }>, index: number) => void,
  *   onClose: () => void,
  *   onAfterClose: () => void
  * }} props
