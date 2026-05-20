@@ -1,12 +1,12 @@
 import React, { memo } from 'react';
 import clsx from 'clsx';
-import { getMediaUrl, isVideoMediaName, mediaNames } from '../../lib/media';
+import { getMediaUrl, isVideoMediaName, mediaNames, videoPreviewUrl } from '../../lib/media';
 
 /**
  * @param {{
  *   post: import('../../services/posts').PostRecord,
  *   variant?: 'card' | 'detail',
- *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, isVideo: boolean }>, index: number) => void
+ *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, isVideo: boolean }>, index: number, originRect?: DOMRect) => void
  * }} props
  */
 function PostMedia({ post, variant = 'card', onOpenFullscreen }) {
@@ -24,6 +24,9 @@ function PostMedia({ post, variant = 'card', onOpenFullscreen }) {
   if (items.length === 0) return null;
 
   const count = Math.min(items.length, 5);
+  const openFullscreen = (event, index) => {
+    onOpenFullscreen?.(items, index, event.currentTarget.getBoundingClientRect());
+  };
 
   return (
     <div
@@ -39,11 +42,12 @@ function PostMedia({ post, variant = 'card', onOpenFullscreen }) {
         if (item.isVideo) {
           const video = (
             <video
-              src={item.url}
+              src={videoPreviewUrl(item.url)}
               className="telegram-post-media-item"
               preload="metadata"
               playsInline
               muted
+              disablePictureInPicture
               aria-label={alt}
               width="800"
               height="600"
@@ -63,7 +67,7 @@ function PostMedia({ post, variant = 'card', onOpenFullscreen }) {
               key={item.filename}
               type="button"
               className="post-media-btn post-media-video-btn"
-              onClick={() => onOpenFullscreen(items, index)}
+              onClick={(event) => openFullscreen(event, index)}
               aria-label={`Открыть видео ${index + 1} на весь экран`}
             >
               {video}
@@ -88,7 +92,7 @@ function PostMedia({ post, variant = 'card', onOpenFullscreen }) {
             key={item.filename}
             type="button"
             className="post-media-btn"
-            onClick={() => onOpenFullscreen(items, index)}
+            onClick={(event) => openFullscreen(event, index)}
             aria-label={`Открыть медиа ${index + 1} на весь экран`}
           >
             {image}

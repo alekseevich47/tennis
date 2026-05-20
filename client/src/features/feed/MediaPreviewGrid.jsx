@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import clsx from 'clsx';
+import { videoPreviewUrl } from '../../lib/media';
 
 /**
  * @param {{
@@ -18,15 +19,19 @@ function MediaPreviewGrid({ items, className, getAction }) {
       {items.map((item) => (
         <figure key={item.key} className="telegram-media-item">
           {item.isVideo ? (
-            <video
-              src={item.url}
-              controls
-              preload="metadata"
-              playsInline
-              aria-label={item.name}
-              width="800"
-              height="600"
-            />
+            <div className="telegram-video-preview">
+              <video
+                src={videoPreviewUrl(item.url)}
+                preload="metadata"
+                playsInline
+                muted
+                disablePictureInPicture
+                aria-label={item.name}
+                width="800"
+                height="600"
+              />
+              <span className="post-media-play-badge" aria-hidden="true">▶</span>
+            </div>
           ) : (
             <img src={item.url} alt={item.name} loading="lazy" width="800" height="600" />
           )}

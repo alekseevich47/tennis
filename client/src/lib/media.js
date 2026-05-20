@@ -61,6 +61,15 @@ export function isVideoFile(file) {
 }
 
 /**
+ * Просим браузер сразу декодировать первый кадр, чтобы preview не выглядел серым блоком.
+ * @param {string} url
+ */
+export function videoPreviewUrl(url) {
+  if (!url || url.includes('#t=')) return url;
+  return `${url}#t=0.1`;
+}
+
+/**
  * @param {FileList | null | undefined} fileList
  * @param {number} [limit]
  * @returns {File[]}

@@ -69,6 +69,64 @@
   pointer-events: none;
 }
 
+.post-upload-progress {
+  position: sticky;
+  top: 10px;
+  z-index: 20;
+  margin: 10px 0 2px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.14);
+  backdrop-filter: blur(10px);
+}
+
+.post-upload-progress-text {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #1f2937;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.post-upload-progress-text button {
+  border: none;
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: #fee2e2;
+  color: #b91c1c;
+  font: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.post-upload-progress-text button:hover {
+  background: #fecaca;
+}
+
+.post-upload-progress-text button:focus-visible {
+  outline: 2px solid #ef4444;
+  outline-offset: 2px;
+}
+
+.post-upload-progress-track {
+  height: 4px;
+  margin-top: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e5e7eb;
+}
+
+.post-upload-progress-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #0095ff, #34c759);
+  transition: width 0.2s ease;
+}
+
 .feed-card {
   background: #ffffff;
   border-radius: 16px;
@@ -176,6 +234,12 @@
   position: relative;
 }
 
+.telegram-video-preview {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
 .post-media-play-badge {
   position: absolute;
   left: 50%;
@@ -268,7 +332,8 @@
 
 .telegram-post-media-item,
 .telegram-media-item img,
-.telegram-media-item video {
+.telegram-media-item video,
+.telegram-video-preview {
   display: block;
   width: 100%;
   height: 100%;
@@ -278,9 +343,14 @@
   background: #111827;
 }
 
+.telegram-video-preview video {
+  pointer-events: none;
+}
+
 .telegram-post-media-grid--1 .telegram-post-media-item,
 .telegram-media-grid--1 .telegram-media-item img,
-.telegram-media-grid--1 .telegram-media-item video {
+.telegram-media-grid--1 .telegram-media-item video,
+.telegram-media-grid--1 .telegram-video-preview {
   aspect-ratio: 16 / 10;
   max-height: 320px;
 }
@@ -584,6 +654,11 @@
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
+.fullscreen-overlay[data-closing="true"] {
+  opacity: 0;
+  transition: opacity 0.24s ease;
+}
+
 .fullscreen-close-btn {
   position: absolute !important;
   top: 16px;
@@ -625,13 +700,40 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+.fullscreen-carousel-track {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  will-change: transform;
+}
+
+.fullscreen-carousel-track.is-sliding {
+  transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.fullscreen-carousel-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
 .fullscreen-target-img {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
   user-select: none;
   -webkit-user-drag: none;
-  transition: none;
+  cursor: grab;
+  will-change: transform;
+}
+
+.fullscreen-target-img:active {
+  cursor: grabbing;
 }
 
 .fullscreen-target-video {
@@ -642,6 +744,12 @@
   object-fit: contain;
   background: #000000;
   z-index: 1;
+  will-change: transform;
+}
+
+.fullscreen-overlay[data-closing="true"] .fullscreen-target-img,
+.fullscreen-overlay[data-closing="true"] .fullscreen-target-video {
+  transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .fullscreen-nav-zone {
@@ -691,6 +799,17 @@
     opacity: 0.38;
     font-size: 44px;
     width: 18%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fullscreen-overlay,
+  .fullscreen-overlay[data-closing="true"],
+  .fullscreen-carousel-track.is-sliding,
+  .fullscreen-overlay[data-closing="true"] .fullscreen-target-img,
+  .fullscreen-overlay[data-closing="true"] .fullscreen-target-video {
+    animation: none;
+    transition-duration: 0.01ms;
   }
 }
 

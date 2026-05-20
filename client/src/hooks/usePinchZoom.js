@@ -32,6 +32,7 @@ export function usePinchZoom({ onClose }) {
   const velocityRef = useRef({ x: 0, y: 0 });
   const animationFrameRef = useRef(/** @type {number | null} */ (null));
   const isSwipingToCloseRef = useRef(false);
+  const pointerDragRef = useRef({ active: false, x: 0, y: 0 });
 
   const reset = useCallback(() => {
     setScale(1);
@@ -41,6 +42,7 @@ export function usePinchZoom({ onClose }) {
     isSwipingToCloseRef.current = false;
     isDraggingRef.current = false;
     startDistRef.current = 0;
+    pointerDragRef.current = { active: false, x: 0, y: 0 };
   }, []);
 
   // Используем рефы для актуальных значений внутри RAF-цикла без re-binding.
@@ -178,8 +180,16 @@ export function usePinchZoom({ onClose }) {
     }
   }, [animateInertia, onClose]);
 
-  const handleWheel = useCallback((/** @type {React.WheelEvent} */ e) => {
-    e.preventDefault();
+  const panBy = useCallback((deltaX, deltaY) => {
+    const limit = maxPan(scaleRef.current);
+    if (scaleRef.current <= MIN_SCALE || limit <= 0) return;
+    setPosition((prev) => ({
+      x: clamp(prev.x + deltaX, -limit, limit),
+      y: clamp(prev.y + deltaY, -limit, limit)
+    }));
+  }, []);
+
+  const handleWheel = useCallback((/** @type {{ deltaY: number }} */ e) => {
     const nextScale = clamp(
       scaleRef.current - e.deltaY * WHEEL_ZOOM_STEP,
       MIN_SCALE,
@@ -200,6 +210,26 @@ export function usePinchZoom({ onClose }) {
     }
   }, []);
 
+  const handlePointerDown = useCallback((/** @type {React.PointerEvent} */ e) => {
+    if (e.pointerType === 'touch' || scaleRef.current <= MIN_SCALE) return;
+    pointerDragRef.current = { active: true, x: e.clientX, y: e.clientY };
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+  }, []);
+
+  const handlePointerMove = useCallback((/** @type {React.PointerEvent} */ e) => {
+    if (!pointerDragRef.current.active) return;
+    const deltaX = e.clientX - pointerDragRef.current.x;
+    const deltaY = e.clientY - pointerDragRef.current.y;
+    pointerDragRef.current = { active: true, x: e.clientX, y: e.clientY };
+    panBy(deltaX, deltaY);
+  }, [panBy]);
+
+  const handlePointerUp = useCallback((/** @type {React.PointerEvent} */ e) => {
+    if (!pointerDragRef.current.active) return;
+    pointerDragRef.current = { active: false, x: 0, y: 0 };
+    e.currentTarget.releasePointerCapture?.(e.pointerId);
+  }, []);
+
   // Глобальный cleanup на unmount (фикс C8).
   useEffect(() => {
     return () => {
@@ -215,7 +245,11 @@ export function usePinchZoom({ onClose }) {
     position,
     bgOpacity,
     reset,
+    panBy,
     handleWheel,
+    handlePointerDown,
+    handlePointerMove,
+    handlePointerUp,
     handleTouchStart,
     handleTouchMove,
     handleTouchEnd

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { usePosts } from '../../hooks/usePosts';
-import { updatePost } from '../../services/posts';
+import { createPostWithProgress, updatePost } from '../../services/posts';
 import { isModerator } from '../../services/auth';
 import Spinner from '../../components/ui/Spinner';
 import EmptyState from '../../components/ui/EmptyState';
@@ -31,13 +31,19 @@ function FeedPage({ user, onDeletedIdsChange }) {
   const [fullscreenMedia, setFullscreenMedia] = useState(null);
   const [deletedPostIds, setDeletedPostIds] = useState([]);
   const [isButtonVisible, setIsButtonVisible] = useState(true);
+  const [uploadTask, setUploadTask] = useState(null);
 
   const containerRef = useRef(null);
   const scrollTimeoutRef = useRef(null);
+  const uploadAbortRef = useRef(null);
 
   useEffect(() => {
     onDeletedIdsChange?.(deletedPostIds);
   }, [deletedPostIds, onDeletedIdsChange]);
+
+  useEffect(() => {
+    return () => uploadAbortRef.current?.abort();
+  }, []);
 
   // Scroll listener: зависит только от модераторского флага (фикс C6).
   useEffect(() => {
@@ -139,18 +145,55 @@ function FeedPage({ user, onDeletedIdsChange }) {
     setSelectedPost(null);
   }, []);
 
-  const handleOpenFullscreen = useCallback((items, index = 0) => {
-    setFullscreenMedia({ items, index });
+  const handleOpenFullscreen = useCallback((items, index = 0, originRect = null) => {
+    setFullscreenMedia({ items, index, originRect });
   }, []);
 
   const handleCloseFullscreen = useCallback(() => {
     setFullscreenMedia(null);
   }, []);
 
-  const handleCreated = useCallback(() => {
+  const handleCreated = useCallback((payload) => {
     setShowAddModal(false);
-    mutate();
+    uploadAbortRef.current?.abort();
+
+    const controller = new AbortController();
+    uploadAbortRef.current = controller;
+    setUploadTask({ progress: 0, status: 'uploading', message: 'Загружаем публикацию…' });
+
+    createPostWithProgress(payload, {
+      signal: controller.signal,
+      onProgress: (progress) => {
+        setUploadTask((current) =>
+          current ? { ...current, progress, message: `Загрузка медиа: ${progress}%` } : current
+        );
+      }
+    })
+      .then((createdPost) => {
+        mutate((current = []) => [createdPost, ...current], false);
+        mutate();
+        setUploadTask({ progress: 100, status: 'done', message: 'Публикация добавлена' });
+        window.setTimeout(() => setUploadTask(null), 1400);
+      })
+      .catch((err) => {
+        if (err?.name === 'AbortError') {
+          setUploadTask(null);
+          return;
+        }
+        error('create post upload:', err);
+        setUploadTask({
+          progress: 0,
+          status: 'error',
+          message: 'Не удалось опубликовать. Проверьте соединение.'
+        });
+      });
   }, [mutate]);
+
+  const handleCancelUpload = useCallback(() => {
+    uploadAbortRef.current?.abort();
+    uploadAbortRef.current = null;
+    setUploadTask(null);
+  }, []);
 
   return (
     <div className="feed-scroll-container" ref={containerRef}>
@@ -163,6 +206,22 @@ function FeedPage({ user, onDeletedIdsChange }) {
           >
             Добавить
           </button>
+        </div>
+      )}
+
+      {uploadTask && (
+        <div className="post-upload-progress" role="status" aria-live="polite">
+          <div className="post-upload-progress-text">
+            <span>{uploadTask.message}</span>
+            {uploadTask.status === 'uploading' && (
+              <button type="button" onClick={handleCancelUpload}>
+                Отменить
+              </button>
+            )}
+          </div>
+          <div className="post-upload-progress-track" aria-hidden="true">
+            <span style={{ width: `${uploadTask.progress}%` }} />
+          </div>
         </div>
       )}
 
@@ -224,6 +283,7 @@ function FeedPage({ user, onDeletedIdsChange }) {
       <FullscreenImageViewer
         items={fullscreenMedia?.items || []}
         initialIndex={fullscreenMedia?.index || 0}
+        originRect={fullscreenMedia?.originRect || null}
         onClose={handleCloseFullscreen}
       />
     </div>

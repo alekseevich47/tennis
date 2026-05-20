@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
-import { createPost } from '../../services/posts';
 import MediaPreviewGrid from './MediaPreviewGrid';
 import {
   MAX_POST_MEDIA_FILES,
   isVideoFile,
   readSelectedFiles
 } from '../../lib/media';
-import { error } from '../../lib/log';
 
 /**
  * @param {{
  *   isOpen: boolean,
  *   onClose: () => void,
- *   onCreated: () => void,
+ *   onCreated: (payload: FormData) => void,
  *   user: any
  * }} props
  */
@@ -22,7 +20,6 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
   const [text, setText] = useState('');
   const [files, setFiles] = useState(/** @type {File[]} */ ([]));
   const [previewItems, setPreviewItems] = useState([]);
-  const [submitting, setSubmitting] = useState(false);
   const { confirm } = useAlertDialog();
 
   useEffect(() => {
@@ -55,23 +52,16 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
     onClose();
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if ((!text.trim() && files.length === 0) || submitting) return;
-    setSubmitting(true);
-    try {
-      const formData = new FormData();
-      formData.append('content', text.trim());
-      formData.append('author', user?.id || '');
-      files.forEach((file) => formData.append('media', file));
-      await createPost(formData);
-      reset();
-      onCreated();
-    } catch (err) {
-      error('Ошибка публикации:', err);
-    } finally {
-      setSubmitting(false);
-    }
+    if (!text.trim() && files.length === 0) return;
+    const formData = new FormData();
+    formData.append('content', text.trim());
+    formData.append('author', user?.id || '');
+    files.forEach((file) => formData.append('media', file));
+    onCreated(formData);
+    reset();
+    onClose();
   };
 
   return (
@@ -128,9 +118,9 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
           <button
             type="submit"
             className="submit-btn-full"
-            disabled={submitting || (!text.trim() && files.length === 0)}
+            disabled={!text.trim() && files.length === 0}
           >
-            {submitting ? 'Публикуем…' : 'Опубликовать'}
+            Опубликовать
           </button>
         </div>
       </form>
