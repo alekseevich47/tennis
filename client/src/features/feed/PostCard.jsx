@@ -24,7 +24,8 @@ function readComments(post) {
  *   onOpenEdit: (post: any) => void,
  *   onDelete: (postId: string) => void,
  *   onRestore: (postId: string) => void,
- *   onOpenFullscreen: (url: string) => void
+ *   hiddenMediaKey?: string | null,
+ *   onOpenFullscreen: (items: Array<{ filename: string, url: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void
  * }} props
  */
 function PostCard({
@@ -35,6 +36,7 @@ function PostCard({
   onOpenEdit,
   onDelete,
   onRestore,
+  hiddenMediaKey,
   onOpenFullscreen
 }) {
   const previewComments = useMemo(() => {
@@ -100,7 +102,11 @@ function PostCard({
         >
           {post.content || post.text}
         </button>
-        <PostMedia post={post} onOpenFullscreen={onOpenFullscreen} />
+        <PostMedia
+          post={post}
+          hiddenMediaKey={hiddenMediaKey}
+          onOpenFullscreen={onOpenFullscreen}
+        />
       </div>
 
       <div className="feed-card-footer">

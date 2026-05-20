@@ -113,16 +113,11 @@ export function usePinchZoom({ onClose }) {
       const currentScale = scaleRef.current;
       const limit = maxPan(currentScale);
 
-      if (
-        currentScale === MIN_SCALE ||
-        isSwipingToCloseRef.current ||
-        nextY > limit ||
-        nextY < -limit
-      ) {
+      if (currentScale === MIN_SCALE || isSwipingToCloseRef.current) {
         isSwipingToCloseRef.current = true;
         const dragY = nextY;
         setPosition({
-          x: currentScale === MIN_SCALE ? 0 : clamp(nextX, -limit, limit),
+          x: 0,
           y: dragY
         });
         setBgOpacity(backdropOpacityForDrag(dragY));
