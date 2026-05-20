@@ -163,6 +163,7 @@ function PostDetailModal({
       onClose={handleClose}
       ariaLabel="Просмотр поста и комментариев"
       size="large"
+      showCloseButton={false}
       footer={
         <form onSubmit={handleAdd} className="modal-comment-form-footer">
           <label htmlFor="post-detail-comment-input" className="visually-hidden">
@@ -202,7 +203,7 @@ function PostDetailModal({
             </IconButton>
             <IconButton
               ariaLabel="Удалить публикацию"
-              variant="ghost"
+              variant="danger"
               size="sm"
               className="delete-post-btn"
               onClick={() => {
@@ -210,7 +211,7 @@ function PostDetailModal({
                 handleClose();
               }}
             >
-              <span aria-hidden="true">✕</span>
+              <span aria-hidden="true">🗑</span>
             </IconButton>
           </div>
         )}

@@ -80,7 +80,7 @@ export async function createPost(payload) {
 
 /**
  * @param {string} postId
- * @param {Partial<PostRecord>} patch
+ * @param {Partial<PostRecord> | FormData} patch
  */
 export async function updatePost(postId, patch) {
   return pb.collection('posts').update(postId, /** @type {Record<string, unknown>} */ (patch));

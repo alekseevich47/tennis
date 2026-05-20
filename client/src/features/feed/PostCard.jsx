@@ -81,12 +81,12 @@ function PostCard({
             </IconButton>
             <IconButton
               ariaLabel="Удалить публикацию"
-              variant="ghost"
+              variant="danger"
               size="sm"
               className="delete-post-btn"
               onClick={() => onDelete(post.id)}
             >
-              <span aria-hidden="true">✕</span>
+              <span aria-hidden="true">🗑</span>
             </IconButton>
           </div>
         )}
