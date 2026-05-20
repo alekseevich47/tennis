@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
-import { getMediaUrl, firstFileName } from '../../lib/media';
+import clsx from 'clsx';
+import { getMediaUrl, isVideoMediaName, mediaNames } from '../../lib/media';
 
 /**
  * @param {{
@@ -9,27 +10,76 @@ import { getMediaUrl, firstFileName } from '../../lib/media';
  * }} props
  */
 function PostMedia({ post, variant = 'card', onOpenFullscreen }) {
-  const filename = firstFileName(post.media);
-  if (!filename) return null;
+  const items = mediaNames(post.media).flatMap((filename) => {
+    const url = getMediaUrl(post, 'posts', filename);
+    return url
+      ? [{
+        filename,
+        url,
+        isVideo: isVideoMediaName(filename)
+      }]
+      : [];
+  });
 
-  const url = getMediaUrl(post, 'posts', filename);
-  if (!url) return null;
+  if (items.length === 0) return null;
 
-  const className = variant === 'detail' ? 'post-media-img-detail' : 'post-media-img clickable';
-
-  if (variant === 'detail') {
-    return <img src={url} alt={`Медиа поста от ${post.created}`} className={className} />;
-  }
+  const count = Math.min(items.length, 5);
 
   return (
-    <button
-      type="button"
-      className="post-media-btn"
-      onClick={() => onOpenFullscreen?.(url)}
-      aria-label="Открыть фото на весь экран"
+    <div
+      className={clsx(
+        'telegram-post-media-grid',
+        `telegram-post-media-grid--${count}`,
+        variant === 'detail' && 'telegram-post-media-grid--detail'
+      )}
     >
-      <img src={url} alt={`Медиа поста от ${post.created}`} className={className} />
-    </button>
+      {items.map((item, index) => {
+        const alt = `Медиа ${index + 1} к посту от ${post.created}`;
+
+        if (item.isVideo) {
+          return (
+            <video
+              key={item.filename}
+              src={item.url}
+              className="telegram-post-media-item"
+              controls
+              preload="metadata"
+              playsInline
+              aria-label={alt}
+              width="800"
+              height="600"
+            />
+          );
+        }
+
+        const image = (
+          <img
+            src={item.url}
+            alt={alt}
+            className="telegram-post-media-item"
+            loading={index === 0 ? 'eager' : 'lazy'}
+            width="800"
+            height="600"
+          />
+        );
+
+        return onOpenFullscreen ? (
+          <button
+            key={item.filename}
+            type="button"
+            className="post-media-btn"
+            onClick={() => onOpenFullscreen(item.url)}
+            aria-label={`Открыть медиа ${index + 1} на весь экран`}
+          >
+            {image}
+          </button>
+        ) : (
+          <div key={item.filename} className="post-media-static">
+            {image}
+          </div>
+        );
+      })}
+    </div>
   );
 }
 

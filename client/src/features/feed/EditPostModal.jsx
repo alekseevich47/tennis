@@ -1,19 +1,16 @@
 import React, { useEffect, useId, useMemo, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import { updatePost } from '../../services/posts';
-import { firstFileName, getMediaUrl } from '../../lib/media';
+import MediaPreviewGrid from './MediaPreviewGrid';
+import {
+  MAX_POST_MEDIA_FILES,
+  getMediaUrl,
+  isVideoFile,
+  isVideoMediaName,
+  mediaNames,
+  readSelectedFiles
+} from '../../lib/media';
 import { error } from '../../lib/log';
-
-function isVideoMedia(file, filename) {
-  if (file?.type?.startsWith('video/')) return true;
-  return typeof filename === 'string' && /\.(mp4|webm|mov)$/i.test(filename);
-}
-
-function readMediaNames(media) {
-  if (!media) return [];
-  if (Array.isArray(media)) return media.filter(Boolean);
-  return typeof media === 'string' ? [media] : [];
-}
 
 /**
  * @param {{
@@ -27,34 +24,46 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
   const textareaId = useId();
   const fileInputId = useId();
   const [text, setText] = useState('');
-  const [mediaFile, setMediaFile] = useState(/** @type {File | null} */ (null));
-  const [selectedMediaUrl, setSelectedMediaUrl] = useState(null);
+  const [mediaFiles, setMediaFiles] = useState(/** @type {File[]} */ ([]));
+  const [selectedPreviewItems, setSelectedPreviewItems] = useState([]);
   const [submitting, setSubmitting] = useState(false);
 
-  const existingMediaNames = useMemo(() => readMediaNames(post?.media), [post?.media]);
-  const existingMediaName = firstFileName(existingMediaNames);
-  const previewIsVideo = isVideoMedia(mediaFile, mediaFile?.name || existingMediaName);
-  const existingMediaUrl = useMemo(
-    () => (post && existingMediaName ? getMediaUrl(post, 'posts', existingMediaName) : null),
-    [post, existingMediaName]
+  const existingMediaNames = useMemo(() => mediaNames(post?.media), [post?.media]);
+  const existingPreviewItems = useMemo(
+    () =>
+      post
+        ? existingMediaNames.flatMap((filename) => {
+          const url = getMediaUrl(post, 'posts', filename);
+          return url
+            ? [{
+              key: `existing-${filename}`,
+              url,
+              name: filename,
+              isVideo: isVideoMediaName(filename)
+            }]
+            : [];
+        })
+        : [],
+    [post, existingMediaNames]
   );
 
   useEffect(() => {
-    if (!mediaFile) {
-      setSelectedMediaUrl(null);
-      return undefined;
-    }
-    const objectUrl = URL.createObjectURL(mediaFile);
-    setSelectedMediaUrl(objectUrl);
+    const items = mediaFiles.map((file) => ({
+      key: `${file.name}-${file.lastModified}`,
+      url: URL.createObjectURL(file),
+      name: file.name,
+      isVideo: isVideoFile(file)
+    }));
+    setSelectedPreviewItems(items);
     return () => {
-      URL.revokeObjectURL(objectUrl);
+      items.forEach((item) => URL.revokeObjectURL(item.url));
     };
-  }, [mediaFile]);
+  }, [mediaFiles]);
 
   useEffect(() => {
     if (!isOpen || !post) return;
     setText(post.content || post.text || '');
-    setMediaFile(null);
+    setMediaFiles([]);
   }, [isOpen, post]);
 
   const handleSubmit = async (event) => {
@@ -68,11 +77,11 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
     try {
       let payload = /** @type {FormData | { content: string }} */ ({ content: nextContent });
 
-      if (mediaFile) {
+      if (mediaFiles.length > 0) {
         payload = new FormData();
         payload.append('content', nextContent);
         existingMediaNames.forEach((filename) => payload.append('media-', filename));
-        payload.append('media', mediaFile);
+        mediaFiles.forEach((file) => payload.append('media', file));
       }
 
       const updatedPost = await updatePost(post.id, payload);
@@ -99,47 +108,57 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
         <div className="edit-post-bubble">
           <textarea
             id={textareaId}
+            name="edit-post-content"
+            autoComplete="off"
             value={text}
             onChange={(event) => setText(event.target.value)}
-            placeholder="Текст публикации"
+            placeholder="Текст публикации…"
             rows={6}
             required
           />
         </div>
 
-        {(selectedMediaUrl || existingMediaUrl) && (
-          <figure className="edit-post-media-preview">
-            {previewIsVideo ? (
-              <video src={selectedMediaUrl || existingMediaUrl} controls />
-            ) : (
-              <img
-                src={selectedMediaUrl || existingMediaUrl}
-                alt={mediaFile ? 'Новое медиа публикации' : 'Текущее медиа публикации'}
-              />
-            )}
-            <figcaption>
-              {mediaFile ? mediaFile.name : 'Текущее медиа публикации'}
-            </figcaption>
-          </figure>
-        )}
+        <MediaPreviewGrid
+          items={mediaFiles.length > 0 ? selectedPreviewItems : existingPreviewItems}
+          className="edit-post-media-preview-grid"
+          getAction={
+            mediaFiles.length > 0
+              ? (item) => (
+                <button
+                  type="button"
+                  className="media-remove-btn"
+                  onClick={() => setMediaFiles((current) => current.filter((file) => `${file.name}-${file.lastModified}` !== item.key))}
+                  aria-label={`Убрать файл ${item.name}`}
+                >
+                  <span aria-hidden="true">×</span>
+                </button>
+              )
+              : undefined
+          }
+        />
 
         <div className="edit-post-media-controls">
-          <label htmlFor={fileInputId} className="media-input-label">
+          <label className="media-input-label">
             <span aria-hidden="true">📎</span>{' '}
-            {existingMediaUrl || mediaFile ? 'Заменить медиа' : 'Добавить медиа'}
+            {existingPreviewItems.length > 0 || mediaFiles.length > 0 ? 'Заменить медиа' : 'Добавить медиа'}
+            <input
+              id={fileInputId}
+              name="edit-post-media"
+              type="file"
+              accept="image/*,video/mp4"
+              multiple
+              onChange={(event) => {
+                setMediaFiles(readSelectedFiles(event.target.files, MAX_POST_MEDIA_FILES));
+                event.currentTarget.value = '';
+              }}
+              className="visually-hidden"
+            />
           </label>
-          <input
-            id={fileInputId}
-            type="file"
-            accept="image/*,video/mp4"
-            onChange={(event) => setMediaFile(event.target.files?.[0] ?? null)}
-            className="visually-hidden"
-          />
-          {mediaFile && (
+          {mediaFiles.length > 0 && (
             <button
               type="button"
               className="edit-post-reset-media-btn"
-              onClick={() => setMediaFile(null)}
+              onClick={() => setMediaFiles([])}
               disabled={submitting}
             >
               Вернуть текущее
@@ -147,7 +166,7 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
           )}
         </div>
         <p className="edit-post-hint">
-          При выборе нового файла текущее медиа будет заменено после сохранения.
+          Можно выбрать до {MAX_POST_MEDIA_FILES} файлов. Новые файлы заменят текущее медиа после сохранения.
         </p>
 
         <div className="modal-actions edit-post-actions">
@@ -164,7 +183,7 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
             className="submit-btn-full edit-post-save-btn"
             disabled={submitting || !text.trim()}
           >
-            {submitting ? 'Сохраняем...' : 'Сохранить'}
+            {submitting ? 'Сохраняем…' : 'Сохранить'}
           </button>
         </div>
       </form>
