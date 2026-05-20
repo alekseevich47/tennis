@@ -648,7 +648,7 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 28%;
+  width: 24%;
   border: none;
   background: transparent;
   color: rgba(255, 255, 255, 0.82);
@@ -659,7 +659,7 @@
   padding: 0 18px;
   font-size: 56px;
   line-height: 1;
-  opacity: 0;
+  opacity: 0.72;
   transition: opacity 0.15s ease, background-color 0.15s ease;
   touch-action: manipulation;
 }
@@ -667,17 +667,18 @@
 .fullscreen-nav-zone--left {
   left: 0;
   justify-content: flex-start;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.28), transparent);
 }
 
 .fullscreen-nav-zone--right {
   right: 0;
   justify-content: flex-end;
+  background: linear-gradient(270deg, rgba(0, 0, 0, 0.28), transparent);
 }
 
 .fullscreen-nav-zone:hover,
 .fullscreen-nav-zone:focus-visible {
   opacity: 1;
-  background: rgba(0, 0, 0, 0.12);
 }
 
 .fullscreen-nav-zone:focus-visible {
@@ -687,7 +688,9 @@
 
 @media (hover: none) {
   .fullscreen-nav-zone {
-    display: none;
+    opacity: 0.38;
+    font-size: 44px;
+    width: 18%;
   }
 }
 
