@@ -4,6 +4,7 @@ import { useMaxAuth } from './hooks/useMaxAuth';
 import AppHeader from './components/AppHeader';
 import BottomNav from './components/BottomNav';
 import Spinner from './components/ui/Spinner';
+import { ProductUploadProvider } from './components/ProductUploadProvider';
 import FeedPage from './features/feed/FeedPage';
 import TrainingsPage from './features/trainings/TrainingsPage';
 import ShopPage from './features/shop/ShopPage';
@@ -131,6 +132,10 @@ function App() {
   }
 
   const headerTitle = TAB_TITLES[activeTab] || TAB_TITLES[0];
+  const contentClassName =
+    activeTab === 1
+      ? 'content-with-header content-with-header--contained'
+      : 'content-with-header';
 
   return (
     <div className="app">
@@ -140,7 +145,7 @@ function App() {
         onProfileClick={() => setActiveTab(PROFILE_TAB_INDEX)}
       />
 
-      <main className="content-with-header">
+      <main className={contentClassName}>
         {activeTab === 0 && (
           <FeedPage user={user} onDeletedIdsChange={setPendingDeletePostIds} />
         )}
@@ -151,7 +156,11 @@ function App() {
             onFlushPendingDeletes={flushPendingDeletes}
           />
         )}
-        {activeTab === 2 && <ShopPage user={user} />}
+        {activeTab === 2 && (
+          <ProductUploadProvider>
+            <ShopPage user={user} />
+          </ProductUploadProvider>
+        )}
         {activeTab === 3 && <RatingPage user={user} />}
         {activeTab === 4 && <CompetitionsPage user={user} />}
         {activeTab === 5 && <GalleryPage user={user} />}

@@ -94,7 +94,9 @@ function TrainingCard({
   const hasLimit = training.max_slots !== null && training.max_slots !== undefined && training.max_slots > 0;
   const isFull = hasLimit && totalBooked >= (training.max_slots || 0);
   const isClosed = training.is_closed === true;
-  const isBookingLocked = isClosed || new Date(training.date) <= new Date();
+  const isStarted = new Date(training.date) <= new Date();
+  const effectivelyClosed = isClosed || isStarted;
+  const isBookingLocked = effectivelyClosed;
 
   return (
     <div
@@ -117,17 +119,23 @@ function TrainingCard({
 
       <div className="card-actions-info-col">
         <div className="card-slots-row">
-          {hasLimit ? (
+          {!isFull && (
+            <span
+              className={clsx(
+                'card-status-badge',
+                effectivelyClosed ? 'card-status-badge--closed' : 'card-status-badge--open'
+              )}
+            >
+              {effectivelyClosed ? 'Запись закрыта' : 'Запись открыта'}
+            </span>
+          )}
+          {hasLimit && (
             <>
               <span className="card-slots-counter">
                 {totalBooked} / {training.max_slots} мест
               </span>
               {isFull && <span className="card-slots-badge-full">Мест нет</span>}
             </>
-          ) : (
-            <span className={clsx('card-slots-counter', { 'no-limit-label': !isClosed })}>
-              {isClosed ? 'Запись закрыта' : 'Запись открыта'}
-            </span>
           )}
         </div>
 
@@ -166,7 +174,7 @@ function TrainingCard({
               variant="ghost"
               size="sm"
               className="action-circle-btn btn-add-plus"
-              disabled={isBookingLocked}
+              disabled={!userIsModerator && isBookingLocked}
               onClick={handleBook}
             >
               <span aria-hidden="true">+</span>
