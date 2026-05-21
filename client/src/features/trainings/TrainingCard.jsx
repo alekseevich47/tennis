@@ -116,15 +116,20 @@ function TrainingCard({
       </div>
 
       <div className="card-actions-info-col">
-        {hasLimit ? (
-          <span className="card-slots-counter">
-            {totalBooked} / {training.max_slots} мест
-          </span>
-        ) : (
-          <span className={clsx('card-slots-counter', { 'no-limit-label': !isClosed })}>
-            {isClosed ? 'Запись закрыта' : 'Запись открыта'}
-          </span>
-        )}
+        <div className="card-slots-row">
+          {hasLimit ? (
+            <>
+              <span className="card-slots-counter">
+                {totalBooked} / {training.max_slots} мест
+              </span>
+              {isFull && <span className="card-slots-badge-full">Мест нет</span>}
+            </>
+          ) : (
+            <span className={clsx('card-slots-counter', { 'no-limit-label': !isClosed })}>
+              {isClosed ? 'Запись закрыта' : 'Запись открыта'}
+            </span>
+          )}
+        </div>
 
         <div className="card-buttons-wrapper">
           {training.is_deleted && userIsModerator ? (
@@ -141,7 +146,7 @@ function TrainingCard({
                 Восстановить
               </button>
             )
-          ) : !userIsModerator && isUserBooked ? (
+          ) : !userIsModerator && isUserBooked && !isBookingLocked ? (
             <IconButton
               ariaLabel="Отменить запись на тренировку"
               variant="ghost"
@@ -151,10 +156,10 @@ function TrainingCard({
             >
               <span aria-hidden="true">✕</span>
             </IconButton>
+          ) : !userIsModerator && isUserBooked ? (
+            <span className="text-status-full-label card-booked-status-label">Вы записаны</span>
           ) : isFull ? (
-            <button type="button" className="text-status-full-label" disabled>
-              Мест нет
-            </button>
+            null
           ) : (
             <IconButton
               ariaLabel="Записаться на тренировку"
