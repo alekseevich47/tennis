@@ -83,6 +83,11 @@ input[type="file"] {
 
 .content-with-header {
   height: calc(100vh - 116px);
+  min-height: 0;
   overflow-y: auto;
   background: #ffffff;
+}
+
+.content-with-header--contained {
+  overflow: hidden;
 }

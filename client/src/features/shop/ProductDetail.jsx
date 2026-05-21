@@ -1,7 +1,24 @@
-import React from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Modal from '../../components/ui/Modal';
+import IconButton from '../../components/ui/IconButton';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
-import { getMediaUrl } from '../../lib/media';
+import { MAX_SHARE_URL_TEMPLATE } from '../../config';
+import { useProductCategories } from '../../hooks/useProductCategories';
+import { getMediaUrl, isVideoMediaName, mediaNames, videoPreviewUrl } from '../../lib/media';
+
+const SWIPE_THRESHOLD_PX = 36;
+
+function getProductCategoryIds(product) {
+  return Array.isArray(product?.categories) ? product.categories : [];
+}
+
+function buildMaxShareUrl(message) {
+  const encodedMessage = encodeURIComponent(message);
+
+  return MAX_SHARE_URL_TEMPLATE
+    .replace(/\{message\}|<message>|\$\{message\}/g, encodedMessage)
+    .replace(/\{text\}|<text>|\$\{text\}/g, encodedMessage);
+}
 
 /**
  * @param {{
@@ -10,11 +27,67 @@ import { getMediaUrl } from '../../lib/media';
  *   moderator: boolean,
  *   onClose: () => void,
  *   onEdit: () => void,
- *   onDelete: () => Promise<void> | void
+ *   onDelete: () => Promise<void> | void,
+ *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void
  * }} props
  */
-function ProductDetail({ isOpen, product, moderator, onClose, onEdit, onDelete }) {
-  const { alert, confirm } = useAlertDialog();
+function ProductDetail({
+  isOpen,
+  product,
+  moderator,
+  onClose,
+  onEdit,
+  onDelete,
+  onOpenFullscreen
+}) {
+  const { alert } = useAlertDialog();
+  const { data: categories = [] } = useProductCategories();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const touchStartRef = useRef({ x: 0, y: 0 });
+  const suppressClickRef = useRef(false);
+  const suppressClickTimerRef = useRef(null);
+
+  const galleryItems = useMemo(() => {
+    if (!product) return [];
+    return mediaNames(product.images).flatMap((filename) => {
+      const url = getMediaUrl(product, 'products', filename);
+      if (!url) return [];
+      return [{
+        filename,
+        url,
+        isVideo: isVideoMediaName(filename),
+        originKey: `product-detail-${product.id}-${filename}`
+      }];
+    });
+  }, [product]);
+
+  const selectedCategoryNames = useMemo(() => {
+    const categoryIds = getProductCategoryIds(product);
+    if (categoryIds.length === 0) return [];
+
+    const expandedCategories = product?.expand?.categories;
+    if (Array.isArray(expandedCategories) && expandedCategories.length > 0) {
+      return expandedCategories
+        .filter((category) => categoryIds.includes(category.id))
+        .map((category) => category.name)
+        .filter(Boolean);
+    }
+
+    return categories
+      .filter((category) => categoryIds.includes(category.id))
+      .map((category) => category.name)
+      .filter(Boolean);
+  }, [categories, product]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    setCurrentImageIndex(0);
+  }, [isOpen, product?.id]);
+
+  useEffect(() => () => {
+    window.clearTimeout(suppressClickTimerRef.current);
+  }, []);
+
   if (!product) return null;
 
   const handleCopyArticle = async () => {
@@ -27,63 +100,224 @@ function ProductDetail({ isOpen, product, moderator, onClose, onEdit, onDelete }
   };
 
   const handleContact = async () => {
-    await alert({
-      title: 'Связь с модератором',
-      message: 'Напишите модератору секции в MAX для покупки этого товара.'
-    });
+    try {
+      const message = `Хочу купить: ${product.title || 'Товар'} #${product.id}`;
+      const webApp = window.WebApp;
+
+      if (webApp?.shareMaxContent) {
+        await webApp.shareMaxContent({ text: message });
+        return;
+      }
+
+      const url = buildMaxShareUrl(message);
+
+      if (webApp?.openMaxLink) {
+        webApp.openMaxLink(url);
+        return;
+      }
+
+      window.open(url, '_blank', 'noopener,noreferrer');
+    } catch {
+      await alert({
+        title: 'Не получилось',
+        message: 'Не удалось открыть отправку сообщения в MAX.'
+      });
+    }
   };
 
-  const handleDelete = async () => {
-    const ok = await confirm({
-      title: 'Удалить товар?',
-      message: 'Это действие нельзя отменить.',
-      confirmText: 'Удалить'
-    });
-    if (!ok) return;
-    await onDelete();
+  const goToImage = (direction) => {
+    if (galleryItems.length <= 1) return;
+    setCurrentImageIndex((current) =>
+      (current + direction + galleryItems.length) % galleryItems.length
+    );
   };
+
+  const handleGalleryTouchStart = (event) => {
+    const touch = event.touches[0];
+    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+  };
+
+  const handleGalleryTouchEnd = (event) => {
+    const touch = event.changedTouches[0];
+    const dx = touch.clientX - touchStartRef.current.x;
+    const dy = touch.clientY - touchStartRef.current.y;
+
+    if (Math.abs(dx) <= SWIPE_THRESHOLD_PX || Math.abs(dx) <= Math.abs(dy) * 1.2) return;
+
+    suppressClickRef.current = true;
+    window.clearTimeout(suppressClickTimerRef.current);
+    suppressClickTimerRef.current = window.setTimeout(() => {
+      suppressClickRef.current = false;
+    }, 350);
+    goToImage(dx < 0 ? 1 : -1);
+  };
+
+  const handleOpenFullscreen = (event) => {
+    if (suppressClickRef.current) {
+      suppressClickRef.current = false;
+      return;
+    }
+    if (!onOpenFullscreen || galleryItems.length === 0) return;
+
+    const activeItem = galleryItems[currentImageIndex];
+    onOpenFullscreen(
+      galleryItems,
+      currentImageIndex,
+      event.currentTarget.getBoundingClientRect(),
+      activeItem.originKey
+    );
+  };
+
+  const handleDelete = () => {
+    onDelete();
+    onClose();
+  };
+
+  const activeImage = galleryItems[currentImageIndex] || null;
+  const hasMultipleImages = galleryItems.length > 1;
+  const hasDescription = Boolean(product.description?.trim());
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={product.title} className="product-detail">
-      <div className="product-images">
-        {product.images?.map((img) => {
-          const url = getMediaUrl(product, 'products', img);
-          return url ? (
-            <img
-              key={img}
-              src={url}
-              alt={`Фото товара ${product.title}`}
-            />
-          ) : null;
-        })}
-      </div>
-
-      <button
-        type="button"
-        className="product-article"
-        onClick={handleCopyArticle}
-      >
-        Артикул: #{product.id} <span aria-hidden="true">📋</span>
-      </button>
-
-      <p className="product-description">{product.description}</p>
-      {product.sizes && <p><strong>Размеры:</strong> {product.sizes}</p>}
-      <p className="product-price">{product.price} ₽</p>
-
-      <button type="button" className="buy-btn" onClick={handleContact}>
-        Купить
-      </button>
-
-      {moderator && (
-        <div className="moderator-actions">
-          <button type="button" className="edit-btn" onClick={onEdit}>
-            Редактировать
-          </button>
-          <button type="button" className="delete-btn" onClick={handleDelete}>
-            Удалить
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      ariaLabel="Просмотр товара"
+      size="large"
+      showCloseButton={false}
+      className="product-detail"
+    >
+      <div className="feed-card-header product-detail-header">
+        <div className="section-avatar" aria-hidden="true">🛍</div>
+        <div className="section-meta">
+          <span className="section-title-name">{product.title}</span>
+          <button
+            type="button"
+            className="product-article"
+            onClick={handleCopyArticle}
+          >
+            Артикул: #{product.id} <span aria-hidden="true">📋</span>
           </button>
         </div>
-      )}
+        <div className="post-card-actions" role="group" aria-label="Действия с товаром">
+          {moderator && (
+            <>
+              <IconButton
+                ariaLabel="Редактировать товар"
+                variant="ghost"
+                size="sm"
+                className="edit-post-btn"
+                onClick={onEdit}
+              >
+                <span aria-hidden="true">✎</span>
+              </IconButton>
+              <IconButton
+                ariaLabel="Удалить товар"
+                variant="danger"
+                size="sm"
+                className="delete-post-btn"
+                onClick={handleDelete}
+              >
+                <span aria-hidden="true">✕</span>
+              </IconButton>
+            </>
+          )}
+          <IconButton
+            ariaLabel="Закрыть карточку товара"
+            variant="ghost"
+            size="sm"
+            onClick={onClose}
+          >
+            <span aria-hidden="true">✕</span>
+          </IconButton>
+        </div>
+      </div>
+
+      <div
+        className="product-detail-gallery"
+        onTouchStart={handleGalleryTouchStart}
+        onTouchEnd={handleGalleryTouchEnd}
+      >
+        {activeImage ? (
+          <button
+            type="button"
+            className="product-detail-image-btn"
+            onClick={handleOpenFullscreen}
+            disabled={!onOpenFullscreen}
+            aria-label="Открыть фото товара на весь экран"
+            data-media-origin-key={activeImage.originKey}
+          >
+            {activeImage.isVideo ? (
+              <video
+                src={videoPreviewUrl(activeImage.url)}
+                muted
+                playsInline
+                preload="metadata"
+                aria-label={`Видео товара ${product.title || ''}`}
+              />
+            ) : (
+              <img
+                src={activeImage.url}
+                alt={`Фото товара ${product.title || 'без названия'}`}
+              />
+            )}
+          </button>
+        ) : (
+          <div className="product-detail-no-image">Нет фото</div>
+        )}
+
+        {hasMultipleImages && (
+          <>
+            <button
+              type="button"
+              className="product-gallery-nav product-gallery-nav--prev"
+              onClick={() => goToImage(-1)}
+              aria-label="Предыдущее фото"
+            >
+              ‹
+            </button>
+            <button
+              type="button"
+              className="product-gallery-nav product-gallery-nav--next"
+              onClick={() => goToImage(1)}
+              aria-label="Следующее фото"
+            >
+              ›
+            </button>
+            <div className="product-gallery-dots" aria-label="Фото товара">
+              {galleryItems.map((item, index) => (
+                <button
+                  key={item.filename}
+                  type="button"
+                  className={index === currentImageIndex ? 'is-active' : ''}
+                  onClick={() => setCurrentImageIndex(index)}
+                  aria-label={`Показать фото ${index + 1}`}
+                  aria-current={index === currentImageIndex ? 'true' : undefined}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+
+      <div className="product-detail-content">
+        {hasDescription && <p className="product-description">{product.description}</p>}
+
+        {selectedCategoryNames.length > 0 && (
+          <div className="product-category-chips" aria-label="Категории товара">
+            {selectedCategoryNames.map((name) => (
+              <span key={name} className="product-category-chip">{name}</span>
+            ))}
+          </div>
+        )}
+
+        {product.sizes && <p className="product-detail-sizes"><strong>Размеры:</strong> {product.sizes}</p>}
+        <p className="product-price">{product.price} ₽</p>
+        {product.out_of_stock && <p className="product-out-of-stock-text">Нет в наличии</p>}
+
+        <button type="button" className="buy-btn" onClick={handleContact}>
+          Купить
+        </button>
+      </div>
     </Modal>
   );
 }

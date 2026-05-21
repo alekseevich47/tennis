@@ -1,69 +1,167 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useId, useMemo, useState } from 'react';
 import { useProducts } from '../../hooks/useProducts';
+import { useProductCategories } from '../../hooks/useProductCategories';
 import { isModerator } from '../../services/auth';
-import {
-  createProduct,
-  updateProduct,
-  deleteProduct
-} from '../../services/catalog';
+import { softDeleteProduct, updateProduct } from '../../services/catalog';
+import { useProductUpload } from '../../components/ProductUploadProvider';
 import Spinner from '../../components/ui/Spinner';
 import EmptyState from '../../components/ui/EmptyState';
 import ProductCard from './ProductCard';
 import ProductForm from './ProductForm';
 import ProductDetail from './ProductDetail';
+import FullscreenImageViewer from '../feed/FullscreenImageViewer';
 import { error } from '../../lib/log';
 import './Shop.css';
 
 function ShopPage() {
-  const { data: products, isLoading, mutate } = useProducts();
+  const categoryButtonId = useId();
+  const [selectedCategoryId, setSelectedCategoryId] = useState('');
+  const { data: products, isLoading, mutate } = useProducts({
+    categoryId: selectedCategoryId || undefined
+  });
+  const { data: categories = [] } = useProductCategories();
   const moderator = isModerator();
+  const { startUpload } = useProductUpload();
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
+  const [deletedProductIds, setDeletedProductIds] = useState([]);
+  const [fullscreenMedia, setFullscreenMedia] = useState(null);
+  const [hiddenMediaKey, setHiddenMediaKey] = useState(null);
+
+  const visibleProducts = useMemo(() => {
+    if (!products) return [];
+    if (moderator) return products;
+    return products.filter(
+      (product) => !product.is_deleted && !deletedProductIds.includes(product.id)
+    );
+  }, [products, moderator, deletedProductIds]);
+
+  const selectedCategoryName = useMemo(() => {
+    if (!selectedCategoryId) return 'Все категории';
+    return categories.find((category) => category.id === selectedCategoryId)?.name || 'Категория';
+  }, [categories, selectedCategoryId]);
 
   const handleCreate = useCallback(
-    async (data) => {
-      try {
-        await createProduct(data);
-        setShowAddModal(false);
-        mutate();
-      } catch (err) {
-        error('create product:', err);
-      }
+    (data) => {
+      setShowAddModal(false);
+      startUpload(data);
     },
-    [mutate]
+    [startUpload]
   );
 
   const handleEdit = useCallback(
-    async (data) => {
+    (data) => {
       if (!selectedProduct) return;
-      try {
-        await updateProduct(selectedProduct.id, data);
-        setShowEditModal(false);
-        setSelectedProduct(null);
-        mutate();
-      } catch (err) {
-        error('update product:', err);
-      }
+      setShowEditModal(false);
+      setSelectedProduct(null);
+      startUpload(data, selectedProduct.id);
     },
-    [selectedProduct, mutate]
+    [selectedProduct, startUpload]
   );
 
-  const handleDelete = useCallback(async () => {
-    if (!selectedProduct) return;
+  const handleDelete = useCallback(async (productId) => {
+    if (!productId) return;
+    setDeletedProductIds((prev) =>
+      prev.includes(productId) ? prev : [...prev, productId]
+    );
     try {
-      await deleteProduct(selectedProduct.id);
-      setSelectedProduct(null);
-      mutate();
+      await softDeleteProduct(productId);
+      mutate(
+        (curr = []) =>
+          curr.map((product) =>
+            product.id === productId ? { ...product, is_deleted: true } : product
+          ),
+        false
+      );
     } catch (err) {
-      error('delete product:', err);
+      error('soft delete product:', err);
     }
-  }, [selectedProduct, mutate]);
+  }, [mutate]);
+
+  const handleRestore = useCallback(async (productId) => {
+    setDeletedProductIds((prev) => prev.filter((id) => id !== productId));
+    try {
+      await updateProduct(productId, { is_deleted: false });
+      mutate(
+        (curr = []) =>
+          curr.map((product) =>
+            product.id === productId ? { ...product, is_deleted: false } : product
+          ),
+        false
+      );
+    } catch (err) {
+      error('restore product:', err);
+    }
+  }, [mutate]);
+
+  const handleOpenFullscreen = useCallback((items, index = 0, originRect = null, originKey = null) => {
+    setHiddenMediaKey(null);
+    setFullscreenMedia({ items, index, originRect, originKey });
+  }, []);
+
+  const handleCloseFullscreen = useCallback(() => {
+    setFullscreenMedia(null);
+    setHiddenMediaKey(null);
+  }, []);
+
+  const handleFullscreenCloseStart = useCallback((originKey) => {
+    setHiddenMediaKey(originKey || null);
+  }, []);
 
   return (
     <section className="shop" aria-label="Магазин секции">
       <div className="shop-header-bar">
+        <div className="shop-category-filter">
+          <button
+            id={categoryButtonId}
+            type="button"
+            className="product-category-trigger"
+            onClick={() => setIsCategoryMenuOpen((value) => !value)}
+            aria-haspopup="listbox"
+            aria-expanded={isCategoryMenuOpen}
+          >
+            {selectedCategoryName}
+          </button>
+          {isCategoryMenuOpen && (
+            <div
+              className="product-category-menu"
+              role="listbox"
+              aria-labelledby={categoryButtonId}
+            >
+              <button
+                type="button"
+                className="product-category-option"
+                role="option"
+                aria-selected={!selectedCategoryId}
+                onClick={() => {
+                  setSelectedCategoryId('');
+                  setIsCategoryMenuOpen(false);
+                }}
+              >
+                Все категории
+              </button>
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  type="button"
+                  className="product-category-option"
+                  role="option"
+                  aria-selected={selectedCategoryId === category.id}
+                  onClick={() => {
+                    setSelectedCategoryId(category.id);
+                    setIsCategoryMenuOpen(false);
+                  }}
+                >
+                  {category.name}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
         {moderator && (
           <button
             type="button"
@@ -78,17 +176,27 @@ function ShopPage() {
 
       {isLoading ? (
         <Spinner label="Загрузка товаров..." />
-      ) : !products || products.length === 0 ? (
+      ) : visibleProducts.length === 0 ? (
         <EmptyState title="Нет товаров" description="Скоро здесь появятся первые позиции." />
       ) : (
         <div className="products-grid">
-          {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onOpen={setSelectedProduct}
-            />
-          ))}
+          {visibleProducts.map((product) => {
+            const isSoftDeleted =
+              deletedProductIds.includes(product.id) || product.is_deleted === true;
+            return (
+              <ProductCard
+                key={product.id}
+                product={product}
+                isSoftDeleted={isSoftDeleted}
+                moderator={moderator}
+                hiddenMediaKey={hiddenMediaKey}
+                onOpen={setSelectedProduct}
+                onDelete={handleDelete}
+                onRestore={handleRestore}
+                onOpenFullscreen={handleOpenFullscreen}
+              />
+            );
+          })}
         </div>
       )}
 
@@ -104,7 +212,8 @@ function ShopPage() {
         moderator={moderator}
         onClose={() => setSelectedProduct(null)}
         onEdit={() => setShowEditModal(true)}
-        onDelete={handleDelete}
+        onDelete={() => handleDelete(selectedProduct?.id)}
+        onOpenFullscreen={handleOpenFullscreen}
       />
 
       <ProductForm
@@ -113,6 +222,17 @@ function ShopPage() {
         onClose={() => setShowEditModal(false)}
         onSubmit={handleEdit}
       />
+
+      {fullscreenMedia && (
+        <FullscreenImageViewer
+          items={fullscreenMedia.items}
+          initialIndex={fullscreenMedia.index}
+          originRect={fullscreenMedia.originRect}
+          originKey={fullscreenMedia.originKey}
+          onCloseStart={handleFullscreenCloseStart}
+          onClose={handleCloseFullscreen}
+        />
+      )}
     </section>
   );
 }

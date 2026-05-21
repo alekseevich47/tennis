@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-height: 0;
   box-sizing: border-box;
 }
 
@@ -92,7 +93,8 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  flex: 1;
+  flex: 1 1 0;
+  min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
@@ -182,12 +184,23 @@
   align-items: center;
 }
 
+.card-status-badge,
 .card-slots-counter,
 .card-slots-badge-full {
   font-size: 12px;
   font-weight: 600;
   padding: 3px 8px;
   border-radius: 8px;
+}
+
+.card-status-badge--open {
+  color: #2b8a3e;
+  background: #ebfbee;
+}
+
+.card-status-badge--closed {
+  color: #868e96;
+  background: #e9ecef;
 }
 
 .card-slots-counter {
@@ -198,11 +211,6 @@
 .card-slots-badge-full {
   color: #e63946;
   background: #fff0f1;
-}
-
-.card-slots-counter.no-limit-label {
-  color: #2b8a3e;
-  background: #ebfbee;
 }
 
 .card-buttons-wrapper {
@@ -325,6 +333,7 @@
 }
 
 .training-row-card--deleted .card-main-info-col,
+.training-row-card--deleted .card-status-badge,
 .training-row-card--deleted .card-slots-counter,
 .training-row-card--deleted .card-slots-badge-full {
   opacity: 0.48;
@@ -385,6 +394,14 @@
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+}
+
+.detail-booking-status-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin-top: 16px;
 }
 
 .no-players-text {
