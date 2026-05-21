@@ -19,6 +19,8 @@ const INITIAL = {
   out_of_stock: false
 };
 
+const MAX_PRODUCT_IMAGES = 5;
+
 /**
  * @param {{
  *   isOpen: boolean,
@@ -70,6 +72,10 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
   const previewItems = useMemo(
     () => [...existingPreviewItems, ...newPreviewItems],
     [existingPreviewItems, newPreviewItems]
+  );
+  const remainingImageSlots = Math.max(
+    0,
+    MAX_PRODUCT_IMAGES - keptExistingImageNames.length - imageFiles.length
   );
   const categoryLabel = useMemo(() => {
     if (form.categories.length === 0) return 'Категории не выбраны';
@@ -129,8 +135,9 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
     data.append('price', String(parseFloat(form.price) || 0));
     data.append('sizes', form.sizes.trim());
     data.append('out_of_stock', String(form.out_of_stock));
+    const imageFieldName = product ? 'images+' : 'images';
     imagesToDelete.forEach((filename) => data.append('images-', filename));
-    imageFiles.forEach((img) => data.append('images', img));
+    imageFiles.forEach((img) => data.append(imageFieldName, img));
     form.categories.forEach((categoryId) => data.append('categories', categoryId));
     onSubmit(data);
     onClose();
@@ -267,11 +274,10 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
               type="file"
               multiple
               accept="image/*"
+              disabled={remainingImageSlots === 0}
               onChange={(e) => {
-                setImageFiles((current) => [
-                  ...current,
-                  ...readSelectedFiles(e.target.files)
-                ]);
+                const incoming = readSelectedFiles(e.target.files, remainingImageSlots);
+                setImageFiles((current) => [...current, ...incoming].slice(0, MAX_PRODUCT_IMAGES));
                 e.currentTarget.value = '';
               }}
               className="visually-hidden"
