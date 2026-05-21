@@ -841,6 +841,68 @@
     "system": false
   },
   {
+    "id": "pbc_3283744169",
+    "listRule": "",
+    "viewRule": "",
+    "createRule": "@request.auth.id != \"\" && @request.auth.role = \"moderator\"",
+    "updateRule": "@request.auth.id != \"\" && @request.auth.role = \"moderator\"",
+    "deleteRule": "@request.auth.id != \"\" && @request.auth.role = \"moderator\"",
+    "name": "product_categories",
+    "type": "base",
+    "fields": [
+      {
+        "autogeneratePattern": "[a-z0-9]{15}",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 15,
+        "min": 15,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text1579384326",
+        "max": 0,
+        "min": 0,
+        "name": "name",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": true,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "autodate2990389176",
+        "name": "created",
+        "onCreate": true,
+        "onUpdate": false,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      },
+      {
+        "hidden": false,
+        "id": "autodate3332085495",
+        "name": "updated",
+        "onCreate": true,
+        "onUpdate": true,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      }
+    ],
+    "indexes": [],
+    "system": false
+  },
+  {
     "id": "pbc_4092854851",
     "listRule": "",
     "viewRule": "",
@@ -931,6 +993,37 @@
         "system": false,
         "thumbs": [],
         "type": "file"
+      },
+      {
+        "cascadeDelete": false,
+        "collectionId": "pbc_3283744169",
+        "hidden": false,
+        "id": "relation989021800",
+        "maxSelect": 999,
+        "minSelect": 0,
+        "name": "categories",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "relation"
+      },
+      {
+        "hidden": false,
+        "id": "bool1833873525",
+        "name": "out_of_stock",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "hidden": false,
+        "id": "bool4245145851",
+        "name": "is_deleted",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
       },
       {
         "hidden": false,
