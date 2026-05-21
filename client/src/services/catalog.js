@@ -99,7 +99,7 @@ export async function listProductCategories({ signal } = {}) {
 export async function listProducts({ categoryId, signal } = {}) {
   try {
     const filter = categoryId
-      ? pb.filter('is_deleted = false && categories ?= {:categoryId}', { categoryId })
+      ? pb.filter('is_deleted = false && categories.id ?= {:categoryId}', { categoryId })
       : 'is_deleted = false';
 
     return /** @type {ProductRecord[]} */ (await pb.collection('products').getFullList({

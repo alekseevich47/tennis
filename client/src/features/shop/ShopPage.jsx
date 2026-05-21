@@ -1,4 +1,5 @@
-import React, { useCallback, useId, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import clsx from 'clsx';
 import { useProducts } from '../../hooks/useProducts';
 import { useProductCategories } from '../../hooks/useProductCategories';
 import { isModerator } from '../../services/auth';
@@ -13,9 +14,13 @@ import FullscreenImageViewer from '../feed/FullscreenImageViewer';
 import { error } from '../../lib/log';
 import './Shop.css';
 
+const SCROLL_HIDE_DEBOUNCE_MS = 300;
+
 function ShopPage() {
   const categoryButtonId = useId();
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { data: products, isLoading, mutate } = useProducts({
     categoryId: selectedCategoryId || undefined
   });
@@ -30,14 +35,47 @@ function ShopPage() {
   const [deletedProductIds, setDeletedProductIds] = useState([]);
   const [fullscreenMedia, setFullscreenMedia] = useState(null);
   const [hiddenMediaKey, setHiddenMediaKey] = useState(null);
+  const [isButtonVisible, setIsButtonVisible] = useState(true);
+
+  const containerRef = useRef(null);
+  const scrollTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!moderator || !container) return undefined;
+
+    const handleScroll = () => {
+      setIsButtonVisible(false);
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+      scrollTimeoutRef.current = window.setTimeout(() => {
+        setIsButtonVisible(true);
+      }, SCROLL_HIDE_DEBOUNCE_MS);
+    };
+
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+        scrollTimeoutRef.current = null;
+      }
+    };
+  }, [moderator]);
 
   const visibleProducts = useMemo(() => {
     if (!products) return [];
-    if (moderator) return products;
-    return products.filter(
+    const baseProducts = moderator ? products : products.filter(
       (product) => !product.is_deleted && !deletedProductIds.includes(product.id)
     );
-  }, [products, moderator, deletedProductIds]);
+    const normalizedSearchQuery = searchQuery.trim().toLowerCase();
+    if (!normalizedSearchQuery) return baseProducts;
+
+    return baseProducts.filter((product) => {
+      const title = String(product.title || '').toLowerCase();
+      const id = String(product.id || '').toLowerCase();
+      return title.includes(normalizedSearchQuery) || id.includes(normalizedSearchQuery);
+    });
+  }, [products, moderator, deletedProductIds, searchQuery]);
 
   const selectedCategoryName = useMemo(() => {
     if (!selectedCategoryId) return 'Все категории';
@@ -111,8 +149,27 @@ function ShopPage() {
     setHiddenMediaKey(originKey || null);
   }, []);
 
+  const handleToggleSearch = useCallback(() => {
+    if (isSearchOpen) {
+      setSearchQuery('');
+    }
+    setIsSearchOpen((value) => !value);
+  }, [isSearchOpen]);
+
   return (
-    <section className="shop" aria-label="Магазин секции">
+    <section className="shop" ref={containerRef} aria-label="Магазин секции">
+      {moderator && (
+        <div className="floating-btn-wrapper">
+          <button
+            type="button"
+            className={clsx('floating-add-btn', isButtonVisible ? 'visible' : 'hidden')}
+            onClick={() => setShowAddModal(true)}
+          >
+            Добавить
+          </button>
+        </div>
+      )}
+
       <div className="shop-header-bar">
         <div className="shop-category-filter">
           <button
@@ -162,15 +219,27 @@ function ShopPage() {
           )}
         </div>
 
-        {moderator && (
-          <button
-            type="button"
-            className="shop-add-btn"
-            onClick={() => setShowAddModal(true)}
-            aria-label="Добавить товар"
-          >
-            <span aria-hidden="true">+</span> Новый товар
-          </button>
+        <button
+          type="button"
+          className="shop-search-btn"
+          onClick={handleToggleSearch}
+          aria-label={isSearchOpen ? 'Скрыть поиск товаров' : 'Показать поиск товаров'}
+          aria-controls="shop-search-input"
+          aria-expanded={isSearchOpen}
+        >
+          <span aria-hidden="true">🔍</span>
+        </button>
+
+        {isSearchOpen && (
+          <input
+            id="shop-search-input"
+            className="shop-search-input"
+            type="search"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            placeholder="Поиск по названию или ID"
+            autoFocus
+          />
         )}
       </div>
 
