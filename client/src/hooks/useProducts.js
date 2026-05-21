@@ -2,6 +2,9 @@
 import useSWR from 'swr';
 import { listProducts } from '../services/catalog';
 
-export function useProducts() {
-  return useSWR(['products'], () => listProducts());
+/** @param {{ categoryId?: string }} [options] */
+export function useProducts({ categoryId } = {}) {
+  return useSWR(['products', categoryId], ([, selectedCategoryId]) =>
+    listProducts({ categoryId: selectedCategoryId })
+  );
 }

@@ -1,6 +1,7 @@
 // @ts-check
 import pb from './pb';
 import { error } from '../lib/log';
+import { PB_URL } from '../config';
 
 /**
  * @typedef {Object} ProductRecord
@@ -12,7 +13,18 @@ import { error } from '../lib/log';
  * @property {number} [price]
  * @property {string} [sizes]
  * @property {string[]} [images]
+ * @property {string[]} [categories]
+ * @property {boolean} [out_of_stock]
+ * @property {boolean} [is_deleted]
  * @property {string} created
+ */
+
+/**
+ * @typedef {Object} ProductCategoryRecord
+ * @property {string} id
+ * @property {string} collectionId
+ * @property {string} collectionName
+ * @property {string} name
  */
 
 /**
@@ -30,6 +42,8 @@ import { error } from '../lib/log';
  * @property {number} [wins]
  * @property {number} [losses]
  * @property {string | string[]} [avatar]
+ * @property {string} [role]
+ * @property {string | number} [max_id]
  */
 
 /**
@@ -67,10 +81,30 @@ import { error } from '../lib/log';
 // --- ПРОДУКТЫ ---------------------------------------------------------------
 
 /** @param {{ signal?: AbortSignal }} [options] */
-export async function listProducts({ signal } = {}) {
+export async function listProductCategories({ signal } = {}) {
   try {
+    return /** @type {ProductCategoryRecord[]} */ (await pb.collection('product_categories').getFullList({
+      sort: 'name',
+      requestKey: null,
+      signal
+    }));
+  } catch (err) {
+    if (err && /** @type {Error} */ (err).name === 'AbortError') return [];
+    error('Ошибка получения категорий товаров:', err);
+    throw err;
+  }
+}
+
+/** @param {{ categoryId?: string, signal?: AbortSignal }} [options] */
+export async function listProducts({ categoryId, signal } = {}) {
+  try {
+    const filter = categoryId
+      ? pb.filter('is_deleted = false && categories ?= {:categoryId}', { categoryId })
+      : 'is_deleted = false';
+
     return /** @type {ProductRecord[]} */ (await pb.collection('products').getFullList({
       sort: '-created',
+      filter,
       requestKey: null,
       signal
     }));
@@ -87,6 +121,74 @@ export async function createProduct(payload) {
 }
 
 /**
+ * @param {FormData} payload
+ * @param {{ signal?: AbortSignal, onProgress?: (percent: number) => void }} [options]
+ * @returns {Promise<ProductRecord>}
+ */
+export function createProductWithProgress(payload, { signal, onProgress } = {}) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    let settled = false;
+
+    const rejectAbort = () => {
+      if (settled) return;
+      settled = true;
+      reject(new DOMException('Загрузка товара отменена', 'AbortError'));
+    };
+
+    if (signal?.aborted) {
+      rejectAbort();
+      return;
+    }
+
+    xhr.open('POST', `${PB_URL}/api/collections/products/records`);
+    if (pb.authStore.token) {
+      xhr.setRequestHeader('Authorization', pb.authStore.token);
+    }
+
+    xhr.upload.onprogress = (event) => {
+      if (!event.lengthComputable || !onProgress) return;
+      onProgress(Math.min(98, Math.round((event.loaded / event.total) * 100)));
+    };
+
+    xhr.onload = () => {
+      if (settled) return;
+      settled = true;
+      signal?.removeEventListener('abort', abortUpload);
+      if (xhr.status >= 200 && xhr.status < 300) {
+        onProgress?.(100);
+        try {
+          resolve(/** @type {ProductRecord} */ (JSON.parse(xhr.responseText)));
+        } catch (parseErr) {
+          reject(parseErr);
+        }
+        return;
+      }
+      reject(new Error(`Не удалось создать товар (${xhr.status})`));
+    };
+
+    xhr.onerror = () => {
+      if (settled) return;
+      settled = true;
+      signal?.removeEventListener('abort', abortUpload);
+      reject(new Error('Сеть прервала загрузку товара'));
+    };
+
+    xhr.onabort = () => {
+      signal?.removeEventListener('abort', abortUpload);
+      rejectAbort();
+    };
+
+    function abortUpload() {
+      xhr.abort();
+    }
+
+    signal?.addEventListener('abort', abortUpload, { once: true });
+    xhr.send(payload);
+  });
+}
+
+/**
  * @param {string} productId
  * @param {FormData | Record<string, unknown>} payload
  */
@@ -95,17 +197,23 @@ export async function updateProduct(productId, payload) {
 }
 
 /** @param {string} productId */
+export async function softDeleteProduct(productId) {
+  return pb.collection('products').update(productId, { is_deleted: true });
+}
+
+/** @param {string} productId */
 export async function deleteProduct(productId) {
-  return pb.collection('products').delete(productId);
+  return softDeleteProduct(productId);
 }
 
 // --- ИГРОКИ -----------------------------------------------------------------
 
-/** @param {{ signal?: AbortSignal }} [options] */
-export async function listPlayers({ signal } = {}) {
+/** @param {{ signal?: AbortSignal, filter?: string }} [options] */
+export async function listPlayers({ signal, filter } = {}) {
   try {
     return /** @type {PlayerRecord[]} */ (await pb.collection('users').getFullList({
       sort: '-rating_points',
+      filter: filter || '',
       requestKey: null,
       signal
     }));

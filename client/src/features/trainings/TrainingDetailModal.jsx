@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import clsx from 'clsx';
 import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
@@ -41,7 +42,9 @@ function TrainingDetailModal({
   const bookedUserIds = training.booked_users || [];
   const hasLimit = training.max_slots !== null && training.max_slots !== undefined && training.max_slots > 0;
   const isFull = hasLimit && bookedUserIds.length >= (training.max_slots || 0);
-  const isBookingLocked = training.is_closed === true || new Date(training.date) <= new Date();
+  const isClosed = training.is_closed === true;
+  const isStarted = new Date(training.date) <= new Date();
+  const effectivelyClosed = isClosed || isStarted;
 
   const handleKick = async (userId) => {
     const ok = await confirm({
@@ -138,6 +141,26 @@ function TrainingDetailModal({
         )}
 
         <div className="detail-participants-section">
+          <div className="detail-booking-status-row">
+            {!isFull && (
+              <span
+                className={clsx(
+                  'card-status-badge',
+                  effectivelyClosed ? 'card-status-badge--closed' : 'card-status-badge--open'
+                )}
+              >
+                {effectivelyClosed ? 'Запись закрыта' : 'Запись открыта'}
+              </span>
+            )}
+            {hasLimit && (
+              <>
+                <span className="card-slots-counter">
+                  {bookedUserIds.length} / {training.max_slots} мест
+                </span>
+                {isFull && <span className="card-slots-badge-full">Мест нет</span>}
+              </>
+            )}
+          </div>
           <h3>
             Записанные игроки ({bookedUserIds.length})
             {userIsModerator && (
@@ -146,14 +169,13 @@ function TrainingDetailModal({
                 variant="ghost"
                 size="sm"
                 className="action-circle-btn btn-add-plus"
-                disabled={isBookingLocked || isFull}
+                disabled={isFull}
                 onClick={() => setIsUserPickerOpen(true)}
               >
                 <span aria-hidden="true">+</span>
               </IconButton>
             )}
           </h3>
-          {isBookingLocked && <p className="no-players-text">Запись закрыта</p>}
           <div className="participants-list-wrapper">
             {!training.expand?.booked_users || training.expand.booked_users.length === 0 ? (
               <p className="no-players-text">На эту тренировку пока никто не записался.</p>
