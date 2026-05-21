@@ -217,7 +217,7 @@ function ProductDetail({
                 className="delete-post-btn"
                 onClick={handleDelete}
               >
-                <span aria-hidden="true">✕</span>
+                <span aria-hidden="true">🗑</span>
               </IconButton>
             </>
           )}
