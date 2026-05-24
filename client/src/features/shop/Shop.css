@@ -564,6 +564,11 @@ label.product-category-option {
   font-weight: 800;
 }
 
+.form-error {
+  color: #ff3b30;
+  font-size: 12px;
+}
+
 .product-form input[type="text"],
 .product-form input[type="number"],
 .product-form textarea {

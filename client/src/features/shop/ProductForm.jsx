@@ -46,6 +46,7 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
   const [imagesToDelete, setImagesToDelete] = useState(/** @type {string[]} */ ([]));
   const [newPreviewItems, setNewPreviewItems] = useState([]);
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
+  const [categoryError, setCategoryError] = useState(false);
 
   const existingImageNames = useMemo(() => mediaNames(product?.images), [product?.images]);
   const keptExistingImageNames = useMemo(
@@ -113,12 +114,14 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
     setImageFiles([]);
     setImagesToDelete([]);
     setIsCategoryMenuOpen(false);
+    setCategoryError(false);
   }, [isOpen, product]);
 
   const updateField = (key) => (value) =>
     setForm((prev) => ({ ...prev, [key]: value }));
 
   const toggleCategory = (categoryId) => {
+    setCategoryError(false);
     setForm((prev) => ({
       ...prev,
       categories: prev.categories.includes(categoryId)
@@ -139,6 +142,12 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
     imagesToDelete.forEach((filename) => data.append('images-', filename));
     imageFiles.forEach((img) => data.append(imageFieldName, img));
     form.categories.forEach((categoryId) => data.append('categories', categoryId));
+    if (form.categories.length === 0) {
+      setCategoryError(true);
+      setIsCategoryMenuOpen(true);
+      return;
+    }
+    setCategoryError(false);
     onSubmit(data);
     onClose();
   };
@@ -192,7 +201,7 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
           />
         </div>
 
-        <div className="form-group">
+        <div className="form-group" aria-invalid={categoryError}>
           <span className="product-form-label">Категории</span>
           <div className="product-category-multiselect">
             <button
@@ -228,6 +237,9 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
               </div>
             )}
           </div>
+          {categoryError && (
+            <span className="form-error" role="alert">Выберите хотя бы одну категорию</span>
+          )}
         </div>
 
         <label className="product-stock-toggle">
