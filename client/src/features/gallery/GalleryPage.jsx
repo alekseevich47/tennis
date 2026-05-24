@@ -366,7 +366,8 @@ function GalleryPage({ user }) {
       title: 'Удалить медиа?',
       message: 'Файл будет удалён из галереи.',
       confirmText: 'Удалить',
-      cancelText: 'Отмена'
+      cancelText: 'Отмена',
+      overlayClassName: 'gallery-fullscreen-confirm-overlay'
     });
     if (!ok) return;
 

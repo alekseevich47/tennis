@@ -296,6 +296,10 @@ button.gallery-item-like:hover:not(:disabled) {
   z-index: 3200;
 }
 
+.gallery-fullscreen-confirm-overlay {
+  z-index: 3300;
+}
+
 .gallery .visually-hidden {
   position: absolute;
   width: 1px;
