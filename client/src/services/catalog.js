@@ -504,9 +504,34 @@ export async function addGalleryImage(payload) {
   return pb.collection('gallery').create(data);
 }
 
+/**
+ * @param {'gallery_likes' | 'gallery_comments'} collectionName
+ * @param {string} mediaId
+ */
+async function deleteGalleryRelatedRecords(collectionName, mediaId) {
+  const records = await pb.collection(collectionName).getFullList({
+    filter: pb.filter('media_id = {:mediaId}', { mediaId }),
+    requestKey: null
+  });
+
+  await Promise.all(records.map((record) => pb.collection(collectionName).delete(record.id)));
+}
+
 /** @param {string} imageId */
 export async function deleteGalleryImage(imageId) {
-  return pb.collection('gallery').delete(imageId);
+  const relatedDeleteResults = await Promise.allSettled([
+    deleteGalleryRelatedRecords('gallery_likes', imageId),
+    deleteGalleryRelatedRecords('gallery_comments', imageId)
+  ]);
+
+  try {
+    return await pb.collection('gallery').delete(imageId);
+  } catch (err) {
+    relatedDeleteResults
+      .filter((result) => result.status === 'rejected')
+      .forEach((result) => error('delete gallery related records:', result.reason));
+    throw err;
+  }
 }
 
 /** @param {string[]} ids */
@@ -598,7 +623,7 @@ export async function createGalleryComment({ mediaId, authorId, text }) {
 
 /** @param {string} commentId */
 export async function deleteGalleryComment(commentId) {
-  return pb.collection('gallery_comments').update(commentId, { is_deleted: true });
+  return pb.collection('gallery_comments').delete(commentId);
 }
 
 /**
