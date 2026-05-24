@@ -1,0 +1,58 @@
+.gallery-upload-progress {
+  position: fixed;
+  top: calc(56px + 10px);
+  left: 12px;
+  right: 12px;
+  z-index: 100;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.14);
+  backdrop-filter: blur(10px);
+}
+
+.gallery-upload-progress-text {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #1f2937;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.gallery-upload-progress-text button {
+  border: none;
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: #fee2e2;
+  color: #b91c1c;
+  font: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.gallery-upload-progress-text button:hover {
+  background: #fecaca;
+}
+
+.gallery-upload-progress-text button:focus-visible {
+  outline: 2px solid #ef4444;
+  outline-offset: 2px;
+}
+
+.gallery-upload-progress-track {
+  height: 4px;
+  margin-top: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e5e7eb;
+}
+
+.gallery-upload-progress-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #0095ff, #34c759);
+  transition: width 0.2s ease;
+}

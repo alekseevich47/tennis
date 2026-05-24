@@ -74,8 +74,31 @@ import { PB_URL } from '../config';
  * @property {string} id
  * @property {string} collectionId
  * @property {string} collectionName
- * @property {string | string[]} image
+ * @property {string | string[]} [image]
+ * @property {string | string[]} [video]
+ * @property {number} [aspect_ratio]
+ * @property {string} [media_type]
  * @property {string} created
+ */
+
+/**
+ * @typedef {Object} GalleryLikeRecord
+ * @property {string} id
+ * @property {string} media_id
+ * @property {string} user
+ * @property {string} created
+ * @property {Record<string, unknown>} [expand]
+ */
+
+/**
+ * @typedef {Object} GalleryCommentRecord
+ * @property {string} id
+ * @property {string} media_id
+ * @property {string} author
+ * @property {string} text
+ * @property {boolean} [is_deleted]
+ * @property {string} created
+ * @property {Record<string, unknown>} [expand]
  */
 
 // --- ПРОДУКТЫ ---------------------------------------------------------------
@@ -388,14 +411,187 @@ export async function listGallery({ signal } = {}) {
   }
 }
 
-/** @param {File} file */
-export async function addGalleryImage(file) {
+/**
+ * @param {{ file: File, aspect_ratio?: number, media_type?: string }} item
+ * @returns {FormData}
+ */
+function createGalleryFormData(item) {
   const data = new FormData();
-  data.append('image', file);
+  const mediaType = item.media_type || (item.file.type.startsWith('video/') ? 'video' : 'image');
+  const fieldName = mediaType === 'video' ? 'video' : 'image';
+
+  data.append(fieldName, item.file);
+  data.append('media_type', mediaType);
+  if (typeof item.aspect_ratio === 'number' && Number.isFinite(item.aspect_ratio)) {
+    data.append('aspect_ratio', String(item.aspect_ratio));
+  }
+
+  return data;
+}
+
+/**
+ * @param {FormData} payload
+ * @param {{ signal?: AbortSignal, onProgress?: (percent: number) => void }} [options]
+ * @returns {Promise<GalleryRecord>}
+ */
+export function createGalleryItemWithProgress(payload, { signal, onProgress } = {}) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    let settled = false;
+
+    const rejectAbort = () => {
+      if (settled) return;
+      settled = true;
+      reject(new DOMException('Загрузка галереи отменена', 'AbortError'));
+    };
+
+    if (signal?.aborted) {
+      rejectAbort();
+      return;
+    }
+
+    xhr.open('POST', `${PB_URL}/api/collections/gallery/records`);
+    if (pb.authStore.token) {
+      xhr.setRequestHeader('Authorization', pb.authStore.token);
+    }
+
+    xhr.upload.onprogress = (event) => {
+      if (!event.lengthComputable || !onProgress) return;
+      onProgress(Math.min(98, Math.round((event.loaded / event.total) * 100)));
+    };
+
+    xhr.onload = () => {
+      if (settled) return;
+      settled = true;
+      signal?.removeEventListener('abort', abortUpload);
+      if (xhr.status >= 200 && xhr.status < 300) {
+        onProgress?.(100);
+        try {
+          resolve(/** @type {GalleryRecord} */ (JSON.parse(xhr.responseText)));
+        } catch (parseErr) {
+          reject(parseErr);
+        }
+        return;
+      }
+      reject(new Error(`Не удалось создать элемент галереи (${xhr.status})`));
+    };
+
+    xhr.onerror = () => {
+      if (settled) return;
+      settled = true;
+      signal?.removeEventListener('abort', abortUpload);
+      reject(new Error('Сеть прервала загрузку галереи'));
+    };
+
+    xhr.onabort = () => {
+      signal?.removeEventListener('abort', abortUpload);
+      rejectAbort();
+    };
+
+    function abortUpload() {
+      xhr.abort();
+    }
+
+    signal?.addEventListener('abort', abortUpload, { once: true });
+    xhr.send(payload);
+  });
+}
+
+/** @param {File | { file: File, aspect_ratio?: number, media_type?: string }} payload */
+export async function addGalleryImage(payload) {
+  const item = payload && 'file' in payload ? payload : { file: payload };
+  const data = createGalleryFormData(item);
   return pb.collection('gallery').create(data);
 }
 
 /** @param {string} imageId */
 export async function deleteGalleryImage(imageId) {
   return pb.collection('gallery').delete(imageId);
+}
+
+/**
+ * @param {string} mediaId
+ * @param {{ signal?: AbortSignal }} [options]
+ * @returns {Promise<GalleryLikeRecord[]>}
+ */
+export async function listGalleryLikes(mediaId, { signal } = {}) {
+  if (!mediaId) return [];
+
+  try {
+    return /** @type {GalleryLikeRecord[]} */ (await pb.collection('gallery_likes').getFullList({
+      filter: pb.filter('media_id = {:mediaId}', { mediaId }),
+      expand: 'user',
+      requestKey: null,
+      signal
+    }));
+  } catch (err) {
+    if (err && /** @type {Error} */ (err).name === 'AbortError') return [];
+    error('Ошибка загрузки лайков галереи:', err);
+    throw err;
+  }
+}
+
+/**
+ * @param {string} mediaId
+ * @param {string} userId
+ * @returns {Promise<GalleryLikeRecord | null>}
+ */
+export async function toggleGalleryLike(mediaId, userId) {
+  if (!mediaId || !userId) return null;
+
+  const existing = /** @type {GalleryLikeRecord[]} */ (await pb.collection('gallery_likes').getFullList({
+    filter: pb.filter('media_id = {:mediaId} && user = {:userId}', { mediaId, userId }),
+    requestKey: null
+  }));
+
+  if (existing[0]) {
+    await pb.collection('gallery_likes').delete(existing[0].id);
+    return null;
+  }
+
+  return /** @type {GalleryLikeRecord} */ (await pb.collection('gallery_likes').create({
+    media_id: mediaId,
+    user: userId
+  }));
+}
+
+/**
+ * @param {string} mediaId
+ * @param {{ signal?: AbortSignal }} [options]
+ * @returns {Promise<GalleryCommentRecord[]>}
+ */
+export async function listGalleryComments(mediaId, { signal } = {}) {
+  if (!mediaId) return [];
+
+  try {
+    return /** @type {GalleryCommentRecord[]} */ (await pb.collection('gallery_comments').getFullList({
+      filter: pb.filter('media_id = {:mediaId} && is_deleted = false', { mediaId }),
+      sort: 'created',
+      expand: 'author',
+      requestKey: null,
+      signal
+    }));
+  } catch (err) {
+    if (err && /** @type {Error} */ (err).name === 'AbortError') return [];
+    error('Ошибка загрузки комментариев галереи:', err);
+    throw err;
+  }
+}
+
+/**
+ * @param {{ mediaId: string, authorId: string, text: string }} params
+ */
+export async function createGalleryComment({ mediaId, authorId, text }) {
+  if (!authorId) throw new Error('Не авторизован: нельзя создать комментарий без author.id');
+
+  return pb.collection('gallery_comments').create({
+    media_id: mediaId,
+    author: authorId,
+    text
+  });
+}
+
+/** @param {string} commentId */
+export async function deleteGalleryComment(commentId) {
+  return pb.collection('gallery_comments').update(commentId, { is_deleted: true });
 }

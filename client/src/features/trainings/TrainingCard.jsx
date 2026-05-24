@@ -15,8 +15,6 @@ import { isModerator } from '../../services/auth';
  *   onBookUser?: (training: any) => void,
  *   onCancelBooking: (training: any) => void,
  *   onToggleClose?: (training: any) => void,
- *   onEdit?: (training: any) => void,
- *   onDelete: (trainingId: string) => void,
  *   onRestore?: (trainingId: string) => void
  * }} props
  */
@@ -29,8 +27,6 @@ function TrainingCard({
   onBookUser,
   onCancelBooking,
   onToggleClose,
-  onEdit,
-  onDelete,
   onRestore
 }) {
   const userIsModerator = isModerator();
@@ -50,13 +46,6 @@ function TrainingCard({
     },
     [onCancelBooking, training]
   );
-  const handleDelete = useCallback(
-    (e) => {
-      e.stopPropagation();
-      onDelete(training.id);
-    },
-    [onDelete, training.id]
-  );
   const handleRestore = useCallback(
     (e) => {
       e.stopPropagation();
@@ -71,14 +60,6 @@ function TrainingCard({
     },
     [onToggleClose, training]
   );
-  const handleEdit = useCallback(
-    (e) => {
-      e.stopPropagation();
-      onEdit?.(training);
-    },
-    [onEdit, training]
-  );
-
   const handleKeyDown = useCallback(
     (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
@@ -191,24 +172,6 @@ function TrainingCard({
                 onClick={handleToggleClose}
               >
                 <span aria-hidden="true">■</span>
-              </IconButton>
-              <IconButton
-                ariaLabel="Редактировать тренировку"
-                variant="ghost"
-                size="sm"
-                className="action-circle-btn btn-edit"
-                onClick={handleEdit}
-              >
-                <span aria-hidden="true">✏️</span>
-              </IconButton>
-              <IconButton
-                ariaLabel="Удалить тренировку"
-                variant="ghost"
-                size="sm"
-                className="action-circle-btn btn-delete-trash"
-                onClick={handleDelete}
-              >
-                <span aria-hidden="true">🗑️</span>
               </IconButton>
             </>
           )}
