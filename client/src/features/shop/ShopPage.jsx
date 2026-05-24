@@ -16,7 +16,12 @@ import './Shop.css';
 
 const SCROLL_HIDE_DEBOUNCE_MS = 300;
 
-function ShopPage() {
+/**
+ * @param {{
+ *   onDeletedIdsChange?: (ids: string[]) => void
+ * }} props
+ */
+function ShopPage({ onDeletedIdsChange } = {}) {
   const categoryButtonId = useId();
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -39,6 +44,10 @@ function ShopPage() {
 
   const containerRef = useRef(null);
   const scrollTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    onDeletedIdsChange?.(deletedProductIds);
+  }, [deletedProductIds, onDeletedIdsChange]);
 
   useEffect(() => {
     const container = containerRef.current;

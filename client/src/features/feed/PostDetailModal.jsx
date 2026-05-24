@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
+import Avatar from '../../components/ui/Avatar';
 import PostMedia from './PostMedia';
+import sectionAvatarUrl from '../../assets/sm-avatar.png';
 import { useComments } from '../../hooks/useComments';
 import { formatPostDate } from '../../lib/format';
 import {
@@ -12,7 +14,6 @@ import pb from '../../services/pb';
 import { error } from '../../lib/log';
 
 const SCROLL_INTO_VIEW_DELAY_MS = 200;
-const FOCUS_COMMENT_DELAY_MS = 150;
 
 /**
  * @param {{
@@ -70,8 +71,8 @@ function PostDetailModal({
   useEffect(() => {
     if (!isOpen || !focusComment) return undefined;
     const timer = window.setTimeout(() => {
-      document.getElementById('post-detail-comment-input')?.focus();
-    }, FOCUS_COMMENT_DELAY_MS);
+      commentsBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, SCROLL_INTO_VIEW_DELAY_MS);
     return () => clearTimeout(timer);
   }, [isOpen, focusComment, postId]);
 
@@ -212,7 +213,9 @@ function PostDetailModal({
       }
     >
       <div className="feed-card-header">
-        <div className="section-avatar" aria-hidden="true">🎾</div>
+        <div className="section-avatar" aria-hidden="true">
+          <img className="section-avatar__image" src={sectionAvatarUrl} alt="" decoding="async" />
+        </div>
         <div className="section-meta">
           <span className="section-title-name">Секция Миленьких</span>
           <span className="post-date">{formatPostDate(post.created)}</span>
@@ -296,18 +299,34 @@ function PostDetailModal({
             return (
               <div key={c.id} className="modal-comment-item">
                 <div className="comment-header-row">
-                  <span className="comment-author-name">
-                    {c.expand?.author?.full_name || 'Игрок секции'}
-                  </span>
+                  <div className="comment-author-meta">
+                    <Avatar user={c.expand?.author} size="sm" />
+                    <span className="comment-author-name">
+                      {c.expand?.author?.full_name || 'Игрок секции'}
+                    </span>
+                  </div>
                   <div className="comment-actions-btns">
                     {isOwner && editingId !== c.id && (
                       <IconButton
                         ariaLabel="Редактировать комментарий"
                         size="sm"
                         variant="ghost"
+                        className="post-comment-icon-button post-comment-icon-button--edit"
                         onClick={() => handleStartEdit(c)}
                       >
-                        <span aria-hidden="true">✏️</span>
+                        <svg
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          focusable="false"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.8"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M4 20h4.2L19.3 8.9a2 2 0 0 0 0-2.8l-1.4-1.4a2 2 0 0 0-2.8 0L4 15.8V20Z" />
+                          <path d="m13.7 6.1 4.2 4.2" />
+                        </svg>
                       </IconButton>
                     )}
                     {canDelete && (
@@ -315,9 +334,25 @@ function PostDetailModal({
                         ariaLabel="Удалить комментарий"
                         size="sm"
                         variant="danger"
+                        className="post-comment-icon-button post-comment-icon-button--delete"
                         onClick={() => handleSoftDelete(c.id)}
                       >
-                        <span aria-hidden="true">✕</span>
+                        <svg
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          focusable="false"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.8"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M4 7h16" />
+                          <path d="M10 11v6" />
+                          <path d="M14 11v6" />
+                          <path d="M6 7l1 13h10l1-13" />
+                          <path d="M9 7V4h6v3" />
+                        </svg>
                       </IconButton>
                     )}
                   </div>

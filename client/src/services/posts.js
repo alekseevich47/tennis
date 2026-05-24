@@ -32,6 +32,15 @@ import { PB_URL } from '../config';
  */
 
 /**
+ * @typedef {Object} PostLikeRecord
+ * @property {string} id
+ * @property {string} post
+ * @property {string} user
+ * @property {string} created
+ * @property {Record<string, unknown>} [expand]
+ */
+
+/**
  * @param {{ includeDeleted?: boolean, signal?: AbortSignal }} [options]
  * @returns {Promise<PostRecord[]>}
  */
@@ -70,6 +79,52 @@ export async function listCommentsForPost(postId, { signal } = {}) {
     error('Ошибка загрузки комментариев:', err);
     throw err;
   }
+}
+
+/**
+ * @param {string} postId
+ * @param {{ signal?: AbortSignal }} [options]
+ * @returns {Promise<PostLikeRecord[]>}
+ */
+export async function listPostLikes(postId, { signal } = {}) {
+  if (!postId) return [];
+
+  try {
+    return /** @type {PostLikeRecord[]} */ (await pb.collection('post_likes').getFullList({
+      filter: pb.filter('post = {:postId}', { postId }),
+      expand: 'user',
+      requestKey: null,
+      signal
+    }));
+  } catch (err) {
+    if (err && /** @type {Error} */ (err).name === 'AbortError') return [];
+    error('Ошибка загрузки лайков поста:', err);
+    throw err;
+  }
+}
+
+/**
+ * @param {string} postId
+ * @param {string} userId
+ * @returns {Promise<PostLikeRecord | null>}
+ */
+export async function togglePostLike(postId, userId) {
+  if (!postId || !userId) return null;
+
+  const existing = /** @type {PostLikeRecord[]} */ (await pb.collection('post_likes').getFullList({
+    filter: pb.filter('post = {:postId} && user = {:userId}', { postId, userId }),
+    requestKey: null
+  }));
+
+  if (existing[0]) {
+    await pb.collection('post_likes').delete(existing[0].id);
+    return null;
+  }
+
+  return /** @type {PostLikeRecord} */ (await pb.collection('post_likes').create({
+    post: postId,
+    user: userId
+  }));
 }
 
 /**

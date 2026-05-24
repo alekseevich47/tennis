@@ -1,10 +1,10 @@
-```
 # Dependencies
 node_modules/
 
 # Build artifacts
 build/
 target/
+client/dist/
 
 # Environment variables
 
@@ -54,4 +54,3 @@ htmlcov/
 *.tar.bz2
 *.tar.xz
 *.tar.zst
-```
