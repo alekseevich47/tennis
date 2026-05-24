@@ -5,7 +5,6 @@ import AppHeader from './components/AppHeader';
 import BottomNav from './components/BottomNav';
 import Spinner from './components/ui/Spinner';
 import { ProductUploadProvider } from './components/ProductUploadProvider';
-import { GalleryUploadProvider } from './components/GalleryUploadProvider';
 import FeedPage from './features/feed/FeedPage';
 import TrainingsPage from './features/trainings/TrainingsPage';
 import ShopPage from './features/shop/ShopPage';
@@ -164,11 +163,7 @@ function App() {
         )}
         {activeTab === 3 && <RatingPage user={user} />}
         {activeTab === 4 && <CompetitionsPage user={user} />}
-        {activeTab === 5 && (
-          <GalleryUploadProvider>
-            <GalleryPage user={user} />
-          </GalleryUploadProvider>
-        )}
+        {activeTab === 5 && <GalleryPage user={user} />}
         {activeTab === PROFILE_TAB_INDEX && (
           <ProfilePage user={user} onUpdate={handleUserUpdate} />
         )}
