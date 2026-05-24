@@ -208,7 +208,10 @@ function ProductDetail({
                 className="edit-post-btn"
                 onClick={onEdit}
               >
-                <span aria-hidden="true">✎</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M4 20h4.2L19.3 8.9a2 2 0 0 0 0-2.8l-1.4-1.4a2 2 0 0 0-2.8 0L4 15.8V20Z" />
+                <path d="m13.7 6.1 4.2 4.2" />
+              </svg>
               </IconButton>
               <IconButton
                 ariaLabel="Удалить товар"
@@ -217,7 +220,13 @@ function ProductDetail({
                 className="delete-post-btn"
                 onClick={handleDelete}
               >
-                <span aria-hidden="true">🗑</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M4 7h16" />
+                <path d="M10 11v6" />
+                <path d="M14 11v6" />
+                <path d="M6 7l1 13h10l1-13" />
+                <path d="M9 7V4h6v3" />
+              </svg>
               </IconButton>
             </>
           )}
