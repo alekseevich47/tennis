@@ -28,6 +28,7 @@ function FeedPage({ user, onDeletedIdsChange }) {
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
+  const [focusComment, setFocusComment] = useState(false);
   const [editingPost, setEditingPost] = useState(null);
   const [fullscreenMedia, setFullscreenMedia] = useState(null);
   const [hiddenMediaKey, setHiddenMediaKey] = useState(null);
@@ -108,8 +109,9 @@ function FeedPage({ user, onDeletedIdsChange }) {
     [mutate]
   );
 
-  const handleOpenDetail = useCallback((post) => {
+  const handleOpenDetail = useCallback((post, shouldFocusComment = false) => {
     setSelectedPost(post);
+    setFocusComment(shouldFocusComment);
   }, []);
 
   const handleOpenEdit = useCallback((post) => {
@@ -140,6 +142,7 @@ function FeedPage({ user, onDeletedIdsChange }) {
 
   const handleCloseDetail = useCallback(() => {
     setSelectedPost(null);
+    setFocusComment(false);
   }, []);
 
   const handleOpenFullscreen = useCallback((items, index = 0, originRect = null, originKey = null) => {
@@ -211,6 +214,7 @@ function FeedPage({ user, onDeletedIdsChange }) {
       <PostDetailModal
         isOpen={Boolean(selectedPost)}
         post={selectedPost}
+        focusComment={focusComment}
         user={user}
         userIsModerator={userIsModerator}
         onOpenEdit={handleOpenEdit}

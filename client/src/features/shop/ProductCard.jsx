@@ -139,6 +139,12 @@ function ProductCard({
     onRestore?.(product.id);
   }, [onRestore, product.id]);
 
+  const handleInfoKeyDown = useCallback((event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    openProduct();
+  }, [openProduct]);
+
   return (
     <article className={clsx('product-card', isSoftDeleted && 'product-card--soft-deleted')}>
       {moderator && !isSoftDeleted && (
@@ -203,11 +209,17 @@ function ProductCard({
         )}
       </div>
 
-      <div className="product-info">
+      <div
+        className="product-info"
+        role="button"
+        tabIndex={0}
+        onClick={openProduct}
+        onKeyDown={handleInfoKeyDown}
+      >
         <h3>
-          <button type="button" className="product-card-title-btn" onClick={openProduct}>
+          <span className="product-card-title-text">
             {product.title}
-          </button>
+          </span>
         </h3>
         {categoryNames.length > 0 && (
           <div className="product-card-category-chips" aria-label="Категории товара">

@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { usePinchZoom } from '../../hooks/usePinchZoom';
 import IconButton from '../../components/ui/IconButton';
+import { videoPreviewUrl } from '../../lib/media';
 
 const SWIPE_NAV_THRESHOLD_PX = 36;
 const NAV_CLICK_DRIFT_PX = 8;
@@ -395,10 +396,10 @@ function FullscreenImageViewer({
               >
                 {item.isVideo ? (
                   <video
-                    src={item.url}
+                    src={videoPreviewUrl(item.url)}
                     className="fullscreen-target-video"
                     controls
-                    autoPlay={isActiveSlide}
+                    preload="metadata"
                     playsInline
                     aria-label={`Полноэкранное видео ${activeIndex + 1}`}
                     width="1200"
