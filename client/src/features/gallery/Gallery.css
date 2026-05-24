@@ -6,9 +6,8 @@
 }
 
 .gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+  columns: 2;
+  column-gap: 8px;
   padding: 8px;
 }
 
@@ -65,9 +64,16 @@
 }
 
 .gallery-item-shell {
+  break-inside: avoid;
+  display: block;
+  margin-bottom: 8px;
   position: relative;
   overflow: hidden;
   border-radius: 8px;
+}
+
+.gallery-grid > .gallery-item-shell:last-child {
+  margin-bottom: 0;
 }
 
 .gallery-item {

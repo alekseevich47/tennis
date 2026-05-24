@@ -129,7 +129,7 @@
 }
 
 .edit-post-btn {
-  color: #007aff !important;
+  color: #6c757d !important;
   width: 36px;
   height: 36px;
 }
@@ -448,7 +448,7 @@ button.post-card-like:hover:not(:disabled) {
 }
 
 .post-card-comment-btn {
-  width: 36px;
+  min-width: 44px;
   height: 36px;
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 999px;
@@ -457,13 +457,19 @@ button.post-card-like:hover:not(:disabled) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
+  gap: 5px;
+  padding: 0 10px;
   cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
   box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
   transition: transform 0.18s ease, background 0.18s ease, color 0.18s ease;
 }
 
 .post-card-comment-btn svg {
+  flex: 0 0 auto;
   width: 20px;
   height: 20px;
   fill: none;
@@ -471,6 +477,11 @@ button.post-card-like:hover:not(:disabled) {
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+.post-card-comment-btn__count {
+  min-width: 1ch;
+  font-variant-numeric: tabular-nums;
 }
 
 .post-card-comment-btn:hover {
