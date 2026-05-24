@@ -5,6 +5,12 @@ node_modules/
 build/
 target/
 client/dist/
+client/tasks/
+
+# Local task notes
+/tasks/
+/Tasks/
+/TASKS*.md
 
 # Environment variables
 
