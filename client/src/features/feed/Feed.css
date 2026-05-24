@@ -854,6 +854,16 @@
   gap: 4px;
 }
 
+.comments-preview-trigger {
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+.comments-preview-trigger:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: 2px;
+}
+
 .post-text-detail {
   font-size: 16px;
   line-height: 1.5;
@@ -958,6 +968,12 @@
   font-weight: 600;
   cursor: pointer;
   min-height: 44px;
+}
+
+.modal-comment-form-footer input:disabled,
+.modal-comment-form-footer button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
 }
 
 .comment-edit-inline-form {

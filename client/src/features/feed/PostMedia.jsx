@@ -27,6 +27,7 @@ function PostMedia({ post, variant = 'card', hiddenMediaKey = null, onOpenFullsc
 
   const count = Math.min(items.length, 5);
   const openFullscreen = (event, index) => {
+    event.stopPropagation();
     const item = items[index];
     onOpenFullscreen?.(items, index, event.currentTarget.getBoundingClientRect(), item?.originKey);
   };

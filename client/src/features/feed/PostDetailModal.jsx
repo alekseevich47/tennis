@@ -12,11 +12,13 @@ import pb from '../../services/pb';
 import { error } from '../../lib/log';
 
 const SCROLL_INTO_VIEW_DELAY_MS = 200;
+const FOCUS_COMMENT_DELAY_MS = 150;
 
 /**
  * @param {{
  *   isOpen: boolean,
  *   post: any | null,
+ *   focusComment?: boolean,
  *   user: any,
  *   userIsModerator: boolean,
  *   onOpenEdit: (post: any) => void,
@@ -30,6 +32,7 @@ const SCROLL_INTO_VIEW_DELAY_MS = 200;
 function PostDetailModal({
   isOpen,
   post,
+  focusComment = false,
   user,
   userIsModerator,
   onOpenEdit,
@@ -44,12 +47,14 @@ function PostDetailModal({
 
   const [showAll, setShowAll] = useState(false);
   const [commentText, setCommentText] = useState('');
+  const [isAddingComment, setIsAddingComment] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editingText, setEditingText] = useState('');
   // Soft-удалённые в рамках текущей сессии модалки. Стираются в БД при закрытии.
   const [softDeletedIds, setSoftDeletedIds] = useState([]);
 
   const commentsBottomRef = useRef(null);
+  const isAddingCommentRef = useRef(false);
   const scrollTimerRef = useRef(null);
 
   useEffect(() => {
@@ -57,8 +62,18 @@ function PostDetailModal({
     setShowAll(false);
     setEditingId(null);
     setEditingText('');
+    setIsAddingComment(false);
+    isAddingCommentRef.current = false;
     setSoftDeletedIds([]);
   }, [isOpen, postId]);
+
+  useEffect(() => {
+    if (!isOpen || !focusComment) return undefined;
+    const timer = window.setTimeout(() => {
+      document.getElementById('post-detail-comment-input')?.focus();
+    }, FOCUS_COMMENT_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [isOpen, focusComment, postId]);
 
   // Cleanup таймера scrollIntoView при закрытии (фикс C7).
   useEffect(() => {
@@ -80,17 +95,23 @@ function PostDetailModal({
 
   const handleAdd = async (e) => {
     e.preventDefault();
-    if (!commentText.trim() || !postId) return;
+    const text = commentText.trim();
+    if (!text || !postId || isAddingCommentRef.current) return;
     if (!user?.id) {
       error('Нельзя создавать комментарий без авторизации.');
       return;
     }
+    isAddingCommentRef.current = true;
+    setIsAddingComment(true);
     try {
-      await createComment({ postId, authorId: user.id, text: commentText });
+      await createComment({ postId, authorId: user.id, text });
       setCommentText('');
       await mutateComments();
     } catch (err) {
       error('Ошибка добавления комментария:', err);
+    } finally {
+      isAddingCommentRef.current = false;
+      setIsAddingComment(false);
     }
   };
 
@@ -181,9 +202,12 @@ function PostDetailModal({
             placeholder="Написать комментарий…"
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
+            disabled={isAddingComment}
             required
           />
-          <button type="submit">Отправить</button>
+          <button type="submit" disabled={isAddingComment || !commentText.trim()}>
+            {isAddingComment ? 'Отправляем…' : 'Отправить'}
+          </button>
         </form>
       }
     >

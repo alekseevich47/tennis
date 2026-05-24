@@ -20,7 +20,7 @@ function readComments(post) {
  *   post: import('../../services/posts').PostRecord,
  *   isSoftDeleted: boolean,
  *   userIsModerator: boolean,
- *   onOpenDetail: (post: any) => void,
+ *   onOpenDetail: (post: any, focusComment?: boolean) => void,
  *   onOpenEdit: (post: any) => void,
  *   onDelete: (postId: string) => void,
  *   onRestore: (postId: string) => void,
@@ -44,6 +44,36 @@ function PostCard({
     return all.slice(-2);
   }, [post]);
 
+  const handleOpenDetail = () => {
+    onOpenDetail(post);
+  };
+
+  const handlePostTextClick = (event) => {
+    event.stopPropagation();
+    onOpenDetail(post);
+  };
+
+  const handleOpenComments = (event) => {
+    event.stopPropagation();
+    onOpenDetail(post, true);
+  };
+
+  const handleCommentsPreviewKeyDown = (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    handleOpenComments(event);
+  };
+
+  const handleOpenEdit = (event) => {
+    event.stopPropagation();
+    onOpenEdit(post);
+  };
+
+  const handleDelete = (event) => {
+    event.stopPropagation();
+    onDelete(post.id);
+  };
+
   if (isSoftDeleted && userIsModerator) {
     return (
       <div className="feed-card soft-deleted-card">
@@ -63,7 +93,11 @@ function PostCard({
   }
 
   return (
-    <article className="feed-card">
+    <article
+      className="feed-card"
+      onClick={handleOpenDetail}
+      style={{ cursor: 'pointer' }}
+    >
       <div className="feed-card-header">
         <div className="section-avatar" aria-hidden="true">🎾</div>
         <div className="section-meta">
@@ -77,7 +111,7 @@ function PostCard({
               variant="ghost"
               size="sm"
               className="edit-post-btn"
-              onClick={() => onOpenEdit(post)}
+              onClick={handleOpenEdit}
             >
               <span aria-hidden="true">✎</span>
             </IconButton>
@@ -86,7 +120,7 @@ function PostCard({
               variant="danger"
               size="sm"
               className="delete-post-btn"
-              onClick={() => onDelete(post.id)}
+              onClick={handleDelete}
             >
               <span aria-hidden="true">🗑</span>
             </IconButton>
@@ -98,7 +132,7 @@ function PostCard({
         <button
           type="button"
           className="post-text"
-          onClick={() => onOpenDetail(post)}
+          onClick={handlePostTextClick}
         >
           {post.content || post.text}
         </button>
@@ -113,13 +147,24 @@ function PostCard({
         <button
           type="button"
           className="comment-btn"
-          onClick={() => onOpenDetail(post)}
+          onClick={handleOpenComments}
         >
           <span aria-hidden="true">💬</span> Комментарии
         </button>
       </div>
 
-      <CommentsPreview comments={previewComments} />
+      {previewComments.length > 0 && (
+        <div
+          role="button"
+          tabIndex={0}
+          className="comments-preview-trigger"
+          onClick={handleOpenComments}
+          onKeyDown={handleCommentsPreviewKeyDown}
+          aria-label="Открыть комментарии к публикации"
+        >
+          <CommentsPreview comments={previewComments} />
+        </div>
+      )}
     </article>
   );
 }
