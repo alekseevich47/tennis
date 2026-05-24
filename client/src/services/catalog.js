@@ -226,7 +226,7 @@ export async function softDeleteProduct(productId) {
 
 /** @param {string} productId */
 export async function deleteProduct(productId) {
-  return softDeleteProduct(productId);
+  return pb.collection('products').delete(productId);
 }
 
 // --- ИГРОКИ -----------------------------------------------------------------
