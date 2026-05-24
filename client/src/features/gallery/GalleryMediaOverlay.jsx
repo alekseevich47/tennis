@@ -6,10 +6,12 @@ import { useGalleryLikes } from '../../hooks/useGalleryLikes';
  * @param {{
  *   mediaId: string | null,
  *   user: any,
- *   onCommentOpen: () => void
+ *   onCommentOpen: () => void,
+ *   onDelete?: () => void,
+ *   canDelete: boolean
  * }} props
  */
-function GalleryMediaOverlay({ mediaId, user, onCommentOpen }) {
+function GalleryMediaOverlay({ mediaId, user, onCommentOpen, onDelete, canDelete }) {
   const { count, isLiked, toggle, isLoading } = useGalleryLikes(mediaId);
 
   if (mediaId === null) return null;
@@ -32,6 +34,29 @@ function GalleryMediaOverlay({ mediaId, user, onCommentOpen }) {
           </span>
           <span className="gallery-media-action__count">{count}</span>
         </button>
+
+        {canDelete && (
+          <button
+            type="button"
+            className="gallery-media-action gallery-media-action--delete"
+            onClick={onDelete}
+            disabled={!onDelete}
+            aria-label="Удалить медиа"
+          >
+            <svg
+              className="gallery-media-action__svg"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path d="M4 7h16" />
+              <path d="M9 7V4h6v3" />
+              <path d="m6 7 1 14h10l1-14" />
+              <path d="M10 11v6" />
+              <path d="M14 11v6" />
+            </svg>
+          </button>
+        )}
 
         <button
           type="button"

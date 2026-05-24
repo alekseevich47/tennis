@@ -509,6 +509,11 @@ export async function deleteGalleryImage(imageId) {
   return pb.collection('gallery').delete(imageId);
 }
 
+/** @param {string[]} ids */
+export async function deleteGalleryImages(ids) {
+  return Promise.all(ids.map((imageId) => deleteGalleryImage(imageId)));
+}
+
 /**
  * @param {string} mediaId
  * @param {{ signal?: AbortSignal }} [options]
@@ -594,4 +599,12 @@ export async function createGalleryComment({ mediaId, authorId, text }) {
 /** @param {string} commentId */
 export async function deleteGalleryComment(commentId) {
   return pb.collection('gallery_comments').update(commentId, { is_deleted: true });
+}
+
+/**
+ * @param {string} commentId
+ * @param {string} text
+ */
+export async function updateGalleryComment(commentId, text) {
+  return pb.collection('gallery_comments').update(commentId, { text });
 }
