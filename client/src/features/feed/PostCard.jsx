@@ -83,10 +83,11 @@ function PostCard({
   hiddenMediaKey,
   onOpenFullscreen
 }) {
-  const previewComments = useMemo(() => {
-    const all = readComments(post).filter((c) => !c.is_deleted);
-    return all.slice(-2);
+  const comments = useMemo(() => {
+    return readComments(post).filter((c) => !c.is_deleted);
   }, [post]);
+  const previewComments = comments.slice(-2);
+  const commentCount = comments.length;
 
   const handleOpenDetail = () => {
     onOpenDetail(post);
@@ -204,11 +205,12 @@ function PostCard({
           type="button"
           className="post-card-comment-btn"
           onClick={handleOpenComments}
-          aria-label="Открыть комментарии к публикации"
+          aria-label={`Открыть комментарии к публикации. Комментариев: ${commentCount}`}
         >
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
             <path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.5-4.5A8 8 0 1 1 21 12Z" />
           </svg>
+          <span className="post-card-comment-btn__count">{commentCount}</span>
         </button>
       </div>
 
