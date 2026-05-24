@@ -319,8 +319,6 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
             onBookUser={handleBookUser}
             onCancelBooking={handleCancelBooking}
             onToggleClose={handleToggleClose}
-            onEdit={handleEdit}
-            onDelete={handleSoftDelete}
             onRestore={handleRestore}
             isDeleting={deletingTrainingIds.has(training.id)}
           />
