@@ -17,6 +17,7 @@ const INITIAL_STATE = {
   variant: 'alert', // 'alert' | 'confirm'
   confirmText: 'Понятно',
   cancelText: 'Отмена',
+  overlayClassName: undefined,
   onConfirm: undefined,
   onCancel: undefined
 };
@@ -33,7 +34,7 @@ export function AlertDialogProvider({ children }) {
   }, []);
 
   const alert = useCallback(
-    ({ title = 'Уведомление', message, confirmText = 'Понятно' } = {}) =>
+    ({ title = 'Уведомление', message, confirmText = 'Понятно', overlayClassName } = {}) =>
       new Promise((resolve) => {
         setState({
           ...INITIAL_STATE,
@@ -42,6 +43,7 @@ export function AlertDialogProvider({ children }) {
           message: message || '',
           variant: 'alert',
           confirmText,
+          overlayClassName,
           onConfirm: () => {
             close();
             resolve(true);
@@ -56,7 +58,8 @@ export function AlertDialogProvider({ children }) {
       title = 'Подтверждение',
       message,
       confirmText = 'Да, продолжить',
-      cancelText = 'Отмена'
+      cancelText = 'Отмена',
+      overlayClassName
     } = {}) =>
       new Promise((resolve) => {
         setState({
@@ -67,6 +70,7 @@ export function AlertDialogProvider({ children }) {
           variant: 'confirm',
           confirmText,
           cancelText,
+          overlayClassName,
           onConfirm: () => {
             close();
             resolve(true);
@@ -91,6 +95,7 @@ export function AlertDialogProvider({ children }) {
         onClose={state.variant === 'confirm' ? state.onCancel : state.onConfirm}
         title={state.title}
         size="default"
+        overlayClassName={state.overlayClassName}
         showCloseButton={false}
         closeOnOverlay={state.variant === 'alert'}
       >
@@ -121,8 +126,8 @@ export function AlertDialogProvider({ children }) {
 
 /**
  * @returns {{
- *   alert: (opts?: { title?: string, message?: string, confirmText?: string }) => Promise<true>,
- *   confirm: (opts?: { title?: string, message?: string, confirmText?: string, cancelText?: string }) => Promise<boolean>
+ *   alert: (opts?: { title?: string, message?: string, confirmText?: string, overlayClassName?: string }) => Promise<true>,
+ *   confirm: (opts?: { title?: string, message?: string, confirmText?: string, cancelText?: string, overlayClassName?: string }) => Promise<boolean>
  * }}
  */
 export function useAlertDialog() {
