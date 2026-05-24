@@ -23,6 +23,7 @@ const FOCUSABLE_SELECTORS = [
  * - `ariaLabel` (string) — альтернатива title при отсутствии заголовка
  * - `children`
  * - `className` (string) — доп.класс для `.modal-content`
+ * - `overlayClassName` (string) — доп.класс для `.ui-modal-overlay`
  * - `closeOnOverlay` (bool, default true)
  * - `showCloseButton` (bool, default true)
  * - `footer` (node) — sticky-блок под скроллом
@@ -35,6 +36,7 @@ function Modal({
   ariaLabel,
   children,
   className,
+  overlayClassName,
   closeOnOverlay = true,
   showCloseButton = true,
   footer,
@@ -109,7 +111,7 @@ function Modal({
 
   return (
     <div
-      className="ui-modal-overlay"
+      className={clsx('ui-modal-overlay', overlayClassName)}
       onClick={closeOnOverlay ? onClose : undefined}
       role="presentation"
     >
