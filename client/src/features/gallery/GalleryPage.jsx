@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { useGallery } from '../../hooks/useGallery';
+import { useGalleryLikes } from '../../hooks/useGalleryLikes';
+import { deleteGalleryImage, deleteGalleryImages } from '../../services/catalog';
 import { isModerator } from '../../services/auth';
 import { useGalleryUpload } from '../../components/GalleryUploadProvider';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
@@ -14,6 +16,8 @@ import { error } from '../../lib/log';
 import './Gallery.css';
 
 const SCROLL_HIDE_DEBOUNCE_MS = 300;
+const LONG_PRESS_MS = 300;
+const LONG_PRESS_MOVE_TOLERANCE = 8;
 
 function getImageAspectRatio(file) {
   return new Promise((resolve, reject) => {
@@ -65,19 +69,123 @@ function getAspectClass(ratio) {
   return 'gallery-item--square';
 }
 
+function GalleryItemLike({ itemId, user }) {
+  const { count, isLiked, toggle, isLoading } = useGalleryLikes(itemId);
+  const userId = user?.id;
+  const liked = isLiked(userId);
+
+  const icon = (
+    <>
+      <span className="gallery-item-like__icon" aria-hidden="true">
+        {liked ? '♥' : '♡'}
+      </span>
+      <span className="gallery-item-like__count">{count}</span>
+    </>
+  );
+
+  if (!userId) {
+    return (
+      <div className="gallery-item-like gallery-item-like--readonly" aria-label={`Лайков: ${count}`}>
+        {icon}
+      </div>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      className={clsx('gallery-item-like', liked && 'gallery-item-like--liked')}
+      onClick={(event) => {
+        event.stopPropagation();
+        toggle(itemId, userId);
+      }}
+      disabled={isLoading}
+      aria-pressed={liked}
+      aria-label={liked ? 'Убрать лайк' : 'Поставить лайк'}
+    >
+      {icon}
+    </button>
+  );
+}
+
 function GalleryPage({ user }) {
   const moderator = isModerator();
-  const { data: images, isLoading } = useGallery();
+  const { data: images, isLoading, mutate } = useGallery();
   const { startUpload } = useGalleryUpload();
-  const { alert } = useAlertDialog();
+  const { alert, confirm } = useAlertDialog();
   const fileInputRef = useRef(null);
   const containerRef = useRef(null);
+  const gridRef = useRef(null);
+  const floatingButtonRef = useRef(null);
   const scrollTimeoutRef = useRef(null);
+  const longPressRef = useRef(null);
+  const suppressClickRef = useRef(null);
   const [fullscreenMedia, setFullscreenMedia] = useState(null);
   const [hiddenMediaKey, setHiddenMediaKey] = useState(null);
   const [activeViewerIndex, setActiveViewerIndex] = useState(0);
   const [isButtonVisible, setIsButtonVisible] = useState(true);
   const [commentModalOpen, setCommentModalOpen] = useState(false);
+  const [selectedIds, setSelectedIds] = useState(() => new Set());
+  const [isSelectMode, setIsSelectMode] = useState(false);
+  const [isDeletingSelected, setIsDeletingSelected] = useState(false);
+  const [isDeletingFullscreen, setIsDeletingFullscreen] = useState(false);
+
+  const selectedCount = selectedIds.size;
+  const isDeleteButton = isSelectMode && selectedCount > 0;
+
+  const clearSelection = useCallback(() => {
+    setIsSelectMode(false);
+    setSelectedIds(new Set());
+  }, []);
+
+  const clearLongPressTimer = useCallback(() => {
+    if (longPressRef.current?.timerId) {
+      window.clearTimeout(longPressRef.current.timerId);
+    }
+    longPressRef.current = null;
+  }, []);
+
+  const toggleSelectedId = useCallback((id) => {
+    setSelectedIds((previous) => {
+      const next = new Set(previous);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }, []);
+
+  const selectGalleryItem = useCallback((id) => {
+    setIsSelectMode(true);
+    setSelectedIds((previous) => {
+      const next = new Set(previous);
+      next.add(id);
+      return next;
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!isSelectMode || selectedIds.size > 0) return undefined;
+    setIsSelectMode(false);
+    return undefined;
+  }, [isSelectMode, selectedIds]);
+
+  useEffect(() => () => clearLongPressTimer(), [clearLongPressTimer]);
+
+  useEffect(() => {
+    if (!isSelectMode) return undefined;
+
+    const handlePointerDown = (event) => {
+      const target = event.target;
+      if (gridRef.current?.contains(target) || floatingButtonRef.current?.contains(target)) return;
+      clearSelection();
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    return () => document.removeEventListener('pointerdown', handlePointerDown);
+  }, [clearSelection, isSelectMode]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -167,10 +275,11 @@ function GalleryPage({ user }) {
   );
 
   const handleOpenFullscreen = useCallback((items, index = 0, originRect = null, originKey = null) => {
+    clearSelection();
     setHiddenMediaKey(null);
     setActiveViewerIndex(index);
     setFullscreenMedia({ items, index, originRect, originKey });
-  }, []);
+  }, [clearSelection]);
 
   const handleCloseFullscreen = useCallback(() => {
     setFullscreenMedia(null);
@@ -183,12 +292,104 @@ function GalleryPage({ user }) {
     setHiddenMediaKey(originKey || null);
   }, []);
 
+  const handleGalleryItemPointerDown = useCallback(
+    (event, itemId) => {
+      if (!moderator || event.button !== 0) return;
+      clearLongPressTimer();
+
+      longPressRef.current = {
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        timerId: window.setTimeout(() => {
+          suppressClickRef.current = itemId;
+          selectGalleryItem(itemId);
+        }, LONG_PRESS_MS)
+      };
+    },
+    [clearLongPressTimer, moderator, selectGalleryItem]
+  );
+
+  const handleGalleryItemPointerMove = useCallback(
+    (event) => {
+      const press = longPressRef.current;
+      if (!press || press.pointerId !== event.pointerId) return;
+
+      const moved = Math.hypot(event.clientX - press.startX, event.clientY - press.startY);
+      if (moved > LONG_PRESS_MOVE_TOLERANCE) {
+        clearLongPressTimer();
+      }
+    },
+    [clearLongPressTimer]
+  );
+
+  const handleGalleryItemPointerEnd = useCallback(() => {
+    clearLongPressTimer();
+  }, [clearLongPressTimer]);
+
+  const handleDeleteSelected = useCallback(async () => {
+    if (!moderator || isDeletingSelected || selectedIds.size === 0) return;
+
+    const ids = [...selectedIds];
+    const ok = await confirm({
+      title: 'Удалить медиа?',
+      message: `Выбранные файлы будут удалены: ${ids.length}.`,
+      confirmText: 'Удалить',
+      cancelText: 'Отмена'
+    });
+    if (!ok) return;
+
+    setIsDeletingSelected(true);
+    try {
+      await deleteGalleryImages(ids);
+      await mutate();
+      clearSelection();
+    } catch (err) {
+      error('delete gallery images:', err);
+      await alert({ title: 'Ошибка', message: 'Не удалось удалить выбранные медиа.' });
+    } finally {
+      setIsDeletingSelected(false);
+    }
+  }, [alert, clearSelection, confirm, isDeletingSelected, moderator, mutate, selectedIds]);
+
   const activeGalleryItem = fullscreenMedia
     ? fullscreenMedia.items[activeViewerIndex] ?? null
     : null;
   const activeGalleryRecord = activeGalleryItem
     ? images?.find((img) => img.id === activeGalleryItem.originKey) ?? null
     : null;
+
+  const handleDeleteFullscreen = useCallback(async () => {
+    if (!moderator || isDeletingFullscreen || !activeGalleryRecord?.id) return;
+
+    const ok = await confirm({
+      title: 'Удалить медиа?',
+      message: 'Файл будет удалён из галереи.',
+      confirmText: 'Удалить',
+      cancelText: 'Отмена'
+    });
+    if (!ok) return;
+
+    setIsDeletingFullscreen(true);
+    try {
+      await deleteGalleryImage(activeGalleryRecord.id);
+      await mutate();
+      handleCloseFullscreen();
+    } catch (err) {
+      error('delete gallery image:', err);
+      await alert({ title: 'Ошибка', message: 'Не удалось удалить медиа.' });
+    } finally {
+      setIsDeletingFullscreen(false);
+    }
+  }, [
+    activeGalleryRecord?.id,
+    alert,
+    confirm,
+    handleCloseFullscreen,
+    isDeletingFullscreen,
+    moderator,
+    mutate
+  ]);
 
   return (
     <section className="gallery" ref={containerRef} aria-label="Галерея фотографий">
@@ -202,14 +403,19 @@ function GalleryPage({ user }) {
       />
 
       {moderator && (
-        <div className="floating-btn-wrapper">
+        <div className="floating-btn-wrapper" ref={floatingButtonRef}>
           <button
             type="button"
-            className={clsx('floating-add-btn', isButtonVisible ? 'visible' : 'hidden')}
-            onClick={() => fileInputRef.current?.click()}
-            aria-label="Добавить файлы в галерею"
+            className={clsx(
+              'floating-add-btn',
+              isDeleteButton && 'floating-add-btn--delete',
+              isButtonVisible ? 'visible' : 'hidden'
+            )}
+            onClick={isDeleteButton ? handleDeleteSelected : () => fileInputRef.current?.click()}
+            disabled={isDeleteButton && isDeletingSelected}
+            aria-label={isDeleteButton ? `Удалить выбранные медиа: ${selectedCount}` : 'Добавить файлы в галерею'}
           >
-            Добавить
+            {isDeleteButton ? `Удалить (${selectedCount})` : 'Добавить'}
           </button>
         </div>
       )}
@@ -219,37 +425,66 @@ function GalleryPage({ user }) {
       ) : galleryItems.length === 0 ? (
         <EmptyState title="Нет фотографий" description="Загрузите первое фото секции." />
       ) : (
-        <div className="gallery-grid">
+        <div className="gallery-grid" ref={gridRef}>
           {galleryItems.map((item, index) => {
+            const isSelected = selectedIds.has(item.id);
             return (
-              <button
+              <div
                 key={item.id || item.filename}
-                type="button"
-                className={clsx('gallery-item', getAspectClass(item.aspectRatio))}
+                className={clsx('gallery-item-shell', getAspectClass(item.aspectRatio))}
                 style={hiddenMediaKey === item.originKey ? { visibility: 'hidden' } : undefined}
-                data-media-origin-key={item.originKey}
-                onClick={(event) => {
-                  handleOpenFullscreen(
-                    galleryItems,
-                    index,
-                    event.currentTarget.getBoundingClientRect(),
-                    item.originKey
-                  );
-                }}
-                aria-label={item.isVideo ? 'Открыть видео на весь экран' : 'Открыть фото на весь экран'}
               >
-                {item.isVideo ? (
-                  <video
-                    src={videoPreviewUrl(item.url)}
-                    preload="metadata"
-                    muted
-                    playsInline
-                    aria-label="Видео из галереи секции"
-                  />
-                ) : (
-                  <img src={item.url} alt="Фотография из галереи секции" />
+                <button
+                  type="button"
+                  className={clsx('gallery-item', isSelected && 'gallery-item--selected')}
+                  data-media-origin-key={item.originKey}
+                  onPointerDown={(event) => handleGalleryItemPointerDown(event, item.id)}
+                  onPointerMove={handleGalleryItemPointerMove}
+                  onPointerUp={handleGalleryItemPointerEnd}
+                  onPointerCancel={handleGalleryItemPointerEnd}
+                  onClick={(event) => {
+                    if (suppressClickRef.current === item.id) {
+                      suppressClickRef.current = null;
+                      return;
+                    }
+
+                    if (isSelectMode) {
+                      toggleSelectedId(item.id);
+                      return;
+                    }
+
+                    handleOpenFullscreen(
+                      galleryItems,
+                      index,
+                      event.currentTarget.getBoundingClientRect(),
+                      item.originKey
+                    );
+                  }}
+                  aria-pressed={isSelectMode ? isSelected : undefined}
+                  aria-label={isSelectMode
+                    ? isSelected
+                      ? 'Убрать медиа из выбранных'
+                      : 'Выбрать медиа'
+                    : item.isVideo
+                      ? 'Открыть видео на весь экран'
+                      : 'Открыть фото на весь экран'}
+                >
+                  {item.isVideo ? (
+                    <video
+                      src={videoPreviewUrl(item.url)}
+                      preload="metadata"
+                      muted
+                      playsInline
+                      aria-label="Видео из галереи секции"
+                    />
+                  ) : (
+                    <img src={item.url} alt="Фотография из галереи секции" />
+                  )}
+                </button>
+                {!isSelectMode && (
+                  <GalleryItemLike itemId={item.id} user={user} />
                 )}
-              </button>
+              </div>
             );
           })}
         </div>
@@ -271,6 +506,8 @@ function GalleryPage({ user }) {
             mediaId={activeGalleryRecord?.id ?? null}
             user={user}
             onCommentOpen={() => setCommentModalOpen(true)}
+            canDelete={moderator}
+            onDelete={isDeletingFullscreen ? undefined : handleDeleteFullscreen}
           />
         </>
       )}
