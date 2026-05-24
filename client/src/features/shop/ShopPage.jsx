@@ -70,11 +70,16 @@ function ShopPage() {
     const normalizedSearchQuery = searchQuery.trim().toLowerCase();
     if (!normalizedSearchQuery) return baseProducts;
 
-    return baseProducts.filter((product) => {
-      const title = String(product.title || '').toLowerCase();
-      const id = String(product.id || '').toLowerCase();
-      return title.includes(normalizedSearchQuery) || id.includes(normalizedSearchQuery);
-    });
+    if (normalizedSearchQuery.startsWith('#')) {
+      const idQuery = normalizedSearchQuery.slice(1);
+      return baseProducts.filter((product) =>
+        String(product.id || '').toLowerCase().includes(idQuery)
+      );
+    }
+
+    return baseProducts.filter((product) =>
+      String(product.title || '').toLowerCase().includes(normalizedSearchQuery)
+    );
   }, [products, moderator, deletedProductIds, searchQuery]);
 
   const selectedCategoryName = useMemo(() => {
@@ -237,7 +242,7 @@ function ShopPage() {
             type="search"
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
-            placeholder="Поиск по названию или ID"
+            placeholder="Поиск по названию или #артикулу"
             autoFocus
           />
         )}
