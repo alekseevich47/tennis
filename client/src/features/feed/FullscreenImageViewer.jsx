@@ -28,6 +28,7 @@ function getOriginRect(originKey) {
  *   originRect?: DOMRect | null,
  *   originKey?: string | null,
  *   onCloseStart?: (originKey?: string | null) => void,
+ *   onActiveIndexChange?: (index: number) => void,
  *   onClose: () => void
  * }} props
  */
@@ -37,6 +38,7 @@ function FullscreenImageViewer({
   originRect = null,
   originKey = null,
   onCloseStart,
+  onActiveIndexChange,
   onClose
 }) {
   const [activeIndex, setActiveIndex] = useState(initialIndex);
@@ -111,15 +113,17 @@ function FullscreenImageViewer({
         setActiveIndex(normalizedIndex);
         setIsSliding(false);
         setSwipeOffset(0);
+        onActiveIndexChange?.(normalizedIndex);
         reset();
       }, SLIDE_ANIMATION_MS);
       return;
     }
     setActiveIndex(normalizedIndex);
+    onActiveIndexChange?.(normalizedIndex);
     setSwipeOffset(0);
     setIsSliding(false);
     reset();
-  }, [activeIndex, items.length, reset]);
+  }, [activeIndex, items.length, onActiveIndexChange, reset]);
 
   const goNext = useCallback((options) => goTo(activeIndex + 1, options), [activeIndex, goTo]);
   const goPrev = useCallback((options) => goTo(activeIndex - 1, options), [activeIndex, goTo]);
