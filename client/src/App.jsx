@@ -17,6 +17,7 @@ import {
   readPendingDeleteTrainingIds,
   writePendingDeleteTrainingIds
 } from './services/trainings';
+import { deleteProduct } from './services/catalog';
 import { error } from './lib/log';
 import './styles/global.css';
 
@@ -39,10 +40,13 @@ function App() {
   // ID-буферы pending soft-delete. Передаются дочерним фичам через колбэки.
   const [pendingDeletePostIds, setPendingDeletePostIds] = useState([]);
   const [pendingDeleteTrainingIds, setPendingDeleteTrainingIds] = useState([]);
+  const [pendingDeleteProductIds, setPendingDeleteProductIds] = useState([]);
   const pendingDeletePostIdsRef = useRef([]);
   const pendingDeleteTrainingIdsRef = useRef([]);
+  const pendingDeleteProductIdsRef = useRef([]);
   pendingDeletePostIdsRef.current = pendingDeletePostIds;
   pendingDeleteTrainingIdsRef.current = pendingDeleteTrainingIds;
+  pendingDeleteProductIdsRef.current = pendingDeleteProductIds;
 
   // Окончательное удаление мягко-скрытых сущностей в БД.
   const flushPendingDeletes = useCallback(async () => {
@@ -53,6 +57,7 @@ function App() {
         ...readPendingDeleteTrainingIds()
       ])
     );
+    const productIds = pendingDeleteProductIdsRef.current;
     const commentJson = sessionStorage.getItem('pending_delete_comments');
 
     const tasks = [];
@@ -73,6 +78,16 @@ function App() {
       pendingDeleteTrainingIdsRef.current = [];
       setPendingDeleteTrainingIds([]);
       writePendingDeleteTrainingIds([]);
+    }
+
+    if (productIds.length > 0) {
+      tasks.push(
+        ...productIds.map((id) =>
+          deleteProduct(id).catch((e) => error('flush product:', e))
+        )
+      );
+      pendingDeleteProductIdsRef.current = [];
+      setPendingDeleteProductIds([]);
     }
 
     if (commentJson) {
@@ -158,7 +173,7 @@ function App() {
         )}
         {activeTab === 2 && (
           <ProductUploadProvider>
-            <ShopPage user={user} />
+            <ShopPage onDeletedIdsChange={setPendingDeleteProductIds} />
           </ProductUploadProvider>
         )}
         {activeTab === 3 && <RatingPage user={user} />}

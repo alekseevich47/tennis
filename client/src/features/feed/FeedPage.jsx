@@ -198,6 +198,7 @@ function FeedPage({ user, onDeletedIdsChange }) {
             <PostCard
               key={post.id}
               post={post}
+              user={user}
               isSoftDeleted={isSoftDeleted}
               userIsModerator={userIsModerator}
               onOpenDetail={handleOpenDetail}

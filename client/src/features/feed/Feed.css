@@ -94,6 +94,15 @@
   justify-content: center;
   align-items: center;
   font-size: 18px;
+  overflow: hidden;
+  flex: 0 0 36px;
+}
+
+.section-avatar__image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
 }
 
 .section-meta {
@@ -129,6 +138,17 @@
   color: #ff3b30 !important;
   width: 36px;
   height: 36px;
+}
+
+.edit-post-btn svg,
+.delete-post-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .feed-card-body {
@@ -357,6 +377,111 @@
   gap: 12px;
   border-top: 1px solid #f8f9fa;
   padding-top: 10px;
+}
+
+.feed-card-bottom-bar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.post-card-like {
+  min-width: 44px;
+  min-height: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 999px;
+  background: rgba(18, 18, 18, 0.58);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 5px 9px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  box-sizing: border-box;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+}
+
+button.post-card-like {
+  cursor: pointer;
+  transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+}
+
+button.post-card-like:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: rgba(18, 18, 18, 0.72);
+}
+
+.post-card-like:focus-visible,
+.post-card-comment-btn:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: 2px;
+}
+
+.post-card-like:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.post-card-like--liked .post-card-like__icon {
+  color: #ff3b30;
+}
+
+.post-card-like--readonly {
+  pointer-events: none;
+}
+
+.post-card-like__icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.post-card-like__count {
+  min-width: 1ch;
+  font-variant-numeric: tabular-nums;
+}
+
+.post-card-comment-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 999px;
+  background: #ffffff;
+  color: #6c757d;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+  transition: transform 0.18s ease, background 0.18s ease, color 0.18s ease;
+}
+
+.post-card-comment-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.post-card-comment-btn:hover {
+  transform: translateY(-1px);
+  background: #f6f7f9;
+  color: #1a1a1a;
+}
+
+.post-card-comment-btn:active {
+  transform: translateY(0);
+  background: #eef0f3;
 }
 
 .like-btn,
@@ -920,6 +1045,13 @@
   gap: 8px;
 }
 
+.comment-author-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
 .comment-author-name {
   font-weight: 700;
   font-size: 13px;
@@ -929,6 +1061,48 @@
 .comment-actions-btns {
   display: flex;
   gap: 4px;
+}
+
+.post-comment-icon-button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: #6c757d;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+}
+
+.post-comment-icon-button svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.post-comment-icon-button:hover:not(:disabled) {
+  background: #f6f7f9;
+}
+
+.post-comment-icon-button:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: 2px;
+}
+
+.post-comment-icon-button:disabled {
+  cursor: wait;
+  opacity: 0.5;
+}
+
+.post-comment-icon-button--delete {
+  color: #ff3b30;
 }
 
 .comment-content-text {

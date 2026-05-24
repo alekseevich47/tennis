@@ -1,7 +1,10 @@
 import React, { memo, useMemo } from 'react';
+import clsx from 'clsx';
 import IconButton from '../../components/ui/IconButton';
 import PostMedia from './PostMedia';
 import CommentsPreview from './CommentsPreview';
+import sectionAvatarUrl from '../../assets/sm-avatar.png';
+import { usePostLikes } from '../../hooks/usePostLikes';
 import { formatPostDate } from '../../lib/format';
 
 /**
@@ -15,9 +18,49 @@ function readComments(post) {
   return Array.isArray(list) ? list : [list];
 }
 
+function PostCardLike({ postId, user }) {
+  const { count, isLiked, toggle, isLoading } = usePostLikes(postId);
+  const userId = user?.id;
+  const liked = isLiked(userId);
+
+  const icon = (
+    <>
+      <span className="post-card-like__icon" aria-hidden="true">
+        {liked ? '♥' : '♡'}
+      </span>
+      <span className="post-card-like__count">{count}</span>
+    </>
+  );
+
+  if (!userId) {
+    return (
+      <div className="post-card-like post-card-like--readonly" aria-label={`Лайков: ${count}`}>
+        {icon}
+      </div>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      className={clsx('post-card-like', liked && 'post-card-like--liked')}
+      onClick={(event) => {
+        event.stopPropagation();
+        toggle(postId, userId);
+      }}
+      disabled={isLoading}
+      aria-pressed={liked}
+      aria-label={liked ? 'Убрать лайк' : 'Поставить лайк'}
+    >
+      {icon}
+    </button>
+  );
+}
+
 /**
  * @param {{
  *   post: import('../../services/posts').PostRecord,
+ *   user?: any,
  *   isSoftDeleted: boolean,
  *   userIsModerator: boolean,
  *   onOpenDetail: (post: any, focusComment?: boolean) => void,
@@ -30,6 +73,7 @@ function readComments(post) {
  */
 function PostCard({
   post,
+  user,
   isSoftDeleted,
   userIsModerator,
   onOpenDetail,
@@ -99,7 +143,9 @@ function PostCard({
       style={{ cursor: 'pointer' }}
     >
       <div className="feed-card-header">
-        <div className="section-avatar" aria-hidden="true">🎾</div>
+        <div className="section-avatar" aria-hidden="true">
+          <img className="section-avatar__image" src={sectionAvatarUrl} alt="" decoding="async" />
+        </div>
         <div className="section-meta">
           <span className="section-title-name">Секция Миленьких</span>
           <span className="post-date">{formatPostDate(post.created)}</span>
@@ -113,7 +159,10 @@ function PostCard({
               className="edit-post-btn"
               onClick={handleOpenEdit}
             >
-              <span aria-hidden="true">✎</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M4 20h4.2L19.3 8.9a2 2 0 0 0 0-2.8l-1.4-1.4a2 2 0 0 0-2.8 0L4 15.8V20Z" />
+                <path d="m13.7 6.1 4.2 4.2" />
+              </svg>
             </IconButton>
             <IconButton
               ariaLabel="Удалить публикацию"
@@ -122,7 +171,13 @@ function PostCard({
               className="delete-post-btn"
               onClick={handleDelete}
             >
-              <span aria-hidden="true">🗑</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M4 7h16" />
+                <path d="M10 11v6" />
+                <path d="M14 11v6" />
+                <path d="M6 7l1 13h10l1-13" />
+                <path d="M9 7V4h6v3" />
+              </svg>
             </IconButton>
           </div>
         )}
@@ -143,13 +198,17 @@ function PostCard({
         />
       </div>
 
-      <div className="feed-card-footer">
+      <div className="feed-card-footer feed-card-bottom-bar">
+        <PostCardLike postId={post.id} user={user} />
         <button
           type="button"
-          className="comment-btn"
+          className="post-card-comment-btn"
           onClick={handleOpenComments}
+          aria-label="Открыть комментарии к публикации"
         >
-          <span aria-hidden="true">💬</span> Комментарии
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.5-4.5A8 8 0 1 1 21 12Z" />
+          </svg>
         </button>
       </div>
 
