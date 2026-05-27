@@ -31,7 +31,7 @@ function GalleryMediaOverlay({
   return (
     <div
       className={clsx('gallery-media-overlay', hidden === true && 'gallery-media-overlay--hidden')}
-      style={{ bottom: `${bottomOffset}px` }}
+      style={{ '--gallery-media-overlay-bottom': `${bottomOffset}px` }}
     >
       <div className="gallery-media-overlay__inner">
         <button
