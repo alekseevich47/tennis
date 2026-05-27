@@ -218,10 +218,16 @@ button.gallery-item-like:hover:not(:disabled) {
 }
 
 .gallery-media-overlay {
+  --gallery-media-actions-lift: clamp(112px, 16vh, 140px);
+
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: calc(
+    var(--gallery-media-overlay-bottom, 0px) +
+    var(--gallery-media-actions-lift) +
+    env(safe-area-inset-bottom)
+  );
   z-index: 3100;
   pointer-events: none;
   padding: 24px 20px 0;
