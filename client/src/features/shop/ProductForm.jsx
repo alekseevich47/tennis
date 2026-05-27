@@ -9,6 +9,7 @@ import {
   mediaNames,
   readSelectedFiles
 } from '../../lib/media';
+import { compressImage } from '../../lib/compress';
 
 const INITIAL = {
   title: '',
@@ -130,8 +131,14 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (form.categories.length === 0) {
+      setCategoryError(true);
+      setIsCategoryMenuOpen(true);
+      return;
+    }
+
     const data = new FormData();
     data.append('title', form.title.trim());
     data.append('description', form.description.trim());
@@ -140,13 +147,9 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
     data.append('out_of_stock', String(form.out_of_stock));
     const imageFieldName = product ? 'images+' : 'images';
     imagesToDelete.forEach((filename) => data.append('images-', filename));
-    imageFiles.forEach((img) => data.append(imageFieldName, img));
+    const compressedImageFiles = await Promise.all(imageFiles.map((img) => compressImage(img)));
+    compressedImageFiles.forEach((img) => data.append(imageFieldName, img));
     form.categories.forEach((categoryId) => data.append('categories', categoryId));
-    if (form.categories.length === 0) {
-      setCategoryError(true);
-      setIsCategoryMenuOpen(true);
-      return;
-    }
     setCategoryError(false);
     onSubmit(data);
     onClose();

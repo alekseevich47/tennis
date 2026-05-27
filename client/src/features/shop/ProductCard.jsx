@@ -2,7 +2,7 @@ import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from '
 import clsx from 'clsx';
 import { useProductCategories } from '../../hooks/useProductCategories';
 import { clamp } from '../../lib/gestures';
-import { getMediaUrl, isVideoMediaName, mediaNames, videoPreviewUrl } from '../../lib/media';
+import { getMediaThumbUrl, getMediaUrl, isVideoMediaName, mediaNames, videoPreviewUrl } from '../../lib/media';
 
 const SWIPE_THRESHOLD_PX = 36;
 
@@ -19,7 +19,7 @@ function getProductCategoryIds(product) {
  *   onOpen: (product: any) => void,
  *   onDelete?: (productId: string) => void,
  *   onRestore?: (productId: string) => void,
- *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void
+ *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, thumbUrl: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void
  * }} props
  */
 function ProductCard({
@@ -41,10 +41,12 @@ function ProductCard({
   const galleryItems = useMemo(() => (
     mediaNames(product.images).flatMap((filename, index) => {
       const url = getMediaUrl(product, 'products', filename);
+      const thumbUrl = getMediaThumbUrl(product, 'products', filename, '600x0');
       if (!url) return [];
       return [{
         filename,
         url,
+        thumbUrl: thumbUrl || url,
         isVideo: isVideoMediaName(filename),
         originKey: `product-card-${product.id}-${index}`
       }];
@@ -184,7 +186,7 @@ function ProductCard({
                 <span className="product-card-video-badge" aria-hidden="true">▶</span>
               </>
             ) : (
-              <img src={activeItem.url} alt={`Фото товара ${product.title || 'без названия'}`} />
+              <img src={activeItem.thumbUrl} alt={`Фото товара ${product.title || 'без названия'}`} />
             )}
           </button>
         ) : (

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
+import { compressImage } from '../../lib/compress';
 
 /**
  * @param {{
@@ -28,7 +29,8 @@ function AddImageModal({ isOpen, onClose, onSubmit }) {
     if (submitting) return;
     setSubmitting(true);
     try {
-      await onSubmit(file);
+      const compressedFile = await compressImage(file);
+      await onSubmit(compressedFile);
       setFile(null);
     } finally {
       setSubmitting(false);
