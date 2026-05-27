@@ -218,7 +218,7 @@ button.gallery-item-like:hover:not(:disabled) {
 }
 
 .gallery-media-overlay {
-  --gallery-media-actions-lift: clamp(112px, 16vh, 140px);
+  --gallery-media-actions-lift: clamp(80px, 11vh, 100px);
 
   position: fixed;
   left: 0;
