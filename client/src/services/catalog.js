@@ -527,6 +527,14 @@ export async function addGalleryImage(payload) {
   return record;
 }
 
+/** @param {GalleryRecord[]} records */
+export function logGalleryBatchUpload(records) {
+  if (!Array.isArray(records) || records.length < 2) return;
+  auditGallery.mediaBatchUpload(
+    records.map((record) => /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)))
+  );
+}
+
 /**
  * @param {'gallery_likes' | 'gallery_comments'} collectionName
  * @param {string} mediaId
@@ -649,7 +657,7 @@ export async function createGalleryComment({ mediaId, authorId, text }) {
     media_id: mediaId,
     author: authorId,
     text
-  }));
+  }, { expand: 'author' }));
   auditGallery.commentCreate(/** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)), mediaId);
   return record;
 }
@@ -678,6 +686,6 @@ export async function updateGalleryComment(commentId, text, mediaId) {
   const record = /** @type {GalleryCommentRecord} */ (
     await pb.collection('gallery_comments').update(commentId, { text })
   );
-  auditGallery.commentEdit(commentId, mediaId || record.media_id || '');
+  auditGallery.commentEdit(commentId, mediaId || record.media_id || '', record.text);
   return record;
 }

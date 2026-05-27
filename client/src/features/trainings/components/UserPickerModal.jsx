@@ -8,7 +8,7 @@ import { error } from '../../../lib/log';
  * @param {{
  *   isOpen: boolean,
  *   onClose: () => void,
- *   onConfirm: (userIds: string[]) => void | Promise<void>,
+ *   onConfirm: (userIds: string[], users?: Array<{ id: string, full_name?: string }>) => void | Promise<void>,
  *   excludeIds?: string[]
  * }} props
  */
@@ -78,7 +78,12 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
     if (selectedIds.size === 0 || confirming) return;
     setConfirming(true);
     try {
-      await onConfirm(Array.from(selectedIds));
+      const selectedUserIds = Array.from(selectedIds);
+      const usersById = new Map(users.map((user) => [user.id, user]));
+      await onConfirm(
+        selectedUserIds,
+        selectedUserIds.map((userId) => usersById.get(userId)).filter(Boolean)
+      );
     } finally {
       setConfirming(false);
     }

@@ -22,6 +22,16 @@ const INITIAL = {
 
 const MAX_PRODUCT_IMAGES = 5;
 
+function parsePrice(value) {
+  return parseFloat(value) || 0;
+}
+
+function areStringArraysEqual(left, right) {
+  if (left.length !== right.length) return false;
+  const leftSet = new Set(left);
+  return right.every((value) => leftSet.has(value));
+}
+
 /**
  * @param {{
  *   isOpen: boolean,
@@ -140,16 +150,39 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
     }
 
     const data = new FormData();
-    data.append('title', form.title.trim());
-    data.append('description', form.description.trim());
-    data.append('price', String(parseFloat(form.price) || 0));
-    data.append('sizes', form.sizes.trim());
-    data.append('out_of_stock', String(form.out_of_stock));
+    const nextTitle = form.title.trim();
+    const nextDescription = form.description.trim();
+    const nextPrice = parsePrice(form.price);
+    const nextSizes = form.sizes.trim();
+    const currentCategories = Array.isArray(product?.categories) ? product.categories : [];
+    const hasCategoryChanges = !areStringArraysEqual(form.categories, currentCategories);
+
+    if (!product || nextTitle !== (product.title || '')) {
+      data.append('title', nextTitle);
+    }
+    if (!product || nextDescription !== (product.description || '')) {
+      data.append('description', nextDescription);
+    }
+    if (!product || nextPrice !== parsePrice(String(product.price ?? ''))) {
+      data.append('price', String(nextPrice));
+    }
+    if (!product || nextSizes !== (product.sizes || '')) {
+      data.append('sizes', nextSizes);
+    }
+    if (!product || form.out_of_stock !== Boolean(product.out_of_stock)) {
+      data.append('out_of_stock', String(form.out_of_stock));
+    }
     const imageFieldName = product ? 'images+' : 'images';
     imagesToDelete.forEach((filename) => data.append('images-', filename));
     const compressedImageFiles = await Promise.all(imageFiles.map((img) => compressImage(img)));
     compressedImageFiles.forEach((img) => data.append(imageFieldName, img));
-    form.categories.forEach((categoryId) => data.append('categories', categoryId));
+    if (!product || hasCategoryChanges) {
+      form.categories.forEach((categoryId) => data.append('categories', categoryId));
+    }
+    if (product && Array.from(data.keys()).length === 0) {
+      onClose();
+      return;
+    }
     setCategoryError(false);
     onSubmit(data);
     onClose();

@@ -1,5 +1,5 @@
 // @ts-check
-import { writeAudit, writeAuditError } from './core';
+import { getActor, writeAudit, writeAuditError } from './core';
 
 const DOMAIN = 'ЛЕНТА';
 
@@ -35,13 +35,34 @@ function getTextPreview(text) {
 }
 
 /**
+ * @param {Record<string, unknown>} record
+ */
+function getPostText(record) {
+  return String(record.content ?? record.text ?? '');
+}
+
+/**
+ * @param {Record<string, unknown> | FormData} patch
+ */
+function getPatchText(patch) {
+  if (isFormData(patch)) {
+    const value = patch.get('content') ?? patch.get('text');
+    return typeof value === 'string' ? value : null;
+  }
+
+  const value = patch.content ?? patch.text;
+  return typeof value === 'string' ? value : null;
+}
+
+/**
  * @param {Record<string, unknown> | undefined} record
  */
 function getAuthorName(record) {
   const expand = /** @type {{ author?: { full_name?: string, name?: string, email?: string } } | undefined} */ (
     record?.expand
   );
-  return expand?.author?.full_name || expand?.author?.name || expand?.author?.email || '';
+  const actor = getActor();
+  return expand?.author?.full_name || expand?.author?.name || expand?.author?.email || actor.userFullName;
 }
 
 export const auditFeed = {
@@ -50,12 +71,14 @@ export const auditFeed = {
    */
   postCreate(record) {
     const mediaCount = getMediaCount(record.media);
+    const text = getPostText(record);
 
-    writeAudit(DOMAIN, 'Пост опубликован', {
+    writeAudit(DOMAIN, 'Пост создан', {
       postId: record.id,
       hasMedia: mediaCount > 0,
       mediaCount,
-      textLength: String(record.content || record.text || '').length
+      text,
+      textLength: text.length
     });
   },
 
@@ -64,10 +87,20 @@ export const auditFeed = {
    * @param {Record<string, unknown> | FormData} patch
    */
   postEdit(postId, patch) {
-    writeAudit(DOMAIN, 'Пост отредактирован', {
+    const details = {
       postId,
       changedFields: getChangedFields(patch)
-    });
+    };
+    const text = getPatchText(patch);
+
+    if (text !== null) {
+      Object.assign(details, {
+        text,
+        textLength: text.length
+      });
+    }
+
+    writeAudit(DOMAIN, 'Пост отредактирован', details);
   },
 
   /**
@@ -111,9 +144,22 @@ export const auditFeed = {
   /**
    * @param {string} commentId
    * @param {string} postId
+   * @param {unknown} text
    */
-  commentEdit(commentId, postId) {
-    writeAudit(DOMAIN, 'Комментарий отредактирован', { commentId, postId });
+  commentEdit(commentId, postId, text) {
+    writeAudit(DOMAIN, 'Комментарий отредактирован', {
+      commentId,
+      postId,
+      textPreview: getTextPreview(text)
+    });
+  },
+
+  /**
+   * @param {string} commentId
+   * @param {string} postId
+   */
+  commentSoftDelete(commentId, postId) {
+    writeAudit(DOMAIN, 'Комментарий скрыт (soft-delete)', { commentId, postId });
   },
 
   /**

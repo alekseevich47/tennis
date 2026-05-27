@@ -20,6 +20,35 @@ function getChangedFields(patch) {
 }
 
 /**
+ * @param {unknown} user
+ */
+function getUserId(user) {
+  return String(/** @type {{ id?: unknown } | null | undefined} */ (user)?.id || '');
+}
+
+/**
+ * @param {unknown} user
+ */
+function getUserFullName(user) {
+  const record = /** @type {{ fullName?: unknown, full_name?: unknown, name?: unknown, email?: unknown } | null | undefined} */ (
+    user
+  );
+  return String(record?.fullName || record?.full_name || record?.name || record?.email || 'Пользователь');
+}
+
+/**
+ * @param {string[]} userIds
+ * @param {unknown[]} [users]
+ */
+function getTargetUsers(userIds, users = []) {
+  const usersById = new Map(users.map((user) => [getUserId(user), user]));
+  return Array.from(new Set(userIds.filter(Boolean))).map((id) => ({
+    id,
+    fullName: getUserFullName(usersById.get(id))
+  }));
+}
+
+/**
  * @param {Record<string, unknown>} training
  */
 function getTrainingId(training) {
@@ -56,12 +85,12 @@ export const auditTrainings = {
 
   /**
    * @param {string} trainingId
-   * @param {Record<string, unknown> | FormData} patch
+   * @param {Array<Record<string, unknown>> | Record<string, unknown> | FormData} changedFields
    */
-  trainingEdit(trainingId, patch) {
+  trainingEdit(trainingId, changedFields) {
     writeAudit(DOMAIN, 'Тренировка отредактирована', {
       trainingId,
-      changedFields: getChangedFields(patch)
+      changedFields: Array.isArray(changedFields) ? changedFields : getChangedFields(changedFields)
     });
   },
 
@@ -127,14 +156,18 @@ export const auditTrainings = {
   /**
    * @param {Record<string, unknown>} training
    * @param {string} targetUserId
+   * @param {unknown} [targetUser]
    */
-  bookUser(training, targetUserId) {
+  bookUser(training, targetUserId, targetUser) {
     const bookedUsers = getBookedUsers(training);
+    const target = getTargetUsers([targetUserId], targetUser ? [targetUser] : [])[0];
 
     writeAudit(DOMAIN, 'Модератор записал игрока', {
       trainingId: getTrainingId(training),
       date: training.date,
-      targetUserId,
+      targetUserId: target.id,
+      targetUserName: target.fullName,
+      targetUser: target,
       slotsUsed: bookedUsers.length,
       maxSlots: getMaxSlots(training)
     });
@@ -143,15 +176,41 @@ export const auditTrainings = {
   /**
    * @param {Record<string, unknown>} training
    * @param {string[]} userIds
+   * @param {unknown[]} [users]
    */
-  bookUsers(training, userIds) {
-    const targetUserIds = Array.from(new Set(userIds.filter(Boolean)));
+  bookUsers(training, userIds, users = []) {
+    const targetUsers = getTargetUsers(userIds, users);
 
     writeAudit(DOMAIN, 'Модератор записал нескольких', {
       trainingId: getTrainingId(training),
       date: training.date,
-      addedCount: targetUserIds.length,
-      targetUserIds
+      addedCount: targetUsers.length,
+      targetUserIds: targetUsers.map((user) => user.id),
+      targetUserNames: targetUsers.map((user) => user.fullName),
+      targetUsers
+    });
+  },
+
+  /**
+   * @param {Record<string, unknown>} training
+   * @param {string[]} userIds
+   * @param {unknown[]} [users]
+   */
+  unbookUsers(training, userIds, users = []) {
+    const targetUsers = getTargetUsers(userIds, users);
+
+    writeAudit(DOMAIN, 'Модератор удалил нескольких', {
+      trainingId: getTrainingId(training),
+      date: training.date,
+      removedCount: targetUsers.length,
+      targetUserIds: targetUsers.map((user) => user.id),
+      targetUserNames: targetUsers.map((user) => user.fullName),
+      changedFields: [
+        {
+          field: 'booked_users',
+          removedUsers: targetUsers
+        }
+      ]
     });
   },
 

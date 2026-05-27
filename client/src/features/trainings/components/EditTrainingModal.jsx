@@ -36,6 +36,40 @@ function getFormFromTraining(training) {
   };
 }
 
+function getPatchFromForm(form) {
+  return {
+    date: new Date(form.date).toISOString(),
+    duration: parseInt(String(form.duration), 10) || 0,
+    type: form.type,
+    max_slots: form.maxSlots ? parseInt(String(form.maxSlots), 10) : null,
+    location: form.location,
+    description: form.description
+  };
+}
+
+function getPatchFromTraining(training) {
+  return {
+    date: training?.date ? new Date(training.date).toISOString() : '',
+    duration: parseInt(String(training?.duration), 10) || 0,
+    type: training?.type || 'group',
+    max_slots:
+      training?.max_slots === null || training?.max_slots === undefined
+        ? null
+        : parseInt(String(training.max_slots), 10),
+    location: training?.location || '',
+    description: training?.description || ''
+  };
+}
+
+function buildTrainingPatch(training, form) {
+  const nextValues = getPatchFromForm(form);
+  const currentValues = getPatchFromTraining(training);
+
+  return Object.fromEntries(
+    Object.entries(nextValues).filter(([key, value]) => value !== currentValues[key])
+  );
+}
+
 /**
  * @param {{
  *   isOpen: boolean,
@@ -71,14 +105,11 @@ function EditTrainingModal({ isOpen, training, onClose, onSaved }) {
 
     setSubmitting(true);
     try {
-      const patch = {
-        date: new Date(form.date).toISOString(),
-        duration: parseInt(String(form.duration), 10) || 0,
-        type: form.type,
-        max_slots: form.maxSlots ? parseInt(String(form.maxSlots), 10) : null,
-        location: form.location,
-        description: form.description
-      };
+      const patch = buildTrainingPatch(training, form);
+      if (Object.keys(patch).length === 0) {
+        await alert({ title: 'Без изменений', message: 'Поля тренировки не изменились.' });
+        return;
+      }
 
       const updatedTraining = await updateTraining(training.id, patch);
       onSaved(updatedTraining);

@@ -42,6 +42,20 @@ import { PB_URL } from '../config';
  */
 
 /**
+ * @param {Record<string, unknown> | FormData} patch
+ * @returns {boolean | null}
+ */
+function getIsDeletedPatchValue(patch) {
+  const rawValue = typeof FormData !== 'undefined' && patch instanceof FormData
+    ? patch.get('is_deleted')
+    : patch.is_deleted;
+
+  if (rawValue === true || rawValue === 'true') return true;
+  if (rawValue === false || rawValue === 'false') return false;
+  return null;
+}
+
+/**
  * @param {{ includeDeleted?: boolean, signal?: AbortSignal }} [options]
  * @returns {Promise<PostRecord[]>}
  */
@@ -190,7 +204,7 @@ export function createPostWithProgress(payload, { signal, onProgress } = {}) {
         try {
           const record = /** @type {PostRecord} */ (JSON.parse(xhr.responseText));
           resolve(record);
-          auditFeed.mediaUpload(/** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)));
+          auditFeed.postCreate(/** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)));
         } catch (parseErr) {
           reject(parseErr);
         }
@@ -228,7 +242,12 @@ export async function updatePost(postId, patch) {
   const record = /** @type {PostRecord} */ (
     await pb.collection('posts').update(postId, /** @type {Record<string, unknown>} */ (patch))
   );
-  auditFeed.postEdit(postId, patch);
+  const isDeleted = getIsDeletedPatchValue(patch);
+  if (isDeleted === true) {
+    auditFeed.postSoftDelete(postId);
+  } else if (isDeleted === null) {
+    auditFeed.postEdit(postId, patch);
+  }
   return record;
 }
 
@@ -251,7 +270,7 @@ export async function createComment({ postId, authorId, text }) {
       post: postId,
       author: authorId,
       text
-    }));
+    }, { expand: 'author' }));
     auditFeed.commentCreate(/** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)), postId);
     return record;
   } catch (err) {
@@ -268,7 +287,12 @@ export async function updateComment(commentId, patch) {
   const record = /** @type {CommentRecord} */ (
     await pb.collection('comments').update(commentId, /** @type {Record<string, unknown>} */ (patch))
   );
-  auditFeed.commentEdit(commentId, record.post);
+  const isDeleted = getIsDeletedPatchValue(patch);
+  if (isDeleted === true) {
+    auditFeed.commentSoftDelete(commentId, record.post);
+  } else if (isDeleted === null) {
+    auditFeed.commentEdit(commentId, record.post, record.text);
+  }
   return record;
 }
 
@@ -298,7 +322,7 @@ export async function purgeAbandonedComments(userId, { signal } = {}) {
     signal
   }));
   await Promise.all(
-    abandoned.map((c) => pb.collection('comments').delete(c.id).catch((err) => error('purge comment:', err)))
+    abandoned.map((c) => hardDeleteComment(c.id, c.post).catch((err) => error('purge comment:', err)))
   );
   return abandoned;
 }

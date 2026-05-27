@@ -38,6 +38,7 @@ export {
   reopenTraining,
   bookTraining,
   bookUserToTraining,
+  removeUsersFromTraining,
   cancelTrainingBooking,
   markAttendance,
   unmarkAttendance
