@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import MediaPreviewGrid from './MediaPreviewGrid';
+import { compressImage } from '../../lib/compress';
 import {
   MAX_POST_MEDIA_FILES,
   isVideoFile,
@@ -52,13 +53,16 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
     onClose();
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!text.trim() && files.length === 0) return;
     const formData = new FormData();
     formData.append('content', text.trim());
     formData.append('author', user?.id || '');
-    files.forEach((file) => formData.append('media', file));
+    const preparedFiles = await Promise.all(
+      files.map((file) => (isVideoFile(file) ? file : compressImage(file)))
+    );
+    preparedFiles.forEach((file) => formData.append('media', file));
     onCreated(formData);
     reset();
     onClose();

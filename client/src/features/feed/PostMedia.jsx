@@ -1,22 +1,24 @@
 import React, { memo } from 'react';
 import clsx from 'clsx';
-import { getMediaUrl, isVideoMediaName, mediaNames, videoPreviewUrl } from '../../lib/media';
+import { getMediaThumbUrl, getMediaUrl, isVideoMediaName, mediaNames, videoPreviewUrl } from '../../lib/media';
 
 /**
  * @param {{
  *   post: import('../../services/posts').PostRecord,
  *   variant?: 'card' | 'detail',
  *   hiddenMediaKey?: string | null,
- *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void
+ *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, thumbUrl: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void
  * }} props
  */
 function PostMedia({ post, variant = 'card', hiddenMediaKey = null, onOpenFullscreen }) {
   const items = mediaNames(post.media).flatMap((filename, index) => {
     const url = getMediaUrl(post, 'posts', filename);
+    const thumbUrl = getMediaThumbUrl(post, 'posts', filename, '800x0');
     return url
       ? [{
         filename,
         url,
+        thumbUrl: thumbUrl || url,
         isVideo: isVideoMediaName(filename),
         originKey: `${variant}-${post.id}-${index}`
       }]
@@ -86,7 +88,7 @@ function PostMedia({ post, variant = 'card', hiddenMediaKey = null, onOpenFullsc
 
         const image = (
           <img
-            src={item.url}
+            src={item.thumbUrl}
             alt={alt}
             className="telegram-post-media-item"
             loading={index === 0 ? 'eager' : 'lazy'}
