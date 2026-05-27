@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
+import Avatar from '../../components/ui/Avatar';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { formatCardDate, formatTimeRange } from '../../lib/format';
 import { updateTraining, bookUsersToTraining } from '../../services/trainings';
@@ -98,7 +99,10 @@ function TrainingDetailModal({
         disabled={!onEdit}
         onClick={() => onEdit?.(training)}
       >
-        <span aria-hidden="true">✏️</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M4 20h4.2L19.3 8.9a2 2 0 0 0 0-2.8l-1.4-1.4a2 2 0 0 0-2.8 0L4 15.8V20Z" />
+          <path d="m13.7 6.1 4.2 4.2" />
+        </svg>
       </IconButton>
       <IconButton
         ariaLabel="Удалить тренировку"
@@ -108,7 +112,13 @@ function TrainingDetailModal({
         disabled={!onDelete}
         onClick={() => onDelete?.(training.id)}
       >
-        <span aria-hidden="true">🗑️</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M4 7h16" />
+          <path d="M10 11v6" />
+          <path d="M14 11v6" />
+          <path d="M6 7l1 13h10l1-13" />
+          <path d="M9 7V4h6v3" />
+        </svg>
       </IconButton>
     </div>
   ) : null;
@@ -183,7 +193,12 @@ function TrainingDetailModal({
               training.expand.booked_users.map((player) => (
                 <div key={player.id} className="player-list-row">
                   <div className="player-meta-left">
-                    <div className="player-avatar-mini" aria-hidden="true">👤</div>
+                    <Avatar
+                      user={player}
+                      size="sm"
+                      className="training-player-avatar"
+                      alt={player.full_name || 'Теннисист'}
+                    />
                     <span className="player-name-label">{player.full_name || 'Теннисист'}</span>
                   </div>
                   {userIsModerator && (

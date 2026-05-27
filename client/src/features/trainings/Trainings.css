@@ -244,7 +244,7 @@
 
 .btn-delete-trash {
   background: #f1f3f5 !important;
-  font-size: 13px;
+  color: #e63946 !important;
 }
 
 .btn-stop {
@@ -257,7 +257,17 @@
 .btn-edit {
   background: #f1f3f5 !important;
   color: #495057 !important;
-  font-size: 13px;
+}
+
+.btn-edit svg,
+.btn-delete-trash svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .btn-restore {
@@ -427,14 +437,12 @@
   min-width: 0;
 }
 
-.player-avatar-mini {
+.training-player-avatar.ui-avatar {
   width: 24px;
   height: 24px;
-  background: #e9ecef;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+}
+
+.training-player-avatar .ui-avatar-fallback {
   font-size: 12px;
 }
 
