@@ -8,7 +8,7 @@ import React, {
   useState
 } from 'react';
 import { mutate } from 'swr';
-import { createGalleryItemWithProgress } from '../services/catalog';
+import { createGalleryItemWithProgress, logGalleryBatchUpload } from '../services/catalog';
 import { error } from '../lib/log';
 import './GalleryUploadProvider.css';
 
@@ -104,6 +104,7 @@ export function GalleryUploadProvider({ children }) {
         );
       }
 
+      logGalleryBatchUpload(createdItems);
       mutate(isGalleryKey);
       uploadAbortRef.current = null;
       setUploadTask({

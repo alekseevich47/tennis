@@ -1,5 +1,5 @@
 // @ts-check
-import { writeAudit, writeAuditError } from './core';
+import { getActor, writeAudit, writeAuditError } from './core';
 
 const DOMAIN = 'ГАЛЕРЕЯ';
 
@@ -34,7 +34,8 @@ function getAuthorName(record) {
   const expand = /** @type {{ author?: { full_name?: string, name?: string, email?: string } } | undefined} */ (
     record?.expand
   );
-  return expand?.author?.full_name || expand?.author?.name || expand?.author?.email || '';
+  const actor = getActor();
+  return expand?.author?.full_name || expand?.author?.name || expand?.author?.email || actor.userFullName;
 }
 
 export const auditGallery = {
@@ -67,6 +68,16 @@ export const auditGallery = {
   },
 
   /**
+   * @param {Record<string, unknown>[]} records
+   */
+  mediaBatchUpload(records) {
+    writeAudit(DOMAIN, 'Массовое добавление медиа', {
+      count: records.length,
+      mediaIds: records.map((record) => record.id).filter(Boolean)
+    });
+  },
+
+  /**
    * @param {Record<string, unknown>} record
    * @param {string} mediaId
    */
@@ -83,9 +94,14 @@ export const auditGallery = {
   /**
    * @param {string} commentId
    * @param {string} mediaId
+   * @param {unknown} text
    */
-  commentEdit(commentId, mediaId) {
-    writeAudit(DOMAIN, 'Комментарий отредактирован', { commentId, mediaId });
+  commentEdit(commentId, mediaId, text) {
+    writeAudit(DOMAIN, 'Комментарий отредактирован', {
+      commentId,
+      mediaId,
+      textPreview: getTextPreview(text)
+    });
   },
 
   /**
