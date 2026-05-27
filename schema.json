@@ -110,7 +110,9 @@
         "protected": false,
         "required": false,
         "system": false,
-        "thumbs": ["200x200t"],
+        "thumbs": [
+          "200x200t"
+        ],
         "type": "file"
       },
       {
@@ -362,6 +364,142 @@
     }
   },
   {
+    "id": "pbc_681515208",
+    "listRule": "@request.auth.role = \"moderator\"",
+    "viewRule": "@request.auth.role = \"moderator\"",
+    "createRule": "@request.auth.id != \"\"",
+    "updateRule": "@request.auth.role = \"moderator\"",
+    "deleteRule": "@request.auth.role = \"moderator\"",
+    "name": "audit_logs",
+    "type": "base",
+    "fields": [
+      {
+        "autogeneratePattern": "[a-z0-9]{15}",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 15,
+        "min": 15,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "cascadeDelete": false,
+        "collectionId": "_pb_users_auth_",
+        "hidden": false,
+        "id": "relation2375276105",
+        "maxSelect": 1,
+        "minSelect": 0,
+        "name": "user",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "relation"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text1852525813",
+        "max": 0,
+        "min": 0,
+        "name": "actor_name",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text1730263193",
+        "max": 0,
+        "min": 0,
+        "name": "actor_role",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text2812878347",
+        "max": 0,
+        "min": 0,
+        "name": "domain",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text1204587666",
+        "max": 0,
+        "min": 0,
+        "name": "action",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "json1915095946",
+        "maxSize": 0,
+        "name": "details",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "json"
+      },
+      {
+        "hidden": false,
+        "id": "bool287399681",
+        "name": "is_error",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "hidden": false,
+        "id": "autodate2990389176",
+        "name": "created",
+        "onCreate": true,
+        "onUpdate": false,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      },
+      {
+        "hidden": false,
+        "id": "autodate3332085495",
+        "name": "updated",
+        "onCreate": true,
+        "onUpdate": true,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      }
+    ],
+    "indexes": [],
+    "system": false
+  },
+  {
     "id": "pbc_1605818338",
     "listRule": "",
     "viewRule": "",
@@ -564,7 +702,10 @@
         "protected": false,
         "required": false,
         "system": false,
-        "thumbs": ["800x0", "400x0"],
+        "thumbs": [
+          "800x0",
+          "400x0"
+        ],
         "type": "file"
       },
       {
@@ -1080,7 +1221,10 @@
         "protected": false,
         "required": false,
         "system": false,
-        "thumbs": ["800x0", "400x0"],
+        "thumbs": [
+          "800x0",
+          "400x0"
+        ],
         "type": "file"
       },
       {
@@ -1280,7 +1424,10 @@
         "protected": false,
         "required": false,
         "system": false,
-        "thumbs": ["600x0", "400x0"],
+        "thumbs": [
+          "600x0",
+          "400x0"
+        ],
         "type": "file"
       },
       {
