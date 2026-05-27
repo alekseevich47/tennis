@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { useProducts } from '../../hooks/useProducts';
 import { useProductCategories } from '../../hooks/useProductCategories';
 import { isModerator } from '../../services/auth';
-import { softDeleteProduct, updateProduct } from '../../services/catalog';
+import { restoreProduct, softDeleteProduct } from '../../services/catalog';
 import { useProductUpload } from '../../components/ProductUploadProvider';
 import Spinner from '../../components/ui/Spinner';
 import EmptyState from '../../components/ui/EmptyState';
@@ -136,7 +136,7 @@ function ShopPage({ onDeletedIdsChange } = {}) {
   const handleRestore = useCallback(async (productId) => {
     setDeletedProductIds((prev) => prev.filter((id) => id !== productId));
     try {
-      await updateProduct(productId, { is_deleted: false });
+      await restoreProduct(productId);
       mutate(
         (curr = []) =>
           curr.map((product) =>

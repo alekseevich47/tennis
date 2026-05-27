@@ -240,6 +240,15 @@ export async function softDeleteProduct(productId) {
 }
 
 /** @param {string} productId */
+export async function restoreProduct(productId) {
+  const record = /** @type {ProductRecord} */ (
+    await pb.collection('products').update(productId, { is_deleted: false })
+  );
+  auditShop.productRestore(productId);
+  return record;
+}
+
+/** @param {string} productId */
 export async function deleteProduct(productId) {
   const result = await pb.collection('products').delete(productId);
   auditShop.productHardDelete(productId);

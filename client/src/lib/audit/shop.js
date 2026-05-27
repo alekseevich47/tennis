@@ -62,6 +62,13 @@ export const auditShop = {
   /**
    * @param {string} productId
    */
+  productRestore(productId) {
+    writeAudit(DOMAIN, 'Товар восстановлен', { productId });
+  },
+
+  /**
+   * @param {string} productId
+   */
   productHardDelete(productId) {
     writeAudit(DOMAIN, 'Товар удалён', { productId });
   },
