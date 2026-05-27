@@ -26,6 +26,28 @@ export function getMediaUrl(record, collectionFallback, fileField) {
 }
 
 /**
+ * @param {BaseRecord | null | undefined} record
+ * @param {string} collectionFallback
+ * @param {string | string[] | null | undefined} fileField
+ * @param {string} [thumb]
+ * @returns {string | null}
+ */
+export function getMediaThumbUrl(
+  record,
+  collectionFallback,
+  fileField,
+  thumb = '800x0'
+) {
+  const url = getMediaUrl(record, collectionFallback, fileField);
+  if (!url) return null;
+
+  const filename = Array.isArray(fileField) ? fileField[0] : fileField;
+  if (isVideoMediaName(filename)) return url;
+
+  return `${url}?thumb=${thumb}`;
+}
+
+/**
  * Извлечь первое имя файла из поля, которое может быть строкой или массивом.
  * @param {string | string[] | null | undefined} fileField
  */

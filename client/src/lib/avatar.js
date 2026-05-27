@@ -1,5 +1,5 @@
 // @ts-check
-import { getMediaUrl } from './media';
+import { getMediaThumbUrl } from './media';
 
 /**
  * @typedef {Object} UserAvatarLike
@@ -27,7 +27,7 @@ export function getUserAvatarData(user) {
   }
 
   // 2. Иначе пробуем собрать URL из файла-поля `avatar` PocketBase.
-  const src = getMediaUrl(user || null, 'users', user?.avatar);
+  const src = getMediaThumbUrl(user || null, 'users', user?.avatar, '200x200t');
   if (src) {
     return { hasAvatar: true, src, initial };
   }

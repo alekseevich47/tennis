@@ -110,7 +110,7 @@
         "protected": false,
         "required": false,
         "system": false,
-        "thumbs": null,
+        "thumbs": ["200x200t"],
         "type": "file"
       },
       {
@@ -564,7 +564,7 @@
         "protected": false,
         "required": false,
         "system": false,
-        "thumbs": [],
+        "thumbs": ["800x0", "400x0"],
         "type": "file"
       },
       {
@@ -1080,7 +1080,7 @@
         "protected": false,
         "required": false,
         "system": false,
-        "thumbs": [],
+        "thumbs": ["800x0", "400x0"],
         "type": "file"
       },
       {
@@ -1280,7 +1280,7 @@
         "protected": false,
         "required": false,
         "system": false,
-        "thumbs": [],
+        "thumbs": ["600x0", "400x0"],
         "type": "file"
       },
       {

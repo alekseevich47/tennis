@@ -44,3 +44,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </ErrorBoundary>
   </React.StrictMode>
 );
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/tt-api/sw.js', { scope: '/' });
+}
