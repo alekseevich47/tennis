@@ -8,10 +8,20 @@ import { useGalleryLikes } from '../../hooks/useGalleryLikes';
  *   user: any,
  *   onCommentOpen: () => void,
  *   onDelete?: () => void,
- *   canDelete: boolean
+ *   canDelete: boolean,
+ *   bottomOffset?: number,
+ *   hidden?: boolean
  * }} props
  */
-function GalleryMediaOverlay({ mediaId, user, onCommentOpen, onDelete, canDelete }) {
+function GalleryMediaOverlay({
+  mediaId,
+  user,
+  onCommentOpen,
+  onDelete,
+  canDelete,
+  bottomOffset = 0,
+  hidden = false,
+}) {
   const { count, isLiked, toggle, isLoading } = useGalleryLikes(mediaId);
 
   if (mediaId === null) return null;
@@ -19,7 +29,10 @@ function GalleryMediaOverlay({ mediaId, user, onCommentOpen, onDelete, canDelete
   const liked = isLiked(user?.id);
 
   return (
-    <div className="gallery-media-overlay">
+    <div
+      className={clsx('gallery-media-overlay', hidden === true && 'gallery-media-overlay--hidden')}
+      style={{ bottom: `${bottomOffset}px` }}
+    >
       <div className="gallery-media-overlay__inner">
         <button
           type="button"
