@@ -67,7 +67,7 @@ function GalleryCommentModal({ isOpen, mediaItem, user, userIsModerator, onClose
 
     setDeletingId(commentId);
     try {
-      await deleteGalleryComment(commentId);
+      await deleteGalleryComment(commentId, mediaId);
       await mutate();
     } catch (err) {
       error('delete gallery comment:', err);
@@ -92,7 +92,7 @@ function GalleryCommentModal({ isOpen, mediaItem, user, userIsModerator, onClose
     if (!text || !commentId) return;
 
     try {
-      await updateGalleryComment(commentId, text);
+      await updateGalleryComment(commentId, text, mediaId);
       setEditingId(null);
       setEditText('');
       await mutate();

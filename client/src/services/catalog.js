@@ -1,6 +1,7 @@
 // @ts-check
 import pb from './pb';
 import { error } from '../lib/log';
+import { auditGallery, auditShop } from '../lib/audit';
 import { PB_URL } from '../config';
 
 /**
@@ -140,7 +141,11 @@ export async function listProducts({ categoryId, signal } = {}) {
 
 /** @param {FormData | Record<string, unknown>} payload */
 export async function createProduct(payload) {
-  return pb.collection('products').create(/** @type {Record<string, unknown>} */ (payload));
+  const record = /** @type {ProductRecord} */ (
+    await pb.collection('products').create(/** @type {Record<string, unknown>} */ (payload))
+  );
+  auditShop.productCreate(/** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)));
+  return record;
 }
 
 /**
@@ -181,7 +186,9 @@ export function createProductWithProgress(payload, { signal, onProgress } = {}) 
       if (xhr.status >= 200 && xhr.status < 300) {
         onProgress?.(100);
         try {
-          resolve(/** @type {ProductRecord} */ (JSON.parse(xhr.responseText)));
+          const record = /** @type {ProductRecord} */ (JSON.parse(xhr.responseText));
+          resolve(record);
+          auditShop.productCreate(/** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)));
         } catch (parseErr) {
           reject(parseErr);
         }
@@ -216,17 +223,27 @@ export function createProductWithProgress(payload, { signal, onProgress } = {}) 
  * @param {FormData | Record<string, unknown>} payload
  */
 export async function updateProduct(productId, payload) {
-  return pb.collection('products').update(productId, /** @type {Record<string, unknown>} */ (payload));
+  const record = /** @type {ProductRecord} */ (
+    await pb.collection('products').update(productId, /** @type {Record<string, unknown>} */ (payload))
+  );
+  auditShop.productEdit(productId, payload);
+  return record;
 }
 
 /** @param {string} productId */
 export async function softDeleteProduct(productId) {
-  return pb.collection('products').update(productId, { is_deleted: true });
+  const record = /** @type {ProductRecord} */ (
+    await pb.collection('products').update(productId, { is_deleted: true })
+  );
+  auditShop.productSoftDelete(productId);
+  return record;
 }
 
 /** @param {string} productId */
 export async function deleteProduct(productId) {
-  return pb.collection('products').delete(productId);
+  const result = await pb.collection('products').delete(productId);
+  auditShop.productHardDelete(productId);
+  return result;
 }
 
 // --- ИГРОКИ -----------------------------------------------------------------
@@ -467,7 +484,9 @@ export function createGalleryItemWithProgress(payload, { signal, onProgress } = 
       if (xhr.status >= 200 && xhr.status < 300) {
         onProgress?.(100);
         try {
-          resolve(/** @type {GalleryRecord} */ (JSON.parse(xhr.responseText)));
+          const record = /** @type {GalleryRecord} */ (JSON.parse(xhr.responseText));
+          resolve(record);
+          auditGallery.mediaUpload(/** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)));
         } catch (parseErr) {
           reject(parseErr);
         }
@@ -480,7 +499,9 @@ export function createGalleryItemWithProgress(payload, { signal, onProgress } = 
       if (settled) return;
       settled = true;
       signal?.removeEventListener('abort', abortUpload);
-      reject(new Error('Сеть прервала загрузку галереи'));
+      const err = new Error('Сеть прервала загрузку галереи');
+      auditGallery.uploadError(err);
+      reject(err);
     };
 
     xhr.onabort = () => {
@@ -501,7 +522,9 @@ export function createGalleryItemWithProgress(payload, { signal, onProgress } = 
 export async function addGalleryImage(payload) {
   const item = payload && 'file' in payload ? payload : { file: payload };
   const data = createGalleryFormData(item);
-  return pb.collection('gallery').create(data);
+  const record = /** @type {GalleryRecord} */ (await pb.collection('gallery').create(data));
+  auditGallery.mediaUpload(/** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)));
+  return record;
 }
 
 /**
@@ -525,18 +548,23 @@ export async function deleteGalleryImage(imageId) {
   ]);
 
   try {
-    return await pb.collection('gallery').delete(imageId);
+    const result = await pb.collection('gallery').delete(imageId);
+    auditGallery.mediaDelete(imageId);
+    return result;
   } catch (err) {
     relatedDeleteResults
       .filter((result) => result.status === 'rejected')
       .forEach((result) => error('delete gallery related records:', result.reason));
+    auditGallery.deleteError(err, imageId);
     throw err;
   }
 }
 
 /** @param {string[]} ids */
 export async function deleteGalleryImages(ids) {
-  return Promise.all(ids.map((imageId) => deleteGalleryImage(imageId)));
+  const results = await Promise.all(ids.map((imageId) => deleteGalleryImage(imageId)));
+  auditGallery.mediaBatchDelete(ids);
+  return results;
 }
 
 /**
@@ -576,13 +604,16 @@ export async function toggleGalleryLike(mediaId, userId) {
 
   if (existing[0]) {
     await pb.collection('gallery_likes').delete(existing[0].id);
+    auditGallery.likeRemove(mediaId);
     return null;
   }
 
-  return /** @type {GalleryLikeRecord} */ (await pb.collection('gallery_likes').create({
+  const record = /** @type {GalleryLikeRecord} */ (await pb.collection('gallery_likes').create({
     media_id: mediaId,
     user: userId
   }));
+  auditGallery.likeAdd(mediaId);
+  return record;
 }
 
 /**
@@ -614,22 +645,39 @@ export async function listGalleryComments(mediaId, { signal } = {}) {
 export async function createGalleryComment({ mediaId, authorId, text }) {
   if (!authorId) throw new Error('Не авторизован: нельзя создать комментарий без author.id');
 
-  return pb.collection('gallery_comments').create({
+  const record = /** @type {GalleryCommentRecord} */ (await pb.collection('gallery_comments').create({
     media_id: mediaId,
     author: authorId,
     text
-  });
+  }));
+  auditGallery.commentCreate(/** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)), mediaId);
+  return record;
 }
 
-/** @param {string} commentId */
-export async function deleteGalleryComment(commentId) {
-  return pb.collection('gallery_comments').delete(commentId);
+/**
+ * @param {string} commentId
+ * @param {string} [mediaId]
+ */
+export async function deleteGalleryComment(commentId, mediaId) {
+  const comment = mediaId
+    ? null
+    : /** @type {GalleryCommentRecord} */ (
+        await pb.collection('gallery_comments').getOne(commentId, { requestKey: null })
+      );
+  const result = await pb.collection('gallery_comments').delete(commentId);
+  auditGallery.commentDelete(commentId, mediaId || comment?.media_id || '');
+  return result;
 }
 
 /**
  * @param {string} commentId
  * @param {string} text
+ * @param {string} [mediaId]
  */
-export async function updateGalleryComment(commentId, text) {
-  return pb.collection('gallery_comments').update(commentId, { text });
+export async function updateGalleryComment(commentId, text, mediaId) {
+  const record = /** @type {GalleryCommentRecord} */ (
+    await pb.collection('gallery_comments').update(commentId, { text })
+  );
+  auditGallery.commentEdit(commentId, mediaId || record.media_id || '');
+  return record;
 }
