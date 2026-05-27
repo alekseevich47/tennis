@@ -2,6 +2,7 @@
 import pb from './pb';
 import { MAX_AUTH_URL } from '../config';
 import { log, error } from '../lib/log';
+import { auditProfile } from '../lib/audit';
 
 /**
  * @typedef {Object} UserRecord
@@ -72,13 +73,37 @@ export function isModerator() {
 }
 
 /**
+ * @param {Partial<UserRecord> | FormData} patch
+ * @returns {boolean}
+ */
+function hasAvatarPatch(patch) {
+  if (typeof FormData !== 'undefined' && patch instanceof FormData) {
+    return patch.has('avatar') || patch.has('avatar_url');
+  }
+
+  return Object.prototype.hasOwnProperty.call(patch, 'avatar') ||
+    Object.prototype.hasOwnProperty.call(patch, 'avatar_url');
+}
+
+/**
  * Безопасное обновление профиля + actualisation через authRefresh (исправляет C10).
  * @param {string} userId
  * @param {Partial<UserRecord> | FormData} patch
  * @returns {Promise<UserRecord>}
  */
 export async function updateUserProfile(userId, patch) {
-  await pb.collection('users').update(userId, /** @type {Record<string, unknown>} */ (patch));
-  const refreshed = await pb.collection('users').authRefresh();
-  return /** @type {UserRecord} */ (refreshed.record);
+  try {
+    await pb.collection('users').update(userId, /** @type {Record<string, unknown>} */ (patch));
+    auditProfile.profileEdit(userId, patch);
+
+    if (hasAvatarPatch(patch)) {
+      auditProfile.avatarUpload(userId);
+    }
+
+    const refreshed = await pb.collection('users').authRefresh();
+    return /** @type {UserRecord} */ (refreshed.record);
+  } catch (err) {
+    auditProfile.profileEditError(err, userId);
+    throw err;
+  }
 }
