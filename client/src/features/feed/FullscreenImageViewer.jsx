@@ -29,6 +29,7 @@ function getOriginRect(originKey) {
  *   originKey?: string | null,
  *   onCloseStart?: (originKey?: string | null) => void,
  *   onActiveIndexChange?: (index: number) => void,
+ *   onActiveVideoRef?: (el: HTMLVideoElement | null) => void,
  *   onClose: () => void
  * }} props
  */
@@ -39,6 +40,7 @@ function FullscreenImageViewer({
   originKey = null,
   onCloseStart,
   onActiveIndexChange,
+  onActiveVideoRef,
   onClose
 }) {
   const [activeIndex, setActiveIndex] = useState(initialIndex);
@@ -63,21 +65,25 @@ function FullscreenImageViewer({
   const showActiveOrigin = useCallback(() => {
     onCloseStart?.(null);
   }, [onCloseStart]);
+  const completeClose = useCallback(() => {
+    onActiveVideoRef?.(null);
+    onClose();
+  }, [onActiveVideoRef, onClose]);
   const requestClose = useCallback(() => {
     if (isClosing) return;
     const closingOriginKey = activeItem?.originKey || originKey;
     const nextReturnRect = getOriginRect(closingOriginKey) || originRect;
 
     if (!nextReturnRect) {
-      onClose();
+      completeClose();
       return;
     }
     hideActiveOrigin();
     setReturnRect(nextReturnRect);
     setIsClosing(true);
     window.clearTimeout(closeTimerRef.current);
-    closeTimerRef.current = window.setTimeout(onClose, SLIDE_ANIMATION_MS);
-  }, [activeItem?.originKey, hideActiveOrigin, isClosing, onClose, originKey, originRect]);
+    closeTimerRef.current = window.setTimeout(completeClose, SLIDE_ANIMATION_MS);
+  }, [activeItem?.originKey, completeClose, hideActiveOrigin, isClosing, originKey, originRect]);
   const {
     scale,
     position,
@@ -156,6 +162,10 @@ function FullscreenImageViewer({
   useEffect(() => {
     if (!hasItems) reset();
   }, [hasItems, reset]);
+
+  useEffect(() => {
+    if (!activeItem?.isVideo) onActiveVideoRef?.(null);
+  }, [activeItem?.isVideo, onActiveVideoRef]);
 
   useEffect(() => {
     return () => {
@@ -296,6 +306,10 @@ function FullscreenImageViewer({
     else goNext({ animated: true });
   };
 
+  const setActiveVideoRef = useCallback((el) => {
+    onActiveVideoRef?.(el);
+  }, [onActiveVideoRef]);
+
   const prevItem = items[(activeIndex - 1 + items.length) % items.length];
   const nextItem = items[(activeIndex + 1) % items.length];
   const trackItems = hasMultiple ? [prevItem, activeItem, nextItem] : [activeItem];
@@ -400,6 +414,7 @@ function FullscreenImageViewer({
               >
                 {item.isVideo ? (
                   <video
+                    ref={isActiveSlide ? setActiveVideoRef : undefined}
                     src={videoPreviewUrl(item.url)}
                     className="fullscreen-target-video"
                     controls

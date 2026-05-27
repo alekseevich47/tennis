@@ -224,8 +224,14 @@ button.gallery-item-like:hover:not(:disabled) {
   bottom: 0;
   z-index: 3100;
   pointer-events: none;
-  padding: 24px 20px calc(24px + env(safe-area-inset-bottom));
+  padding: 24px 20px 0;
   box-sizing: border-box;
+  transition: opacity 0.3s ease;
+}
+
+.gallery-media-overlay--hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .gallery-media-overlay__inner {
@@ -552,7 +558,7 @@ button.gallery-item-like:hover:not(:disabled) {
 
 @media (max-width: 480px) {
   .gallery-media-overlay {
-    padding: 18px 16px calc(18px + env(safe-area-inset-bottom));
+    padding: 18px 16px 0;
   }
 
   .gallery-comment-form {
