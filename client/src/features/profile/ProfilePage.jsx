@@ -11,6 +11,10 @@ import './Profile.css';
 
 const DEFAULT_HAND = 'Правая';
 
+function normalizeAge(value) {
+  return value != null && value !== '' ? Number(value) : null;
+}
+
 /**
  * @param {{ user: any, onUpdate?: (user: any) => void }} props
  */
@@ -39,13 +43,33 @@ function ProfilePage({ user, onUpdate }) {
   const handleSave = async (e) => {
     e.preventDefault();
     if (!user || saving) return;
+    const nextProfile = {
+      full_name: fullName,
+      age: age ? parseInt(age, 10) : null,
+      dominant_hand: dominantHand
+    };
+    const patch = {};
+
+    if (nextProfile.full_name !== (user.full_name || '')) {
+      patch.full_name = nextProfile.full_name;
+    }
+
+    if (nextProfile.age !== normalizeAge(user.age)) {
+      patch.age = nextProfile.age;
+    }
+
+    if (nextProfile.dominant_hand !== (user.dominant_hand || DEFAULT_HAND)) {
+      patch.dominant_hand = nextProfile.dominant_hand;
+    }
+
+    if (Object.keys(patch).length === 0) {
+      setIsEditing(false);
+      return;
+    }
+
     setSaving(true);
     try {
-      const updated = await updateUserProfile(user.id, {
-        full_name: fullName,
-        age: age ? parseInt(age, 10) : null,
-        dominant_hand: dominantHand
-      });
+      const updated = await updateUserProfile(user.id, patch);
       setIsEditing(false);
       onUpdate?.(updated);
     } catch (err) {

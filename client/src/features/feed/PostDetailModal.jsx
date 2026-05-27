@@ -8,9 +8,9 @@ import { useComments } from '../../hooks/useComments';
 import { formatPostDate } from '../../lib/format';
 import {
   createComment,
+  hardDeleteComment,
   updateComment
 } from '../../services/posts';
-import pb from '../../services/pb';
 import { error } from '../../lib/log';
 
 const SCROLL_INTO_VIEW_DELAY_MS = 200;
@@ -169,7 +169,7 @@ function PostDetailModal({
       try {
         await Promise.all(
           ids.map((id) =>
-            pb.collection('comments').delete(id).catch((e) => error('hard delete comment:', e))
+            hardDeleteComment(id, postId).catch((e) => error('hard delete comment:', e))
           )
         );
       } finally {

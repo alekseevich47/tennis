@@ -5,7 +5,7 @@ import IconButton from '../../components/ui/IconButton';
 import Avatar from '../../components/ui/Avatar';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { formatCardDate, formatTimeRange } from '../../lib/format';
-import { updateTraining, bookUsersToTraining } from '../../services/trainings';
+import { bookUsersToTraining, removeUsersFromTraining } from '../../services/trainings';
 import { error } from '../../lib/log';
 import UserPickerModal from './components/UserPickerModal';
 
@@ -54,10 +54,7 @@ function TrainingDetailModal({
     });
     if (!ok) return;
     try {
-      const currentBooked = training.booked_users || [];
-      await updateTraining(training.id, {
-        booked_users: currentBooked.filter((id) => id !== userId)
-      });
+      await removeUsersFromTraining(training, [userId]);
       onMutated();
     } catch (err) {
       error('kick player:', err);
@@ -65,9 +62,9 @@ function TrainingDetailModal({
     }
   };
 
-  const handleConfirmBookingUsers = async (selectedUserIds) => {
+  const handleConfirmBookingUsers = async (selectedUserIds, selectedUsers) => {
     try {
-      await bookUsersToTraining(training, selectedUserIds);
+      await bookUsersToTraining(training, selectedUserIds, selectedUsers);
       onMutated();
       setIsUserPickerOpen(false);
     } catch (err) {

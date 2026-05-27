@@ -255,10 +255,10 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
   }, []);
 
   const handleConfirmBookingUsers = useCallback(
-    async (userIds) => {
+    async (userIds, selectedUsers) => {
       if (!bookingTraining) return;
       try {
-        await bookUsersToTraining(bookingTraining, userIds);
+        await bookUsersToTraining(bookingTraining, userIds, selectedUsers);
         mutate();
         setBookingTraining(null);
       } catch (err) {

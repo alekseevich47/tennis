@@ -25,6 +25,117 @@ export const PENDING_DELETE_TRAININGS_KEY = 'pending_delete_trainings';
  */
 
 /**
+ * @typedef {Object} UserAuditRecord
+ * @property {string} id
+ * @property {string} [fullName]
+ * @property {string} [full_name]
+ * @property {string} [name]
+ * @property {string} [email]
+ */
+
+/**
+ * @param {unknown} user
+ */
+function getUserId(user) {
+  return String(/** @type {{ id?: unknown } | null | undefined} */ (user)?.id || '');
+}
+
+/**
+ * @param {string} userId
+ * @param {unknown} user
+ * @returns {UserAuditRecord}
+ */
+function toAuditUser(userId, user) {
+  const record = /** @type {UserAuditRecord | null | undefined} */ (user);
+  return {
+    id: userId,
+    fullName: record?.fullName || record?.full_name || record?.name || record?.email || 'Пользователь'
+  };
+}
+
+/**
+ * @param {TrainingRecord} training
+ * @param {string} relationKey
+ * @returns {unknown[]}
+ */
+function getExpandedUsers(training, relationKey) {
+  const expand = /** @type {Record<string, unknown> | undefined} */ (training.expand);
+  const users = expand?.[relationKey];
+  return Array.isArray(users) ? users : [];
+}
+
+/**
+ * @param {string[]} userIds
+ * @param {unknown[]} [knownUsers]
+ * @returns {Promise<UserAuditRecord[]>}
+ */
+async function resolveAuditUsers(userIds, knownUsers = []) {
+  const ids = Array.from(new Set(userIds.filter(Boolean)));
+  const usersById = new Map(knownUsers.map((user) => [getUserId(user), user]));
+  const missingIds = ids.filter((id) => !usersById.has(id));
+
+  const fetchedUsers = await Promise.all(
+    missingIds.map(async (id) => {
+      try {
+        return await pb.collection('users').getOne(id, {
+          fields: 'id,full_name,name,email',
+          requestKey: null
+        });
+      } catch (err) {
+        error('resolve audit user:', err);
+        return { id };
+      }
+    })
+  );
+
+  fetchedUsers.forEach((user) => {
+    usersById.set(getUserId(user), user);
+  });
+
+  return ids.map((id) => toAuditUser(id, usersById.get(id)));
+}
+
+/**
+ * @param {string} field
+ * @param {unknown} before
+ * @param {unknown} after
+ */
+function areTrainingValuesEqual(field, before, after) {
+  if (field === 'date') {
+    const beforeTime = new Date(String(before || '')).getTime();
+    const afterTime = new Date(String(after || '')).getTime();
+    if (Number.isFinite(beforeTime) && Number.isFinite(afterTime)) return beforeTime === afterTime;
+  }
+
+  if (Array.isArray(before) || Array.isArray(after)) {
+    return JSON.stringify(before || []) === JSON.stringify(after || []);
+  }
+
+  return before === after;
+}
+
+/**
+ * @param {TrainingRecord} previous
+ * @param {TrainingRecord} next
+ * @param {Record<string, unknown>} patch
+ */
+function getTrainingChangedFields(previous, next, patch) {
+  return Object.keys(patch).flatMap((field) => {
+    const hasNextValue = Object.prototype.hasOwnProperty.call(next, field);
+    const before = /** @type {Record<string, unknown>} */ (previous)[field];
+    const after = hasNextValue ? /** @type {Record<string, unknown>} */ (next)[field] : patch[field];
+
+    if (areTrainingValuesEqual(field, before, after)) return [];
+
+    return [{
+      field,
+      from: before ?? null,
+      to: after ?? null
+    }];
+  });
+}
+
+/**
  * @param {{ signal?: AbortSignal }} [options]
  * @returns {Promise<TrainingRecord[]>}
  */
@@ -64,8 +175,14 @@ export async function createTraining(payload) {
  */
 export async function updateTraining(trainingId, patch) {
   try {
+    const previous = /** @type {TrainingRecord} */ (
+      await pb.collection('trainings').getOne(trainingId, { requestKey: null })
+    );
     const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(trainingId, patch));
-    auditTrainings.trainingEdit(trainingId, patch);
+    const changedFields = getTrainingChangedFields(previous, record, patch);
+    if (changedFields.length > 0) {
+      auditTrainings.trainingEdit(trainingId, changedFields);
+    }
     return record;
   } catch (err) {
     auditTrainings.trainingEditError(err, trainingId);
@@ -221,8 +338,9 @@ export async function bookTraining(training, userId) {
  * Записать произвольного пользователя на тренировку.
  * @param {TrainingRecord} training
  * @param {string} userId
+ * @param {UserAuditRecord} [targetUser]
  */
-export async function bookUserToTraining(training, userId) {
+export async function bookUserToTraining(training, userId, targetUser) {
   try {
     if (!userId) throw new Error('Не выбран пользователь');
     const current = training.booked_users || [];
@@ -233,9 +351,11 @@ export async function bookUserToTraining(training, userId) {
     const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
       booked_users: [...current, userId]
     }));
+    const [auditUser] = await resolveAuditUsers(userId ? [userId] : [], targetUser ? [targetUser] : []);
     auditTrainings.bookUser(
       /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
-      userId
+      userId,
+      auditUser
     );
     return record;
   } catch (err) {
@@ -248,8 +368,9 @@ export async function bookUserToTraining(training, userId) {
  * Записать несколько пользователей на тренировку одним обновлением.
  * @param {TrainingRecord} training
  * @param {string[]} userIds
+ * @param {UserAuditRecord[]} [targetUsers]
  */
-export async function bookUsersToTraining(training, userIds) {
+export async function bookUsersToTraining(training, userIds, targetUsers = []) {
   try {
     const selectedUserIds = Array.from(new Set(userIds.filter(Boolean)));
     if (selectedUserIds.length === 0) throw new Error('Не выбраны игроки');
@@ -265,9 +386,42 @@ export async function bookUsersToTraining(training, userIds) {
     const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
       booked_users: [...current, ...nextUserIds]
     }));
+    const auditUsers = await resolveAuditUsers(nextUserIds, targetUsers);
     auditTrainings.bookUsers(
       /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
-      nextUserIds
+      nextUserIds,
+      auditUsers
+    );
+    return record;
+  } catch (err) {
+    auditTrainings.bookError(err, training.id);
+    throw err;
+  }
+}
+
+/**
+ * Удалить пользователей из записи на тренировку модератором.
+ * @param {TrainingRecord} training
+ * @param {string[]} userIds
+ */
+export async function removeUsersFromTraining(training, userIds) {
+  try {
+    const selectedUserIds = Array.from(new Set(userIds.filter(Boolean)));
+    if (selectedUserIds.length === 0) throw new Error('Не выбраны игроки');
+
+    const current = training.booked_users || [];
+    const currentSet = new Set(current);
+    const removedUserIds = selectedUserIds.filter((userId) => currentSet.has(userId));
+    if (removedUserIds.length === 0) throw new Error('Игроки не записаны на эту тренировку');
+
+    const auditUsers = await resolveAuditUsers(removedUserIds, getExpandedUsers(training, 'booked_users'));
+    const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
+      booked_users: current.filter((id) => !removedUserIds.includes(id))
+    }));
+    auditTrainings.unbookUsers(
+      /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
+      removedUserIds,
+      auditUsers
     );
     return record;
   } catch (err) {

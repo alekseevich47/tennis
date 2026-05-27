@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import pb from './services/pb';
 import { useMaxAuth } from './hooks/useMaxAuth';
 import AppHeader from './components/AppHeader';
 import BottomNav from './components/BottomNav';
@@ -18,6 +17,7 @@ import {
   writePendingDeleteTrainingIds
 } from './services/trainings';
 import { deleteProduct } from './services/catalog';
+import { hardDeleteComment, hardDeletePost } from './services/posts';
 import { error } from './lib/log';
 import './styles/global.css';
 
@@ -65,7 +65,7 @@ function App() {
     if (postIds.length > 0) {
       tasks.push(
         ...postIds.map((id) =>
-          pb.collection('posts').delete(id).catch((e) => error('flush post:', e))
+          hardDeletePost(id).catch((e) => error('flush post:', e))
         )
       );
       setPendingDeletePostIds([]);
@@ -96,7 +96,7 @@ function App() {
         if (Array.isArray(commentIds)) {
           tasks.push(
             ...commentIds.map((id) =>
-              pb.collection('comments').delete(id).catch((e) => error('flush comment:', e))
+              hardDeleteComment(id).catch((e) => error('flush comment:', e))
             )
           );
         }
