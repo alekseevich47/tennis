@@ -120,9 +120,12 @@ function GalleryPage({ user }) {
   const scrollTimeoutRef = useRef(null);
   const longPressRef = useRef(null);
   const suppressClickRef = useRef(null);
+  const videoElRef = useRef(null);
+  const [videoBottomOffset, setVideoBottomOffset] = useState(0);
   const [fullscreenMedia, setFullscreenMedia] = useState(null);
   const [hiddenMediaKey, setHiddenMediaKey] = useState(null);
   const [activeViewerIndex, setActiveViewerIndex] = useState(0);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [isButtonVisible, setIsButtonVisible] = useState(true);
   const [commentModalOpen, setCommentModalOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState(() => new Set());
@@ -144,6 +147,50 @@ function GalleryPage({ user }) {
     }
     longPressRef.current = null;
   }, []);
+
+  const [activeVideoEl, setActiveVideoEl] = useState(null);
+
+  const handleActiveVideoRef = useCallback((el) => {
+    videoElRef.current = el;
+    setActiveVideoEl(el);
+  }, []);
+
+  useEffect(() => {
+    if (!activeVideoEl) {
+      setVideoBottomOffset(0);
+      return undefined;
+    }
+
+    const measure = () => {
+      setVideoBottomOffset(window.innerHeight - activeVideoEl.getBoundingClientRect().bottom);
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(activeVideoEl);
+    window.addEventListener('resize', measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', measure);
+    };
+  }, [activeVideoEl]);
+
+  useEffect(() => {
+    if (!fullscreenMedia) {
+      setIsVideoPlaying(false);
+      return undefined;
+    }
+
+    const handlePlay = () => setIsVideoPlaying(true);
+    const handlePause = () => setIsVideoPlaying(false);
+
+    document.addEventListener('play', handlePlay, true);
+    document.addEventListener('pause', handlePause, true);
+    return () => {
+      document.removeEventListener('play', handlePlay, true);
+      document.removeEventListener('pause', handlePause, true);
+    };
+  }, [fullscreenMedia]);
 
   const toggleSelectedId = useCallback((id) => {
     setSelectedIds((previous) => {
@@ -285,6 +332,7 @@ function GalleryPage({ user }) {
     setFullscreenMedia(null);
     setHiddenMediaKey(null);
     setActiveViewerIndex(0);
+    setIsVideoPlaying(false);
     setCommentModalOpen(false);
   }, []);
 
@@ -501,6 +549,7 @@ function GalleryPage({ user }) {
             onCloseStart={handleFullscreenCloseStart}
             onActiveIndexChange={setActiveViewerIndex}
             onClose={handleCloseFullscreen}
+            onActiveVideoRef={handleActiveVideoRef}
           />
           <GalleryMediaOverlay
             key={activeGalleryRecord?.id}
@@ -509,6 +558,8 @@ function GalleryPage({ user }) {
             onCommentOpen={() => setCommentModalOpen(true)}
             canDelete={moderator}
             onDelete={isDeletingFullscreen ? undefined : handleDeleteFullscreen}
+            bottomOffset={videoBottomOffset}
+            hidden={isVideoPlaying}
           />
         </>
       )}
