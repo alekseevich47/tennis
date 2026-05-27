@@ -1,5 +1,6 @@
 import React, { useEffect, useId, useMemo, useState } from 'react';
 import Modal from '../../../components/ui/Modal';
+import Avatar from '../../../components/ui/Avatar';
 import { listUsers } from '../../../services/users';
 import { error } from '../../../lib/log';
 
@@ -131,7 +132,12 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
                   checked={selectedIds.has(user.id)}
                   onChange={() => handleToggleUser(user.id)}
                 />
-                <span className="player-avatar-mini" aria-hidden="true">👤</span>
+                <Avatar
+                  user={user}
+                  size="sm"
+                  className="training-player-avatar"
+                  alt={user.full_name || 'Теннисист'}
+                />
                 <span>{user.full_name || 'Теннисист'}</span>
               </label>
             ))

@@ -173,6 +173,7 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
 
   const handleSoftDelete = useCallback(
     async (trainingId) => {
+      setSelectedTrainingId(null);
       setDeletingTrainingIds((prev) => new Set(prev).add(trainingId));
       addPendingDeleteTrainingId(trainingId);
       setHiddenDeletedTrainingIds((prev) =>
