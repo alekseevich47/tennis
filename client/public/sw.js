@@ -1,5 +1,13 @@
 const MEDIA_CACHE_NAME = 'media-v1';
 
+self.addEventListener('install', (event) => {
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(self.clients.claim());
+});
+
 function isMediaRequest(request) {
   if (request.method !== 'GET') return false;
 
