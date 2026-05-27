@@ -50,6 +50,7 @@ export {
   listProducts,
   createProduct,
   updateProduct,
+  restoreProduct,
   deleteProduct,
   listPlayers,
   createPlayer,
