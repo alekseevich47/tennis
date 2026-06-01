@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
-import { MAX_SHARE_URL_TEMPLATE } from '../../config';
+import { MAX_SELLER_ID } from '../../config';
 import { useProductCategories } from '../../hooks/useProductCategories';
 import { getMediaUrl, isVideoMediaName, mediaNames, videoPreviewUrl } from '../../lib/media';
 
@@ -10,14 +10,6 @@ const SWIPE_THRESHOLD_PX = 36;
 
 function getProductCategoryIds(product) {
   return Array.isArray(product?.categories) ? product.categories : [];
-}
-
-function buildMaxShareUrl(message) {
-  const encodedMessage = encodeURIComponent(message);
-
-  return MAX_SHARE_URL_TEMPLATE
-    .replace(/\{message\}|<message>|\$\{message\}/g, encodedMessage)
-    .replace(/\{text\}|<text>|\$\{text\}/g, encodedMessage);
 }
 
 /**
@@ -100,27 +92,31 @@ function ProductDetail({
   };
 
   const handleContact = async () => {
-    try {
-      const message = `Хочу купить: ${product.title || 'Товар'} #${product.id}`;
-      const webApp = window.WebApp;
+    const message = `Хочу купить: ${product.title} #${product.id}`;
+    let isMessageCopied = false;
 
-      if (webApp?.shareMaxContent) {
-        await webApp.shareMaxContent({ text: message });
-        return;
+    if (navigator.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(message);
+        isMessageCopied = true;
+      } catch {
+        isMessageCopied = false;
       }
+    }
 
-      const url = buildMaxShareUrl(message);
+    const url = `https://max.ru/u/${MAX_SELLER_ID}`;
+    const webApp = window.WebApp;
 
-      if (webApp?.openMaxLink) {
-        webApp.openMaxLink(url);
-        return;
-      }
+    if (webApp?.openMaxLink) {
+      webApp.openMaxLink(url);
+    } else {
+      window.open(url, '_blank');
+    }
 
-      window.open(url, '_blank', 'noopener,noreferrer');
-    } catch {
+    if (isMessageCopied) {
       await alert({
-        title: 'Не получилось',
-        message: 'Не удалось открыть отправку сообщения в MAX.'
+        title: 'Скопировано',
+        message: 'Текст скопирован — вставьте в сообщение'
       });
     }
   };

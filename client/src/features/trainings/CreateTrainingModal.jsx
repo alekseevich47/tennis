@@ -4,11 +4,11 @@ import { createTraining } from '../../services/trainings';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { error } from '../../lib/log';
 
-const DEFAULT_LOCATION = 'ул. Тухачевского, 31б';
+const DEFAULT_LOCATION = 'ул. Тухачевского, 31/3';
 
 const INITIAL_FORM = {
   time: '18:00',
-  duration: 120,
+  duration: 90,
   type: 'group',
   maxSlots: '',
   selectedLocation: DEFAULT_LOCATION,
