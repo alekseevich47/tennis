@@ -12,11 +12,8 @@ const MEDIA_BASE_URL = `${PB_URL}/api/files`;
 // ID приложения MAX (выдаётся в кабинете разработчика MAX).
 const MAX_APP_ID = import.meta.env.VITE_MAX_APP_ID || 'id420550689204_bot';
 
-const MAX_SELLER_ID = import.meta.env.VITE_MAX_SELLER_ID || '146493812';
-
-const MAX_SHARE_URL_TEMPLATE =
-  import.meta.env.VITE_MAX_SHARE_URL_TEMPLATE || 'https://max.ru/:share?text={text}';
+const MAX_SELLER_URL = import.meta.env.VITE_MAX_SELLER_URL || 'https://max.ru/u/f9LHodD0cOKlWp4-3nvjD4xLuY56sR9La9x_NG6-K05fCD4cEXtTPFHojmQ';
 
 const IS_DEV = import.meta.env.DEV;
 
-export { PB_URL, MAX_AUTH_URL, MEDIA_BASE_URL, MAX_APP_ID, MAX_SELLER_ID, MAX_SHARE_URL_TEMPLATE, IS_DEV };
+export { PB_URL, MAX_AUTH_URL, MEDIA_BASE_URL, MAX_APP_ID, MAX_SELLER_URL, IS_DEV };
