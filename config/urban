@@ -139,6 +139,14 @@ server {
 	        add_header Service-Worker-Allowed "/" always;
 	        add_header Cache-Control "no-cache" always;
 	    }
+    location = /tt-api/ {
+        alias /home/sa/tt_bot/client/dist/index.html;
+        add_header Cache-Control "no-cache" always;
+    }
+    location = /tt-api/index.html {
+        alias /home/sa/tt_bot/client/dist/index.html;
+        add_header Cache-Control "no-cache" always;
+    }
     # === 6. Фронтенд (Mini App) ===
     location /tt-api/ {
         alias /home/sa/tt_bot/client/dist/;
