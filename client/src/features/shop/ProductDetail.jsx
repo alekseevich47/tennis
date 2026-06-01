@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
-import { MAX_SELLER_ID } from '../../config';
+import { MAX_SELLER_URL } from '../../config';
 import { useProductCategories } from '../../hooks/useProductCategories';
 import { getMediaUrl, isVideoMediaName, mediaNames, videoPreviewUrl } from '../../lib/media';
 
@@ -93,25 +93,29 @@ function ProductDetail({
 
   const handleContact = async () => {
     const message = `Хочу купить: ${product.title} #${product.id}`;
-    let isMessageCopied = false;
+    const sellerUrl = MAX_SELLER_URL.trim();
 
-    if (navigator.clipboard?.writeText) {
-      try {
-        await navigator.clipboard.writeText(message);
-        isMessageCopied = true;
-      } catch {
-        isMessageCopied = false;
-      }
+    if (!sellerUrl) {
+      await alert({
+        title: 'Не настроена ссылка продавца',
+        message: 'Укажите VITE_MAX_SELLER_URL в конфигурации приложения.'
+      });
+      return;
     }
 
-    const url = `https://max.ru/u/${MAX_SELLER_ID}`;
+    const copyMessagePromise = navigator.clipboard?.writeText
+      ? navigator.clipboard.writeText(message).then(() => true).catch(() => false)
+      : Promise.resolve(false);
+
     const webApp = window.WebApp;
 
-    if (webApp?.openMaxLink) {
-      webApp.openMaxLink(url);
+    if (webApp?.openMaxLink && webApp.initData) {
+      webApp.openMaxLink(sellerUrl);
     } else {
-      window.open(url, '_blank');
+      window.open(sellerUrl, '_blank', 'noopener,noreferrer');
     }
+
+    const isMessageCopied = await copyMessagePromise;
 
     if (isMessageCopied) {
       await alert({
