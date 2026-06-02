@@ -95,21 +95,6 @@ function TrainingDetailModal({
     }
   };
 
-  const moderatorActions = userIsModerator && !training.is_deleted && !isPast ? (
-    <div className="card-buttons-wrapper">
-      <IconButton
-        ariaLabel={training.is_closed ? 'Открыть запись на тренировку' : 'Закрыть запись на тренировку'}
-        variant="ghost"
-        size="sm"
-        className="action-circle-btn btn-stop"
-        disabled={!onToggleClose}
-        onClick={() => onToggleClose?.(training)}
-      >
-        <span aria-hidden="true">■</span>
-      </IconButton>
-    </div>
-  ) : null;
-
   return (
     <>
       <Modal
@@ -118,7 +103,6 @@ function TrainingDetailModal({
         size="tall"
         ariaLabel="Детали тренировки и список участников"
         showCloseButton={false}
-        footer={moderatorActions}
       >
         <div className="detail-header-row">
           <span className="detail-badge-type">
@@ -127,6 +111,24 @@ function TrainingDetailModal({
           <div className="detail-header-actions">
             {userIsModerator && !training.is_deleted && (
               <>
+                {!isPast && (
+                  <IconButton
+                    ariaLabel={training.is_closed ? 'Открыть запись на тренировку' : 'Закрыть запись на тренировку'}
+                    variant="ghost"
+                    size="sm"
+                    className={clsx('action-circle-btn btn-stop', training.is_closed && 'btn-stop-play')}
+                    disabled={!onToggleClose}
+                    onClick={() => onToggleClose?.(training)}
+                  >
+                    {training.is_closed ? (
+                      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M8 5v14l11-7L8 5Z" />
+                      </svg>
+                    ) : (
+                      <span aria-hidden="true">■</span>
+                    )}
+                  </IconButton>
+                )}
                 <IconButton
                   ariaLabel="Редактировать тренировку"
                   variant="ghost"
