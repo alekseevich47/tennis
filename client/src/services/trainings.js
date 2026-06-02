@@ -96,6 +96,32 @@ async function resolveAuditUsers(userIds, knownUsers = []) {
 }
 
 /**
+ * @param {string} userId
+ */
+async function incrementAttendanceCount(userId) {
+  await pb.collection('users').update(userId, {
+    'attendance_count+': 1
+  });
+}
+
+/**
+ * @param {string} userId
+ */
+async function decrementAttendanceCount(userId) {
+  const user = /** @type {{ attendance_count?: number | null }} */ (
+    await pb.collection('users').getOne(userId, {
+      fields: 'attendance_count'
+    })
+  );
+
+  if ((user.attendance_count || 0) <= 0) return;
+
+  await pb.collection('users').update(userId, {
+    'attendance_count-': 1
+  });
+}
+
+/**
  * @param {string} field
  * @param {unknown} before
  * @param {unknown} after
@@ -414,15 +440,28 @@ export async function removeUsersFromTraining(training, userIds) {
     const removedUserIds = selectedUserIds.filter((userId) => currentSet.has(userId));
     if (removedUserIds.length === 0) throw new Error('Игроки не записаны на эту тренировку');
 
+    const attended = training.attended_users || [];
+    const attendedSet = new Set(attended);
+    const removedAttendedUserIds = removedUserIds.filter((userId) => attendedSet.has(userId));
     const auditUsers = await resolveAuditUsers(removedUserIds, getExpandedUsers(training, 'booked_users'));
     const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
-      booked_users: current.filter((id) => !removedUserIds.includes(id))
+      booked_users: current.filter((id) => !removedUserIds.includes(id)),
+      ...(removedAttendedUserIds.length > 0
+        ? { attended_users: attended.filter((id) => !removedAttendedUserIds.includes(id)) }
+        : {})
     }));
+    await Promise.all(removedAttendedUserIds.map((userId) => decrementAttendanceCount(userId)));
     auditTrainings.unbookUsers(
       /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
       removedUserIds,
       auditUsers
     );
+    removedAttendedUserIds.forEach((userId) => {
+      auditTrainings.unmarkAttendance(
+        /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
+        userId
+      );
+    });
     return record;
   } catch (err) {
     auditTrainings.bookError(err, training.id);
@@ -437,9 +476,19 @@ export async function removeUsersFromTraining(training, userIds) {
 export async function cancelTrainingBooking(training, userId) {
   try {
     const current = training.booked_users || [];
+    const attended = training.attended_users || [];
+    const shouldRemoveAttendance = attended.includes(userId);
     const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
-      booked_users: current.filter((id) => id !== userId)
+      booked_users: current.filter((id) => id !== userId),
+      ...(shouldRemoveAttendance ? { attended_users: attended.filter((id) => id !== userId) } : {})
     }));
+    if (shouldRemoveAttendance) {
+      await decrementAttendanceCount(userId);
+      auditTrainings.unmarkAttendance(
+        /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
+        userId
+      );
+    }
     auditTrainings.cancelBookingSelf(
       /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record))
     );
@@ -462,6 +511,7 @@ export async function markAttendance(training, userId) {
     const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
       attended_users: [...current, userId]
     }));
+    await incrementAttendanceCount(userId);
     auditTrainings.markAttendance(
       /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
       userId
@@ -479,10 +529,13 @@ export async function markAttendance(training, userId) {
  */
 export async function unmarkAttendance(training, userId) {
   try {
+    if (!userId) throw new Error('Не выбран пользователь');
     const current = training.attended_users || [];
+    if (!current.includes(userId)) return training;
     const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
       attended_users: current.filter((id) => id !== userId)
     }));
+    await decrementAttendanceCount(userId);
     auditTrainings.unmarkAttendance(
       /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
       userId

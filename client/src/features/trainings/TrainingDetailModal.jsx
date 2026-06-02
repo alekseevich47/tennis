@@ -95,48 +95,17 @@ function TrainingDetailModal({
     }
   };
 
-  const moderatorActions = userIsModerator && !training.is_deleted ? (
+  const moderatorActions = userIsModerator && !training.is_deleted && !isPast ? (
     <div className="card-buttons-wrapper">
-      {!isPast && (
-        <IconButton
-          ariaLabel={training.is_closed ? 'Открыть запись на тренировку' : 'Закрыть запись на тренировку'}
-          variant="ghost"
-          size="sm"
-          className="action-circle-btn btn-stop"
-          disabled={!onToggleClose}
-          onClick={() => onToggleClose?.(training)}
-        >
-          <span aria-hidden="true">■</span>
-        </IconButton>
-      )}
       <IconButton
-        ariaLabel="Редактировать тренировку"
+        ariaLabel={training.is_closed ? 'Открыть запись на тренировку' : 'Закрыть запись на тренировку'}
         variant="ghost"
         size="sm"
-        className="action-circle-btn btn-edit"
-        disabled={!onEdit}
-        onClick={() => onEdit?.(training)}
+        className="action-circle-btn btn-stop"
+        disabled={!onToggleClose}
+        onClick={() => onToggleClose?.(training)}
       >
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path d="M4 20h4.2L19.3 8.9a2 2 0 0 0 0-2.8l-1.4-1.4a2 2 0 0 0-2.8 0L4 15.8V20Z" />
-          <path d="m13.7 6.1 4.2 4.2" />
-        </svg>
-      </IconButton>
-      <IconButton
-        ariaLabel="Удалить тренировку"
-        variant="ghost"
-        size="sm"
-        className="action-circle-btn btn-delete-trash"
-        disabled={!onDelete}
-        onClick={() => onDelete?.(training.id)}
-      >
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path d="M4 7h16" />
-          <path d="M10 11v6" />
-          <path d="M14 11v6" />
-          <path d="M6 7l1 13h10l1-13" />
-          <path d="M9 7V4h6v3" />
-        </svg>
+        <span aria-hidden="true">■</span>
       </IconButton>
     </div>
   ) : null;
@@ -148,8 +117,54 @@ function TrainingDetailModal({
         onClose={onClose}
         size="tall"
         ariaLabel="Детали тренировки и список участников"
+        showCloseButton={false}
         footer={moderatorActions}
       >
+        <div className="detail-header-row">
+          <div className="detail-header-actions">
+            {userIsModerator && !training.is_deleted && (
+              <>
+                <IconButton
+                  ariaLabel="Редактировать тренировку"
+                  variant="ghost"
+                  size="sm"
+                  className="action-circle-btn btn-edit"
+                  disabled={!onEdit}
+                  onClick={() => onEdit?.(training)}
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M4 20h4.2L19.3 8.9a2 2 0 0 0 0-2.8l-1.4-1.4a2 2 0 0 0-2.8 0L4 15.8V20Z" />
+                    <path d="m13.7 6.1 4.2 4.2" />
+                  </svg>
+                </IconButton>
+                <IconButton
+                  ariaLabel="Удалить тренировку"
+                  variant="ghost"
+                  size="sm"
+                  className="action-circle-btn btn-delete-trash"
+                  disabled={!onDelete}
+                  onClick={() => onDelete?.(training.id)}
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M4 7h16" />
+                    <path d="M10 11v6" />
+                    <path d="M14 11v6" />
+                    <path d="M6 7l1 13h10l1-13" />
+                    <path d="M9 7V4h6v3" />
+                  </svg>
+                </IconButton>
+              </>
+            )}
+          </div>
+          <IconButton
+            type="button"
+            className="ui-modal-close"
+            ariaLabel="Закрыть"
+            onClick={onClose}
+          >
+            <span aria-hidden="true">✕</span>
+          </IconButton>
+        </div>
         <span className="detail-badge-type">
           {training.type === 'group' ? 'Групповой сбор' : 'Турнирная сетка'}
         </span>

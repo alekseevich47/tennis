@@ -107,7 +107,7 @@ function TrainingCard({
                 effectivelyClosed ? 'card-status-badge--closed' : 'card-status-badge--open'
               )}
             >
-              {effectivelyClosed ? 'Запись закрыта' : 'Запись открыта'}
+              {isStarted ? 'Тренировка завершена' : (isClosed ? 'Запись закрыта' : 'Запись открыта')}
             </span>
           )}
           {hasLimit && (

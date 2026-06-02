@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import EmptyState from '../../../components/ui/EmptyState';
+import IconButton from '../../../components/ui/IconButton';
 import Modal from '../../../components/ui/Modal';
 import { formatCardDate, formatTimeRange } from '../../../lib/format';
 import '../Trainings.css';
@@ -13,6 +14,15 @@ import '../Trainings.css';
  * }} props
  */
 function ArchiveModal({ isOpen, trainings, onClose, onOpenDetail }) {
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filtered = useMemo(() => {
+    if (!searchQuery.trim()) return trainings;
+
+    const q = searchQuery.trim().toLowerCase();
+    return trainings.filter((training) => formatCardDate(training.date).toLowerCase().includes(q));
+  }, [trainings, searchQuery]);
+
   if (!isOpen) return null;
 
   return (
@@ -23,11 +33,32 @@ function ArchiveModal({ isOpen, trainings, onClose, onOpenDetail }) {
       title="Архив тренировок"
       ariaLabel="Список прошедших тренировок"
     >
+      <div className="archive-search-wrapper">
+        <input
+          type="text"
+          className="archive-search-input"
+          placeholder="Поиск по дате..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          aria-label="Поиск тренировок по дате"
+        />
+        {searchQuery ? (
+          <IconButton
+            ariaLabel="Очистить поиск"
+            variant="ghost"
+            size="sm"
+            className="archive-search-clear"
+            onClick={() => setSearchQuery('')}
+          >
+            <span aria-hidden="true">✕</span>
+          </IconButton>
+        ) : null}
+      </div>
       <div className="archive-list">
-        {trainings.length === 0 ? (
+        {filtered.length === 0 ? (
           <EmptyState title="Пусто" description="Прошедших тренировок пока нет." />
         ) : (
-          trainings.map((training) => (
+          filtered.map((training) => (
             <div
               key={training.id}
               className="training-row-card archive-card"

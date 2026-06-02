@@ -99,6 +99,16 @@
   color: #868e96 !important;
 }
 
+.archive-training-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .trainings-list-layout {
   display: flex;
   flex-direction: column;
@@ -372,8 +382,50 @@
   gap: 12px;
 }
 
+.archive-search-wrapper {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.archive-search-input {
+  width: 100%;
+  padding: 10px 40px 10px 14px;
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+  font-size: 14px;
+  background: #f8f9fa;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.archive-search-input:focus {
+  border-color: #007aff;
+  background: #ffffff;
+}
+
+.archive-search-clear {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #868e96 !important;
+}
+
 .archive-card::after {
   display: none;
+}
+
+.detail-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.detail-header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
 .detail-badge-type {
