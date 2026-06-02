@@ -23,6 +23,7 @@ import CreateTrainingModal from './CreateTrainingModal';
 import TrainingDetailModal from './TrainingDetailModal';
 import EditTrainingModal from './components/EditTrainingModal';
 import UserPickerModal from './components/UserPickerModal';
+import ArchiveModal from './components/ArchiveModal';
 import { dayKey, generateNextDays, isSameDay } from '../../lib/format';
 import { error } from '../../lib/log';
 import './Trainings.css';
@@ -45,6 +46,7 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
   const days = useMemo(() => generateNextDays(DAYS_COUNT), []);
   const [selectedDate, setSelectedDate] = useState(() => days[0]);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showArchiveModal, setShowArchiveModal] = useState(false);
   const [selectedTrainingId, setSelectedTrainingId] = useState(null);
   const [editingTraining, setEditingTraining] = useState(null);
   const [bookingTraining, setBookingTraining] = useState(null);
@@ -87,6 +89,18 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
     });
   }, [hiddenDeletedTrainingIds, trainings, selectedDate, userIsModerator]);
 
+  const pastTrainings = useMemo(() => {
+    if (!trainings) return [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return trainings
+      .filter((t) => {
+        if (t.is_deleted) return false;
+        return new Date(t.date) < today;
+      })
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [trainings]);
+
   // Selected training всегда актуален из SWR-кэша (H15).
   const selectedTraining = useMemo(() => {
     if (!selectedTrainingId || !trainings) return null;
@@ -96,6 +110,11 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
   const handleSelectDate = useCallback((date) => setSelectedDate(date), []);
 
   const handleOpenDetail = useCallback((training) => {
+    setSelectedTrainingId(training.id);
+  }, []);
+
+  const handleOpenArchiveDetail = useCallback((training) => {
+    setShowArchiveModal(false);
     setSelectedTrainingId(training.id);
   }, []);
 
@@ -287,15 +306,26 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
           {selectedDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}
         </h2>
         {userIsModerator && (
-          <IconButton
-            ariaLabel="Добавить тренировку на выбранный день"
-            variant="soft"
-            size="sm"
-            className="add-training-context-btn"
-            onClick={() => setShowAddModal(true)}
-          >
-            <span aria-hidden="true">+</span>
-          </IconButton>
+          <div className="selected-day-actions">
+            <IconButton
+              ariaLabel="Архив прошедших тренировок"
+              variant="soft"
+              size="sm"
+              className="archive-training-btn"
+              onClick={() => setShowArchiveModal(true)}
+            >
+              <span aria-hidden="true">📦</span>
+            </IconButton>
+            <IconButton
+              ariaLabel="Добавить тренировку на выбранный день"
+              variant="soft"
+              size="sm"
+              className="add-training-context-btn"
+              onClick={() => setShowAddModal(true)}
+            >
+              <span aria-hidden="true">+</span>
+            </IconButton>
+          </div>
         )}
       </div>
 
@@ -334,6 +364,13 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
           setShowAddModal(false);
           mutate();
         }}
+      />
+
+      <ArchiveModal
+        isOpen={showArchiveModal}
+        trainings={pastTrainings}
+        onClose={() => setShowArchiveModal(false)}
+        onOpenDetail={handleOpenArchiveDetail}
       />
 
       <TrainingDetailModal

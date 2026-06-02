@@ -20,6 +20,7 @@ alwaysApply: false
 |------|------------|
 | `App.jsx` | Shell: табы, `flushPendingDeletes`, soft-delete буферы |
 | `features/*` | Страницы по разделам (feed, trainings, shop, …) |
+| `features/trainings/components/*` | Модалки тренировок: `EditTrainingModal`, `UserPickerModal`, `ArchiveModal` |
 | `hooks/*` | `useMaxAuth`, `usePosts`, … — SWR + побочные эффекты |
 | `services/*` | API: `pb.js`, `auth.js`, `posts.js`, … |
 | `components/ui/*` | `Modal`, `AlertDialog`, `Avatar` — переиспользовать |
@@ -37,10 +38,14 @@ alwaysApply: false
 - Touch/жесты: `lib/gestures.js`, `usePinchZoom`; цель — плавный UI в webview.
 - Стили: CSS рядом с фичей (`Feed.css`, …), глобально — `styles/global.css`.
 - Env: `VITE_POCKETBASE_URL`, `VITE_MAX_AUTH_URL`, `VITE_MAX_APP_ID` — не коммитить секреты.
+- **Посещаемость тренировок**: `TrainingDetailModal` — checkbox напротив каждого участника для модератора; используют `markAttendance` / `unmarkAttendance` из `services/trainings` (меняют `training.attended_users[]`).
+- **Архив тренировок**: прошедшие (date < сегодня) — `ArchiveModal` (список, клик → `TrainingDetailModal` с автоскрытием stop-кнопки). Фильтрация на клиенте; `is_deleted` тренировки в архив не попадают.
+- **Аудит посещаемости**: уже реализован через `auditTrainings.markAttendance` / `unmarkAttendance` (domain `ТРЕНИРОВКИ`, actions `Отмечена явка` / `Явка отменена`).
 
 ## PocketBase
 
 - Коллекции и поля — по `schema.json`; не выдумывать имена.
+- **trainings**: `attended_users` (relation → users), `booked_users` (relation → users), `date`, `duration`, `type`, `max_slots`, `location`, `description`, `is_closed`, `is_deleted`.
 - Загрузка файлов — через PB file fields; URL медиа — `lib/media.js` / `config.js` (`MEDIA_BASE_URL`).
 - Ошибки API — ловить в `services/*`, в UI показывать коротко через AlertDialog.
 

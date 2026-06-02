@@ -89,6 +89,16 @@
   color: #007aff !important;
 }
 
+.selected-day-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.archive-training-btn {
+  color: #868e96 !important;
+}
+
 .trainings-list-layout {
   display: flex;
   flex-direction: column;
@@ -356,6 +366,16 @@
   color: #868e96;
 }
 
+.archive-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.archive-card::after {
+  display: none;
+}
+
 .detail-badge-type {
   font-size: 11px;
   background: #f1f3f5;
@@ -433,8 +453,16 @@
 .player-meta-left {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   min-width: 0;
+}
+
+.attendance-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: #2b8a3e;
+  cursor: pointer;
+  flex-shrink: 0;
 }
 
 .training-player-avatar.ui-avatar {
