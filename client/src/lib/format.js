@@ -51,6 +51,18 @@ export function formatTimeRange(dateLike, durationMin) {
 }
 
 /**
+ * Проверяет, закончился ли временной диапазон тренировки.
+ * @param {string | number | Date} dateLike
+ * @param {number} durationMin
+ * @param {Date} [now]
+ */
+export function hasTimeRangeEnded(dateLike, durationMin, now = new Date()) {
+  const start = new Date(dateLike);
+  const end = new Date(start.getTime() + (durationMin || 0) * 60_000);
+  return end < now;
+}
+
+/**
  * `5 ноября, 18:00` — для карточки матча в соревнованиях.
  * @param {string | number | Date} dateLike
  */

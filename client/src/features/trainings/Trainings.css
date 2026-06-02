@@ -257,6 +257,10 @@
   color: #ffffff !important;
 }
 
+.btn-add-plus:hover:not(:disabled) {
+  background: #0063cc !important;
+}
+
 .btn-cancel-cross {
   background: #e63946 !important;
   color: #ffffff !important;
@@ -274,6 +278,20 @@
   box-shadow: inset 0 0 0 1px #ffa8a8;
 }
 
+.btn-stop:hover:not(:disabled) {
+  background: #ffe3e3 !important;
+}
+
+.btn-stop-play {
+  background: #ebfbee !important;
+  color: #2b8a3e !important;
+  box-shadow: inset 0 0 0 1px #8ce99a;
+}
+
+.btn-stop-play:hover:not(:disabled) {
+  background: #d3f9d8 !important;
+}
+
 .btn-edit {
   background: #f1f3f5 !important;
   color: #495057 !important;
@@ -289,6 +307,11 @@
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+.btn-stop-play svg {
+  fill: currentColor;
+  stroke: none;
 }
 
 .btn-restore {
@@ -443,25 +466,6 @@
 .detail-header-actions .btn-edit:hover:not(:disabled),
 .detail-header-actions .btn-delete-trash:hover:not(:disabled) {
   background: rgba(0, 0, 0, 0.05) !important;
-}
-
-.detail-header-actions .btn-stop:hover:not(:disabled) {
-  background: #ffe3e3 !important;
-}
-
-.detail-header-actions .btn-stop-play {
-  background: #ebfbee !important;
-  color: #2b8a3e !important;
-  box-shadow: inset 0 0 0 1px #8ce99a;
-}
-
-.detail-header-actions .btn-stop-play:hover:not(:disabled) {
-  background: #d3f9d8 !important;
-}
-
-.detail-header-actions .btn-stop-play svg {
-  fill: currentColor;
-  stroke: none;
 }
 
 .detail-badge-type {
