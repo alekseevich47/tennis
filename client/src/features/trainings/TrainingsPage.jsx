@@ -314,7 +314,12 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
               className="archive-training-btn"
               onClick={() => setShowArchiveModal(true)}
             >
-              <span aria-hidden="true">📦</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M5 8h14" />
+                <path d="M7 8v11h10V8" />
+                <path d="M9 5h6l2 3H7l2-3Z" />
+                <path d="M10 12h4" />
+              </svg>
             </IconButton>
             <IconButton
               ariaLabel="Добавить тренировку на выбранный день"
