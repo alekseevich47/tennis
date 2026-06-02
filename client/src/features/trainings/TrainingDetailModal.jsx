@@ -121,6 +121,9 @@ function TrainingDetailModal({
         footer={moderatorActions}
       >
         <div className="detail-header-row">
+          <span className="detail-badge-type">
+            {training.type === 'group' ? 'Групповой сбор' : 'Турнирная сетка'}
+          </span>
           <div className="detail-header-actions">
             {userIsModerator && !training.is_deleted && (
               <>
@@ -155,19 +158,16 @@ function TrainingDetailModal({
                 </IconButton>
               </>
             )}
+            <IconButton
+              type="button"
+              className="ui-modal-close"
+              ariaLabel="Закрыть"
+              onClick={onClose}
+            >
+              <span aria-hidden="true">✕</span>
+            </IconButton>
           </div>
-          <IconButton
-            type="button"
-            className="ui-modal-close"
-            ariaLabel="Закрыть"
-            onClick={onClose}
-          >
-            <span aria-hidden="true">✕</span>
-          </IconButton>
         </div>
-        <span className="detail-badge-type">
-          {training.type === 'group' ? 'Групповой сбор' : 'Турнирная сетка'}
-        </span>
         <h2 className="detail-title-date">{formatCardDate(training.date)}</h2>
         <p className="detail-time-range">
           <span aria-hidden="true">⏱️</span> {formatTimeRange(training.date, training.duration)}
