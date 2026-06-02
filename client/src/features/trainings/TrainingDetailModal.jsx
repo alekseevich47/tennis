@@ -5,7 +5,12 @@ import IconButton from '../../components/ui/IconButton';
 import Avatar from '../../components/ui/Avatar';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { formatCardDate, formatTimeRange } from '../../lib/format';
-import { bookUsersToTraining, removeUsersFromTraining } from '../../services/trainings';
+import {
+  bookUsersToTraining,
+  markAttendance,
+  removeUsersFromTraining,
+  unmarkAttendance
+} from '../../services/trainings';
 import { error } from '../../lib/log';
 import UserPickerModal from './components/UserPickerModal';
 
@@ -44,8 +49,8 @@ function TrainingDetailModal({
   const hasLimit = training.max_slots !== null && training.max_slots !== undefined && training.max_slots > 0;
   const isFull = hasLimit && bookedUserIds.length >= (training.max_slots || 0);
   const isClosed = training.is_closed === true;
-  const isStarted = new Date(training.date) <= new Date();
-  const effectivelyClosed = isClosed || isStarted;
+  const isPast = new Date(training.date) < new Date();
+  const effectivelyClosed = isClosed || isPast;
 
   const handleKick = async (userId) => {
     const ok = await confirm({
@@ -59,6 +64,20 @@ function TrainingDetailModal({
     } catch (err) {
       error('kick player:', err);
       await alert({ title: 'Ошибка', message: 'Не удалось исключить участника.' });
+    }
+  };
+
+  const handleAttendanceChange = async (playerId, checked) => {
+    try {
+      if (checked) {
+        await markAttendance(training, playerId);
+      } else {
+        await unmarkAttendance(training, playerId);
+      }
+      onMutated();
+    } catch (err) {
+      error('toggle attendance:', err);
+      await alert({ title: 'Ошибка', message: 'Не удалось обновить посещаемость.' });
     }
   };
 
@@ -78,16 +97,18 @@ function TrainingDetailModal({
 
   const moderatorActions = userIsModerator && !training.is_deleted ? (
     <div className="card-buttons-wrapper">
-      <IconButton
-        ariaLabel={training.is_closed ? 'Открыть запись на тренировку' : 'Закрыть запись на тренировку'}
-        variant="ghost"
-        size="sm"
-        className="action-circle-btn btn-stop"
-        disabled={!onToggleClose}
-        onClick={() => onToggleClose?.(training)}
-      >
-        <span aria-hidden="true">■</span>
-      </IconButton>
+      {!isPast && (
+        <IconButton
+          ariaLabel={training.is_closed ? 'Открыть запись на тренировку' : 'Закрыть запись на тренировку'}
+          variant="ghost"
+          size="sm"
+          className="action-circle-btn btn-stop"
+          disabled={!onToggleClose}
+          onClick={() => onToggleClose?.(training)}
+        >
+          <span aria-hidden="true">■</span>
+        </IconButton>
+      )}
       <IconButton
         ariaLabel="Редактировать тренировку"
         variant="ghost"
@@ -156,7 +177,7 @@ function TrainingDetailModal({
                   effectivelyClosed ? 'card-status-badge--closed' : 'card-status-badge--open'
                 )}
               >
-                {effectivelyClosed ? 'Запись закрыта' : 'Запись открыта'}
+                {isPast ? 'Тренировка завершена' : effectivelyClosed ? 'Запись закрыта' : 'Запись открыта'}
               </span>
             )}
             {hasLimit && (
@@ -190,6 +211,15 @@ function TrainingDetailModal({
               training.expand.booked_users.map((player) => (
                 <div key={player.id} className="player-list-row">
                   <div className="player-meta-left">
+                    {userIsModerator && (
+                      <input
+                        type="checkbox"
+                        className="attendance-checkbox"
+                        checked={training.attended_users?.includes(player.id) || false}
+                        aria-label={`Отметить посещение: ${player.full_name || 'Теннисист'}`}
+                        onChange={(event) => handleAttendanceChange(player.id, event.target.checked)}
+                      />
+                    )}
                     <Avatar
                       user={player}
                       size="sm"
