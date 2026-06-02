@@ -420,12 +420,28 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
+  gap: 12px;
 }
 
 .detail-header-actions {
   display: flex;
   gap: 8px;
   align-items: center;
+  flex-shrink: 0;
+}
+
+.detail-header-actions .ui-modal-close {
+  position: static;
+}
+
+.detail-header-actions .btn-edit,
+.detail-header-actions .btn-delete-trash {
+  background: transparent !important;
+}
+
+.detail-header-actions .btn-edit:hover:not(:disabled),
+.detail-header-actions .btn-delete-trash:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.05) !important;
 }
 
 .detail-badge-type {
