@@ -4,7 +4,7 @@ import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
 import Avatar from '../../components/ui/Avatar';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
-import { formatCardDate, formatTimeRange } from '../../lib/format';
+import { formatCardDate, formatTimeRange, hasTimeRangeEnded } from '../../lib/format';
 import {
   bookUsersToTraining,
   markAttendance,
@@ -49,8 +49,8 @@ function TrainingDetailModal({
   const hasLimit = training.max_slots !== null && training.max_slots !== undefined && training.max_slots > 0;
   const isFull = hasLimit && bookedUserIds.length >= (training.max_slots || 0);
   const isClosed = training.is_closed === true;
-  const isPast = new Date(training.date) < new Date();
-  const effectivelyClosed = isClosed || isPast;
+  const hasEnded = hasTimeRangeEnded(training.date, training.duration || 0);
+  const effectivelyClosed = isClosed || hasEnded;
 
   const handleKick = async (userId) => {
     const ok = await confirm({
@@ -111,7 +111,7 @@ function TrainingDetailModal({
           <div className="detail-header-actions">
             {userIsModerator && !training.is_deleted && (
               <>
-                {!isPast && (
+                {!hasEnded && (
                   <IconButton
                     ariaLabel={training.is_closed ? 'Открыть запись на тренировку' : 'Закрыть запись на тренировку'}
                     variant="ghost"
@@ -194,7 +194,7 @@ function TrainingDetailModal({
                   effectivelyClosed ? 'card-status-badge--closed' : 'card-status-badge--open'
                 )}
               >
-                {isPast ? 'Тренировка завершена' : effectivelyClosed ? 'Запись закрыта' : 'Запись открыта'}
+                {hasEnded ? 'Тренировка завершена' : effectivelyClosed ? 'Запись закрыта' : 'Запись открыта'}
               </span>
             )}
             {hasLimit && (

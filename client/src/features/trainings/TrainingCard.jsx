@@ -2,7 +2,7 @@ import React, { memo, useCallback } from 'react';
 import clsx from 'clsx';
 import IconButton from '../../components/ui/IconButton';
 import Spinner from '../../components/ui/Spinner';
-import { formatCardDate, formatTimeRange } from '../../lib/format';
+import { formatCardDate, formatTimeRange, hasTimeRangeEnded } from '../../lib/format';
 import { isModerator } from '../../services/auth';
 
 /**
@@ -75,8 +75,8 @@ function TrainingCard({
   const hasLimit = training.max_slots !== null && training.max_slots !== undefined && training.max_slots > 0;
   const isFull = hasLimit && totalBooked >= (training.max_slots || 0);
   const isClosed = training.is_closed === true;
-  const isStarted = new Date(training.date) <= new Date();
-  const effectivelyClosed = isClosed || isStarted;
+  const hasEnded = hasTimeRangeEnded(training.date, training.duration || 0);
+  const effectivelyClosed = isClosed || hasEnded;
   const isBookingLocked = effectivelyClosed;
 
   return (
@@ -107,7 +107,7 @@ function TrainingCard({
                 effectivelyClosed ? 'card-status-badge--closed' : 'card-status-badge--open'
               )}
             >
-              {isStarted ? 'Тренировка завершена' : (isClosed ? 'Запись закрыта' : 'Запись открыта')}
+              {hasEnded ? 'Тренировка завершена' : (isClosed ? 'Запись закрыта' : 'Запись открыта')}
             </span>
           )}
           {hasLimit && (
@@ -162,16 +162,22 @@ function TrainingCard({
             </IconButton>
           )}
 
-          {userIsModerator && !training.is_deleted && (
+          {userIsModerator && !training.is_deleted && !hasEnded && (
             <>
               <IconButton
                 ariaLabel={training.is_closed ? 'Открыть запись на тренировку' : 'Закрыть запись на тренировку'}
                 variant="ghost"
                 size="sm"
-                className="action-circle-btn btn-stop"
+                className={clsx('action-circle-btn btn-stop', training.is_closed && 'btn-stop-play')}
                 onClick={handleToggleClose}
               >
-                <span aria-hidden="true">■</span>
+                {training.is_closed ? (
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M8 5v14l11-7L8 5Z" />
+                  </svg>
+                ) : (
+                  <span aria-hidden="true">■</span>
+                )}
               </IconButton>
             </>
           )}
