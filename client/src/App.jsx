@@ -176,11 +176,13 @@ function App() {
             <ShopPage onDeletedIdsChange={setPendingDeleteProductIds} />
           </ProductUploadProvider>
         )}
-        {activeTab === 3 && <RatingPage user={user} />}
+        {activeTab === 3 && (
+          <RatingPage key={`rating-${activeTab}`} user={user} onTabChange={handleTabChange} />
+        )}
         {activeTab === 4 && <CompetitionsPage user={user} />}
         {activeTab === 5 && <GalleryPage user={user} />}
         {activeTab === PROFILE_TAB_INDEX && (
-          <ProfilePage user={user} onUpdate={handleUserUpdate} />
+          <ProfilePage user={user} onUpdate={handleUserUpdate} onTabChange={handleTabChange} />
         )}
       </main>
 

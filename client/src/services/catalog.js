@@ -43,7 +43,14 @@ import { PB_URL } from '../config';
  * @property {number} [wins]
  * @property {number} [losses]
  * @property {string | string[]} [avatar]
+ * @property {string} [avatar_url]
+ * @property {string} [birth_date]
+ * @property {string} [section_start_date]
+ * @property {string} [created]
+ * @property {number} [available_sessions]
+ * @property {number} [attendance_count]
  * @property {string} [role]
+ * @property {string} [email]
  * @property {string | number} [max_id]
  */
 
@@ -263,6 +270,30 @@ export async function listPlayers({ signal, filter } = {}) {
     return /** @type {PlayerRecord[]} */ (await pb.collection('users').getFullList({
       sort: '-rating_points',
       filter: filter || '',
+      fields: [
+        'id',
+        'collectionId',
+        'collectionName',
+        'full_name',
+        'name',
+        'avatar',
+        'avatar_url',
+        'birth_year',
+        'birth_date',
+        'hand',
+        'dominant_hand',
+        'section_start_date',
+        'created',
+        'available_sessions',
+        'attendance_count',
+        'rating_points',
+        'games_count',
+        'wins',
+        'losses',
+        'role',
+        'email',
+        'max_id'
+      ].join(','),
       requestKey: null,
       signal
     }));

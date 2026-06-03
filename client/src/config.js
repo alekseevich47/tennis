@@ -12,7 +12,7 @@ const MEDIA_BASE_URL = `${PB_URL}/api/files`;
 // ID приложения MAX (выдаётся в кабинете разработчика MAX).
 const MAX_APP_ID = import.meta.env.VITE_MAX_APP_ID || 'id420550689204_bot';
 
-const MAX_SELLER_URL = import.meta.env.VITE_MAX_SELLER_URL || 'https://max.ru/u/f9LHodD0cOKlWp4-3nvjD4xLuY56sR9La9x_NG6-K05fCD4cEXtTPFHojmQ';
+const MAX_SELLER_URL = import.meta.env.VITE_MAX_SELLER_URL || 'https://max.ru/u/f9LHodD0cOKkZw87t6_Jy_PkELAZf1_Ycj-oyk_dnoGOBlY27GSpxl1YrZU';
 
 const IS_DEV = import.meta.env.DEV;
 

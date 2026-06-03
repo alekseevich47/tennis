@@ -1,5 +1,5 @@
 // @ts-check
-import { writeAudit, writeAuditError } from './core';
+import { getActor, writeAudit, writeAuditError } from './core';
 
 const DOMAIN = 'ПРОФИЛЬ';
 
@@ -25,9 +25,12 @@ export const auditProfile = {
    * @param {Record<string, unknown> | FormData} patch
    */
   profileEdit(userId, patch) {
+    const actor = getActor();
+
     writeAudit(DOMAIN, 'Профиль отредактирован', {
       targetUserId: userId,
-      changedFields: getChangedFields(patch)
+      changedFields: getChangedFields(patch),
+      editedByModerator: actor.role === 'МОДЕРАТОР' && actor.userId !== userId
     });
   },
 

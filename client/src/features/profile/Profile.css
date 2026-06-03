@@ -9,6 +9,32 @@
   top: 10px;
   right: 16px;
   z-index: 10;
+  color: #495057 !important;
+}
+
+.edit-profile-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.membership-btn {
+  position: absolute !important;
+  top: 10px;
+  left: 16px;
+  z-index: 10;
+}
+
+.membership-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+.membership-add-sessions-btn {
+  background: #2b8a3e !important;
+}
+
+.membership-add-sessions-btn:hover:not(:disabled) {
+  background: #237032 !important;
 }
 
 .profile-user-name {
@@ -16,6 +42,14 @@
   font-size: 22px;
   margin-bottom: 20px;
   font-weight: 700;
+}
+
+.profile-rating-badge {
+  font-size: 13px;
+  color: #007aff;
+  cursor: pointer;
+  vertical-align: super;
+  margin-left: 4px;
 }
 
 .profile-meta-info {
