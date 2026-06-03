@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import AvatarCropModal from '../../components/AvatarCropModal';
 import Avatar from '../../components/ui/Avatar';
 import IconButton from '../../components/ui/IconButton';
 import EmptyState from '../../components/ui/EmptyState';
@@ -9,6 +10,7 @@ import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { isModerator, updateUserProfile } from '../../services/auth';
 import pb from '../../services/pb';
 import { error } from '../../lib/log';
+import { compressImage } from '../../lib/compress';
 import MembershipModal from './MembershipModal';
 import './Profile.css';
 
@@ -40,6 +42,9 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
   const [dominantHand, setDominantHand] = useState(user?.dominant_hand || DEFAULT_HAND);
   const [sectionStartDate, setSectionStartDate] = useState(normalizeDateInput(user?.section_start_date));
   const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(null);
+  const [pendingAvatarFile, setPendingAvatarFile] = useState(null);
+  const [cropModalOpen, setCropModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [membershipOpen, setMembershipOpen] = useState(false);
 
@@ -49,7 +54,21 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
     setDominantHand(user?.dominant_hand || DEFAULT_HAND);
     setSectionStartDate(normalizeDateInput(user?.section_start_date));
     setAvatarFile(null);
+    setPendingAvatarFile(null);
+    setCropModalOpen(false);
   }, [user?.id, user?.full_name, user?.birth_date, user?.dominant_hand, user?.section_start_date]);
+
+  useEffect(() => {
+    if (!avatarFile) {
+      setAvatarPreview(null);
+      return undefined;
+    }
+
+    const previewUrl = URL.createObjectURL(avatarFile);
+    setAvatarPreview(previewUrl);
+
+    return () => URL.revokeObjectURL(previewUrl);
+  }, [avatarFile]);
 
   // Профильный список — производное от SWR-данных (H4).
   const myTrainings = useMemo(() => {
@@ -78,11 +97,42 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
     setDominantHand(user?.dominant_hand || DEFAULT_HAND);
     setSectionStartDate(normalizeDateInput(user?.section_start_date));
     setAvatarFile(null);
+    setPendingAvatarFile(null);
+    setCropModalOpen(false);
   };
 
   const handleEditToggle = () => {
     if (isEditing) resetEditForm();
     setIsEditing((prev) => !prev);
+  };
+
+  const handleAvatarInputChange = (e) => {
+    const file = e.target.files?.[0] ?? null;
+    e.target.value = '';
+    if (!file) return;
+
+    setPendingAvatarFile(file);
+    setCropModalOpen(true);
+  };
+
+  const handleAvatarCropCancel = () => {
+    setPendingAvatarFile(null);
+    setCropModalOpen(false);
+  };
+
+  const handleAvatarCropConfirm = async (croppedBlob) => {
+    const croppedFile = new File([croppedBlob], 'avatar.png', { type: 'image/png' });
+    let nextAvatarFile = croppedFile;
+
+    try {
+      nextAvatarFile = await compressImage(croppedFile);
+    } catch (err) {
+      error('compress cropped avatar:', err);
+    }
+
+    setAvatarFile(nextAvatarFile);
+    setPendingAvatarFile(null);
+    setCropModalOpen(false);
   };
 
   const handleSave = async (e) => {
@@ -199,7 +249,17 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
       {isEditing ? (
         <form onSubmit={handleSave} className="profile-edit-form">
           <div className="avatar-wrapper-large">
-            <Avatar user={user} size="lg" alt="Большой аватар" />
+            {avatarPreview ? (
+              <div className="ui-avatar ui-avatar--lg">
+                <img
+                  src={avatarPreview}
+                  alt="Предпросмотр выбранного аватара"
+                  className="ui-avatar-img"
+                />
+              </div>
+            ) : (
+              <Avatar user={user} size="lg" alt="Большой аватар" />
+            )}
           </div>
 
           <div className="form-group">
@@ -208,7 +268,7 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
               id="profile-avatar"
               type="file"
               accept="image/*"
-              onChange={(e) => setAvatarFile(e.target.files?.[0] ?? null)}
+              onChange={handleAvatarInputChange}
             />
           </div>
 
@@ -327,6 +387,13 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
         onClose={() => setMembershipOpen(false)}
         user={user}
         onMutated={handleMembershipMutated}
+      />
+
+      <AvatarCropModal
+        isOpen={cropModalOpen}
+        file={pendingAvatarFile}
+        onConfirm={handleAvatarCropConfirm}
+        onCancel={handleAvatarCropCancel}
       />
     </div>
   );
