@@ -93,15 +93,19 @@ function hasAvatarPatch(patch) {
  */
 export async function updateUserProfile(userId, patch) {
   try {
-    await pb.collection('users').update(userId, /** @type {Record<string, unknown>} */ (patch));
+    const updated = await pb.collection('users').update(userId, /** @type {Record<string, unknown>} */ (patch));
     auditProfile.profileEdit(userId, patch);
 
     if (hasAvatarPatch(patch)) {
       auditProfile.avatarUpload(userId);
     }
 
-    const refreshed = await pb.collection('users').authRefresh();
-    return /** @type {UserRecord} */ (refreshed.record);
+    if (getCurrentUser()?.id === userId) {
+      const refreshed = await pb.collection('users').authRefresh();
+      return /** @type {UserRecord} */ (refreshed.record);
+    }
+
+    return /** @type {UserRecord} */ (updated);
   } catch (err) {
     auditProfile.profileEditError(err, userId);
     throw err;

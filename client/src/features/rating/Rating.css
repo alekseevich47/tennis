@@ -25,6 +25,40 @@
   min-height: 44px;
 }
 
+.rating-add-btn:hover:not(:disabled) {
+  background: #0063cc;
+}
+
+.rating-add-btn--circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  padding: 0;
+  justify-content: center;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.rating-search-bar {
+  padding: 8px 16px;
+  background: #ffffff;
+}
+
+.rating-search-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 14px;
+  background: #f5f5f5;
+  outline: none;
+}
+
+.rating-search-input:focus {
+  border-color: #007aff;
+  background: #ffffff;
+}
+
 .players-table {
   padding: 12px;
 }
@@ -41,6 +75,42 @@
   margin-bottom: 8px;
 }
 
+.table-header span,
+.table-header button {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  cursor: default;
+}
+
+.table-header button {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
+.table-header span.sortable,
+.table-header button.sortable,
+.table-header .sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.table-header > :nth-child(3),
+.table-header > :nth-child(4) {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.sort-icon {
+  font-size: 10px;
+  line-height: 1;
+  color: #000;
+}
+
 .player-row {
   display: grid;
   grid-template-columns: 40px 1fr 60px 80px;
@@ -51,11 +121,20 @@
   border-radius: 8px;
   margin-bottom: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.player-row:hover {
+  background: #f8fbff;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
 }
 
 .rank {
   font-weight: 700;
   color: #007aff;
+  margin: 0;
+  padding: 0;
 }
 
 .player-info {

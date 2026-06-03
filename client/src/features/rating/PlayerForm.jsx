@@ -3,7 +3,7 @@ import Modal from '../../components/ui/Modal';
 
 const INITIAL = {
   name: '',
-  birth_year: '',
+  birth_date: '',
   hand: 'Правая',
   rating_points: '0',
   games_count: '0',
@@ -33,7 +33,7 @@ function PlayerForm({ isOpen, onClose, onSubmit }) {
     try {
       const data = new FormData();
       data.append('full_name', form.name);
-      data.append('birth_year', String(parseInt(form.birth_year, 10) || 0));
+      data.append('birth_date', form.birth_date);
       data.append('hand', form.hand);
       data.append('rating_points', String(parseInt(form.rating_points, 10) || 0));
       data.append('games_count', String(parseInt(form.games_count, 10) || 0));
@@ -62,12 +62,12 @@ function PlayerForm({ isOpen, onClose, onSubmit }) {
         </div>
 
         <div className="form-group">
-          <label htmlFor="player-birth-year">Год рождения</label>
+          <label htmlFor="player-birth-date">Дата рождения</label>
           <input
-            id="player-birth-year"
-            type="number"
-            value={form.birth_year}
-            onChange={(e) => updateField('birth_year')(e.target.value)}
+            id="player-birth-date"
+            type="date"
+            value={form.birth_date}
+            onChange={(e) => updateField('birth_date')(e.target.value)}
           />
         </div>
 

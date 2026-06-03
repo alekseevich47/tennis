@@ -4,6 +4,7 @@ import { SWRConfig } from 'swr';
 import { ErrorBoundary } from 'react-error-boundary';
 import App from './App';
 import { AlertDialogProvider } from './components/ui/AlertDialog';
+import { ToastProvider } from './components/ui/ToastContext';
 import { PostUploadProvider } from './components/PostUploadProvider';
 import { GalleryUploadProvider } from './components/GalleryUploadProvider';
 import './styles/global.css';
@@ -34,11 +35,13 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         }}
       >
         <AlertDialogProvider>
-          <PostUploadProvider>
-            <GalleryUploadProvider>
-              <App />
-            </GalleryUploadProvider>
-          </PostUploadProvider>
+          <ToastProvider>
+            <PostUploadProvider>
+              <GalleryUploadProvider>
+                <App />
+              </GalleryUploadProvider>
+            </PostUploadProvider>
+          </ToastProvider>
         </AlertDialogProvider>
       </SWRConfig>
     </ErrorBoundary>

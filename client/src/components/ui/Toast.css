@@ -1,0 +1,40 @@
+.ui-toast {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 3000;
+  width: 100%;
+  padding: 14px 18px;
+  background: rgba(0, 0, 0, 0.82);
+  color: #ffffff;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.4;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+  animation: ui-toast-slide-down 180ms ease-out;
+  touch-action: pan-y;
+}
+
+.ui-toast--exiting {
+  animation: ui-toast-slide-up 180ms ease-in forwards;
+}
+
+@keyframes ui-toast-slide-down {
+  from {
+    transform: translateY(-100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes ui-toast-slide-up {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-100%);
+  }
+}
