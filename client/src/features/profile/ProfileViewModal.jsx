@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import AvatarCropModal from '../../components/AvatarCropModal';
 import Avatar from '../../components/ui/Avatar';
 import IconButton from '../../components/ui/IconButton';
 import Modal from '../../components/ui/Modal';
@@ -9,6 +10,7 @@ import { listTrainings } from '../../services/trainings';
 import { updateUserProfile } from '../../services/auth';
 import pb from '../../services/pb';
 import { error } from '../../lib/log';
+import { compressImage } from '../../lib/compress';
 import MembershipModal from './MembershipModal';
 import './Profile.css';
 
@@ -59,6 +61,9 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
     normalizeDateInput(targetUser?.section_start_date)
   );
   const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(null);
+  const [pendingAvatarFile, setPendingAvatarFile] = useState(null);
+  const [cropModalOpen, setCropModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const targetUserId = targetUser?.id;
@@ -79,6 +84,8 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
     setDisplayUser(nextUser);
     setIsEditing(false);
     setAvatarFile(null);
+    setPendingAvatarFile(null);
+    setCropModalOpen(false);
     setFullName(nextUser?.full_name || '');
     setBirthDate(normalizeDateInput(nextUser?.birth_date));
     setDominantHand(nextUser?.dominant_hand || DEFAULT_HAND);
@@ -86,9 +93,24 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
   }, [targetUser]);
 
   useEffect(() => {
+    if (!avatarFile) {
+      setAvatarPreview(null);
+      return undefined;
+    }
+
+    const previewUrl = URL.createObjectURL(avatarFile);
+    setAvatarPreview(previewUrl);
+
+    return () => URL.revokeObjectURL(previewUrl);
+  }, [avatarFile]);
+
+  useEffect(() => {
     if (!isOpen) {
       setMembershipOpen(false);
       setIsEditing(false);
+      setAvatarFile(null);
+      setPendingAvatarFile(null);
+      setCropModalOpen(false);
       return undefined;
     }
 
@@ -154,12 +176,43 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
     setDominantHand(displayUser?.dominant_hand || DEFAULT_HAND);
     setSectionStartDate(normalizeDateInput(displayUser?.section_start_date));
     setAvatarFile(null);
+    setPendingAvatarFile(null);
+    setCropModalOpen(false);
   };
 
   const handleEditToggle = () => {
     if (!canManageProfile || saving) return;
     if (isEditing) resetEditForm();
     setIsEditing((prev) => !prev);
+  };
+
+  const handleAvatarInputChange = (e) => {
+    const file = e.target.files?.[0] ?? null;
+    e.target.value = '';
+    if (!file) return;
+
+    setPendingAvatarFile(file);
+    setCropModalOpen(true);
+  };
+
+  const handleAvatarCropCancel = () => {
+    setPendingAvatarFile(null);
+    setCropModalOpen(false);
+  };
+
+  const handleAvatarCropConfirm = async (croppedBlob) => {
+    const croppedFile = new File([croppedBlob], 'avatar.png', { type: 'image/png' });
+    let nextAvatarFile = croppedFile;
+
+    try {
+      nextAvatarFile = await compressImage(croppedFile);
+    } catch (err) {
+      error('compress cropped profile view avatar:', err);
+    }
+
+    setAvatarFile(nextAvatarFile);
+    setPendingAvatarFile(null);
+    setCropModalOpen(false);
   };
 
   const handleSave = async (e) => {
@@ -284,7 +337,17 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
           {isEditing ? (
             <form onSubmit={handleSave} className="profile-edit-form">
               <div className="avatar-wrapper-large">
-                <Avatar user={displayUser} size="lg" alt="Большой аватар" />
+                {avatarPreview ? (
+                  <div className="ui-avatar ui-avatar--lg">
+                    <img
+                      src={avatarPreview}
+                      alt="Предпросмотр выбранного аватара"
+                      className="ui-avatar-img"
+                    />
+                  </div>
+                ) : (
+                  <Avatar user={displayUser} size="lg" alt="Большой аватар" />
+                )}
               </div>
 
               <div className="form-group">
@@ -293,7 +356,7 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                   id="profile-view-avatar"
                   type="file"
                   accept="image/*"
-                  onChange={(e) => setAvatarFile(e.target.files?.[0] ?? null)}
+                  onChange={handleAvatarInputChange}
                 />
               </div>
 
@@ -413,6 +476,13 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
         onClose={() => setMembershipOpen(false)}
         user={displayUser}
         onMutated={handleMembershipMutated}
+      />
+
+      <AvatarCropModal
+        isOpen={cropModalOpen}
+        file={pendingAvatarFile}
+        onConfirm={handleAvatarCropConfirm}
+        onCancel={handleAvatarCropCancel}
       />
     </>
   );

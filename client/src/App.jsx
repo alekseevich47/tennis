@@ -35,7 +35,7 @@ const PROFILE_TAB_INDEX = 6;
 
 function App() {
   const [activeTab, setActiveTab] = useState(0);
-  const { user, isLoading } = useMaxAuth();
+  const { user, isLoading, setUser } = useMaxAuth();
 
   // ID-буферы pending soft-delete. Передаются дочерним фичам через колбэки.
   const [pendingDeletePostIds, setPendingDeletePostIds] = useState([]);
@@ -134,9 +134,9 @@ function App() {
     };
   }, [flushPendingDeletes]);
 
-  const handleUserUpdate = useCallback(() => {
-    // useMaxAuth слушает pb.authStore.onChange — состояние обновится автоматически.
-  }, []);
+  const handleUserUpdate = useCallback((updated) => {
+    setUser(updated);
+  }, [setUser]);
 
   if (isLoading) {
     return (

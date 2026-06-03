@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
 import { isModerator } from '../../services/auth';
+import pb from '../../services/pb';
+import { error } from '../../lib/log';
 import MembershipEditModal from './MembershipEditModal';
 import './Profile.css';
 import '../trainings/Trainings.css';
@@ -9,14 +11,32 @@ import '../trainings/Trainings.css';
 function MembershipModal({ isOpen, onClose, user, onMutated }) {
   const [editMode, setEditMode] = useState(null);
   const moderator = isModerator();
-  const availableSessions = user?.available_sessions ?? 0;
-  const usedSessions = user?.attendance_count ?? 0;
+  const [availableSessions, setAvailableSessions] = useState(0);
+  const [usedSessions, setUsedSessions] = useState(0);
+
+  const fetchMembership = useCallback(async () => {
+    if (!user?.id) return;
+    try {
+      const fresh = await pb.collection('users').getOne(user.id, {
+        fields: 'available_sessions,attendance_count'
+      });
+      setAvailableSessions(Number(fresh.available_sessions ?? 0));
+      setUsedSessions(Number(fresh.attendance_count ?? 0));
+    } catch (err) {
+      error('fetch membership:', err);
+    }
+  }, [user?.id]);
 
   useEffect(() => {
-    if (!isOpen) setEditMode(null);
-  }, [isOpen]);
+    if (isOpen) {
+      fetchMembership();
+    } else {
+      setEditMode(null);
+    }
+  }, [isOpen, fetchMembership]);
 
   const handleMutated = () => {
+    fetchMembership();
     onMutated?.();
     setEditMode(null);
   };
