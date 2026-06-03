@@ -2,20 +2,19 @@ import React, { memo } from 'react';
 import Avatar from '../../components/ui/Avatar';
 
 /**
- * @param {{ player: any, rank: number }} props
+ * @param {{ player: any, rank: number, onPlayerClick?: (player: any) => void }} props
  */
-function PlayerRow({ player, rank }) {
+function PlayerRow({ player, rank, onPlayerClick }) {
+  const handleClick = () => {
+    onPlayerClick?.(player);
+  };
+
   return (
-    <div className="player-row">
+    <div className="player-row" onClick={handleClick}>
       <span className="rank">{rank}</span>
       <div className="player-info">
         <Avatar
-          user={{
-            id: player.id,
-            collectionId: player.collectionId,
-            full_name: player.full_name || player.name,
-            avatar: player.avatar
-          }}
+          user={player}
           size="md"
           alt={player.full_name || player.name}
         />

@@ -266,6 +266,10 @@
   color: #ffffff !important;
 }
 
+.btn-cancel-cross:hover:not(:disabled) {
+  background: #cc2a36 !important;
+}
+
 .btn-delete-trash {
   background: #f1f3f5 !important;
   color: #e63946 !important;
