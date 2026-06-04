@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useMaxAuth } from './hooks/useMaxAuth';
+import { useSessionResetKey } from './hooks/useSessionResetKey';
 import AppHeader from './components/AppHeader';
 import BottomNav from './components/BottomNav';
 import Spinner from './components/ui/Spinner';
@@ -37,6 +38,7 @@ const PROFILE_TAB_INDEX = 6;
 function App() {
   const [activeTab, setActiveTab] = useState(0);
   const [membershipOpen, setMembershipOpen] = useState(false);
+  const sessionResetKey = useSessionResetKey();
   const { user, isLoading, setUser } = useMaxAuth();
 
   // ID-буферы pending soft-delete. Передаются дочерним фичам через колбэки.
@@ -179,6 +181,7 @@ function App() {
               onFlushPendingDeletes={flushPendingDeletes}
             />
             <MembershipOverviewModal
+              key={sessionResetKey}
               isOpen={membershipOpen}
               onClose={() => setMembershipOpen(false)}
               currentUser={user}
@@ -191,7 +194,7 @@ function App() {
           </ProductUploadProvider>
         )}
         {activeTab === 3 && (
-          <RatingPage key={`rating-${activeTab}`} user={user} onTabChange={handleTabChange} />
+          <RatingPage key={sessionResetKey} user={user} onTabChange={handleTabChange} />
         )}
         {activeTab === 4 && <CompetitionsPage user={user} />}
         {activeTab === 5 && <GalleryPage user={user} />}
