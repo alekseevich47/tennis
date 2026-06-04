@@ -157,17 +157,7 @@ function MembershipOverviewModal({ isOpen, onClose, currentUser }) {
         title="Абонемент"
         size="tall"
         className="membership-overview-modal"
-        showCloseButton={false}
       >
-        <div className="detail-header-row">
-          <span className="detail-badge-type">Все участники</span>
-          <div className="detail-header-actions">
-            <IconButton type="button" className="ui-modal-close" ariaLabel="Закрыть" onClick={onClose}>
-              <span aria-hidden="true">✕</span>
-            </IconButton>
-          </div>
-        </div>
-
         <div className="membership-search-row">
           <input
             type="text"
