@@ -20,7 +20,7 @@ alwaysApply: false
 |------|------------|
 | `App.jsx` | Shell: табы, `flushPendingDeletes`, soft-delete буферы, `ToastProvider` |
 | `features/*` | Страницы по разделам (feed, trainings, shop, …) |
-| `features/trainings/components/*` | Модалки тренировок: `EditTrainingModal`, `UserPickerModal`, `ArchiveModal` |
+| `features/trainings/components/*` | Модалки тренировок: `EditTrainingModal`, `UserPickerModal`, `ArchiveModal`, `MembershipOverviewModal`, `DateRangeModal` |
 | `features/profile/*` | Профиль: `ProfilePage`, `MembershipModal`, `MembershipEditModal`, `ProfileViewModal` |
 | `hooks/*` | `useMaxAuth`, `usePosts`, `usePlayers`, … — SWR + побочные эффекты |
 | `services/*` | API: `pb.js`, `auth.js`, `users.js`, `catalog.js`, `trainings.js`, … |
@@ -60,6 +60,8 @@ alwaysApply: false
 - **Сортировка рейтинга**: кликабельные заголовки `#`, `Игрок`, `Очки` с иконками ▼/▲. Первое нажатие — desc, второе — asc. Смена окна → сброс сортировки (через `key` на компоненте).
 - **Поиск по рейтингу**: input «Поиск игрока по имени…», фильтрация на клиенте по `full_name`.
 - **Склонение числительных**: `pluralize(n, one, few, many)` в `lib/format.js` — для toast-уведомлений и других UI-текстов.
+
+- **Обзор абонементов (модератор)**: `MembershipOverviewModal` в разделе «Тренировки» — кнопка «Абонемент» в `AppHeader` (после заголовка «Тренировки», перед кнопкой профиля; видна только модераторам). Таблица всех участников: «Игрок» (`full_name`), «Д/П» (`available_sessions`), «И/П» (`attendance_count`). Сортировка по всем колонкам (первое нажатие desc, второе asc), поиск по имени. Кнопка-календарик (пустотелый синий контур, стандартная svg) → `DateRangeModal` с выбором дат начала/конца отчётного периода (дефолт: 1-е прошлого – 1-е текущего месяца). При подтверждении `И/П` пересчитывается как количество вхождений `user.id` в `trainings[].attended_users` за выбранный диапазон дат (фильтрация на клиенте), `Д/П` всегда текущее значение из БД. После применения фильтра — текст диапазона + крестик сброса; изначально фильтр сброшен (весь период). Клик по строке → `ProfileViewModal`. Данные: `usePlayers` (поля `id,full_name,available_sessions,attendance_count`) + `useTrainings` (поля `attended_users,date`).
 
 ## PocketBase
 
