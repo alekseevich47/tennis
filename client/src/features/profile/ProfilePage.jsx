@@ -301,7 +301,7 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
               className="avatar-pick-btn"
               onClick={() => avatarInputRef.current?.click()}
             >
-              Выбрать фото
+              Изменить фото
             </button>
             {avatarFile ? <span className="avatar-pick-name">{avatarFile.name}</span> : null}
           </div>
