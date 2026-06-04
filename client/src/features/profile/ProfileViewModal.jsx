@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import AvatarCropModal from '../../components/AvatarCropModal';
 import Avatar from '../../components/ui/Avatar';
 import IconButton from '../../components/ui/IconButton';
@@ -49,6 +49,7 @@ function isModerator(user) {
 function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChange, onMutated }) {
   const { alert } = useAlertDialog();
   const { data: players } = usePlayers();
+  const avatarInputRef = useRef(null);
   const [trainings, setTrainings] = useState([]);
   const [loadingDetails, setLoadingDetails] = useState(false);
   const [membershipOpen, setMembershipOpen] = useState(false);
@@ -158,8 +159,8 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
   const userTrainings = useMemo(() => {
     if (!targetUserId) return [];
     return trainings.filter((training) => {
-      const bookedUsers = training.booked_users || [];
-      return bookedUsers.includes(targetUserId);
+      const attendedUsers = training.attended_users || [];
+      return attendedUsers.includes(targetUserId);
     });
   }, [targetUserId, trainings]);
 
@@ -277,6 +278,7 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
       Object.entries(patch).forEach(([key, value]) => {
         fd.append(key, value == null ? '' : value);
       });
+      fd.append('avatar_url', '');
       fd.append('avatar', avatarFile);
       patch = fd;
     }
@@ -373,13 +375,21 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
               </div>
 
               <div className="form-group">
-                <label htmlFor="profile-view-avatar">Фотография</label>
                 <input
-                  id="profile-view-avatar"
+                  ref={avatarInputRef}
                   type="file"
                   accept="image/*"
                   onChange={handleAvatarInputChange}
+                  style={{ display: 'none' }}
                 />
+                <button
+                  type="button"
+                  className="avatar-pick-btn"
+                  onClick={() => avatarInputRef.current?.click()}
+                >
+                  Выбрать фото
+                </button>
+                {avatarFile ? <span className="avatar-pick-name">{avatarFile.name}</span> : null}
               </div>
 
               <div className="form-group">
@@ -485,7 +495,7 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                     ))}
                   </div>
                 ) : isOwnProfile ? (
-                  <p className="no-data-text">Вы ещё не записаны на тренировки</p>
+                  <p className="no-data-text">Вы ещё не посещали тренировки</p>
                 ) : null}
               </div>
             </div>
