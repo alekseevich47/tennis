@@ -151,7 +151,14 @@ function MembershipOverviewModal({ isOpen, onClose, currentUser }) {
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onClose} title="Абонемент" showCloseButton={false}>
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        title="Абонемент"
+        size="tall"
+        className="membership-overview-modal"
+        showCloseButton={false}
+      >
         <div className="detail-header-row">
           <span className="detail-badge-type">Все участники</span>
           <div className="detail-header-actions">
