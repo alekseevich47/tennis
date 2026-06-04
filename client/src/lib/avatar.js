@@ -21,15 +21,15 @@ export function getUserAvatarData(user) {
   const displayName = user?.full_name || user?.name || '';
   const initial = displayName ? displayName.charAt(0).toUpperCase() : 'U';
 
-  // 1. Если уже есть готовая ссылка — используем её (старый API MAX Bridge).
-  if (user?.avatar_url) {
-    return { hasAvatar: true, src: user.avatar_url, initial };
-  }
-
-  // 2. Иначе пробуем собрать URL из файла-поля `avatar` PocketBase.
+  // 1. Локально загруженный аватар должен перекрывать внешний MAX URL.
   const src = getMediaThumbUrl(user || null, 'users', user?.avatar, '200x200t');
   if (src) {
     return { hasAvatar: true, src, initial };
+  }
+
+  // 2. Если локального файла нет — используем готовую ссылку MAX Bridge.
+  if (user?.avatar_url) {
+    return { hasAvatar: true, src: user.avatar_url, initial };
   }
 
   return { hasAvatar: false, src: '', initial };
