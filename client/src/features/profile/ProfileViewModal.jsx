@@ -120,6 +120,22 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
     }
 
     const controller = new AbortController();
+
+    pb.collection('users')
+      .getOne(targetUserId, { signal: controller.signal })
+      .then((fresh) => {
+        if (controller.signal.aborted) return;
+        setDisplayUser(fresh);
+        setFullName(fresh.full_name || '');
+        setBirthDate(normalizeDateInput(fresh.birth_date));
+        setDominantHand(fresh.dominant_hand || DEFAULT_HAND);
+        setSectionStartDate(normalizeDateInput(fresh.section_start_date));
+      })
+      .catch((err) => {
+        if (err && err.name === 'AbortError') return;
+        error('load profile view user:', err);
+      });
+
     setLoadingDetails(true);
 
     listTrainings({ signal: controller.signal })
@@ -158,13 +174,19 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
     }
   };
 
-  const handleMembershipMutated = async () => {
+  const handleMembershipMutated = async (updated) => {
     if (!targetUserId) return;
 
-    try {
-      const updated = await pb.collection('users').getOne(targetUserId);
+    if (updated) {
       setDisplayUser(updated);
       onMutated?.(updated);
+      return;
+    }
+
+    try {
+      const fresh = await pb.collection('users').getOne(targetUserId);
+      setDisplayUser(fresh);
+      onMutated?.(fresh);
     } catch (err) {
       error('refresh profile view membership:', err);
     }

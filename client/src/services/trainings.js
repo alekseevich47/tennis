@@ -96,18 +96,31 @@ async function resolveAuditUsers(userIds, knownUsers = []) {
 }
 
 /**
+ * Списать одно посещение абонемента и увеличить счётчик использованных.
  * @param {string} userId
  */
-async function incrementAttendanceCount(userId) {
+async function consumeMembershipSession(userId) {
+  const user = /** @type {{ available_sessions?: number | null }} */ (
+    await pb.collection('users').getOne(userId, {
+      fields: 'available_sessions'
+    })
+  );
+
+  if ((user.available_sessions || 0) <= 0) {
+    throw new Error('Нет доступных посещений');
+  }
+
   await pb.collection('users').update(userId, {
+    'available_sessions-': 1,
     'attendance_count+': 1
   });
 }
 
 /**
+ * Вернуть одно посещение в абонемент и уменьшить счётчик использованных.
  * @param {string} userId
  */
-async function decrementAttendanceCount(userId) {
+async function restoreMembershipSession(userId) {
   const user = /** @type {{ attendance_count?: number | null }} */ (
     await pb.collection('users').getOne(userId, {
       fields: 'attendance_count'
@@ -117,6 +130,7 @@ async function decrementAttendanceCount(userId) {
   if ((user.attendance_count || 0) <= 0) return;
 
   await pb.collection('users').update(userId, {
+    'available_sessions+': 1,
     'attendance_count-': 1
   });
 }
@@ -450,7 +464,7 @@ export async function removeUsersFromTraining(training, userIds) {
         ? { attended_users: attended.filter((id) => !removedAttendedUserIds.includes(id)) }
         : {})
     }));
-    await Promise.all(removedAttendedUserIds.map((userId) => decrementAttendanceCount(userId)));
+    await Promise.all(removedAttendedUserIds.map((userId) => restoreMembershipSession(userId)));
     auditTrainings.unbookUsers(
       /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
       removedUserIds,
@@ -483,7 +497,7 @@ export async function cancelTrainingBooking(training, userId) {
       ...(shouldRemoveAttendance ? { attended_users: attended.filter((id) => id !== userId) } : {})
     }));
     if (shouldRemoveAttendance) {
-      await decrementAttendanceCount(userId);
+      await restoreMembershipSession(userId);
       auditTrainings.unmarkAttendance(
         /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
         userId
@@ -511,7 +525,7 @@ export async function markAttendance(training, userId) {
     const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
       attended_users: [...current, userId]
     }));
-    await incrementAttendanceCount(userId);
+    await consumeMembershipSession(userId);
     auditTrainings.markAttendance(
       /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
       userId
@@ -535,7 +549,7 @@ export async function unmarkAttendance(training, userId) {
     const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
       attended_users: current.filter((id) => id !== userId)
     }));
-    await decrementAttendanceCount(userId);
+    await restoreMembershipSession(userId);
     auditTrainings.unmarkAttendance(
       /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
       userId
