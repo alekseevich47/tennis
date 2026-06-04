@@ -50,7 +50,7 @@ function MembershipEditModal({ isOpen, onClose, user, mode = 'add', onMutated })
 
     setSubmitting(true);
     try {
-      await pb.collection('users').update(user.id, { available_sessions: newValue });
+      const updated = await pb.collection('users').update(user.id, { available_sessions: newValue });
 
       if (mode === 'subtract') {
         auditMembership.sessionsSubtracted(user.id, delta, newValue);
@@ -65,7 +65,7 @@ function MembershipEditModal({ isOpen, onClose, user, mode = 'add', onMutated })
       });
 
       onClose?.();
-      onMutated?.();
+      onMutated?.(updated);
     } catch (err) {
       if (mode === 'subtract') {
         auditMembership.sessionsSubtractError(err, user.id);

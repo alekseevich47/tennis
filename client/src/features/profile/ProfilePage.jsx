@@ -59,6 +59,25 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
   }, [user?.id, user?.full_name, user?.birth_date, user?.dominant_hand, user?.section_start_date]);
 
   useEffect(() => {
+    if (!user?.id) return undefined;
+
+    let cancelled = false;
+
+    pb.collection('users')
+      .getOne(user.id)
+      .then((fresh) => {
+        if (!cancelled) onUpdate?.(fresh);
+      })
+      .catch((err) => {
+        error('refresh profile user:', err);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.id, onUpdate]);
+
+  useEffect(() => {
     if (!avatarFile) {
       setAvatarPreview(null);
       return undefined;
@@ -80,12 +99,17 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
     ? players.findIndex((p) => p.id === user.id) + 1
     : null;
 
-  const handleMembershipMutated = async () => {
+  const handleMembershipMutated = async (updated) => {
     if (!user?.id) return;
 
-    try {
-      const updated = await pb.collection('users').getOne(user.id);
+    if (updated) {
       onUpdate?.(updated);
+      return;
+    }
+
+    try {
+      const fresh = await pb.collection('users').getOne(user.id);
+      onUpdate?.(fresh);
     } catch (err) {
       error('refresh membership user:', err);
     }

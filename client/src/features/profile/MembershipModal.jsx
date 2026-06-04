@@ -28,16 +28,29 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
   }, [user?.id]);
 
   useEffect(() => {
-    if (isOpen) {
-      fetchMembership();
-    } else {
+    if (!isOpen) {
       setEditMode(null);
+      return;
     }
-  }, [isOpen, fetchMembership]);
 
-  const handleMutated = () => {
+    setAvailableSessions(Number(user?.available_sessions ?? 0));
+    setUsedSessions(Number(user?.attendance_count ?? 0));
     fetchMembership();
-    onMutated?.();
+  }, [isOpen, fetchMembership, user?.available_sessions, user?.attendance_count]);
+
+  const applyMembership = (record) => {
+    if (!record) return;
+    setAvailableSessions(Number(record.available_sessions ?? 0));
+    setUsedSessions(Number(record.attendance_count ?? 0));
+  };
+
+  const handleMutated = async (updated) => {
+    if (updated) {
+      applyMembership(updated);
+    } else {
+      await fetchMembership();
+    }
+    onMutated?.(updated);
     setEditMode(null);
   };
 

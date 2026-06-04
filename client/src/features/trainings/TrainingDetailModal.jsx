@@ -85,14 +85,12 @@ function TrainingDetailModal({
           requestKey: null
         });
         const rawAvailable = Number(playerData.available_sessions ?? 0);
-        const rawUsed = Number(playerData.attendance_count ?? 0);
         const available = Number.isFinite(rawAvailable) ? rawAvailable : 0;
-        const used = Number.isFinite(rawUsed) ? rawUsed : 0;
 
-        if (available <= used) {
+        if (available <= 0) {
           const shouldAdd = await confirm({
             title: 'Недостаточно посещений',
-            message: `У игрока закончились доступные посещения (${used}/${available}). Добавить посещения?`,
+            message: `У игрока закончились доступные посещения. Добавить посещения?`,
             confirmText: 'Добавить',
             cancelText: 'Отмена'
           });
@@ -107,7 +105,7 @@ function TrainingDetailModal({
         await markAttendance(training, playerId);
         onMutated();
 
-        const remaining = available - used - 1;
+        const remaining = available - 1;
         const fullName = playerData.full_name || 'Игрок';
         showToast({
           text: remaining > 0
