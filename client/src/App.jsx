@@ -6,6 +6,7 @@ import Spinner from './components/ui/Spinner';
 import { ProductUploadProvider } from './components/ProductUploadProvider';
 import FeedPage from './features/feed/FeedPage';
 import TrainingsPage from './features/trainings/TrainingsPage';
+import MembershipOverviewModal from './features/trainings/components/MembershipOverviewModal';
 import ShopPage from './features/shop/ShopPage';
 import RatingPage from './features/rating/RatingPage';
 import CompetitionsPage from './features/competitions/CompetitionsPage';
@@ -35,6 +36,7 @@ const PROFILE_TAB_INDEX = 6;
 
 function App() {
   const [activeTab, setActiveTab] = useState(0);
+  const [membershipOpen, setMembershipOpen] = useState(false);
   const { user, isLoading, setUser } = useMaxAuth();
 
   // ID-буферы pending soft-delete. Передаются дочерним фичам через колбэки.
@@ -158,6 +160,11 @@ function App() {
         title={headerTitle}
         user={user}
         onProfileClick={() => setActiveTab(PROFILE_TAB_INDEX)}
+        onMembershipClick={
+          activeTab === 1 && user?.role === 'moderator'
+            ? () => setMembershipOpen(true)
+            : undefined
+        }
       />
 
       <main className={contentClassName}>
@@ -165,11 +172,18 @@ function App() {
           <FeedPage user={user} onDeletedIdsChange={setPendingDeletePostIds} />
         )}
         {activeTab === 1 && (
-          <TrainingsPage
-            user={user}
-            onDeletedIdsChange={setPendingDeleteTrainingIds}
-            onFlushPendingDeletes={flushPendingDeletes}
-          />
+          <>
+            <TrainingsPage
+              user={user}
+              onDeletedIdsChange={setPendingDeleteTrainingIds}
+              onFlushPendingDeletes={flushPendingDeletes}
+            />
+            <MembershipOverviewModal
+              isOpen={membershipOpen}
+              onClose={() => setMembershipOpen(false)}
+              currentUser={user}
+            />
+          </>
         )}
         {activeTab === 2 && (
           <ProductUploadProvider>

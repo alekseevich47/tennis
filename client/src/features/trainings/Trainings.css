@@ -755,3 +755,86 @@
 .date-status-dot.dot-gray { background: #ced4da; }
 .date-status-dot.dot-blue { background: #007aff; box-shadow: 0 0 6px rgba(0, 122, 255, 0.6); }
 .date-status-dot.dot-red { background: #e63946; box-shadow: 0 0 6px rgba(230, 57, 70, 0.6); }
+
+.membership-search-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.membership-search-row input {
+  flex: 1;
+  min-width: 0;
+}
+
+.membership-calendar-btn {
+  border: 1.5px solid #007aff;
+  color: #007aff;
+  background: transparent;
+  border-radius: 8px;
+  min-height: 36px;
+  flex-shrink: 0;
+}
+
+.membership-calendar-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.membership-date-range-label {
+  font-size: 13px;
+  color: #868e96;
+  white-space: nowrap;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+.membership-date-reset-btn {
+  color: #868e96 !important;
+  flex-shrink: 0;
+}
+
+.date-range-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.date-range-confirm-btn {
+  width: 100%;
+  min-height: 44px;
+  background: #007aff;
+  color: #fff;
+  border: 0;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.date-range-confirm-btn:active {
+  background: #0063cc;
+}
+
+.membership-overview-table .table-header,
+.membership-overview-table .membership-player-row {
+  grid-template-columns: 1fr 80px 80px;
+}
+
+.membership-overview-table .table-header > :nth-child(2),
+.membership-overview-table .table-header > :nth-child(3) {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.membership-overview-table .membership-player-row > :nth-child(2),
+.membership-overview-table .membership-player-row > :nth-child(3) {
+  text-align: right;
+}
+
+.membership-col-num {
+  font-weight: 600;
+  font-size: 14px;
+  color: #212529;
+}

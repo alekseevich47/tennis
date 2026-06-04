@@ -24,9 +24,22 @@ function RatingPage({ user, onTabChange }) {
   const playerRanks = useMemo(() => {
     if (!players) return new Map();
 
-    return [...players]
+    const ranks = new Map();
+    let previousPoints = null;
+    let previousRank = 0;
+
+    [...players]
       .sort((a, b) => getRatingPoints(b) - getRatingPoints(a))
-      .reduce((ranks, player, index) => ranks.set(player.id, index + 1), new Map());
+      .forEach((player, index) => {
+        const points = getRatingPoints(player);
+        const rank = points === previousPoints ? previousRank : index + 1;
+
+        ranks.set(player.id, rank);
+        previousPoints = points;
+        previousRank = rank;
+      });
+
+    return ranks;
   }, [players]);
 
   const sortedPlayers = useMemo(() => {
