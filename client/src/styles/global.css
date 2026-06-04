@@ -27,24 +27,11 @@ body {
 
 .app-boot {
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 12px;
   height: 100vh;
   background: #ffffff;
   color: #1a1a1a;
-}
-
-.app-boot-loader {
-  display: block;
-  width: 72px;
-  height: 72px;
-}
-
-.app-boot-label {
-  color: #6c757d;
-  font-size: 14px;
 }
 
 .app-error-fallback {
