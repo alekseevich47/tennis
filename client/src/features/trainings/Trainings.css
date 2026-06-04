@@ -817,6 +817,23 @@
   background: #0063cc;
 }
 
+.membership-overview-modal.ui-modal-tall .ui-modal-body {
+  padding: 0 0 16px 20px;
+}
+
+.membership-overview-modal .detail-header-row,
+.membership-overview-modal .membership-search-row {
+  padding-right: 12px;
+}
+
+.membership-overview-modal .detail-header-row {
+  padding-top: 4px;
+}
+
+.membership-overview-modal .players-table.membership-overview-table {
+  padding: 0;
+}
+
 .membership-overview-table {
   padding: 0 0 8px;
   overflow-x: hidden;
@@ -826,14 +843,15 @@
 
 .membership-overview-table .table-header,
 .membership-overview-table .membership-player-row {
-  grid-template-columns: minmax(0, 1fr) 52px 52px;
-  gap: 10px;
-  padding: 14px 12px;
+  grid-template-columns: minmax(0, 1fr) 56px 56px;
+  gap: 12px;
+  padding: 16px 14px;
 }
 
 .membership-overview-table .membership-player-row {
-  min-height: 60px;
+  min-height: 68px;
   align-items: center;
+  margin-bottom: 10px;
 }
 
 .membership-overview-table .table-header > :nth-child(2),
