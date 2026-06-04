@@ -843,15 +843,41 @@
 
 .membership-overview-table .table-header,
 .membership-overview-table .membership-player-row {
+  display: grid;
   grid-template-columns: minmax(0, 1fr) 56px 56px;
   gap: 12px;
   padding: 16px 14px;
+}
+
+.membership-overview-table .table-header {
+  background: #f5f5f5;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.membership-overview-table .table-header button {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  user-select: none;
 }
 
 .membership-overview-table .membership-player-row {
   min-height: 68px;
   align-items: center;
   margin-bottom: 10px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
 }
 
 .membership-overview-table .table-header > :nth-child(2),
@@ -866,6 +892,9 @@
 }
 
 .membership-overview-table .player-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   min-width: 0;
 }
 

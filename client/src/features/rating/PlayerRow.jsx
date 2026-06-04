@@ -20,10 +20,6 @@ function PlayerRow({ player, rank, onPlayerClick }) {
         />
         <div>
           <div className="player-name">{player.full_name || player.name || 'Без имени'}</div>
-          <div className="player-details">
-            {player.birth_year && <span>{player.birth_year} г.р.</span>}
-            {player.hand && <span>• {player.hand}</span>}
-          </div>
         </div>
       </div>
       <span className="rating-points">{player.rating_points || 0}</span>
