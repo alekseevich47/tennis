@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useMaxAuth } from './hooks/useMaxAuth';
 import AppHeader from './components/AppHeader';
 import BottomNav from './components/BottomNav';
-import bootLoaderUrl from './assets/loader.svg';
+import Spinner from './components/ui/Spinner';
 import { ProductUploadProvider } from './components/ProductUploadProvider';
 import FeedPage from './features/feed/FeedPage';
 import TrainingsPage from './features/trainings/TrainingsPage';
@@ -140,9 +140,8 @@ function App() {
 
   if (isLoading) {
     return (
-      <div className="app-boot" role="status" aria-live="polite">
-        <img className="app-boot-loader" src={bootLoaderUrl} alt="" aria-hidden="true" />
-        <span className="app-boot-label">Загрузка профиля MAX...</span>
+      <div className="app-boot">
+        <Spinner label="Загрузка профиля MAX..." />
       </div>
     );
   }

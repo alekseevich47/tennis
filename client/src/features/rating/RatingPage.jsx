@@ -10,6 +10,8 @@ import ProfileViewModal from '../profile/ProfileViewModal';
 import { error } from '../../lib/log';
 import './Rating.css';
 
+const getRatingPoints = (player) => player.rating_points || 0;
+
 function RatingPage({ user, onTabChange }) {
   const { data: players, isLoading, mutate } = usePlayers();
   const moderator = isModerator();
@@ -19,17 +21,25 @@ function RatingPage({ user, onTabChange }) {
   const [sortDir, setSortDir] = useState('asc');
   const [searchQuery, setSearchQuery] = useState('');
 
+  const playerRanks = useMemo(() => {
+    if (!players) return new Map();
+
+    return [...players]
+      .sort((a, b) => getRatingPoints(b) - getRatingPoints(a))
+      .reduce((ranks, player, index) => ranks.set(player.id, index + 1), new Map());
+  }, [players]);
+
   const sortedPlayers = useMemo(() => {
     if (!players) return [];
 
     const sorted = [...players];
 
     if (sortField === '#') {
-      sorted.sort((a, b) =>
-        sortDir === 'desc'
-          ? (b.rating_points || 0) - (a.rating_points || 0)
-          : (a.rating_points || 0) - (b.rating_points || 0)
-      );
+      sorted.sort((a, b) => {
+        const rankA = playerRanks.get(a.id) || 0;
+        const rankB = playerRanks.get(b.id) || 0;
+        return sortDir === 'desc' ? rankB - rankA : rankA - rankB;
+      });
     }
 
     if (sortField === 'name') {
@@ -43,13 +53,13 @@ function RatingPage({ user, onTabChange }) {
     if (sortField === 'points') {
       sorted.sort((a, b) =>
         sortDir === 'desc'
-          ? (b.rating_points || 0) - (a.rating_points || 0)
-          : (a.rating_points || 0) - (b.rating_points || 0)
+          ? getRatingPoints(b) - getRatingPoints(a)
+          : getRatingPoints(a) - getRatingPoints(b)
       );
     }
 
     return sorted;
-  }, [players, sortField, sortDir]);
+  }, [players, playerRanks, sortField, sortDir]);
 
   const filteredPlayers = useMemo(() => {
     if (!sortedPlayers) return [];
@@ -114,6 +124,17 @@ function RatingPage({ user, onTabChange }) {
   return (
     <section className="rating" aria-label="Рейтинг игроков">
       <div className="rating-action-bar">
+        {!isLoading && players?.length > 0 && (
+          <div className="rating-search-bar">
+            <input
+              type="text"
+              placeholder="Поиск игрока по имени..."
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              className="rating-search-input"
+            />
+          </div>
+        )}
         {moderator && (
           <button
             type="button"
@@ -132,15 +153,6 @@ function RatingPage({ user, onTabChange }) {
         <EmptyState title="Пока нет игроков" description="Добавьте первого участника секции." />
       ) : (
         <>
-          <div className="rating-search-bar">
-            <input
-              type="text"
-              placeholder="Поиск игрока по имени..."
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-              className="rating-search-input"
-            />
-          </div>
           <div className="players-table">
             <div className="table-header" role="row">
               <button type="button" className="sortable" onClick={() => handleSort('#')}>
@@ -158,7 +170,7 @@ function RatingPage({ user, onTabChange }) {
               <PlayerRow
                 key={player.id}
                 player={player}
-                rank={index + 1}
+                rank={playerRanks.get(player.id) || index + 1}
                 onPlayerClick={setViewingPlayer}
               />
             ))}
