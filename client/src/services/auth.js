@@ -42,8 +42,21 @@ export async function initMaxAuth(initData, signal) {
     const data = await response.json();
 
     if (data.token && data.user) {
-      pb.authStore.save(data.token, data.user);
+      let loggedUser = data.user;
+      pb.authStore.save(data.token, loggedUser);
+
+      if (loggedUser.id) {
+        try {
+          loggedUser = await pb.collection('users').getOne(loggedUser.id, { signal });
+          pb.authStore.save(data.token, loggedUser);
+        } catch (refreshErr) {
+          if (refreshErr && /** @type {Error} */ (refreshErr).name === 'AbortError') throw refreshErr;
+          error('Ошибка обновления профиля после MAX auth:', refreshErr);
+        }
+      }
+
       log('Авторизация в PocketBase успешно зафиксирована для текущего сеанса.');
+      return loggedUser;
     }
 
     return data.user || null;

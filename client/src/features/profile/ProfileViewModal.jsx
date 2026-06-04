@@ -387,7 +387,7 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                   className="avatar-pick-btn"
                   onClick={() => avatarInputRef.current?.click()}
                 >
-                  Выбрать фото
+                  Изменить фото
                 </button>
                 {avatarFile ? <span className="avatar-pick-name">{avatarFile.name}</span> : null}
               </div>
