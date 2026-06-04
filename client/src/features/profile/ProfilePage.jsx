@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import AvatarCropModal from '../../components/AvatarCropModal';
 import Avatar from '../../components/ui/Avatar';
 import IconButton from '../../components/ui/IconButton';
@@ -35,6 +35,7 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
   const { data: players } = usePlayers();
   const { data: trainings, isLoading: trainingsLoading } = useTrainings();
   const canEditSectionStartDate = isModerator();
+  const avatarInputRef = useRef(null);
 
   const [isEditing, setIsEditing] = useState(false);
   const [fullName, setFullName] = useState(user?.full_name || '');
@@ -92,7 +93,7 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
   // Профильный список — производное от SWR-данных (H4).
   const myTrainings = useMemo(() => {
     if (!trainings || !user?.id) return [];
-    return trainings.filter((t) => t.booked_users && t.booked_users.includes(user.id));
+    return trainings.filter((t) => t.attended_users && t.attended_users.includes(user.id));
   }, [trainings, user?.id]);
 
   const ratingPosition = players && user?.id
@@ -195,6 +196,7 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
       Object.entries(patch).forEach(([key, value]) => {
         fd.append(key, value == null ? '' : value);
       });
+      fd.append('avatar_url', '');
       fd.append('avatar', avatarFile);
       patch = fd;
     }
@@ -287,13 +289,21 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
           </div>
 
           <div className="form-group">
-            <label htmlFor="profile-avatar">Фотография</label>
             <input
-              id="profile-avatar"
+              ref={avatarInputRef}
               type="file"
               accept="image/*"
               onChange={handleAvatarInputChange}
+              style={{ display: 'none' }}
             />
+            <button
+              type="button"
+              className="avatar-pick-btn"
+              onClick={() => avatarInputRef.current?.click()}
+            >
+              Выбрать фото
+            </button>
+            {avatarFile ? <span className="avatar-pick-name">{avatarFile.name}</span> : null}
           </div>
 
           <div className="form-group">
@@ -387,7 +397,7 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
             {trainingsLoading ? (
               <Spinner label="Загрузка тренировок..." inline />
             ) : myTrainings.length === 0 ? (
-              <p className="no-data-text">Вы ещё не записаны на тренировки</p>
+              <p className="no-data-text">Вы ещё не посещали тренировки</p>
             ) : (
               <div className="profile-trainings-list">
                 {myTrainings.map((t) => (

@@ -204,6 +204,38 @@
   cursor: not-allowed;
 }
 
+.avatar-pick-btn {
+  background: transparent;
+  color: #ff5722;
+  border: 1px solid #ff5722;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 44px;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.avatar-pick-btn:hover {
+  background: #fff3ee;
+  border-color: #e64a19;
+  color: #e64a19;
+}
+
+.avatar-pick-btn:focus-visible {
+  outline: 2px solid rgba(255, 87, 34, 0.35);
+  outline-offset: 2px;
+}
+
+.avatar-pick-name {
+  color: #666;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .avatar-wrapper-large {
   position: relative;
   width: 90px;
