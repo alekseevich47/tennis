@@ -763,17 +763,22 @@
   margin-bottom: 12px;
 }
 
-.membership-search-row input {
+.membership-search-row .rating-search-input {
   flex: 1;
   min-width: 0;
+  height: 40px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
-.membership-calendar-btn {
+.membership-search-row .membership-calendar-btn {
+  width: 40px;
+  height: 40px;
+  min-height: 40px;
   border: 1.5px solid #007aff;
   color: #007aff;
   background: transparent;
   border-radius: 8px;
-  min-height: 36px;
   flex-shrink: 0;
 }
 
