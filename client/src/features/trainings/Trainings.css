@@ -821,13 +821,8 @@
   padding: 0 0 16px 20px;
 }
 
-.membership-overview-modal .detail-header-row,
 .membership-overview-modal .membership-search-row {
   padding-right: 12px;
-}
-
-.membership-overview-modal .detail-header-row {
-  padding-top: 4px;
 }
 
 .membership-overview-modal .players-table.membership-overview-table {
