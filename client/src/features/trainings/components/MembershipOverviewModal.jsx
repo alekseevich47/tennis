@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Modal from '../../../components/ui/Modal';
 import IconButton from '../../../components/ui/IconButton';
 import Spinner from '../../../components/ui/Spinner';
@@ -41,6 +41,12 @@ function MembershipOverviewModal({ isOpen, onClose, currentUser }) {
   const [dateRange, setDateRange] = useState(null);
   const [showDateModal, setShowDateModal] = useState(false);
   const [viewingPlayer, setViewingPlayer] = useState(null);
+
+  useEffect(() => {
+    if (isOpen) return;
+    setSortField(null);
+    setSortDir('desc');
+  }, [isOpen]);
 
   const isLoading = playersLoading || trainingsLoading;
   const hasDateFilter = Boolean(dateRange?.start && dateRange?.end);
