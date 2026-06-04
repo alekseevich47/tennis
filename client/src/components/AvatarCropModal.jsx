@@ -4,8 +4,7 @@ import {
   MAX_SCALE,
   MIN_SCALE,
   clamp,
-  getTouchDistance,
-  maxPan
+  getTouchDistance
 } from '../lib/gestures';
 import './AvatarCropModal.css';
 
@@ -91,14 +90,13 @@ function AvatarCropModal({ isOpen, file, onConfirm, onCancel }) {
   const clampOffset = useCallback((nextOffset, nextScale = scaleRef.current) => {
     const currentImage = imageRef.current;
     const currentViewport = viewportRef.current;
-    if (!currentImage || nextScale <= MIN_SCALE) return { x: 0, y: 0 };
+    if (!currentImage) return { x: 0, y: 0 };
 
     const placement = getImagePlacement(currentImage, currentViewport, nextScale, { x: 0, y: 0 });
     if (!placement) return { x: 0, y: 0 };
 
-    const gestureLimit = maxPan(nextScale);
-    const limitX = Math.min(gestureLimit, Math.max(0, (placement.width - placement.diameter) / 2));
-    const limitY = Math.min(gestureLimit, Math.max(0, (placement.height - placement.diameter) / 2));
+    const limitX = Math.max(0, (placement.width - placement.diameter) / 2);
+    const limitY = Math.max(0, (placement.height - placement.diameter) / 2);
 
     return {
       x: clamp(nextOffset.x, -limitX, limitX),
@@ -120,10 +118,6 @@ function AvatarCropModal({ isOpen, file, onConfirm, onCancel }) {
 
     const previousScale = scaleRef.current;
     const nextScale = clamp(targetScale, MIN_SCALE, MAX_SCALE);
-    if (nextScale === MIN_SCALE) {
-      setTransform(MIN_SCALE, { x: 0, y: 0 });
-      return;
-    }
 
     const ratio = nextScale / previousScale;
     const anchorX = point.x - circle.centerX;
@@ -142,7 +136,6 @@ function AvatarCropModal({ isOpen, file, onConfirm, onCancel }) {
 
   const panBy = useCallback((deltaX, deltaY) => {
     const currentScale = scaleRef.current;
-    if (currentScale <= MIN_SCALE) return;
 
     const nextOffset = clampOffset(
       {
@@ -281,7 +274,6 @@ function AvatarCropModal({ isOpen, file, onConfirm, onCancel }) {
     if (!imageRef.current) return;
 
     if (event.touches.length === 1 && touchRef.current.mode === 'pan') {
-      if (scaleRef.current <= MIN_SCALE) return;
       event.preventDefault();
       const touch = event.touches[0];
       panBy(touch.clientX - touchRef.current.lastX, touch.clientY - touchRef.current.lastY);
@@ -333,7 +325,7 @@ function AvatarCropModal({ isOpen, file, onConfirm, onCancel }) {
   }, []);
 
   const handlePointerDown = useCallback((event) => {
-    if (event.pointerType === 'touch' || scaleRef.current <= MIN_SCALE) return;
+    if (event.pointerType === 'touch') return;
     pointerRef.current = {
       active: true,
       pointerId: event.pointerId,
@@ -442,7 +434,6 @@ function AvatarCropModal({ isOpen, file, onConfirm, onCancel }) {
         <div
           ref={stageRef}
           className="avatar-crop-stage"
-          data-zoomed={scale > MIN_SCALE ? 'true' : undefined}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}

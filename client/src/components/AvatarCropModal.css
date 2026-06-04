@@ -38,15 +38,11 @@
   overflow: hidden;
   touch-action: none;
   user-select: none;
-  cursor: default;
+  cursor: grab;
   -webkit-tap-highlight-color: transparent;
 }
 
-.avatar-crop-stage[data-zoomed="true"] {
-  cursor: grab;
-}
-
-.avatar-crop-stage[data-zoomed="true"]:active {
+.avatar-crop-stage:active {
   cursor: grabbing;
 }
 
