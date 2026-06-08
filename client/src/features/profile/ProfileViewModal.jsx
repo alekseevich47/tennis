@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import AchievementsBlock from '../../components/AchievementsBlock';
+import FloatingAchievements from '../../components/FloatingAchievements';
 import AvatarCropModal from '../../components/AvatarCropModal';
 import Avatar from '../../components/ui/Avatar';
 import IconButton from '../../components/ui/IconButton';
@@ -29,7 +31,7 @@ function normalizeDateInput(value) {
 }
 
 function getTrainingTitle(training) {
-  return training.type === 'tournament' ? 'Турнир секции' : 'Групповая тренировка';
+  return training.type === 'tournament' ? 'Турнир секции' : 'Тренировка';
 }
 
 function isModerator(user) {
@@ -66,6 +68,7 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
   const [pendingAvatarFile, setPendingAvatarFile] = useState(null);
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [trainingsExpanded, setTrainingsExpanded] = useState(false);
 
   const targetUserId = targetUser?.id;
   const currentUserId = currentUser?.id;
@@ -444,27 +447,31 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
             </form>
           ) : (
             <div className="profile-view">
-              <div className="avatar-wrapper-large">
-                <Avatar user={displayUser} size="lg" alt="Большой аватар" />
-              </div>
+              <div className="profile-view-hero">
+                <FloatingAchievements userId={targetUserId} />
 
-              <h2 className="profile-user-name">
-                {displayName}
-                <span
-                  className="profile-rating-badge"
-                  onClick={handleRatingClick}
-                  onKeyDown={handleRatingKeyDown}
-                  role="button"
-                  tabIndex={0}
-                >
-                  #{ratingPosition || '—'}
-                </span>
-              </h2>
+                <div className="avatar-wrapper-large">
+                  <Avatar user={displayUser} size="lg" alt="Большой аватар" />
+                </div>
 
-              <div className="profile-meta-info">
-                <p><strong>Дата рождения:</strong> {formatDate(displayUser?.birth_date) || 'Не указана'}</p>
-                <p><strong>Рука:</strong> {displayUser?.dominant_hand || displayUser?.hand || 'Не указана'}</p>
-                <p><strong>В секции с:</strong> {formatDate(displayUser?.section_start_date || displayUser?.created) || 'Не указана'}</p>
+                <h2 className="profile-user-name">
+                  {displayName}
+                  <span
+                    className="profile-rating-badge"
+                    onClick={handleRatingClick}
+                    onKeyDown={handleRatingKeyDown}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    #{ratingPosition || '—'}
+                  </span>
+                </h2>
+
+                <div className="profile-meta-info">
+                  <p><strong>Дата рождения:</strong> {formatDate(displayUser?.birth_date) || 'Не указана'}</p>
+                  <p><strong>Рука:</strong> {displayUser?.dominant_hand || displayUser?.hand || 'Не указана'}</p>
+                  <p><strong>В секции с:</strong> {formatDate(displayUser?.section_start_date || displayUser?.created) || 'Не указана'}</p>
+                </div>
               </div>
 
               <div className="profile-stats-block">
@@ -479,24 +486,38 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                 </div>
               </div>
 
+              <AchievementsBlock userId={targetUserId} />
+
               <div className="profile-trainings-block">
-                <h3>Посещенные тренировки ({userTrainings.length})</h3>
-                {loadingDetails ? (
-                  <Spinner label="Загрузка тренировок..." inline />
-                ) : userTrainings.length > 0 ? (
-                  <div className="profile-trainings-list">
-                    {userTrainings.map((training) => (
-                      <div key={training.id} className="profile-training-card">
-                        <span className="training-date">
-                          {formatDate(training.date) || 'Дата не указана'}
-                        </span>
-                        <span className="training-title">{getTrainingTitle(training)}</span>
-                      </div>
-                    ))}
-                  </div>
-                ) : isOwnProfile ? (
-                  <p className="no-data-text">Вы ещё не посещали тренировки</p>
-                ) : null}
+                <button
+                  type="button"
+                  className="profile-trainings-toggle"
+                  onClick={() => setTrainingsExpanded((v) => !v)}
+                  aria-expanded={trainingsExpanded}
+                >
+                  <h3>Посещенные тренировки ({userTrainings.length})</h3>
+                  <span className="profile-trainings-arrow" aria-hidden="true">
+                    {trainingsExpanded ? '▲' : '▼'}
+                  </span>
+                </button>
+                {trainingsExpanded && (
+                  loadingDetails ? (
+                    <Spinner label="Загрузка тренировок..." inline />
+                  ) : userTrainings.length > 0 ? (
+                    <div className="profile-trainings-list">
+                      {userTrainings.map((training) => (
+                        <div key={training.id} className="profile-training-card">
+                          <span className="training-date">
+                            {formatDate(training.date) || 'Дата не указана'}
+                          </span>
+                          <span className="training-title">{getTrainingTitle(training)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : isOwnProfile ? (
+                    <p className="no-data-text">Вы ещё не посещали тренировки</p>
+                  ) : null
+                )}
               </div>
             </div>
           )}

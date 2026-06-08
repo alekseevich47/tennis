@@ -150,7 +150,7 @@ function EditTrainingModal({ isOpen, training, onClose, onSaved }) {
         <div className="form-group-row">
           <label htmlFor="edit-training-type">Тип события</label>
           <select id="edit-training-type" value={form.type} onChange={updateField('type')}>
-            <option value="group">Групповая тренировка</option>
+            <option value="group">Тренировка</option>
             <option value="tournament">Турнир</option>
           </select>
         </div>

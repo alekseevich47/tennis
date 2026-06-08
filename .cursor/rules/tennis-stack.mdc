@@ -77,6 +77,26 @@ alwaysApply: false
 - Не полагаться на `focus`/`blur` окна как в обычном браузере.
 - Тест авторизации — только из MAX или с уже сохранённой сессией.
 
+## Достижения (achievements)
+
+- **Коллекции PB**: `achievements` (name, description, sort_order), `achievement_levels` (achievement → relation, level, title, required_value, icon — file). Записи создаются/редактируются модератором через админку PB.
+- **Сервис**: `services/achievements.js` — `listAchievements({ signal })` (getFullList + expand уровней), `listMatches({ userId, signal })` (finished matcher для userId), `getUserAchievements(userId, achievements, user, matches)` (вычисление достигнутых уровней на клиенте «на лету»).
+- **Аудит**: `lib/audit/achievements.js` — `auditAchievements.achievementUnlocked(...)` при получении любого уровня (domain `ДОСТИЖЕНИЯ`, action `Достижение получено`, details: `achievementId, achievementName, level, levelTitle, requiredValue, userValue`). Экспортируется из `lib/audit/index.js`.
+- **Вычисление уровней** (на клиенте, без миграции):
+  - Рейтинговый взлёт: `user.rating_points` против `required_value`.
+  - Победитель турниров: `user.wins` против `required_value`.
+  - Постоянство: `user.attendance_count` против `required_value`.
+  - Серия побед: все finished-матчи пользователя, сортировка по `date_time`, максимальная непрерывная цепочка побед (без разбивки по турнирам).
+  - Призовой пьедестал: **отложен** (всегда `achieved: false`). Будет реализован после доработки раздела «Соревнования».
+- **Хук**: `useAchievements(userId)` — SWR [`achievements`, userId]; возвращает достижения с флагом `achieved` для каждого уровня.
+- **Компоненты**:
+  - `components/AchievementsBlock.jsx` — список достижений с 5 медалями: полученные — цветные (из PB), неполученные — `grayscale(100%)` + `opacity: 0.35`. При наведении (ПК) / клике (мобильные) на любой элемент строки достижения — всплывающий попап «Текущий уровень: *название*».
+  - `components/FloatingAchievements.jsx` — плавающие иконки полученных достижений на фоне области аватара (position: absolute, z-index: 0, pointer-events: none, анимация через CSS @keyframes без пересечений).
+- **Иконки**: хранятся в PB `achievement_levels.icon`. Локальные файлы `client/src/assets/ach/` удалены после заливки в БД.
+- **Отображение в профиле**: в `ProfilePage` и `ProfileViewModal` — подраздел «Достижения» (между «Статистика игр» и «Посещенные тренировки»). Плавающие иконки — в области `.profile-view` (под аватаром, именем, мета-инфо).
+- **Ренейминг тренировок**: «Групповая тренировка» → «Тренировка» во всём UI (поле `type` в БД не меняется).
+- **Посещенные тренировки**: список свёрнут по умолчанию, раскрывается по клику на заголовок (стрелка ▼/▲).
+
 ## Ограничения при правках
 
 - Минимальный diff; не трогать `client/dist/`, `node_modules`, `.env`.
