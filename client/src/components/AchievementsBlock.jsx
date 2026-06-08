@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import clsx from 'clsx';
 import { useAchievements } from '../hooks/useAchievements';
 import Spinner from './ui/Spinner';
@@ -14,38 +14,47 @@ function getCurrentLevelTitle(levels) {
 }
 
 /**
+ * @param {number} value
+ */
+function clampProgress(value) {
+  return Math.max(0, Math.min(100, value));
+}
+
+/**
+ * @param {number} progressPercent
+ */
+function getProgressBarColorClass(progressPercent) {
+  if (progressPercent < 30) return 'achievement-progress-bar--low';
+  if (progressPercent <= 70) return 'achievement-progress-bar--mid';
+  return 'achievement-progress-bar--high';
+}
+
+/**
  * @param {{ achievement: import('../hooks/useAchievements').AchievementWithProgress }} props
  */
 function AchievementRow({ achievement }) {
-  const [tooltipOpen, setTooltipOpen] = useState(false);
   const currentTitle = getCurrentLevelTitle(achievement.levels);
-  const tooltipText = currentTitle
-    ? `Текущий уровень: ${currentTitle}`
-    : 'Уровень не достигнут';
-
-  const isTouch =
-    typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches;
-
-  const handleMouseEnter = () => {
-    if (!isTouch) setTooltipOpen(true);
-  };
-
-  const handleMouseLeave = () => {
-    if (!isTouch) setTooltipOpen(false);
-  };
-
-  const handleClick = () => {
-    if (isTouch) setTooltipOpen((v) => !v);
-  };
+  const { nextLevel, userValue = 0 } = achievement;
+  const progressPercent = nextLevel
+    ? clampProgress(
+        ((userValue - nextLevel.prevRequired) /
+          Math.max(1, nextLevel.nextRequired - nextLevel.prevRequired)) *
+          100
+      )
+    : 100;
+  const progressText = nextLevel ? `${userValue} / ${nextLevel.nextRequired}` : 'Максимум';
+  const progressBarColorClass = getProgressBarColorClass(progressPercent);
 
   return (
-    <div
-      className={clsx('achievement-row', tooltipOpen && 'achievement-row--tooltip-open')}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onClick={handleClick}
-    >
+    <div className="achievement-row">
       <p className="achievement-name">{achievement.name}</p>
+      {currentTitle ? (
+        <span className="achievement-current-level">Текущий уровень: {currentTitle}</span>
+      ) : (
+        <span className="achievement-current-level achievement-current-level--none">
+          Уровень не достигнут
+        </span>
+      )}
       {achievement.description ? (
         <p className="achievement-description">{achievement.description}</p>
       ) : null}
@@ -61,13 +70,19 @@ function AchievementRow({ achievement }) {
             ) : (
               <span className="achievement-medal-placeholder" aria-hidden="true" />
             )}
-            <span className="achievement-medal-level">{level.level}</span>
+            <span className="achievement-medal-value">{level.required_value}</span>
           </div>
         ))}
       </div>
 
-      <div className="achievement-tooltip" role="tooltip">
-        {tooltipText}
+      <div className="achievement-progress">
+        <div className="achievement-progress-bar-wrap">
+          <div
+            className={clsx('achievement-progress-bar', progressBarColorClass)}
+            style={{ width: `${progressPercent}%` }}
+          />
+        </div>
+        <span className="achievement-progress-text">{progressText}</span>
       </div>
     </div>
   );

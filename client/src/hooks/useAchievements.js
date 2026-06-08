@@ -2,7 +2,7 @@
 import useSWR from 'swr';
 import pb from '../services/pb';
 import { getMediaUrl } from '../lib/media';
-import { listAchievements, listMatches, getUserAchievements } from '../services/achievements';
+import { listAchievements, listMatches, getUserAchievements, calcNextLevel } from '../services/achievements';
 
 /**
  * @typedef {import('../services/achievements').AchievementRecord} AchievementRecord
@@ -40,11 +40,15 @@ export function useAchievements(userId) {
 
     return achievements.map((achievement) => {
       const levels = getAchievementLevels(achievement);
-      const progress = progressMap.get(achievement.id);
+      const achievementResult = progressMap.get(achievement.id);
+      const progress = achievementResult?.progress;
+      const userValue = achievementResult?.userValue ?? 0;
       const currentLevel = progress?.level ?? 0;
 
       return {
         ...achievement,
+        userValue,
+        nextLevel: calcNextLevel(levels, userValue),
         levels: levels.map((levelRecord) => ({
           level: levelRecord.level ?? 0,
           title: levelRecord.title || '',

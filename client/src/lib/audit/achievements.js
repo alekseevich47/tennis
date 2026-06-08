@@ -1,7 +1,22 @@
 // @ts-check
+import pb from '../../services/pb';
 import { writeAudit, writeAuditError } from './core';
 
 const DOMAIN = 'ДОСТИЖЕНИЯ';
+const ACHIEVEMENT_UNLOCKED_ACTION = 'Достижение получено';
+
+/**
+ * @param {unknown} err
+ * @returns {boolean}
+ */
+function isNotFoundError(err) {
+  return (
+    typeof err === 'object' &&
+    err !== null &&
+    'status' in err &&
+    /** @type {{ status?: number }} */ (err).status === 404
+  );
+}
 
 export const auditAchievements = {
   /**
@@ -11,9 +26,32 @@ export const auditAchievements = {
    * @param {string} levelTitle
    * @param {number} requiredValue
    * @param {number} userValue
+   * @param {string} userId
    */
-  achievementUnlocked(achievementId, achievementName, level, levelTitle, requiredValue, userValue) {
-    writeAudit(DOMAIN, 'Достижение получено', {
+  async achievementUnlocked(achievementId, achievementName, level, levelTitle, requiredValue, userValue, userId) {
+    try {
+      await pb.collection('audit_logs').getFirstListItem(
+        pb.filter(
+          'user = {:userId} && domain = {:domain} && action = {:action} && details.achievementId = {:achievementId} && details.level = {:level}',
+          {
+            userId,
+            domain: DOMAIN,
+            action: ACHIEVEMENT_UNLOCKED_ACTION,
+            achievementId,
+            level
+          }
+        ),
+        { requestKey: null }
+      );
+      return;
+    } catch (err) {
+      if (!isNotFoundError(err)) {
+        console.warn('Ошибка проверки audit_logs:', err);
+        return;
+      }
+    }
+
+    writeAudit(DOMAIN, ACHIEVEMENT_UNLOCKED_ACTION, {
       achievementId,
       achievementName,
       level,
