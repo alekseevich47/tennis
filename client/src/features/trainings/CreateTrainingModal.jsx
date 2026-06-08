@@ -100,7 +100,7 @@ function CreateTrainingModal({ isOpen, onClose, selectedDate, onCreated }) {
         <div className="form-group-row">
           <label htmlFor="training-type">Тип события</label>
           <select id="training-type" value={form.type} onChange={updateField('type')}>
-            <option value="group">Групповая тренировка</option>
+            <option value="group">Тренировка</option>
             <option value="tournament">Турнир</option>
           </select>
         </div>

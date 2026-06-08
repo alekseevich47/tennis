@@ -94,7 +94,7 @@ function TrainingCard({
         <span className="card-row-date">{formatCardDate(training.date)}</span>
         <span className="card-row-time">{formatTimeRange(training.date, training.duration)}</span>
         <span className="card-row-type-label">
-          {training.type === 'group' ? 'Групповая тренировка' : 'Турнир секции'}
+          {training.type === 'group' ? 'Тренировка' : 'Турнир секции'}
         </span>
       </div>
 

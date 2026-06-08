@@ -4,3 +4,4 @@ export { auditGallery } from './gallery';
 export { auditShop } from './shop';
 export { auditProfile } from './profile';
 export { auditMembership } from './membership';
+export { auditAchievements } from './achievements';

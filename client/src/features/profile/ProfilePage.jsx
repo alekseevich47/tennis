@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import AchievementsBlock from '../../components/AchievementsBlock';
+import FloatingAchievements from '../../components/FloatingAchievements';
 import AvatarCropModal from '../../components/AvatarCropModal';
 import Avatar from '../../components/ui/Avatar';
 import IconButton from '../../components/ui/IconButton';
@@ -48,6 +50,7 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [membershipOpen, setMembershipOpen] = useState(false);
+  const [trainingsExpanded, setTrainingsExpanded] = useState(false);
 
   useEffect(() => {
     setFullName(user?.full_name || '');
@@ -358,26 +361,30 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
         </form>
       ) : (
         <div className="profile-view">
-          <div className="avatar-wrapper-large">
-            <Avatar user={user} size="lg" alt="Большой аватар" />
-          </div>
+          <div className="profile-view-hero">
+            <FloatingAchievements userId={user.id} />
 
-          <h2 className="profile-user-name">
-            {user.full_name}
-            <span
-              className="profile-rating-badge"
-              onClick={() => onTabChange?.(3)}
-              role="button"
-              tabIndex={0}
-            >
-              #{ratingPosition || '—'}
-            </span>
-          </h2>
+            <div className="avatar-wrapper-large">
+              <Avatar user={user} size="lg" alt="Большой аватар" />
+            </div>
 
-          <div className="profile-meta-info">
-            <p><strong>Дата рождения:</strong> {formatDate(user.birth_date) || 'Не указана'}</p>
-            <p><strong>В секции с:</strong> {formatDate(user.section_start_date || user.created) || 'Не указана'}</p>
-            <p><strong>Рука:</strong> {user.dominant_hand || 'Не указана'}</p>
+            <h2 className="profile-user-name">
+              {user.full_name}
+              <span
+                className="profile-rating-badge"
+                onClick={() => onTabChange?.(3)}
+                role="button"
+                tabIndex={0}
+              >
+                #{ratingPosition || '—'}
+              </span>
+            </h2>
+
+            <div className="profile-meta-info">
+              <p><strong>Дата рождения:</strong> {formatDate(user.birth_date) || 'Не указана'}</p>
+              <p><strong>В секции с:</strong> {formatDate(user.section_start_date || user.created) || 'Не указана'}</p>
+              <p><strong>Рука:</strong> {user.dominant_hand || 'Не указана'}</p>
+            </div>
           </div>
 
           <div className="profile-stats-block">
@@ -392,25 +399,39 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
             </div>
           </div>
 
+          <AchievementsBlock userId={user.id} />
+
           <div className="profile-trainings-block">
-            <h3>Посещенные тренировки ({myTrainings.length})</h3>
-            {trainingsLoading ? (
-              <Spinner label="Загрузка тренировок..." inline />
-            ) : myTrainings.length === 0 ? (
-              <p className="no-data-text">Вы ещё не посещали тренировки</p>
-            ) : (
-              <div className="profile-trainings-list">
-                {myTrainings.map((t) => (
-                  <div key={t.id} className="profile-training-card">
-                    <span className="training-date">
-                      {new Date(t.date).toLocaleDateString('ru-RU')}
-                    </span>
-                    <span className="training-title">
-                      {t.type === 'tournament' ? 'Турнир секции' : 'Групповая тренировка'}
-                    </span>
-                  </div>
-                ))}
-              </div>
+            <button
+              type="button"
+              className="profile-trainings-toggle"
+              onClick={() => setTrainingsExpanded((v) => !v)}
+              aria-expanded={trainingsExpanded}
+            >
+              <h3>Посещенные тренировки ({myTrainings.length})</h3>
+              <span className="profile-trainings-arrow" aria-hidden="true">
+                {trainingsExpanded ? '▲' : '▼'}
+              </span>
+            </button>
+            {trainingsExpanded && (
+              trainingsLoading ? (
+                <Spinner label="Загрузка тренировок..." inline />
+              ) : myTrainings.length === 0 ? (
+                <p className="no-data-text">Вы ещё не посещали тренировки</p>
+              ) : (
+                <div className="profile-trainings-list">
+                  {myTrainings.map((t) => (
+                    <div key={t.id} className="profile-training-card">
+                      <span className="training-date">
+                        {new Date(t.date).toLocaleDateString('ru-RU')}
+                      </span>
+                      <span className="training-title">
+                        {t.type === 'tournament' ? 'Турнир секции' : 'Тренировка'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )
             )}
           </div>
         </div>
