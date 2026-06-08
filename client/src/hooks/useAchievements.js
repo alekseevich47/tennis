@@ -31,7 +31,8 @@ export function useAchievements(userId) {
       listAchievements(),
       listMatches({ userId: id }),
       pb.collection('users').getOne(id, {
-        fields: 'id,rating_points,wins,attendance_count'
+        fields: 'id,rating_points,wins,attendance_count',
+        requestKey: null
       })
     ]);
 
