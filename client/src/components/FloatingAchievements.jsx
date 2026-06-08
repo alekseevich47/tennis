@@ -1,26 +1,34 @@
 import React, { useMemo } from 'react';
 import { useAchievements } from '../hooks/useAchievements';
 
-const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
+function hashUnit(seed) {
+  const value = Math.sin(seed) * 10000;
+  return value - Math.floor(value);
+}
+
+function clampPercent(value) {
+  return Math.max(6, Math.min(94, value));
+}
 
 /**
- * Спиральное размещение иконок вокруг центра без пересечений.
+ * Детерминированное распределение иконок по виртуальной сетке hero.
  * @param {number} count
- * @returns {{ x: number, y: number, durationX: number, durationY: number, delayX: number, delayY: number }[]}
+ * @returns {{ left: number, top: number, durationX: number, durationY: number, delayX: number, delayY: number }[]}
  */
-function computeSpiralLayout(count) {
+function computeGridLayout(count) {
   const positions = [];
+  const cols = Math.max(1, Math.ceil(Math.sqrt(count)));
+  const rows = Math.max(1, Math.ceil(count / cols));
 
   for (let i = 0; i < count; i++) {
-    const t = i + 1;
-    const radius = 48 + Math.sqrt(t) * 16;
-    const angle = i * GOLDEN_ANGLE;
-    const jitterX = ((i * 17) % 13) - 6;
-    const jitterY = ((i * 23) % 11) - 5;
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    const offsetX = (hashUnit(i * 37 + 11) - 0.5) * 0.55;
+    const offsetY = (hashUnit(i * 53 + 17) - 0.5) * 0.55;
 
     positions.push({
-      x: Math.cos(angle) * radius + jitterX,
-      y: Math.sin(angle) * radius + jitterY,
+      left: clampPercent(((col + 0.5 + offsetX) / cols) * 100),
+      top: clampPercent(((row + 0.5 + offsetY) / rows) * 100),
       durationX: 5 + (i % 3) * 0.5,
       durationY: 7 + (i % 4) * 0.5,
       delayX: (i * 0.7) % 2.5,
@@ -51,7 +59,7 @@ function FloatingAchievements({ userId }) {
   }, [data]);
 
   const layout = useMemo(
-    () => computeSpiralLayout(achievedIcons.length),
+    () => computeGridLayout(achievedIcons.length),
     [achievedIcons.length]
   );
 
@@ -68,7 +76,8 @@ function FloatingAchievements({ userId }) {
             key={`${iconUrl}-${index}`}
             className="floating-achievement-wrap"
             style={{
-              transform: `translate(calc(-50% + ${pos.x}px), calc(-50% + ${pos.y}px))`,
+              left: `calc(${pos.left}% - 16px)`,
+              top: `calc(${pos.top}% - 16px)`,
               '--float-x-duration': `${pos.durationX}s`,
               '--float-y-duration': `${pos.durationY}s`,
               '--float-delay-x': `${pos.delayX}s`,

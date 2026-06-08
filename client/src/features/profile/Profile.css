@@ -179,42 +179,62 @@
   opacity: 0.35;
 }
 
-.achievement-medal-level {
+.achievement-medal-value {
   font-size: 11px;
   color: #888;
   line-height: 1;
 }
 
-.achievement-tooltip {
-  display: none;
-  position: absolute;
-  left: 50%;
-  bottom: calc(100% + 6px);
-  transform: translateX(-50%);
-  padding: 6px 10px;
-  background: #1a1a1a;
-  color: #fff;
-  font-size: 12px;
-  line-height: 1.3;
-  border-radius: 8px;
-  white-space: nowrap;
-  z-index: 5;
-  pointer-events: none;
-}
-
-.achievement-tooltip::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 5px solid transparent;
-  border-top-color: #1a1a1a;
-}
-
-.achievement-row:hover .achievement-tooltip,
-.achievement-row--tooltip-open .achievement-tooltip {
+.achievement-current-level {
   display: block;
+  font-size: 13px;
+  color: #4caf50;
+  margin: 0 0 6px;
+}
+
+.achievement-current-level--none {
+  color: #999;
+}
+
+.achievement-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.achievement-progress-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: #e9ecef;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.achievement-progress-bar {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.achievement-progress-bar--low {
+  background: #ef4444;
+}
+
+.achievement-progress-bar--mid {
+  background: #f97316;
+}
+
+.achievement-progress-bar--high {
+  background: #4caf50;
+}
+
+.achievement-progress-text {
+  font-size: 11px;
+  color: #888;
+  white-space: nowrap;
+  min-width: 70px;
+  text-align: right;
 }
 
 .profile-trainings-toggle {
@@ -385,30 +405,25 @@
 
 .floating-achievements {
   position: absolute;
-  left: 50%;
-  top: 65px;
-  width: 0;
-  height: 0;
+  inset: 0;
   z-index: 0;
   pointer-events: none;
 }
 
 .floating-achievement-wrap {
   position: absolute;
-  left: 0;
-  top: 0;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   animation: floating-ach-x var(--float-x-duration, 6s) ease-in-out infinite alternate;
   animation-delay: var(--float-delay-x, 0s);
 }
 
 .floating-achievement-icon {
   display: block;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   object-fit: contain;
-  opacity: 0.3;
+  opacity: 0.25;
   pointer-events: none;
   animation: floating-ach-y var(--float-y-duration, 8s) ease-in-out infinite alternate;
   animation-delay: var(--float-delay-y, 0s);
