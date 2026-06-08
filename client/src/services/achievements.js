@@ -45,6 +45,12 @@ import { auditAchievements } from '../lib/audit';
  * @property {string} icon_url
  */
 
+/**
+ * @typedef {Object} UserAchievementResult
+ * @property {UserAchievementProgress} progress
+ * @property {number} userValue
+ */
+
 /** @param {{ signal?: AbortSignal }} [options] */
 export async function listAchievements({ signal } = {}) {
   try {
@@ -128,6 +134,29 @@ function calcLevelFromValue(levels, value) {
     required_value: 0,
     icon_url: ''
   };
+}
+
+/**
+ * @param {AchievementLevelRecord[]} levels
+ * @param {number} userValue
+ * @returns {{ prevRequired: number, nextRequired: number, level: number } | null}
+ */
+export function calcNextLevel(levels, userValue) {
+  let prevRequired = 0;
+
+  for (const levelRecord of levels) {
+    const required = levelRecord.required_value ?? 0;
+    if (userValue < required) {
+      return {
+        prevRequired,
+        nextRequired: required,
+        level: levelRecord.level ?? 0
+      };
+    }
+    prevRequired = required;
+  }
+
+  return null;
 }
 
 /**
@@ -264,10 +293,10 @@ function calcAchievementProgress(sortOrder, userId, user, matches, levels) {
  * @param {AchievementRecord[]} achievements
  * @param {Record<string, unknown>} user
  * @param {MatchRecord[]} matches
- * @returns {Map<string, UserAchievementProgress>}
+ * @returns {Map<string, UserAchievementResult>}
  */
 export function getUserAchievements(userId, achievements, user, matches) {
-  /** @type {Map<string, UserAchievementProgress>} */
+  /** @type {Map<string, UserAchievementResult>} */
   const result = new Map();
 
   try {
@@ -282,16 +311,17 @@ export function getUserAchievements(userId, achievements, user, matches) {
         levels
       );
 
-      result.set(achievement.id, progress);
+      result.set(achievement.id, { progress, userValue });
 
       if (progress.achieved) {
-        auditAchievements.achievementUnlocked(
+        void auditAchievements.achievementUnlocked(
           achievement.id,
           achievement.name || '',
           progress.level,
           progress.title,
           progress.required_value,
-          userValue
+          userValue,
+          userId
         );
       }
     }
