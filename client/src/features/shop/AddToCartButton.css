@@ -176,6 +176,10 @@
   visibility: hidden;
 }
 
+.add-to-cart:disabled:not(.active) span {
+  transform: translateX(0) translateZ(0);
+}
+
 .add-to-cart.active {
   overflow: visible;
 }
