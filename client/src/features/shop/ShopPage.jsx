@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { useProducts } from '../../hooks/useProducts';
-import { useProductCategories } from '../../hooks/useProductCategories';
 import { isModerator } from '../../services/auth';
 import { restoreProduct, softDeleteProduct } from '../../services/catalog';
 import { useProductUpload } from '../../components/ProductUploadProvider';
@@ -10,6 +9,8 @@ import EmptyState from '../../components/ui/EmptyState';
 import ProductCard from './ProductCard';
 import ProductForm from './ProductForm';
 import ProductDetail from './ProductDetail';
+import CategoryDropdown from './CategoryDropdown';
+import SearchBar from './SearchBar';
 import FullscreenImageViewer from '../feed/FullscreenImageViewer';
 import { error } from '../../lib/log';
 import './Shop.css';
@@ -18,25 +19,24 @@ const SCROLL_HIDE_DEBOUNCE_MS = 300;
 
 /**
  * @param {{
- *   onDeletedIdsChange?: (ids: string[]) => void
+ *   onDeletedIdsChange?: (ids: string[]) => void,
+ *   productToOpen?: import('../../services/catalog').ProductRecord | null,
+ *   onProductOpened?: () => void
  * }} props
  */
-function ShopPage({ onDeletedIdsChange } = {}) {
-  const categoryButtonId = useId();
+function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } = {}) {
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { data: products, isLoading, mutate } = useProducts({
     categoryId: selectedCategoryId || undefined
   });
-  const { data: categories = [] } = useProductCategories();
   const moderator = isModerator();
   const { startUpload } = useProductUpload();
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
   const [deletedProductIds, setDeletedProductIds] = useState([]);
   const [fullscreenMedia, setFullscreenMedia] = useState(null);
   const [hiddenMediaKey, setHiddenMediaKey] = useState(null);
@@ -48,6 +48,12 @@ function ShopPage({ onDeletedIdsChange } = {}) {
   useEffect(() => {
     onDeletedIdsChange?.(deletedProductIds);
   }, [deletedProductIds, onDeletedIdsChange]);
+
+  useEffect(() => {
+    if (!productToOpen) return;
+    setSelectedProduct(productToOpen);
+    onProductOpened?.();
+  }, [productToOpen, onProductOpened]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -91,10 +97,10 @@ function ShopPage({ onDeletedIdsChange } = {}) {
     );
   }, [products, moderator, deletedProductIds, searchQuery]);
 
-  const selectedCategoryName = useMemo(() => {
-    if (!selectedCategoryId) return 'Все категории';
-    return categories.find((category) => category.id === selectedCategoryId)?.name || 'Категория';
-  }, [categories, selectedCategoryId]);
+  const handleCloseSearch = useCallback(() => {
+    setIsSearchOpen(false);
+    setSearchQuery('');
+  }, []);
 
   const handleCreate = useCallback(
     (data) => {
@@ -163,13 +169,6 @@ function ShopPage({ onDeletedIdsChange } = {}) {
     setHiddenMediaKey(originKey || null);
   }, []);
 
-  const handleToggleSearch = useCallback(() => {
-    if (isSearchOpen) {
-      setSearchQuery('');
-    }
-    setIsSearchOpen((value) => !value);
-  }, [isSearchOpen]);
-
   return (
     <section className="shop" ref={containerRef} aria-label="Магазин секции">
       {moderator && (
@@ -184,77 +183,20 @@ function ShopPage({ onDeletedIdsChange } = {}) {
         </div>
       )}
 
-      <div className="shop-header-bar">
-        <div className="shop-category-filter">
-          <button
-            id={categoryButtonId}
-            type="button"
-            className="product-category-trigger"
-            onClick={() => setIsCategoryMenuOpen((value) => !value)}
-            aria-haspopup="listbox"
-            aria-expanded={isCategoryMenuOpen}
-          >
-            {selectedCategoryName}
-          </button>
-          {isCategoryMenuOpen && (
-            <div
-              className="product-category-menu"
-              role="listbox"
-              aria-labelledby={categoryButtonId}
-            >
-              <button
-                type="button"
-                className="product-category-option"
-                role="option"
-                aria-selected={!selectedCategoryId}
-                onClick={() => {
-                  setSelectedCategoryId('');
-                  setIsCategoryMenuOpen(false);
-                }}
-              >
-                Все категории
-              </button>
-              {categories.map((category) => (
-                <button
-                  key={category.id}
-                  type="button"
-                  className="product-category-option"
-                  role="option"
-                  aria-selected={selectedCategoryId === category.id}
-                  onClick={() => {
-                    setSelectedCategoryId(category.id);
-                    setIsCategoryMenuOpen(false);
-                  }}
-                >
-                  {category.name}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <button
-          type="button"
-          className="shop-search-btn"
-          onClick={handleToggleSearch}
-          aria-label={isSearchOpen ? 'Скрыть поиск товаров' : 'Показать поиск товаров'}
-          aria-controls="shop-search-input"
-          aria-expanded={isSearchOpen}
-        >
-          <span aria-hidden="true">🔍</span>
-        </button>
-
-        {isSearchOpen && (
-          <input
-            id="shop-search-input"
-            className="shop-search-input"
-            type="search"
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
-            placeholder="Поиск по названию или #артикулу"
-            autoFocus
-          />
-        )}
+      <div className={clsx('shop-header-bar-new', isSearchOpen && 'search-open')}>
+        <CategoryDropdown
+          selectedCategoryId={selectedCategoryId}
+          onCategoryChange={setSelectedCategoryId}
+          isSearchOpen={isSearchOpen}
+          onCloseSearch={handleCloseSearch}
+        />
+        <SearchBar
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          isOpen={isSearchOpen}
+          onOpenChange={setIsSearchOpen}
+          onSearchToggle={setIsSearchOpen}
+        />
       </div>
 
       {isLoading ? (

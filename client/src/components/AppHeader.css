@@ -62,3 +62,24 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.header-shop-controls {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.header-cart-anchor {
+  position: relative;
+}
+
+.header-orders-btn {
+  color: #495057;
+  flex-shrink: 0;
+}
+
+.header-orders-btn svg {
+  width: 22px;
+  height: 22px;
+}

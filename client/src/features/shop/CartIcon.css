@@ -1,0 +1,233 @@
+.cart-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px 10px 6px 6px;
+  border-radius: 22px;
+  min-height: 44px;
+  min-width: 44px;
+  transition: background 0.15s ease;
+}
+
+.cart-icon-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.cart-icon-btn:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: 2px;
+}
+
+.shopping-cart {
+  --stroke: #242836;
+  --stroke-light: #3f4656;
+  --background: #fff;
+  --inner: #eef4ff;
+  --count-background: #007aff;
+  position: relative;
+  pointer-events: none;
+}
+
+.shopping-cart .bag {
+  perspective: 64px;
+  position: relative;
+  transform-origin: 50% 100%;
+}
+
+.shopping-cart .bag .front,
+.shopping-cart .bag .back,
+.shopping-cart .bag .inner {
+  --x: 0;
+  --y: 0;
+  --z: 0;
+  --r: 24deg;
+  --s: 1;
+  width: 32px;
+  position: relative;
+  transition: transform 0.5s ease, clip-path 0.7s ease;
+  transform-origin: 50% 100%;
+  border-radius: 2px;
+  transform: translate3d(var(--x), var(--y), var(--z)) rotateX(var(--r)) scaleY(var(--s));
+}
+
+.shopping-cart .bag .front,
+.shopping-cart .bag .back {
+  height: 32px;
+  background: var(--background);
+  border: 2px solid var(--stroke);
+}
+
+.shopping-cart .bag .front,
+.shopping-cart .bag .inner {
+  backface-visibility: hidden;
+}
+
+.shopping-cart .bag .front::before,
+.shopping-cart .bag .inner::before {
+  content: '';
+  position: absolute;
+}
+
+.shopping-cart .bag .front {
+  --z: 1px;
+  z-index: 3;
+}
+
+.shopping-cart .bag .front::before {
+  height: 2px;
+  border-radius: 1px;
+  bottom: 4px;
+  left: 5px;
+  right: 5px;
+  background: var(--stroke-light);
+}
+
+.shopping-cart .bag .front canvas {
+  width: 32px;
+  height: 32px;
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translate(-50%, -52%);
+  pointer-events: none;
+}
+
+.shopping-cart .bag .back,
+.shopping-cart .bag .inner {
+  position: absolute;
+  top: 0;
+}
+
+.shopping-cart .bag .back {
+  --r: 28deg;
+  --y: -1.5px;
+  left: 0;
+}
+
+.shopping-cart .bag .inner {
+  --x: -50%;
+  --y: -105%;
+  --r: -130deg;
+  --offset: 10px;
+  height: 22px;
+  left: 50%;
+  background: var(--stroke);
+  clip-path: polygon(
+    6px 0,
+    26px 0,
+    calc(32px - var(--offset)) 8px,
+    32px 22px,
+    0 22px,
+    var(--offset) 8px
+  );
+}
+
+.shopping-cart .bag .inner::before {
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--inner);
+  clip-path: polygon(
+    6px 0,
+    26px 0,
+    calc(32px - var(--offset)) 8px,
+    32px 22px,
+    0 22px,
+    var(--offset) 8px
+  );
+  transform: scale(0.76);
+  transition: clip-path 0.7s ease;
+}
+
+.shopping-cart .count {
+  --o: 0;
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+  font-size: 9px;
+  text-align: center;
+  font-weight: 600;
+  border-radius: 50%;
+  background: var(--count-background);
+  color: #fff;
+  left: 100%;
+  top: 0;
+  overflow: hidden;
+  position: absolute;
+  transform: translate(4px, -4px);
+  opacity: var(--o);
+  transition: opacity 0.3s ease;
+}
+
+.shopping-cart .count div span {
+  display: block;
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+}
+
+.shopping-cart .count div span.before,
+.shopping-cart .count div span.after {
+  left: 0;
+  position: absolute;
+}
+
+.shopping-cart .count div span.before {
+  bottom: 100%;
+}
+
+.shopping-cart .count div span.after {
+  top: 100%;
+}
+
+.shopping-cart .count.moveUp div {
+  animation: cart-count-move-up 0.3s linear forwards;
+}
+
+.shopping-cart .count.moveDown div {
+  animation: cart-count-move-down 0.3s linear forwards;
+}
+
+.shopping-cart:not(.open) .bag .inner {
+  transition-delay: 0.01s;
+}
+
+.shopping-cart.open .bag .front {
+  --r: -20deg;
+  --s: 0.65;
+}
+
+.shopping-cart.open .bag .inner {
+  --r: -64deg;
+  --offset: 7px;
+}
+
+.shopping-cart.open.bounce .bag {
+  animation: cart-bounce 0.3s linear;
+}
+
+.shopping-cart.counted .count {
+  --o: 1;
+}
+
+@keyframes cart-bounce {
+  36% {
+    transform: scaleY(0.9);
+  }
+}
+
+@keyframes cart-count-move-up {
+  100% {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes cart-count-move-down {
+  100% {
+    transform: translateY(100%);
+  }
+}

@@ -1,0 +1,268 @@
+.category-dropdown {
+  --max-scroll: 8;
+  --text: #1f2937;
+  --border: #dce6f2;
+  --borderActive: #007aff;
+  --background: #fff;
+  --arrow: #8b98a5;
+  --arrowActive: #6c7486;
+  --listText: #99a3ba;
+  --listBackground: #fff;
+  --listActive: #eef6ff;
+  --listTextActive: #0969c3;
+  --listBorder: #e4ecfa;
+  --textFilled: #6c7486;
+
+  width: 220px;
+  position: relative;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.category-dropdown__native {
+  display: none;
+}
+
+.category-dropdown > span {
+  cursor: pointer;
+  padding: 9px 36px 9px 16px;
+  border-radius: 6px;
+  display: block;
+  position: relative;
+  color: var(--text);
+  border: 1px solid var(--border);
+  background: var(--background);
+  transition: all 0.3s ease;
+  user-select: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 44px;
+  line-height: 24px;
+  font-size: 16px;
+  font-family: inherit;
+}
+
+.category-dropdown > span::before,
+.category-dropdown > span::after {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 8px;
+  height: 2px;
+  border-radius: 1px;
+  top: 50%;
+  right: 15px;
+  background: var(--arrow);
+  transition: all 0.3s ease;
+}
+
+.category-dropdown > span::before {
+  margin-right: 4px;
+  transform: scale(0.96, 0.8) rotate(50deg);
+}
+
+.category-dropdown > span::after {
+  transform: scale(0.96, 0.8) rotate(-50deg);
+}
+
+.category-dropdown__hamburger-mid {
+  display: none;
+}
+
+.category-dropdown ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+  max-height: calc(var(--max-scroll) * 42px);
+  top: 42px;
+  left: 0;
+  z-index: 10;
+  right: 0;
+  background: var(--listBackground);
+  border-radius: 6px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  transform-origin: 0 0;
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease,
+    transform 0.3s cubic-bezier(0.4, 0.6, 0.5, 1.32);
+  transform: scale(0.8) translate(0, 4px);
+  border: 1px solid var(--listBorder);
+  box-shadow: 0 10px 36px -2px rgba(0, 0, 0, 0.12);
+}
+
+.category-dropdown ul li {
+  opacity: 0;
+  transform: translate(6px, 0);
+  transition: all 0.3s ease;
+}
+
+.category-dropdown ul li a {
+  cursor: pointer;
+  display: block;
+  padding: 10px 16px;
+  color: var(--listText);
+  text-decoration: none;
+  outline: none;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.category-dropdown ul li a:hover {
+  color: var(--listTextActive);
+}
+
+.category-dropdown ul li.active a {
+  color: var(--listTextActive);
+  background: var(--listActive);
+}
+
+.category-dropdown ul li.active a::before,
+.category-dropdown ul li.active a::after {
+  --scale: 0.6;
+  content: '';
+  display: block;
+  width: 10px;
+  height: 2px;
+  position: absolute;
+  right: 17px;
+  top: 50%;
+  opacity: 0;
+  background: var(--listText);
+  transition: all 0.2s ease;
+}
+
+.category-dropdown ul li.active a::before {
+  transform: rotate(45deg) scale(var(--scale));
+}
+
+.category-dropdown ul li.active a::after {
+  transform: rotate(-45deg) scale(var(--scale));
+}
+
+.category-dropdown ul li.active a:hover::before,
+.category-dropdown ul li.active a:hover::after {
+  --scale: 0.9;
+  opacity: 1;
+}
+
+.category-dropdown ul li:first-child a {
+  border-radius: 6px 6px 0 0;
+}
+
+.category-dropdown ul li:last-child a {
+  border-radius: 0 0 6px 6px;
+}
+
+.category-dropdown.filled > span {
+  color: var(--textFilled);
+}
+
+.category-dropdown.open > span {
+  border-color: var(--borderActive);
+}
+
+.category-dropdown.open > span::before,
+.category-dropdown.open > span::after {
+  background: var(--arrowActive);
+}
+
+.category-dropdown.open > span::before {
+  transform: scale(0.96, 0.8) rotate(-50deg);
+}
+
+.category-dropdown.open > span::after {
+  transform: scale(0.96, 0.8) rotate(50deg);
+}
+
+.category-dropdown.open ul {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1) translate(0, 12px);
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease,
+    transform 0.3s cubic-bezier(0.4, 0.6, 0.5, 1.32);
+}
+
+.category-dropdown.open ul li {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+.category-dropdown.open ul li:nth-child(1) { transition-delay: 80ms; }
+.category-dropdown.open ul li:nth-child(2) { transition-delay: 160ms; }
+.category-dropdown.open ul li:nth-child(3) { transition-delay: 240ms; }
+.category-dropdown.open ul li:nth-child(4) { transition-delay: 320ms; }
+.category-dropdown.open ul li:nth-child(5) { transition-delay: 400ms; }
+.category-dropdown.open ul li:nth-child(6) { transition-delay: 480ms; }
+.category-dropdown.open ul li:nth-child(7) { transition-delay: 560ms; }
+.category-dropdown.open ul li:nth-child(8) { transition-delay: 640ms; }
+.category-dropdown.open ul li:nth-child(9) { transition-delay: 720ms; }
+.category-dropdown.open ul li:nth-child(10) { transition-delay: 800ms; }
+
+/* Hamburger mode when search is open */
+.category-dropdown.search-open {
+  width: 44px;
+  transform: translateX(-8px);
+}
+
+.category-dropdown.search-open > span {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font-size: 0;
+  color: transparent;
+  border-radius: 8px;
+}
+
+.category-dropdown.search-open > span::before,
+.category-dropdown.search-open > span::after,
+.category-dropdown.search-open .category-dropdown__hamburger-mid {
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: 1px;
+  top: auto;
+  right: auto;
+  left: 50%;
+  margin: 0;
+  background: var(--arrow);
+  transform: translateX(-50%);
+}
+
+.category-dropdown.search-open > span::before {
+  top: calc(50% - 6px);
+}
+
+.category-dropdown.search-open .category-dropdown__hamburger-mid {
+  display: block;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.category-dropdown.search-open > span::after {
+  top: calc(50% + 6px);
+}
+
+.category-dropdown > span:focus-visible {
+  outline: 2px solid var(--borderActive);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .category-dropdown,
+  .category-dropdown > span,
+  .category-dropdown > span::before,
+  .category-dropdown > span::after,
+  .category-dropdown ul,
+  .category-dropdown ul li {
+    transition-duration: 0.01ms;
+  }
+}

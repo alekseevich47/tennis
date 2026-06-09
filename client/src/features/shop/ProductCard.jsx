@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { useProductCategories } from '../../hooks/useProductCategories';
 import { clamp } from '../../lib/gestures';
 import { getMediaThumbUrl, getMediaUrl, isVideoMediaName, mediaNames, videoPreviewUrl } from '../../lib/media';
+import AddToCartButton from './AddToCartButton';
 
 const SWIPE_THRESHOLD_PX = 36;
 
@@ -235,6 +236,10 @@ function ProductCard({
           <span className="product-out-of-stock-badge">Нет в наличии</span>
         )}
       </div>
+
+      {!isSoftDeleted && (
+        <AddToCartButton product={product} />
+      )}
 
       {isSoftDeleted && (
         <div className="product-card-soft-delete-overlay">

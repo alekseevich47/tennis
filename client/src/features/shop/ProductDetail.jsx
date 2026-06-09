@@ -2,8 +2,8 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
-import { MAX_SELLER_URL } from '../../config';
 import { useProductCategories } from '../../hooks/useProductCategories';
+import AddToCartButton from './AddToCartButton';
 import { getMediaUrl, isVideoMediaName, mediaNames, videoPreviewUrl } from '../../lib/media';
 
 const SWIPE_THRESHOLD_PX = 36;
@@ -88,40 +88,6 @@ function ProductDetail({
       await alert({ title: 'Скопировано', message: 'Артикул скопирован в буфер обмена.' });
     } catch {
       await alert({ title: 'Не получилось', message: 'Скопируйте артикул вручную.' });
-    }
-  };
-
-  const handleContact = async () => {
-    const message = `Хочу купить: ${product.title} #${product.id}`;
-    const sellerUrl = MAX_SELLER_URL.trim();
-
-    if (!sellerUrl) {
-      await alert({
-        title: 'Не настроена ссылка продавца',
-        message: 'Укажите VITE_MAX_SELLER_URL в конфигурации приложения.'
-      });
-      return;
-    }
-
-    const copyMessagePromise = navigator.clipboard?.writeText
-      ? navigator.clipboard.writeText(message).then(() => true).catch(() => false)
-      : Promise.resolve(false);
-
-    const webApp = window.WebApp;
-
-    if (webApp?.openMaxLink && webApp.initData) {
-      webApp.openMaxLink(sellerUrl);
-    } else {
-      window.open(sellerUrl, '_blank', 'noopener,noreferrer');
-    }
-
-    const isMessageCopied = await copyMessagePromise;
-
-    if (isMessageCopied) {
-      await alert({
-        title: 'Скопировано',
-        message: 'Текст скопирован — вставьте в сообщение'
-      });
     }
   };
 
@@ -323,9 +289,7 @@ function ProductDetail({
         <p className="product-price">{product.price} ₽</p>
         {product.out_of_stock && <p className="product-out-of-stock-text">Нет в наличии</p>}
 
-        <button type="button" className="buy-btn" onClick={handleContact}>
-          Купить
-        </button>
+        <AddToCartButton product={product} />
       </div>
     </Modal>
   );
