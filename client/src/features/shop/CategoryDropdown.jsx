@@ -11,6 +11,7 @@ const PLACEHOLDER = 'Все категории';
  *   onCategoryChange: (categoryId: string) => void,
  *   isSearchOpen?: boolean,
  *   onCloseSearch?: () => void,
+ *   onOpenChange?: (open: boolean) => void,
  *   className?: string
  * }} props
  */
@@ -19,6 +20,7 @@ export default function CategoryDropdown({
   onCategoryChange,
   isSearchOpen = false,
   onCloseSearch,
+  onOpenChange,
   className
 }) {
   const rootRef = useRef(null);
@@ -63,6 +65,10 @@ export default function CategoryDropdown({
   useEffect(() => {
     if (isSearchOpen) setIsOpen(false);
   }, [isSearchOpen]);
+
+  useEffect(() => {
+    onOpenChange?.(isOpen);
+  }, [isOpen, onOpenChange]);
 
   return (
     <div
