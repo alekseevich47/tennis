@@ -8,6 +8,7 @@
   border-bottom: 1px solid #eaeaea;
   height: 56px;
   box-sizing: border-box;
+  overflow: visible;
 }
 
 .header-title {
@@ -68,10 +69,12 @@
   align-items: center;
   gap: 2px;
   flex-shrink: 0;
+  overflow: visible;
 }
 
 .header-cart-anchor {
   position: relative;
+  overflow: visible;
 }
 
 .header-orders-btn {
