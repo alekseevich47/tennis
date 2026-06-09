@@ -200,6 +200,8 @@ label.product-category-option {
 }
 
 .product-card {
+  display: flex;
+  flex-direction: column;
   background: white;
   border-radius: 12px;
   overflow: hidden;

@@ -6,7 +6,7 @@ import './CartIcon.css';
 const BASE_Y = -1280;
 const ROPE_RESOLUTION = 4;
 const ROPE_SOLVER_ITERATIONS = 20;
-const ROPE_SIZE = 14;
+const ROPE_SIZE = 10;
 
 function lerp(first, second, percentage) {
   return first + (second - first) * percentage;
