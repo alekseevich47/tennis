@@ -1,0 +1,652 @@
+HTML
+
+div(class='shopping-cart')
+  div(class='bag')
+    div(class='front')
+      div(class='inner')
+      canvas(width='240px' height='240px' data-x='0' data-y='-1280' data-mass='.8' data-damping='.8')
+    div(class='back')
+  div(class='count')
+    div
+      span(class='current') 0
+  
+a(class='minus' href='')
+a(class='plus' href='')
+
+a(class='dribbble' href='https://dribbble.com/shots/6808801-Shopping-Cart-Animation' target='_blank')
+  img(src='https://cdn.dribbble.com/assets/dribbble-ball-mark-2bd45f09c2fb58dbbfb44766d5d1d07c5a12972d602ef8b32204d28fa3dda554.svg')
+
+CSS
+
+.shopping-cart {
+    --stroke: #242836;
+    --stroke-light: #3F4656;
+    --background: #FFF;
+    --inner: #EEF4FF;
+    --count-background: #275EFE;
+    position: relative;
+    // For Demo
+    zoom: 2;
+    .bag {
+        perspective: 64px;
+        position: relative;
+        transform-origin: 50% 100%;
+        .front,
+        .back,
+        .inner {
+            --x: 0;
+            --y: 0;
+            --z: 0;
+            --r: 24deg;
+            --s: 1;
+            width: 32px;
+            position: relative;
+            transition: transform .5s ease, clip-path .7s ease;
+            transform-origin: 50% 100%;
+            border-radius: 2px;
+            transform: translate3d(var(--x), var(--y), var(--z)) rotateX(var(--r)) scaleY(var(--s));
+        }
+        .front,
+        .back {
+            height: 32px;
+            background: var(--background);
+            border: 2px solid var(--stroke);
+        }
+        .front,
+        .inner {
+            backface-visibility: hidden;
+            &:before {
+                content: '';
+                position: absolute;
+            }
+        }
+        .front {
+            --z: 1px;
+            z-index: 3;
+            &:before {
+                height: 2px;
+                border-radius: 1px;
+                bottom: 4px;
+                left: 5px;
+                right: 5px;
+                background: var(--stroke-light);
+            }
+            canvas {
+                width: 32px;
+                height: 32px;
+                position: absolute;
+                left: 50%;
+                top: 0;
+                transform: translate(-50%, -52%);
+            }
+        }
+        .back,
+        .inner {
+            position: absolute;
+            top: 0;
+        }
+        .back {
+            --r: 28deg;
+            --y: -1.5px;
+            left: 0;
+        }
+        .inner {
+            --x: -50%;
+            --y: -105%;
+            --r: -130deg;
+            --offset: 10px;
+            height: 22px;
+            left: 50%;
+            background: var(--stroke);
+            clip-path: polygon(6px 0, 26px 0, calc(32px - var(--offset)) 8px, 32px 22px, 0 22px, var(--offset) 8px);
+            &:before {
+                left: 0;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                background: var(--inner);
+                clip-path: polygon(6px 0, 26px 0, calc(32px - var(--offset)) 8px, 32px 22px, 0 22px, var(--offset) 8px);
+                transform: scale(.76);
+                transition: clip-path .7s ease;
+            }
+        }
+    }
+    .count {
+        --o: 0;
+        width: 16px;
+        height: 16px;
+        line-height: 16px;
+        font-size: .5em;
+        text-align: center;
+        font-weight: 600;
+        border-radius: 50%;
+        background: var(--count-background);
+        color: #fff;
+        top: 100%;
+        left: 50%;
+        overflow: hidden;
+        position: absolute;
+        transform: translate(-50%, 8px);
+        opacity: var(--o);
+        transition: opacity .3s ease;
+        div {
+            span {
+                display: block;
+                width: 16px;
+                height: 16px;
+                line-height: 16px;
+                &.before,
+                &.after {
+                    left: 0;
+                    position: absolute;
+                }
+                &.before {
+                    bottom: 100%;
+                }
+                &.after {
+                    top: 100%;
+                }
+            }
+        }
+        &.moveUp {
+            div {
+                animation: moveUp .3s linear forwards;
+            }
+        }
+        &.moveDown {
+            div {
+                animation: moveDown .3s linear forwards;
+            }
+        }
+    }
+    &:not(.open) {
+        .bag {
+            .inner {
+                transition-delay: .01s;
+            }
+        }
+    }
+    &.open {
+        .bag {
+            .front {
+                --r: -20deg;
+                --s: .65;
+            }
+            .inner {
+                --r: -64deg;
+                --offset: 7px;
+            }
+        }
+        &.bounce {
+            .bag {
+                animation: bounce .3s linear;
+            }
+        }
+    }
+    &.counted {
+        .count {
+            --o: 1;
+        }
+    }
+}
+
+@keyframes bounce {
+    36% {
+        transform: scaleY(.9);
+    }
+}
+
+@keyframes moveUp {
+    100% {
+        transform: translateY(-100%);
+    }
+}
+
+@keyframes moveDown {
+    100% {
+        transform: translateY(100%);
+    }
+}
+
+.plus,
+.minus {
+    --border: #CDD9ED;
+    --icon: #99A3BA;
+    --x: -120px;
+    --s: 1;
+    width: 24px;
+    height: 24px;
+    margin-left: -12px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    transition: transform .3s ease;
+    transform: translate(var(--x), -50%) scale(var(--s));
+    &:before,
+    &:after {
+        --r: 0deg;
+        content: '';
+        width: 14px;
+        height: 2px;
+        border-radius: 1px;
+        margin: -1px 0 0 -7px;
+        left: 50%;
+        top: 50%;
+        position: absolute;
+        background: var(--icon);
+        transform: rotate(var(--r)) scale(.7);
+    }
+    &:active {
+        --s: .92;
+    }
+}
+
+.plus {
+    transform: translate(calc(var(--x) * -1), -50%) scale(var(--s));
+    &:after {
+        --r: 90deg;
+    }
+}
+
+html {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+}
+
+* {
+    box-sizing: inherit;
+    &:before,
+    &:after {
+        box-sizing: inherit;
+    }
+}
+
+// Center & dribbble
+body {
+    min-height: 100vh;
+    font-family: Roboto, Arial;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fff;
+    .dribbble {
+        position: fixed;
+        display: block;
+        right: 20px;
+        bottom: 20px;
+        img {
+            display: block;
+            height: 28px;
+        }
+    }
+}
+
+JS 
+
+var cart = $('.shopping-cart'),
+    canvas = $('.shopping-cart canvas')[0],
+    context = canvas.getContext('2d'),
+    count = cart.find('.count'),
+    current = 0,
+    x = canvas.dataset.x,
+    y = canvas.dataset.y;
+
+$('.plus, .minus').on('click', e => {
+
+    let minus = $(e.currentTarget).hasClass('minus');
+
+    if(minus) {
+        if(current == 0) {
+            return false;
+        }
+        current--;
+    } else {
+        if(current >= 9) {
+            return false;
+        }
+        current++;
+    }
+
+    let setY = current >= 1 && !cart.hasClass('open') ? y * -.7 : y;
+
+    if(current == 0) {
+        setY = -1280;
+    }
+
+    canvas.setAttribute('data-y', setY);
+
+    cart.toggleClass('open', current >= 1);
+
+    x = canvas.dataset.x;
+    y = canvas.dataset.y;
+
+    setTimeout(() => {
+        setCount(current, minus);
+    }, current == 1 && !minus ? 300 : 0);
+
+    return false;
+
+});
+
+function setCount(value, minus) {
+    cart.toggleClass('counted', value != 0);
+    let moveClass = minus ? 'moveDown' : 'moveUp';
+    count.children('div').append($('<span />').addClass(minus ? 'before' : 'after').text(value));
+    count.addClass(moveClass);
+    bounceCart();
+    setTimeout(() => {
+        count.find('.current').text(value);
+        count.removeClass(moveClass);
+        count.find('.before, .after').remove();
+    }, 300);
+}
+
+function bounceCart() {
+    canvas.setAttribute('data-y', y * 3);
+    canvas.setAttribute('data-x', -200);
+    setTimeout(() => {
+        canvas.setAttribute('data-x', 200);
+    }, 50);
+    cart.addClass('bounce');
+    setTimeout(() => {
+        canvas.setAttribute('data-y', y);
+        canvas.setAttribute('data-x', x);
+        setTimeout(() => {
+            cart.removeClass('bounce');
+        }, 200);
+    }, 100);
+}
+
+Math.lerp = (first, second, percentage) => {
+    return first + (second - first) * percentage;
+};
+
+Math.clamp = (value, min, max) => {
+    return value < min ? min : value > max ? max : value;
+};
+
+class App {
+    constructor(
+        window,
+        canvas,
+        context,
+        updateHandler,
+        drawHandler,
+        frameRate = 60
+    ) {
+        this._window = window;
+        this._canvas = canvas;
+        this._context = context;
+        this._updateHandler = updateHandler;
+        this._drawHandler = drawHandler;
+        this._frameRate = frameRate;
+        this._lastTime = 0;
+        this._currentTime = 0;
+        this._deltaTime = 0;
+        this._interval = 0;
+        this.onMouseMoveHandler = (x, y) => {};
+        this.onMouseDownHandler = (x, y) => {};
+        this.start = this.start.bind(this);
+        this._onMouseEventHandlerWrapper = this._onMouseEventHandlerWrapper.bind(this);
+        this._onRequestAnimationFrame = this._onRequestAnimationFrame.bind(this);
+    }
+    start() {
+        this._lastTime = new Date().getTime();
+        this._currentTime = 0;
+        this._deltaTime = 0;
+        this._interval = 1000 / this._frameRate;
+        this._canvas.addEventListener('mousemove', e => {
+            this._onMouseEventHandlerWrapper(e, this.onMouseMoveHandler);
+        }, false);
+        this._canvas.addEventListener('mousedown', e => {
+            this._onMouseEventHandlerWrapper(e, this.onMouseDownHandler);
+        }, false);
+        setInterval(() => {
+            this._onRequestAnimationFrame();
+        }, 30);
+    }
+    _onMouseEventHandlerWrapper(e, callback) {
+        let element = this._canvas;
+        let offsetX = 0;
+        let offsetY = 0;
+        if(element.offsetParent) {
+            do {
+                offsetX += element.offsetLeft;
+                offsetY += element.offsetTop;
+            } while ((element = element.offsetParent));
+        }
+        const x = e.pageX - offsetX;
+        const y = e.pageY - offsetY;
+        callback(x, y);
+    }
+    _onRequestAnimationFrame() {
+        //this._window.requestAnimationFrame(this._onRequestAnimationFrame);
+        this._currentTime = new Date().getTime();
+        this._deltaTime = this._currentTime - this._lastTime;
+        if(this._deltaTime > this._interval) {
+            const dts = this._deltaTime * 0.001;
+            this._updateHandler(dts);
+            this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
+            this._drawHandler(this._canvas, this._context, dts);
+            this._lastTime = this._currentTime - this._deltaTime % this._interval;
+        }
+    }
+}
+
+class Vector2 {
+    static zero() {
+        return { x: 0, y: 0 };
+    }
+    static sub(a, b) {
+        return { x: a.x - b.x, y: a.y - b.y };
+    }
+    static add(a, b) {
+        return { x: a.x + b.x, y: a.y + b.y };
+    }
+    static mult(a, b) {
+        return { x: a.x * b.x, y: a.y * b.y };
+    }
+    static scale(v, scaleFactor) {
+        return { x: v.x * scaleFactor, y: v.y * scaleFactor };
+    }
+    static mag(v) {
+        return Math.sqrt(v.x * v.x + v.y * v.y);
+    }
+    static normalized(v) {
+        const mag = Vector2.mag(v);
+        if(mag === 0) {
+            return Vector2.zero();
+        }
+        return { x: v.x / mag, y: v.y / mag };
+    }
+}
+
+class RopePoint {
+    static integrate(point, gravity, dt, previousFrameDt) {
+        point.velocity = Vector2.sub(point.pos, point.oldPos);
+        point.oldPos = { ...point.pos };
+
+        let timeCorrection = previousFrameDt != 0.0 ? dt / previousFrameDt : 0.0;
+
+        let accel = Vector2.add(gravity, {
+            x: 0,
+            y: point.mass
+        });
+
+        const velCoef = timeCorrection * point.damping;
+        const accelCoef = Math.pow(dt, 2);
+
+        point.pos.x += point.velocity.x * velCoef + accel.x * accelCoef;
+        point.pos.y += point.velocity.y * velCoef + accel.y * accelCoef;
+    }
+    static constrain(point) {
+        if(point.next) {
+            const delta = Vector2.sub(point.next.pos, point.pos);
+            const len = Vector2.mag(delta);
+            const diff = len - point.distanceToNextPoint;
+            const normal = Vector2.normalized(delta);
+
+            if(!point.isFixed) {
+                point.pos.x += normal.x * diff * 0.25;
+                point.pos.y += normal.y * diff * 0.25;
+            }
+
+            if(!point.next.isFixed) {
+                point.next.pos.x -= normal.x * diff * 0.25;
+                point.next.pos.y -= normal.y * diff * 0.25;
+            }
+        }
+        if(point.prev) {
+            const delta = Vector2.sub(point.prev.pos, point.pos);
+            const len = Vector2.mag(delta);
+            const diff = len - point.distanceToNextPoint;
+            const normal = Vector2.normalized(delta);
+
+            if(!point.isFixed) {
+                point.pos.x += normal.x * diff * 0.25;
+                point.pos.y += normal.y * diff * 0.25;
+            }
+
+            if(!point.prev.isFixed) {
+                point.prev.pos.x -= normal.x * diff * 0.25;
+                point.prev.pos.y -= normal.y * diff * 0.25;
+            }
+        }
+    }
+    constructor(initialPos, distanceToNextPoint) {
+        this.pos = initialPos;
+        this.distanceToNextPoint = distanceToNextPoint;
+        this.isFixed = false;
+        this.oldPos = { ...initialPos };
+        this.velocity = Vector2.zero();
+        this.mass = 1.0;
+        this.damping = 1.0;
+        this.prev = null;
+        this.next = null;
+    }
+}
+
+class Rope {
+    static generate(start, end, resolution, canvas) {
+        const delta = Vector2.sub(end, start);
+        const len = Vector2.mag(delta);
+
+        let points = [];
+        const pointsLen = len / resolution;
+
+        for(let i = 0; i < pointsLen; i++) {
+            const percentage = i / (pointsLen - 1);
+
+            const lerpX = Math.lerp(start.x, end.x, percentage);
+            const lerpY = Math.lerp(start.y, end.y, percentage);
+
+            points[i] = new RopePoint({
+                x: lerpX,
+                y: lerpY
+            }, resolution);
+            points[i].mass = canvas.dataset.mass;
+            points[i].damping = canvas.dataset.damping;
+        }
+
+        for(let i = 0; i < pointsLen; i++) {
+            const prev = i != 0 ? points[i - 1] : null;
+            const curr = points[i];
+            const next = i != pointsLen - 1 ? points[i + 1] : null;
+
+            curr.prev = prev;
+            curr.next = next;
+        }
+
+        points[0].isFixed = points[points.length - 1].isFixed = true;
+
+        return points;
+    }
+    constructor(points, solverIterations) {
+        this._points = points;
+        this.update = this.update.bind(this);
+        this._prevDelta = 0;
+        this._solverIterations = solverIterations;
+
+        this.getPoint = this.getPoint.bind(this);
+    }
+    getPoint(index) {
+        return this._points[index];
+    }
+    update(canvas, dt) {
+        if(document.hidden) {
+            return;
+        }
+        for(let i = 1; i < this._points.length-1; i++) {
+            let point = this._points[i];
+
+            let accel = {
+                x: canvas.dataset.x,
+                y: canvas.dataset.y
+            };
+
+            RopePoint.integrate(point, accel, dt, this._prevDelta);
+        }
+        for(let iteration = 0; iteration < this._solverIterations; iteration++) {
+            for(let i = 1; i < this._points.length-1; i++) {
+                let point = this._points[i];
+                RopePoint.constrain(point);
+            }
+        }
+        this._prevDelta = dt;
+    }
+}
+
+const args = {
+    start: {
+        x: canvas.width / 4,
+        y: canvas.height / 2
+    },
+    end: {
+        x: canvas.width - canvas.width / 4,
+        y: canvas.height / 2
+    },
+    resolution: 4,
+    mass: .8,
+    damping: .8,
+    solverIterations: 20,
+    color: getComputedStyle(cart[0]).getPropertyValue('--stroke'),
+    ropeSize: 14
+};
+
+const points = Rope.generate(
+    args.start,
+    args.end,
+    args.resolution,
+    canvas
+);
+
+let rope = new Rope(points, args.solverIterations);
+
+const tick = dt => {
+    rope.update(canvas, dt);
+};
+
+const drawRopePoints = (context, points, color, width) => {
+    for (i = 0; i < points.length; i++) {
+        let p = points[i];
+        const prev = i > 0 ? points[i - 1] : null;
+        if(prev) {
+            context.beginPath();
+            context.moveTo(prev.pos.x, prev.pos.y);
+            context.lineTo(p.pos.x, p.pos.y);
+            context.lineWidth = width;
+            context.strokeStyle = color;
+            context.stroke();
+        }
+    }
+};
+
+const draw = (canvas, context, dt) => {
+    drawRopePoints(context, points, args.color, args.ropeSize);
+};
+
+const app = new App(window, canvas, context, tick, draw, 60);
+
+app.start();

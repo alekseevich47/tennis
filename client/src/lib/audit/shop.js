@@ -86,5 +86,36 @@ export const auditShop = {
    */
   productEditError(err, productId) {
     writeAuditError(DOMAIN, 'Ошибка редактирования товара', err, { productId });
+  },
+
+  /**
+   * @param {string} orderId
+   * @param {number} itemsCount
+   */
+  orderCreate(orderId, itemsCount) {
+    writeAudit(DOMAIN, 'Заказ создан', { orderId, itemsCount });
+  },
+
+  /**
+   * @param {string} orderId
+   * @param {string} newStatus
+   */
+  orderStatusChange(orderId, newStatus) {
+    writeAudit(DOMAIN, 'Статус заказа изменён', { orderId, newStatus });
+  },
+
+  /**
+   * @param {string} orderId
+   * @param {string} productId
+   */
+  orderItemRemoved(orderId, productId) {
+    writeAudit(DOMAIN, 'Товар удалён из заказа', { orderId, productId });
+  },
+
+  /**
+   * @param {string} orderId
+   */
+  orderDeleted(orderId) {
+    writeAudit(DOMAIN, 'Заказ удалён', { orderId });
   }
 };

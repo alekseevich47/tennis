@@ -1,0 +1,287 @@
+@property --cross-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@property --cross-y {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+.search {
+  --text: #1f2937;
+  --icon: #007aff;
+  --bg: #ffffff;
+
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  border-radius: 50%;
+  cursor: pointer;
+  background: var(--bg);
+  transition: all 0.3s ease 0.6s;
+  box-shadow: 0 3px 14px -1px rgba(0, 0, 0, 0.18);
+  flex-shrink: 0;
+  min-width: 44px;
+  min-height: 44px;
+  overflow: hidden;
+}
+
+.search.open {
+  cursor: default;
+  border-radius: 8px;
+  transition-delay: 0s;
+  box-shadow: 0 10px 36px -2px rgba(0, 0, 0, 0.18);
+}
+
+.search-icon {
+  flex-shrink: 0;
+  margin: 13px;
+  width: 18px;
+  height: 18px;
+  display: block;
+  color: var(--icon);
+  stroke-width: 2;
+  transform: rotate(90deg);
+  transition: all 0.3s ease 0.6s;
+  pointer-events: none;
+}
+
+.search.open .search-icon {
+  opacity: 0.4;
+  transform: rotate(0deg);
+  transition-delay: 0s;
+}
+
+.search-field {
+  position: relative;
+  width: 0;
+  height: 20px;
+  transition: width 0.5s cubic-bezier(0.51, 0.92, 0.24, 1.15) 0.5s;
+}
+
+.search.open .search-field {
+  width: 200px;
+  transition-delay: 0s;
+}
+
+.search-field input {
+  font-size: 16px;
+  line-height: 20px;
+  padding: 0 32px 0 8px;
+  border: 0;
+  display: block;
+  outline: none;
+  font-family: inherit;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-appearance: none;
+  appearance: none;
+  opacity: 0;
+  z-index: 2;
+  visibility: hidden;
+  transition: all 0s ease 0s;
+}
+
+.search.open .search-field input {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0.75s;
+}
+
+.search-placeholder {
+  white-space: nowrap;
+  color: var(--text);
+  display: flex;
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+  padding-left: 8px;
+}
+
+.search-placeholder span {
+  line-height: 20px;
+  font-size: 16px;
+  opacity: 0;
+  display: block;
+  visibility: hidden;
+  transform: translateY(12px);
+  transition: all 0.4s ease;
+}
+
+.search-placeholder span[data-index='0'] {
+  transition-delay: 0.4s;
+}
+
+.search-placeholder span[data-index='1'] {
+  transition-delay: 0.2s;
+}
+
+.search-placeholder span[data-index='2'] {
+  transition-delay: 0s;
+}
+
+.search.open .search-placeholder span {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.search.open .search-placeholder span[data-index='0'] {
+  transition-delay: 0.4s;
+}
+
+.search.open .search-placeholder span[data-index='1'] {
+  transition-delay: 0.45s;
+}
+
+.search.open .search-placeholder span[data-index='2'] {
+  transition-delay: 0.5s;
+}
+
+.search-clear {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-clear span {
+  position: absolute;
+  width: 2px;
+  height: 12px;
+  background: #8b98a5;
+  border-radius: 1px;
+  transform-origin: center center;
+  --cross-angle: 0deg;
+  --cross-y: 0px;
+  transform: translateY(var(--cross-y)) rotate(var(--cross-angle));
+  opacity: 1;
+}
+
+.search-clear.formed span:nth-child(1) {
+  --cross-angle: 45deg;
+}
+
+.search-clear.formed span:nth-child(2) {
+  --cross-angle: -45deg;
+}
+
+.search-clear.forming span:nth-child(1) {
+  animation: crossFormFirst 0.35s ease forwards;
+}
+
+.search-clear.forming span:nth-child(2) {
+  animation: crossFormSecond 0.35s ease forwards;
+}
+
+.search-clear.dissolving span:nth-child(1) {
+  animation: crossDissolveFirst 0.35s ease forwards;
+}
+
+.search-clear.dissolving span:nth-child(2) {
+  animation: crossDissolveSecond 0.35s ease forwards;
+}
+
+@keyframes crossFormFirst {
+  from {
+    --cross-angle: 0deg;
+    --cross-y: 0px;
+    opacity: 1;
+  }
+
+  to {
+    --cross-angle: 45deg;
+    --cross-y: 0px;
+    opacity: 1;
+  }
+}
+
+@keyframes crossFormSecond {
+  from {
+    --cross-angle: 0deg;
+    --cross-y: 0px;
+    opacity: 1;
+  }
+
+  to {
+    --cross-angle: -45deg;
+    --cross-y: 0px;
+    opacity: 1;
+  }
+}
+
+@keyframes crossDissolveFirst {
+  0% {
+    --cross-angle: 45deg;
+    --cross-y: 0px;
+    opacity: 1;
+  }
+
+  50% {
+    --cross-angle: 0deg;
+    --cross-y: 0px;
+    opacity: 1;
+  }
+
+  100% {
+    --cross-angle: 0deg;
+    --cross-y: 0px;
+    opacity: 0;
+  }
+}
+
+@keyframes crossDissolveSecond {
+  0% {
+    --cross-angle: -45deg;
+    --cross-y: 0px;
+    opacity: 1;
+  }
+
+  50% {
+    --cross-angle: 0deg;
+    --cross-y: 0px;
+    opacity: 1;
+  }
+
+  100% {
+    --cross-angle: 0deg;
+    --cross-y: 0px;
+    opacity: 0;
+  }
+}
+
+.search-clear:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .search,
+  .search-icon,
+  .search-field,
+  .search-field input,
+  .search-placeholder span,
+  .search-clear span {
+    transition-duration: 0.01ms;
+    animation-duration: 0.01ms;
+  }
+}
