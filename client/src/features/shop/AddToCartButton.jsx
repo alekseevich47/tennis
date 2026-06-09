@@ -61,19 +61,47 @@ export default function AddToCartButton({ product, onAdd, className }) {
   const isDisabled = Boolean(product?.out_of_stock) || inCart || phase === 'animating' || phase === 'done';
   const label = inCart || phase === 'done' ? 'В корзине' : 'В корзину';
 
-  useEffect(() => () => {
-    window.clearTimeout(doneTimerRef.current);
+  const resetButtonStyles = useCallback(() => {
     const button = buttonRef.current;
+    const morph = morphRef.current;
+    const shirt = shirtPathRef.current;
     if (button) {
       gsap.killTweensOf(button);
+      button.classList.remove('active');
+      button.style.removeProperty('--background-scale');
+      button.style.removeProperty('--text-o');
+      button.style.removeProperty('--text-x');
+      button.style.removeProperty('--cart-x');
+      button.style.removeProperty('--cart-y');
+      button.style.removeProperty('--cart-rotate');
+      button.style.removeProperty('--cart-scale');
+      button.style.removeProperty('--cart-clip');
+      button.style.removeProperty('--cart-clip-x');
+      button.style.removeProperty('--cart-tick-offset');
+      button.style.removeProperty('--shirt-y');
+      button.style.removeProperty('--shirt-scale');
+      button.style.removeProperty('--shirt-second-y');
+      button.style.overflow = '';
     }
-    if (morphRef.current) {
-      gsap.killTweensOf(morphRef.current);
+    if (morph) {
+      gsap.killTweensOf(morph);
+      morph.setAttribute('d', MORPH_PATH_DEFAULT);
     }
-    if (shirtPathRef.current) {
-      gsap.killTweensOf(shirtPathRef.current);
+    if (shirt) {
+      gsap.killTweensOf(shirt);
+      shirt.setAttribute('d', SHIRT_PATH);
     }
   }, []);
+
+  useEffect(() => {
+    if (!inCart || phase === 'animating') return;
+    resetButtonStyles();
+  }, [inCart, phase, resetButtonStyles]);
+
+  useEffect(() => () => {
+    window.clearTimeout(doneTimerRef.current);
+    resetButtonStyles();
+  }, [resetButtonStyles]);
 
   const runAnimation = useCallback(() => {
     const button = buttonRef.current;
@@ -167,6 +195,7 @@ export default function AddToCartButton({ product, onAdd, className }) {
             setPhase('done');
           },
           onComplete() {
+            resetButtonStyles();
             button.classList.remove('active');
             doneTimerRef.current = window.setTimeout(() => {
               setPhase('idle');
@@ -214,7 +243,7 @@ export default function AddToCartButton({ product, onAdd, className }) {
         }
       ]
     });
-  }, []);
+  }, [resetButtonStyles]);
 
   const handlePointerDown = useCallback(() => {
     if (isDisabled || phase === 'animating') return;
