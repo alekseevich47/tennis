@@ -16,7 +16,7 @@
   width: 220px;
   position: relative;
   flex-shrink: 0;
-  transition: transform 0.3s ease;
+  transition: transform 0.9s ease;
 }
 
 .category-dropdown__native {
@@ -210,6 +210,7 @@
 .category-dropdown.search-open {
   width: 44px;
   transform: translateX(-8px);
+  transition: transform 0.5s ease 0s;
 }
 
 .category-dropdown.search-open > span {
