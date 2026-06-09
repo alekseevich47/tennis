@@ -94,7 +94,13 @@ export default function AddToCartButton({ product, onAdd, className }) {
   }, []);
 
   useEffect(() => {
-    if (!inCart || phase === 'animating') return;
+    if (!inCart) {
+      window.clearTimeout(doneTimerRef.current);
+      resetButtonStyles();
+      setPhase('idle');
+      return;
+    }
+    if (phase === 'animating') return;
     resetButtonStyles();
   }, [inCart, phase, resetButtonStyles]);
 

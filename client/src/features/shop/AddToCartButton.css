@@ -169,11 +169,15 @@
   box-sizing: border-box;
 }
 
-.add-to-cart:disabled .shirt,
-.add-to-cart:disabled .cart,
-.add-to-cart:disabled .morph {
+.add-to-cart:disabled:not(.active) .shirt,
+.add-to-cart:disabled:not(.active) .cart,
+.add-to-cart:disabled:not(.active) .morph {
   opacity: 0;
   visibility: hidden;
+}
+
+.add-to-cart.active {
+  overflow: visible;
 }
 
 .product-detail-content .add-to-cart {
