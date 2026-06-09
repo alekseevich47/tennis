@@ -41,9 +41,12 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
   const [fullscreenMedia, setFullscreenMedia] = useState(null);
   const [hiddenMediaKey, setHiddenMediaKey] = useState(null);
   const [isButtonVisible, setIsButtonVisible] = useState(true);
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
+  const [isSearchTyping, setIsSearchTyping] = useState(false);
 
   const containerRef = useRef(null);
   const scrollTimeoutRef = useRef(null);
+  const searchTypingTimeoutRef = useRef(null);
 
   useEffect(() => {
     onDeletedIdsChange?.(deletedProductIds);
@@ -76,6 +79,29 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
       }
     };
   }, [moderator]);
+
+  useEffect(() => {
+    if (!searchQuery) {
+      setIsSearchTyping(false);
+      return undefined;
+    }
+
+    setIsSearchTyping(true);
+    if (searchTypingTimeoutRef.current) clearTimeout(searchTypingTimeoutRef.current);
+    searchTypingTimeoutRef.current = window.setTimeout(() => {
+      setIsSearchTyping(false);
+    }, SCROLL_HIDE_DEBOUNCE_MS);
+
+    return () => {
+      if (searchTypingTimeoutRef.current) {
+        clearTimeout(searchTypingTimeoutRef.current);
+        searchTypingTimeoutRef.current = null;
+      }
+    };
+  }, [searchQuery]);
+
+  const showAddButton =
+    isButtonVisible && !isCategoryDropdownOpen && !isSearchTyping;
 
   const visibleProducts = useMemo(() => {
     if (!products) return [];
@@ -175,7 +201,7 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
         <div className="floating-btn-wrapper">
           <button
             type="button"
-            className={clsx('floating-add-btn', isButtonVisible ? 'visible' : 'hidden')}
+            className={clsx('floating-add-btn', showAddButton ? 'visible' : 'hidden')}
             onClick={() => setShowAddModal(true)}
           >
             Добавить
@@ -189,6 +215,7 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
           onCategoryChange={setSelectedCategoryId}
           isSearchOpen={isSearchOpen}
           onCloseSearch={handleCloseSearch}
+          onOpenChange={setIsCategoryDropdownOpen}
         />
         <SearchBar
           searchQuery={searchQuery}
