@@ -176,13 +176,25 @@ function GalleryPage({ user }) {
   }, [activeVideoEl]);
 
   useEffect(() => {
+    setIsVideoPlaying(false);
+  }, [activeViewerIndex]);
+
+  useEffect(() => {
     if (!fullscreenMedia) {
       setIsVideoPlaying(false);
       return undefined;
     }
 
-    const handlePlay = () => setIsVideoPlaying(true);
-    const handlePause = () => setIsVideoPlaying(false);
+    const handlePlay = (event) => {
+      if (event.target === videoElRef.current) {
+        setIsVideoPlaying(true);
+      }
+    };
+    const handlePause = (event) => {
+      if (event.target === videoElRef.current) {
+        setIsVideoPlaying(false);
+      }
+    };
 
     document.addEventListener('play', handlePlay, true);
     document.addEventListener('pause', handlePause, true);

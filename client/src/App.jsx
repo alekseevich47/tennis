@@ -5,10 +5,12 @@ import AppHeader from './components/AppHeader';
 import BottomNav from './components/BottomNav';
 import Spinner from './components/ui/Spinner';
 import { ProductUploadProvider } from './components/ProductUploadProvider';
+import { CartProvider, useCart } from './context/CartContext';
 import FeedPage from './features/feed/FeedPage';
 import TrainingsPage from './features/trainings/TrainingsPage';
 import MembershipOverviewModal from './features/trainings/components/MembershipOverviewModal';
 import ShopPage from './features/shop/ShopPage';
+import OrdersModal from './features/shop/OrdersModal';
 import RatingPage from './features/rating/RatingPage';
 import CompetitionsPage from './features/competitions/CompetitionsPage';
 import GalleryPage from './features/gallery/GalleryPage';
@@ -35,9 +37,13 @@ const TAB_TITLES = [
 
 const PROFILE_TAB_INDEX = 6;
 
-function App() {
+function AppInner() {
   const [activeTab, setActiveTab] = useState(0);
   const [membershipOpen, setMembershipOpen] = useState(false);
+  const [cartDropdownOpen, setCartDropdownOpen] = useState(false);
+  const [ordersModalOpen, setOrdersModalOpen] = useState(false);
+  const [cartProductToOpen, setCartProductToOpen] = useState(null);
+  const { totalCount: cartCount } = useCart();
   const sessionResetKey = useSessionResetKey();
   const { user, isLoading, setUser } = useMaxAuth();
 
@@ -119,6 +125,8 @@ function App() {
   const handleTabChange = useCallback(
     (newTab) => {
       flushPendingDeletes();
+      setCartDropdownOpen(false);
+      setOrdersModalOpen(false);
       setActiveTab(newTab);
     },
     [flushPendingDeletes]
@@ -167,6 +175,16 @@ function App() {
             ? () => setMembershipOpen(true)
             : undefined
         }
+        showShopControls={activeTab === 2}
+        cartCount={cartCount}
+        onCartClick={() => setCartDropdownOpen((open) => !open)}
+        onOrdersClick={() => setOrdersModalOpen(true)}
+        cartDropdownOpen={cartDropdownOpen}
+        onCartDropdownClose={() => setCartDropdownOpen(false)}
+        onOpenProduct={(product) => {
+          setCartProductToOpen(product);
+          setCartDropdownOpen(false);
+        }}
       />
 
       <main className={contentClassName}>
@@ -190,7 +208,11 @@ function App() {
         )}
         {activeTab === 2 && (
           <ProductUploadProvider>
-            <ShopPage onDeletedIdsChange={setPendingDeleteProductIds} />
+            <ShopPage
+              onDeletedIdsChange={setPendingDeleteProductIds}
+              productToOpen={cartProductToOpen}
+              onProductOpened={() => setCartProductToOpen(null)}
+            />
           </ProductUploadProvider>
         )}
         {activeTab === 3 && (
@@ -203,11 +225,24 @@ function App() {
         )}
       </main>
 
+      <OrdersModal
+        isOpen={ordersModalOpen}
+        onClose={() => setOrdersModalOpen(false)}
+      />
+
       <BottomNav
         activeTab={activeTab === PROFILE_TAB_INDEX ? -1 : activeTab}
         onTabChange={handleTabChange}
       />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <CartProvider>
+      <AppInner />
+    </CartProvider>
   );
 }
 
