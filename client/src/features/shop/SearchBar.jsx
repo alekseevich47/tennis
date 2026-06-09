@@ -136,7 +136,9 @@ export default function SearchBar({
           onChange={(event) => onSearchChange(event.target.value)}
           onClick={(event) => event.stopPropagation()}
           aria-label="Поиск по названию или #артикулу"
+          inputMode="search"
           autoComplete="off"
+          autoCorrect="off"
           spellCheck={false}
         />
 

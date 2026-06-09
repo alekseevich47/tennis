@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { useCart } from '../../context/CartContext';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
@@ -106,6 +106,22 @@ export default function CartDropdown({
     const frame = requestAnimationFrame(() => setIsVisible(true));
     return () => cancelAnimationFrame(frame);
   }, [open]);
+
+  useLayoutEffect(() => {
+    if (!open) return;
+
+    const anchor = cartAnchorRef.current;
+    const dropdown = dropdownRef.current;
+    if (!anchor || !dropdown) return;
+
+    const anchorRect = anchor.getBoundingClientRect();
+    const dropdownWidth = dropdown.offsetWidth;
+    const top = anchorRect.bottom + 8;
+    const left = Math.max(8, Math.min(anchorRect.left, window.innerWidth - dropdownWidth - 8));
+
+    dropdown.style.top = `${top}px`;
+    dropdown.style.left = `${left}px`;
+  }, [open, cartAnchorRef]);
 
   useEffect(() => {
     if (!open) return undefined;
