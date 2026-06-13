@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useMaxAuth } from './hooks/useMaxAuth';
 import { useSessionResetKey } from './hooks/useSessionResetKey';
+import { isUserBanned } from './services/auth';
 import AppHeader from './components/AppHeader';
 import BottomNav from './components/BottomNav';
 import Spinner from './components/ui/Spinner';
@@ -156,7 +157,7 @@ function AppInner() {
     );
   }
 
-  if (user?.is_banned) {
+  if (isUserBanned(user)) {
     return (
       <div className="app">
         <BlockedPage user={user} />

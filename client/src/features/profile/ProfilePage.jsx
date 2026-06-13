@@ -12,6 +12,7 @@ import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { isModerator, updateUserProfile } from '../../services/auth';
 import pb from '../../services/pb';
 import { error } from '../../lib/log';
+import { getPlayerRatingRank } from '../../lib/rating';
 import { compressImage } from '../../lib/compress';
 import MembershipModal from './MembershipModal';
 import './Profile.css';
@@ -99,9 +100,10 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
     return trainings.filter((t) => t.attended_users && t.attended_users.includes(user.id));
   }, [trainings, user?.id]);
 
-  const ratingPosition = players && user?.id
-    ? players.findIndex((p) => p.id === user.id) + 1
-    : null;
+  const ratingPosition = useMemo(
+    () => getPlayerRatingRank(players, user?.id),
+    [players, user?.id]
+  );
 
   const handleMembershipMutated = async (updated) => {
     if (!user?.id) return;
