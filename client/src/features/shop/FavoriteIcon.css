@@ -29,9 +29,9 @@
 
 .favorite-icon-btn__badge {
   position: absolute;
-  left: 100%;
-  top: 0;
-  transform: translate(2px, -3px);
+  left: calc(50% + 5px);
+  top: 7px;
+  transform: none;
   min-width: 14px;
   height: 14px;
   padding: 0 3px;
