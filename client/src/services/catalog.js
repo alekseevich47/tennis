@@ -292,7 +292,9 @@ export async function listPlayers({ signal, filter } = {}) {
         'losses',
         'role',
         'email',
-        'max_id'
+        'max_id',
+        'is_visible',
+        'is_banned'
       ].join(','),
       requestKey: null,
       signal

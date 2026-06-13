@@ -11,6 +11,7 @@ import EmptyState from '../../components/ui/EmptyState';
 import FullscreenImageViewer from '../feed/FullscreenImageViewer';
 import GalleryMediaOverlay from './GalleryMediaOverlay';
 import GalleryCommentModal from './GalleryCommentModal';
+import ProfileViewModal from '../profile/ProfileViewModal';
 import { getMediaUrl, videoPreviewUrl } from '../../lib/media';
 import { error } from '../../lib/log';
 import './Gallery.css';
@@ -128,6 +129,7 @@ function GalleryPage({ user }) {
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [isButtonVisible, setIsButtonVisible] = useState(true);
   const [commentModalOpen, setCommentModalOpen] = useState(false);
+  const [viewingPlayer, setViewingPlayer] = useState(null);
   const [selectedIds, setSelectedIds] = useState(() => new Set());
   const [isSelectMode, setIsSelectMode] = useState(false);
   const [isDeletingSelected, setIsDeletingSelected] = useState(false);
@@ -582,6 +584,14 @@ function GalleryPage({ user }) {
         user={user}
         userIsModerator={moderator}
         onClose={() => setCommentModalOpen(false)}
+        onOpenProfile={setViewingPlayer}
+      />
+
+      <ProfileViewModal
+        isOpen={!!viewingPlayer}
+        onClose={() => setViewingPlayer(null)}
+        targetUser={viewingPlayer}
+        currentUser={user}
       />
     </section>
   );

@@ -9,7 +9,15 @@ import Spinner from '../../components/ui/Spinner';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { usePlayers } from '../../hooks/usePlayers';
 import { listTrainings } from '../../services/trainings';
-import { deleteUser, updateUserProfile } from '../../services/auth';
+import {
+  banUser,
+  hideFromRating,
+  restrictComments,
+  showInRating,
+  unbanUser,
+  unrestrictComments,
+  updateUserProfile
+} from '../../services/auth';
 import pb from '../../services/pb';
 import { error } from '../../lib/log';
 import { compressImage } from '../../lib/compress';
@@ -49,7 +57,7 @@ function isModerator(user) {
  * }} props
  */
 function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChange, onMutated }) {
-  const { alert, confirm } = useAlertDialog();
+  const { alert } = useAlertDialog();
   const { data: players } = usePlayers();
   const avatarInputRef = useRef(null);
   const [trainings, setTrainings] = useState([]);
@@ -69,6 +77,11 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [trainingsExpanded, setTrainingsExpanded] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [banReasonDialogOpen, setBanReasonDialogOpen] = useState(false);
+  const [restrictReasonDialogOpen, setRestrictReasonDialogOpen] = useState(false);
+  const [banReason, setBanReason] = useState('');
+  const [restrictReason, setRestrictReason] = useState('');
 
   const targetUserId = targetUser?.id;
   const currentUserId = currentUser?.id;
@@ -115,6 +128,11 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
       setAvatarFile(null);
       setPendingAvatarFile(null);
       setCropModalOpen(false);
+      setMenuOpen(false);
+      setBanReasonDialogOpen(false);
+      setRestrictReasonDialogOpen(false);
+      setBanReason('');
+      setRestrictReason('');
       return undefined;
     }
 
@@ -301,22 +319,78 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
     }
   };
 
-  const handleDeleteClick = async () => {
-    const confirmed = await confirm({
-      title: 'Удаление пользователя',
-      message: `Вы уверены, что хотите удалить пользователя «${displayName}»? Это действие необратимо.`,
-      confirmText: 'Подтвердить',
-      cancelText: 'Отменить'
-    });
-    if (!confirmed) return;
+  const applyProfileMutation = (updated) => {
+    setDisplayUser(updated);
+    onMutated?.(updated);
+  };
 
+  const handleHideFromRating = async () => {
     try {
-      await deleteUser(targetUserId);
-      onMutated?.(null);
-      onClose?.();
+      const updated = await hideFromRating(targetUserId);
+      applyProfileMutation(updated);
+      setMenuOpen(false);
     } catch (err) {
-      error('delete user:', err);
-      await alert({ title: 'Ошибка', message: 'Не удалось удалить пользователя.' });
+      error('hide from rating:', err);
+      await alert({ title: 'Ошибка', message: 'Не удалось скрыть пользователя из рейтинга.' });
+    }
+  };
+
+  const handleShowInRating = async () => {
+    try {
+      const updated = await showInRating(targetUserId);
+      applyProfileMutation(updated);
+      setMenuOpen(false);
+    } catch (err) {
+      error('show in rating:', err);
+      await alert({ title: 'Ошибка', message: 'Не удалось вернуть пользователя в рейтинг.' });
+    }
+  };
+
+  const handleUnrestrictComments = async () => {
+    try {
+      const updated = await unrestrictComments(targetUserId);
+      applyProfileMutation(updated);
+      setMenuOpen(false);
+    } catch (err) {
+      error('unrestrict comments:', err);
+      await alert({ title: 'Ошибка', message: 'Не удалось снять ограничение комментариев.' });
+    }
+  };
+
+  const handleUnban = async () => {
+    try {
+      const updated = await unbanUser(targetUserId);
+      applyProfileMutation(updated);
+      setMenuOpen(false);
+    } catch (err) {
+      error('unban user:', err);
+      await alert({ title: 'Ошибка', message: 'Не удалось разблокировать пользователя.' });
+    }
+  };
+
+  const handleBanConfirm = async () => {
+    try {
+      const updated = await banUser(targetUserId, banReason);
+      applyProfileMutation(updated);
+      setBanReasonDialogOpen(false);
+      setBanReason('');
+      setMenuOpen(false);
+    } catch (err) {
+      error('ban user:', err);
+      await alert({ title: 'Ошибка', message: 'Не удалось заблокировать пользователя.' });
+    }
+  };
+
+  const handleRestrictConfirm = async () => {
+    try {
+      const updated = await restrictComments(targetUserId, restrictReason);
+      applyProfileMutation(updated);
+      setRestrictReasonDialogOpen(false);
+      setRestrictReason('');
+      setMenuOpen(false);
+    } catch (err) {
+      error('restrict comments:', err);
+      await alert({ title: 'Ошибка', message: 'Не удалось ограничить комментарии.' });
     }
   };
 
@@ -353,30 +427,79 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
             )}
 
             {canManageProfile && !isEditing && !isOwnProfile && (
-              <IconButton
-                ariaLabel="Удалить аккаунт игрока"
-                variant="danger"
-                size="md"
-                className="delete-profile-btn"
-                onClick={handleDeleteClick}
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#e53935"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                  focusable="false"
+              <>
+                <IconButton
+                  ariaLabel="Действия модератора"
+                  ariaExpanded={menuOpen}
+                  variant="ghost"
+                  size="md"
+                  className="profile-menu-btn"
+                  onClick={() => setMenuOpen((prev) => !prev)}
                 >
-                  <polyline points="3 6 5 6 21 6" />
-                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                  <path d="M10 11v6" />
-                  <path d="M14 11v6" />
-                  <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-                </svg>
-              </IconButton>
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                    <circle cx="12" cy="5" r="2" />
+                    <circle cx="12" cy="12" r="2" />
+                    <circle cx="12" cy="19" r="2" />
+                  </svg>
+                </IconButton>
+
+                {menuOpen && (
+                  <div className="profile-menu-dropdown" role="menu">
+                    <button
+                      type="button"
+                      className="profile-menu-item"
+                      role="menuitem"
+                      onClick={
+                        displayUser?.is_visible === false
+                          ? handleShowInRating
+                          : handleHideFromRating
+                      }
+                    >
+                      {displayUser?.is_visible === false
+                        ? 'Показать в рейтинге'
+                        : 'Скрыть из рейтинга'}
+                    </button>
+
+                    <button
+                      type="button"
+                      className="profile-menu-item"
+                      role="menuitem"
+                      onClick={
+                        displayUser?.can_comment === false
+                          ? handleUnrestrictComments
+                          : () => {
+                              setMenuOpen(false);
+                              setRestrictReasonDialogOpen(true);
+                            }
+                      }
+                    >
+                      {displayUser?.can_comment === false
+                        ? 'Разрешить комментарии'
+                        : 'Ограничить комментарии'}
+                    </button>
+
+                    <button
+                      type="button"
+                      className={`profile-menu-item ${
+                        displayUser?.is_banned === true
+                          ? 'profile-menu-item--success'
+                          : 'profile-menu-item--danger'
+                      }`}
+                      role="menuitem"
+                      onClick={
+                        displayUser?.is_banned === true
+                          ? handleUnban
+                          : () => {
+                              setMenuOpen(false);
+                              setBanReasonDialogOpen(true);
+                            }
+                      }
+                    >
+                      {displayUser?.is_banned === true ? 'Разблокировать' : 'Заблокировать'}
+                    </button>
+                  </div>
+                )}
+              </>
             )}
 
             {canManageProfile && (
@@ -595,6 +718,84 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
         onConfirm={handleAvatarCropConfirm}
         onCancel={handleAvatarCropCancel}
       />
+
+      <Modal
+        isOpen={banReasonDialogOpen}
+        onClose={() => {
+          setBanReasonDialogOpen(false);
+          setBanReason('');
+        }}
+        title="Причина блокировки"
+        footer={
+          <div className="profile-reason-dialog-footer">
+            <button
+              type="button"
+              className="profile-reason-dialog-btn profile-reason-dialog-btn--secondary"
+              onClick={() => {
+                setBanReasonDialogOpen(false);
+                setBanReason('');
+              }}
+            >
+              Отменить
+            </button>
+            <button
+              type="button"
+              className="profile-reason-dialog-btn profile-reason-dialog-btn--primary"
+              onClick={handleBanConfirm}
+            >
+              Подтвердить
+            </button>
+          </div>
+        }
+      >
+        <textarea
+          className="profile-reason-textarea"
+          value={banReason}
+          onChange={(e) => setBanReason(e.target.value)}
+          placeholder="Укажите причину блокировки"
+          rows={4}
+          maxLength={500}
+        />
+      </Modal>
+
+      <Modal
+        isOpen={restrictReasonDialogOpen}
+        onClose={() => {
+          setRestrictReasonDialogOpen(false);
+          setRestrictReason('');
+        }}
+        title="Причина ограничения"
+        footer={
+          <div className="profile-reason-dialog-footer">
+            <button
+              type="button"
+              className="profile-reason-dialog-btn profile-reason-dialog-btn--secondary"
+              onClick={() => {
+                setRestrictReasonDialogOpen(false);
+                setRestrictReason('');
+              }}
+            >
+              Отменить
+            </button>
+            <button
+              type="button"
+              className="profile-reason-dialog-btn profile-reason-dialog-btn--primary"
+              onClick={handleRestrictConfirm}
+            >
+              Подтвердить
+            </button>
+          </div>
+        }
+      >
+        <textarea
+          className="profile-reason-textarea"
+          value={restrictReason}
+          onChange={(e) => setRestrictReason(e.target.value)}
+          placeholder="Укажите причину ограничения комментариев"
+          rows={4}
+          maxLength={500}
+        />
+      </Modal>
     </>
   );
 }

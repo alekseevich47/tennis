@@ -52,13 +52,82 @@ export const auditProfile = {
   /**
    * @param {string} targetUserId
    */
-  userDelete(targetUserId) {
+  userHidden(targetUserId) {
     const actor = getActor();
 
-    writeAudit(DOMAIN, 'Пользователь удалён', {
+    writeAudit(DOMAIN, 'Пользователь скрыт из рейтинга', {
       targetUserId,
-      deletedBy: actor.userId,
-      deletedByName: actor.userFullName
+      hiddenBy: actor.userId,
+      hiddenByName: actor.userFullName
+    });
+  },
+
+  /**
+   * @param {string} targetUserId
+   */
+  userRevealed(targetUserId) {
+    const actor = getActor();
+
+    writeAudit(DOMAIN, 'Пользователь возвращён в рейтинг', {
+      targetUserId,
+      revealedBy: actor.userId,
+      revealedByName: actor.userFullName
+    });
+  },
+
+  /**
+   * @param {string} targetUserId
+   * @param {string} reason
+   */
+  userBanned(targetUserId, reason) {
+    const actor = getActor();
+
+    writeAudit(DOMAIN, 'Пользователь заблокирован', {
+      targetUserId,
+      reason,
+      bannedBy: actor.userId,
+      bannedByName: actor.userFullName
+    });
+  },
+
+  /**
+   * @param {string} targetUserId
+   */
+  userUnbanned(targetUserId) {
+    const actor = getActor();
+
+    writeAudit(DOMAIN, 'Пользователь разблокирован', {
+      targetUserId,
+      unbannedBy: actor.userId,
+      unbannedByName: actor.userFullName
+    });
+  },
+
+  /**
+   * @param {string} targetUserId
+   * @param {string} reason
+   */
+  commentsRestricted(targetUserId, reason) {
+    const actor = getActor();
+
+    writeAudit(DOMAIN, 'Комментарии ограничены', {
+      targetUserId,
+      reason,
+      restrictedBy: actor.userId,
+      restrictedByName: actor.userFullName
+    });
+  },
+
+  /**
+   * @param {string} targetUserId
+   */
+  commentsUnrestricted(targetUserId) {
+    const actor = getActor();
+
+    writeAudit(DOMAIN, 'Ограничение комментариев снято', {
+      targetUserId,
+      unrestrictedBy: actor.userId,
+      unrestrictedByName: actor.userFullName
     });
   }
 };

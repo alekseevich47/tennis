@@ -13,22 +13,39 @@ import './Rating.css';
 const getRatingPoints = (player) => player.rating_points || 0;
 
 function RatingPage({ user, onTabChange }) {
-  const { data: players, isLoading, mutate } = usePlayers('is_visible = true');
   const moderator = isModerator();
+  const { data: players, isLoading, mutate } = usePlayers(
+    moderator ? undefined : 'is_visible = true && is_banned = false'
+  );
   const [showAddModal, setShowAddModal] = useState(false);
   const [viewingPlayer, setViewingPlayer] = useState(null);
   const [sortField, setSortField] = useState(null);
   const [sortDir, setSortDir] = useState('asc');
   const [searchQuery, setSearchQuery] = useState('');
 
+  const visiblePlayers = useMemo(() => {
+    if (!players) return [];
+    return players.filter((player) => player.is_visible !== false && player.is_banned !== true);
+  }, [players]);
+
+  const hiddenPlayers = useMemo(() => {
+    if (!moderator || !players) return [];
+    return players.filter((player) => player.is_visible === false && player.is_banned !== true);
+  }, [players, moderator]);
+
+  const bannedPlayers = useMemo(() => {
+    if (!moderator || !players) return [];
+    return players.filter((player) => player.is_banned === true);
+  }, [players, moderator]);
+
   const playerRanks = useMemo(() => {
-    if (!players) return new Map();
+    if (!visiblePlayers.length) return new Map();
 
     const ranks = new Map();
     let previousPoints = null;
     let previousRank = 0;
 
-    [...players]
+    [...visiblePlayers]
       .sort((a, b) => getRatingPoints(b) - getRatingPoints(a))
       .forEach((player, index) => {
         const points = getRatingPoints(player);
@@ -40,12 +57,12 @@ function RatingPage({ user, onTabChange }) {
       });
 
     return ranks;
-  }, [players]);
+  }, [visiblePlayers]);
 
   const sortedPlayers = useMemo(() => {
-    if (!players) return [];
+    if (!visiblePlayers.length) return [];
 
-    const sorted = [...players];
+    const sorted = [...visiblePlayers];
 
     if (sortField === '#') {
       sorted.sort((a, b) => {
@@ -72,7 +89,7 @@ function RatingPage({ user, onTabChange }) {
     }
 
     return sorted;
-  }, [players, playerRanks, sortField, sortDir]);
+  }, [visiblePlayers, playerRanks, sortField, sortDir]);
 
   const filteredPlayers = useMemo(() => {
     if (!sortedPlayers) return [];
@@ -137,7 +154,7 @@ function RatingPage({ user, onTabChange }) {
   return (
     <section className="rating" aria-label="Рейтинг игроков">
       <div className="rating-action-bar">
-        {!isLoading && players?.length > 0 && (
+        {!isLoading && visiblePlayers.length > 0 && (
           <div className="rating-search-bar">
             <input
               type="text"
@@ -162,7 +179,8 @@ function RatingPage({ user, onTabChange }) {
 
       {isLoading ? (
         <Spinner label="Загрузка рейтинга..." />
-      ) : !players || players.length === 0 ? (
+      ) : visiblePlayers.length === 0 &&
+        (!moderator || (hiddenPlayers.length === 0 && bannedPlayers.length === 0)) ? (
         <EmptyState title="Пока нет игроков" description="Добавьте первого участника секции." />
       ) : (
         <>
@@ -188,6 +206,42 @@ function RatingPage({ user, onTabChange }) {
               />
             ))}
           </div>
+          {moderator && hiddenPlayers.length > 0 && (
+            <div className="rating-hidden-section">
+              <div className="rating-hidden-divider">
+                Скрытые пользователи ({hiddenPlayers.length})
+              </div>
+              <div className="players-table">
+                {hiddenPlayers.map((player) => (
+                  <PlayerRow
+                    key={player.id}
+                    player={player}
+                    rank={null}
+                    hidden
+                    onPlayerClick={setViewingPlayer}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+          {moderator && bannedPlayers.length > 0 && (
+            <div className="rating-banned-section">
+              <div className="rating-banned-divider">
+                Заблокированные пользователи ({bannedPlayers.length})
+              </div>
+              <div className="players-table">
+                {bannedPlayers.map((player) => (
+                  <PlayerRow
+                    key={player.id}
+                    player={player}
+                    rank={null}
+                    banned
+                    onPlayerClick={setViewingPlayer}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </>
       )}
 

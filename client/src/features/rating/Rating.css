@@ -177,3 +177,62 @@
   color: #666;
   text-align: right;
 }
+
+.player-row--hidden {
+  color: #9ca3af;
+  opacity: 0.7;
+}
+
+.player-row--hidden .player-name,
+.player-row--hidden .rank,
+.player-row--hidden .rating-points,
+.player-row--hidden .stats {
+  color: #9ca3af;
+}
+
+.rating-hidden-section {
+  margin-top: 24px;
+}
+
+.rating-hidden-divider {
+  padding: 8px 16px;
+  font-size: 13px;
+  color: #9ca3af;
+  border-top: 1px solid #e5e7eb;
+  margin-bottom: 8px;
+}
+
+.player-row--banned {
+  color: #9ca3af;
+  opacity: 0.7;
+}
+
+.player-row--banned .player-name,
+.player-row--banned .rating-points,
+.player-row--banned .stats {
+  color: #9ca3af;
+}
+
+.rank--banned {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+}
+
+.rank-stop-icon {
+  display: block;
+  flex-shrink: 0;
+}
+
+.rating-banned-section {
+  margin-top: 24px;
+}
+
+.rating-banned-divider {
+  padding: 8px 16px;
+  font-size: 13px;
+  color: #e53935;
+  border-top: 1px solid #fecaca;
+  margin-bottom: 8px;
+}

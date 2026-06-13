@@ -1,0 +1,57 @@
+.blocked-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 32px;
+  text-align: center;
+  color: #333;
+  background: #fafafa;
+}
+
+.blocked-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.blocked-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.blocked-details {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+  max-width: 320px;
+}
+
+.blocked-reason {
+  font-size: 14px;
+  color: #e53935;
+  margin-bottom: 24px;
+  max-width: 320px;
+  line-height: 1.5;
+}
+
+.blocked-contact-hint {
+  font-size: 13px;
+  color: #999;
+  margin-bottom: 16px;
+}
+
+.blocked-chat-btn {
+  padding: 12px 24px;
+  background: #17171B;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.blocked-chat-btn:hover {
+  opacity: 0.9;
+}
