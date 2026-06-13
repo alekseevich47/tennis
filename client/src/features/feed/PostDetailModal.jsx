@@ -27,7 +27,8 @@ const SCROLL_INTO_VIEW_DELAY_MS = 200;
  *   hiddenMediaKey?: string | null,
  *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void,
  *   onClose: () => void,
- *   onAfterClose: () => void
+ *   onAfterClose: () => void,
+ *   onOpenProfile?: (user: any) => void
  * }} props
  */
 function PostDetailModal({
@@ -41,7 +42,8 @@ function PostDetailModal({
   hiddenMediaKey,
   onOpenFullscreen,
   onClose,
-  onAfterClose
+  onAfterClose,
+  onOpenProfile
 }) {
   const postId = post?.id || null;
   const { data: comments = [], mutate: mutateComments } = useComments(postId);
@@ -191,25 +193,32 @@ function PostDetailModal({
       size="large"
       showCloseButton={false}
       footer={
-        <form onSubmit={handleAdd} className="modal-comment-form-footer">
-          <label htmlFor="post-detail-comment-input" className="visually-hidden">
-            Написать комментарий
-          </label>
-          <input
-            id="post-detail-comment-input"
-            type="text"
-            name="post-comment"
-            autoComplete="off"
-            placeholder="Написать комментарий…"
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            disabled={isAddingComment}
-            required
-          />
-          <button type="submit" disabled={isAddingComment || !commentText.trim()}>
-            {isAddingComment ? 'Отправляем…' : 'Отправить'}
-          </button>
-        </form>
+        user?.can_comment === false ? (
+          <div className="comment-restricted-message">
+            Вы запрещено оставлять комментарии по причине:{' '}
+            {user.comment_restriction_reason || 'не указана'}. Свяжитесь с администратором.
+          </div>
+        ) : (
+          <form onSubmit={handleAdd} className="modal-comment-form-footer">
+            <label htmlFor="post-detail-comment-input" className="visually-hidden">
+              Написать комментарий
+            </label>
+            <input
+              id="post-detail-comment-input"
+              type="text"
+              name="post-comment"
+              autoComplete="off"
+              placeholder="Написать комментарий…"
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              disabled={isAddingComment}
+              required
+            />
+            <button type="submit" disabled={isAddingComment || !commentText.trim()}>
+              {isAddingComment ? 'Отправляем…' : 'Отправить'}
+            </button>
+          </form>
+        )
       }
     >
       <div className="feed-card-header">
@@ -308,12 +317,17 @@ function PostDetailModal({
             return (
               <div key={c.id} className="modal-comment-item">
                 <div className="comment-header-row">
-                  <div className="comment-author-meta">
+                  <button
+                    type="button"
+                    className="comment-author-profile-link"
+                    onClick={() => onOpenProfile?.(c.expand?.author)}
+                    aria-label={`Открыть профиль ${c.expand?.author?.full_name || 'игрока'}`}
+                  >
                     <Avatar user={c.expand?.author} size="sm" />
                     <span className="comment-author-name">
                       {c.expand?.author?.full_name || 'Игрок секции'}
                     </span>
-                  </div>
+                  </button>
                   <div className="comment-actions-btns">
                     {isOwner && editingId !== c.id && (
                       <IconButton

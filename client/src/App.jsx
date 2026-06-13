@@ -14,6 +14,7 @@ import RatingPage from './features/rating/RatingPage';
 import CompetitionsPage from './features/competitions/CompetitionsPage';
 import GalleryPage from './features/gallery/GalleryPage';
 import ProfilePage from './features/profile/ProfilePage';
+import BlockedPage from './features/profile/BlockedPage';
 import {
   deleteTraining,
   readPendingDeleteTrainingIds,
@@ -151,6 +152,14 @@ function AppInner() {
     return (
       <div className="app-boot">
         <Spinner label="Загрузка профиля MAX..." />
+      </div>
+    );
+  }
+
+  if (user?.is_banned) {
+    return (
+      <div className="app">
+        <BlockedPage user={user} />
       </div>
     );
   }

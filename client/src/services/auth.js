@@ -99,13 +99,78 @@ function hasAvatarPatch(patch) {
 }
 
 /**
- * Soft-delete пользователя (скрытие из рейтинга).
+ * @param {string} targetUserId
+ * @param {string} reason
+ * @returns {Promise<UserRecord>}
+ */
+export async function banUser(targetUserId, reason) {
+  const updated = await pb.collection('users').update(targetUserId, {
+    is_banned: true,
+    ban_reason: reason || '',
+    banned_at: new Date().toISOString()
+  });
+  auditProfile.userBanned(targetUserId, reason);
+  return /** @type {UserRecord} */ (updated);
+}
+
+/**
  * @param {string} targetUserId
  * @returns {Promise<UserRecord>}
  */
-export async function deleteUser(targetUserId) {
+export async function unbanUser(targetUserId) {
+  const updated = await pb.collection('users').update(targetUserId, {
+    is_banned: false,
+    ban_reason: '',
+    banned_at: ''
+  });
+  auditProfile.userUnbanned(targetUserId);
+  return /** @type {UserRecord} */ (updated);
+}
+
+/**
+ * @param {string} targetUserId
+ * @param {string} reason
+ * @returns {Promise<UserRecord>}
+ */
+export async function restrictComments(targetUserId, reason) {
+  const updated = await pb.collection('users').update(targetUserId, {
+    can_comment: false,
+    comment_restriction_reason: reason || ''
+  });
+  auditProfile.commentsRestricted(targetUserId, reason);
+  return /** @type {UserRecord} */ (updated);
+}
+
+/**
+ * @param {string} targetUserId
+ * @returns {Promise<UserRecord>}
+ */
+export async function unrestrictComments(targetUserId) {
+  const updated = await pb.collection('users').update(targetUserId, {
+    can_comment: true,
+    comment_restriction_reason: ''
+  });
+  auditProfile.commentsUnrestricted(targetUserId);
+  return /** @type {UserRecord} */ (updated);
+}
+
+/**
+ * @param {string} targetUserId
+ * @returns {Promise<UserRecord>}
+ */
+export async function hideFromRating(targetUserId) {
   const updated = await pb.collection('users').update(targetUserId, { is_visible: false });
-  auditProfile.userDelete(targetUserId);
+  auditProfile.userHidden(targetUserId);
+  return /** @type {UserRecord} */ (updated);
+}
+
+/**
+ * @param {string} targetUserId
+ * @returns {Promise<UserRecord>}
+ */
+export async function showInRating(targetUserId) {
+  const updated = await pb.collection('users').update(targetUserId, { is_visible: true });
+  auditProfile.userRevealed(targetUserId);
   return /** @type {UserRecord} */ (updated);
 }
 

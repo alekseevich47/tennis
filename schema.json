@@ -38,6 +38,61 @@
         "type": "text"
       },
       {
+        "hidden": false,
+        "id": "bool1821142673",
+        "name": "is_visible",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "hidden": false,
+        "id": "bool3405807721",
+        "name": "is_banned",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text3875941284",
+        "max": 500,
+        "min": 0,
+        "name": "ban_reason",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "bool2368411861",
+        "name": "can_comment",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text850564223",
+        "max": 500,
+        "min": 0,
+        "name": "comment_restriction_reason",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
         "cost": 0,
         "hidden": true,
         "id": "password901924565",
@@ -319,12 +374,14 @@
       },
       {
         "hidden": false,
-        "id": "bool1821142673",
-        "name": "is_visible",
+        "id": "date3360840220",
+        "max": "",
+        "min": "",
+        "name": "banned_at",
         "presentable": false,
         "required": false,
         "system": false,
-        "type": "bool"
+        "type": "date"
       },
       {
         "hidden": false,
@@ -830,11 +887,11 @@
   },
   {
     "id": "pbc_533777971",
-    "listRule": "",
-    "viewRule": "",
-    "createRule": "",
-    "updateRule": "",
-    "deleteRule": "",
+    "listRule": "@request.auth.id != \"\"",
+    "viewRule": "@request.auth.id != \"\"",
+    "createRule": "@request.auth.id = author && @request.auth.can_comment = true",
+    "updateRule": "@request.auth.id = author",
+    "deleteRule": "@request.auth.id = author || @request.auth.role = \"moderator\"",
     "name": "comments",
     "type": "base",
     "fields": [
@@ -1034,7 +1091,7 @@
     "id": "pbc_1954347540",
     "listRule": "@request.auth.id != \"\"",
     "viewRule": "@request.auth.id != \"\"",
-    "createRule": "@request.auth.id = author",
+    "createRule": "@request.auth.id = author && @request.auth.can_comment = true",
     "updateRule": "@request.auth.id = author",
     "deleteRule": "@request.auth.id = author || @request.auth.role = \"moderator\"",
     "name": "gallery_comments",

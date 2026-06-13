@@ -17,10 +17,11 @@ import { error } from '../../lib/log';
  *   mediaItem: any | null,
  *   user: any,
  *   userIsModerator: boolean,
- *   onClose: () => void
+ *   onClose: () => void,
+ *   onOpenProfile?: (user: any) => void
  * }} props
  */
-function GalleryCommentModal({ isOpen, mediaItem, user, userIsModerator, onClose }) {
+function GalleryCommentModal({ isOpen, mediaItem, user, userIsModerator, onClose, onOpenProfile }) {
   const mediaId = mediaItem?.id || null;
   const { comments, mutate, isLoading } = useGalleryComments(isOpen ? mediaId : null);
   const [commentText, setCommentText] = useState('');
@@ -110,23 +111,30 @@ function GalleryCommentModal({ isOpen, mediaItem, user, userIsModerator, onClose
       size="large"
       className="gallery-comment-modal"
       footer={user?.id ? (
-        <form className="gallery-comment-form" onSubmit={handleAdd}>
-          <label htmlFor="gallery-comment-input" className="visually-hidden">
-            Написать комментарий
-          </label>
-          <textarea
-            id="gallery-comment-input"
-            value={commentText}
-            onChange={(event) => setCommentText(event.target.value)}
-            placeholder="Написать комментарий..."
-            rows={2}
-            disabled={isAddingComment}
-            required
-          />
-          <button type="submit" disabled={isAddingComment || !commentText.trim()}>
-            {isAddingComment ? 'Отправляем...' : 'Отправить'}
-          </button>
-        </form>
+        user.can_comment === false ? (
+          <div className="comment-restricted-message">
+            Вы запрещено оставлять комментарии по причине:{' '}
+            {user.comment_restriction_reason || 'не указана'}. Свяжитесь с администратором.
+          </div>
+        ) : (
+          <form className="gallery-comment-form" onSubmit={handleAdd}>
+            <label htmlFor="gallery-comment-input" className="visually-hidden">
+              Написать комментарий
+            </label>
+            <textarea
+              id="gallery-comment-input"
+              value={commentText}
+              onChange={(event) => setCommentText(event.target.value)}
+              placeholder="Написать комментарий..."
+              rows={2}
+              disabled={isAddingComment}
+              required
+            />
+            <button type="submit" disabled={isAddingComment || !commentText.trim()}>
+              {isAddingComment ? 'Отправляем...' : 'Отправить'}
+            </button>
+          </form>
+        )
       ) : null}
     >
       {mediaUrl && (
@@ -190,7 +198,19 @@ function GalleryCommentModal({ isOpen, mediaItem, user, userIsModerator, onClose
                     </div>
                   )}
 
-                  <div className="gallery-comment-item__header">
+                  <div
+                    className="gallery-comment-item__header"
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => onOpenProfile?.(comment.expand?.author)}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        onOpenProfile?.(comment.expand?.author);
+                      }
+                    }}
+                    aria-label={`Открыть профиль ${comment.expand?.author?.full_name || comment.expand?.author?.name || 'игрока'}`}
+                  >
                     <Avatar
                       user={comment.expand?.author}
                       size="sm"

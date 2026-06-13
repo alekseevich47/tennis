@@ -11,6 +11,7 @@ import CreatePostModal from './CreatePostModal';
 import EditPostModal from './EditPostModal';
 import PostDetailModal from './PostDetailModal';
 import FullscreenImageViewer from './FullscreenImageViewer';
+import ProfileViewModal from '../profile/ProfileViewModal';
 import { error } from '../../lib/log';
 import './Feed.css';
 
@@ -33,6 +34,7 @@ function FeedPage({ user, onDeletedIdsChange }) {
   const [fullscreenMedia, setFullscreenMedia] = useState(null);
   const [hiddenMediaKey, setHiddenMediaKey] = useState(null);
   const [deletedPostIds, setDeletedPostIds] = useState([]);
+  const [viewingPlayer, setViewingPlayer] = useState(null);
   const [isButtonVisible, setIsButtonVisible] = useState(true);
   const { startUpload } = usePostUpload();
 
@@ -224,6 +226,7 @@ function FeedPage({ user, onDeletedIdsChange }) {
         onOpenFullscreen={handleOpenFullscreen}
         onClose={handleCloseDetail}
         onAfterClose={() => mutate()}
+        onOpenProfile={setViewingPlayer}
       />
 
       <EditPostModal
@@ -250,6 +253,13 @@ function FeedPage({ user, onDeletedIdsChange }) {
           onClose={handleCloseFullscreen}
         />
       )}
+
+      <ProfileViewModal
+        isOpen={!!viewingPlayer}
+        onClose={() => setViewingPlayer(null)}
+        targetUser={viewingPlayer}
+        currentUser={user}
+      />
     </div>
   );
 }
