@@ -320,7 +320,7 @@ function ProductDetail({
         <p className="product-price">{product.price} ₽</p>
         {product.out_of_stock && <p className="product-out-of-stock-text">Нет в наличии</p>}
 
-        <BuyButton />
+        <BuyButton product={product} />
       </div>
     </Modal>
   );

@@ -1,24 +1,71 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
+import { useToast } from '../../components/ui/ToastContext';
 import { MAX_SELLER_URL } from '../../config';
+import { error } from '../../lib/log';
+import {
+  buildBuyMessage,
+  BUY_REDIRECT_DELAY_MS,
+  BUY_REDIRECT_TOAST_TEXT
+} from './buyMessage';
 import './BuyButton.css';
 
 /**
- * @param {{ className?: string }} props
+ * @param {{
+ *   className?: string,
+ *   product?: import('../../services/catalog').ProductRecord | null,
+ *   products?: import('../../services/catalog').ProductRecord[],
+ *   disabled?: boolean
+ * }} props
  */
-export default function BuyButton({ className }) {
-  const handleBuy = useCallback((event) => {
+export default function BuyButton({ className, product = null, products, disabled = false }) {
+  const { showToast } = useToast();
+  const [isPending, setIsPending] = useState(false);
+  const redirectTimerRef = useRef(null);
+
+  const handleBuy = useCallback(async (event) => {
     event.preventDefault();
     event.stopPropagation();
-    if (window.WebApp?.openLink) {
-      window.WebApp.openLink(MAX_SELLER_URL);
-    } else {
-      window.open(MAX_SELLER_URL, '_blank');
+    if (disabled || isPending) return;
+
+    const items = products ?? (product ? [product] : []);
+    const message = buildBuyMessage(items);
+    if (!message) return;
+
+    setIsPending(true);
+
+    try {
+      await navigator.clipboard.writeText(message);
+    } catch (err) {
+      error('copy buy message:', err);
+    }
+
+    showToast({ text: BUY_REDIRECT_TOAST_TEXT });
+
+    redirectTimerRef.current = window.setTimeout(() => {
+      redirectTimerRef.current = null;
+      setIsPending(false);
+      if (window.WebApp?.openLink) {
+        window.WebApp.openLink(MAX_SELLER_URL);
+      } else {
+        window.open(MAX_SELLER_URL, '_blank');
+      }
+    }, BUY_REDIRECT_DELAY_MS);
+  }, [disabled, isPending, product, products, showToast]);
+
+  useEffect(() => () => {
+    if (redirectTimerRef.current) {
+      window.clearTimeout(redirectTimerRef.current);
     }
   }, []);
 
   return (
-    <button type="button" className={clsx('buy-button', className)} onClick={handleBuy}>
+    <button
+      type="button"
+      className={clsx('buy-button', className)}
+      onClick={handleBuy}
+      disabled={disabled || isPending}
+    >
       Купить
     </button>
   );
