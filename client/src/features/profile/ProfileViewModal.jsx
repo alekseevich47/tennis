@@ -352,6 +352,33 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
               </IconButton>
             )}
 
+            {canManageProfile && !isEditing && !isOwnProfile && (
+              <IconButton
+                ariaLabel="Удалить аккаунт игрока"
+                variant="danger"
+                size="md"
+                className="delete-profile-btn"
+                onClick={handleDeleteClick}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#e53935"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                  <path d="M10 11v6" />
+                  <path d="M14 11v6" />
+                  <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                </svg>
+              </IconButton>
+            )}
+
             {canManageProfile && (
               <IconButton
                 ariaLabel={isEditing ? 'Отменить редактирование профиля' : 'Редактировать профиль'}
@@ -378,32 +405,6 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                     <path d="m13.7 6.1 4.2 4.2" />
                   </svg>
                 )}
-              </IconButton>
-            )}
-
-            {canManageProfile && !isEditing && !isOwnProfile && (
-              <IconButton
-                ariaLabel="Удалить аккаунт игрока"
-                variant="danger"
-                size="md"
-                className="delete-profile-btn"
-                onClick={handleDeleteClick}
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#e53935"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <polyline points="3 6 5 6 21 6" />
-                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                  <path d="M10 11v6" />
-                  <path d="M14 11v6" />
-                  <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-                </svg>
               </IconButton>
             )}
 

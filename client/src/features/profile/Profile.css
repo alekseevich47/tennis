@@ -13,14 +13,19 @@
 }
 
 .profile-view-edit-btn {
-  right: 96px !important;
+  right: 56px !important;
 }
 
 .delete-profile-btn {
   position: absolute !important;
   top: 10px;
-  right: 56px !important;
+  right: 96px !important;
   z-index: 10;
+}
+
+.delete-profile-btn svg {
+  width: 18px;
+  height: 18px;
 }
 
 .profile-view-close-btn {
