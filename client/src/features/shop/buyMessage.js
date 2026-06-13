@@ -9,7 +9,7 @@ const BUY_REDIRECT_TOAST_TEXT =
 function formatProductLine(product) {
   const title = String(product?.title || 'товар').trim();
   const id = String(product?.id || '').trim();
-  return `${title} #${id}`;
+  return `"${title}" #${id}`;
 }
 
 /**

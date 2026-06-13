@@ -4,6 +4,8 @@ import { useProductCategories } from '../../hooks/useProductCategories';
 import './CategoryDropdown.css';
 
 const PLACEHOLDER = 'Все категории';
+/** width 0.5s @ 0.9s delay + transform 0.9s @ 0.9s delay */
+const SEARCH_CLOSE_ANIM_MS = 1900;
 
 /**
  * @param {{
@@ -24,7 +26,13 @@ export default function CategoryDropdown({
   className
 }) {
   const rootRef = useRef(null);
+  const triggerRef = useRef(null);
+  const labelMeasureRef = useRef(null);
+  const pendingOpenRef = useRef(false);
+  const pendingOpenTimerRef = useRef(null);
+  const searchCloseAnimCleanupRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [isLabelVisible, setIsLabelVisible] = useState(true);
   const { data: categories = [] } = useProductCategories();
 
   const selectedCategoryName = useMemo(() => {
@@ -32,8 +40,65 @@ export default function CategoryDropdown({
     return categories.find((category) => category.id === selectedCategoryId)?.name || 'Категория';
   }, [categories, selectedCategoryId]);
 
+  const cancelSearchCloseAnimation = useCallback(() => {
+    searchCloseAnimCleanupRef.current?.();
+    searchCloseAnimCleanupRef.current = null;
+    if (pendingOpenTimerRef.current) {
+      window.clearTimeout(pendingOpenTimerRef.current);
+      pendingOpenTimerRef.current = null;
+    }
+  }, []);
+
+  const clearPendingOpen = useCallback(() => {
+    pendingOpenRef.current = false;
+    cancelSearchCloseAnimation();
+  }, [cancelSearchCloseAnimation]);
+
+  const openAfterSearchClose = useCallback(() => {
+    pendingOpenRef.current = false;
+    cancelSearchCloseAnimation();
+    setIsOpen(true);
+  }, [cancelSearchCloseAnimation]);
+
+  const scheduleOpenAfterSearchClose = useCallback(() => {
+    const root = rootRef.current;
+    if (!root) {
+      openAfterSearchClose();
+      return;
+    }
+
+    cancelSearchCloseAnimation();
+
+    let opened = false;
+    const cleanup = () => {
+      root.removeEventListener('transitionend', handleTransitionEnd);
+      if (pendingOpenTimerRef.current) {
+        window.clearTimeout(pendingOpenTimerRef.current);
+        pendingOpenTimerRef.current = null;
+      }
+      searchCloseAnimCleanupRef.current = null;
+    };
+
+    const finish = () => {
+      if (opened) return;
+      opened = true;
+      cleanup();
+      openAfterSearchClose();
+    };
+
+    const handleTransitionEnd = (event) => {
+      if (event.target !== root) return;
+      if (event.propertyName === 'transform') finish();
+    };
+
+    root.addEventListener('transitionend', handleTransitionEnd);
+    pendingOpenTimerRef.current = window.setTimeout(finish, SEARCH_CLOSE_ANIM_MS);
+    searchCloseAnimCleanupRef.current = cleanup;
+  }, [cancelSearchCloseAnimation, openAfterSearchClose]);
+
   const handleTriggerClick = useCallback(() => {
     if (isSearchOpen) {
+      pendingOpenRef.current = true;
       onCloseSearch?.();
       return;
     }
@@ -63,12 +128,48 @@ export default function CategoryDropdown({
   }, [isOpen, isSearchOpen]);
 
   useEffect(() => {
-    if (isSearchOpen) setIsOpen(false);
-  }, [isSearchOpen]);
+    if (isSearchOpen) {
+      clearPendingOpen();
+      setIsOpen(false);
+      setIsLabelVisible(false);
+      return;
+    }
+
+    if (pendingOpenRef.current) {
+      scheduleOpenAfterSearchClose();
+    }
+  }, [isSearchOpen, clearPendingOpen, scheduleOpenAfterSearchClose]);
 
   useEffect(() => {
     onOpenChange?.(isOpen);
   }, [isOpen, onOpenChange]);
+
+  useEffect(() => {
+    if (isSearchOpen) return undefined;
+
+    const trigger = triggerRef.current;
+    const measure = labelMeasureRef.current;
+    if (!trigger || !measure) return undefined;
+
+    const checkLabelFit = () => {
+      if (isSearchOpen || trigger.clientWidth < 80) {
+        setIsLabelVisible(false);
+        return;
+      }
+      measure.textContent = selectedCategoryName;
+      const textWidth = measure.offsetWidth;
+      const availableWidth = trigger.clientWidth - 52;
+      setIsLabelVisible(textWidth <= availableWidth);
+    };
+
+    checkLabelFit();
+
+    const observer = new ResizeObserver(checkLabelFit);
+    observer.observe(trigger);
+    return () => observer.disconnect();
+  }, [isSearchOpen, selectedCategoryName]);
+
+  useEffect(() => () => cancelSearchCloseAnimation(), [cancelSearchCloseAnimation]);
 
   return (
     <div
@@ -82,6 +183,8 @@ export default function CategoryDropdown({
         className
       )}
     >
+      <span ref={labelMeasureRef} className="category-dropdown__label-measure" aria-hidden="true" />
+
       <select
         className="category-dropdown__native"
         value={selectedCategoryId}
@@ -98,6 +201,7 @@ export default function CategoryDropdown({
       </select>
 
       <span
+        ref={triggerRef}
         role="button"
         tabIndex={0}
         onClick={handleTriggerClick}
@@ -111,7 +215,14 @@ export default function CategoryDropdown({
         aria-expanded={isOpen && !isSearchOpen}
         aria-label={isSearchOpen ? 'Закрыть поиск' : selectedCategoryName}
       >
-        {!isSearchOpen && selectedCategoryName}
+        <span
+          className={clsx(
+            'category-dropdown__label',
+            !isSearchOpen && isLabelVisible && 'visible'
+          )}
+        >
+          {selectedCategoryName}
+        </span>
         <span className="category-dropdown__hamburger-mid" aria-hidden="true" />
       </span>
 
