@@ -29,12 +29,12 @@ alwaysApply: false
 | `features/*` | Страницы по разделам (feed, trainings, shop, …) |
 | `features/trainings/components/*` | Модалки тренировок: `EditTrainingModal`, `UserPickerModal`, `ArchiveModal`, `MembershipOverviewModal`, `DateRangeModal` |
 | `features/shop/*` | Магазин: `ShopPage`, `ProductCard`, `ProductDetail`, `ProductForm`, `FavoriteIcon`, `FavoritesDropdown`, `BuyButton`, `buyMessage`, `SearchBar`, `CategoryDropdown` |
-| `features/profile/*` | Профиль: `ProfilePage`, `MembershipModal`, `MembershipEditModal`, `ProfileViewModal` |
+| `features/profile/*` | Профиль: `ProfilePage`, `MembershipModal`, `MembershipEditModal`, `ProfileViewModal`, `BlockedPage` |
 | `context/*` | React-контексты: `FavoritesContext` (избранное, localStorage) |
 | `hooks/*` | `useMaxAuth`, `usePosts`, `usePlayers`, … — SWR + побочные эффекты |
 | `services/*` | API: `pb.js`, `auth.js`, `users.js`, `catalog.js`, `trainings.js`, … |
 | `components/ui/*` | `Modal`, `AlertDialog`, `Avatar`, `IconButton`, `Toast` — переиспользовать |
-| `lib/*` | `format`, `media`, `avatar`, `gestures`, `log` |
+| `lib/*` | `format`, `media`, `avatar`, `rating`, `gestures`, `log` |
 | `lib/audit/*` | Аудит-логи: `core`, `profile`, `trainings`, `membership`, … |
 
 ## Правила кода
@@ -44,7 +44,7 @@ alwaysApply: false
 - Модалки — `Modal` (focus-trap, `aria-modal`). Скроллбар в `.ui-modal-body` скрыт (`scrollbar-width: none`, `::webkit-scrollbar { display: none }`), прокрутка работает.
 - Роли: `user` / `moderator` — проверять через `isModerator` из `auth`.
 - Логи: `lib/log` (`warn`, `error`), не `console.log` в прод-путях.
-- `useMaxAuth`: идемпотентный init (`startedRef`), `AbortController`, не блокировать UI тяжёлой зачисткой.
+- `useMaxAuth`: идемпотентный init (`startedRef`), `AbortController`, не блокировать UI тяжёлой зачисткой. При бане — `bannedRef` + `loadBanInfo()`/`saveBanInfo()`; `setUser` через `applyUser`. Локальная сессия (без `initData`) — `refreshAuthUser` для проверки `is_banned`.
 - Soft-delete постов/комментариев + `flush` на смене таба / `pagehide` / `visibilitychange`.
 - Touch/жесты: `lib/gestures.js`, `usePinchZoom`; цель — плавный UI в webview.
 - Стили: CSS рядом с фичей (`Feed.css`, …), глобально — `styles/global.css`.
@@ -65,7 +65,8 @@ alwaysApply: false
 - **Превью аватара при редактировании**: если `avatarFile !== null` — показывать `<img src={URL.createObjectURL(avatarFile)}>` вместо `<Avatar user={user}>`. Не забывать `revokeObjectURL` при смене/размонтировании.
 - **Форма редактирования профиля** продублирована между `ProfilePage` и `ProfileViewModal` — изменения вносить в оба файла.
 - **Дата начала в секции** (`section_start_date`): при создании пользователя = `created` (один раз, через миграцию). В UI показывается `section_start_date || created`. Изменять может только модератор через форму редактирования профиля.
-- **Рейтинг в профиле**: `#N` (синий, верхний индекс) после имени в профиле и `ProfileViewModal`. Клик → переход на вкладку «Рейтинг».
+- **Рейтинг в профиле**: `#N` (синий, верхний индекс) после имени в профиле и `ProfileViewModal`. Клик → переход на вкладку «Рейтинг». Место считается через `getPlayerRatingRank` из `lib/rating.js` — та же логика, что в списке рейтинга. Скрытые/заблокированные (`is_visible = false` или `is_banned = true`) — `#—`.
+- **Ранги рейтинга** (`lib/rating.js`): `buildPlayerRanks`, `getPlayerRatingRank`, `getRatingPoints`, `isRatingVisible`. Только видимые игроки (`is_visible !== false && is_banned !== true`). При одинаковых `rating_points` — одно место на всех (competition ranking). Используется в `RatingPage`, `ProfilePage`, `ProfileViewModal`.
 - **Сортировка рейтинга**: кликабельные заголовки `#`, `Игрок`, `Очки` с иконками ▼/▲. Первое нажатие — desc, второе — asc. Смена окна → сброс сортировки (через `key` на компоненте).
 - **Поиск по рейтингу**: input «Поиск игрока по имени…», фильтрация на клиенте по `full_name`.
 - **Склонение числительных**: `pluralize(n, one, few, many)` в `lib/format.js` — для toast-уведомлений и других UI-текстов.
@@ -76,7 +77,7 @@ alwaysApply: false
 
 - Коллекции и поля — по `schema.json`; не выдумывать имена.
 - **trainings**: `attended_users` (relation → users), `booked_users` (relation → users), `date`, `duration`, `type`, `max_slots`, `location`, `description`, `is_closed`, `is_deleted`.
-- **users** (новые поля): `available_sessions` (number, min: 0) — остаток абонемента (списание при явке); `birth_date` (date); `section_start_date` (date, nullable); `attendance_count` — всего использованных посещений (+1 при явке, –1 при отмене); `is_visible` (boolean, default true) — видимость в рейтинге (false = скрыт модератором); `is_banned` (boolean, default false) — бан доступа; `ban_reason` (text) — причина бана; `banned_at` (date) — дата блокировки; `can_comment` (boolean, default true) — право оставлять комментарии; `comment_restriction_reason` (text) — причина ограничения комментариев. При создании записи PB-хук `pb_hooks/users_default_visible.pb.js` (`onRecordBeforeCreateRequest`) выставляет `is_visible = true`.
+- **users** (новые поля): `available_sessions` (number, min: 0) — остаток абонемента (списание при явке); `birth_date` (date); `section_start_date` (date, nullable); `attendance_count` — всего использованных посещений (+1 при явке, –1 при отмене); `is_visible` (boolean, default true) — видимость в рейтинге (false = скрыт модератором); `is_banned` (boolean, default false) — бан доступа; `ban_reason` (text) — причина бана; `banned_at` (date) — дата блокировки; `can_comment` (boolean, default true) — право оставлять комментарии; `comment_restriction_reason` (text) — причина ограничения комментариев. При создании записи PB-хук `pb_hooks/users_default_visible.pb.js` (`onRecordCreateRequest`) выставляет `is_visible = true` и `can_comment = true`.
 - Загрузка файлов — через PB file fields; URL медиа — `lib/media.js` / `config.js` (`MEDIA_BASE_URL`).
 - Ошибки API — ловить в `services/*`, в UI показывать коротко через AlertDialog.
 
@@ -115,9 +116,11 @@ alwaysApply: false
   - Аудит: `auditProfile.userHidden` / `auditProfile.userRevealed` (domain `ПРОФИЛЬ`, actions `Пользователь скрыт из рейтинга` / `Пользователь возвращён в рейтинг`).
 - **Блокировка** (`is_banned = true`):
   - Выпадающее меню «3 точки» → «Заблокировать» → модалка с причиной. После бана кнопка меняется на зелёную «Разблокировать».
-  - Забаненный при входе видит `BlockedPage` с причиной, датой (`banned_at` в формате `HH:mm dd.MM.yyyy`) и кнопкой «Перейти в чат с модератором» (вызывает `openSellerChat(MAX_SELLER_URL)`).
+  - **Поток авторизации забаненного**: `max-auth` (`pb_hooks/max-auth.pb.js`) при `is_banned` возвращает **403** с `{ error, ban_reason, banned_at }` **без токена**. `initMaxAuth` в `auth.js` обрабатывает 403 → `pb.authStore.clear()` → псевдо-пользователь `{ is_banned: true, ban_reason, banned_at }` + `sessionStorage` (`tennis_ban_info`). `useMaxAuth`: `bannedRef` не даёт `authStore.onChange` сбросить ban-state в `null` (иначе в шапке «Гость» и весь UI доступен).
+  - `App.jsx`: после спиннера `isUserBanned(user)` → только `<BlockedPage>` (без `AppHeader`, табов, `BottomNav`).
+  - `BlockedPage`: причина, дата (`banned_at` → `date-fns` `HH:mm dd.MM.yyyy`), кнопка «Перейти в чат» → `openSellerChat(MAX_SELLER_URL)`.
   - В рейтинге: обычные пользователи не видят заблокированных; модератор видит их **после секции скрытых** — серым цветом, в колонке `#` — иконка «стоп» (красный восьмиугольник), без позиции. Заблокированные не участвуют в сортировке и поиске. Если пользователь и скрыт, и заблокирован — показывается только в секции заблокированных.
-  - MAX-auth endpoint **на сервере** не выдаёт токен при `is_banned = true`. PB-хук `pb_hooks/users_ban_auth.pb.js` запрещает `authRefresh` (`onRecordAuthRequest` → `throw new ForbiddenError`).
+  - MAX-auth endpoint **на сервере** не выдаёт токен при `is_banned = true`. PB-хук `pb_hooks/users_ban_auth.pb.js` запрещает `authRefresh` (`onRecordAuthRequest` → `throw new ForbiddenError`; в PB 0.23+ обязателен `e.next()` при успехе).
   - API: `banUser(userId, reason)` / `unbanUser(userId)` в `services/auth.js`.
   - Аудит: `auditProfile.userBanned` / `auditProfile.userUnbanned` (domain `ПРОФИЛЬ`).
 - **Ограничение комментариев** (`can_comment = false`):

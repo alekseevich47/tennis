@@ -8,9 +8,8 @@ import PlayerRow from './PlayerRow';
 import PlayerForm from './PlayerForm';
 import ProfileViewModal from '../profile/ProfileViewModal';
 import { error } from '../../lib/log';
+import { buildPlayerRanks, getRatingPoints, isRatingVisible } from '../../lib/rating';
 import './Rating.css';
-
-const getRatingPoints = (player) => player.rating_points || 0;
 
 function RatingPage({ user, onTabChange }) {
   const moderator = isModerator();
@@ -25,7 +24,7 @@ function RatingPage({ user, onTabChange }) {
 
   const visiblePlayers = useMemo(() => {
     if (!players) return [];
-    return players.filter((player) => player.is_visible !== false && player.is_banned !== true);
+    return players.filter(isRatingVisible);
   }, [players]);
 
   const hiddenPlayers = useMemo(() => {
@@ -38,26 +37,7 @@ function RatingPage({ user, onTabChange }) {
     return players.filter((player) => player.is_banned === true);
   }, [players, moderator]);
 
-  const playerRanks = useMemo(() => {
-    if (!visiblePlayers.length) return new Map();
-
-    const ranks = new Map();
-    let previousPoints = null;
-    let previousRank = 0;
-
-    [...visiblePlayers]
-      .sort((a, b) => getRatingPoints(b) - getRatingPoints(a))
-      .forEach((player, index) => {
-        const points = getRatingPoints(player);
-        const rank = points === previousPoints ? previousRank : index + 1;
-
-        ranks.set(player.id, rank);
-        previousPoints = points;
-        previousRank = rank;
-      });
-
-    return ranks;
-  }, [visiblePlayers]);
+  const playerRanks = useMemo(() => buildPlayerRanks(visiblePlayers), [visiblePlayers]);
 
   const sortedPlayers = useMemo(() => {
     if (!visiblePlayers.length) return [];
