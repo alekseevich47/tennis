@@ -27,4 +27,26 @@ export function buildBuyMessage(products) {
   return `Здравствуйте. Хочу узнать о:\n${lines.join('\n')}`;
 }
 
+/**
+ * @param {string} url
+ */
+export function openSellerChat(url) {
+  const webApp = window.WebApp;
+  const platform = webApp?.platform;
+  const isMobileMax = platform === 'ios' || platform === 'android';
+
+  if (isMobileMax && webApp?.openMaxLink) {
+    webApp.openMaxLink(url);
+    webApp.close?.();
+    return;
+  }
+
+  if (webApp?.openLink) {
+    webApp.openLink(url);
+    return;
+  }
+
+  window.open(url, '_blank');
+}
+
 export { BUY_REDIRECT_DELAY_MS, BUY_REDIRECT_TOAST_TEXT };

@@ -6,7 +6,8 @@ import { error } from '../../lib/log';
 import {
   buildBuyMessage,
   BUY_REDIRECT_DELAY_MS,
-  BUY_REDIRECT_TOAST_TEXT
+  BUY_REDIRECT_TOAST_TEXT,
+  openSellerChat
 } from './buyMessage';
 import './BuyButton.css';
 
@@ -45,11 +46,7 @@ export default function BuyButton({ className, product = null, products, disable
     redirectTimerRef.current = window.setTimeout(() => {
       redirectTimerRef.current = null;
       setIsPending(false);
-      if (window.WebApp?.openLink) {
-        window.WebApp.openLink(MAX_SELLER_URL);
-      } else {
-        window.open(MAX_SELLER_URL, '_blank');
-      }
+      openSellerChat(MAX_SELLER_URL);
     }, BUY_REDIRECT_DELAY_MS);
   }, [disabled, isPending, product, products, showToast]);
 
