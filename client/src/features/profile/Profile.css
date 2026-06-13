@@ -12,6 +12,25 @@
   color: #495057 !important;
 }
 
+.profile-view-edit-btn {
+  right: 96px !important;
+}
+
+.delete-profile-btn {
+  position: absolute !important;
+  top: 10px;
+  right: 56px !important;
+  z-index: 10;
+}
+
+.profile-view-close-btn {
+  position: absolute !important;
+  top: 10px;
+  right: 16px;
+  z-index: 10;
+  color: #495057 !important;
+}
+
 .edit-profile-btn svg {
   width: 18px;
   height: 18px;
@@ -237,6 +256,34 @@
   text-align: right;
 }
 
+.profile-achievements-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0;
+  margin-bottom: 12px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.profile-achievements-toggle h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+  color: #1a1a1a;
+}
+
+.profile-achievements-arrow {
+  flex-shrink: 0;
+  margin-left: 8px;
+  font-size: 12px;
+  color: #888;
+  line-height: 1;
+}
+
 .profile-trainings-toggle {
   display: flex;
   align-items: center;
@@ -408,14 +455,17 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
+  contain: layout style paint;
 }
 
 .floating-achievement-wrap {
   position: absolute;
   width: 32px;
   height: 32px;
+  will-change: transform;
   animation: floating-ach-x var(--float-x-duration, 6s) ease-in-out infinite alternate;
   animation-delay: var(--float-delay-x, 0s);
+  animation-fill-mode: backwards;
 }
 
 .floating-achievement-icon {
@@ -425,8 +475,10 @@
   object-fit: contain;
   opacity: 0.25;
   pointer-events: none;
+  will-change: transform;
   animation: floating-ach-y var(--float-y-duration, 8s) ease-in-out infinite alternate;
   animation-delay: var(--float-delay-y, 0s);
+  animation-fill-mode: backwards;
 }
 
 @keyframes floating-ach-x {

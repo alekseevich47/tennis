@@ -399,7 +399,7 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
             </div>
           </div>
 
-          <AchievementsBlock userId={user.id} />
+          <AchievementsBlock userId={user.id} collapsible />
 
           <div className="profile-trainings-block">
             <button
