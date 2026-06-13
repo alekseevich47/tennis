@@ -7,6 +7,7 @@ import {
   buildBuyMessage,
   BUY_REDIRECT_DELAY_MS,
   BUY_REDIRECT_TOAST_TEXT,
+  isMobileMaxPlatform,
   openSellerChat
 } from './buyMessage';
 import './BuyButton.css';
@@ -33,7 +34,13 @@ export default function BuyButton({ className, product = null, products, disable
     const message = buildBuyMessage(items);
     if (!message) return;
 
+    const redirectOnClick = isMobileMaxPlatform();
+
     setIsPending(true);
+
+    if (redirectOnClick) {
+      openSellerChat(MAX_SELLER_URL);
+    }
 
     try {
       await navigator.clipboard.writeText(message);
@@ -46,7 +53,9 @@ export default function BuyButton({ className, product = null, products, disable
     redirectTimerRef.current = window.setTimeout(() => {
       redirectTimerRef.current = null;
       setIsPending(false);
-      openSellerChat(MAX_SELLER_URL);
+      if (!redirectOnClick) {
+        openSellerChat(MAX_SELLER_URL);
+      }
     }, BUY_REDIRECT_DELAY_MS);
   }, [disabled, isPending, product, products, showToast]);
 
