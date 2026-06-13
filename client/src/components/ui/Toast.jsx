@@ -2,10 +2,11 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { SWIPE_CLOSE_THRESHOLD } from '../../lib/gestures';
 import './Toast.css';
 
-function Toast({ text, onDismiss }) {
+function Toast({ text, actionLabel, onAction, autoDismissMs = 3000, onDismiss }) {
   const [isExiting, setIsExiting] = useState(false);
   const touchGestureRef = useRef(null);
   const dismissedRef = useRef(false);
+  const hasAction = Boolean(actionLabel);
 
   const dismiss = useCallback(() => {
     if (dismissedRef.current) return;
@@ -15,9 +16,16 @@ function Toast({ text, onDismiss }) {
   }, [onDismiss]);
 
   useEffect(() => {
-    const timer = window.setTimeout(dismiss, 3000);
+    if (hasAction || autoDismissMs <= 0) return undefined;
+    const timer = window.setTimeout(dismiss, autoDismissMs);
     return () => window.clearTimeout(timer);
-  }, [dismiss]);
+  }, [autoDismissMs, dismiss, hasAction]);
+
+  const handleActionClick = (event) => {
+    event.stopPropagation();
+    onAction?.();
+    dismiss();
+  };
 
   const handleTouchStart = (event) => {
     const touch = event.touches[0];
@@ -65,7 +73,18 @@ function Toast({ text, onDismiss }) {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      {text}
+      <div className="ui-toast__content">
+        <p className="ui-toast__text">{text}</p>
+        {hasAction && (
+          <button
+            type="button"
+            className="ui-toast__action"
+            onClick={handleActionClick}
+          >
+            {actionLabel}
+          </button>
+        )}
+      </div>
     </div>
   );
 }

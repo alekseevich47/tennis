@@ -15,6 +15,45 @@
   touch-action: pan-y;
 }
 
+.ui-toast__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.ui-toast__text {
+  margin: 0;
+}
+
+.ui-toast__action {
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  line-height: 1.2;
+  padding: 8px 18px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.ui-toast__action:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+.ui-toast__action:active {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.ui-toast__action:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.85);
+  outline-offset: 2px;
+}
+
 .ui-toast--exiting {
   animation: ui-toast-slide-up 180ms ease-in forwards;
 }
