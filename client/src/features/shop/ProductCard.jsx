@@ -269,7 +269,7 @@ function ProductCard({
       </div>
 
       {!isSoftDeleted && (
-        <BuyButton />
+        <BuyButton product={product} />
       )}
 
       {isSoftDeleted && (
