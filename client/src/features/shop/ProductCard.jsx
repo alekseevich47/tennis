@@ -1,9 +1,10 @@
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
+import { useFavorites } from '../../context/FavoritesContext';
 import { useProductCategories } from '../../hooks/useProductCategories';
 import { clamp } from '../../lib/gestures';
 import { getMediaThumbUrl, getMediaUrl, isVideoMediaName, mediaNames, videoPreviewUrl } from '../../lib/media';
-import AddToCartButton from './AddToCartButton';
+import BuyButton from './BuyButton';
 
 const SWIPE_THRESHOLD_PX = 36;
 
@@ -34,6 +35,8 @@ function ProductCard({
   onOpenFullscreen
 }) {
   const { data: categories = [] } = useProductCategories();
+  const { isFavorite, addItem, removeItem } = useFavorites();
+  const favorited = isFavorite(product.id);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const touchStartRef = useRef({ x: 0, y: 0 });
   const suppressClickRef = useRef(false);
@@ -148,6 +151,15 @@ function ProductCard({
     openProduct();
   }, [openProduct]);
 
+  const handleFavoriteClick = useCallback((event) => {
+    event.stopPropagation();
+    if (favorited) {
+      removeItem(product.id);
+    } else {
+      addItem(product);
+    }
+  }, [favorited, addItem, removeItem, product]);
+
   return (
     <article className={clsx('product-card', isSoftDeleted && 'product-card--soft-deleted')}>
       {moderator && !isSoftDeleted && (
@@ -162,6 +174,25 @@ function ProductCard({
       )}
 
       <div className="product-image">
+        {!isSoftDeleted && (
+          <button
+            type="button"
+            className="product-card-favorite-btn"
+            onClick={handleFavoriteClick}
+            aria-label={favorited ? 'Убрать из избранного' : 'Добавить в избранное'}
+          >
+            {favorited ? (
+              <svg viewBox="0 0 24 24" fill="#ff3b30" stroke="#ff3b30" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="20" height="20" aria-hidden="true">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="20" height="20" aria-hidden="true">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+            )}
+          </button>
+        )}
+
         {activeItem ? (
           <button
             type="button"
@@ -238,7 +269,7 @@ function ProductCard({
       </div>
 
       {!isSoftDeleted && (
-        <AddToCartButton product={product} />
+        <BuyButton />
       )}
 
       {isSoftDeleted && (
