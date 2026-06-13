@@ -13,7 +13,7 @@ import './Rating.css';
 const getRatingPoints = (player) => player.rating_points || 0;
 
 function RatingPage({ user, onTabChange }) {
-  const { data: players, isLoading, mutate } = usePlayers();
+  const { data: players, isLoading, mutate } = usePlayers('is_visible = true');
   const moderator = isModerator();
   const [showAddModal, setShowAddModal] = useState(false);
   const [viewingPlayer, setViewingPlayer] = useState(null);

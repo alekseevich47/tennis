@@ -99,6 +99,17 @@ function hasAvatarPatch(patch) {
 }
 
 /**
+ * Soft-delete пользователя (скрытие из рейтинга).
+ * @param {string} targetUserId
+ * @returns {Promise<UserRecord>}
+ */
+export async function deleteUser(targetUserId) {
+  const updated = await pb.collection('users').update(targetUserId, { is_visible: false });
+  auditProfile.userDelete(targetUserId);
+  return /** @type {UserRecord} */ (updated);
+}
+
+/**
  * Безопасное обновление профиля + actualisation через authRefresh (исправляет C10).
  * @param {string} userId
  * @param {Partial<UserRecord> | FormData} patch

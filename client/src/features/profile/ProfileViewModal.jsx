@@ -9,7 +9,7 @@ import Spinner from '../../components/ui/Spinner';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { usePlayers } from '../../hooks/usePlayers';
 import { listTrainings } from '../../services/trainings';
-import { updateUserProfile } from '../../services/auth';
+import { deleteUser, updateUserProfile } from '../../services/auth';
 import pb from '../../services/pb';
 import { error } from '../../lib/log';
 import { compressImage } from '../../lib/compress';
@@ -49,7 +49,7 @@ function isModerator(user) {
  * }} props
  */
 function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChange, onMutated }) {
-  const { alert } = useAlertDialog();
+  const { alert, confirm } = useAlertDialog();
   const { data: players } = usePlayers();
   const avatarInputRef = useRef(null);
   const [trainings, setTrainings] = useState([]);
@@ -301,6 +301,25 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
     }
   };
 
+  const handleDeleteClick = async () => {
+    const confirmed = await confirm({
+      title: 'Удаление пользователя',
+      message: `Вы уверены, что хотите удалить пользователя «${displayName}»? Это действие необратимо.`,
+      confirmText: 'Подтвердить',
+      cancelText: 'Отменить'
+    });
+    if (!confirmed) return;
+
+    try {
+      await deleteUser(targetUserId);
+      onMutated?.(null);
+      onClose?.();
+    } catch (err) {
+      error('delete user:', err);
+      await alert({ title: 'Ошибка', message: 'Не удалось удалить пользователя.' });
+    }
+  };
+
   if (!targetUser) return null;
 
   return (
@@ -308,7 +327,9 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
       <Modal
         isOpen={isOpen}
         onClose={onClose}
-        title={isOwnProfile ? 'Мой профиль' : displayName}
+        title=""
+        showCloseButton={false}
+        ariaLabel={isOwnProfile ? 'Мой профиль' : 'Профиль'}
         size="large"
       >
         <div className="profile-container">
@@ -359,6 +380,42 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                 )}
               </IconButton>
             )}
+
+            {canManageProfile && !isEditing && !isOwnProfile && (
+              <IconButton
+                ariaLabel="Удалить аккаунт игрока"
+                variant="danger"
+                size="md"
+                className="delete-profile-btn"
+                onClick={handleDeleteClick}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#e53935"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                  <path d="M10 11v6" />
+                  <path d="M14 11v6" />
+                  <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                </svg>
+              </IconButton>
+            )}
+
+            <IconButton
+              ariaLabel="Закрыть"
+              variant="ghost"
+              size="md"
+              className="profile-view-close-btn"
+              onClick={onClose}
+            >
+              <span aria-hidden="true">✕</span>
+            </IconButton>
           </div>
 
           {isEditing ? (
@@ -486,7 +543,7 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                 </div>
               </div>
 
-              <AchievementsBlock userId={targetUserId} />
+              <AchievementsBlock userId={targetUserId} collapsible />
 
               <div className="profile-trainings-block">
                 <button
