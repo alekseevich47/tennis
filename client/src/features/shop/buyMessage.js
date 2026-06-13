@@ -1,7 +1,7 @@
-const BUY_REDIRECT_DELAY_MS = 3000;
+const BUY_TOAST_TEXT =
+  'Текст о товаре сохранён в буфер обмена. Вставьте его в чат к администратору.';
 
-const BUY_REDIRECT_TOAST_TEXT =
-  'Сейчас вы будете перенаправлены в чат к администратору. Вставьте в чат автоматически сохраненный текст о выбранном товаре.';
+const BUY_MOBILE_TOAST_ACTION_LABEL = 'Перейти в чат';
 
 /**
  * @param {import('../../services/catalog').ProductRecord} product
@@ -54,4 +54,4 @@ export function openSellerChat(url) {
   window.open(url, '_blank');
 }
 
-export { BUY_REDIRECT_DELAY_MS, BUY_REDIRECT_TOAST_TEXT };
+export { BUY_TOAST_TEXT, BUY_MOBILE_TOAST_ACTION_LABEL };

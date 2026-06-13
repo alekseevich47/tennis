@@ -6,9 +6,9 @@ const ToastContext = createContext(null);
 export function ToastProvider({ children }) {
   const [toast, setToast] = useState(null);
 
-  const showToast = useCallback(({ text } = {}) => {
+  const showToast = useCallback(({ text, actionLabel, onAction, autoDismissMs } = {}) => {
     if (!text) return;
-    setToast({ text, key: Date.now() });
+    setToast({ text, actionLabel, onAction, autoDismissMs, key: Date.now() });
   }, []);
 
   const hideToast = useCallback(() => {
@@ -20,7 +20,16 @@ export function ToastProvider({ children }) {
   return (
     <ToastContext.Provider value={value}>
       {children}
-      {toast && <Toast key={toast.key} text={toast.text} onDismiss={hideToast} />}
+      {toast && (
+        <Toast
+          key={toast.key}
+          text={toast.text}
+          actionLabel={toast.actionLabel}
+          onAction={toast.onAction}
+          autoDismissMs={toast.autoDismissMs}
+          onDismiss={hideToast}
+        />
+      )}
     </ToastContext.Provider>
   );
 }
