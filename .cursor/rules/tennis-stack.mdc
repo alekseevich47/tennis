@@ -41,7 +41,7 @@ alwaysApply: false
 
 - Импорты PB: новый код — из `./pb`, `./auth`, `./posts`; `pocketbase.js` — только legacy re-export.
 - **Не** `window.alert` / `confirm` — `useAlertDialog`.
-- Модалки — `Modal` (focus-trap, `aria-modal`).
+- Модалки — `Modal` (focus-trap, `aria-modal`). Скроллбар в `.ui-modal-body` скрыт (`scrollbar-width: none`, `::webkit-scrollbar { display: none }`), прокрутка работает.
 - Роли: `user` / `moderator` — проверять через `isModerator` из `auth`.
 - Логи: `lib/log` (`warn`, `error`), не `console.log` в прод-путях.
 - `useMaxAuth`: идемпотентный init (`startedRef`), `AbortController`, не блокировать UI тяжёлой зачисткой.
@@ -56,7 +56,7 @@ alwaysApply: false
 - **Аудит посещаемости**: уже реализован через `auditTrainings.markAttendance` / `unmarkAttendance` (domain `ТРЕНИРОВКИ`, actions `Отмечена явка` / `Явка отменена`).
 - **Абонемент**: `MembershipModal` — `available_sessions` и `attendance_count`; после +/- в `MembershipEditModal` счётчики обновляются сразу (ответ `update` → `onMutated`). При отметке на тренировке — `available_sessions > 0`, иначе алерт → `MembershipEditModal`.
 - **Toast-уведомление после отметки**: после успешной `markAttendance` — `showToast({ text: 'У Имя осталось N доступных посещений' })`. Компонент `Toast` (полная ширина, slide-down, по умолчанию 3s автоскрытие, свайп влево/вправо для ручного закрытия с защитой от ложных срабатываний — порог `SWIPE_CLOSE_THRESHOLD = 120px`, игнорировать вертикальный скролл если `|deltaY| > |deltaX| * 1.5`). Опционально: `showToast({ text, actionLabel, onAction })` — кнопка действия (`.ui-toast__action`, ghost на тёмном фоне), **без автоскрытия**; закрытие по кнопке, свайпу или после `onAction`. `ToastProvider` в `App.jsx`, хук `useToast()`.
-- **Просмотр профиля из рейтинга**: `ProfileViewModal` — read-only профиль любого пользователя (клик по строке в `RatingPage`). Надпись «Мой профиль» и кнопка «Абонемент» — только для владельца. Кнопка «Редактировать» (карандаш) — только для владельца и модератора.
+- **Просмотр профиля из рейтинга**: `ProfileViewModal` — read-only профиль любого пользователя (клик по строке в `RatingPage`). Заголовок модалки: **всегда пустой** (`title=""`), стандартный крестик скрыт (`showCloseButton={false}`), `ariaLabel="Профиль"`. Вместо заголовка — ряд абсолютно спозиционированных кнопок в `.profile-view-actions` (слева-направо): кнопка «Абонемент» (`left: 16px`, только для владельца), «Редактировать» (карандаш, `right: 96px`, только для владельца и модератора), «Удалить» (красная контурная корзинка, `variant="danger"`, `right: 56px`, только для модератора на чужом профиле не в режиме редактирования), кастомный крестик ✕ (`right: 16px`, всегда).
 - **Редактирование профиля**: доступно владельцу и модератору. В форме: `birth_date` (date) вместо возраста, загрузка аватара (один файл, через `FormData`), `section_start_date` (только для модератора). Аудит: `auditProfile.profileEdit` с полями `changedFields` и `editedByModerator`.
 - **Аватар — единый подход**: везде `<Avatar user={user} size="..." />`. Компонент сам вызывает `getUserAvatarData(user)` из `lib/avatar.js`, который проверяет `avatar_url` (MAX Bridge) → `avatar` (PocketBase file field). Никакого ручного вычисления src.
 - **Загрузка нового аватара**: при сборке `FormData` с `avatarFile` обязательно добавлять `fd.append('avatar_url', '')` перед `fd.append('avatar', file)` — иначе старый `avatar_url` (MAX Bridge) перекроет новый файл в `getUserAvatarData`.
@@ -76,7 +76,7 @@ alwaysApply: false
 
 - Коллекции и поля — по `schema.json`; не выдумывать имена.
 - **trainings**: `attended_users` (relation → users), `booked_users` (relation → users), `date`, `duration`, `type`, `max_slots`, `location`, `description`, `is_closed`, `is_deleted`.
-- **users** (новые поля): `available_sessions` (number, min: 0) — остаток абонемента (списание при явке); `birth_date` (date); `section_start_date` (date, nullable); `attendance_count` — всего использованных посещений (+1 при явке, –1 при отмене).
+- **users** (новые поля): `available_sessions` (number, min: 0) — остаток абонемента (списание при явке); `birth_date` (date); `section_start_date` (date, nullable); `attendance_count` — всего использованных посещений (+1 при явке, –1 при отмене); `is_visible` (boolean, default true) — видимость в рейтинге (false = soft-delete модератором). При создании записи PB-хук `pb_hooks/users_default_visible.pb.js` (`onRecordBeforeCreateRequest`) выставляет `is_visible = true`.
 - Загрузка файлов — через PB file fields; URL медиа — `lib/media.js` / `config.js` (`MEDIA_BASE_URL`).
 - Ошибки API — ловить в `services/*`, в UI показывать коротко через AlertDialog.
 
@@ -102,9 +102,17 @@ alwaysApply: false
   - `components/AchievementsBlock.jsx` — список достижений с 5 медалями: полученные — цветные (из PB), неполученные — `grayscale(100%)` + `opacity: 0.35`. При наведении (ПК) / клике (мобильные) на любой элемент строки достижения — всплывающий попап «Текущий уровень: *название*».
   - `components/FloatingAchievements.jsx` — плавающие иконки полученных достижений на фоне области аватара (position: absolute, z-index: 0, pointer-events: none, анимация через CSS @keyframes без пересечений).
 - **Иконки**: хранятся в PB `achievement_levels.icon`. Локальные файлы `client/src/assets/ach/` удалены после заливки в БД.
-- **Отображение в профиле**: в `ProfilePage` и `ProfileViewModal` — подраздел «Достижения» (между «Статистика игр» и «Посещенные тренировки»). Плавающие иконки — в области `.profile-view` (под аватаром, именем, мета-инфо).
+- **Отображение в профиле**: в `ProfilePage` и `ProfileViewModal` — подраздел «Достижения» (между «Статистика игр» и «Посещенные тренировки»). Блок достижений — **сворачиваемый** (проп `collapsible`, по умолчанию свёрнут), раскрывается по клику на заголовок (стрелка ▼/▲ + счётчик `(N)`). Плавающие иконки — в области `.profile-view` (под аватаром, именем, мета-инфо). Стили анимации: `will-change: transform`, `animation-fill-mode: backwards`, `contain: layout style paint` на `.floating-achievements` — для плавного старта без рывков при монтировании.
 - **Ренейминг тренировок**: «Групповая тренировка» → «Тренировка» во всём UI (поле `type` в БД не меняется).
 - **Посещенные тренировки**: список свёрнут по умолчанию, раскрывается по клику на заголовок (стрелка ▼/▲).
+
+## Удаление пользователей (soft-delete)
+
+- **Поле `is_visible`** (boolean, default `true`) в коллекции `users`. При «удалении» модератором через `ProfileViewModal` → `is_visible = false`.
+- **Видимость**: скрытые пользователи (`is_visible = false`) не показываются только в рейтинге — `RatingPage` передаёт `usePlayers('is_visible = true')`. В комментариях, тренировках, соревнованиях — видны (загрузка через `getOne` / expand, без фильтра).
+- **API**: `deleteUser(targetUserId)` в `services/auth.js` — `pb.collection('users').update(targetUserId, { is_visible: false })` + аудит.
+- **Аудит**: `auditProfile.userDelete(targetUserId)` — domain `ПРОФИЛЬ`, action `Пользователь удалён`, details: `targetUserId, deletedBy, deletedByName`.
+- **UI**: кнопка-корзинка (контурная красная SVG, `IconButton variant="danger"`) в `ProfileViewModal`, справа от карандаша. При клике — `confirm()` через `useAlertDialog` с предупреждением о необратимости. При подтверждении: `deleteUser()` → `onMutated(null)` → `onClose()`.
 
 ## Магазин — избранное и кнопка «Купить»
 

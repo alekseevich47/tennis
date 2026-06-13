@@ -24,6 +24,20 @@
         "type": "text"
       },
       {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text3687080900",
+        "max": 0,
+        "min": 0,
+        "name": "full_name",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
         "cost": 0,
         "hidden": true,
         "id": "password901924565",
@@ -218,20 +232,6 @@
         "type": "text"
       },
       {
-        "autogeneratePattern": "",
-        "hidden": false,
-        "id": "text3687080900",
-        "max": 0,
-        "min": 0,
-        "name": "full_name",
-        "pattern": "",
-        "presentable": false,
-        "primaryKey": false,
-        "required": false,
-        "system": false,
-        "type": "text"
-      },
-      {
         "hidden": false,
         "id": "number2704281778",
         "max": null,
@@ -316,6 +316,15 @@
         "required": false,
         "system": false,
         "type": "date"
+      },
+      {
+        "hidden": false,
+        "id": "bool1821142673",
+        "name": "is_visible",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
       },
       {
         "hidden": false,

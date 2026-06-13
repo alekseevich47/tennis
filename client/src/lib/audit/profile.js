@@ -47,5 +47,18 @@ export const auditProfile = {
    */
   profileEditError(err, userId) {
     writeAuditError(DOMAIN, 'Ошибка редактирования профиля', err, { targetUserId: userId });
+  },
+
+  /**
+   * @param {string} targetUserId
+   */
+  userDelete(targetUserId) {
+    const actor = getActor();
+
+    writeAudit(DOMAIN, 'Пользователь удалён', {
+      targetUserId,
+      deletedBy: actor.userId,
+      deletedByName: actor.userFullName
+    });
   }
 };

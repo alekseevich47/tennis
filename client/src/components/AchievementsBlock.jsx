@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 import { useAchievements } from '../hooks/useAchievements';
 import Spinner from './ui/Spinner';
@@ -89,39 +89,52 @@ function AchievementRow({ achievement }) {
 }
 
 /**
- * @param {{ userId?: string | null, className?: string }} props
+ * @param {{ userId?: string | null, className?: string, collapsible?: boolean }} props
  */
-function AchievementsBlock({ userId, className }) {
+function AchievementsBlock({ userId, className, collapsible = false }) {
+  const [expanded, setExpanded] = useState(false);
   const { data, isLoading, error } = useAchievements(userId);
 
   if (!userId) return null;
 
-  if (isLoading) {
-    return (
-      <div className={clsx('profile-achievements-block', className)}>
-        <h3>Достижения</h3>
-        <Spinner label="Загрузка достижений..." inline />
-      </div>
-    );
-  }
+  const count = !isLoading && !error && data ? data.length : null;
 
-  if (error || !data?.length) {
-    return (
-      <div className={clsx('profile-achievements-block', className)}>
-        <h3>Достижения</h3>
-        <p className="no-data-text">Не удалось загрузить достижения</p>
-      </div>
-    );
-  }
+  const header = collapsible ? (
+    <button
+      type="button"
+      className="profile-achievements-toggle"
+      onClick={() => setExpanded((v) => !v)}
+      aria-expanded={expanded}
+    >
+      <h3>Достижения{count !== null ? ` (${count})` : ''}</h3>
+      <span className="profile-achievements-arrow" aria-hidden="true">
+        {expanded ? '▲' : '▼'}
+      </span>
+    </button>
+  ) : (
+    <h3>Достижения</h3>
+  );
 
-  return (
-    <div className={clsx('profile-achievements-block', className)}>
-      <h3>Достижения</h3>
+  const renderContent = () => {
+    if (isLoading) {
+      return <Spinner label="Загрузка достижений..." inline />;
+    }
+    if (error || !data?.length) {
+      return <p className="no-data-text">Не удалось загрузить достижения</p>;
+    }
+    return (
       <div className="achievements-list">
         {data.map((achievement) => (
           <AchievementRow key={achievement.id} achievement={achievement} />
         ))}
       </div>
+    );
+  };
+
+  return (
+    <div className={clsx('profile-achievements-block', className)}>
+      {header}
+      {(!collapsible || expanded) && renderContent()}
     </div>
   );
 }

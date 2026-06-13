@@ -65,6 +65,12 @@
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.ui-modal-body::-webkit-scrollbar {
+  display: none;
 }
 
 .ui-modal-footer {
