@@ -28,7 +28,6 @@ export default function SearchBar({
   const inputRef = useRef(null);
   const prevQueryRef = useRef(searchQuery);
   const [clearAnim, setClearAnim] = useState('');
-  const [hidePlaceholder, setHidePlaceholder] = useState(false);
 
   const setOpen = useCallback(
     (open) => {
@@ -43,7 +42,6 @@ export default function SearchBar({
   }, [setOpen]);
 
   const handleOpen = useCallback(() => {
-    setHidePlaceholder(true);
     if (!isOpen) setOpen(true);
   }, [isOpen, setOpen]);
 
@@ -66,7 +64,6 @@ export default function SearchBar({
     if (isOpen) return;
     inputRef.current?.blur();
     onFocusChange?.(false);
-    setHidePlaceholder(false);
   }, [isOpen, onFocusChange]);
 
   useEffect(() => {
@@ -74,6 +71,7 @@ export default function SearchBar({
 
     const handlePointerDown = (event) => {
       if (rootRef.current?.contains(event.target)) return;
+      if (event.target instanceof Element && event.target.closest('.category-dropdown')) return;
       if (searchQuery.trim()) return;
       closeSearchUI();
     };
@@ -112,8 +110,8 @@ export default function SearchBar({
     return undefined;
   }, [searchQuery]);
 
-  const showClear = searchQuery.length > 0 || clearAnim === 'dissolving';
-  const showPlaceholder = searchQuery.length === 0 && !hidePlaceholder;
+  const showClear = isOpen && (searchQuery.length > 0 || clearAnim === 'dissolving');
+  const showPlaceholder = isOpen && searchQuery.length === 0;
 
   return (
     <div
@@ -144,14 +142,8 @@ export default function SearchBar({
           type="text"
           value={searchQuery}
           onChange={(event) => onSearchChange(event.target.value)}
-          onClick={(event) => {
-            event.stopPropagation();
-            setHidePlaceholder(true);
-          }}
-          onFocus={() => {
-            setHidePlaceholder(true);
-            onFocusChange?.(true);
-          }}
+          onClick={(event) => event.stopPropagation()}
+          onFocus={() => onFocusChange?.(true)}
           onBlur={() => onFocusChange?.(false)}
           aria-label="Поиск по названию или #артикулу"
           inputMode="search"
