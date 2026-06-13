@@ -28,16 +28,21 @@ export function buildBuyMessage(products) {
 }
 
 /**
+ * @returns {boolean}
+ */
+export function isMobileMaxPlatform() {
+  const platform = window.WebApp?.platform;
+  return platform === 'ios' || platform === 'android';
+}
+
+/**
  * @param {string} url
  */
 export function openSellerChat(url) {
   const webApp = window.WebApp;
-  const platform = webApp?.platform;
-  const isMobileMax = platform === 'ios' || platform === 'android';
 
-  if (isMobileMax && webApp?.openMaxLink) {
+  if (isMobileMaxPlatform() && webApp?.openMaxLink) {
     webApp.openMaxLink(url);
-    webApp.close?.();
     return;
   }
 
