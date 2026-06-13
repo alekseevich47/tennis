@@ -382,6 +382,20 @@ button.gallery-item-like:hover:not(:disabled) {
   align-items: center;
   gap: 8px;
   padding-right: 74px;
+  cursor: pointer;
+}
+
+.gallery-comment-item__header:hover {
+  opacity: 0.8;
+}
+
+.comment-restricted-message {
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #e53935;
+  background: #fff5f5;
+  border-top: 1px solid #fecaca;
+  text-align: center;
 }
 
 .gallery-comment-item__avatar {
