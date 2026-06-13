@@ -112,14 +112,11 @@
   font-size: 16px;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(8px);
-  transition: opacity 0.35s ease 0.45s, visibility 0.35s ease 0.45s, transform 0.35s ease 0.45s;
 }
 
 .search.open .search-placeholder {
   opacity: 1;
   visibility: visible;
-  transform: translateY(0);
 }
 
 .search-clear {

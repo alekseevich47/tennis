@@ -4,8 +4,9 @@ import { useProductCategories } from '../../hooks/useProductCategories';
 import './CategoryDropdown.css';
 
 const PLACEHOLDER = 'Все категории';
-/** width 0.5s @ 0.9s delay + transform 0.9s @ 0.9s delay */
-const SEARCH_CLOSE_ANIM_MS = 1900;
+/** width 0.5s @ 0.9s delay */
+const SEARCH_CLOSE_ANIM_MS = 1450;
+const CATEGORY_EXPANDED_WIDTH = 200;
 
 /**
  * @param {{
@@ -33,6 +34,7 @@ export default function CategoryDropdown({
   const searchCloseAnimCleanupRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isLabelVisible, setIsLabelVisible] = useState(true);
+  const [isExpandingFromSearch, setIsExpandingFromSearch] = useState(false);
   const { data: categories = [] } = useProductCategories();
 
   const selectedCategoryName = useMemo(() => {
@@ -62,15 +64,33 @@ export default function CategoryDropdown({
 
   const scheduleOpenAfterSearchClose = useCallback(() => {
     const root = rootRef.current;
-    if (!root) {
-      openAfterSearchClose();
-      return;
-    }
+    if (!root || !pendingOpenRef.current) return;
 
     cancelSearchCloseAnimation();
+    setIsExpandingFromSearch(true);
 
     let opened = false;
-    const cleanup = () => {
+    const finish = () => {
+      if (opened || !pendingOpenRef.current) return;
+      if (root.offsetWidth < CATEGORY_EXPANDED_WIDTH) {
+        pendingOpenTimerRef.current = window.setTimeout(finish, 50);
+        return;
+      }
+      opened = true;
+      searchCloseAnimCleanupRef.current?.();
+      openAfterSearchClose();
+      setIsExpandingFromSearch(false);
+    };
+
+    const handleTransitionEnd = (event) => {
+      if (event.target !== root) return;
+      if (event.propertyName !== 'width') return;
+      finish();
+    };
+
+    root.addEventListener('transitionend', handleTransitionEnd);
+    pendingOpenTimerRef.current = window.setTimeout(finish, SEARCH_CLOSE_ANIM_MS);
+    searchCloseAnimCleanupRef.current = () => {
       root.removeEventListener('transitionend', handleTransitionEnd);
       if (pendingOpenTimerRef.current) {
         window.clearTimeout(pendingOpenTimerRef.current);
@@ -78,22 +98,6 @@ export default function CategoryDropdown({
       }
       searchCloseAnimCleanupRef.current = null;
     };
-
-    const finish = () => {
-      if (opened) return;
-      opened = true;
-      cleanup();
-      openAfterSearchClose();
-    };
-
-    const handleTransitionEnd = (event) => {
-      if (event.target !== root) return;
-      if (event.propertyName === 'transform') finish();
-    };
-
-    root.addEventListener('transitionend', handleTransitionEnd);
-    pendingOpenTimerRef.current = window.setTimeout(finish, SEARCH_CLOSE_ANIM_MS);
-    searchCloseAnimCleanupRef.current = cleanup;
   }, [cancelSearchCloseAnimation, openAfterSearchClose]);
 
   const handleTriggerClick = useCallback(() => {
@@ -132,6 +136,7 @@ export default function CategoryDropdown({
       clearPendingOpen();
       setIsOpen(false);
       setIsLabelVisible(false);
+      setIsExpandingFromSearch(false);
       return;
     }
 
@@ -156,6 +161,10 @@ export default function CategoryDropdown({
         setIsLabelVisible(false);
         return;
       }
+      if (!isExpandingFromSearch) {
+        setIsLabelVisible(true);
+        return;
+      }
       measure.textContent = selectedCategoryName;
       const textWidth = measure.offsetWidth;
       const availableWidth = trigger.clientWidth - 52;
@@ -167,7 +176,7 @@ export default function CategoryDropdown({
     const observer = new ResizeObserver(checkLabelFit);
     observer.observe(trigger);
     return () => observer.disconnect();
-  }, [isSearchOpen, selectedCategoryName]);
+  }, [isSearchOpen, isExpandingFromSearch, selectedCategoryName]);
 
   useEffect(() => () => cancelSearchCloseAnimation(), [cancelSearchCloseAnimation]);
 
@@ -183,7 +192,7 @@ export default function CategoryDropdown({
         className
       )}
     >
-      <span ref={labelMeasureRef} className="category-dropdown__label-measure" aria-hidden="true" />
+      <div ref={labelMeasureRef} className="category-dropdown__label-measure" aria-hidden="true" />
 
       <select
         className="category-dropdown__native"
