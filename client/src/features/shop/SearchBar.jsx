@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import './SearchBar.css';
 
-const PLACEHOLDER_WORDS = ['Можете', 'что-нибудь', 'написать'];
+const PLACEHOLDER_TEXT = 'я жду...';
 
 /**
  * @param {{
@@ -11,6 +11,7 @@ const PLACEHOLDER_WORDS = ['Можете', 'что-нибудь', 'написа�
  *   isOpen: boolean,
  *   onOpenChange: (open: boolean) => void,
  *   onSearchToggle?: (open: boolean) => void,
+ *   onFocusChange?: (focused: boolean) => void,
  *   className?: string
  * }} props
  */
@@ -20,6 +21,7 @@ export default function SearchBar({
   isOpen,
   onOpenChange,
   onSearchToggle,
+  onFocusChange,
   className
 }) {
   const rootRef = useRef(null);
@@ -35,10 +37,9 @@ export default function SearchBar({
     [onOpenChange, onSearchToggle]
   );
 
-  const closeSearch = useCallback(() => {
+  const closeSearchUI = useCallback(() => {
     setOpen(false);
-    onSearchChange('');
-  }, [setOpen, onSearchChange]);
+  }, [setOpen]);
 
   const handleOpen = useCallback(() => {
     if (!isOpen) setOpen(true);
@@ -60,16 +61,22 @@ export default function SearchBar({
   }, [isOpen]);
 
   useEffect(() => {
+    if (isOpen) return;
+    inputRef.current?.blur();
+    onFocusChange?.(false);
+  }, [isOpen, onFocusChange]);
+
+  useEffect(() => {
     if (!isOpen) return undefined;
 
     const handlePointerDown = (event) => {
-      if (!rootRef.current?.contains(event.target)) {
-        closeSearch();
-      }
+      if (rootRef.current?.contains(event.target)) return;
+      if (searchQuery.trim()) return;
+      closeSearchUI();
     };
 
     const handleKeyDown = (event) => {
-      if (event.key === 'Escape') closeSearch();
+      if (event.key === 'Escape' && !searchQuery.trim()) closeSearchUI();
     };
 
     document.addEventListener('pointerdown', handlePointerDown);
@@ -78,7 +85,7 @@ export default function SearchBar({
       document.removeEventListener('pointerdown', handlePointerDown);
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen, closeSearch]);
+  }, [isOpen, searchQuery, closeSearchUI]);
 
   useEffect(() => {
     const hadQuery = prevQueryRef.current.length > 0;
@@ -135,6 +142,8 @@ export default function SearchBar({
           value={searchQuery}
           onChange={(event) => onSearchChange(event.target.value)}
           onClick={(event) => event.stopPropagation()}
+          onFocus={() => onFocusChange?.(true)}
+          onBlur={() => onFocusChange?.(false)}
           aria-label="Поиск по названию или #артикулу"
           inputMode="search"
           autoComplete="off"
@@ -144,12 +153,7 @@ export default function SearchBar({
 
         {showPlaceholder && (
           <div className="search-placeholder" aria-hidden="true">
-            {PLACEHOLDER_WORDS.map((word, index) => (
-              <span key={word} data-index={index}>
-                {word}
-                {index < PLACEHOLDER_WORDS.length - 1 ? '\u00a0' : ''}
-              </span>
-            ))}
+            {PLACEHOLDER_TEXT}
           </div>
         )}
 

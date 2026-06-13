@@ -42,11 +42,20 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
   const [hiddenMediaKey, setHiddenMediaKey] = useState(null);
   const [isButtonVisible, setIsButtonVisible] = useState(true);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
-  const [isSearchTyping, setIsSearchTyping] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const containerRef = useRef(null);
   const scrollTimeoutRef = useRef(null);
-  const searchTypingTimeoutRef = useRef(null);
+  const isSearchOpenRef = useRef(isSearchOpen);
+  const searchQueryRef = useRef(searchQuery);
+
+  useEffect(() => {
+    isSearchOpenRef.current = isSearchOpen;
+  }, [isSearchOpen]);
+
+  useEffect(() => {
+    searchQueryRef.current = searchQuery;
+  }, [searchQuery]);
 
   useEffect(() => {
     onDeletedIdsChange?.(deletedProductIds);
@@ -64,6 +73,10 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
 
     const handleScroll = () => {
       setIsButtonVisible(false);
+      if (isSearchOpenRef.current && !searchQueryRef.current.trim()) {
+        setIsSearchOpen(false);
+        setIsSearchFocused(false);
+      }
       if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
       scrollTimeoutRef.current = window.setTimeout(() => {
         setIsButtonVisible(true);
@@ -80,28 +93,11 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
     };
   }, [moderator]);
 
-  useEffect(() => {
-    if (!searchQuery) {
-      setIsSearchTyping(false);
-      return undefined;
-    }
-
-    setIsSearchTyping(true);
-    if (searchTypingTimeoutRef.current) clearTimeout(searchTypingTimeoutRef.current);
-    searchTypingTimeoutRef.current = window.setTimeout(() => {
-      setIsSearchTyping(false);
-    }, SCROLL_HIDE_DEBOUNCE_MS);
-
-    return () => {
-      if (searchTypingTimeoutRef.current) {
-        clearTimeout(searchTypingTimeoutRef.current);
-        searchTypingTimeoutRef.current = null;
-      }
-    };
-  }, [searchQuery]);
-
   const showAddButton =
-    isButtonVisible && !isCategoryDropdownOpen && !isSearchTyping;
+    isButtonVisible
+    && !isCategoryDropdownOpen
+    && !isSearchFocused
+    && !(isSearchOpen && searchQuery.trim());
 
   const visibleProducts = useMemo(() => {
     if (!products) return [];
@@ -123,9 +119,8 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
     );
   }, [products, moderator, deletedProductIds, searchQuery]);
 
-  const handleCloseSearch = useCallback(() => {
+  const handleCloseSearchUI = useCallback(() => {
     setIsSearchOpen(false);
-    setSearchQuery('');
   }, []);
 
   const handleCreate = useCallback(
@@ -214,7 +209,7 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
           selectedCategoryId={selectedCategoryId}
           onCategoryChange={setSelectedCategoryId}
           isSearchOpen={isSearchOpen}
-          onCloseSearch={handleCloseSearch}
+          onCloseSearch={handleCloseSearchUI}
           onOpenChange={setIsCategoryDropdownOpen}
         />
         <SearchBar
@@ -223,6 +218,7 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
           isOpen={isSearchOpen}
           onOpenChange={setIsSearchOpen}
           onSearchToggle={setIsSearchOpen}
+          onFocusChange={setIsSearchFocused}
         />
       </div>
 
