@@ -1,8 +1,8 @@
 import React, { memo, useRef } from 'react';
 import Avatar from './ui/Avatar';
 import IconButton from './ui/IconButton';
-import CartIcon from '../features/shop/CartIcon';
-import CartDropdown from '../features/shop/CartDropdown';
+import FavoriteIcon from '../features/shop/FavoriteIcon';
+import FavoritesDropdown from '../features/shop/FavoritesDropdown';
 import './AppHeader.css';
 
 /**
@@ -12,11 +12,10 @@ import './AppHeader.css';
  *   onProfileClick: () => void,
  *   onMembershipClick?: () => void,
  *   showShopControls?: boolean,
- *   cartCount?: number,
- *   onCartClick?: () => void,
- *   onOrdersClick?: () => void,
- *   cartDropdownOpen?: boolean,
- *   onCartDropdownClose?: () => void,
+ *   favoritesCount?: number,
+ *   onFavoritesClick?: () => void,
+ *   favoritesDropdownOpen?: boolean,
+ *   onFavoritesDropdownClose?: () => void,
  *   onOpenProduct?: (product: import('../services/catalog').ProductRecord) => void
  * }} props
  */
@@ -26,14 +25,12 @@ function AppHeader({
   onProfileClick,
   onMembershipClick,
   showShopControls = false,
-  cartCount = 0,
-  onCartClick,
-  onOrdersClick,
-  cartDropdownOpen = false,
-  onCartDropdownClose,
+  onFavoritesClick,
+  favoritesDropdownOpen = false,
+  onFavoritesDropdownClose,
   onOpenProduct
 }) {
-  const cartAnchorRef = useRef(null);
+  const favoritesAnchorRef = useRef(null);
   const displayName = user?.full_name || user?.name || 'Гость';
   return (
     <header className="app-header">
@@ -56,35 +53,15 @@ function AppHeader({
       ) : null}
       {showShopControls ? (
         <div className="header-shop-controls">
-          <div ref={cartAnchorRef} className="header-cart-anchor">
-            <CartIcon onClick={onCartClick} />
-            <CartDropdown
-              open={cartDropdownOpen}
-              onClose={onCartDropdownClose}
+          <div ref={favoritesAnchorRef} className="header-favorites-anchor">
+            <FavoriteIcon onClick={onFavoritesClick} />
+            <FavoritesDropdown
+              open={favoritesDropdownOpen}
+              onClose={onFavoritesDropdownClose}
               onOpenProduct={onOpenProduct}
-              cartAnchorRef={cartAnchorRef}
+              favoritesAnchorRef={favoritesAnchorRef}
             />
           </div>
-          <IconButton
-            ariaLabel="Мои заказы"
-            variant="ghost"
-            className="header-orders-btn"
-            onClick={onOrdersClick}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4H6z" />
-              <path d="M3 6h18" />
-              <path d="M16 10a4 4 0 01-8 0" />
-            </svg>
-          </IconButton>
         </div>
       ) : null}
       <button

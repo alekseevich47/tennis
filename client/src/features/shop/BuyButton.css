@@ -1,0 +1,38 @@
+.buy-button {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 48px;
+  margin: 0;
+  padding: 0 16px;
+  border: none;
+  border-radius: 12px;
+  background: #17171b;
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 48px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.buy-button:hover {
+  background: #0a0a0c;
+}
+
+.product-card .buy-button {
+  flex-shrink: 0;
+  margin-top: auto;
+  margin-left: 12px;
+  margin-right: 12px;
+  margin-bottom: 12px;
+  width: calc(100% - 24px);
+  box-sizing: border-box;
+}
+
+.product-detail-content .buy-button {
+  margin-top: 12px;
+}

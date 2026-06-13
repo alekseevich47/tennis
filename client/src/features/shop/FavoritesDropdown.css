@@ -1,4 +1,4 @@
-.cart-dropdown {
+.favorites-dropdown {
   position: fixed;
   left: 0;
   right: auto;
@@ -13,12 +13,12 @@
   overflow: hidden;
 }
 
-.cart-dropdown--visible {
+.favorites-dropdown--visible {
   opacity: 1;
   transform: translateY(0);
 }
 
-.cart-dropdown__empty {
+.favorites-dropdown__empty {
   margin: 0;
   padding: 24px 16px;
   text-align: center;
@@ -26,7 +26,7 @@
   color: #8b98a5;
 }
 
-.cart-dropdown__list {
+.favorites-dropdown__list {
   list-style: none;
   margin: 0;
   padding: 8px 0;
@@ -34,7 +34,7 @@
   overflow-y: auto;
 }
 
-.cart-dropdown__item {
+.favorites-dropdown__item {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -45,14 +45,14 @@
   transition: opacity 200ms ease, max-height 200ms ease;
 }
 
-.cart-dropdown__item--removing {
+.favorites-dropdown__item--removing {
   opacity: 0;
   max-height: 0;
   padding-top: 0;
   padding-bottom: 0;
 }
 
-.cart-dropdown__item-main {
+.favorites-dropdown__item-main {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -67,16 +67,16 @@
   transition: background 0.15s ease;
 }
 
-.cart-dropdown__item-main:hover {
+.favorites-dropdown__item-main:hover {
   background: #f5f7fa;
 }
 
-.cart-dropdown__item-main:focus-visible {
+.favorites-dropdown__item-main:focus-visible {
   outline: 2px solid #007aff;
   outline-offset: 2px;
 }
 
-.cart-dropdown__thumb {
+.favorites-dropdown__thumb {
   width: 44px;
   height: 44px;
   border-radius: 8px;
@@ -85,11 +85,11 @@
   background: #f0f2f5;
 }
 
-.cart-dropdown__thumb--empty {
+.favorites-dropdown__thumb--empty {
   display: block;
 }
 
-.cart-dropdown__title {
+.favorites-dropdown__title {
   font-size: 14px;
   font-weight: 500;
   color: #1f2937;
@@ -100,7 +100,7 @@
   -webkit-box-orient: vertical;
 }
 
-.cart-dropdown__remove {
+.favorites-dropdown__remove {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -116,29 +116,29 @@
   transition: color 0.15s ease, background 0.15s ease;
 }
 
-.cart-dropdown__remove svg {
+.favorites-dropdown__remove svg {
   width: 16px;
   height: 16px;
 }
 
-.cart-dropdown__remove:hover {
+.favorites-dropdown__remove:hover {
   color: #6b7280;
   background: #f0f2f5;
 }
 
-.cart-dropdown__remove:focus-visible {
+.favorites-dropdown__remove:focus-visible {
   outline: 2px solid #007aff;
   outline-offset: 2px;
 }
 
-.cart-dropdown__checkout {
+.favorites-dropdown__checkout {
   display: block;
   width: calc(100% - 24px);
   margin: 4px 12px 12px;
   padding: 12px 16px;
   border: none;
   border-radius: 10px;
-  background: #007aff;
+  background: #17171B;
   color: #ffffff;
   font-size: 15px;
   font-weight: 600;
@@ -146,11 +146,11 @@
   transition: background 0.15s ease;
 }
 
-.cart-dropdown__checkout:hover {
-  background: #0066d6;
+.favorites-dropdown__checkout:hover {
+  background: #2a2a30;
 }
 
-.cart-dropdown__checkout:focus-visible {
+.favorites-dropdown__checkout:focus-visible {
   outline: 2px solid #007aff;
   outline-offset: 2px;
 }

@@ -1,9 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
+import { useFavorites } from '../../context/FavoritesContext';
 import { useProductCategories } from '../../hooks/useProductCategories';
-import AddToCartButton from './AddToCartButton';
+import BuyButton from './BuyButton';
 import { getMediaUrl, isVideoMediaName, mediaNames, videoPreviewUrl } from '../../lib/media';
 
 const SWIPE_THRESHOLD_PX = 36;
@@ -34,6 +35,7 @@ function ProductDetail({
 }) {
   const { alert } = useAlertDialog();
   const { data: categories = [] } = useProductCategories();
+  const { isFavorite, addItem, removeItem } = useFavorites();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const touchStartRef = useRef({ x: 0, y: 0 });
   const suppressClickRef = useRef(false);
@@ -80,7 +82,19 @@ function ProductDetail({
     window.clearTimeout(suppressClickTimerRef.current);
   }, []);
 
+  const handleFavoriteClick = useCallback((event) => {
+    event.stopPropagation();
+    if (!product) return;
+    if (isFavorite(product.id)) {
+      removeItem(product.id);
+    } else {
+      addItem(product);
+    }
+  }, [isFavorite, addItem, removeItem, product]);
+
   if (!product) return null;
+
+  const favorited = isFavorite(product.id);
 
   const handleCopyArticle = async () => {
     try {
@@ -212,6 +226,23 @@ function ProductDetail({
         onTouchStart={handleGalleryTouchStart}
         onTouchEnd={handleGalleryTouchEnd}
       >
+        <button
+          type="button"
+          className="product-card-favorite-btn"
+          onClick={handleFavoriteClick}
+          aria-label={favorited ? 'Убрать из избранного' : 'Добавить в избранное'}
+        >
+          {favorited ? (
+            <svg viewBox="0 0 24 24" fill="#ff3b30" stroke="#ff3b30" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="20" height="20" aria-hidden="true">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="20" height="20" aria-hidden="true">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+          )}
+        </button>
+
         {activeImage ? (
           <button
             type="button"
@@ -289,7 +320,7 @@ function ProductDetail({
         <p className="product-price">{product.price} ₽</p>
         {product.out_of_stock && <p className="product-out-of-stock-text">Нет в наличии</p>}
 
-        <AddToCartButton product={product} />
+        <BuyButton />
       </div>
     </Modal>
   );

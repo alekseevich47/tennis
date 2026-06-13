@@ -17,8 +17,9 @@ alwaysApply: false
 - **clsx** — условные классы в JSX.
 - **date-fns** — форматирование/парсинг дат.
 - **react-error-boundary** — предохранители (ErrorBoundary) для изоляции падений.
-- **GSAP** (GreenSock Animation Platform) + **MorphSVGPlugin** — high-performance анимации (AddToCartButton, морфинг SVG).
+- **GSAP** (GreenSock Animation Platform) — удалён из зависимостей после замены AddToCartButton на статичный BuyButton.
 - `base: '/tt-api/'` в production.
+- `MAX_SELLER_URL` — ссылка на чат с продавцом/администратором в MAX; кнопка «Купить» открывает её через `window.WebApp.openLink`.
 
 ## Структура `client/src`
 
@@ -27,9 +28,9 @@ alwaysApply: false
 | `App.jsx` | Shell: табы, `flushPendingDeletes`, soft-delete буферы, `ToastProvider` |
 | `features/*` | Страницы по разделам (feed, trainings, shop, …) |
 | `features/trainings/components/*` | Модалки тренировок: `EditTrainingModal`, `UserPickerModal`, `ArchiveModal`, `MembershipOverviewModal`, `DateRangeModal` |
-| `features/shop/*` | Магазин: `ShopPage`, `ProductCard`, `ProductDetail`, `ProductForm`, `CartIcon`, `CartDropdown`, `SearchBar`, `CategoryDropdown`, `AddToCartButton`, `OrdersModal` |
+| `features/shop/*` | Магазин: `ShopPage`, `ProductCard`, `ProductDetail`, `ProductForm`, `FavoriteIcon`, `FavoritesDropdown`, `BuyButton`, `SearchBar`, `CategoryDropdown` |
 | `features/profile/*` | Профиль: `ProfilePage`, `MembershipModal`, `MembershipEditModal`, `ProfileViewModal` |
-| `context/*` | React-контексты: `CartContext` (корзина, sessionStorage) |
+| `context/*` | React-контексты: `FavoritesContext` (избранное, localStorage) |
 | `hooks/*` | `useMaxAuth`, `usePosts`, `usePlayers`, … — SWR + побочные эффекты |
 | `services/*` | API: `pb.js`, `auth.js`, `users.js`, `catalog.js`, `trainings.js`, … |
 | `components/ui/*` | `Modal`, `AlertDialog`, `Avatar`, `IconButton`, `Toast` — переиспользовать |
@@ -105,27 +106,26 @@ alwaysApply: false
 - **Ренейминг тренировок**: «Групповая тренировка» → «Тренировка» во всём UI (поле `type` в БД не меняется).
 - **Посещенные тренировки**: список свёрнут по умолчанию, раскрывается по клику на заголовок (стрелка ▼/▲).
 
-## Магазин — корзина и заказы
+## Магазин — избранное и кнопка «Купить»
 
-- **Корзина**: локальное состояние (`CartContext` + `useCart`), хранение в `sessionStorage` (`cart_items`). SWR не используется. `CartProvider` оборачивает `ShopPage` в `App.jsx`.
-- **CartContext** (`client/src/context/CartContext.jsx`): `items[]` (массив `{ product, quantity }`), методы `addItem`, `removeItem`, `clearCart`, `totalCount`. `addItem` проверяет уникальность по `product.id`.
-- **CartIcon** (`client/src/features/shop/CartIcon.jsx`): референс — `shop_cart_button.txt` (Codepen: varcoderisamudha/VoYWxy). CSS-переменные для цветов (`--stroke`, `--background`, `--inner`, `--count-background: #007aff`). 3D-мешок: `.bag > .front + .back + .inner` с `perspective: 64px`, `rotateX` и `transform-origin: 50% 100%`. Badge `.count` — круглый, позиция **справа** от мешка (не снизу). Canvas + rope-физика (RopePoint, Vector2, App, Rope) — **переносится полностью** из референса (нативный Canvas API + `requestAnimationFrame`, без внешних зависимостей). Анимации: `@keyframes bounce` (мешок), `@keyframes moveUp`/`moveDown` (число в badge). Состояния: `.open` (мешок открыт), `.counted` (badge виден), `.bounce` (подскок при изменении количества).
-- **AppHeader**: пропсы `onCartClick`, `onOrdersClick`, `cartCount`, `showShopControls` (только для таба «Магазин»). `<CartIcon>` и иконка заказов (пустотелая контурная SVG) — справа от заголовка, перед профилем.
-- **CartDropdown** (`client/src/features/shop/CartDropdown.jsx`): выпадает под иконкой корзины (≈280px). `position: fixed` — координаты `top`/`left` вычисляются через `useLayoutEffect` из `cartAnchorRef.getBoundingClientRect()` (left зажат: `max(8, min(anchorLeft, window.innerWidth - width - 8))`). Список товаров: thumbnail 44×44 (`getMediaThumbUrl 400x0`), название, серый крестик. Клик по товару → `ProductDetail`. Крестик → `removeItem` + fade (opacity + max-height 200ms). Кнопка «Купить» (`#007aff`) → `createOrder` → `clearCart` → toast.
+- **Избранное**: локальное состояние (`FavoritesContext` + `useFavorites`), хранение в `localStorage` (`favorite_items`). SWR не используется. `FavoritesProvider` оборачивает `ShopPage` в `App.jsx`. Данные сохраняются между сессиями.
+- **FavoritesContext** (`client/src/context/FavoritesContext.jsx`): `items[]` (массив `{ product, quantity }`), методы `addItem`, `removeItem`, `clearFavorites`, `totalCount`, `isFavorite(productId)`. `addItem` проверяет уникальность по `product.id`.
+- **FavoriteIcon** (`client/src/features/shop/FavoriteIcon.jsx`): простая SVG-иконка — пустотелое серое сердечко (контур `#8b98a5`, без заливки). Badge (красный кружок со счётчиком) — справа-сверху, видим при `totalCount > 0`. Без Canvas/Rope/GSAP-анимаций.
+- **AppHeader**: пропсы `onFavoritesClick`, `favoritesCount`, `showShopControls` (только для таба «Магазин»). `<FavoriteIcon>` — справа от заголовка, перед профилем. Иконка заказов удалена.
+- **FavoritesDropdown** (`client/src/features/shop/FavoritesDropdown.jsx`): выпадает под иконкой сердечка. `position: fixed` — координаты `top`/`left` вычисляются через `useLayoutEffect` из `cartAnchorRef.getBoundingClientRect()` (left зажат: `max(8, min(anchorLeft, window.innerWidth - width - 8))`). Список товаров: thumbnail 44×44 (`getMediaThumbUrl 400x0`), название, серый крестик удаления. Клик по товару → `ProductDetail`. Крестик → `removeItem` + fade (opacity + max-height 200ms). Кнопка «Купить» (чёрная `#17171B`) → `window.WebApp.openLink(MAX_SELLER_URL)` — переход в чат с администратором.
+- **BuyButton** (`client/src/features/shop/BuyButton.jsx`): простая чёрная кнопка (`background: #17171B`, белый текст, `border-radius: 12px`, `width: 100%`, без анимаций). При клике → `window.WebApp.openLink(MAX_SELLER_URL)`. Используется в `ProductCard`, `ProductDetail` и `FavoritesDropdown`.
+- **Сердечко избранного на товарах**: пустотелая серая SVG-иконка в левом верхнем углу области фото (`position: absolute; top: 8px; left: 8px; z-index: 2`):
+  - `ProductCard` — поверх `.product-image`
+  - `ProductDetail` — поверх `.product-detail-gallery`
+  - При клике: `e.stopPropagation()` + toggle `addItem(product)` / `removeItem(product.id)`.
+  - Активное состояние: заливка `#ff3b30` (красное сердечко).
+- **Раздел «Заказы»** (`OrdersModal`, `useOrders`) — удалён полностью. Коллекция `orders` в PB — удалена.
+- **Стили**: каждый компонент — собственный CSS-файл, без внешних библиотек. Старые стили `.shop-header-bar`, `.shop-search-btn`, `.shop-search-input`, `.shop-category-filter`, `.buy-btn` — удалить из `Shop.css`. Старые файлы `CartIcon.*`, `CartDropdown.*`, `AddToCartButton.*`, `OrdersModal.*` — удалены.
 - **SearchBar** (`client/src/features/shop/SearchBar.jsx`): референс — `search_button_1.txt` (Codepen: aaroniker/pZgPvd). Круглая кнопка-лупа (SVG) → при клике раскрывается: лупа смещается **влево** (иконка — левый flex-item, `flex-direction: row`, поле растёт вправо; SearchBar расширяется влево за счёт `justify-content: space-between` в `.shop-header-bar-new`). Крестик очистки (`.search-clear`) — на **правом** краю строки: `@keyframes crossForm` (2 палочки → X), `@keyframes crossDissolve`. `.search-placeholder` — `position: absolute` поверх input (не в нормальном потоке). `.search-field` — `height: 44px`, input — `height: 100%`. `<input>` имеет `inputMode="search"` и `autoCorrect="off"`. Поиск по `#артикул` и названию. Закрытие: клик вне / Escape.
 - **CategoryDropdown** (`client/src/features/shop/CategoryDropdown.jsx`): референс — `drop_category.txt` (Codepen: aaroniker/XxBjKN). CSS-переменные (светлая тема: `--background: #fff`, `--border: #dce6f2`, `--text: #1f2937`). Кнопка с названием + стрелка (2 палочки, rotate ±50°). Список: `transform: scale(.8)→scale(1)` + `cubic-bezier(.4,.6,.5,1.32)`. Пункты: `translateX(6px)→0` с каскадными задержками. Активный пункт — галочка из 2 палочек. При `SearchBar.isOpen`: кнопка → гамбургер (3 полоски), смещается влево. Клик по гамбургеру → закрыть поиск. **Анимация возврата**: `transition: transform 0.9s ease 0.9s, width 0.5s ease 0.9s` — задержка 0.9s гарантирует, что CategoryDropdown возвращается только после полного collapse SearchBar.
-- **AddToCartButton** (`client/src/features/shop/AddToCartButton.jsx`): референс — `add_button.txt` (Codepen: aaroniker/pogGgbx). Реализация через **GSAP** + MorphSVGPlugin (как в оригинале). Светлая тема. CSS-переменные: `--background-default: #17171B`, `--cart-tick-color: #34c759`. Три SVG внутри: `svg.morph`, `.shirt`, `.cart`. 3 состояния: idle («В корзину») → animating (~2.5s) → done («В корзине»). Кнопка `width: 100%`, `border-radius: 12px`. **Текст центрируется**: в disabled-состоянии (не анимация) span имеет `transform: translateX(0) translateZ(0)` — переопределяет дефолтный `--text-x: 12px`. Вставляется в `ProductCard` (внизу) и `ProductDetail`.
-- **OrdersModal** (`client/src/features/shop/OrdersModal.jsx`):
-  - Пользователь: список заказов (preview товара, название, цена, серый крестик удаления). Красная контурная корзина — удалить заказ. Статусы: «Ожидает»/«Выполнен» (зелёный)/«Отменён» (красный). После `completed`/`cancelled` — удаление заблокировано.
-  - Модератор: фильтр статусов (Ожидает/Выполнено/Удалено), default «Ожидает». В заказе: аватарка + `full_name` пользователя, зелёная галочка (выполнить), красная корзина (отменить).
-- **SWR-хуки**: `useOrders({ status, signal })` — ключ `['orders', status]`.
-- **Коллекция `orders` в PB**: `user` (relation → users), `items` (json: `[{ productId, title, price, imageFileName, collectionId, productCollectionId }]`), `status` (select: `pending`/`completed`/`cancelled`), `created`, `updated`. Правила: list/view — владелец или модератор; create — авторизованный; update/delete — владелец при `pending` или модератор.
-- **API в `services/catalog.js`**: `createOrder`, `listOrders`, `updateOrderStatus`, `removeOrderItem`, `deleteOrder`.
-- **Аудит** (`lib/audit/shop.js`): `orderCreate`, `orderStatusChange`, `orderItemRemoved`, `orderDeleted`.
-- **Стили**: каждый компонент — собственный CSS-файл, без внешних библиотек. Старые стили `.shop-header-bar`, `.shop-search-btn`, `.shop-search-input`, `.shop-category-filter`, `.buy-btn` — удалить из `Shop.css`.
 
 ## Ограничения при правках
 
 - Минимальный diff; не трогать `client/dist/`, `node_modules`, `.env`.
-- Не переводить проект на TS, не добавлять новые UI-библиотеки без запроса. GSAP — разрешён.
+- Не переводить проект на TS, не добавлять новые UI-библиотеки без запроса.
 - Коммиты и push — только по явной просьбе пользователя.
