@@ -6,7 +6,7 @@ import { auditProfile } from '../lib/audit';
 
 /**
  * @typedef {Object} UserRecord
- * @property {string} id
+ * @property {string} [id]
  * @property {string} [full_name]
  * @property {string} [role]
  * @property {string} [email]
@@ -18,7 +18,82 @@ import { auditProfile } from '../lib/audit';
  * @property {number} [games_count]
  * @property {number} [wins]
  * @property {number} [losses]
+ * @property {boolean} [is_banned]
+ * @property {string} [ban_reason]
+ * @property {string} [banned_at]
+ * @property {boolean} [can_comment]
+ * @property {string} [comment_restriction_reason]
  */
+
+const BAN_INFO_KEY = 'tennis_ban_info';
+
+/**
+ * @param {Partial<UserRecord> | Record<string, unknown>} data
+ * @returns {UserRecord}
+ */
+function buildBannedUser(data) {
+  return {
+    is_banned: true,
+    ban_reason: String(data.ban_reason || data.error || ''),
+    banned_at: String(data.banned_at || '')
+  };
+}
+
+export function saveBanInfo(user) {
+  sessionStorage.setItem(BAN_INFO_KEY, JSON.stringify(user));
+}
+
+export function clearBanInfo() {
+  sessionStorage.removeItem(BAN_INFO_KEY);
+}
+
+/**
+ * @returns {UserRecord | null}
+ */
+export function loadBanInfo() {
+  try {
+    const raw = sessionStorage.getItem(BAN_INFO_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return parsed?.is_banned ? /** @type {UserRecord} */ (parsed) : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * @param {UserRecord | null | undefined} user
+ * @returns {boolean}
+ */
+export function isUserBanned(user) {
+  return user?.is_banned === true;
+}
+
+/**
+ * @param {UserRecord} user
+ * @returns {UserRecord}
+ */
+function finalizeBannedUser(user) {
+  pb.authStore.clear();
+  const banned = buildBannedUser(user);
+  saveBanInfo(banned);
+  return banned;
+}
+
+/**
+ * @param {string} userId
+ * @param {AbortSignal} [signal]
+ * @returns {Promise<UserRecord>}
+ */
+export async function refreshAuthUser(userId, signal) {
+  const fresh = await pb.collection('users').getOne(userId, { signal });
+  if (isUserBanned(/** @type {UserRecord} */ (fresh))) {
+    return finalizeBannedUser(/** @type {UserRecord} */ (fresh));
+  }
+  pb.authStore.save(pb.authStore.token, fresh);
+  clearBanInfo();
+  return /** @type {UserRecord} */ (fresh);
+}
 
 /**
  * Инициализация авторизации через MAX Bridge.
@@ -36,25 +111,32 @@ export async function initMaxAuth(initData, signal) {
     });
 
     if (!response.ok) {
+      if (response.status === 403) {
+        const data = await response.json().catch(() => ({}));
+        return finalizeBannedUser(/** @type {UserRecord} */ (data));
+      }
       throw new Error('Сервер авторизации MAX вернул ошибку');
     }
 
     const data = await response.json();
 
     if (data.token && data.user) {
-      let loggedUser = data.user;
+      let loggedUser = /** @type {UserRecord} */ (data.user);
       pb.authStore.save(data.token, loggedUser);
 
       if (loggedUser.id) {
         try {
-          loggedUser = await pb.collection('users').getOne(loggedUser.id, { signal });
-          pb.authStore.save(data.token, loggedUser);
+          loggedUser = await refreshAuthUser(loggedUser.id, signal);
+          if (isUserBanned(loggedUser)) return loggedUser;
         } catch (refreshErr) {
           if (refreshErr && /** @type {Error} */ (refreshErr).name === 'AbortError') throw refreshErr;
           error('Ошибка обновления профиля после MAX auth:', refreshErr);
         }
+      } else if (isUserBanned(loggedUser)) {
+        return finalizeBannedUser(loggedUser);
       }
 
+      clearBanInfo();
       log('Авторизация в PocketBase успешно зафиксирована для текущего сеанса.');
       return loggedUser;
     }

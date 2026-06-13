@@ -20,6 +20,7 @@ import {
 } from '../../services/auth';
 import pb from '../../services/pb';
 import { error } from '../../lib/log';
+import { getPlayerRatingRank } from '../../lib/rating';
 import { compressImage } from '../../lib/compress';
 import MembershipModal from './MembershipModal';
 import './Profile.css';
@@ -90,11 +91,10 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
   const canManageProfile = Boolean(isOwnProfile || canEditSectionStartDate);
   const displayName = displayUser?.full_name || displayUser?.name || 'Профиль';
 
-  const ratingPosition = useMemo(() => {
-    if (!players || !targetUserId) return null;
-    const position = players.findIndex((player) => player.id === targetUserId);
-    return position >= 0 ? position + 1 : null;
-  }, [players, targetUserId]);
+  const ratingPosition = useMemo(
+    () => getPlayerRatingRank(players, targetUserId),
+    [players, targetUserId]
+  );
 
   useEffect(() => {
     const nextUser = targetUser || null;

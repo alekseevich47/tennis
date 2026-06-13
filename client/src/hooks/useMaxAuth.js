@@ -1,7 +1,13 @@
 // @ts-check
 import { useEffect, useRef, useState } from 'react';
 import pb from '../services/pb';
-import { initMaxAuth, getCurrentUser } from '../services/auth';
+import {
+  initMaxAuth,
+  getCurrentUser,
+  loadBanInfo,
+  isUserBanned,
+  refreshAuthUser
+} from '../services/auth';
 import { purgeAbandonedComments } from '../services/posts';
 import { warn, error } from '../lib/log';
 
@@ -10,17 +16,36 @@ import { warn, error } from '../lib/log';
  */
 
 /**
+ * @returns {UserRecord | null}
+ */
+function getInitialUser() {
+  const banInfo = loadBanInfo();
+  if (banInfo) return banInfo;
+  return getCurrentUser();
+}
+
+/**
  * Идемпотентная инициализация MAX-сессии (фикс C4, C9).
  * Реализован гвард: повторный mount в StrictMode не запускает auth дважды.
  * Возвращает `{ user, isLoading, error, setUser }`.
  */
 export function useMaxAuth() {
-  const [user, setUser] = useState(/** @type {UserRecord | null} */ (getCurrentUser()));
+  const [user, setUser] = useState(/** @type {UserRecord | null} */ (getInitialUser()));
   const [isLoading, setIsLoading] = useState(true);
   const [err, setErr] = useState(/** @type {Error | null} */ (null));
+  const bannedRef = useRef(/** @type {UserRecord | null} */ (loadBanInfo()));
 
   // Гвард против двойного вызова StrictMode и любых параллельных монтирований.
   const startedRef = useRef(false);
+
+  const applyUser = (/** @type {UserRecord | null} */ nextUser) => {
+    if (isUserBanned(nextUser)) {
+      bannedRef.current = nextUser;
+    } else {
+      bannedRef.current = null;
+    }
+    setUser(nextUser);
+  };
 
   useEffect(() => {
     if (startedRef.current) return;
@@ -39,13 +64,21 @@ export function useMaxAuth() {
         } else {
           warn('Запуск вне мессенджера MAX. Используем локальную сессию.');
           loggedUser = getCurrentUser();
+          if (loggedUser?.id && pb.authStore.token) {
+            try {
+              loggedUser = await refreshAuthUser(loggedUser.id, controller.signal);
+            } catch (refreshErr) {
+              if (refreshErr && /** @type {Error} */ (refreshErr).name === 'AbortError') throw refreshErr;
+              error('Ошибка обновления профиля из локальной сессии:', refreshErr);
+            }
+          }
         }
 
         if (cancelled) return;
-        setUser(loggedUser);
+        applyUser(loggedUser);
 
         // Параллельная зачистка зомби-комментариев — не блокирует UI (правило async-parallel).
-        if (loggedUser?.id) {
+        if (loggedUser?.id && !isUserBanned(loggedUser)) {
           purgeAbandonedComments(loggedUser.id, { signal: controller.signal }).catch((e) =>
             error('Ошибка автозачистки старых комментариев:', e)
           );
@@ -67,10 +100,15 @@ export function useMaxAuth() {
   // Слушаем смену authStore (например, после updateUserProfile → authRefresh).
   useEffect(() => {
     const unsubscribe = pb.authStore.onChange(() => {
+      if (bannedRef.current?.is_banned) return;
       setUser(/** @type {UserRecord | null} */ (pb.authStore.model));
     });
     return unsubscribe;
   }, []);
 
-  return { user, isLoading, error: err, setUser };
+  const setUserSafe = (/** @type {UserRecord | null} */ nextUser) => {
+    applyUser(nextUser);
+  };
+
+  return { user, isLoading, error: err, setUser: setUserSafe };
 }

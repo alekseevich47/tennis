@@ -9,15 +9,17 @@ function closeStartedTraining(record) {
   if (record.getBool('is_closed') || !hasTrainingStarted(record)) return;
 
   record.set('is_closed', true);
-  $app.dao().saveRecord(record);
+  $app.save(record);
 }
 
-onRecordBeforeUpdateRequest((e) => {
+onRecordUpdateRequest((e) => {
   if (!e.record.getBool('is_closed') && hasTrainingStarted(e.record)) {
     e.record.set('is_closed', true);
   }
+  e.next();
 }, TRAININGS_COLLECTION);
 
 onRecordViewRequest((e) => {
   closeStartedTraining(e.record);
+  e.next();
 }, TRAININGS_COLLECTION);
