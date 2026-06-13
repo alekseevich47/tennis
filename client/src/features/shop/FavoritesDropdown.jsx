@@ -180,7 +180,11 @@ export default function FavoritesDropdown({
           ))}
         </ul>
       )}
-      <BuyButton className="favorites-dropdown__checkout" />
+      <BuyButton
+        className="favorites-dropdown__checkout"
+        products={items.map((entry) => entry.product)}
+        disabled={items.length === 0}
+      />
     </div>
   );
 }
