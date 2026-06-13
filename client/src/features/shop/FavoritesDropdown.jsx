@@ -72,17 +72,27 @@ export default function FavoritesDropdown({
   const { items, removeItem } = useFavorites();
   const dropdownRef = useRef(null);
   const [removingIds, setRemovingIds] = useState(() => new Set());
+  const [mounted, setMounted] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    if (!open) {
-      setIsVisible(false);
-      setRemovingIds(new Set());
-      return undefined;
+    if (open) {
+      setMounted(true);
+      const frame = requestAnimationFrame(() => setIsVisible(true));
+      return () => cancelAnimationFrame(frame);
     }
 
-    const frame = requestAnimationFrame(() => setIsVisible(true));
-    return () => cancelAnimationFrame(frame);
+    setIsVisible(false);
+    return undefined;
+  }, [open]);
+
+  const handleDropdownTransitionEnd = useCallback((event) => {
+    if (event.target !== dropdownRef.current) return;
+    if (event.propertyName !== 'opacity') return;
+    if (open) return;
+
+    setMounted(false);
+    setRemovingIds(new Set());
   }, [open]);
 
   useLayoutEffect(() => {
@@ -143,7 +153,7 @@ export default function FavoritesDropdown({
     [onOpenProduct, onClose]
   );
 
-  if (!open) return null;
+  if (!mounted) return null;
 
   return (
     <div
@@ -151,6 +161,8 @@ export default function FavoritesDropdown({
       className={clsx('favorites-dropdown', isVisible && 'favorites-dropdown--visible')}
       role="dialog"
       aria-label="Избранное"
+      aria-hidden={!open}
+      onTransitionEnd={handleDropdownTransitionEnd}
     >
       {items.length === 0 ? (
         <p className="favorites-dropdown__empty">Избранное пусто</p>

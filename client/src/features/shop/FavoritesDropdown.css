@@ -132,25 +132,10 @@
 }
 
 .favorites-dropdown__checkout {
-  display: block;
+  height: 36px;
   width: calc(100% - 24px);
   margin: 4px 12px 12px;
-  padding: 12px 16px;
-  border: none;
+  padding: 0 16px;
+  font-size: 13px;
   border-radius: 10px;
-  background: #17171B;
-  color: #ffffff;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-
-.favorites-dropdown__checkout:hover {
-  background: #2a2a30;
-}
-
-.favorites-dropdown__checkout:focus-visible {
-  outline: 2px solid #007aff;
-  outline-offset: 2px;
 }
