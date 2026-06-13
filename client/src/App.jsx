@@ -5,12 +5,11 @@ import AppHeader from './components/AppHeader';
 import BottomNav from './components/BottomNav';
 import Spinner from './components/ui/Spinner';
 import { ProductUploadProvider } from './components/ProductUploadProvider';
-import { CartProvider, useCart } from './context/CartContext';
+import { FavoritesProvider, useFavorites } from './context/FavoritesContext';
 import FeedPage from './features/feed/FeedPage';
 import TrainingsPage from './features/trainings/TrainingsPage';
 import MembershipOverviewModal from './features/trainings/components/MembershipOverviewModal';
 import ShopPage from './features/shop/ShopPage';
-import OrdersModal from './features/shop/OrdersModal';
 import RatingPage from './features/rating/RatingPage';
 import CompetitionsPage from './features/competitions/CompetitionsPage';
 import GalleryPage from './features/gallery/GalleryPage';
@@ -40,10 +39,9 @@ const PROFILE_TAB_INDEX = 6;
 function AppInner() {
   const [activeTab, setActiveTab] = useState(0);
   const [membershipOpen, setMembershipOpen] = useState(false);
-  const [cartDropdownOpen, setCartDropdownOpen] = useState(false);
-  const [ordersModalOpen, setOrdersModalOpen] = useState(false);
-  const [cartProductToOpen, setCartProductToOpen] = useState(null);
-  const { totalCount: cartCount } = useCart();
+  const [favoritesDropdownOpen, setFavoritesDropdownOpen] = useState(false);
+  const [favoriteProductToOpen, setFavoriteProductToOpen] = useState(null);
+  const { totalCount: favoritesCount } = useFavorites();
   const sessionResetKey = useSessionResetKey();
   const { user, isLoading, setUser } = useMaxAuth();
 
@@ -125,8 +123,7 @@ function AppInner() {
   const handleTabChange = useCallback(
     (newTab) => {
       flushPendingDeletes();
-      setCartDropdownOpen(false);
-      setOrdersModalOpen(false);
+      setFavoritesDropdownOpen(false);
       setActiveTab(newTab);
     },
     [flushPendingDeletes]
@@ -176,14 +173,13 @@ function AppInner() {
             : undefined
         }
         showShopControls={activeTab === 2}
-        cartCount={cartCount}
-        onCartClick={() => setCartDropdownOpen((open) => !open)}
-        onOrdersClick={() => setOrdersModalOpen(true)}
-        cartDropdownOpen={cartDropdownOpen}
-        onCartDropdownClose={() => setCartDropdownOpen(false)}
+        favoritesCount={favoritesCount}
+        onFavoritesClick={() => setFavoritesDropdownOpen((open) => !open)}
+        favoritesDropdownOpen={favoritesDropdownOpen}
+        onFavoritesDropdownClose={() => setFavoritesDropdownOpen(false)}
         onOpenProduct={(product) => {
-          setCartProductToOpen(product);
-          setCartDropdownOpen(false);
+          setFavoriteProductToOpen(product);
+          setFavoritesDropdownOpen(false);
         }}
       />
 
@@ -210,8 +206,8 @@ function AppInner() {
           <ProductUploadProvider>
             <ShopPage
               onDeletedIdsChange={setPendingDeleteProductIds}
-              productToOpen={cartProductToOpen}
-              onProductOpened={() => setCartProductToOpen(null)}
+              productToOpen={favoriteProductToOpen}
+              onProductOpened={() => setFavoriteProductToOpen(null)}
             />
           </ProductUploadProvider>
         )}
@@ -225,11 +221,6 @@ function AppInner() {
         )}
       </main>
 
-      <OrdersModal
-        isOpen={ordersModalOpen}
-        onClose={() => setOrdersModalOpen(false)}
-      />
-
       <BottomNav
         activeTab={activeTab === PROFILE_TAB_INDEX ? -1 : activeTab}
         onTabChange={handleTabChange}
@@ -240,9 +231,9 @@ function AppInner() {
 
 function App() {
   return (
-    <CartProvider>
+    <FavoritesProvider>
       <AppInner />
-    </CartProvider>
+    </FavoritesProvider>
   );
 }
 

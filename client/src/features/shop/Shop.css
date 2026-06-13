@@ -237,6 +237,23 @@ label.product-category-option {
   overflow: hidden;
 }
 
+.product-card-favorite-btn {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  background: rgba(255, 255, 255, 0.88);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
 .product-card-image-btn,
 .no-image {
   display: block;

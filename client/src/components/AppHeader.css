@@ -72,17 +72,7 @@
   overflow: visible;
 }
 
-.header-cart-anchor {
+.header-favorites-anchor {
   position: relative;
   overflow: visible;
-}
-
-.header-orders-btn {
-  color: #495057;
-  flex-shrink: 0;
-}
-
-.header-orders-btn svg {
-  width: 22px;
-  height: 22px;
 }

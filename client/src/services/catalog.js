@@ -109,29 +109,6 @@ import { PB_URL } from '../config';
  * @property {Record<string, unknown>} [expand]
  */
 
-/**
- * @typedef {Object} OrderItemRecord
- * @property {string} productId
- * @property {string} title
- * @property {number} [price]
- * @property {string} [imageFileName]
- * @property {string} [collectionId]
- * @property {string} [productCollectionId]
- */
-
-/**
- * @typedef {Object} OrderRecord
- * @property {string} id
- * @property {string} collectionId
- * @property {string} collectionName
- * @property {string} user
- * @property {OrderItemRecord[]} items
- * @property {'pending' | 'completed' | 'cancelled'} status
- * @property {string} created
- * @property {string} updated
- * @property {Record<string, unknown>} [expand]
- */
-
 // --- ПРОДУКТЫ ---------------------------------------------------------------
 
 /** @param {{ signal?: AbortSignal }} [options] */
@@ -751,88 +728,4 @@ export async function updateGalleryComment(commentId, text, mediaId) {
   );
   auditGallery.commentEdit(commentId, mediaId || record.media_id || '', record.text);
   return record;
-}
-
-// --- ЗАКАЗЫ -----------------------------------------------------------------
-
-/**
- * @param {{ user: string, items: OrderItemRecord[] }} payload
- * @returns {Promise<OrderRecord>}
- */
-export async function createOrder(payload) {
-  const record = /** @type {OrderRecord} */ (
-    await pb.collection('orders').create({
-      ...payload,
-      status: 'pending'
-    })
-  );
-  auditShop.orderCreate(record.id, Array.isArray(record.items) ? record.items.length : 0);
-  return record;
-}
-
-/**
- * @param {{ userId?: string, status?: 'pending' | 'completed' | 'cancelled', signal?: AbortSignal }} [options]
- * @returns {Promise<OrderRecord[]>}
- */
-export async function listOrders({ userId, status, signal } = {}) {
-  try {
-    const filters = [];
-    if (userId) filters.push(pb.filter('user = {:userId}', { userId }));
-    if (status) filters.push(pb.filter('status = {:status}', { status }));
-
-    return /** @type {OrderRecord[]} */ (await pb.collection('orders').getFullList({
-      sort: '-created',
-      filter: filters.join(' && '),
-      expand: 'user',
-      requestKey: null,
-      signal
-    }));
-  } catch (err) {
-    if (err && /** @type {Error} */ (err).name === 'AbortError') return [];
-    error('Ошибка получения заказов:', err);
-    throw err;
-  }
-}
-
-/**
- * @param {string} orderId
- * @param {'pending' | 'completed' | 'cancelled'} status
- * @returns {Promise<OrderRecord>}
- */
-export async function updateOrderStatus(orderId, status) {
-  const record = /** @type {OrderRecord} */ (
-    await pb.collection('orders').update(orderId, { status })
-  );
-  auditShop.orderStatusChange(orderId, status);
-  return record;
-}
-
-/**
- * @param {string} orderId
- * @param {number} itemIndex
- * @returns {Promise<OrderRecord>}
- */
-export async function removeOrderItem(orderId, itemIndex) {
-  const order = /** @type {OrderRecord} */ (
-    await pb.collection('orders').getOne(orderId, { requestKey: null })
-  );
-  const items = Array.isArray(order.items) ? [...order.items] : [];
-  const removed = items[itemIndex];
-  if (!removed) {
-    throw new Error(`Товар с индексом ${itemIndex} не найден в заказе ${orderId}`);
-  }
-
-  items.splice(itemIndex, 1);
-  const record = /** @type {OrderRecord} */ (
-    await pb.collection('orders').update(orderId, { items })
-  );
-  auditShop.orderItemRemoved(orderId, removed.productId);
-  return record;
-}
-
-/** @param {string} orderId */
-export async function deleteOrder(orderId) {
-  const result = await pb.collection('orders').delete(orderId);
-  auditShop.orderDeleted(orderId);
-  return result;
 }
