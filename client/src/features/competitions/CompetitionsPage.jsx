@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { usePlayers } from '../../hooks/usePlayers';
 import { useTournamentPosts } from '../../hooks/useTournamentPosts';
@@ -7,6 +7,8 @@ import Spinner from '../../components/ui/Spinner';
 import EmptyState from '../../components/ui/EmptyState';
 import CreateTournamentPostModal from './CreateTournamentPostModal';
 import TournamentPostCard from './TournamentPostCard';
+import FullscreenImageViewer from '../feed/FullscreenImageViewer';
+import '../feed/Feed.css';
 import './Competitions.css';
 
 const TABS = [
@@ -14,13 +16,62 @@ const TABS = [
   { id: 'games', label: 'Игры' }
 ];
 
+const SCROLL_TOP_THRESHOLD = 8;
+const SCROLL_DELTA_THRESHOLD = 4;
+
 function CompetitionsPage() {
   const moderator = isModerator();
   const { data: players } = usePlayers();
   const { data: posts, isLoading: postsLoading, mutate: mutatePosts } = useTournamentPosts();
   const [activeTab, setActiveTab] = useState('feed');
   const [showCreatePost, setShowCreatePost] = useState(false);
+  const [fullscreenMedia, setFullscreenMedia] = useState(null);
+  const [hiddenMediaKey, setHiddenMediaKey] = useState(null);
+  const [isButtonVisible, setIsButtonVisible] = useState(false);
   const containerRef = useRef(null);
+  const lastScrollTopRef = useRef(0);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!moderator || !container || activeTab !== 'feed') return undefined;
+
+    const syncVisibility = (scrollTop, delta) => {
+      if (scrollTop <= SCROLL_TOP_THRESHOLD) {
+        setIsButtonVisible(true);
+      } else if (delta < -SCROLL_DELTA_THRESHOLD) {
+        setIsButtonVisible(true);
+      } else if (delta > SCROLL_DELTA_THRESHOLD) {
+        setIsButtonVisible(false);
+      }
+    };
+
+    lastScrollTopRef.current = container.scrollTop;
+    syncVisibility(container.scrollTop, 0);
+
+    const handleScroll = () => {
+      const scrollTop = container.scrollTop;
+      const delta = scrollTop - lastScrollTopRef.current;
+      syncVisibility(scrollTop, delta);
+      lastScrollTopRef.current = scrollTop;
+    };
+
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [moderator, activeTab]);
+
+  const handleOpenFullscreen = useCallback((items, index = 0, originRect = null, originKey = null) => {
+    setHiddenMediaKey(null);
+    setFullscreenMedia({ items, index, originRect, originKey });
+  }, []);
+
+  const handleCloseFullscreen = useCallback(() => {
+    setFullscreenMedia(null);
+    setHiddenMediaKey(null);
+  }, []);
+
+  const handleFullscreenCloseStart = useCallback((originKey) => {
+    setHiddenMediaKey(originKey || null);
+  }, []);
 
   return (
     <section className="competitions" aria-label="Соревнования">
@@ -40,12 +91,12 @@ function CompetitionsPage() {
       </div>
 
       {activeTab === 'feed' && (
-        <div className="competitions-feed-scroll" ref={containerRef}>
+        <div className="competitions-scroll-container" ref={containerRef}>
           {moderator && (
             <div className="floating-btn-wrapper">
               <button
                 type="button"
-                className="floating-add-btn visible"
+                className={clsx('floating-add-btn', isButtonVisible ? 'visible' : 'hidden')}
                 onClick={() => setShowCreatePost(true)}
               >
                 Добавить
@@ -63,7 +114,13 @@ function CompetitionsPage() {
           ) : (
             <div className="competitions-feed-list">
               {posts.map((post) => (
-                <TournamentPostCard key={post.id} post={post} players={players || []} />
+                <TournamentPostCard
+                  key={post.id}
+                  post={post}
+                  players={players || []}
+                  hiddenMediaKey={hiddenMediaKey}
+                  onOpenFullscreen={handleOpenFullscreen}
+                />
               ))}
             </div>
           )}
@@ -85,6 +142,17 @@ function CompetitionsPage() {
           setShowCreatePost(false);
         }}
       />
+
+      {fullscreenMedia && (
+        <FullscreenImageViewer
+          items={fullscreenMedia.items}
+          initialIndex={fullscreenMedia.index}
+          originRect={fullscreenMedia.originRect}
+          originKey={fullscreenMedia.originKey}
+          onCloseStart={handleFullscreenCloseStart}
+          onClose={handleCloseFullscreen}
+        />
+      )}
     </section>
   );
 }
