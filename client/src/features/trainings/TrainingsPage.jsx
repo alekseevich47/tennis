@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTrainings } from '../../hooks/useTrainings';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
+import { useToast } from '../../components/ui/ToastContext';
 import { isModerator } from '../../services/auth';
 import {
   addPendingDeleteTrainingId,
@@ -24,7 +25,14 @@ import TrainingDetailModal from './TrainingDetailModal';
 import EditTrainingModal from './components/EditTrainingModal';
 import UserPickerModal from './components/UserPickerModal';
 import ArchiveModal from './components/ArchiveModal';
-import { dayKey, generateNextDays, isSameDay } from '../../lib/format';
+import {
+  canCancelBooking,
+  dayKey,
+  formatCardDate,
+  formatTimeRange,
+  generateNextDays,
+  isSameDay
+} from '../../lib/format';
 import { error } from '../../lib/log';
 import './Trainings.css';
 
@@ -41,6 +49,7 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
   const userIsModerator = isModerator();
   const { data: trainings, isLoading, mutate } = useTrainings();
   const { alert, confirm } = useAlertDialog();
+  const { showToast } = useToast();
 
   // Lazy init — устраняет H2/H6.
   const days = useMemo(() => generateNextDays(DAYS_COUNT), []);
@@ -122,12 +131,17 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
 
   const handleBook = useCallback(
     async (training) => {
+      if (user?.membership_frozen === true) {
+        showToast({
+          text: 'Ваш абонемент заморожен. Запись на тренировку недоступна.'
+        });
+        return;
+      }
       try {
         await bookTraining(training, user?.id);
         mutate();
-        await alert({
-          title: 'Запись успешна',
-          message: 'Вы записаны на тренировку!'
+        showToast({
+          text: `Вы записаны на тренировку ${formatCardDate(training.date)}, ${formatTimeRange(training.date, training.duration)}. Снять запись можно не позднее, чем за 1 час до начала.`
         });
       } catch (err) {
         error('book training:', err);
@@ -137,11 +151,17 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
         });
       }
     },
-    [user?.id, mutate, alert]
+    [user?.id, user?.membership_frozen, mutate, alert, showToast]
   );
 
   const handleCancelBooking = useCallback(
     async (training) => {
+      if (!userIsModerator && !canCancelBooking(training)) {
+        showToast({
+          text: 'Невозможно снять запись — до начала тренировки менее 1 часа.'
+        });
+        return;
+      }
       const ok = await confirm({
         title: 'Отмена записи',
         message: 'Вы действительно хотите отменить свою запись на тренировку?'
@@ -159,7 +179,7 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
         await alert({ title: 'Ошибка', message: 'Не удалось отменить запись.' });
       }
     },
-    [user?.id, mutate, alert, confirm]
+    [user?.id, userIsModerator, mutate, alert, confirm, showToast]
   );
 
   const handleRestore = useCallback(

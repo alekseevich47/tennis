@@ -25,5 +25,21 @@ export const auditMembership = {
 
   sessionsSubtractError(err, userId) {
     writeAuditError(DOMAIN, 'Ошибка уменьшения посещений', err, { targetUserId: userId });
+  },
+
+  membershipTypeChanged(userId, from, to) {
+    writeAudit(DOMAIN, 'Изменён тип абонемента', { targetUserId: userId, from, to });
+  },
+
+  membershipFrozen(userId) {
+    writeAudit(DOMAIN, 'Абонемент заморожен', { targetUserId: userId });
+  },
+
+  membershipUnfrozen(userId) {
+    writeAudit(DOMAIN, 'Абонемент разморожен', { targetUserId: userId });
+  },
+
+  membershipEdited(userId, changedFields) {
+    writeAudit(DOMAIN, 'Абонемент отредактирован', { targetUserId: userId, changedFields });
   }
 };

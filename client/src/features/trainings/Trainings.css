@@ -578,6 +578,14 @@
   white-space: nowrap;
 }
 
+.player-row--unbooked {
+  color: var(--color-text-secondary, #8b98a5);
+}
+
+.player-row--unbooked .player-name-label {
+  color: var(--color-text-secondary, #8b98a5);
+}
+
 .kick-player-btn {
   background: none;
   border: none;

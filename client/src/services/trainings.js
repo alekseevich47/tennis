@@ -20,6 +20,7 @@ export const PENDING_DELETE_TRAININGS_KEY = 'pending_delete_trainings';
  * @property {boolean} [is_deleted]
  * @property {boolean} [is_closed]
  * @property {string[]} [booked_users]
+ * @property {string[]} [unbooked_users]
  * @property {string[]} [attended_users]
  * @property {Record<string, unknown>} [expand]
  */
@@ -96,42 +97,42 @@ async function resolveAuditUsers(userIds, knownUsers = []) {
 }
 
 /**
- * Списать одно посещение абонемента и увеличить счётчик использованных.
+ * Списать одно посещение абонемента при записи на тренировку.
  * @param {string} userId
  */
 async function consumeMembershipSession(userId) {
-  const user = /** @type {{ available_sessions?: number | null }} */ (
+  const user = /** @type {{ available_sessions?: number | null, membership_type?: string }} */ (
     await pb.collection('users').getOne(userId, {
-      fields: 'available_sessions'
+      fields: 'available_sessions,membership_type'
     })
   );
+
+  if (user.membership_type === 'corporate') return;
 
   if ((user.available_sessions || 0) <= 0) {
     throw new Error('Нет доступных посещений');
   }
 
   await pb.collection('users').update(userId, {
-    'available_sessions-': 1,
-    'attendance_count+': 1
+    'available_sessions-': 1
   });
 }
 
 /**
- * Вернуть одно посещение в абонемент и уменьшить счётчик использованных.
+ * Вернуть одно посещение в абонемент при отмене записи.
  * @param {string} userId
  */
 async function restoreMembershipSession(userId) {
-  const user = /** @type {{ attendance_count?: number | null }} */ (
+  const user = /** @type {{ membership_type?: string }} */ (
     await pb.collection('users').getOne(userId, {
-      fields: 'attendance_count'
+      fields: 'membership_type'
     })
   );
 
-  if ((user.attendance_count || 0) <= 0) return;
+  if (user.membership_type === 'corporate') return;
 
   await pb.collection('users').update(userId, {
-    'available_sessions+': 1,
-    'attendance_count-': 1
+    'available_sessions+': 1
   });
 }
 
@@ -184,7 +185,7 @@ export async function listTrainings({ signal } = {}) {
     return /** @type {TrainingRecord[]} */ (await pb.collection('trainings').getFullList({
       sort: 'date',
       filter: isModerator() ? '' : 'is_deleted != true',
-      expand: 'booked_users,attended_users',
+      expand: 'booked_users,attended_users,unbooked_users',
       requestKey: null,
       signal
     }));
@@ -366,6 +367,7 @@ export async function bookTraining(training, userId) {
     const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
       booked_users: [...current, userId]
     }));
+    await consumeMembershipSession(userId);
     auditTrainings.bookSelf(/** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)));
     return record;
   } catch (err) {
@@ -391,6 +393,7 @@ export async function bookUserToTraining(training, userId, targetUser) {
     const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
       booked_users: [...current, userId]
     }));
+    await consumeMembershipSession(userId);
     const [auditUser] = await resolveAuditUsers(userId ? [userId] : [], targetUser ? [targetUser] : []);
     auditTrainings.bookUser(
       /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
@@ -426,6 +429,7 @@ export async function bookUsersToTraining(training, userIds, targetUsers = []) {
     const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
       booked_users: [...current, ...nextUserIds]
     }));
+    await Promise.allSettled(nextUserIds.map((id) => consumeMembershipSession(id)));
     const auditUsers = await resolveAuditUsers(nextUserIds, targetUsers);
     auditTrainings.bookUsers(
       /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
@@ -457,14 +461,22 @@ export async function removeUsersFromTraining(training, userIds) {
     const attended = training.attended_users || [];
     const attendedSet = new Set(attended);
     const removedAttendedUserIds = removedUserIds.filter((userId) => attendedSet.has(userId));
+    const currentUnbooked = training.unbooked_users || [];
+    const nextUnbooked = Array.from(new Set([...currentUnbooked, ...removedUserIds]));
     const auditUsers = await resolveAuditUsers(removedUserIds, getExpandedUsers(training, 'booked_users'));
     const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
       booked_users: current.filter((id) => !removedUserIds.includes(id)),
+      unbooked_users: nextUnbooked,
       ...(removedAttendedUserIds.length > 0
         ? { attended_users: attended.filter((id) => !removedAttendedUserIds.includes(id)) }
         : {})
     }));
-    await Promise.all(removedAttendedUserIds.map((userId) => restoreMembershipSession(userId)));
+    await Promise.all(removedUserIds.map((userId) => restoreMembershipSession(userId)));
+    await Promise.all(
+      removedAttendedUserIds.map((userId) =>
+        pb.collection('users').update(userId, { 'attendance_count-': 1 })
+      )
+    );
     auditTrainings.unbookUsers(
       /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
       removedUserIds,
@@ -492,12 +504,15 @@ export async function cancelTrainingBooking(training, userId) {
     const current = training.booked_users || [];
     const attended = training.attended_users || [];
     const shouldRemoveAttendance = attended.includes(userId);
+    const currentUnbooked = training.unbooked_users || [];
     const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
       booked_users: current.filter((id) => id !== userId),
+      unbooked_users: currentUnbooked.includes(userId) ? currentUnbooked : [...currentUnbooked, userId],
       ...(shouldRemoveAttendance ? { attended_users: attended.filter((id) => id !== userId) } : {})
     }));
+    await restoreMembershipSession(userId);
     if (shouldRemoveAttendance) {
-      await restoreMembershipSession(userId);
+      await pb.collection('users').update(userId, { 'attendance_count-': 1 });
       auditTrainings.unmarkAttendance(
         /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
         userId
@@ -525,7 +540,7 @@ export async function markAttendance(training, userId) {
     const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
       attended_users: [...current, userId]
     }));
-    await consumeMembershipSession(userId);
+    await pb.collection('users').update(userId, { 'attendance_count+': 1 });
     auditTrainings.markAttendance(
       /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
       userId
@@ -549,7 +564,7 @@ export async function unmarkAttendance(training, userId) {
     const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
       attended_users: current.filter((id) => id !== userId)
     }));
-    await restoreMembershipSession(userId);
+    await pb.collection('users').update(userId, { 'attendance_count-': 1 });
     auditTrainings.unmarkAttendance(
       /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
       userId

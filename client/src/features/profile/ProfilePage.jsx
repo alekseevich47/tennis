@@ -14,6 +14,7 @@ import pb from '../../services/pb';
 import { error } from '../../lib/log';
 import { getPlayerRatingRank } from '../../lib/rating';
 import { compressImage } from '../../lib/compress';
+import { formatCardDate, formatTimeRange, hasTimeRangeEnded } from '../../lib/format';
 import MembershipModal from './MembershipModal';
 import './Profile.css';
 
@@ -28,6 +29,22 @@ function formatDate(dateStr) {
 function normalizeDateInput(value) {
   if (!value) return '';
   return String(value).slice(0, 10);
+}
+
+function getTrainingTitle(training) {
+  return training.type === 'tournament' ? 'Турнир секции' : 'Тренировка';
+}
+
+function getUserPastTrainings(trainings, userId) {
+  if (!userId) return [];
+  return trainings
+    .filter((training) => {
+      if (!hasTimeRangeEnded(training.date, training.duration || 0)) return false;
+      const booked = training.booked_users || [];
+      const unbooked = training.unbooked_users || [];
+      return booked.includes(userId) || unbooked.includes(userId);
+    })
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
 /**
@@ -95,10 +112,10 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
   }, [avatarFile]);
 
   // Профильный список — производное от SWR-данных (H4).
-  const myTrainings = useMemo(() => {
-    if (!trainings || !user?.id) return [];
-    return trainings.filter((t) => t.attended_users && t.attended_users.includes(user.id));
-  }, [trainings, user?.id]);
+  const myTrainings = useMemo(
+    () => getUserPastTrainings(trainings || [], user?.id),
+    [trainings, user?.id]
+  );
 
   const ratingPosition = useMemo(
     () => getPlayerRatingRank(players, user?.id),
@@ -175,7 +192,10 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
     };
     let patch = {};
 
-    if (nextProfile.full_name !== (user.full_name || '')) {
+    if (
+      canEditSectionStartDate &&
+      nextProfile.full_name !== (user.full_name || '')
+    ) {
       patch.full_name = nextProfile.full_name;
     }
 
@@ -318,6 +338,7 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
+              disabled={!canEditSectionStartDate}
               required
             />
           </div>
@@ -422,16 +443,25 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
                 <p className="no-data-text">Вы ещё не посещали тренировки</p>
               ) : (
                 <div className="profile-trainings-list">
-                  {myTrainings.map((t) => (
-                    <div key={t.id} className="profile-training-card">
-                      <span className="training-date">
-                        {new Date(t.date).toLocaleDateString('ru-RU')}
-                      </span>
-                      <span className="training-title">
-                        {t.type === 'tournament' ? 'Турнир секции' : 'Тренировка'}
-                      </span>
-                    </div>
-                  ))}
+                  {myTrainings.map((t) => {
+                    const attended = (t.attended_users || []).includes(user.id);
+                    return (
+                      <div key={t.id} className="profile-training-card">
+                        <div className="profile-training-card__info">
+                          <span className="training-date">{formatCardDate(t.date)}</span>
+                          <span className="training-time">
+                            {formatTimeRange(t.date, t.duration || 0)}
+                          </span>
+                          <span className="training-title">{getTrainingTitle(t)}</span>
+                        </div>
+                        <span
+                          className={`training-attendance-badge ${attended ? 'training-attendance-badge--attended' : 'training-attendance-badge--missed'}`}
+                        >
+                          {attended ? 'Посетил' : 'Не посетил'}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               )
             )}
