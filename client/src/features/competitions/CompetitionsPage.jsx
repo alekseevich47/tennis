@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import clsx from 'clsx';
 import { usePlayers } from '../../hooks/usePlayers';
 import { useTournamentPosts } from '../../hooks/useTournamentPosts';
@@ -20,6 +20,7 @@ function CompetitionsPage() {
   const { data: posts, isLoading: postsLoading, mutate: mutatePosts } = useTournamentPosts();
   const [activeTab, setActiveTab] = useState('feed');
   const [showCreatePost, setShowCreatePost] = useState(false);
+  const containerRef = useRef(null);
 
   return (
     <section className="competitions" aria-label="Соревнования">
@@ -39,15 +40,15 @@ function CompetitionsPage() {
       </div>
 
       {activeTab === 'feed' && (
-        <div className="competitions-feed">
+        <div className="competitions-feed-scroll" ref={containerRef}>
           {moderator && (
-            <div className="competitions-action-bar">
+            <div className="floating-btn-wrapper">
               <button
                 type="button"
-                className="competitions-add-btn"
+                className="floating-add-btn visible"
                 onClick={() => setShowCreatePost(true)}
               >
-                <span aria-hidden="true">+</span> Добавить итоги
+                Добавить
               </button>
             </div>
           )}
