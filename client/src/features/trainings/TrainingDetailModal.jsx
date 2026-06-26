@@ -56,6 +56,10 @@ function TrainingDetailModal({
   if (!training) return null;
 
   const bookedUserIds = training.booked_users || [];
+  const bookedUserIdSet = new Set(bookedUserIds);
+  const unbookedPlayers = (training.expand?.unbooked_users || []).filter(
+    (player) => !bookedUserIdSet.has(player.id)
+  );
   const hasLimit = training.max_slots !== null && training.max_slots !== undefined && training.max_slots > 0;
   const isFull = hasLimit && bookedUserIds.length >= (training.max_slots || 0);
   const isClosed = training.is_closed === true;
@@ -310,6 +314,26 @@ function TrainingDetailModal({
               ))
             )}
           </div>
+          {userIsModerator && unbookedPlayers.length > 0 && (
+            <>
+              <h3>Снявшие запись ({unbookedPlayers.length})</h3>
+              <div className="participants-list-wrapper">
+                {unbookedPlayers.map((player) => (
+                  <div key={player.id} className="player-list-row player-row--unbooked">
+                    <div className="player-meta-left">
+                      <Avatar
+                        user={player}
+                        size="sm"
+                        className="training-player-avatar"
+                        alt={player.full_name || 'Теннисист'}
+                      />
+                      <span className="player-name-label">{player.full_name || 'Теннисист'}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </Modal>
 
