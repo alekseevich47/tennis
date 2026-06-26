@@ -207,26 +207,29 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
                     <Avatar user={player} size="sm" />
                     <span>{player.full_name}</span>
                   </label>
-                  {checked ? (
-                    <div className="player-points-inline">
-                      <span className="player-points-inline-label">Очки</span>
-                      <input
-                        type="number"
-                        min="0"
-                        max="99"
-                        inputMode="numeric"
-                        autoFocus
-                        value={pointsByUserId[player.id] ?? '0'}
-                        onChange={(event) =>
-                          setPointsByUserId((current) => ({
-                            ...current,
-                            [player.id]: event.target.value
-                          }))
-                        }
-                        aria-label={`Очки для ${player.full_name}`}
-                      />
-                    </div>
-                  ) : null}
+                  <div className="player-points-slot" aria-hidden={!checked}>
+                    {checked ? (
+                      <>
+                        <span className="player-points-inline-label">Очки</span>
+                        <input
+                          type="number"
+                          className="player-points-inline-input"
+                          min="0"
+                          max="99"
+                          inputMode="numeric"
+                          autoFocus
+                          value={pointsByUserId[player.id] ?? '0'}
+                          onChange={(event) =>
+                            setPointsByUserId((current) => ({
+                              ...current,
+                              [player.id]: event.target.value
+                            }))
+                          }
+                          aria-label={`Очки для ${player.full_name}`}
+                        />
+                      </>
+                    ) : null}
+                  </div>
                 </div>
               );
             })}
