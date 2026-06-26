@@ -1,22 +1,23 @@
 import React, { memo, useMemo } from 'react';
 import Avatar from '../../components/ui/Avatar';
-import MediaPreviewGrid from '../feed/MediaPreviewGrid';
+import PostMedia from '../feed/PostMedia';
 import TournamentPodium from './TournamentPodium';
 import { formatPostDate } from '../../lib/format';
-import {
-  getMediaThumbUrl,
-  getMediaUrl,
-  isVideoMediaName,
-  mediaNames
-} from '../../lib/media';
 
 /**
  * @param {{
  *   post: import('../../services/tournamentPosts').TournamentPostRecord,
- *   players?: any[]
+ *   players?: any[],
+ *   hiddenMediaKey?: string | null,
+ *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, thumbUrl: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void
  * }} props
  */
-function TournamentPostCard({ post, players = [] }) {
+function TournamentPostCard({
+  post,
+  players = [],
+  hiddenMediaKey = null,
+  onOpenFullscreen
+}) {
   const participants = Array.isArray(post.participants) ? post.participants : [];
 
   const playerMap = useMemo(() => {
@@ -24,21 +25,6 @@ function TournamentPostCard({ post, players = [] }) {
     players.forEach((player) => map.set(player.id, player));
     return map;
   }, [players]);
-
-  const previewItems = useMemo(() => {
-    return mediaNames(post.media).flatMap((filename, index) => {
-      const url =
-        getMediaThumbUrl(post, 'tournament_posts', filename, '800x0') ||
-        getMediaUrl(post, 'tournament_posts', filename);
-      if (!url) return [];
-      return [{
-        key: `${post.id}-${index}`,
-        url,
-        name: filename,
-        isVideo: isVideoMediaName(filename)
-      }];
-    });
-  }, [post]);
 
   return (
     <article className="tournament-post-card">
@@ -48,9 +34,14 @@ function TournamentPostCard({ post, players = [] }) {
 
       {post.content ? <p className="tournament-post-content">{post.content}</p> : null}
 
-      {previewItems.length > 0 ? (
-        <MediaPreviewGrid items={previewItems} className="tournament-post-media" />
-      ) : null}
+      <PostMedia
+        post={post}
+        collection="tournament_posts"
+        variant="card"
+        className="tournament-post-media"
+        hiddenMediaKey={hiddenMediaKey}
+        onOpenFullscreen={onOpenFullscreen}
+      />
 
       {participants.length > 0 ? (
         <TournamentPodium participants={participants} players={players} />

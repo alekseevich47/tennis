@@ -4,16 +4,25 @@ import { getMediaThumbUrl, getMediaUrl, isVideoMediaName, mediaNames, videoPrevi
 
 /**
  * @param {{
- *   post: import('../../services/posts').PostRecord,
+ *   post: { id: string, created?: string, media?: string | string[] },
+ *   collection?: string,
  *   variant?: 'card' | 'detail',
+ *   className?: string,
  *   hiddenMediaKey?: string | null,
  *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, thumbUrl: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void
  * }} props
  */
-function PostMedia({ post, variant = 'card', hiddenMediaKey = null, onOpenFullscreen }) {
+function PostMedia({
+  post,
+  collection = 'posts',
+  variant = 'card',
+  className,
+  hiddenMediaKey = null,
+  onOpenFullscreen
+}) {
   const items = mediaNames(post.media).flatMap((filename, index) => {
-    const url = getMediaUrl(post, 'posts', filename);
-    const thumbUrl = getMediaThumbUrl(post, 'posts', filename, '800x0');
+    const url = getMediaUrl(post, collection, filename);
+    const thumbUrl = getMediaThumbUrl(post, collection, filename, '800x0');
     return url
       ? [{
         filename,
@@ -39,7 +48,8 @@ function PostMedia({ post, variant = 'card', hiddenMediaKey = null, onOpenFullsc
       className={clsx(
         'telegram-post-media-grid',
         `telegram-post-media-grid--${count}`,
-        variant === 'detail' && 'telegram-post-media-grid--detail'
+        variant === 'detail' && 'telegram-post-media-grid--detail',
+        className
       )}
     >
       {items.map((item, index) => {
