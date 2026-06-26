@@ -4,9 +4,7 @@ import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
 import Avatar from '../../components/ui/Avatar';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
-import { useToast } from '../../components/ui/ToastContext';
-import { formatCardDate, formatTimeRange, hasTimeRangeEnded, pluralize } from '../../lib/format';
-import pb from '../../services/pb';
+import { formatCardDate, formatTimeRange, hasTimeRangeEnded } from '../../lib/format';
 import {
   bookUsersToTraining,
   markAttendance,
@@ -14,7 +12,6 @@ import {
   unmarkAttendance
 } from '../../services/trainings';
 import { error } from '../../lib/log';
-import MembershipEditModal from '../profile/MembershipEditModal';
 import UserPickerModal from './components/UserPickerModal';
 
 /**
@@ -40,16 +37,11 @@ function TrainingDetailModal({
   onDelete
 }) {
   const { confirm, alert } = useAlertDialog();
-  const { showToast } = useToast();
   const [isUserPickerOpen, setIsUserPickerOpen] = useState(false);
-  const [attendanceBlockedPlayer, setAttendanceBlockedPlayer] = useState(null);
-  const [showMembershipEdit, setShowMembershipEdit] = useState(false);
 
   useEffect(() => {
     if (!isOpen) {
       setIsUserPickerOpen(false);
-      setAttendanceBlockedPlayer(null);
-      setShowMembershipEdit(false);
     }
   }, [isOpen]);
 
@@ -84,39 +76,7 @@ function TrainingDetailModal({
   const handleAttendanceChange = async (playerId, checked) => {
     try {
       if (checked) {
-        const playerData = await pb.collection('users').getOne(playerId, {
-          fields: 'id,available_sessions,attendance_count,full_name',
-          requestKey: null
-        });
-        const rawAvailable = Number(playerData.available_sessions ?? 0);
-        const available = Number.isFinite(rawAvailable) ? rawAvailable : 0;
-
-        if (available <= 0) {
-          const shouldAdd = await confirm({
-            title: 'Недостаточно посещений',
-            message: `У игрока закончились доступные посещения. Добавить посещения?`,
-            confirmText: 'Добавить',
-            cancelText: 'Отмена'
-          });
-
-          if (shouldAdd) {
-            setAttendanceBlockedPlayer(playerData);
-            setShowMembershipEdit(true);
-          }
-          return;
-        }
-
         await markAttendance(training, playerId);
-        onMutated();
-
-        const remaining = available - 1;
-        const fullName = playerData.full_name || 'Игрок';
-        showToast({
-          text: remaining > 0
-            ? `У ${fullName} осталось ${remaining} ${pluralize(remaining, 'доступное посещение', 'доступных посещения', 'доступных посещений')}.`
-            : `У ${fullName} доступных посещений не осталось.`
-        });
-        return;
       } else {
         await unmarkAttendance(training, playerId);
       }
@@ -127,22 +87,29 @@ function TrainingDetailModal({
     }
   };
 
-  const handleCloseMembershipEdit = () => {
-    setShowMembershipEdit(false);
-    setAttendanceBlockedPlayer(null);
-  };
-
-  const handleMembershipMutated = () => {
-    handleCloseMembershipEdit();
-    onMutated();
-  };
-
   const handleConfirmBookingUsers = async (selectedUserIds, selectedUsers) => {
     try {
       await bookUsersToTraining(training, selectedUserIds, selectedUsers);
       onMutated();
       setIsUserPickerOpen(false);
     } catch (err) {
+      if (/** @type {{ code?: string }} */ (err).code === 'MEMBERSHIP_FROZEN') {
+        await alert({ title: 'Запись невозможна', message: /** @type {Error} */ (err).message });
+        return;
+      }
+      if (/** @type {{ code?: string }} */ (err).code === 'ANNUAL_DAILY_LIMIT') {
+        const ok = await confirm({
+          title: 'Годовой абонемент',
+          message: 'Один или несколько игроков уже записаны на тренировку в этот день (лимит: 1 в день). Записать принудительно?',
+          confirmText: 'Записать',
+          cancelText: 'Отмена'
+        });
+        if (!ok) return;
+        await bookUsersToTraining(training, selectedUserIds, selectedUsers, { overrideAnnualLimit: true });
+        onMutated();
+        setIsUserPickerOpen(false);
+        return;
+      }
       error('book users to training:', err);
       await alert({
         title: 'Ошибка',
@@ -342,14 +309,6 @@ function TrainingDetailModal({
         onClose={() => setIsUserPickerOpen(false)}
         onConfirm={handleConfirmBookingUsers}
         excludeIds={bookedUserIds}
-      />
-
-      <MembershipEditModal
-        isOpen={showMembershipEdit}
-        onClose={handleCloseMembershipEdit}
-        user={attendanceBlockedPlayer}
-        mode="add"
-        onMutated={handleMembershipMutated}
       />
     </>
   );

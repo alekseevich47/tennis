@@ -17,7 +17,9 @@ function formatMembershipDate(dateStr) {
 }
 
 function getMembershipTypeLabel(type) {
-  return type === 'corporate' ? 'Корпоративный' : 'Обычный';
+  if (type === 'corporate') return 'Корпоративный';
+  if (type === 'annual') return 'Годовой';
+  return 'Обычный';
 }
 
 function MembershipModal({ isOpen, onClose, user, onMutated }) {
@@ -128,16 +130,31 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
 
     setFreezing(true);
     try {
-      const updated = frozen
-        ? await pb.collection('users').update(user.id, { membership_frozen: false })
-        : await pb.collection('users').update(user.id, {
-            membership_frozen: true,
-            membership_frozen_at: new Date().toISOString()
-          });
-
+      let updated;
       if (frozen) {
-        auditMembership.membershipUnfrozen(user.id);
+        const frozenAtDate = new Date(frozenAt);
+        const nowDate = new Date();
+        const frozenMs = nowDate.getTime() - frozenAtDate.getTime();
+        const frozenDays = Math.ceil(frozenMs / 86_400_000);
+
+        let updatedEndDate = endDate;
+        if (endDate && frozenDays > 0) {
+          const end = new Date(endDate);
+          end.setDate(end.getDate() + frozenDays);
+          updatedEndDate = end.toISOString().slice(0, 10);
+        }
+
+        updated = await pb.collection('users').update(user.id, {
+          membership_frozen: false,
+          ...(updatedEndDate !== endDate ? { membership_end_date: updatedEndDate } : {})
+        });
+
+        auditMembership.membershipUnfrozen(user.id, { extendedDays: frozenDays });
       } else {
+        updated = await pb.collection('users').update(user.id, {
+          membership_frozen: true,
+          membership_frozen_at: new Date().toISOString()
+        });
         auditMembership.membershipFrozen(user.id);
       }
 
@@ -151,6 +168,7 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
   };
 
   const isCorporate = membershipType === 'corporate';
+  const isAnnual = membershipType === 'annual';
 
   return (
     <>
@@ -221,7 +239,7 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
           <p><strong>Тип абонемента:</strong> {getMembershipTypeLabel(membershipType)}</p>
           <p>
             <strong>Доступно:</strong>{' '}
-            {isCorporate ? '∞' : availableSessions}
+            {isCorporate ? '∞' : isAnnual ? '∞ (1 в день)' : availableSessions}
           </p>
           <p><strong>Использовано:</strong> {usedSessions}</p>
           {!isCorporate && (startDate || endDate) && (

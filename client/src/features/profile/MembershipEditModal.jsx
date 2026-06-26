@@ -130,13 +130,16 @@ function MembershipEditModal({ isOpen, onClose, user, mode = 'add', onMutated })
     if (membershipType !== initialSnapshot.membershipType) {
       payload.membership_type = membershipType;
       changedFields.push('membership_type');
-      if (membershipType === 'regular' && initialSnapshot.membershipType === 'corporate') {
+      if (
+        membershipType === 'regular'
+        && (initialSnapshot.membershipType === 'corporate' || initialSnapshot.membershipType === 'annual')
+      ) {
         payload.available_sessions = 0;
         changedFields.push('available_sessions');
       }
     }
 
-    if (membershipType === 'regular') {
+    if (membershipType === 'regular' || membershipType === 'annual') {
       if (startDate !== initialSnapshot.startDate) {
         payload.membership_start_date = startDate || '';
         changedFields.push('membership_start_date');
@@ -146,11 +149,13 @@ function MembershipEditModal({ isOpen, onClose, user, mode = 'add', onMutated })
         changedFields.push('membership_end_date');
       }
 
-      const sessions = Math.max(0, Number.parseInt(availableSessions, 10) || 0);
-      const initialSessions = Number.parseInt(initialSnapshot.availableSessions, 10) || 0;
-      if (sessions !== initialSessions && !('available_sessions' in payload)) {
-        payload.available_sessions = sessions;
-        changedFields.push('available_sessions');
+      if (membershipType === 'regular') {
+        const sessions = Math.max(0, Number.parseInt(availableSessions, 10) || 0);
+        const initialSessions = Number.parseInt(initialSnapshot.availableSessions, 10) || 0;
+        if (sessions !== initialSessions && !('available_sessions' in payload)) {
+          payload.available_sessions = sessions;
+          changedFields.push('available_sessions');
+        }
       }
     }
 
@@ -214,7 +219,10 @@ function MembershipEditModal({ isOpen, onClose, user, mode = 'add', onMutated })
                   checked={membershipType === 'regular'}
                   onChange={() => {
                     setMembershipType('regular');
-                    if (initialSnapshot?.membershipType === 'corporate') {
+                    if (
+                      initialSnapshot?.membershipType === 'corporate'
+                      || initialSnapshot?.membershipType === 'annual'
+                    ) {
                       setAvailableSessions('0');
                     }
                   }}
@@ -231,10 +239,20 @@ function MembershipEditModal({ isOpen, onClose, user, mode = 'add', onMutated })
                 />
                 Корпоративный
               </label>
+              <label className="membership-type-option">
+                <input
+                  type="radio"
+                  name="membership-type"
+                  value="annual"
+                  checked={membershipType === 'annual'}
+                  onChange={() => setMembershipType('annual')}
+                />
+                Годовой
+              </label>
             </div>
           </div>
 
-          {membershipType === 'regular' && (
+          {(membershipType === 'regular' || membershipType === 'annual') && (
             <>
               <div className="form-group">
                 <label htmlFor="membership-start-date">Начало периода</label>
@@ -254,17 +272,19 @@ function MembershipEditModal({ isOpen, onClose, user, mode = 'add', onMutated })
                   onChange={(e) => setEndDate(e.target.value)}
                 />
               </div>
-              <div className="form-group">
-                <label htmlFor="membership-available-sessions">Доступные посещения</label>
-                <input
-                  id="membership-available-sessions"
-                  type="number"
-                  min="0"
-                  value={availableSessions}
-                  onChange={(e) => setAvailableSessions(e.target.value)}
-                  required
-                />
-              </div>
+              {membershipType === 'regular' && (
+                <div className="form-group">
+                  <label htmlFor="membership-available-sessions">Доступные посещения</label>
+                  <input
+                    id="membership-available-sessions"
+                    type="number"
+                    min="0"
+                    value={availableSessions}
+                    onChange={(e) => setAvailableSessions(e.target.value)}
+                    required
+                  />
+                </div>
+              )}
             </>
           )}
 
