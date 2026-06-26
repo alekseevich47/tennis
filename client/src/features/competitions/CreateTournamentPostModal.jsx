@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import ReactDOM from 'react-dom';
 import Modal from '../../components/ui/Modal';
 import Avatar from '../../components/ui/Avatar';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
@@ -27,7 +28,10 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
   const [previewItems, setPreviewItems] = useState([]);
   const [search, setSearch] = useState('');
   const [pointsByUserId, setPointsByUserId] = useState(/** @type {Record<string, string>} */ ({}));
+  const [popupPlayerId, setPopupPlayerId] = useState(null);
+  const [popupPos, setPopupPos] = useState({ top: 0, left: 0 });
   const [submitting, setSubmitting] = useState(false);
+  const popupRef = useRef(null);
   const { confirm } = useAlertDialog();
   const { showToast } = useToast();
 
@@ -47,6 +51,7 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
     setFiles([]);
     setSearch('');
     setPointsByUserId({});
+    setPopupPlayerId(null);
   };
 
   const handleClose = async () => {
@@ -81,7 +86,19 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
       .filter((item) => Number.isFinite(item.points) && item.points >= 0);
   }, [pointsByUserId, players]);
 
+  const updatePopupPos = (playerId) => {
+    const row = document.querySelector(`[data-player-id="${playerId}"]`);
+    if (row) {
+      const rect = row.getBoundingClientRect();
+      setPopupPos({ top: rect.top, left: rect.right });
+    }
+  };
+
   const handleTogglePlayer = (playerId, checked) => {
+    if (!checked && popupPlayerId === playerId) {
+      setPopupPlayerId(null);
+    }
+
     setPointsByUserId((current) => {
       const next = { ...current };
       if (checked) {
@@ -91,7 +108,29 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
       }
       return next;
     });
+
+    if (checked) {
+      updatePopupPos(playerId);
+      setPopupPlayerId(playerId);
+    }
   };
+
+  useEffect(() => {
+    if (!popupPlayerId) return;
+
+    updatePopupPos(popupPlayerId);
+
+    const handlePointerDown = (event) => {
+      const target = event.target;
+      if (popupRef.current?.contains(target)) return;
+      const row = target.closest('[data-player-id]');
+      if (row?.getAttribute('data-player-id') === popupPlayerId) return;
+      setPopupPlayerId(null);
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    return () => document.removeEventListener('pointerdown', handlePointerDown);
+  }, [popupPlayerId]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -125,19 +164,6 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title="Итоги турнира" size="tall">
       <form onSubmit={handleSubmit} className="create-tournament-post-form">
-        <label htmlFor="tournament-post-text" className="visually-hidden">
-          Текст поста
-        </label>
-        <textarea
-          id="tournament-post-text"
-          name="tournament-post-content"
-          autoComplete="off"
-          placeholder="Опишите итоги турнира…"
-          value={text}
-          onChange={(event) => setText(event.target.value)}
-          required
-        />
-
         <div className="media-upload-group">
           <label htmlFor="tournament-post-media" className="media-input-label">
             <span aria-hidden="true">📎</span>{' '}
@@ -177,6 +203,19 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
           )}
         />
 
+        <label htmlFor="tournament-post-text" className="visually-hidden">
+          Текст поста
+        </label>
+        <textarea
+          id="tournament-post-text"
+          name="tournament-post-content"
+          autoComplete="off"
+          placeholder="Опишите итоги турнира…"
+          value={text}
+          onChange={(event) => setText(event.target.value)}
+          required
+        />
+
         <div className="create-tournament-post-participants">
           <h3 className="create-tournament-post-participants-title">Участники</h3>
           <input
@@ -192,7 +231,11 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
             {filteredPlayers.map((player) => {
               const checked = player.id in pointsByUserId;
               return (
-                <div key={player.id} className="create-tournament-post-player-row">
+                <div
+                  key={player.id}
+                  className="create-tournament-post-player-row"
+                  data-player-id={player.id}
+                >
                   <label className="create-tournament-post-player-label">
                     <input
                       type="checkbox"
@@ -202,21 +245,6 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
                     <Avatar user={player} size="sm" />
                     <span>{player.full_name}</span>
                   </label>
-                  {checked ? (
-                    <input
-                      type="number"
-                      min="0"
-                      className="create-tournament-post-points"
-                      value={pointsByUserId[player.id] ?? '0'}
-                      onChange={(event) =>
-                        setPointsByUserId((current) => ({
-                          ...current,
-                          [player.id]: event.target.value
-                        }))
-                      }
-                      aria-label={`Очки для ${player.full_name}`}
-                    />
-                  ) : null}
                 </div>
               );
             })}
@@ -233,6 +261,28 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
           </button>
         </div>
       </form>
+
+      {popupPlayerId &&
+        ReactDOM.createPortal(
+          <div
+            ref={popupRef}
+            className="player-points-popup"
+            style={{ top: popupPos.top, left: popupPos.left }}
+          >
+            <span className="player-points-popup-label">Очки</span>
+            <input
+              type="number"
+              min="0"
+              autoFocus
+              value={pointsByUserId[popupPlayerId] ?? '0'}
+              onChange={(e) =>
+                setPointsByUserId((curr) => ({ ...curr, [popupPlayerId]: e.target.value }))
+              }
+              aria-label={`Очки для ${players.find((p) => p.id === popupPlayerId)?.full_name}`}
+            />
+          </div>,
+          document.body
+        )}
     </Modal>
   );
 }

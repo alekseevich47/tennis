@@ -29,28 +29,43 @@ function TournamentPodium({ participants, players = [] }) {
 
   return (
     <div className="tournament-podium" aria-label="Подиум">
-      {PODIUM_ORDER.map(({ place, medal, className }) => {
-        const participant = topThree.find((item) => item.place === place);
-        if (!participant) {
-          return <div key={place} className={`tournament-podium-slot ${className} tournament-podium-slot--empty`} />;
-        }
+      <div className="tournament-podium-tops">
+        {PODIUM_ORDER.map(({ place, medal, className }) => {
+          const participant = topThree.find((item) => item.place === place);
+          if (!participant) {
+            return (
+              <div
+                key={place}
+                className={`tournament-podium-slot ${className} tournament-podium-slot--empty`}
+              />
+            );
+          }
 
-        const user = playerMap.get(participant.userId) || {
-          id: participant.userId,
-          full_name: participant.fullName
-        };
+          const user = playerMap.get(participant.userId) || {
+            id: participant.userId,
+            full_name: participant.fullName
+          };
 
-        return (
-          <div key={place} className={`tournament-podium-slot ${className}`}>
-            <span className="tournament-podium-medal" aria-hidden="true">
-              {medal}
-            </span>
-            <Avatar user={user} size="md" />
-            <span className="tournament-podium-name">{participant.fullName}</span>
-            <span className="tournament-podium-place">{place}-е место</span>
-          </div>
-        );
-      })}
+          return (
+            <div key={place} className={`tournament-podium-slot ${className}`}>
+              <span className="tournament-podium-medal" aria-hidden="true">
+                {medal}
+              </span>
+              <Avatar user={user} size="md" />
+              <span className="tournament-podium-name">{participant.fullName}</span>
+              <span className="tournament-podium-place">{place}-е место</span>
+            </div>
+          );
+        })}
+      </div>
+      <div className="tournament-podium-bases" aria-hidden="true">
+        {PODIUM_ORDER.map(({ place, className }) => (
+          <div
+            key={place}
+            className={`tournament-podium-pedestal tournament-podium-pedestal--${place} ${className}`}
+          />
+        ))}
+      </div>
     </div>
   );
 }
