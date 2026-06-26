@@ -35,8 +35,11 @@ export const auditMembership = {
     writeAudit(DOMAIN, 'Абонемент заморожен', { targetUserId: userId });
   },
 
-  membershipUnfrozen(userId) {
-    writeAudit(DOMAIN, 'Абонемент разморожен', { targetUserId: userId });
+  membershipUnfrozen(userId, { extendedDays } = {}) {
+    writeAudit(DOMAIN, 'Абонемент разморожен', {
+      targetUserId: userId,
+      ...(extendedDays != null ? { extendedDays } : {})
+    });
   },
 
   membershipEdited(userId, changedFields) {

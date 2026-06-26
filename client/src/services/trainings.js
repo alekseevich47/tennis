@@ -107,7 +107,7 @@ async function consumeMembershipSession(userId) {
     })
   );
 
-  if (user.membership_type === 'corporate') return;
+  if (user.membership_type === 'annual' || user.membership_type === 'corporate') return;
 
   if ((user.available_sessions || 0) <= 0) {
     throw new Error('Нет доступных посещений');
@@ -129,11 +129,37 @@ async function restoreMembershipSession(userId) {
     })
   );
 
-  if (user.membership_type === 'corporate') return;
+  if (user.membership_type === 'annual' || user.membership_type === 'corporate') return;
 
   await pb.collection('users').update(userId, {
     'available_sessions+': 1
   });
+}
+
+/**
+ * Проверить лимит годового абонемента: не более одной записи в день.
+ * @param {string} userId
+ * @param {string} trainingDate
+ * @returns {Promise<boolean>} true — лимит уже исчерпан
+ */
+async function checkAnnualDailyLimit(userId, trainingDate) {
+  const user = await pb.collection('users').getOne(userId, {
+    fields: 'membership_type',
+    requestKey: null
+  });
+  if (user.membership_type !== 'annual') return false;
+
+  const day = new Date(trainingDate);
+  const dayStart = new Date(day);
+  dayStart.setHours(0, 0, 0, 0);
+  const dayEnd = new Date(day);
+  dayEnd.setHours(23, 59, 59, 999);
+
+  const result = await pb.collection('trainings').getList(1, 1, {
+    filter: `date >= "${dayStart.toISOString()}" && date <= "${dayEnd.toISOString()}" && booked_users ?~ "${userId}" && is_deleted != true`,
+    requestKey: null
+  });
+  return result.totalItems > 0;
 }
 
 /**
@@ -364,6 +390,12 @@ export async function bookTraining(training, userId) {
     if (training.max_slots && current.length >= training.max_slots) {
       throw new Error('Нет свободных мест');
     }
+    if (await checkAnnualDailyLimit(userId, training.date)) {
+      throw Object.assign(
+        new Error('Годовой абонемент: можно записаться только на одну тренировку в день.'),
+        { code: 'ANNUAL_DAILY_LIMIT' }
+      );
+    }
     const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
       booked_users: [...current, userId]
     }));
@@ -381,14 +413,28 @@ export async function bookTraining(training, userId) {
  * @param {TrainingRecord} training
  * @param {string} userId
  * @param {UserAuditRecord} [targetUser]
+ * @param {{ overrideAnnualLimit?: boolean }} [options]
  */
-export async function bookUserToTraining(training, userId, targetUser) {
+export async function bookUserToTraining(training, userId, targetUser, { overrideAnnualLimit } = {}) {
   try {
     if (!userId) throw new Error('Не выбран пользователь');
     const current = training.booked_users || [];
     if (current.includes(userId)) throw new Error('Игрок уже записан на эту тренировку');
     if (training.max_slots && current.length >= training.max_slots) {
       throw new Error('Нет свободных мест');
+    }
+    if (!overrideAnnualLimit && await checkAnnualDailyLimit(userId, training.date)) {
+      throw Object.assign(new Error('ANNUAL_DAILY_LIMIT'), { code: 'ANNUAL_DAILY_LIMIT' });
+    }
+    const targetUserData = await pb.collection('users').getOne(userId, {
+      fields: 'membership_frozen,membership_type',
+      requestKey: null
+    });
+    if (targetUserData.membership_frozen) {
+      throw Object.assign(
+        new Error('Абонемент пользователя заморожен. Запись невозможна.'),
+        { code: 'MEMBERSHIP_FROZEN' }
+      );
     }
     const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
       booked_users: [...current, userId]
@@ -412,8 +458,9 @@ export async function bookUserToTraining(training, userId, targetUser) {
  * @param {TrainingRecord} training
  * @param {string[]} userIds
  * @param {UserAuditRecord[]} [targetUsers]
+ * @param {{ overrideAnnualLimit?: boolean }} [options]
  */
-export async function bookUsersToTraining(training, userIds, targetUsers = []) {
+export async function bookUsersToTraining(training, userIds, targetUsers = [], { overrideAnnualLimit } = {}) {
   try {
     const selectedUserIds = Array.from(new Set(userIds.filter(Boolean)));
     if (selectedUserIds.length === 0) throw new Error('Не выбраны игроки');
@@ -424,6 +471,35 @@ export async function bookUsersToTraining(training, userIds, targetUsers = []) {
     if (nextUserIds.length === 0) throw new Error('Игроки уже записаны на эту тренировку');
     if (training.max_slots && current.length + nextUserIds.length > training.max_slots) {
       throw new Error('Недостаточно свободных мест');
+    }
+
+    if (nextUserIds.length > 0) {
+      const frozenUsers = await pb.collection('users').getFullList({
+        filter: nextUserIds.map((id) => `id = "${id}"`).join(' || '),
+        fields: 'id,membership_frozen',
+        requestKey: null
+      });
+      if (frozenUsers.some((u) => u.membership_frozen)) {
+        throw Object.assign(
+          new Error('Абонемент пользователя заморожен. Запись невозможна.'),
+          { code: 'MEMBERSHIP_FROZEN' }
+        );
+      }
+    }
+
+    if (!overrideAnnualLimit) {
+      const blockedIds = [];
+      for (const userId of nextUserIds) {
+        if (await checkAnnualDailyLimit(userId, training.date)) {
+          blockedIds.push(userId);
+        }
+      }
+      if (blockedIds.length > 0) {
+        throw Object.assign(new Error('ANNUAL_DAILY_LIMIT'), {
+          code: 'ANNUAL_DAILY_LIMIT',
+          blockedIds
+        });
+      }
     }
 
     const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
