@@ -265,9 +265,10 @@
 .create-tournament-post-player-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 12px;
+  gap: 8px;
+  padding: 8px 12px;
+  min-height: 44px;
+  box-sizing: border-box;
   border-bottom: 1px solid #f3f4f6;
 }
 
@@ -290,43 +291,52 @@
   white-space: nowrap;
 }
 
-.player-points-inline {
+.player-points-slot {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
   flex-shrink: 0;
-  margin-left: auto;
+  width: 76px;
+  min-height: 28px;
 }
 
 .player-points-inline-label {
-  font-size: 10px;
-  color: #6b7280;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
+  font-size: 11px;
+  color: #8b98a5;
   line-height: 1;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.player-points-inline input {
-  width: 36px;
+.create-tournament-post-form .player-points-inline-input {
+  width: 32px;
+  min-width: 32px;
+  max-width: 32px;
+  height: 28px;
+  min-height: 28px;
+  margin: 0;
+  padding: 0 2px;
   text-align: center;
   border: 1px solid #dce3ea;
   border-radius: 6px;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
-  padding: 4px 2px;
+  line-height: 1;
   outline: none;
   box-sizing: border-box;
+  flex-shrink: 0;
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 
-.player-points-inline input::-webkit-outer-spin-button,
-.player-points-inline input::-webkit-inner-spin-button {
+.create-tournament-post-form .player-points-inline-input::-webkit-outer-spin-button,
+.create-tournament-post-form .player-points-inline-input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-.player-points-inline input:focus {
+.create-tournament-post-form .player-points-inline-input:focus {
   border-color: #007aff;
 }
 
