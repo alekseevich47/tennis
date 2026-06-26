@@ -213,6 +213,8 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
                       <input
                         type="number"
                         min="0"
+                        max="99"
+                        inputMode="numeric"
                         autoFocus
                         value={pointsByUserId[player.id] ?? '0'}
                         onChange={(event) =>
