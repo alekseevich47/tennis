@@ -293,28 +293,37 @@
 .player-points-inline {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 4px;
+  align-items: flex-end;
+  gap: 2px;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 .player-points-inline-label {
-  font-size: 11px;
+  font-size: 10px;
   color: #6b7280;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
+  line-height: 1;
 }
 
 .player-points-inline input {
-  width: 64px;
+  width: 36px;
   text-align: center;
   border: 1px solid #dce3ea;
-  border-radius: 8px;
-  font-size: 18px;
+  border-radius: 6px;
+  font-size: 15px;
   font-weight: 600;
-  padding: 6px 4px;
+  padding: 4px 2px;
   outline: none;
   box-sizing: border-box;
+  -moz-appearance: textfield;
+}
+
+.player-points-inline input::-webkit-outer-spin-button,
+.player-points-inline input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .player-points-inline input:focus {
