@@ -23,6 +23,7 @@ import pb from '../../services/pb';
 import { error } from '../../lib/log';
 import { getPlayerRatingRank } from '../../lib/rating';
 import { compressImage } from '../../lib/compress';
+import { formatCardDate, formatTimeRange, hasTimeRangeEnded } from '../../lib/format';
 import MembershipModal from './MembershipModal';
 import './Profile.css';
 
@@ -42,6 +43,18 @@ function normalizeDateInput(value) {
 
 function getTrainingTitle(training) {
   return training.type === 'tournament' ? 'Турнир секции' : 'Тренировка';
+}
+
+function getUserPastTrainings(trainings, userId) {
+  if (!userId) return [];
+  return trainings
+    .filter((training) => {
+      if (!hasTimeRangeEnded(training.date, training.duration || 0)) return false;
+      const booked = training.booked_users || [];
+      const unbooked = training.unbooked_users || [];
+      return booked.includes(userId) || unbooked.includes(userId);
+    })
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
 function isModerator(user) {
@@ -184,13 +197,10 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
     return () => controller.abort();
   }, [isOpen, targetUserId]);
 
-  const userTrainings = useMemo(() => {
-    if (!targetUserId) return [];
-    return trainings.filter((training) => {
-      const attendedUsers = training.attended_users || [];
-      return attendedUsers.includes(targetUserId);
-    });
-  }, [targetUserId, trainings]);
+  const userTrainings = useMemo(
+    () => getUserPastTrainings(trainings, targetUserId),
+    [targetUserId, trainings]
+  );
 
   const closeMenu = useCallback(() => {
     setMenuOpen(false);
@@ -325,7 +335,10 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
     };
     let patch = {};
 
-    if (nextProfile.full_name !== (displayUser.full_name || '')) {
+    if (
+      canEditSectionStartDate &&
+      nextProfile.full_name !== (displayUser.full_name || '')
+    ) {
       patch.full_name = nextProfile.full_name;
     }
 
@@ -648,6 +661,7 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
+                  disabled={!canEditSectionStartDate}
                   required
                 />
               </div>
@@ -751,14 +765,30 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                     <Spinner label="Загрузка тренировок..." inline />
                   ) : userTrainings.length > 0 ? (
                     <div className="profile-trainings-list">
-                      {userTrainings.map((training) => (
-                        <div key={training.id} className="profile-training-card">
-                          <span className="training-date">
-                            {formatDate(training.date) || 'Дата не указана'}
-                          </span>
-                          <span className="training-title">{getTrainingTitle(training)}</span>
-                        </div>
-                      ))}
+                      {userTrainings.map((training) => {
+                        const attended = (training.attended_users || []).includes(targetUserId);
+                        return (
+                          <div key={training.id} className="profile-training-card">
+                            <div className="profile-training-card__info">
+                              <span className="training-date">{formatCardDate(training.date)}</span>
+                              <span className="training-time">
+                                {formatTimeRange(training.date, training.duration || 0)}
+                              </span>
+                              <span className="training-title">{getTrainingTitle(training)}</span>
+                            </div>
+                            <span
+                              className={clsx(
+                                'training-attendance-badge',
+                                attended
+                                  ? 'training-attendance-badge--attended'
+                                  : 'training-attendance-badge--missed'
+                              )}
+                            >
+                              {attended ? 'Посетил' : 'Не посетил'}
+                            </span>
+                          </div>
+                        );
+                      })}
                     </div>
                   ) : isOwnProfile ? (
                     <p className="no-data-text">Вы ещё не посещали тренировки</p>

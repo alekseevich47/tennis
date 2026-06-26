@@ -139,6 +139,76 @@
   height: 24px;
 }
 
+.membership-info {
+  margin-bottom: 12px;
+}
+
+.membership-frozen-notice {
+  color: #1971c2;
+}
+
+.membership-comment-display {
+  color: #666;
+  font-style: italic;
+}
+
+.membership-freeze-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #1971c2;
+  border-radius: 8px;
+  background: #e7f5ff;
+  color: #1971c2;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.membership-freeze-btn:hover:not(:disabled) {
+  background: #d0ebff;
+}
+
+.membership-freeze-btn--unfreeze {
+  border-color: #2b8a3e;
+  background: #ebfbee;
+  color: #2b8a3e;
+}
+
+.membership-freeze-btn--unfreeze:hover:not(:disabled) {
+  background: #d3f9d8;
+}
+
+.membership-freeze-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.membership-type-options {
+  display: flex;
+  gap: 16px;
+}
+
+.membership-type-option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  color: #333;
+  cursor: pointer;
+}
+
+.form-group-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+}
+
+.membership-comment-textarea {
+  min-height: 80px;
+}
+
 .membership-add-sessions-btn {
   background: #2b8a3e !important;
 }
@@ -421,6 +491,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
   padding: 14px 16px;
   background: #ffffff;
   border: 1px solid #eaeaea;
@@ -428,14 +499,44 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
+.profile-training-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
 .training-date {
   color: #888;
   font-size: 14px;
 }
 
+.training-time {
+  color: #888;
+  font-size: 13px;
+}
+
 .training-title {
   font-weight: 600;
   color: #222;
+}
+
+.training-attendance-badge {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.training-attendance-badge--attended {
+  color: #2b8a3e;
+  background: #ebfbee;
+}
+
+.training-attendance-badge--missed {
+  color: #e63946;
+  background: #fff0f1;
 }
 
 .profile-edit-form {

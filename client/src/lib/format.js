@@ -63,6 +63,15 @@ export function hasTimeRangeEnded(dateLike, durationMin, now = new Date()) {
 }
 
 /**
+ * Можно ли снять запись самостоятельно (не позднее чем за 1 час до начала).
+ * @param {{ date: string | number | Date }} training
+ * @param {Date} [now]
+ */
+export function canCancelBooking(training, now = new Date()) {
+  return new Date(training.date).getTime() - now.getTime() > 60 * 60 * 1000;
+}
+
+/**
  * `5 ноября, 18:00` — для карточки матча в соревнованиях.
  * @param {string | number | Date} dateLike
  */
