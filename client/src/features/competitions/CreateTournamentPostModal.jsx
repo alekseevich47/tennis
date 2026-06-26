@@ -187,6 +187,7 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
         <MediaPreviewGrid
           items={previewItems}
           className="create-tournament-post-preview-grid"
+          showCaption={false}
           getAction={(item) => (
             <button
               type="button"

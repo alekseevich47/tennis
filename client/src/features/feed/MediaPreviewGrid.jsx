@@ -6,10 +6,11 @@ import { videoPreviewUrl } from '../../lib/media';
  * @param {{
  *   items: Array<{ key: string, url: string, name: string, isVideo: boolean }>,
  *   className?: string,
+ *   showCaption?: boolean,
  *   getAction?: (item: { key: string, url: string, name: string, isVideo: boolean }) => React.ReactNode
  * }} props
  */
-function MediaPreviewGrid({ items, className, getAction }) {
+function MediaPreviewGrid({ items, className, showCaption = true, getAction }) {
   if (!items.length) return null;
 
   return (
@@ -35,7 +36,7 @@ function MediaPreviewGrid({ items, className, getAction }) {
           ) : (
             <img src={item.url} alt={item.name} loading="lazy" width="800" height="600" />
           )}
-          <figcaption>{item.name}</figcaption>
+          {showCaption ? <figcaption>{item.name}</figcaption> : null}
           {getAction?.(item)}
         </figure>
       ))}
