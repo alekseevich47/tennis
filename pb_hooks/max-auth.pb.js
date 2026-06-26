@@ -42,11 +42,10 @@ routerAdd("POST", "/api/max-auth", (c) => {
         try {
             user = $app.findFirstRecordByFilter("users", "max_id = {:maxId}", { maxId: maxId });
 
-            // ФИКС: Обновляем avatar_url в БД ТОЛЬКО если MAX передал непустую строку
+            // avatar_url — только если MAX передал непустую строку; full_name не перезаписываем (редактируется в приложении)
             if (maxAvatarUrl) {
                 user.set("avatar_url", maxAvatarUrl);
             }
-            user.set("full_name", fullName); // Синхронизируем имя, если изменилось в MAX
             $app.save(user);
 
         } catch (e) {

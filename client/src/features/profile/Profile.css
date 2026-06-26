@@ -41,14 +41,12 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
   opacity: 0;
   transform: translateY(-4px);
-  animation: profile-menu-dropdown-in 200ms ease forwards;
+  transition: opacity 200ms ease, transform 200ms ease;
 }
 
-@keyframes profile-menu-dropdown-in {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.profile-menu-dropdown--visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .profile-menu-item {

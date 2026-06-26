@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import clsx from 'clsx';
 import AchievementsBlock from '../../components/AchievementsBlock';
 import FloatingAchievements from '../../components/FloatingAchievements';
 import AvatarCropModal from '../../components/AvatarCropModal';
@@ -61,6 +62,8 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
   const { alert } = useAlertDialog();
   const { data: players } = usePlayers();
   const avatarInputRef = useRef(null);
+  const menuBtnRef = useRef(null);
+  const menuDropdownRef = useRef(null);
   const [trainings, setTrainings] = useState([]);
   const [loadingDetails, setLoadingDetails] = useState(false);
   const [membershipOpen, setMembershipOpen] = useState(false);
@@ -79,6 +82,8 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
   const [saving, setSaving] = useState(false);
   const [trainingsExpanded, setTrainingsExpanded] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [menuMounted, setMenuMounted] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
   const [banReasonDialogOpen, setBanReasonDialogOpen] = useState(false);
   const [restrictReasonDialogOpen, setRestrictReasonDialogOpen] = useState(false);
   const [banReason, setBanReason] = useState('');
@@ -129,6 +134,8 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
       setPendingAvatarFile(null);
       setCropModalOpen(false);
       setMenuOpen(false);
+      setMenuMounted(false);
+      setMenuVisible(false);
       setBanReasonDialogOpen(false);
       setRestrictReasonDialogOpen(false);
       setBanReason('');
@@ -184,6 +191,54 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
       return attendedUsers.includes(targetUserId);
     });
   }, [targetUserId, trainings]);
+
+  const closeMenu = useCallback(() => {
+    setMenuOpen(false);
+  }, []);
+
+  useEffect(() => {
+    if (menuOpen) {
+      setMenuMounted(true);
+      const frame = requestAnimationFrame(() => setMenuVisible(true));
+      return () => cancelAnimationFrame(frame);
+    }
+
+    setMenuVisible(false);
+    return undefined;
+  }, [menuOpen]);
+
+  const handleMenuTransitionEnd = useCallback((event) => {
+    if (event.target !== menuDropdownRef.current) return;
+    if (event.propertyName !== 'opacity') return;
+    if (menuOpen) return;
+    setMenuMounted(false);
+  }, [menuOpen]);
+
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+
+    const handlePointerDown = (event) => {
+      const target = event.target;
+      if (!(target instanceof Node)) return;
+      if (menuDropdownRef.current?.contains(target)) return;
+      if (menuBtnRef.current?.contains(target)) return;
+      closeMenu();
+    };
+
+    const handleScroll = () => {
+      closeMenu();
+    };
+
+    const modalBody = menuBtnRef.current?.closest('.ui-modal-overlay')?.querySelector('.ui-modal-body');
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    modalBody?.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      modalBody?.removeEventListener('scroll', handleScroll);
+    };
+  }, [menuOpen, closeMenu]);
 
   const handleRatingClick = () => {
     onTabChange?.(3);
@@ -429,6 +484,7 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
             {canManageProfile && !isEditing && !isOwnProfile && (
               <>
                 <IconButton
+                  ref={menuBtnRef}
                   ariaLabel="Действия модератора"
                   ariaExpanded={menuOpen}
                   variant="ghost"
@@ -443,8 +499,17 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                   </svg>
                 </IconButton>
 
-                {menuOpen && (
-                  <div className="profile-menu-dropdown" role="menu">
+                {menuMounted && (
+                  <div
+                    ref={menuDropdownRef}
+                    className={clsx(
+                      'profile-menu-dropdown',
+                      menuVisible && 'profile-menu-dropdown--visible'
+                    )}
+                    role="menu"
+                    aria-hidden={!menuOpen}
+                    onTransitionEnd={handleMenuTransitionEnd}
+                  >
                     <button
                       type="button"
                       className="profile-menu-item"
