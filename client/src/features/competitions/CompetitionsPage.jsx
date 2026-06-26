@@ -1,133 +1,88 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useChampionships } from '../../hooks/useChampionships';
-import { useMatches } from '../../hooks/useMatches';
+import React, { useState } from 'react';
+import clsx from 'clsx';
 import { usePlayers } from '../../hooks/usePlayers';
+import { useTournamentPosts } from '../../hooks/useTournamentPosts';
 import { isModerator } from '../../services/auth';
-import { createMatch, updateMatchResult } from '../../services/catalog';
 import Spinner from '../../components/ui/Spinner';
 import EmptyState from '../../components/ui/EmptyState';
-import ChampionshipSelect from './ChampionshipSelect';
-import CreateChampionshipModal from './CreateChampionshipModal';
-import CreateMatchForm from './CreateMatchForm';
-import EditMatchForm from './EditMatchForm';
-import MatchCard from './MatchCard';
-import { error } from '../../lib/log';
+import CreateTournamentPostModal from './CreateTournamentPostModal';
+import TournamentPostCard from './TournamentPostCard';
 import './Competitions.css';
+
+const TABS = [
+  { id: 'feed', label: 'Лента' },
+  { id: 'games', label: 'Игры' }
+];
 
 function CompetitionsPage() {
   const moderator = isModerator();
-
-  // Параллельная загрузка через SWR — устраняет H1.
-  const { data: championships, mutate: mutateChamps } = useChampionships();
   const { data: players } = usePlayers();
-
-  const [selectedChampionshipId, setSelectedChampionshipId] = useState('');
-  const [showAddChamp, setShowAddChamp] = useState(false);
-  const [showAddMatch, setShowAddMatch] = useState(false);
-  const [editingMatch, setEditingMatch] = useState(null);
-
-  // Авто-выбор первого чемпионата после загрузки.
-  useEffect(() => {
-    if (championships && championships.length > 0 && !selectedChampionshipId) {
-      setSelectedChampionshipId(championships[0].id);
-    }
-  }, [championships, selectedChampionshipId]);
-
-  const { data: matches, isLoading: matchesLoading, mutate: mutateMatches } = useMatches(
-    selectedChampionshipId
-  );
-
-  const handleCreateMatch = useCallback(
-    async (payload) => {
-      try {
-        await createMatch(payload);
-        setShowAddMatch(false);
-        mutateMatches();
-      } catch (err) {
-        error('create match:', err);
-      }
-    },
-    [mutateMatches]
-  );
-
-  const handleUpdateMatch = useCallback(
-    async (payload) => {
-      if (!editingMatch) return;
-      try {
-        await updateMatchResult(editingMatch.id, payload);
-        setEditingMatch(null);
-        mutateMatches();
-      } catch (err) {
-        error('update match:', err);
-      }
-    },
-    [editingMatch, mutateMatches]
-  );
-
-  const handleCreateChampionship = useCallback(() => {
-    setShowAddChamp(false);
-    mutateChamps();
-  }, [mutateChamps]);
+  const { data: posts, isLoading: postsLoading, mutate: mutatePosts } = useTournamentPosts();
+  const [activeTab, setActiveTab] = useState('feed');
+  const [showCreatePost, setShowCreatePost] = useState(false);
 
   return (
     <section className="competitions" aria-label="Соревнования">
-      <div className="competitions-action-bar">
-        {moderator && (
+      <div className="competitions-tabs" role="tablist" aria-label="Разделы соревнований">
+        {TABS.map((tab) => (
           <button
+            key={tab.id}
             type="button"
-            className="competitions-add-btn"
-            onClick={() => setShowAddChamp(true)}
-            aria-label="Создать чемпионат"
+            role="tab"
+            aria-selected={activeTab === tab.id}
+            className={clsx('competitions-tab', activeTab === tab.id && 'competitions-tab--active')}
+            onClick={() => setActiveTab(tab.id)}
           >
-            <span aria-hidden="true">+</span> Новый чемпионат
+            {tab.label}
           </button>
-        )}
+        ))}
       </div>
 
-      <ChampionshipSelect
-        championships={championships || []}
-        value={selectedChampionshipId}
-        onChange={setSelectedChampionshipId}
-        moderator={moderator}
-        onCreateMatch={() => setShowAddMatch(true)}
-      />
+      {activeTab === 'feed' && (
+        <div className="competitions-feed">
+          {moderator && (
+            <div className="competitions-action-bar">
+              <button
+                type="button"
+                className="competitions-add-btn"
+                onClick={() => setShowCreatePost(true)}
+              >
+                <span aria-hidden="true">+</span> Добавить итоги
+              </button>
+            </div>
+          )}
 
-      {matchesLoading ? (
-        <Spinner label="Загрузка матчей..." />
-      ) : !matches || matches.length === 0 ? (
-        <EmptyState title="Нет матчей" description="Запланированных игр пока нет." />
-      ) : (
-        <div className="matches-list">
-          {matches.map((match) => (
-            <MatchCard
-              key={match.id}
-              match={match}
-              moderator={moderator}
-              onEdit={setEditingMatch}
+          {postsLoading ? (
+            <Spinner label="Загрузка ленты..." />
+          ) : !posts || posts.length === 0 ? (
+            <EmptyState
+              title="Пока нет итогов"
+              description="Здесь появятся результаты турниров секции."
             />
-          ))}
+          ) : (
+            <div className="competitions-feed-list">
+              {posts.map((post) => (
+                <TournamentPostCard key={post.id} post={post} players={players || []} />
+              ))}
+            </div>
+          )}
         </div>
       )}
 
-      <CreateChampionshipModal
-        isOpen={showAddChamp}
-        onClose={() => setShowAddChamp(false)}
-        onCreated={handleCreateChampionship}
-      />
+      {activeTab === 'games' && (
+        <div className="competitions-stub">
+          <p>Раздел в разработке</p>
+        </div>
+      )}
 
-      <CreateMatchForm
-        isOpen={showAddMatch}
-        championshipId={selectedChampionshipId}
+      <CreateTournamentPostModal
+        isOpen={showCreatePost}
+        onClose={() => setShowCreatePost(false)}
         players={players || []}
-        onClose={() => setShowAddMatch(false)}
-        onSubmit={handleCreateMatch}
-      />
-
-      <EditMatchForm
-        isOpen={Boolean(editingMatch)}
-        match={editingMatch}
-        onClose={() => setEditingMatch(null)}
-        onSubmit={handleUpdateMatch}
+        onCreated={() => {
+          mutatePosts();
+          setShowCreatePost(false);
+        }}
       />
     </section>
   );

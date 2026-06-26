@@ -144,6 +144,10 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
           text: `Вы записаны на тренировку ${formatCardDate(training.date)}, ${formatTimeRange(training.date, training.duration)}. Снять запись можно не позднее, чем за 1 час до начала.`
         });
       } catch (err) {
+        if (/** @type {{ code?: string }} */ (err).code === 'ANNUAL_DAILY_LIMIT') {
+          showToast({ text: 'Годовой абонемент: только одна тренировка в день.' });
+          return;
+        }
         error('book training:', err);
         await alert({
           title: 'Ошибка',
@@ -301,6 +305,23 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
         mutate();
         setBookingTraining(null);
       } catch (err) {
+        if (/** @type {{ code?: string }} */ (err).code === 'MEMBERSHIP_FROZEN') {
+          await alert({ title: 'Запись невозможна', message: /** @type {Error} */ (err).message });
+          return;
+        }
+        if (/** @type {{ code?: string }} */ (err).code === 'ANNUAL_DAILY_LIMIT') {
+          const ok = await confirm({
+            title: 'Годовой абонемент',
+            message: 'Один или несколько игроков уже записаны на тренировку в этот день (лимит: 1 в день). Записать принудительно?',
+            confirmText: 'Записать',
+            cancelText: 'Отмена'
+          });
+          if (!ok) return;
+          await bookUsersToTraining(bookingTraining, userIds, selectedUsers, { overrideAnnualLimit: true });
+          mutate();
+          setBookingTraining(null);
+          return;
+        }
         error('book users to training:', err);
         await alert({
           title: 'Ошибка',
@@ -308,7 +329,7 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
         });
       }
     },
-    [bookingTraining, mutate, alert]
+    [bookingTraining, mutate, alert, confirm]
   );
 
   return (
