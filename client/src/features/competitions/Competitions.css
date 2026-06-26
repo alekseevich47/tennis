@@ -290,30 +290,22 @@
   white-space: nowrap;
 }
 
-.player-points-popup {
-  position: fixed;
-  z-index: 1100;
-  background: #fff;
-  border: 1px solid #dce3ea;
-  border-radius: 12px;
-  padding: 10px 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+.player-points-inline {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  min-width: 80px;
-  transform: translateX(8px);
+  flex-shrink: 0;
 }
 
-.player-points-popup-label {
+.player-points-inline-label {
   font-size: 11px;
   color: #6b7280;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.player-points-popup input {
+.player-points-inline input {
   width: 64px;
   text-align: center;
   border: 1px solid #dce3ea;
@@ -322,9 +314,10 @@
   font-weight: 600;
   padding: 6px 4px;
   outline: none;
+  box-sizing: border-box;
 }
 
-.player-points-popup input:focus {
+.player-points-inline input:focus {
   border-color: #007aff;
 }
 
