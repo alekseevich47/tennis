@@ -114,7 +114,8 @@ async function consumeMembershipSession(userId) {
   }
 
   await pb.collection('users').update(userId, {
-    'available_sessions-': 1
+    'available_sessions-': 1,
+    'used_sessions+': 1
   });
 }
 
@@ -123,16 +124,17 @@ async function consumeMembershipSession(userId) {
  * @param {string} userId
  */
 async function restoreMembershipSession(userId) {
-  const user = /** @type {{ membership_type?: string }} */ (
+  const user = /** @type {{ membership_type?: string, used_sessions?: number | null }} */ (
     await pb.collection('users').getOne(userId, {
-      fields: 'membership_type'
+      fields: 'membership_type,used_sessions'
     })
   );
 
   if (user.membership_type === 'annual' || user.membership_type === 'corporate') return;
 
   await pb.collection('users').update(userId, {
-    'available_sessions+': 1
+    'available_sessions+': 1,
+    used_sessions: Math.max(0, (user.used_sessions || 0) - 1)
   });
 }
 

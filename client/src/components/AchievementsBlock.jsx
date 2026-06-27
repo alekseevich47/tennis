@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { useAchievements } from '../hooks/useAchievements';
 import Spinner from './ui/Spinner';
@@ -30,9 +30,29 @@ function getProgressBarColorClass(progressPercent) {
 }
 
 /**
- * @param {{ achievement: import('../hooks/useAchievements').AchievementWithProgress }} props
+ * @param {string} achievementId
+ * @param {{ level: number }} level
  */
-function AchievementRow({ achievement }) {
+function getTooltipKey(achievementId, level) {
+  return `${achievementId}:${level.level}`;
+}
+
+/**
+ * @param {{ title: string, achieved: boolean }} level
+ */
+function getTooltipText(level) {
+  return level.achieved ? level.title : 'Не достигнут';
+}
+
+/**
+ * @param {{
+ *   achievement: import('../hooks/useAchievements').AchievementWithProgress,
+ *   tooltipLevelId: string | null,
+ *   setTooltipLevelId: React.Dispatch<React.SetStateAction<string | null>>,
+ *   isCoarsePointer: boolean,
+ * }} props
+ */
+function AchievementRow({ achievement, tooltipLevelId, setTooltipLevelId, isCoarsePointer }) {
   const currentTitle = getCurrentLevelTitle(achievement.levels);
   const { nextLevel, userValue = 0 } = achievement;
   const progressPercent = nextLevel
@@ -60,19 +80,41 @@ function AchievementRow({ achievement }) {
       ) : null}
 
       <div className="achievement-medals">
-        {achievement.levels.map((level) => (
-          <div
-            key={level.level}
-            className={clsx('achievement-medal', !level.achieved && 'achievement-medal--locked')}
-          >
-            {level.icon_url ? (
-              <img src={level.icon_url} alt="" aria-hidden="true" />
-            ) : (
-              <span className="achievement-medal-placeholder" aria-hidden="true" />
-            )}
-            <span className="achievement-medal-value">{level.required_value}</span>
-          </div>
-        ))}
+        {achievement.levels.map((level) => {
+          const tooltipKey = getTooltipKey(achievement.id, level);
+          const isTooltipVisible = tooltipLevelId === tooltipKey;
+
+          return (
+            <div
+              key={level.level}
+              className={clsx('achievement-medal', !level.achieved && 'achievement-medal--locked')}
+              onMouseEnter={
+                !isCoarsePointer ? () => setTooltipLevelId(tooltipKey) : undefined
+              }
+              onMouseLeave={!isCoarsePointer ? () => setTooltipLevelId(null) : undefined}
+              onClick={
+                isCoarsePointer
+                  ? (e) => {
+                      e.stopPropagation();
+                      setTooltipLevelId((prev) => (prev === tooltipKey ? null : tooltipKey));
+                    }
+                  : undefined
+              }
+            >
+              {level.icon_url ? (
+                <img src={level.icon_url} alt="" aria-hidden="true" />
+              ) : (
+                <span className="achievement-medal-placeholder" aria-hidden="true" />
+              )}
+              <span className="achievement-medal-value">{level.required_value}</span>
+              {isTooltipVisible ? (
+                <span className="achievement-medal-tooltip" role="tooltip">
+                  {getTooltipText(level)}
+                </span>
+              ) : null}
+            </div>
+          );
+        })}
       </div>
 
       <div className="achievement-progress">
@@ -93,7 +135,17 @@ function AchievementRow({ achievement }) {
  */
 function AchievementsBlock({ userId, className, collapsible = false }) {
   const [expanded, setExpanded] = useState(false);
+  const [tooltipLevelId, setTooltipLevelId] = useState(null);
+  const [isCoarsePointer, setIsCoarsePointer] = useState(false);
   const { data, isLoading, error } = useAchievements(userId);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(pointer: coarse)');
+    const update = () => setIsCoarsePointer(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
 
   if (!userId) return null;
 
@@ -125,7 +177,13 @@ function AchievementsBlock({ userId, className, collapsible = false }) {
     return (
       <div className="achievements-list">
         {data.map((achievement) => (
-          <AchievementRow key={achievement.id} achievement={achievement} />
+          <AchievementRow
+            key={achievement.id}
+            achievement={achievement}
+            tooltipLevelId={tooltipLevelId}
+            setTooltipLevelId={setTooltipLevelId}
+            isCoarsePointer={isCoarsePointer}
+          />
         ))}
       </div>
     );

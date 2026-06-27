@@ -77,7 +77,7 @@ function MembershipOverviewModal({ isOpen, onClose, currentUser }) {
       availableSessions: Number(player.available_sessions ?? 0),
       usedSessions: periodAttendanceCounts
         ? (periodAttendanceCounts.get(player.id) ?? 0)
-        : Number(player.attendance_count ?? 0)
+        : Number(player.used_sessions ?? 0)
     }));
   }, [players, periodAttendanceCounts]);
 

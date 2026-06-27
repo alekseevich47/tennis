@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { addYears, format, parse } from 'date-fns';
 import Modal from '../../components/ui/Modal';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { isModerator } from '../../services/auth';
@@ -14,6 +15,12 @@ function getCurrentSessions(user) {
 function normalizeDateInput(value) {
   if (!value) return '';
   return String(value).slice(0, 10);
+}
+
+function computeAnnualEndDate(startDateStr) {
+  if (!startDateStr) return '';
+  const start = parse(startDateStr, 'yyyy-MM-dd', new Date());
+  return format(addYears(start, 1), 'yyyy-MM-dd');
 }
 
 function getModeCopy(mode) {
@@ -127,16 +134,10 @@ function MembershipEditModal({ isOpen, onClose, user, mode = 'add', onMutated })
     const payload = {};
     const changedFields = [];
 
-    if (membershipType !== initialSnapshot.membershipType) {
+    const typeChanged = membershipType !== initialSnapshot.membershipType;
+    if (typeChanged) {
       payload.membership_type = membershipType;
       changedFields.push('membership_type');
-      if (
-        membershipType === 'regular'
-        && (initialSnapshot.membershipType === 'corporate' || initialSnapshot.membershipType === 'annual')
-      ) {
-        payload.available_sessions = 0;
-        changedFields.push('available_sessions');
-      }
     }
 
     if (membershipType === 'regular' || membershipType === 'annual') {
@@ -144,7 +145,18 @@ function MembershipEditModal({ isOpen, onClose, user, mode = 'add', onMutated })
         payload.membership_start_date = startDate || '';
         changedFields.push('membership_start_date');
       }
-      if (endDate !== initialSnapshot.endDate) {
+
+      if (membershipType === 'annual') {
+        const computedEndDate = computeAnnualEndDate(startDate);
+        if (
+          typeChanged ||
+          startDate !== initialSnapshot.startDate ||
+          computedEndDate !== initialSnapshot.endDate
+        ) {
+          payload.membership_end_date = computedEndDate;
+          changedFields.push('membership_end_date');
+        }
+      } else if (endDate !== initialSnapshot.endDate) {
         payload.membership_end_date = endDate || '';
         changedFields.push('membership_end_date');
       }
@@ -152,7 +164,7 @@ function MembershipEditModal({ isOpen, onClose, user, mode = 'add', onMutated })
       if (membershipType === 'regular') {
         const sessions = Math.max(0, Number.parseInt(availableSessions, 10) || 0);
         const initialSessions = Number.parseInt(initialSnapshot.availableSessions, 10) || 0;
-        if (sessions !== initialSessions && !('available_sessions' in payload)) {
+        if (typeChanged || sessions !== initialSessions) {
           payload.available_sessions = sessions;
           changedFields.push('available_sessions');
         }
@@ -192,6 +204,14 @@ function MembershipEditModal({ isOpen, onClose, user, mode = 'add', onMutated })
         confirmText: 'Ок'
       });
 
+      setInitialSnapshot({
+        membershipType: updated.membership_type || membershipType,
+        startDate: normalizeDateInput(updated.membership_start_date ?? startDate),
+        endDate: normalizeDateInput(updated.membership_end_date ?? endDate),
+        availableSessions: String(getCurrentSessions(updated)),
+        comment: updated.membership_comment ?? comment
+      });
+
       onClose?.();
       onMutated?.(updated);
     } catch {
@@ -218,13 +238,10 @@ function MembershipEditModal({ isOpen, onClose, user, mode = 'add', onMutated })
                   value="regular"
                   checked={membershipType === 'regular'}
                   onChange={() => {
-                    setMembershipType('regular');
-                    if (
-                      initialSnapshot?.membershipType === 'corporate'
-                      || initialSnapshot?.membershipType === 'annual'
-                    ) {
+                    if (membershipType === 'corporate' || membershipType === 'annual') {
                       setAvailableSessions('0');
                     }
+                    setMembershipType('regular');
                   }}
                 />
                 Обычный
@@ -263,15 +280,17 @@ function MembershipEditModal({ isOpen, onClose, user, mode = 'add', onMutated })
                   onChange={(e) => setStartDate(e.target.value)}
                 />
               </div>
-              <div className="form-group">
-                <label htmlFor="membership-end-date">Конец периода</label>
-                <input
-                  id="membership-end-date"
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                />
-              </div>
+              {membershipType === 'regular' && (
+                <div className="form-group">
+                  <label htmlFor="membership-end-date">Конец периода</label>
+                  <input
+                    id="membership-end-date"
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                  />
+                </div>
+              )}
               {membershipType === 'regular' && (
                 <div className="form-group">
                   <label htmlFor="membership-available-sessions">Доступные посещения</label>

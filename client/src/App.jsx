@@ -11,7 +11,6 @@ import FeedPage from './features/feed/FeedPage';
 import TrainingsPage from './features/trainings/TrainingsPage';
 import MembershipOverviewModal from './features/trainings/components/MembershipOverviewModal';
 import ShopPage from './features/shop/ShopPage';
-import RatingPage from './features/rating/RatingPage';
 import CompetitionsPage from './features/competitions/CompetitionsPage';
 import GalleryPage from './features/gallery/GalleryPage';
 import ProfilePage from './features/profile/ProfilePage';
@@ -30,13 +29,12 @@ const TAB_TITLES = [
   'Лента новостей',
   'Тренировки',
   'Магазин',
-  'Рейтинг',
   'Соревнования',
   'Галерея',
   'Мой профиль'
 ];
 
-const PROFILE_TAB_INDEX = 6;
+const PROFILE_TAB_INDEX = 5;
 
 function AppInner() {
   const [activeTab, setActiveTab] = useState(0);
@@ -222,10 +220,9 @@ function AppInner() {
           </ProductUploadProvider>
         )}
         {activeTab === 3 && (
-          <RatingPage key={sessionResetKey} user={user} onTabChange={handleTabChange} />
+          <CompetitionsPage user={user} onTabChange={handleTabChange} />
         )}
-        {activeTab === 4 && <CompetitionsPage user={user} />}
-        {activeTab === 5 && <GalleryPage user={user} />}
+        {activeTab === 4 && <GalleryPage user={user} />}
         {activeTab === PROFILE_TAB_INDEX && (
           <ProfilePage user={user} onUpdate={handleUserUpdate} onTabChange={handleTabChange} />
         )}
