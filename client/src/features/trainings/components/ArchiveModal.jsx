@@ -3,7 +3,7 @@ import EmptyState from '../../../components/ui/EmptyState';
 import IconButton from '../../../components/ui/IconButton';
 import Modal from '../../../components/ui/Modal';
 import { isDateQueryParsed, matchesDateQuery, parseDateQuery } from '../../../lib/dateSearch';
-import { formatCardDate, formatTimeRange } from '../../../lib/format';
+import { formatCardDateWithYear, formatTimeRange } from '../../../lib/format';
 import '../Trainings.css';
 
 /**
@@ -27,7 +27,7 @@ function ArchiveModal({ isOpen, trainings, onClose, onOpenDetail }) {
     }
 
     const qLower = q.toLowerCase();
-    return trainings.filter((training) => formatCardDate(training.date).toLowerCase().includes(qLower));
+    return trainings.filter((training) => formatCardDateWithYear(training.date).toLowerCase().includes(qLower));
   }, [trainings, searchQuery]);
 
   if (!isOpen) return null;
@@ -78,10 +78,10 @@ function ArchiveModal({ isOpen, trainings, onClose, onOpenDetail }) {
               }}
               role="button"
               tabIndex={0}
-              aria-label={`Тренировка ${formatCardDate(training.date)}, ${formatTimeRange(training.date, training.duration)}`}
+              aria-label={`Тренировка ${formatCardDateWithYear(training.date)}, ${formatTimeRange(training.date, training.duration)}`}
             >
               <div className="card-main-info-col">
-                <span className="card-row-date">{formatCardDate(training.date)}</span>
+                <span className="card-row-date">{formatCardDateWithYear(training.date)}</span>
                 <span className="card-row-time">
                   {formatTimeRange(training.date, training.duration)}
                 </span>

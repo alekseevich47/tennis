@@ -40,6 +40,15 @@ export function formatCardDate(dateLike) {
 }
 
 /**
+ * `Понедельник, 5 ноября 2024` — дата с годом (архив, посещённые тренировки).
+ * @param {string | number | Date} dateLike
+ */
+export function formatCardDateWithYear(dateLike) {
+  const d = new Date(dateLike);
+  return `${DAYS_FULL[d.getDay()]}, ${d.getDate()} ${MONTHS_GENITIVE[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+/**
  * `18:00 - 19:30` — диапазон тренировки по дате старта + длительности (мин).
  * @param {string | number | Date} dateLike
  * @param {number} durationMin

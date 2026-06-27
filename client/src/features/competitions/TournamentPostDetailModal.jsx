@@ -1,36 +1,36 @@
-import React, { memo, useMemo } from 'react';
-import Avatar from '../../components/ui/Avatar';
+import React, { useMemo } from 'react';
+import Modal from '../../components/ui/Modal';
 import PostMedia from '../feed/PostMedia';
 import TournamentPodium from './TournamentPodium';
+import TournamentCommentsSection from './TournamentCommentsSection';
+import Avatar from '../../components/ui/Avatar';
 import { formatPostDate } from '../../lib/format';
 
 /**
- * @param {import('../../services/tournamentPosts').TournamentPostRecord} post
- */
-function readTournamentComments(post) {
-  if (!post || !post.expand) return [];
-  const list = post.expand['tournament_comments(post)'];
-  if (!list) return [];
-  return Array.isArray(list) ? list : [list];
-}
-
-/**
  * @param {{
- *   post: import('../../services/tournamentPosts').TournamentPostRecord,
+ *   isOpen: boolean,
+ *   post: import('../../services/tournamentPosts').TournamentPostRecord | null,
  *   players?: any[],
- *   onOpenComments: (post: import('../../services/tournamentPosts').TournamentPostRecord) => void,
+ *   user?: any,
+ *   userIsModerator?: boolean,
+ *   onClose: () => void,
+ *   onOpenProfile?: (user: any) => void,
  *   hiddenMediaKey?: string | null,
  *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, thumbUrl: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void
  * }} props
  */
-function TournamentPostCard({
+function TournamentPostDetailModal({
+  isOpen,
   post,
   players = [],
-  onOpenComments,
+  user = null,
+  userIsModerator = false,
+  onClose,
+  onOpenProfile,
   hiddenMediaKey = null,
   onOpenFullscreen
 }) {
-  const participants = Array.isArray(post.participants) ? post.participants : [];
+  const participants = Array.isArray(post?.participants) ? post.participants : [];
 
   const playerMap = useMemo(() => {
     const map = new Map();
@@ -38,13 +38,15 @@ function TournamentPostCard({
     return map;
   }, [players]);
 
-  const commentCount = useMemo(
-    () => readTournamentComments(post).filter((c) => c.is_deleted !== true).length,
-    [post]
-  );
+  if (!post) return null;
 
   return (
-    <article className="tournament-post-card">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      ariaLabel="Просмотр итогов турнира и комментариев"
+      size="large"
+    >
       <time className="tournament-post-date" dateTime={post.created}>
         {formatPostDate(post.created)}
       </time>
@@ -54,7 +56,7 @@ function TournamentPostCard({
       <PostMedia
         post={post}
         collection="tournament_posts"
-        variant="card"
+        variant="detail"
         className="tournament-post-media"
         hiddenMediaKey={hiddenMediaKey}
         onOpenFullscreen={onOpenFullscreen}
@@ -67,7 +69,7 @@ function TournamentPostCard({
       {participants.length > 0 ? (
         <ol className="tournament-results-list">
           {participants.map((participant) => {
-            const user = playerMap.get(participant.userId) || {
+            const player = playerMap.get(participant.userId) || {
               id: participant.userId,
               full_name: participant.fullName
             };
@@ -75,7 +77,7 @@ function TournamentPostCard({
             return (
               <li key={participant.userId} className="tournament-results-row">
                 <span className="tournament-results-place">{participant.place}</span>
-                <Avatar user={user} size="sm" />
+                <Avatar user={player} size="sm" />
                 <span className="tournament-results-name">{participant.fullName}</span>
                 <span className="tournament-results-points">+{participant.points}</span>
               </li>
@@ -84,21 +86,18 @@ function TournamentPostCard({
         </ol>
       ) : null}
 
-      <div className="feed-card-footer feed-card-bottom-bar">
-        <button
-          type="button"
-          className="post-card-comment-btn"
-          onClick={() => onOpenComments(post)}
-          aria-label={`Открыть комментарии к публикации. Комментариев: ${commentCount}`}
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.5-4.5A8 8 0 1 1 21 12Z" />
-          </svg>
-          <span className="post-card-comment-btn__count">{commentCount}</span>
-        </button>
-      </div>
-    </article>
+      <div className="tournament-post-detail-divider" role="separator" />
+
+      <h3 className="tournament-comments-modal-title">Комментарии</h3>
+
+      <TournamentCommentsSection
+        postId={post.id}
+        user={user}
+        userIsModerator={userIsModerator}
+        onOpenProfile={onOpenProfile}
+      />
+    </Modal>
   );
 }
 
-export default memo(TournamentPostCard);
+export default TournamentPostDetailModal;

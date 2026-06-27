@@ -455,24 +455,19 @@
 }
 
 .tournament-comments {
-  margin-top: 14px;
-  border-top: 1px solid #eef2f6;
-  padding-top: 12px;
+  margin-top: 0;
 }
 
-.tournament-comments-toggle {
-  background: none;
+.tournament-post-detail-divider {
   border: none;
-  color: #007aff;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 4px 0;
-  min-height: 36px;
+  border-top: 1px solid #eef2f6;
+  margin: 16px 0 0;
 }
 
-.tournament-comments-panel {
-  margin-top: 10px;
+.tournament-comments-modal-title {
+  margin: 14px 0 10px;
+  font-size: 15px;
+  font-weight: 600;
 }
 
 .tournament-comments-list {

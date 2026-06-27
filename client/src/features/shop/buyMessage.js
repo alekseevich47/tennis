@@ -65,11 +65,25 @@ export function buildMaxUserChatUrl(maxId) {
 }
 
 /**
+ * @param {string} url
+ */
+export function openMaxDeepLink(url) {
+  const webApp = window.WebApp;
+  if (webApp?.openMaxLink) {
+    webApp.openMaxLink(url);
+    return;
+  }
+  if (webApp?.openLink) {
+    webApp.openLink(url);
+  }
+}
+
+/**
  * @param {string | number | null | undefined} maxId
  */
 export function openMaxUserChat(maxId) {
   const url = buildMaxUserChatUrl(maxId);
-  if (url) openSellerChat(url);
+  if (url) openMaxDeepLink(url);
 }
 
 export { BUY_TOAST_TEXT, BUY_MOBILE_TOAST_ACTION_LABEL };
