@@ -7,6 +7,7 @@ import Spinner from '../../components/ui/Spinner';
 import EmptyState from '../../components/ui/EmptyState';
 import CreateTournamentPostModal from './CreateTournamentPostModal';
 import TournamentPostCard from './TournamentPostCard';
+import TournamentPostDetailModal from './TournamentPostDetailModal';
 import FullscreenImageViewer from '../feed/FullscreenImageViewer';
 import RatingPage from '../rating/RatingPage';
 import ProfileViewModal from '../profile/ProfileViewModal';
@@ -31,6 +32,7 @@ function CompetitionsPage({ user, onTabChange }) {
   const [hiddenMediaKey, setHiddenMediaKey] = useState(null);
   const [isButtonVisible, setIsButtonVisible] = useState(false);
   const [viewingPlayer, setViewingPlayer] = useState(null);
+  const [openedPost, setOpenedPost] = useState(null);
   const containerRef = useRef(null);
   const lastScrollTopRef = useRef(0);
 
@@ -121,9 +123,7 @@ function CompetitionsPage({ user, onTabChange }) {
                   key={post.id}
                   post={post}
                   players={players || []}
-                  user={user}
-                  userIsModerator={moderator}
-                  onOpenProfile={setViewingPlayer}
+                  onOpenComments={setOpenedPost}
                   hiddenMediaKey={hiddenMediaKey}
                   onOpenFullscreen={handleOpenFullscreen}
                 />
@@ -157,6 +157,18 @@ function CompetitionsPage({ user, onTabChange }) {
           onClose={handleCloseFullscreen}
         />
       )}
+
+      <TournamentPostDetailModal
+        isOpen={Boolean(openedPost)}
+        post={openedPost}
+        players={players || []}
+        user={user}
+        userIsModerator={moderator}
+        onClose={() => setOpenedPost(null)}
+        onOpenProfile={setViewingPlayer}
+        hiddenMediaKey={hiddenMediaKey}
+        onOpenFullscreen={handleOpenFullscreen}
+      />
 
       <ProfileViewModal
         isOpen={Boolean(viewingPlayer)}

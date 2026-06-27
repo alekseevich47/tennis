@@ -41,7 +41,7 @@ function getTooltipKey(achievementId, level) {
  * @param {{ title: string, achieved: boolean }} level
  */
 function getTooltipText(level) {
-  return level.achieved ? level.title : 'Не достигнут';
+  return level.title || 'Уровень не назван';
 }
 
 /**

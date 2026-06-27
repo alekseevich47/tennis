@@ -22,7 +22,6 @@ const COMMENT_COLLECTION = 'tournament_comments';
  * }} props
  */
 function TournamentCommentsSection({ postId, user, userIsModerator, onOpenProfile }) {
-  const [expanded, setExpanded] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [isAddingComment, setIsAddingComment] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -43,14 +42,10 @@ function TournamentCommentsSection({ postId, user, userIsModerator, onOpenProfil
   );
 
   const { countsByComment, userLikedSet, mutateLikes } = useCommentLikes(
-    expanded ? activeCommentIds : [],
+    activeCommentIds,
     COMMENT_COLLECTION,
     user?.id
   );
-
-  const handleToggleExpand = () => {
-    setExpanded((prev) => !prev);
-  };
 
   const handleAdd = async (e) => {
     e.preventDefault();
@@ -124,23 +119,10 @@ function TournamentCommentsSection({ postId, user, userIsModerator, onOpenProfil
     }
   };
 
-  const commentCount = comments.filter((c) => c.is_deleted !== true).length;
-
   return (
     <div className="tournament-comments">
-      <button
-        type="button"
-        className="tournament-comments-toggle"
-        onClick={handleToggleExpand}
-        aria-expanded={expanded}
-      >
-        Комментарии {commentCount > 0 ? `(${commentCount})` : ''}
-      </button>
-
-      {expanded && (
-        <div className="tournament-comments-panel">
-          <div className="tournament-comments-list">
-            {comments.length === 0 ? (
+      <div className="tournament-comments-list">
+        {comments.length === 0 ? (
               <p className="tournament-comments-empty">Пока нет комментариев</p>
             ) : (
               comments.map((c) => {
@@ -282,35 +264,33 @@ function TournamentCommentsSection({ postId, user, userIsModerator, onOpenProfil
                 );
               })
             )}
-          </div>
+      </div>
 
-          {user?.can_comment === false ? (
-            <div className="comment-restricted-message tournament-comments-restricted">
-              Вы запрещено оставлять комментарии по причине:{' '}
-              {user.comment_restriction_reason || 'не указана'}. Свяжитесь с администратором.
-            </div>
-          ) : (
-            <form onSubmit={handleAdd} className="tournament-comment-form">
-              <label htmlFor={`tournament-comment-input-${postId}`} className="visually-hidden">
-                Написать комментарий
-              </label>
-              <input
-                id={`tournament-comment-input-${postId}`}
-                type="text"
-                name="tournament-comment"
-                autoComplete="off"
-                placeholder="Написать комментарий…"
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                disabled={isAddingComment}
-                required
-              />
-              <button type="submit" disabled={isAddingComment || !commentText.trim()}>
-                {isAddingComment ? '…' : 'Отправить'}
-              </button>
-            </form>
-          )}
+      {user?.can_comment === false ? (
+        <div className="comment-restricted-message tournament-comments-restricted">
+          Вы запрещено оставлять комментарии по причине:{' '}
+          {user.comment_restriction_reason || 'не указана'}. Свяжитесь с администратором.
         </div>
+      ) : (
+        <form onSubmit={handleAdd} className="tournament-comment-form">
+          <label htmlFor={`tournament-comment-input-${postId}`} className="visually-hidden">
+            Написать комментарий
+          </label>
+          <input
+            id={`tournament-comment-input-${postId}`}
+            type="text"
+            name="tournament-comment"
+            autoComplete="off"
+            placeholder="Написать комментарий…"
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            disabled={isAddingComment}
+            required
+          />
+          <button type="submit" disabled={isAddingComment || !commentText.trim()}>
+            {isAddingComment ? '…' : 'Отправить'}
+          </button>
+        </form>
       )}
     </div>
   );

@@ -53,6 +53,7 @@ export async function listTournamentPosts({ signal } = {}) {
   try {
     return /** @type {TournamentPostRecord[]} */ (await pb.collection('tournament_posts').getFullList({
       sort: '-created',
+      expand: 'tournament_comments(post)',
       requestKey: null,
       signal
     }));
