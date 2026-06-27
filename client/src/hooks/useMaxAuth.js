@@ -6,7 +6,8 @@ import {
   getCurrentUser,
   loadBanInfo,
   isUserBanned,
-  refreshAuthUser
+  refreshAuthUser,
+  saveBanInfo
 } from '../services/auth';
 import { purgeAbandonedComments } from '../services/posts';
 import { warn, error } from '../lib/log';
@@ -105,6 +106,53 @@ export function useMaxAuth() {
     });
     return unsubscribe;
   }, []);
+
+  // Realtime: мгновенная реакция на бан, заморозку абонемента, ограничение комментариев.
+  useEffect(() => {
+    const userId = user?.id;
+    if (!userId || isUserBanned(user)) return;
+
+    let cancelled = false;
+
+    const handler = (/** @type {{ action?: string, record?: Record<string, unknown> }} */ event) => {
+      if (cancelled) return;
+      const record = event.record;
+      if (!record) return;
+
+      if (record.is_banned === true) {
+        pb.authStore.clear();
+        const bannedUser = /** @type {UserRecord} */ ({
+          is_banned: true,
+          ban_reason: String(record.ban_reason || ''),
+          banned_at: String(record.banned_at || '')
+        });
+        saveBanInfo(bannedUser);
+        bannedRef.current = bannedUser;
+        setUser(bannedUser);
+        return;
+      }
+
+      setUser((prev) => {
+        if (!prev) return prev;
+        if (
+          prev.membership_frozen !== record.membership_frozen ||
+          prev.can_comment !== record.can_comment
+        ) {
+          return { ...prev, .../** @type {UserRecord} */ (record) };
+        }
+        return prev;
+      });
+    };
+
+    pb.collection('users').subscribe(userId, handler).catch((e) => {
+      error('Ошибка подписки на обновления пользователя:', e);
+    });
+
+    return () => {
+      cancelled = true;
+      pb.collection('users').unsubscribe(userId);
+    };
+  }, [user?.id]);
 
   const setUserSafe = (/** @type {UserRecord | null} */ nextUser) => {
     applyUser(nextUser);

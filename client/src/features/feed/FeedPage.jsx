@@ -15,7 +15,8 @@ import ProfileViewModal from '../profile/ProfileViewModal';
 import { error } from '../../lib/log';
 import './Feed.css';
 
-const SCROLL_HIDE_DEBOUNCE_MS = 300;
+const SCROLL_TOP_THRESHOLD = 8;
+const SCROLL_DELTA_THRESHOLD = 4;
 
 /**
  * @param {{
@@ -39,33 +40,38 @@ function FeedPage({ user, onDeletedIdsChange }) {
   const { startUpload } = usePostUpload();
 
   const containerRef = useRef(null);
-  const scrollTimeoutRef = useRef(null);
+  const lastScrollTopRef = useRef(0);
 
   useEffect(() => {
     onDeletedIdsChange?.(deletedPostIds);
   }, [deletedPostIds, onDeletedIdsChange]);
 
-  // Scroll listener: зависит только от модераторского флага (фикс C6).
   useEffect(() => {
     const container = containerRef.current;
     if (!userIsModerator || !container) return undefined;
 
-    const handleScroll = () => {
-      setIsButtonVisible(false);
-      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
-      scrollTimeoutRef.current = window.setTimeout(() => {
+    const syncVisibility = (scrollTop, delta) => {
+      if (scrollTop <= SCROLL_TOP_THRESHOLD) {
         setIsButtonVisible(true);
-      }, SCROLL_HIDE_DEBOUNCE_MS);
+      } else if (delta < -SCROLL_DELTA_THRESHOLD) {
+        setIsButtonVisible(true);
+      } else if (delta > SCROLL_DELTA_THRESHOLD) {
+        setIsButtonVisible(false);
+      }
+    };
+
+    lastScrollTopRef.current = container.scrollTop;
+    syncVisibility(container.scrollTop, 0);
+
+    const handleScroll = () => {
+      const scrollTop = container.scrollTop;
+      const delta = scrollTop - lastScrollTopRef.current;
+      syncVisibility(scrollTop, delta);
+      lastScrollTopRef.current = scrollTop;
     };
 
     container.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      container.removeEventListener('scroll', handleScroll);
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-        scrollTimeoutRef.current = null;
-      }
-    };
+    return () => container.removeEventListener('scroll', handleScroll);
   }, [userIsModerator]);
 
   const visiblePosts = useMemo(() => {

@@ -54,4 +54,22 @@ export function openSellerChat(url) {
   window.open(url, '_blank');
 }
 
+/**
+ * Диплинк личного чата в MAX по user_id (dev.max.ru/docs-api — max://user/user_id).
+ * @param {string | number | null | undefined} maxId
+ * @returns {string}
+ */
+export function buildMaxUserChatUrl(maxId) {
+  const id = String(maxId ?? '').trim();
+  return id ? `max://user/${id}` : '';
+}
+
+/**
+ * @param {string | number | null | undefined} maxId
+ */
+export function openMaxUserChat(maxId) {
+  const url = buildMaxUserChatUrl(maxId);
+  if (url) openSellerChat(url);
+}
+
 export { BUY_TOAST_TEXT, BUY_MOBILE_TOAST_ACTION_LABEL };

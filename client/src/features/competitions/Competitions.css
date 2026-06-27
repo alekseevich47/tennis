@@ -453,3 +453,135 @@
 .submit-btn-green {
   background: #34c759 !important;
 }
+
+.tournament-comments {
+  margin-top: 14px;
+  border-top: 1px solid #eef2f6;
+  padding-top: 12px;
+}
+
+.tournament-comments-toggle {
+  background: none;
+  border: none;
+  color: #007aff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 0;
+  min-height: 36px;
+}
+
+.tournament-comments-panel {
+  margin-top: 10px;
+}
+
+.tournament-comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.tournament-comments-empty {
+  margin: 0;
+  font-size: 13px;
+  color: #868e96;
+}
+
+.tournament-comments-restricted {
+  border-top: none;
+  border-radius: 10px;
+  margin-top: 4px;
+}
+
+.tournament-comment-form {
+  display: flex;
+  gap: 8px;
+}
+
+.tournament-comment-form input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  outline: none;
+  font-size: 14px;
+  margin: 0;
+}
+
+.tournament-comment-form input:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: 2px;
+}
+
+.tournament-comment-form button {
+  background: #007aff;
+  color: white;
+  border: none;
+  padding: 0 14px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  min-height: 40px;
+  white-space: nowrap;
+}
+
+.tournament-comment-form input:disabled,
+.tournament-comment-form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.comment-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+  gap: 8px;
+}
+
+.comment-footer-row .comment-timestamp-text {
+  margin-top: 0;
+  flex-shrink: 0;
+}
+
+.comment-like-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 2px 4px;
+  cursor: pointer;
+  color: #8b98a5;
+  min-height: 28px;
+}
+
+.comment-like-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+
+.comment-like-btn--active {
+  color: #ff3b30;
+}
+
+.comment-like-btn--active svg {
+  fill: #ff3b30;
+  stroke: #ff3b30;
+}
+
+.comment-like-btn:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.comment-like-count {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+}

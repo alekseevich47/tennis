@@ -9,7 +9,7 @@ const NAV_ITEMS = [
     label: 'Лента новостей',
     icon: (
       <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path d="M4 4h16v16H4V4zm2 2v12h12V6H6zm2 2h8v2H8V8zm0 4h8v2H8v-2zm0 4h5v2H8v-2z" />
+        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
       </svg>
     )
   },
@@ -30,18 +30,10 @@ const NAV_ITEMS = [
     )
   },
   {
-    label: 'Рейтинг',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z" />
-      </svg>
-    )
-  },
-  {
     label: 'Соревнования',
     icon: (
       <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+        <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z" />
       </svg>
     )
   },

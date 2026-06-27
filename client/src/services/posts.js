@@ -310,6 +310,69 @@ export async function hardDeleteComment(commentId, postId) {
 }
 
 /**
+ * @typedef {Object} CommentLikeRecord
+ * @property {string} id
+ * @property {string} comment
+ * @property {string} comment_collection
+ * @property {string} author
+ * @property {string} created
+ */
+
+/**
+ * @param {string[]} commentIds
+ * @param {'comments' | 'tournament_comments' | 'gallery_comments'} collection
+ * @param {{ signal?: AbortSignal }} [options]
+ * @returns {Promise<CommentLikeRecord[]>}
+ */
+export async function listCommentLikes(commentIds, collection, { signal } = {}) {
+  if (!commentIds?.length) return [];
+
+  const filterParts = commentIds.map((id) => pb.filter('comment = {:id}', { id }));
+  const filter = `(${filterParts.join(' || ')}) && comment_collection = "${collection}"`;
+
+  try {
+    return /** @type {CommentLikeRecord[]} */ (await pb.collection('comment_likes').getFullList({
+      filter,
+      requestKey: null,
+      signal
+    }));
+  } catch (err) {
+    if (err && /** @type {Error} */ (err).name === 'AbortError') return [];
+    error('Ошибка загрузки лайков комментариев:', err);
+    throw err;
+  }
+}
+
+/**
+ * @param {string} commentId
+ * @param {'comments' | 'tournament_comments' | 'gallery_comments'} collection
+ * @param {string} userId
+ * @returns {Promise<CommentLikeRecord | null>}
+ */
+export async function toggleCommentLike(commentId, collection, userId) {
+  if (!commentId || !userId) return null;
+
+  const existing = /** @type {CommentLikeRecord[]} */ (await pb.collection('comment_likes').getFullList({
+    filter: pb.filter(
+      'comment = {:commentId} && comment_collection = {:collection} && author = {:userId}',
+      { commentId, collection, userId }
+    ),
+    requestKey: null
+  }));
+
+  if (existing[0]) {
+    await pb.collection('comment_likes').delete(existing[0].id);
+    return null;
+  }
+
+  return /** @type {CommentLikeRecord} */ (await pb.collection('comment_likes').create({
+    comment: commentId,
+    comment_collection: collection,
+    author: userId
+  }));
+}
+
+/**
  * Используется при старте приложения — очищаем «зомби» soft-deleted комменты текущего юзера.
  * @param {string} userId
  * @param {{ signal?: AbortSignal }} [options]

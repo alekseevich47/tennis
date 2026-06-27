@@ -4,7 +4,7 @@ import IconButton from '../../components/ui/IconButton';
 import { isModerator } from '../../services/auth';
 import pb from '../../services/pb';
 import { auditMembership } from '../../lib/audit';
-import { formatPostDate } from '../../lib/format';
+import { formatPostDate, pluralize } from '../../lib/format';
 import { error } from '../../lib/log';
 import MembershipEditModal from './MembershipEditModal';
 import './Profile.css';
@@ -22,7 +22,38 @@ function getMembershipTypeLabel(type) {
   return 'Обычный';
 }
 
+function parseFreezeLog(raw) {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw;
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function formatFreezeLogEntry(entry, index, total) {
+  const from = formatMembershipDate(entry.frozen_at);
+  const isActive = !entry.unfrozen_at && index === total - 1;
+
+  if (isActive) {
+    return `${from} — по сей день (активна)`;
+  }
+
+  if (!entry.unfrozen_at) {
+    return `${from} — —`;
+  }
+
+  const to = formatMembershipDate(entry.unfrozen_at);
+  const frozenMs = new Date(entry.unfrozen_at).getTime() - new Date(entry.frozen_at).getTime();
+  const days = Math.max(1, Math.ceil(frozenMs / 86_400_000));
+  const dayLabel = pluralize(days, 'день', 'дня', 'дней');
+  return `${from} — ${to} (${days} ${dayLabel})`;
+}
+
 function MembershipModal({ isOpen, onClose, user, onMutated }) {
+  const [userSnapshot, setUserSnapshot] = useState(user);
   const [editMode, setEditMode] = useState(null);
   const [freezing, setFreezing] = useState(false);
   const moderator = isModerator();
@@ -33,19 +64,27 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
   const [endDate, setEndDate] = useState('');
   const [frozen, setFrozen] = useState(false);
   const [frozenAt, setFrozenAt] = useState('');
+  const [freezeLog, setFreezeLog] = useState([]);
   const [comment, setComment] = useState('');
+
+  useEffect(() => {
+    if (user) {
+      setUserSnapshot(user);
+    }
+  }, [user]);
 
   const fetchMembership = useCallback(async () => {
     if (!user?.id) return;
     try {
       const fields = [
         'available_sessions',
-        'attendance_count',
+        'used_sessions',
         'membership_type',
         'membership_start_date',
         'membership_end_date',
         'membership_frozen',
-        'membership_frozen_at'
+        'membership_frozen_at',
+        'membership_freeze_log'
       ];
       if (moderator) {
         fields.push('membership_comment');
@@ -56,12 +95,13 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
       });
 
       setAvailableSessions(Number(fresh.available_sessions ?? 0));
-      setUsedSessions(Number(fresh.attendance_count ?? 0));
+      setUsedSessions(Number(fresh.used_sessions ?? 0));
       setMembershipType(fresh.membership_type || 'regular');
       setStartDate(fresh.membership_start_date || '');
       setEndDate(fresh.membership_end_date || '');
       setFrozen(Boolean(fresh.membership_frozen));
       setFrozenAt(fresh.membership_frozen_at || '');
+      setFreezeLog(parseFreezeLog(fresh.membership_freeze_log));
       if (moderator) {
         setComment(fresh.membership_comment || '');
       }
@@ -77,12 +117,13 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
     }
 
     setAvailableSessions(Number(user?.available_sessions ?? 0));
-    setUsedSessions(Number(user?.attendance_count ?? 0));
+    setUsedSessions(Number(user?.used_sessions ?? 0));
     setMembershipType(user?.membership_type || 'regular');
     setStartDate(user?.membership_start_date || '');
     setEndDate(user?.membership_end_date || '');
     setFrozen(Boolean(user?.membership_frozen));
     setFrozenAt(user?.membership_frozen_at || '');
+    setFreezeLog(parseFreezeLog(user?.membership_freeze_log));
     if (moderator) {
       setComment(user?.membership_comment || '');
     }
@@ -91,12 +132,13 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
     isOpen,
     fetchMembership,
     user?.available_sessions,
-    user?.attendance_count,
+    user?.used_sessions,
     user?.membership_type,
     user?.membership_start_date,
     user?.membership_end_date,
     user?.membership_frozen,
     user?.membership_frozen_at,
+    user?.membership_freeze_log,
     user?.membership_comment,
     moderator
   ]);
@@ -104,12 +146,13 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
   const applyMembership = (record) => {
     if (!record) return;
     setAvailableSessions(Number(record.available_sessions ?? 0));
-    setUsedSessions(Number(record.attendance_count ?? 0));
+    setUsedSessions(Number(record.used_sessions ?? 0));
     setMembershipType(record.membership_type || 'regular');
     setStartDate(record.membership_start_date || '');
     setEndDate(record.membership_end_date || '');
     setFrozen(Boolean(record.membership_frozen));
     setFrozenAt(record.membership_frozen_at || '');
+    setFreezeLog(parseFreezeLog(record.membership_freeze_log));
     if (moderator) {
       setComment(record.membership_comment || '');
     }
@@ -118,6 +161,7 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
   const handleMutated = async (updated) => {
     if (updated) {
       applyMembership(updated);
+      setUserSnapshot((prev) => ({ ...prev, ...updated }));
     } else {
       await fetchMembership();
     }
@@ -144,21 +188,32 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
           updatedEndDate = end.toISOString().slice(0, 10);
         }
 
+        const log = [...freezeLog];
+        if (log.length > 0) {
+          log[log.length - 1].unfrozen_at = new Date().toISOString();
+        }
+
         updated = await pb.collection('users').update(user.id, {
           membership_frozen: false,
+          membership_freeze_log: log,
           ...(updatedEndDate !== endDate ? { membership_end_date: updatedEndDate } : {})
         });
 
         auditMembership.membershipUnfrozen(user.id, { extendedDays: frozenDays });
       } else {
+        const newEntry = { frozen_at: new Date().toISOString(), unfrozen_at: null };
+        const updatedLog = [...freezeLog, newEntry];
+
         updated = await pb.collection('users').update(user.id, {
           membership_frozen: true,
-          membership_frozen_at: new Date().toISOString()
+          membership_frozen_at: newEntry.frozen_at,
+          membership_freeze_log: updatedLog
         });
         auditMembership.membershipFrozen(user.id);
       }
 
       applyMembership(updated);
+      setUserSnapshot((prev) => ({ ...prev, ...updated }));
       onMutated?.(updated);
     } catch (err) {
       error('toggle membership freeze:', err);
@@ -253,6 +308,18 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
               <strong>Заморожен с:</strong> {formatPostDate(frozenAt)}
             </p>
           )}
+          {freezeLog.length > 0 && (
+            <div className="membership-freeze-history">
+              <p><strong>История заморозок:</strong></p>
+              <ul className="membership-freeze-history-list">
+                {freezeLog.map((entry, index) => (
+                  <li key={`${entry.frozen_at}-${index}`}>
+                    {formatFreezeLogEntry(entry, index, freezeLog.length)}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           {moderator && comment && (
             <p className="membership-comment-display">
               <strong>Комментарий:</strong> {comment}
@@ -275,7 +342,7 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
       <MembershipEditModal
         isOpen={Boolean(editMode)}
         onClose={() => setEditMode(null)}
-        user={user}
+        user={userSnapshot}
         mode={editMode}
         onMutated={handleMutated}
       />

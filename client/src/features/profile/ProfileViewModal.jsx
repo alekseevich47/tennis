@@ -23,7 +23,9 @@ import pb from '../../services/pb';
 import { error } from '../../lib/log';
 import { getPlayerRatingRank } from '../../lib/rating';
 import { compressImage } from '../../lib/compress';
+import { isDateQueryParsed, matchesDateQuery, parseDateQuery } from '../../lib/dateSearch';
 import { formatCardDate, formatTimeRange, hasTimeRangeEnded } from '../../lib/format';
+import { openMaxUserChat } from '../shop/buyMessage';
 import MembershipModal from './MembershipModal';
 import './Profile.css';
 
@@ -94,6 +96,7 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [trainingsExpanded, setTrainingsExpanded] = useState(false);
+  const [searchDate, setSearchDate] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuMounted, setMenuMounted] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
@@ -108,6 +111,8 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
   const canEditSectionStartDate = isModerator(currentUser);
   const canManageProfile = Boolean(isOwnProfile || canEditSectionStartDate);
   const displayName = displayUser?.full_name || displayUser?.name || 'Профиль';
+  const targetMaxId = displayUser?.max_id;
+  const canOpenMaxChat = !isOwnProfile && Boolean(targetMaxId);
 
   const ratingPosition = useMemo(
     () => getPlayerRatingRank(players, targetUserId),
@@ -201,6 +206,15 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
     () => getUserPastTrainings(trainings, targetUserId),
     [targetUserId, trainings]
   );
+
+  const filteredTrainings = useMemo(() => {
+    if (!searchDate.trim()) return userTrainings;
+
+    const parsed = parseDateQuery(searchDate);
+    if (!isDateQueryParsed(parsed)) return [];
+
+    return userTrainings.filter((t) => matchesDateQuery(t.date, parsed));
+  }, [userTrainings, searchDate]);
 
   const closeMenu = useCallback(() => {
     setMenuOpen(false);
@@ -715,7 +729,18 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                 </div>
 
                 <h2 className="profile-user-name">
-                  {displayName}
+                  {canOpenMaxChat ? (
+                    <button
+                      type="button"
+                      className="profile-user-name-link"
+                      onClick={() => openMaxUserChat(targetMaxId)}
+                      title="Написать в MAX"
+                    >
+                      {displayName}
+                    </button>
+                  ) : (
+                    displayName
+                  )}
                   <span
                     className="profile-rating-badge"
                     onClick={handleRatingClick}
@@ -731,18 +756,6 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                   <p><strong>Дата рождения:</strong> {formatDate(displayUser?.birth_date) || 'Не указана'}</p>
                   <p><strong>Рука:</strong> {displayUser?.dominant_hand || displayUser?.hand || 'Не указана'}</p>
                   <p><strong>В секции с:</strong> {formatDate(displayUser?.section_start_date || displayUser?.created) || 'Не указана'}</p>
-                </div>
-              </div>
-
-              <div className="profile-stats-block">
-                <h3>Статистика игр</h3>
-                <div className="stats-counter">
-                  {displayUser?.games_count || 0} / {displayUser?.wins || 0} / {displayUser?.losses || 0}
-                </div>
-                <div className="stats-labels">
-                  <span>Игры</span>
-                  <span>Победы</span>
-                  <span>Поражения</span>
                 </div>
               </div>
 
@@ -764,8 +777,45 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                   loadingDetails ? (
                     <Spinner label="Загрузка тренировок..." inline />
                   ) : userTrainings.length > 0 ? (
+                    <>
+                      <div className="profile-trainings-search">
+                        <svg
+                          className="profile-trainings-search-icon"
+                          viewBox="0 0 24 24"
+                          width="18"
+                          height="18"
+                          aria-hidden="true"
+                        >
+                          <g strokeLinecap="square" strokeLinejoin="miter" stroke="currentColor" fill="none">
+                            <line strokeMiterlimit="10" x1="22" y1="22" x2="16.4" y2="16.4" />
+                            <circle stroke="currentColor" strokeMiterlimit="10" cx="10" cy="10" r="9" />
+                          </g>
+                        </svg>
+                        <input
+                          type="text"
+                          className="profile-trainings-search-input"
+                          placeholder="Поиск по дате..."
+                          value={searchDate}
+                          onChange={(e) => setSearchDate(e.target.value)}
+                          aria-label="Поиск тренировок по дате"
+                        />
+                        {searchDate ? (
+                          <IconButton
+                            ariaLabel="Очистить поиск"
+                            variant="ghost"
+                            size="sm"
+                            className="profile-trainings-search-clear"
+                            onClick={() => setSearchDate('')}
+                          >
+                            <span aria-hidden="true">✕</span>
+                          </IconButton>
+                        ) : null}
+                      </div>
+                      {filteredTrainings.length === 0 ? (
+                        <p className="no-data-text">Ничего не найдено</p>
+                      ) : (
                     <div className="profile-trainings-list">
-                      {userTrainings.map((training) => {
+                      {filteredTrainings.map((training) => {
                         const attended = (training.attended_users || []).includes(targetUserId);
                         return (
                           <div key={training.id} className="profile-training-card">
@@ -790,6 +840,8 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                         );
                       })}
                     </div>
+                      )}
+                    </>
                   ) : isOwnProfile ? (
                     <p className="no-data-text">Вы ещё не посещали тренировки</p>
                   ) : null

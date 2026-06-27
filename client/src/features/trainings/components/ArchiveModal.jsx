@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import EmptyState from '../../../components/ui/EmptyState';
 import IconButton from '../../../components/ui/IconButton';
 import Modal from '../../../components/ui/Modal';
+import { isDateQueryParsed, matchesDateQuery, parseDateQuery } from '../../../lib/dateSearch';
 import { formatCardDate, formatTimeRange } from '../../../lib/format';
 import '../Trainings.css';
 
@@ -19,8 +20,14 @@ function ArchiveModal({ isOpen, trainings, onClose, onOpenDetail }) {
   const filtered = useMemo(() => {
     if (!searchQuery.trim()) return trainings;
 
-    const q = searchQuery.trim().toLowerCase();
-    return trainings.filter((training) => formatCardDate(training.date).toLowerCase().includes(q));
+    const q = searchQuery.trim();
+    const parsed = parseDateQuery(q);
+    if (isDateQueryParsed(parsed)) {
+      return trainings.filter((training) => matchesDateQuery(training.date, parsed));
+    }
+
+    const qLower = q.toLowerCase();
+    return trainings.filter((training) => formatCardDate(training.date).toLowerCase().includes(qLower));
   }, [trainings, searchQuery]);
 
   if (!isOpen) return null;

@@ -8,18 +8,20 @@ import EmptyState from '../../components/ui/EmptyState';
 import CreateTournamentPostModal from './CreateTournamentPostModal';
 import TournamentPostCard from './TournamentPostCard';
 import FullscreenImageViewer from '../feed/FullscreenImageViewer';
+import RatingPage from '../rating/RatingPage';
+import ProfileViewModal from '../profile/ProfileViewModal';
 import '../feed/Feed.css';
 import './Competitions.css';
 
 const TABS = [
   { id: 'feed', label: 'Лента' },
-  { id: 'games', label: 'Игры' }
+  { id: 'rating', label: 'Рейтинг' }
 ];
 
 const SCROLL_TOP_THRESHOLD = 8;
 const SCROLL_DELTA_THRESHOLD = 4;
 
-function CompetitionsPage() {
+function CompetitionsPage({ user, onTabChange }) {
   const moderator = isModerator();
   const { data: players } = usePlayers();
   const { data: posts, isLoading: postsLoading, mutate: mutatePosts } = useTournamentPosts();
@@ -28,6 +30,7 @@ function CompetitionsPage() {
   const [fullscreenMedia, setFullscreenMedia] = useState(null);
   const [hiddenMediaKey, setHiddenMediaKey] = useState(null);
   const [isButtonVisible, setIsButtonVisible] = useState(false);
+  const [viewingPlayer, setViewingPlayer] = useState(null);
   const containerRef = useRef(null);
   const lastScrollTopRef = useRef(0);
 
@@ -118,6 +121,9 @@ function CompetitionsPage() {
                   key={post.id}
                   post={post}
                   players={players || []}
+                  user={user}
+                  userIsModerator={moderator}
+                  onOpenProfile={setViewingPlayer}
                   hiddenMediaKey={hiddenMediaKey}
                   onOpenFullscreen={handleOpenFullscreen}
                 />
@@ -127,10 +133,8 @@ function CompetitionsPage() {
         </div>
       )}
 
-      {activeTab === 'games' && (
-        <div className="competitions-stub">
-          <p>Раздел в разработке</p>
-        </div>
+      {activeTab === 'rating' && (
+        <RatingPage user={user} onTabChange={onTabChange} />
       )}
 
       <CreateTournamentPostModal
@@ -153,6 +157,14 @@ function CompetitionsPage() {
           onClose={handleCloseFullscreen}
         />
       )}
+
+      <ProfileViewModal
+        isOpen={Boolean(viewingPlayer)}
+        targetUser={viewingPlayer}
+        currentUser={user}
+        onTabChange={onTabChange}
+        onClose={() => setViewingPlayer(null)}
+      />
     </section>
   );
 }

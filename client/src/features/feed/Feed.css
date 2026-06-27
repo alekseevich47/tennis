@@ -1267,3 +1267,56 @@ button.post-card-like:hover:not(:disabled) {
   margin-top: 4px;
   text-align: right;
 }
+
+.comment-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+  gap: 8px;
+}
+
+.comment-footer-row .comment-timestamp-text {
+  margin-top: 0;
+  flex-shrink: 0;
+}
+
+.comment-like-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 2px 4px;
+  cursor: pointer;
+  color: #8b98a5;
+  min-height: 28px;
+}
+
+.comment-like-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+
+.comment-like-btn--active {
+  color: #ff3b30;
+}
+
+.comment-like-btn--active svg {
+  fill: #ff3b30;
+  stroke: #ff3b30;
+}
+
+.comment-like-btn:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.comment-like-count {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+}

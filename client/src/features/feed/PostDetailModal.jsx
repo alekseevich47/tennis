@@ -1,19 +1,22 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
 import Avatar from '../../components/ui/Avatar';
 import PostMedia from './PostMedia';
 import sectionAvatarUrl from '../../assets/sm-avatar.png';
 import { useComments } from '../../hooks/useComments';
+import { useCommentLikes } from '../../hooks/useCommentLikes';
 import { formatPostDate } from '../../lib/format';
 import {
   createComment,
   hardDeleteComment,
+  toggleCommentLike,
   updateComment
 } from '../../services/posts';
 import { error } from '../../lib/log';
 
 const SCROLL_INTO_VIEW_DELAY_MS = 200;
+const COMMENT_COLLECTION = 'comments';
 
 /**
  * @param {{
@@ -55,10 +58,25 @@ function PostDetailModal({
   const [editingText, setEditingText] = useState('');
   // Soft-удалённые в рамках текущей сессии модалки. Стираются в БД при закрытии.
   const [softDeletedIds, setSoftDeletedIds] = useState([]);
+  const [togglingLikeId, setTogglingLikeId] = useState(null);
 
   const commentsBottomRef = useRef(null);
   const isAddingCommentRef = useRef(false);
   const scrollTimerRef = useRef(null);
+
+  const activeCommentIds = useMemo(
+    () =>
+      comments
+        .filter((c) => !softDeletedIds.includes(c.id) && c.is_deleted !== true)
+        .map((c) => c.id),
+    [comments, softDeletedIds]
+  );
+
+  const { countsByComment, userLikedSet, mutateLikes } = useCommentLikes(
+    isOpen ? activeCommentIds : [],
+    COMMENT_COLLECTION,
+    user?.id
+  );
 
   useEffect(() => {
     if (!isOpen) return;
@@ -160,6 +178,19 @@ function PostDetailModal({
       await mutateComments();
     } catch (err) {
       error('save edit comment:', err);
+    }
+  };
+
+  const handleToggleLike = async (commentId) => {
+    if (!user?.id || togglingLikeId) return;
+    setTogglingLikeId(commentId);
+    try {
+      await toggleCommentLike(commentId, COMMENT_COLLECTION, user.id);
+      await mutateLikes();
+    } catch (err) {
+      error('toggle comment like:', err);
+    } finally {
+      setTogglingLikeId(null);
     }
   };
 
@@ -313,6 +344,8 @@ function PostDetailModal({
             }
 
             const canDelete = isOwner || userIsModerator;
+            const likeCount = countsByComment[c.id] || 0;
+            const isLiked = userLikedSet.has(c.id);
 
             return (
               <div key={c.id} className="modal-comment-item">
@@ -407,7 +440,23 @@ function PostDetailModal({
                 ) : (
                   <>
                     <p className="comment-content-text">{c.text}</p>
-                    <span className="comment-timestamp-text">{formatPostDate(c.created)}</span>
+                    <div className="comment-footer-row">
+                      <button
+                        type="button"
+                        className={`comment-like-btn${isLiked ? ' comment-like-btn--active' : ''}`}
+                        onClick={() => handleToggleLike(c.id)}
+                        disabled={!user?.id || togglingLikeId === c.id}
+                        aria-label={isLiked ? 'Убрать лайк' : 'Поставить лайк'}
+                      >
+                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                        </svg>
+                        {likeCount > 0 && (
+                          <span className="comment-like-count">{likeCount}</span>
+                        )}
+                      </button>
+                      <span className="comment-timestamp-text">{formatPostDate(c.created)}</span>
+                    </div>
                   </>
                 )}
               </div>

@@ -1,15 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import Avatar from '../../components/ui/Avatar';
 import { useGalleryComments } from '../../hooks/useGalleryComments';
+import { useCommentLikes } from '../../hooks/useCommentLikes';
 import {
   createGalleryComment,
   deleteGalleryComment,
   updateGalleryComment
 } from '../../services/catalog';
+import { toggleCommentLike } from '../../services/posts';
 import { formatPostDate } from '../../lib/format';
 import { getMediaUrl, videoPreviewUrl } from '../../lib/media';
 import { error } from '../../lib/log';
+import '../feed/Feed.css';
+
+const COMMENT_COLLECTION = 'gallery_comments';
 
 /**
  * @param {{
@@ -29,6 +34,15 @@ function GalleryCommentModal({ isOpen, mediaItem, user, userIsModerator, onClose
   const [deletingId, setDeletingId] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState('');
+  const [togglingLikeId, setTogglingLikeId] = useState(null);
+
+  const commentIds = useMemo(() => comments.map((c) => c.id), [comments]);
+
+  const { countsByComment, userLikedSet, mutateLikes } = useCommentLikes(
+    isOpen ? commentIds : [],
+    COMMENT_COLLECTION,
+    user?.id
+  );
 
   useEffect(() => {
     if (!isOpen) {
@@ -102,6 +116,19 @@ function GalleryCommentModal({ isOpen, mediaItem, user, userIsModerator, onClose
     }
   };
 
+  const handleToggleLike = async (commentId) => {
+    if (!user?.id || togglingLikeId) return;
+    setTogglingLikeId(commentId);
+    try {
+      await toggleCommentLike(commentId, COMMENT_COLLECTION, user.id);
+      await mutateLikes();
+    } catch (err) {
+      error('toggle gallery comment like:', err);
+    } finally {
+      setTogglingLikeId(null);
+    }
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -157,6 +184,8 @@ function GalleryCommentModal({ isOpen, mediaItem, user, userIsModerator, onClose
             {comments.map((comment) => {
               const isAuthor = comment.author === user?.id;
               const canEdit = isAuthor || userIsModerator;
+              const likeCount = countsByComment[comment.id] || 0;
+              const isLiked = userLikedSet.has(comment.id);
 
               return (
                 <div key={comment.id} className="gallery-comment-item">
@@ -249,11 +278,27 @@ function GalleryCommentModal({ isOpen, mediaItem, user, userIsModerator, onClose
                     <p className="gallery-comment-item__text">{comment.text}</p>
                   )}
 
-                  <div className="gallery-comment-item__footer">
-                    <span className="gallery-comment-item__date">
-                      {formatPostDate(comment.created)}
-                    </span>
-                  </div>
+                  {editingId !== comment.id && (
+                    <div className="comment-footer-row gallery-comment-item__footer">
+                      <button
+                        type="button"
+                        className={`comment-like-btn${isLiked ? ' comment-like-btn--active' : ''}`}
+                        onClick={() => handleToggleLike(comment.id)}
+                        disabled={!user?.id || togglingLikeId === comment.id}
+                        aria-label={isLiked ? 'Убрать лайк' : 'Поставить лайк'}
+                      >
+                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                        </svg>
+                        {likeCount > 0 && (
+                          <span className="comment-like-count">{likeCount}</span>
+                        )}
+                      </button>
+                      <span className="comment-timestamp-text gallery-comment-item__date">
+                        {formatPostDate(comment.created)}
+                      </span>
+                    </div>
+                  )}
                 </div>
               );
             })}

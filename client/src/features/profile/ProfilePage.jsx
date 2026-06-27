@@ -14,6 +14,7 @@ import pb from '../../services/pb';
 import { error } from '../../lib/log';
 import { getPlayerRatingRank } from '../../lib/rating';
 import { compressImage } from '../../lib/compress';
+import { isDateQueryParsed, matchesDateQuery, parseDateQuery } from '../../lib/dateSearch';
 import { formatCardDate, formatTimeRange, hasTimeRangeEnded } from '../../lib/format';
 import MembershipModal from './MembershipModal';
 import './Profile.css';
@@ -69,6 +70,7 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
   const [saving, setSaving] = useState(false);
   const [membershipOpen, setMembershipOpen] = useState(false);
   const [trainingsExpanded, setTrainingsExpanded] = useState(false);
+  const [searchDate, setSearchDate] = useState('');
 
   useEffect(() => {
     setFullName(user?.full_name || '');
@@ -116,6 +118,15 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
     () => getUserPastTrainings(trainings || [], user?.id),
     [trainings, user?.id]
   );
+
+  const filteredTrainings = useMemo(() => {
+    if (!searchDate.trim()) return myTrainings;
+
+    const parsed = parseDateQuery(searchDate);
+    if (!isDateQueryParsed(parsed)) return [];
+
+    return myTrainings.filter((t) => matchesDateQuery(t.date, parsed));
+  }, [myTrainings, searchDate]);
 
   const ratingPosition = useMemo(
     () => getPlayerRatingRank(players, user?.id),
@@ -410,18 +421,6 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
             </div>
           </div>
 
-          <div className="profile-stats-block">
-            <h3>Статистика игр</h3>
-            <div className="stats-counter">
-              {user.games_count || 0} / {user.wins || 0} / {user.losses || 0}
-            </div>
-            <div className="stats-labels">
-              <span>Игры</span>
-              <span>Победы</span>
-              <span>Поражения</span>
-            </div>
-          </div>
-
           <AchievementsBlock userId={user.id} collapsible />
 
           <div className="profile-trainings-block">
@@ -442,8 +441,45 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
               ) : myTrainings.length === 0 ? (
                 <p className="no-data-text">Вы ещё не посещали тренировки</p>
               ) : (
+                <>
+                  <div className="profile-trainings-search">
+                    <svg
+                      className="profile-trainings-search-icon"
+                      viewBox="0 0 24 24"
+                      width="18"
+                      height="18"
+                      aria-hidden="true"
+                    >
+                      <g strokeLinecap="square" strokeLinejoin="miter" stroke="currentColor" fill="none">
+                        <line strokeMiterlimit="10" x1="22" y1="22" x2="16.4" y2="16.4" />
+                        <circle stroke="currentColor" strokeMiterlimit="10" cx="10" cy="10" r="9" />
+                      </g>
+                    </svg>
+                    <input
+                      type="text"
+                      className="profile-trainings-search-input"
+                      placeholder="Поиск по дате..."
+                      value={searchDate}
+                      onChange={(e) => setSearchDate(e.target.value)}
+                      aria-label="Поиск тренировок по дате"
+                    />
+                    {searchDate ? (
+                      <IconButton
+                        ariaLabel="Очистить поиск"
+                        variant="ghost"
+                        size="sm"
+                        className="profile-trainings-search-clear"
+                        onClick={() => setSearchDate('')}
+                      >
+                        <span aria-hidden="true">✕</span>
+                      </IconButton>
+                    ) : null}
+                  </div>
+                  {filteredTrainings.length === 0 ? (
+                    <p className="no-data-text">Ничего не найдено</p>
+                  ) : (
                 <div className="profile-trainings-list">
-                  {myTrainings.map((t) => {
+                  {filteredTrainings.map((t) => {
                     const attended = (t.attended_users || []).includes(user.id);
                     return (
                       <div key={t.id} className="profile-training-card">
@@ -463,6 +499,8 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
                     );
                   })}
                 </div>
+                  )}
+                </>
               )
             )}
           </div>

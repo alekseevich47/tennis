@@ -147,6 +147,21 @@
   color: #1971c2;
 }
 
+.membership-freeze-history {
+  margin-top: 4px;
+}
+
+.membership-freeze-history-list {
+  margin: 4px 0 0;
+  padding-left: 18px;
+  color: #495057;
+  font-size: 14px;
+}
+
+.membership-freeze-history-list li {
+  margin-bottom: 2px;
+}
+
 .membership-comment-display {
   color: #666;
   font-style: italic;
@@ -224,6 +239,21 @@
   font-weight: 700;
 }
 
+.profile-user-name-link {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-weight: inherit;
+  color: #007aff;
+  cursor: pointer;
+}
+
+.profile-user-name-link:hover {
+  text-decoration: underline;
+}
+
 .profile-rating-badge {
   font-size: 13px;
   color: #007aff;
@@ -244,44 +274,6 @@
   margin: 8px 0;
   font-size: 15px;
   color: #444;
-}
-
-.profile-stats-block {
-  background: #1a1a1a;
-  color: white;
-  padding: 18px;
-  border-radius: 16px;
-  text-align: center;
-  margin-bottom: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.profile-stats-block h3 {
-  margin-top: 0;
-  font-size: 13px;
-  color: #aaa;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-}
-
-.stats-counter {
-  font-size: 30px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  margin: 12px 0;
-  color: #4caf50;
-}
-
-.stats-labels {
-  display: flex;
-  justify-content: space-around;
-  font-size: 12px;
-  color: #888;
-}
-
-.stats-labels span {
-  flex: 1;
-  text-align: center;
 }
 
 .profile-achievements-block {
@@ -332,12 +324,45 @@
 }
 
 .achievement-medal {
+  position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
   min-width: 0;
+}
+
+.achievement-medal-tooltip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  font-size: 11px;
+  line-height: 1.3;
+  border-radius: 6px;
+  white-space: nowrap;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.achievement-medal-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.85);
+}
+
+@media (hover: none) {
+  .achievement-medal {
+    cursor: pointer;
+  }
 }
 
 .achievement-medal img,
@@ -480,11 +505,49 @@
   margin: 20px 0;
 }
 
+.profile-trainings-search {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.profile-trainings-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #868e96;
+  pointer-events: none;
+}
+
+.profile-trainings-search-input {
+  width: 100%;
+  padding: 10px 36px 10px 38px;
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+  font-size: 14px;
+  background: #f8f9fa;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.profile-trainings-search-input:focus {
+  border-color: #007aff;
+  background: #ffffff;
+}
+
+.profile-trainings-search-clear {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #868e96 !important;
+}
+
 .profile-trainings-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-top: 12px;
+  margin-top: 0;
 }
 
 .profile-training-card {
