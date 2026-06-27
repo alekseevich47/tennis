@@ -2,16 +2,23 @@ import React, { memo, useMemo } from 'react';
 import Avatar from '../../components/ui/Avatar';
 import PostMedia from '../feed/PostMedia';
 import TournamentPodium from './TournamentPodium';
-import TournamentCommentsSection from './TournamentCommentsSection';
 import { formatPostDate } from '../../lib/format';
+
+/**
+ * @param {import('../../services/tournamentPosts').TournamentPostRecord} post
+ */
+function readTournamentComments(post) {
+  if (!post || !post.expand) return [];
+  const list = post.expand['tournament_comments(post)'];
+  if (!list) return [];
+  return Array.isArray(list) ? list : [list];
+}
 
 /**
  * @param {{
  *   post: import('../../services/tournamentPosts').TournamentPostRecord,
  *   players?: any[],
- *   user?: any,
- *   userIsModerator?: boolean,
- *   onOpenProfile?: (user: any) => void,
+ *   onOpenComments: (post: import('../../services/tournamentPosts').TournamentPostRecord) => void,
  *   hiddenMediaKey?: string | null,
  *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, thumbUrl: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void
  * }} props
@@ -19,9 +26,7 @@ import { formatPostDate } from '../../lib/format';
 function TournamentPostCard({
   post,
   players = [],
-  user = null,
-  userIsModerator = false,
-  onOpenProfile,
+  onOpenComments,
   hiddenMediaKey = null,
   onOpenFullscreen
 }) {
@@ -32,6 +37,11 @@ function TournamentPostCard({
     players.forEach((player) => map.set(player.id, player));
     return map;
   }, [players]);
+
+  const commentCount = useMemo(
+    () => readTournamentComments(post).filter((c) => c.is_deleted !== true).length,
+    [post]
+  );
 
   return (
     <article className="tournament-post-card">
@@ -74,12 +84,19 @@ function TournamentPostCard({
         </ol>
       ) : null}
 
-      <TournamentCommentsSection
-        postId={post.id}
-        user={user}
-        userIsModerator={userIsModerator}
-        onOpenProfile={onOpenProfile}
-      />
+      <div className="feed-card-footer feed-card-bottom-bar">
+        <button
+          type="button"
+          className="post-card-comment-btn"
+          onClick={() => onOpenComments(post)}
+          aria-label={`Открыть комментарии к публикации. Комментариев: ${commentCount}`}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.5-4.5A8 8 0 1 1 21 12Z" />
+          </svg>
+          <span className="post-card-comment-btn__count">{commentCount}</span>
+        </button>
+      </div>
     </article>
   );
 }

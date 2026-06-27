@@ -15,7 +15,7 @@ import { error } from '../../lib/log';
 import { getPlayerRatingRank } from '../../lib/rating';
 import { compressImage } from '../../lib/compress';
 import { isDateQueryParsed, matchesDateQuery, parseDateQuery } from '../../lib/dateSearch';
-import { formatCardDate, formatTimeRange, hasTimeRangeEnded } from '../../lib/format';
+import { formatCardDateWithYear, formatTimeRange, hasTimeRangeEnded } from '../../lib/format';
 import MembershipModal from './MembershipModal';
 import './Profile.css';
 
@@ -443,18 +443,6 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
               ) : (
                 <>
                   <div className="profile-trainings-search">
-                    <svg
-                      className="profile-trainings-search-icon"
-                      viewBox="0 0 24 24"
-                      width="18"
-                      height="18"
-                      aria-hidden="true"
-                    >
-                      <g strokeLinecap="square" strokeLinejoin="miter" stroke="currentColor" fill="none">
-                        <line strokeMiterlimit="10" x1="22" y1="22" x2="16.4" y2="16.4" />
-                        <circle stroke="currentColor" strokeMiterlimit="10" cx="10" cy="10" r="9" />
-                      </g>
-                    </svg>
                     <input
                       type="text"
                       className="profile-trainings-search-input"
@@ -484,7 +472,7 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
                     return (
                       <div key={t.id} className="profile-training-card">
                         <div className="profile-training-card__info">
-                          <span className="training-date">{formatCardDate(t.date)}</span>
+                          <span className="training-date">{formatCardDateWithYear(t.date)}</span>
                           <span className="training-time">
                             {formatTimeRange(t.date, t.duration || 0)}
                           </span>
