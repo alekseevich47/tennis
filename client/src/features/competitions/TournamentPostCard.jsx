@@ -2,12 +2,16 @@ import React, { memo, useMemo } from 'react';
 import Avatar from '../../components/ui/Avatar';
 import PostMedia from '../feed/PostMedia';
 import TournamentPodium from './TournamentPodium';
+import TournamentCommentsSection from './TournamentCommentsSection';
 import { formatPostDate } from '../../lib/format';
 
 /**
  * @param {{
  *   post: import('../../services/tournamentPosts').TournamentPostRecord,
  *   players?: any[],
+ *   user?: any,
+ *   userIsModerator?: boolean,
+ *   onOpenProfile?: (user: any) => void,
  *   hiddenMediaKey?: string | null,
  *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, thumbUrl: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void
  * }} props
@@ -15,6 +19,9 @@ import { formatPostDate } from '../../lib/format';
 function TournamentPostCard({
   post,
   players = [],
+  user = null,
+  userIsModerator = false,
+  onOpenProfile,
   hiddenMediaKey = null,
   onOpenFullscreen
 }) {
@@ -66,6 +73,13 @@ function TournamentPostCard({
           })}
         </ol>
       ) : null}
+
+      <TournamentCommentsSection
+        postId={post.id}
+        user={user}
+        userIsModerator={userIsModerator}
+        onOpenProfile={onOpenProfile}
+      />
     </article>
   );
 }

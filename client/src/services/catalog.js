@@ -48,6 +48,7 @@ import { PB_URL } from '../config';
  * @property {string} [section_start_date]
  * @property {string} [created]
  * @property {number} [available_sessions]
+ * @property {number} [used_sessions]
  * @property {number} [attendance_count]
  * @property {string} [role]
  * @property {string} [email]
@@ -285,6 +286,7 @@ export async function listPlayers({ signal, filter } = {}) {
         'section_start_date',
         'created',
         'available_sessions',
+        'used_sessions',
         'attendance_count',
         'rating_points',
         'games_count',

@@ -474,7 +474,10 @@ button.gallery-item-like:hover:not(:disabled) {
 
 .gallery-comment-item__footer {
   margin-top: 8px;
-  text-align: right;
+}
+
+.gallery-comment-item__footer.comment-footer-row {
+  text-align: unset;
 }
 
 .gallery-comment-edit-form {
