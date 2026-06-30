@@ -6,7 +6,7 @@ import './BottomNav.css';
 // Каждый элемент включает осмысленный `label` (фикс M4).
 const NAV_ITEMS = [
   {
-    label: 'Лента новостей',
+    label: 'Лента',
     icon: (
       <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
@@ -30,7 +30,7 @@ const NAV_ITEMS = [
     )
   },
   {
-    label: 'Соревнования',
+    label: 'Турнир',
     icon: (
       <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z" />

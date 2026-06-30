@@ -1,9 +1,11 @@
 import React, { useMemo } from 'react';
 import Modal from '../../components/ui/Modal';
+import IconButton from '../../components/ui/IconButton';
 import PostMedia from '../feed/PostMedia';
 import TournamentPodium from './TournamentPodium';
 import TournamentCommentsSection from './TournamentCommentsSection';
 import Avatar from '../../components/ui/Avatar';
+import sectionAvatarUrl from '../../assets/sm-avatar.png';
 import { formatPostDate } from '../../lib/format';
 
 /**
@@ -14,6 +16,7 @@ import { formatPostDate } from '../../lib/format';
  *   user?: any,
  *   userIsModerator?: boolean,
  *   onClose: () => void,
+ *   onOpenEdit?: (post: import('../../services/tournamentPosts').TournamentPostRecord) => void,
  *   onOpenProfile?: (user: any) => void,
  *   hiddenMediaKey?: string | null,
  *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, thumbUrl: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void
@@ -26,6 +29,7 @@ function TournamentPostDetailModal({
   user = null,
   userIsModerator = false,
   onClose,
+  onOpenEdit,
   onOpenProfile,
   hiddenMediaKey = null,
   onOpenFullscreen
@@ -40,6 +44,11 @@ function TournamentPostDetailModal({
 
   if (!post) return null;
 
+  const handleOpenEdit = () => {
+    onOpenEdit?.(post);
+    onClose();
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -47,9 +56,36 @@ function TournamentPostDetailModal({
       ariaLabel="Просмотр итогов турнира и комментариев"
       size="large"
     >
-      <time className="tournament-post-date" dateTime={post.created}>
-        {formatPostDate(post.created)}
-      </time>
+      <div className="feed-card-header">
+        <div className="section-avatar" aria-hidden="true">
+          <img className="section-avatar__image" src={sectionAvatarUrl} alt="" decoding="async" />
+        </div>
+        <div className="section-meta">
+          <span className="section-title-name">Секция Миленьких</span>
+          <span className="post-date-line">
+            <time className="post-date" dateTime={post.created}>
+              {formatPostDate(post.created)}
+            </time>
+            {post.post_number ? <span className="post-number">#{post.post_number}</span> : null}
+          </span>
+        </div>
+        {userIsModerator && onOpenEdit ? (
+          <div className="post-card-actions" role="group" aria-label="Действия с публикацией">
+            <IconButton
+              ariaLabel="Редактировать публикацию"
+              variant="ghost"
+              size="sm"
+              className="edit-post-btn"
+              onClick={handleOpenEdit}
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M4 20h4.2L19.3 8.9a2 2 0 0 0 0-2.8l-1.4-1.4a2 2 0 0 0-2.8 0L4 15.8V20Z" />
+                <path d="m13.7 6.1 4.2 4.2" />
+              </svg>
+            </IconButton>
+          </div>
+        ) : null}
+      </div>
 
       {post.content ? <p className="tournament-post-content">{post.content}</p> : null}
 
