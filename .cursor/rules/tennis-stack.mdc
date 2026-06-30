@@ -176,7 +176,7 @@ alwaysApply: false
 ## Поиск в AppHeader (Feed, Competitions, Gallery)
 
 - `AppHeader` получает проп `searchConfig?: { open, query, onToggle, onChange, onClose, showDateSearch?, onDatePick? }`.
-- При `searchConfig.open=true`: `<h1>` скрыт; `.header-search-row` (`flex: 1`) растягивается **до** `.header-profile-badge`. Внутри — `.header-search-field` (серый фон, `border-radius: 8px`): `<input className="header-search-input">` + иконка-календарь (если `showDateSearch=true`) + кнопка ✕ (`.header-search-clear`) **внутри** поля. Колокольчик (`.header-bell-btn`) **скрыт** при открытом поиске.
+- При `searchConfig.open=true`: `<h1>` скрыт; `.header-search-row` (`flex: 1`) растягивается до колокольчика и профиля. Внутри — `.header-search-field` (серый фон): `<input>` с `padding-right` под иконки; календарь и ✕ — в `.header-search-field-actions` (absolute, внутри поля). Колокольчик **остаётся видимым**.
 - При `searchConfig.open=false`: справа от `<h1>` — кнопка-лупа (`.header-search-btn`).
 - State поиска (`feedSearch`, `competitionsSearch`, `gallerySearch`) — в `App.jsx`, передаётся пропами в страницы. Сбрасывается при смене таба.
 - `FeedPage` / `CompetitionsPage` / `GalleryPage` принимают проп `searchQuery: string`.
@@ -211,11 +211,11 @@ alwaysApply: false
 ## Иконка «Абонемент»
 
 - Везде (AppHeader, ProfileViewModal) — SVG силуэта 👤: `<circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>`, `stroke="#007aff"`, `fill="none"`.
-- В `AppHeader` (раздел «Тренировки», только модератор): `.header-membership-btn` с `margin-left: auto` — прижат вправо (перед колокольчиком и профилем).
+- В `AppHeader` (раздел «Тренировки», только модератор): кнопка «Абонемент» в `.header-end-group` (вместе с колокольчиком и профилем, `margin-left: auto` на группе).
 
 ## Колокольчик в AppHeader
 
-- `<IconButton ariaLabel="Уведомления" className="header-bell-btn" onClick={onNotificationsClick}>` — **перед** `.header-profile-badge`; `onNotificationsClick` (заглушка `() => {}` в App.jsx). SVG: `<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>`. `margin-left: 8px` (сдвиг вправо); `margin-left: auto` — только если нет `.header-search-btn` и нет `.header-membership-btn`. **Скрыт** при `searchConfig.open=true`.
+- `<IconButton ariaLabel="Уведомления" className="header-bell-btn" onClick={onNotificationsClick}>` — **перед** `.header-profile-badge`; `onNotificationsClick` (заглушка `() => {}` в App.jsx). SVG: `<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>`. `margin-left: 8px` (сдвиг вправо); `margin-left: auto` — только если нет поиска, абонемента и открытой строки поиска. **Виден** при `searchConfig.open=true`.
 
 ## Бот MAX — оповещения
 
