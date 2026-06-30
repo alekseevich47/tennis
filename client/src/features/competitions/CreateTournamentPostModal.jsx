@@ -10,15 +10,12 @@ import {
   isVideoFile,
   readSelectedFiles
 } from '../../lib/media';
-import { publishTournamentPost } from '../../services/tournamentPosts';
-import { error } from '../../lib/log';
-
 /**
  * @param {{
  *   isOpen: boolean,
  *   onClose: () => void,
  *   players: any[],
- *   onCreated: () => void
+ *   onCreated: (payload: { content: string, files: File[], rawParticipants: Array<{ userId: string, fullName: string, points: number }> }) => void
  * }} props
  */
 function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
@@ -27,7 +24,6 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
   const [previewItems, setPreviewItems] = useState([]);
   const [search, setSearch] = useState('');
   const [pointsByUserId, setPointsByUserId] = useState(/** @type {Record<string, string>} */ ({}));
-  const [submitting, setSubmitting] = useState(false);
   const { confirm } = useAlertDialog();
   const { showToast } = useToast();
 
@@ -101,25 +97,16 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
       return;
     }
 
-    setSubmitting(true);
-    try {
-      const preparedFiles = await Promise.all(
-        files.map((file) => (isVideoFile(file) ? file : compressImage(file)))
-      );
-      await publishTournamentPost({
-        content: text.trim(),
-        files: preparedFiles,
-        rawParticipants: selectedParticipants
-      });
-      showToast({ text: 'Итоги турнира опубликованы.' });
-      reset();
-      onCreated();
-    } catch (err) {
-      error('publish tournament post:', err);
-      showToast({ text: 'Не удалось опубликовать итоги турнира.' });
-    } finally {
-      setSubmitting(false);
-    }
+    const preparedFiles = await Promise.all(
+      files.map((file) => (isVideoFile(file) ? file : compressImage(file)))
+    );
+    onCreated({
+      content: text.trim(),
+      files: preparedFiles,
+      rawParticipants: selectedParticipants
+    });
+    reset();
+    onClose();
   };
 
   return (
@@ -240,9 +227,9 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
           <button
             type="submit"
             className="submit-btn-full"
-            disabled={submitting || !text.trim() || selectedParticipants.length < 2}
+            disabled={!text.trim() || selectedParticipants.length < 2}
           >
-            {submitting ? 'Публикация…' : 'Опубликовать'}
+            Опубликовать
           </button>
         </div>
       </form>

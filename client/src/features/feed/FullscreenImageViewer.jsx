@@ -23,7 +23,7 @@ function getOriginRect(originKey) {
 
 /**
  * @param {{
- *   items: Array<{ filename: string, url: string, isVideo: boolean, originKey?: string }>,
+ *   items: Array<{ filename: string, url: string, isVideo: boolean, originKey?: string, postNumber?: number }>,
  *   initialIndex?: number,
  *   originRect?: DOMRect | null,
  *   originKey?: string | null,
@@ -186,10 +186,13 @@ function FullscreenImageViewer({
     return () => node.removeEventListener('wheel', handleNativeWheel);
   }, [handleWheel, isImage, activeIndex]);
 
-  const counterText = useMemo(
-    () => (hasMultiple ? `${activeIndex + 1} / ${items.length}` : ''),
-    [activeIndex, hasMultiple, items.length]
-  );
+  const counterText = useMemo(() => {
+    const postNum = activeItem?.postNumber;
+    if (postNum) {
+      return hasMultiple ? `#${postNum} (${activeIndex + 1} / ${items.length})` : `#${postNum}`;
+    }
+    return hasMultiple ? `${activeIndex + 1} / ${items.length}` : '';
+  }, [activeIndex, activeItem?.postNumber, hasMultiple, items.length]);
 
   const handleViewerTouchStart = (event) => {
     gestureModeRef.current = 'pending';

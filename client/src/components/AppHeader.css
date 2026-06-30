@@ -16,6 +16,71 @@
   font-weight: 700;
   color: #1a1a1a;
   margin: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.header-search-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.header-search-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 15px;
+  color: #1a1a1a;
+  outline: none;
+}
+
+.header-search-input:focus {
+  background: #eee;
+}
+
+.header-search-input::placeholder {
+  color: #999;
+}
+
+.header-search-btn {
+  margin-left: auto;
+  flex-shrink: 0;
+  color: #444;
+}
+
+.header-search-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.header-search-clear {
+  flex-shrink: 0;
+  color: #666;
+  font-size: 16px;
+}
+
+.header-date-btn {
+  flex-shrink: 0;
+  color: #444;
+}
+
+.header-date-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.header-date-input-hidden {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .header-membership-btn {
@@ -29,6 +94,30 @@
   fill: none;
   stroke: #007aff;
   stroke-width: 1.8;
+}
+
+.header-bell-btn {
+  flex-shrink: 0;
+  margin-right: 4px;
+  color: #444;
+}
+
+.header-search-btn ~ .header-bell-btn,
+.header-search-row ~ .header-bell-btn {
+  margin-left: 0;
+}
+
+.app-header:not(:has(.header-search-btn)) .header-bell-btn {
+  margin-left: auto;
+}
+
+.header-bell-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.header-bell-btn ~ .header-profile-badge {
+  margin-left: 0;
 }
 
 .header-profile-badge {

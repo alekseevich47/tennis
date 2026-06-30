@@ -1248,6 +1248,18 @@
       },
       {
         "hidden": false,
+        "id": "number2796747569",
+        "max": null,
+        "min": 1,
+        "name": "post_number",
+        "onlyInt": false,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      },
+      {
+        "hidden": false,
         "id": "autodate2990389176",
         "name": "created",
         "onCreate": true,
@@ -1749,6 +1761,18 @@
       },
       {
         "hidden": false,
+        "id": "number2796747569",
+        "max": null,
+        "min": 1,
+        "name": "post_number",
+        "onlyInt": false,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      },
+      {
+        "hidden": false,
         "id": "autodate2990389176",
         "name": "created",
         "onCreate": true,
@@ -2154,6 +2178,27 @@
         "required": false,
         "system": false,
         "type": "json"
+      },
+      {
+        "hidden": false,
+        "id": "number2796747569",
+        "max": null,
+        "min": 1,
+        "name": "post_number",
+        "onlyInt": false,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      },
+      {
+        "hidden": false,
+        "id": "bool4245145851",
+        "name": "is_deleted",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
       },
       {
         "hidden": false,

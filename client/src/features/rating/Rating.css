@@ -66,7 +66,7 @@
 .rating .players-table {
   padding: 12px;
   display: grid;
-  grid-template-columns: 40px minmax(0, 1fr) 60px 80px;
+  grid-template-columns: 40px minmax(0, 1fr) 60px;
   column-gap: 8px;
   row-gap: 8px;
 }
@@ -106,8 +106,7 @@
   user-select: none;
 }
 
-.rating .table-header > :nth-child(3),
-.rating .table-header > :nth-child(4) {
+.rating .table-header > :nth-child(3) {
   justify-content: flex-end;
   text-align: right;
 }
@@ -170,12 +169,7 @@
   font-weight: 700;
   color: #34c759;
   text-align: right;
-}
-
-.stats {
-  font-size: 12px;
-  color: #666;
-  text-align: right;
+  margin-left: auto;
 }
 
 .player-row--hidden {
@@ -185,8 +179,7 @@
 
 .player-row--hidden .player-name,
 .player-row--hidden .rank,
-.player-row--hidden .rating-points,
-.player-row--hidden .stats {
+.player-row--hidden .rating-points {
   color: #9ca3af;
 }
 
@@ -208,8 +201,7 @@
 }
 
 .player-row--banned .player-name,
-.player-row--banned .rating-points,
-.player-row--banned .stats {
+.player-row--banned .rating-points {
   color: #9ca3af;
 }
 
