@@ -198,7 +198,7 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, searchQuery = '' 
   );
 
   return (
-    <section className="competitions" aria-label="Соревнования">
+    <section className="competitions" aria-label="Турнир">
       <div className="competitions-tabs" role="tablist" aria-label="Разделы соревнований">
         {TABS.map((tab) => (
           <button
@@ -301,6 +301,7 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, searchQuery = '' 
         user={user}
         userIsModerator={moderator}
         onClose={() => setOpenedPost(null)}
+        onOpenEdit={handleOpenEdit}
         onOpenProfile={setViewingPlayer}
         hiddenMediaKey={hiddenMediaKey}
         onOpenFullscreen={handleOpenFullscreen}
