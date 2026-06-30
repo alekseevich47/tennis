@@ -464,6 +464,30 @@
   margin: 16px 0 0;
 }
 
+.tournament-post-detail-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tournament-post-detail-card-header {
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+.tournament-post-detail-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.tournament-post-detail-actions .ui-modal-close {
+  position: static;
+}
+
 .tournament-comments-modal-title {
   margin: 14px 0 10px;
   font-size: 15px;

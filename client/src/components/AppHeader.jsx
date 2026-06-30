@@ -77,7 +77,7 @@ function AppHeader({
               className="header-search-input"
               value={searchConfig.query}
               onChange={(e) => searchConfig.onChange(e.target.value)}
-              placeholder="Поиск…"
+              placeholder="Поиск"
               aria-label="Поиск"
               autoComplete="off"
               autoCorrect="off"
@@ -85,31 +85,24 @@ function AppHeader({
             />
             <div className="header-search-field-actions">
               {searchConfig.showDateSearch ? (
-                <>
+                <label className="header-date-btn" aria-label="Выбрать дату">
                   <input
                     ref={dateInputRef}
                     type="date"
-                    className="header-date-input-hidden"
+                    className="header-date-input-overlay"
                     tabIndex={-1}
-                    aria-hidden="true"
                     onChange={handleDatePick}
                   />
-                  <IconButton
-                    ariaLabel="Выбрать дату"
-                    variant="ghost"
-                    className="header-date-btn"
-                    onClick={() => dateInputRef.current?.showPicker?.()}
-                  >
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                      <rect x="3" y="4" width="18" height="18" rx="2" />
-                      <path d="M16 2v4M8 2v4M3 10h18" />
-                    </svg>
-                  </IconButton>
-                </>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    <rect x="3" y="4" width="18" height="18" rx="2" />
+                    <path d="M16 2v4M8 2v4M3 10h18" />
+                  </svg>
+                </label>
               ) : null}
               <IconButton
                 ariaLabel="Закрыть поиск"
                 variant="ghost"
+                size="sm"
                 className="header-search-clear"
                 onClick={searchConfig.onClose}
               >

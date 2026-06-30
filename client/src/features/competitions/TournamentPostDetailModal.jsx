@@ -55,22 +55,25 @@ function TournamentPostDetailModal({
       onClose={onClose}
       ariaLabel="Просмотр итогов турнира и комментариев"
       size="large"
+      showCloseButton={false}
     >
-      <div className="feed-card-header">
-        <div className="section-avatar" aria-hidden="true">
-          <img className="section-avatar__image" src={sectionAvatarUrl} alt="" decoding="async" />
+      <div className="tournament-post-detail-header">
+        <div className="feed-card-header tournament-post-detail-card-header">
+          <div className="section-avatar" aria-hidden="true">
+            <img className="section-avatar__image" src={sectionAvatarUrl} alt="" decoding="async" />
+          </div>
+          <div className="section-meta">
+            <span className="section-title-name">Секция Миленьких</span>
+            <span className="post-date-line">
+              <time className="post-date" dateTime={post.created}>
+                {formatPostDate(post.created)}
+              </time>
+              {post.post_number ? <span className="post-number">#{post.post_number}</span> : null}
+            </span>
+          </div>
         </div>
-        <div className="section-meta">
-          <span className="section-title-name">Секция Миленьких</span>
-          <span className="post-date-line">
-            <time className="post-date" dateTime={post.created}>
-              {formatPostDate(post.created)}
-            </time>
-            {post.post_number ? <span className="post-number">#{post.post_number}</span> : null}
-          </span>
-        </div>
-        {userIsModerator && onOpenEdit ? (
-          <div className="post-card-actions" role="group" aria-label="Действия с публикацией">
+        <div className="tournament-post-detail-actions">
+          {userIsModerator && onOpenEdit ? (
             <IconButton
               ariaLabel="Редактировать публикацию"
               variant="ghost"
@@ -83,8 +86,16 @@ function TournamentPostDetailModal({
                 <path d="m13.7 6.1 4.2 4.2" />
               </svg>
             </IconButton>
-          </div>
-        ) : null}
+          ) : null}
+          <IconButton
+            type="button"
+            className="ui-modal-close"
+            ariaLabel="Закрыть"
+            onClick={onClose}
+          >
+            <span aria-hidden="true">✕</span>
+          </IconButton>
+        </div>
       </div>
 
       {post.content ? <p className="tournament-post-content">{post.content}</p> : null}
