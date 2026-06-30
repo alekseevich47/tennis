@@ -64,49 +64,51 @@ function AppHeader({
     <header className="app-header">
       {searchConfig?.open ? (
         <div className="header-search-row">
-          <input
-            ref={searchInputRef}
-            type="search"
-            className="header-search-input"
-            value={searchConfig.query}
-            onChange={(e) => searchConfig.onChange(e.target.value)}
-            placeholder="Поиск…"
-            aria-label="Поиск"
-            autoComplete="off"
-            autoCorrect="off"
-            spellCheck={false}
-          />
-          {searchConfig.showDateSearch ? (
-            <>
-              <input
-                ref={dateInputRef}
-                type="date"
-                className="header-date-input-hidden"
-                tabIndex={-1}
-                aria-hidden="true"
-                onChange={handleDatePick}
-              />
-              <IconButton
-                ariaLabel="Выбрать дату"
-                variant="ghost"
-                className="header-date-btn"
-                onClick={() => dateInputRef.current?.showPicker?.()}
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                  <rect x="3" y="4" width="18" height="18" rx="2" />
-                  <path d="M16 2v4M8 2v4M3 10h18" />
-                </svg>
-              </IconButton>
-            </>
-          ) : null}
-          <IconButton
-            ariaLabel="Закрыть поиск"
-            variant="ghost"
-            className="header-search-clear"
-            onClick={searchConfig.onClose}
-          >
-            <span aria-hidden="true">✕</span>
-          </IconButton>
+          <div className="header-search-field">
+            <input
+              ref={searchInputRef}
+              type="search"
+              className="header-search-input"
+              value={searchConfig.query}
+              onChange={(e) => searchConfig.onChange(e.target.value)}
+              placeholder="Поиск…"
+              aria-label="Поиск"
+              autoComplete="off"
+              autoCorrect="off"
+              spellCheck={false}
+            />
+            {searchConfig.showDateSearch ? (
+              <>
+                <input
+                  ref={dateInputRef}
+                  type="date"
+                  className="header-date-input-hidden"
+                  tabIndex={-1}
+                  aria-hidden="true"
+                  onChange={handleDatePick}
+                />
+                <IconButton
+                  ariaLabel="Выбрать дату"
+                  variant="ghost"
+                  className="header-date-btn"
+                  onClick={() => dateInputRef.current?.showPicker?.()}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    <rect x="3" y="4" width="18" height="18" rx="2" />
+                    <path d="M16 2v4M8 2v4M3 10h18" />
+                  </svg>
+                </IconButton>
+              </>
+            ) : null}
+            <IconButton
+              ariaLabel="Закрыть поиск"
+              variant="ghost"
+              className="header-search-clear"
+              onClick={searchConfig.onClose}
+            >
+              <span aria-hidden="true">✕</span>
+            </IconButton>
+          </div>
         </div>
       ) : (
         <h1 className="header-title">{title}</h1>
@@ -150,7 +152,7 @@ function AppHeader({
           </svg>
         </IconButton>
       ) : null}
-      {onNotificationsClick !== undefined && (
+      {onNotificationsClick !== undefined && !searchConfig?.open && (
         <IconButton
           ariaLabel="Уведомления"
           variant="ghost"
