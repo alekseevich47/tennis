@@ -149,7 +149,10 @@ function PostCard({
         </div>
         <div className="section-meta">
           <span className="section-title-name">Секция Миленьких</span>
-          <span className="post-date">{formatPostDate(post.created)}</span>
+          <span className="post-date-line">
+            <span className="post-date">{formatPostDate(post.created)}</span>
+            {post.post_number ? <span className="post-number">#{post.post_number}</span> : null}
+          </span>
         </div>
         {userIsModerator && (
           <div className="post-card-actions" role="group" aria-label="Действия с публикацией">

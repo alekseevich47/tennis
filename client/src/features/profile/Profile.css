@@ -16,6 +16,10 @@
   right: 56px !important;
 }
 
+.profile-view-edit-btn--editing {
+  right: 16px !important;
+}
+
 .profile-menu-btn {
   position: absolute !important;
   top: 10px;

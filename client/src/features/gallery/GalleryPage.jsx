@@ -109,7 +109,7 @@ function GalleryItemLike({ itemId, user }) {
   );
 }
 
-function GalleryPage({ user }) {
+function GalleryPage({ user, searchQuery = '' }) {
   const moderator = isModerator();
   const { data: images, isLoading, mutate } = useGallery();
   const { startUpload } = useGalleryUpload();
@@ -288,10 +288,23 @@ function GalleryPage({ user }) {
     return () => document.removeEventListener('keydown', handleViewerKeys, true);
   }, [commentModalOpen]);
 
-  const galleryItems = useMemo(() => {
+  const filteredImages = useMemo(() => {
     if (!images) return [];
+    if (!searchQuery.trim()) return images;
+    const q = searchQuery.trim().replace('#', '');
+    const num = parseInt(q, 10);
+    if (!Number.isNaN(num)) {
+      return images.filter((img) => img.post_number === num);
+    }
+    return images;
+  }, [images, searchQuery]);
 
-    return images.flatMap((img) => {
+  const isSearchActive = searchQuery.trim().length > 0;
+
+  const galleryItems = useMemo(() => {
+    if (!filteredImages.length) return [];
+
+    return filteredImages.flatMap((img) => {
       const isVideo = img.media_type === 'video';
       const mediaFile = isVideo ? img.video : img.image;
       const filename = img.image || img.video;
@@ -304,10 +317,11 @@ function GalleryPage({ user }) {
         url,
         isVideo,
         aspectRatio: img.aspect_ratio,
-        originKey: img.id
+        originKey: img.id,
+        postNumber: img.post_number
       }];
     });
-  }, [images]);
+  }, [filteredImages]);
 
   const handleFileChange = useCallback(
     async (event) => {
@@ -486,7 +500,14 @@ function GalleryPage({ user }) {
       {isLoading ? (
         <Spinner label="Загрузка галереи..." />
       ) : galleryItems.length === 0 ? (
-        <EmptyState title="Нет фотографий" description="Загрузите первое фото секции." />
+        <EmptyState
+          title={isSearchActive ? 'Ничего не найдено' : 'Нет фотографий'}
+          description={
+            isSearchActive
+              ? 'Попробуйте другой номер.'
+              : 'Загрузите первое фото секции.'
+          }
+        />
       ) : (
         <div className="gallery-grid" ref={gridRef}>
           {galleryItems.map((item, index) => {

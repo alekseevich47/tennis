@@ -57,9 +57,6 @@ function PlayerRow({ player, rank, hidden = false, banned = false, onPlayerClick
         </div>
       </div>
       <span className="rating-points">{player.rating_points || 0}</span>
-      <span className="stats">
-        {player.games_count || 0}/{player.wins || 0}/{player.losses || 0}
-      </span>
     </div>
   );
 }

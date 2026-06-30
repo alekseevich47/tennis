@@ -6,6 +6,7 @@ import App from './App';
 import { AlertDialogProvider } from './components/ui/AlertDialog';
 import { ToastProvider } from './components/ui/ToastContext';
 import { PostUploadProvider } from './components/PostUploadProvider';
+import { TournamentPostUploadProvider } from './components/TournamentPostUploadProvider';
 import { GalleryUploadProvider } from './components/GalleryUploadProvider';
 import './styles/global.css';
 
@@ -37,9 +38,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <AlertDialogProvider>
           <ToastProvider>
             <PostUploadProvider>
-              <GalleryUploadProvider>
-                <App />
-              </GalleryUploadProvider>
+              <TournamentPostUploadProvider>
+                <GalleryUploadProvider>
+                  <App />
+                </GalleryUploadProvider>
+              </TournamentPostUploadProvider>
             </PostUploadProvider>
           </ToastProvider>
         </AlertDialogProvider>

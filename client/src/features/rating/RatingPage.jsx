@@ -175,7 +175,6 @@ function RatingPage({ user, onTabChange }) {
               <button type="button" className="sortable" onClick={() => handleSort('points')}>
                 Очки {renderSortIcon('points')}
               </button>
-              <span role="columnheader">И/В/П</span>
             </div>
             {filteredPlayers.map((player, index) => (
               <PlayerRow

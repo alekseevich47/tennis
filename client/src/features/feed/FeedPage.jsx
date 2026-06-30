@@ -13,6 +13,7 @@ import PostDetailModal from './PostDetailModal';
 import FullscreenImageViewer from './FullscreenImageViewer';
 import ProfileViewModal from '../profile/ProfileViewModal';
 import { error } from '../../lib/log';
+import { parseDateQuery, isDateQueryParsed, matchesDateQuery } from '../../lib/dateSearch';
 import './Feed.css';
 
 const SCROLL_TOP_THRESHOLD = 8;
@@ -21,10 +22,11 @@ const SCROLL_DELTA_THRESHOLD = 4;
 /**
  * @param {{
  *   user: any,
- *   onDeletedIdsChange?: (ids: string[]) => void
+ *   onDeletedIdsChange?: (ids: string[]) => void,
+ *   searchQuery?: string
  * }} props
  */
-function FeedPage({ user, onDeletedIdsChange }) {
+function FeedPage({ user, onDeletedIdsChange, searchQuery = '' }) {
   const userIsModerator = isModerator();
   const { data: posts, isLoading, mutate } = usePosts({ includeDeleted: userIsModerator });
 
@@ -81,6 +83,27 @@ function FeedPage({ user, onDeletedIdsChange }) {
       (p) => !p.is_deleted && !deletedPostIds.includes(p.id)
     );
   }, [posts, userIsModerator, deletedPostIds]);
+
+  const filteredPosts = useMemo(() => {
+    if (!searchQuery.trim()) return visiblePosts;
+    const q = searchQuery.trim().toLowerCase();
+
+    if (/^#?\d+$/.test(q)) {
+      const num = parseInt(q.replace('#', ''), 10);
+      return visiblePosts.filter((p) => p.post_number === num);
+    }
+
+    const dateQ = parseDateQuery(q);
+    if (isDateQueryParsed(dateQ)) {
+      return visiblePosts.filter((p) => matchesDateQuery(p.created, dateQ));
+    }
+
+    return visiblePosts.filter((p) =>
+      (p.content || p.text || '').toLowerCase().includes(q)
+    );
+  }, [visiblePosts, searchQuery]);
+
+  const isSearchActive = searchQuery.trim().length > 0;
 
   const handleDeletePost = useCallback(
     async (postId) => {
@@ -192,14 +215,18 @@ function FeedPage({ user, onDeletedIdsChange }) {
       <div className="feed-list">
         {isLoading && <Spinner label="Загрузка ленты…" />}
 
-        {!isLoading && visiblePosts.length === 0 && (
+        {!isLoading && filteredPosts.length === 0 && (
           <EmptyState
-            title="Пока ничего нет"
-            description="Здесь появятся первые публикации секции."
+            title={isSearchActive ? 'Ничего не найдено' : 'Пока ничего нет'}
+            description={
+              isSearchActive
+                ? 'Попробуйте другой запрос.'
+                : 'Здесь появятся первые публикации секции.'
+            }
           />
         )}
 
-        {visiblePosts.map((post) => {
+        {filteredPosts.map((post) => {
           const isSoftDeleted =
             deletedPostIds.includes(post.id) || post.is_deleted === true;
           return (
