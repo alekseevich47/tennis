@@ -25,7 +25,6 @@ import { getPlayerRatingRank } from '../../lib/rating';
 import { compressImage } from '../../lib/compress';
 import { isDateQueryParsed, matchesDateQuery, parseDateQuery } from '../../lib/dateSearch';
 import { formatCardDate, formatTimeRange, hasTimeRangeEnded } from '../../lib/format';
-import { openMaxUserChat } from '../shop/buyMessage';
 import MembershipModal from './MembershipModal';
 import './Profile.css';
 
@@ -111,8 +110,6 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
   const canEditSectionStartDate = isModerator(currentUser);
   const canManageProfile = Boolean(isOwnProfile || canEditSectionStartDate);
   const displayName = displayUser?.full_name || displayUser?.name || 'Профиль';
-  const targetMaxId = displayUser?.max_id;
-  const canOpenMaxChat = !isOwnProfile && Boolean(targetMaxId);
 
   const ratingPosition = useMemo(
     () => getPlayerRatingRank(players, targetUserId),
@@ -499,11 +496,8 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                 onClick={() => setMembershipOpen(true)}
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="#007aff" strokeWidth="2" aria-hidden="true">
-                  <path d="M4 8h16v8H4z" />
-                  <path d="M4 8a2 2 0 100-4v4z" />
-                  <path d="M20 8a2 2 0 110-4v4z" />
-                  <path d="M4 16a2 2 0 100 4v-4z" />
-                  <path d="M20 16a2 2 0 110 4v-4z" />
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
                 </svg>
               </IconButton>
             )}
@@ -599,7 +593,10 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                 ariaLabel={isEditing ? 'Отменить редактирование профиля' : 'Редактировать профиль'}
                 variant="ghost"
                 size="md"
-                className="edit-profile-btn profile-view-edit-btn"
+                className={clsx(
+                  'edit-profile-btn profile-view-edit-btn',
+                  isEditing && 'profile-view-edit-btn--editing'
+                )}
                 onClick={handleEditToggle}
                 disabled={saving}
               >
@@ -623,15 +620,17 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
               </IconButton>
             )}
 
-            <IconButton
-              ariaLabel="Закрыть"
-              variant="ghost"
-              size="md"
-              className="profile-view-close-btn"
-              onClick={onClose}
-            >
-              <span aria-hidden="true">✕</span>
-            </IconButton>
+            {!isEditing && (
+              <IconButton
+                ariaLabel="Закрыть"
+                variant="ghost"
+                size="md"
+                className="profile-view-close-btn"
+                onClick={onClose}
+              >
+                <span aria-hidden="true">✕</span>
+              </IconButton>
+            )}
           </div>
 
           {isEditing ? (
@@ -729,18 +728,7 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                 </div>
 
                 <h2 className="profile-user-name">
-                  {canOpenMaxChat ? (
-                    <button
-                      type="button"
-                      className="profile-user-name-link"
-                      onClick={() => openMaxUserChat(targetMaxId)}
-                      title="Написать в MAX"
-                    >
-                      {displayName}
-                    </button>
-                  ) : (
-                    displayName
-                  )}
+                  <span>{displayName}</span>
                   <span
                     className="profile-rating-badge"
                     onClick={handleRatingClick}

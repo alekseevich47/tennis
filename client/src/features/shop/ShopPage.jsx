@@ -15,7 +15,8 @@ import FullscreenImageViewer from '../feed/FullscreenImageViewer';
 import { error } from '../../lib/log';
 import './Shop.css';
 
-const SCROLL_HIDE_DEBOUNCE_MS = 300;
+const SCROLL_TOP_THRESHOLD = 8;
+const SCROLL_DELTA_THRESHOLD = 4;
 
 /**
  * @param {{
@@ -45,7 +46,7 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const containerRef = useRef(null);
-  const scrollTimeoutRef = useRef(null);
+  const lastScrollTopRef = useRef(0);
   const isSearchOpenRef = useRef(isSearchOpen);
   const searchQueryRef = useRef(searchQuery);
 
@@ -71,26 +72,32 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
     const container = containerRef.current;
     if (!moderator || !container) return undefined;
 
+    const syncVisibility = (scrollTop, delta) => {
+      if (scrollTop <= SCROLL_TOP_THRESHOLD) {
+        setIsButtonVisible(true);
+      } else if (delta < -SCROLL_DELTA_THRESHOLD) {
+        setIsButtonVisible(true);
+      } else if (delta > SCROLL_DELTA_THRESHOLD) {
+        setIsButtonVisible(false);
+      }
+    };
+
+    lastScrollTopRef.current = container.scrollTop;
+    syncVisibility(container.scrollTop, 0);
+
     const handleScroll = () => {
-      setIsButtonVisible(false);
+      const scrollTop = container.scrollTop;
+      const delta = scrollTop - lastScrollTopRef.current;
       if (isSearchOpenRef.current && !searchQueryRef.current.trim()) {
         setIsSearchOpen(false);
         setIsSearchFocused(false);
       }
-      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
-      scrollTimeoutRef.current = window.setTimeout(() => {
-        setIsButtonVisible(true);
-      }, SCROLL_HIDE_DEBOUNCE_MS);
+      syncVisibility(scrollTop, delta);
+      lastScrollTopRef.current = scrollTop;
     };
 
     container.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      container.removeEventListener('scroll', handleScroll);
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-        scrollTimeoutRef.current = null;
-      }
-    };
+    return () => container.removeEventListener('scroll', handleScroll);
   }, [moderator]);
 
   const showAddButton =

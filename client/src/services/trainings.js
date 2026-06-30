@@ -1,10 +1,27 @@
 // @ts-check
 import pb from './pb';
-import { isModerator } from './auth';
+import { isModerator, getCurrentUser } from './auth';
 import { error } from '../lib/log';
 import { auditTrainings } from '../lib/audit';
 
 export const PENDING_DELETE_TRAININGS_KEY = 'pending_delete_trainings';
+
+/**
+ * Уведомить модераторов через MAX Bot API (pb_hooks/bot_notifications.pb.js).
+ * @param {{ event: 'book' | 'unbook', userId: string, trainingId: string, actorIsModerator: boolean }} payload
+ */
+async function notifyTrainingBot(payload) {
+  const actorId = getCurrentUser()?.id;
+  if (!actorId) return;
+  try {
+    await pb.send('/api/bot-notify-training', {
+      method: 'POST',
+      body: { ...payload, actorId }
+    });
+  } catch (err) {
+    error('Ошибка уведомления бота о тренировке:', err);
+  }
+}
 
 /**
  * @typedef {Object} TrainingRecord
@@ -403,6 +420,12 @@ export async function bookTraining(training, userId) {
     }));
     await consumeMembershipSession(userId);
     auditTrainings.bookSelf(/** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)));
+    await notifyTrainingBot({
+      event: 'book',
+      userId,
+      trainingId: training.id,
+      actorIsModerator: isModerator()
+    });
     return record;
   } catch (err) {
     auditTrainings.bookError(err, training.id);
@@ -448,6 +471,12 @@ export async function bookUserToTraining(training, userId, targetUser, { overrid
       userId,
       auditUser
     );
+    await notifyTrainingBot({
+      event: 'book',
+      userId,
+      trainingId: training.id,
+      actorIsModerator: true
+    });
     return record;
   } catch (err) {
     auditTrainings.bookError(err, training.id);
@@ -514,6 +543,16 @@ export async function bookUsersToTraining(training, userIds, targetUsers = [], {
       nextUserIds,
       auditUsers
     );
+    await Promise.all(
+      nextUserIds.map((id) =>
+        notifyTrainingBot({
+          event: 'book',
+          userId: id,
+          trainingId: training.id,
+          actorIsModerator: true
+        })
+      )
+    );
     return record;
   } catch (err) {
     auditTrainings.bookError(err, training.id);
@@ -566,6 +605,16 @@ export async function removeUsersFromTraining(training, userIds) {
         userId
       );
     });
+    await Promise.all(
+      removedUserIds.map((id) =>
+        notifyTrainingBot({
+          event: 'unbook',
+          userId: id,
+          trainingId: training.id,
+          actorIsModerator: true
+        })
+      )
+    );
     return record;
   } catch (err) {
     auditTrainings.bookError(err, training.id);
@@ -599,6 +648,12 @@ export async function cancelTrainingBooking(training, userId) {
     auditTrainings.cancelBookingSelf(
       /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record))
     );
+    await notifyTrainingBot({
+      event: 'unbook',
+      userId,
+      trainingId: training.id,
+      actorIsModerator: isModerator()
+    });
     return record;
   } catch (err) {
     auditTrainings.bookError(err, training.id);

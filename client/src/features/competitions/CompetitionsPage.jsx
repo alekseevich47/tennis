@@ -1,16 +1,21 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { usePlayers } from '../../hooks/usePlayers';
 import { useTournamentPosts } from '../../hooks/useTournamentPosts';
 import { isModerator } from '../../services/auth';
+import { updateTournamentPost } from '../../services/tournamentPosts';
 import Spinner from '../../components/ui/Spinner';
 import EmptyState from '../../components/ui/EmptyState';
 import CreateTournamentPostModal from './CreateTournamentPostModal';
+import EditTournamentPostModal from './EditTournamentPostModal';
 import TournamentPostCard from './TournamentPostCard';
 import TournamentPostDetailModal from './TournamentPostDetailModal';
 import FullscreenImageViewer from '../feed/FullscreenImageViewer';
 import RatingPage from '../rating/RatingPage';
 import ProfileViewModal from '../profile/ProfileViewModal';
+import { useTournamentPostUpload } from '../../components/TournamentPostUploadProvider';
+import { error } from '../../lib/log';
+import { parseDateQuery, isDateQueryParsed, matchesDateQuery } from '../../lib/dateSearch';
 import '../feed/Feed.css';
 import './Competitions.css';
 
@@ -22,10 +27,12 @@ const TABS = [
 const SCROLL_TOP_THRESHOLD = 8;
 const SCROLL_DELTA_THRESHOLD = 4;
 
-function CompetitionsPage({ user, onTabChange }) {
+function CompetitionsPage({ user, onTabChange, onSubTabChange, searchQuery = '' }) {
   const moderator = isModerator();
   const { data: players } = usePlayers();
-  const { data: posts, isLoading: postsLoading, mutate: mutatePosts } = useTournamentPosts();
+  const { data: posts, isLoading: postsLoading, mutate: mutatePosts } = useTournamentPosts({
+    includeDeleted: moderator
+  });
   const [activeTab, setActiveTab] = useState('feed');
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [fullscreenMedia, setFullscreenMedia] = useState(null);
@@ -33,8 +40,48 @@ function CompetitionsPage({ user, onTabChange }) {
   const [isButtonVisible, setIsButtonVisible] = useState(false);
   const [viewingPlayer, setViewingPlayer] = useState(null);
   const [openedPost, setOpenedPost] = useState(null);
+  const [editingPost, setEditingPost] = useState(null);
+  const [deletedPostIds, setDeletedPostIds] = useState([]);
   const containerRef = useRef(null);
   const lastScrollTopRef = useRef(0);
+  const { startUpload } = useTournamentPostUpload();
+
+  const visiblePosts = useMemo(() => {
+    if (!posts) return [];
+    if (moderator) return posts;
+    return posts.filter(
+      (p) => !p.is_deleted && !deletedPostIds.includes(p.id)
+    );
+  }, [posts, moderator, deletedPostIds]);
+
+  const filteredPosts = useMemo(() => {
+    if (!searchQuery.trim()) return visiblePosts;
+    const q = searchQuery.trim().toLowerCase();
+
+    if (/^#?\d+$/.test(q)) {
+      const num = parseInt(q.replace('#', ''), 10);
+      return visiblePosts.filter((p) => p.post_number === num);
+    }
+
+    const dateQ = parseDateQuery(q);
+    if (isDateQueryParsed(dateQ)) {
+      return visiblePosts.filter((p) => matchesDateQuery(p.created, dateQ));
+    }
+
+    return visiblePosts.filter((p) =>
+      (p.content || p.text || '').toLowerCase().includes(q)
+    );
+  }, [visiblePosts, searchQuery]);
+
+  const isSearchActive = searchQuery.trim().length > 0;
+
+  const handleSubTabClick = useCallback(
+    (tabId) => {
+      setActiveTab(tabId);
+      onSubTabChange?.(tabId);
+    },
+    [onSubTabChange]
+  );
 
   useEffect(() => {
     const container = containerRef.current;
@@ -78,6 +125,78 @@ function CompetitionsPage({ user, onTabChange }) {
     setHiddenMediaKey(originKey || null);
   }, []);
 
+  const handleOpenDetail = useCallback((post) => {
+    setOpenedPost(post);
+  }, []);
+
+  const handleOpenEdit = useCallback((post) => {
+    if (!moderator) return;
+    setEditingPost(post);
+  }, [moderator]);
+
+  const handleCloseEdit = useCallback(() => {
+    setEditingPost(null);
+  }, []);
+
+  const handlePostSaved = useCallback(
+    (updatedPost) => {
+      mutatePosts(
+        (curr = []) =>
+          curr.map((post) =>
+            post.id === updatedPost.id ? { ...post, ...updatedPost } : post
+          ),
+        false
+      );
+      setOpenedPost((current) =>
+        current?.id === updatedPost.id ? { ...current, ...updatedPost } : current
+      );
+      setEditingPost(null);
+    },
+    [mutatePosts]
+  );
+
+  const handleDeletePost = useCallback(
+    async (postId) => {
+      setDeletedPostIds((prev) => [...prev, postId]);
+      try {
+        await updateTournamentPost(postId, { is_deleted: true });
+        mutatePosts(
+          (curr = []) =>
+            curr.map((p) => (p.id === postId ? { ...p, is_deleted: true } : p)),
+          false
+        );
+      } catch (err) {
+        error('soft delete tournament post:', err);
+      }
+    },
+    [mutatePosts]
+  );
+
+  const handleCreated = useCallback(
+    (payload) => {
+      setShowCreatePost(false);
+      startUpload(payload);
+    },
+    [startUpload]
+  );
+
+  const handleRestorePost = useCallback(
+    async (postId) => {
+      setDeletedPostIds((prev) => prev.filter((id) => id !== postId));
+      try {
+        await updateTournamentPost(postId, { is_deleted: false });
+        mutatePosts(
+          (curr = []) =>
+            curr.map((p) => (p.id === postId ? { ...p, is_deleted: false } : p)),
+          false
+        );
+      } catch (err) {
+        error('restore tournament post:', err);
+      }
+    },
+    [mutatePosts]
+  );
+
   return (
     <section className="competitions" aria-label="Соревнования">
       <div className="competitions-tabs" role="tablist" aria-label="Разделы соревнований">
@@ -88,7 +207,7 @@ function CompetitionsPage({ user, onTabChange }) {
             role="tab"
             aria-selected={activeTab === tab.id}
             className={clsx('competitions-tab', activeTab === tab.id && 'competitions-tab--active')}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => handleSubTabClick(tab.id)}
           >
             {tab.label}
           </button>
@@ -111,23 +230,36 @@ function CompetitionsPage({ user, onTabChange }) {
 
           {postsLoading ? (
             <Spinner label="Загрузка ленты..." />
-          ) : !posts || posts.length === 0 ? (
+          ) : filteredPosts.length === 0 ? (
             <EmptyState
-              title="Пока нет итогов"
-              description="Здесь появятся результаты турниров секции."
+              title={isSearchActive ? 'Ничего не найдено' : 'Пока нет итогов'}
+              description={
+                isSearchActive
+                  ? 'Попробуйте другой запрос.'
+                  : 'Здесь появятся результаты турниров секции.'
+              }
             />
           ) : (
             <div className="competitions-feed-list">
-              {posts.map((post) => (
-                <TournamentPostCard
-                  key={post.id}
-                  post={post}
-                  players={players || []}
-                  onOpenComments={setOpenedPost}
-                  hiddenMediaKey={hiddenMediaKey}
-                  onOpenFullscreen={handleOpenFullscreen}
-                />
-              ))}
+              {filteredPosts.map((post) => {
+                const isSoftDeleted =
+                  deletedPostIds.includes(post.id) || post.is_deleted === true;
+                return (
+                  <TournamentPostCard
+                    key={post.id}
+                    post={post}
+                    players={players || []}
+                    userIsModerator={moderator}
+                    isSoftDeleted={isSoftDeleted}
+                    onOpenDetail={handleOpenDetail}
+                    onOpenEdit={handleOpenEdit}
+                    onDelete={handleDeletePost}
+                    onRestore={handleRestorePost}
+                    hiddenMediaKey={hiddenMediaKey}
+                    onOpenFullscreen={handleOpenFullscreen}
+                  />
+                );
+              })}
             </div>
           )}
         </div>
@@ -141,10 +273,14 @@ function CompetitionsPage({ user, onTabChange }) {
         isOpen={showCreatePost}
         onClose={() => setShowCreatePost(false)}
         players={players || []}
-        onCreated={() => {
-          mutatePosts();
-          setShowCreatePost(false);
-        }}
+        onCreated={handleCreated}
+      />
+
+      <EditTournamentPostModal
+        isOpen={Boolean(editingPost)}
+        post={editingPost}
+        onClose={handleCloseEdit}
+        onSaved={handlePostSaved}
       />
 
       {fullscreenMedia && (

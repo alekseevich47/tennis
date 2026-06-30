@@ -41,6 +41,10 @@ function AppInner() {
   const [membershipOpen, setMembershipOpen] = useState(false);
   const [favoritesDropdownOpen, setFavoritesDropdownOpen] = useState(false);
   const [favoriteProductToOpen, setFavoriteProductToOpen] = useState(null);
+  const [feedSearch, setFeedSearch] = useState({ open: false, query: '' });
+  const [competitionsSearch, setCompetitionsSearch] = useState({ open: false, query: '' });
+  const [gallerySearch, setGallerySearch] = useState({ open: false, query: '' });
+  const [competitionsSubTab, setCompetitionsSubTab] = useState('feed');
   const { totalCount: favoritesCount } = useFavorites();
   const sessionResetKey = useSessionResetKey();
   const { user, isLoading, setUser } = useMaxAuth();
@@ -124,10 +128,20 @@ function AppInner() {
     (newTab) => {
       flushPendingDeletes();
       setFavoritesDropdownOpen(false);
+      setFeedSearch({ open: false, query: '' });
+      setCompetitionsSearch({ open: false, query: '' });
+      setGallerySearch({ open: false, query: '' });
       setActiveTab(newTab);
     },
     [flushPendingDeletes]
   );
+
+  const handleCompetitionsSubTabChange = useCallback((subTab) => {
+    setCompetitionsSubTab(subTab);
+    if (subTab === 'rating') {
+      setCompetitionsSearch({ open: false, query: '' });
+    }
+  }, []);
 
   useEffect(() => {
     const onHide = () => {
@@ -169,6 +183,36 @@ function AppInner() {
       ? 'content-with-header content-with-header--contained'
       : 'content-with-header';
 
+  const searchConfig =
+    activeTab === 0
+      ? {
+          open: feedSearch.open,
+          query: feedSearch.query,
+          onToggle: () => setFeedSearch((s) => ({ ...s, open: !s.open })),
+          onChange: (q) => setFeedSearch((s) => ({ ...s, query: q })),
+          onClose: () => setFeedSearch({ open: false, query: '' }),
+          showDateSearch: true
+        }
+      : activeTab === 3 && competitionsSubTab === 'feed'
+        ? {
+            open: competitionsSearch.open,
+            query: competitionsSearch.query,
+            onToggle: () => setCompetitionsSearch((s) => ({ ...s, open: !s.open })),
+            onChange: (q) => setCompetitionsSearch((s) => ({ ...s, query: q })),
+            onClose: () => setCompetitionsSearch({ open: false, query: '' }),
+            showDateSearch: true
+          }
+        : activeTab === 4
+          ? {
+              open: gallerySearch.open,
+              query: gallerySearch.query,
+              onToggle: () => setGallerySearch((s) => ({ ...s, open: !s.open })),
+              onChange: (q) => setGallerySearch((s) => ({ ...s, query: q })),
+              onClose: () => setGallerySearch({ open: false, query: '' }),
+              showDateSearch: false
+            }
+          : undefined;
+
   return (
     <div className="app">
       <AppHeader
@@ -189,11 +233,17 @@ function AppInner() {
           setFavoriteProductToOpen(product);
           setFavoritesDropdownOpen(false);
         }}
+        onNotificationsClick={() => {}}
+        searchConfig={searchConfig}
       />
 
       <main className={contentClassName}>
         {activeTab === 0 && (
-          <FeedPage user={user} onDeletedIdsChange={setPendingDeletePostIds} />
+          <FeedPage
+            user={user}
+            onDeletedIdsChange={setPendingDeletePostIds}
+            searchQuery={feedSearch.query}
+          />
         )}
         {activeTab === 1 && (
           <>
@@ -220,9 +270,16 @@ function AppInner() {
           </ProductUploadProvider>
         )}
         {activeTab === 3 && (
-          <CompetitionsPage user={user} onTabChange={handleTabChange} />
+          <CompetitionsPage
+            user={user}
+            onTabChange={handleTabChange}
+            onSubTabChange={handleCompetitionsSubTabChange}
+            searchQuery={competitionsSearch.query}
+          />
         )}
-        {activeTab === 4 && <GalleryPage user={user} />}
+        {activeTab === 4 && (
+          <GalleryPage user={user} searchQuery={gallerySearch.query} />
+        )}
         {activeTab === PROFILE_TAB_INDEX && (
           <ProfilePage user={user} onUpdate={handleUserUpdate} onTabChange={handleTabChange} />
         )}

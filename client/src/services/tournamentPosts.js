@@ -3,6 +3,7 @@ import { mutate } from 'swr';
 import pb from './pb';
 import { getCurrentUser } from './auth';
 import { error } from '../lib/log';
+import { PB_URL } from '../config';
 
 /**
  * @typedef {{ userId: string, fullName: string, points: number, place: number }} TournamentParticipant
@@ -15,7 +16,10 @@ import { error } from '../lib/log';
  * @property {string | string[]} [media]
  * @property {string} [author]
  * @property {TournamentParticipant[]} [participants]
+ * @property {number} [post_number]
+ * @property {boolean} [is_deleted]
  * @property {string} created
+ * @property {Record<string, unknown>} [expand]
  */
 
 /**
@@ -46,14 +50,15 @@ function invalidateTournamentCaches() {
 }
 
 /**
- * @param {{ signal?: AbortSignal }} [options]
+ * @param {{ includeDeleted?: boolean, signal?: AbortSignal }} [options]
  * @returns {Promise<TournamentPostRecord[]>}
  */
-export async function listTournamentPosts({ signal } = {}) {
+export async function listTournamentPosts({ includeDeleted = false, signal } = {}) {
   try {
     return /** @type {TournamentPostRecord[]} */ (await pb.collection('tournament_posts').getFullList({
       sort: '-created',
-      expand: 'tournament_comments(post)',
+      filter: includeDeleted ? '' : '(is_deleted = false || is_deleted = null)',
+      expand: 'tournament_comments(post),tournament_comments(post).author',
       requestKey: null,
       signal
     }));
@@ -65,14 +70,35 @@ export async function listTournamentPosts({ signal } = {}) {
 }
 
 /**
+ * @param {string} id
+ * @param {Record<string, unknown> | FormData} data
+ * @returns {Promise<TournamentPostRecord>}
+ */
+export async function updateTournamentPost(id, data) {
+  const record = /** @type {TournamentPostRecord} */ (
+    await pb.collection('tournament_posts').update(id, data)
+  );
+  invalidateTournamentCaches();
+  return record;
+}
+
+/**
+ * @param {string} id
+ * @returns {Promise<TournamentPostRecord>}
+ */
+export async function softDeleteTournamentPost(id) {
+  return updateTournamentPost(id, { is_deleted: true });
+}
+
+/**
  * @param {{
  *   content: string,
  *   files?: File[],
  *   rawParticipants: Array<{ userId: string, fullName: string, points: number }>
  * }} params
- * @returns {Promise<TournamentPostRecord>}
+ * @returns {{ formData: FormData, participants: TournamentParticipant[] }}
  */
-export async function publishTournamentPost({ content, files = [], rawParticipants }) {
+function buildTournamentPostPayload({ content, files = [], rawParticipants }) {
   const author = getCurrentUser();
   if (!author?.id) {
     throw new Error('Не авторизован: нельзя опубликовать итоги турнира');
@@ -85,16 +111,111 @@ export async function publishTournamentPost({ content, files = [], rawParticipan
   formData.append('participants', JSON.stringify(participants));
   files.forEach((file) => formData.append('media', file));
 
-  const record = /** @type {TournamentPostRecord} */ (
-    await pb.collection('tournament_posts').create(formData)
-  );
+  return { formData, participants };
+}
 
+/**
+ * @param {TournamentParticipant[]} participants
+ */
+async function applyTournamentPostSideEffects(participants) {
   await Promise.allSettled(
     participants.map((participant) =>
       pb.collection('users').update(participant.userId, { 'rating_points+': participant.points })
     )
   );
-
   invalidateTournamentCaches();
+}
+
+/**
+ * @param {{
+ *   content: string,
+ *   files?: File[],
+ *   rawParticipants: Array<{ userId: string, fullName: string, points: number }>
+ * }} params
+ * @returns {Promise<TournamentPostRecord>}
+ */
+export async function publishTournamentPost(params) {
+  const { formData, participants } = buildTournamentPostPayload(params);
+  const record = /** @type {TournamentPostRecord} */ (
+    await pb.collection('tournament_posts').create(formData)
+  );
+  await applyTournamentPostSideEffects(participants);
   return record;
+}
+
+/**
+ * @param {{
+ *   content: string,
+ *   files?: File[],
+ *   rawParticipants: Array<{ userId: string, fullName: string, points: number }>
+ * }} params
+ * @param {{ signal?: AbortSignal, onProgress?: (percent: number) => void }} [options]
+ * @returns {Promise<TournamentPostRecord>}
+ */
+export function publishTournamentPostWithProgress(params, { signal, onProgress } = {}) {
+  const { formData, participants } = buildTournamentPostPayload(params);
+
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    let settled = false;
+
+    const rejectAbort = () => {
+      if (settled) return;
+      settled = true;
+      reject(new DOMException('Загрузка публикации отменена', 'AbortError'));
+    };
+
+    if (signal?.aborted) {
+      rejectAbort();
+      return;
+    }
+
+    xhr.open('POST', `${PB_URL}/api/collections/tournament_posts/records`);
+    if (pb.authStore.token) {
+      xhr.setRequestHeader('Authorization', pb.authStore.token);
+    }
+
+    xhr.upload.onprogress = (event) => {
+      if (!event.lengthComputable || !onProgress) return;
+      onProgress(Math.min(98, Math.round((event.loaded / event.total) * 100)));
+    };
+
+    xhr.onload = () => {
+      if (settled) return;
+      settled = true;
+      signal?.removeEventListener('abort', abortUpload);
+      if (xhr.status >= 200 && xhr.status < 300) {
+        onProgress?.(100);
+        try {
+          const record = /** @type {TournamentPostRecord} */ (JSON.parse(xhr.responseText));
+          applyTournamentPostSideEffects(participants)
+            .then(() => resolve(record))
+            .catch(reject);
+        } catch (parseErr) {
+          reject(parseErr);
+        }
+        return;
+      }
+      reject(new Error(`Не удалось опубликовать итоги турнира (${xhr.status})`));
+    };
+
+    xhr.onerror = () => {
+      if (settled) return;
+      settled = true;
+      signal?.removeEventListener('abort', abortUpload);
+      reject(new Error('Сеть прервала загрузку публикации'));
+    };
+
+    xhr.onabort = () => {
+      signal?.removeEventListener('abort', abortUpload);
+      rejectAbort();
+    };
+
+    function abortUpload() {
+      xhr.abort();
+    }
+
+    signal?.addEventListener('abort', abortUpload, { once: true });
+    xhr.send(formData);
+  });
 }

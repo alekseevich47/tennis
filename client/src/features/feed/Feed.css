@@ -117,9 +117,23 @@
   color: #1a1a1a;
 }
 
-.post-date {
+.post-date-line {
   font-size: 12px;
   color: #999;
+}
+
+.post-date {
+  font-size: inherit;
+  color: inherit;
+}
+
+.post-number {
+  font-size: inherit;
+  color: inherit;
+}
+
+.post-number::before {
+  content: ' • ';
 }
 
 .post-card-actions {

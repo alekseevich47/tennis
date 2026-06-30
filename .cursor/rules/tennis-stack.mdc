@@ -166,6 +166,66 @@ alwaysApply: false
 - **CategoryDropdown** (`client/src/features/shop/CategoryDropdown.jsx`): референс — `drop_category.txt` (Codepen: aaroniker/XxBjKN). CSS-переменные (светлая тема: `--background: #fff`, `--border: #dce6f2`, `--text: #1f2937`). Триггер — `span[role='button']` (не путать со скрытым `div.category-dropdown__label-measure` вне потока). Кнопка с названием + стрелка (2 палочки, rotate ±50°). Список: `transform: scale(.8)→scale(1)` + `cubic-bezier(.4,.6,.5,1.32)`. Пункты: `translateX(6px)→0` с каскадными задержками. Активный пункт — галочка из 2 палочек. При `SearchBar.isOpen`: кнопка → гамбургер (3 полоски), смещается влево. Клик по гамбургеру → **закрыть UI поиска** (`onCloseSearch` / `handleCloseSearchUI` — без сброса `searchQuery`), **дождаться полного раскрытия строки** (`transitionend` по `width` + проверка `offsetWidth >= 200`, fallback `1450ms`), затем открыть выпадающий список; `pendingOpenRef` не сбрасывать при закрытии поиска через бургер. **Анимация возврата**: `transition: transform 0.9s ease 0.9s, width 0.5s ease 0.9s`. Текст категории (`.category-dropdown__label`) — в обычном состоянии виден сразу; при возврате из режима поиска — плавное проявление (`.visible`) через `ResizeObserver`, когда ширина триггера достаточна (`isExpandingFromSearch`).
 - **Плавающая кнопка «Добавить»** (`ShopPage.jsx`): скрывается при скролле, открытом dropdown категорий, **фокусе на строке поиска** (`isSearchFocused`) и при **открытой строке поиска с непустым текстом** (`isSearchOpen && searchQuery.trim()`). Скролл списка товаров при **пустом** открытом поиске — сворачивает строку и показывает «Добавить»; при непустом — строка и фильтр остаются. Логику «бургер ↔ Добавить» не менять.
 
+## Нумерация публикаций
+
+- Коллекции `posts`, `tournament_posts`, `gallery` имеют поле `post_number` (number, min: 1) — автоинкремент через PB-хук `pb_hooks/posts_autonumber.pb.js` (`onRecordBeforeCreateRequest`); inline в каждом обработчике (helper вне callback в PB-хуках недоступен).
+- В `PostCard` и `TournamentPostCard`: отображается как `#N` в `.section-meta` сразу после даты, тем же шрифтом/цветом через `<span className="post-number">`.
+- В `FullscreenImageViewer` для галереи: `items[i].postNumber` (берётся из `gallery.post_number`) отображается вместо/рядом с `activeIndex+1 / items.length`.
+- Используется в уведомлениях бота (комментарии, новые публикации) для идентификации.
+
+## Поиск в AppHeader (Feed, Competitions, Gallery)
+
+- `AppHeader` получает проп `searchConfig?: { open, query, onToggle, onChange, onClose, showDateSearch?, onDatePick? }`.
+- При `searchConfig.open=true`: `<h1>` скрыт, вместо него — `<input className="header-search-input">` (ширина: от начала до `.header-profile-badge`). Справа внутри строки: иконка-календарь (если `showDateSearch=true`, открывает `<input type="date">` popover → форматирует в `DD.MM.YYYY` → вставляет в `onChange`) + кнопка ✕.
+- При `searchConfig.open=false`: справа от `<h1>` — кнопка-лупа (`.header-search-btn`).
+- State поиска (`feedSearch`, `competitionsSearch`, `gallerySearch`) — в `App.jsx`, передаётся пропами в страницы. Сбрасывается при смене таба.
+- `FeedPage` / `CompetitionsPage` / `GalleryPage` принимают проп `searchQuery: string`.
+- Фильтрация в `useMemo`:  
+  — `#N` или число → по `post_number`;  
+  — строка даты → `parseDateQuery` / `matchesDateQuery` из `lib/dateSearch.js`;  
+  — иначе → `content.toLowerCase().includes(q)`.
+- Галерея: только поиск по `post_number` (`showDateSearch: false`).
+- Соревнования: поиск отображается только на вкладке «Лента» (не «Рейтинг»).
+
+## TournamentPostCard — оформление
+
+- Шапка идентична `PostCard`: аватар «Секция Миленьких» (`assets/sm-avatar.png`), имя, дата + `#N`; кнопки редактирования/удаления — только модератор.
+- `tournament_posts` имеет поле `is_deleted` (Bool) — soft-delete аналогично `posts`. `listTournamentPosts` фильтрует `is_deleted = false` (для модератора — `includeDeleted: true`). `softDeleteTournamentPost(id)`, `restoreTournamentPost(id)` в `services/tournamentPosts.js`.
+- `EditTournamentPostModal` — по аналогии с `EditPostModal`.
+- Клик по любой части карточки (кроме медиа) → `TournamentPostDetailModal`. Медиа → `onOpenFullscreen` + `e.stopPropagation()`.
+- Превью комментариев: `readTournamentComments(post).filter(!is_deleted).slice(-2)` + `CommentsPreview` из `features/feed/CommentsPreview.jsx`. Expand в `listTournamentPosts`: `'tournament_comments(post),tournament_comments(post).author'`.
+- Загрузка с прогрессом: `TournamentPostUploadProvider` (аналог `PostUploadProvider`) в `main.jsx`; `useTournamentPostUpload` → `startUpload(payload)`; `CreateTournamentPostModal` возвращает `payload` через `onCreated(payload)`.
+
+## Магазин — FAB «Добавить» (логика скролла)
+
+- **Единая delta-логика** для Feed, Competitions и Shop: `SCROLL_TOP_THRESHOLD = 8`, `SCROLL_DELTA_THRESHOLD = 4`; `syncVisibility(scrollTop, delta)` — у верхней границы видна, скролл вверх → видна, скролл вниз → скрыта.
+- В `ShopPage` убраны `SCROLL_HIDE_DEBOUNCE_MS` и `scrollTimeoutRef`; дополнительные условия скрытия сохранены: `isCategoryDropdownOpen`, `isSearchFocused`, `isSearchOpen && searchQuery.trim()`.
+
+## ProfileViewModal — режим редактирования
+
+- При `isEditing=true`: `profile-view-close-btn` скрыта; `edit-profile-btn` (с `✕`, класс `profile-view-edit-btn--editing`) занимает `right: 16px`. При `isEditing=false` — карандаш `right: 56px`, close-кнопка `right: 16px`.
+- Ровно один крестик в правом углу в любом режиме.
+- Клик по имени пользователя **не открывает** чат MAX — `openMaxUserChat` удалена из ProfileViewModal, имя — статичный элемент.
+
+## Иконка «Абонемент»
+
+- Везде (AppHeader, ProfileViewModal) — SVG силуэта 👤: `<circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>`, `stroke="#007aff"`, `fill="none"`.
+
+## Колокольчик в AppHeader
+
+- `<IconButton ariaLabel="Уведомления" className="header-bell-btn" onClick={onNotificationsClick}>` — **перед** `.header-profile-badge`; `onNotificationsClick` (заглушка `() => {}` в App.jsx). SVG: `<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>`.
+
+## Бот MAX — оповещения
+
+- **MAX `max_id`** в коллекции `users` = chat_id для MAX Bot API. Поле уже существует — дополнительного поля не нужно.
+- Реализация через один файл `pb_hooks/bot_notifications.pb.js` — все helper-функции (`sendBotMessage`, `getModeratorMaxIds`, `formatDateTime`) и все обработчики в одном файле.
+- MAX Bot API: `POST https://botapi.max.ru/messages?access_token={MAX_BOT_TOKEN}` → `{ recipient: { chat_id: Number(maxId) }, type: "message", body: { text } }`.
+- Токен: env `MAX_BOT_TOKEN` (PocketBase env, `$os.getenv('MAX_BOT_TOKEN')`).
+- Обработчики: `onRecordAfterCreateRequest(users)` — новый пользователь модераторам; custom route `/api/bot-notify-training` — запись/снятие; `onRecordAfterCreateRequest` + `onRecordAfterUpdateRequest` на `comments/tournament_comments/gallery_comments` — комментарии; `onRecordAfterCreateRequest(posts/tournament_posts)` — всем пользователям; cron `training_reminder_evening` (13:00 UTC) + `training_reminder_morning` (03:00 UTC) — напоминания.
+- Клиент: `services/trainings.js` вызывает `pb.send('/api/bot-notify-training', ...)` после записи/снятия.
+- В уведомлениях о комментариях указывается `post_number` публикации.
+- В уведомлениях о комментариях/публикациях указывается `post_number` публикации.
+
 ## Ограничения при правках
 
 - Минимальный diff; не трогать `client/dist/`, `node_modules`, `.env`.
