@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useMaxAuth } from './hooks/useMaxAuth';
 import { useSessionResetKey } from './hooks/useSessionResetKey';
-import { isUserBanned } from './services/auth';
+import { isUserBanned, completeOnboarding } from './services/auth';
+import OnboardingTutorial from './features/onboarding/OnboardingTutorial';
 import AppHeader from './components/AppHeader';
 import BottomNav from './components/BottomNav';
 import Spinner from './components/ui/Spinner';
@@ -215,6 +216,18 @@ function AppInner() {
 
   return (
     <div className="app">
+      {user && !user.onboarding_completed && (
+        <OnboardingTutorial
+          user={user}
+          onUpdate={handleUserUpdate}
+          onComplete={async () => {
+            const updated = await completeOnboarding(user.id);
+            handleUserUpdate(updated);
+          }}
+          onTabChange={setActiveTab}
+        />
+      )}
+
       <AppHeader
         title={headerTitle}
         user={user}

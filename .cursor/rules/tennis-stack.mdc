@@ -190,12 +190,14 @@ alwaysApply: false
 ## TournamentPostCard — оформление
 
 - Шапка идентична `PostCard`: аватар «Секция Миленьких» (`assets/sm-avatar.png`), имя, дата + `#N`; кнопки редактирования/удаления — только модератор.
+- **Кнопка комментариев** (`.post-card-comment-btn`) — `position: absolute; bottom: 12px; right: 12px` внутри `article.tournament-post-card` (который имеет `position: relative`). Кнопка **не** оборачивается в `.feed-card-footer`; счётчик `commentCount` из `expand['tournament_comments(post)']`.
 - `TournamentPostDetailModal`: `showCloseButton={false}`; шапка `.tournament-post-detail-header` — слева `.feed-card-header` (аватар «Секция Миленьких», дата + `#N`), справа `.tournament-post-detail-actions`: карандаш (модератор) + крестик ✕ (`ui-modal-close`, `position: static`) — карандаш **слева** от крестика, без наложения. `onOpenEdit` → закрытие модалки → `EditTournamentPostModal`.
 - `tournament_posts` имеет поле `is_deleted` (Bool) — soft-delete аналогично `posts`. `listTournamentPosts` фильтрует `is_deleted = false` (для модератора — `includeDeleted: true`). `softDeleteTournamentPost(id)`, `restoreTournamentPost(id)` в `services/tournamentPosts.js`.
 - `EditTournamentPostModal` — по аналогии с `EditPostModal`.
 - Клик по любой части карточки (кроме медиа) → `TournamentPostDetailModal`. Медиа → `onOpenFullscreen` + `e.stopPropagation()`.
 - Превью комментариев: `readTournamentComments(post).filter(!is_deleted).slice(-2)` + `CommentsPreview` из `features/feed/CommentsPreview.jsx`. Expand в `listTournamentPosts`: `'tournament_comments(post),tournament_comments(post).author'`.
 - Загрузка с прогрессом: `TournamentPostUploadProvider` (аналог `PostUploadProvider`) в `main.jsx`; `useTournamentPostUpload` → `startUpload(payload)`; `CreateTournamentPostModal` возвращает `payload` через `onCreated(payload)`.
+- **Real-time комментарии**: `CompetitionsPage` деструктурирует `mutate: mutateTournamentPosts` из `useTournamentPosts()` и передаёт `onCommentMutated={mutateTournamentPosts}` в `TournamentPostDetailModal` → `TournamentCommentsSection`. `TournamentCommentsSection` вызывает `onCommentMutated?.()` после успешного `handleAdd`/`handleDelete`. Дополнительно — `pb.collection('tournament_comments').subscribe('*', () => mutateTournamentPosts())` в `CompetitionsPage` (useEffect с cleanup).
 
 ## Магазин — FAB «Добавить» (логика скролла)
 
@@ -210,7 +212,8 @@ alwaysApply: false
 
 ## Иконка «Абонемент»
 
-- Везде (AppHeader, ProfileViewModal) — SVG силуэта 👤: `<circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>`, `stroke="#007aff"`, `fill="none"`.
+- `AppHeader` (раздел «Тренировки», только модератор) и `ProfileViewModal` — SVG силуэта 👤: `<circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>`, `stroke="#007aff"`, `fill="none"`.
+- `ProfilePage` — кнопка `.membership-btn`: SVG-календарь из BottomNav «Тренировки» (`fill="currentColor"`, `stroke="#007aff"`), `viewBox="0 0 24 24"`.
 - В `AppHeader` (раздел «Тренировки», только модератор): кнопка «Абонемент» в `.header-end-group` (вместе с колокольчиком и профилем, `margin-left: auto` на группе).
 
 ## Колокольчик в AppHeader
@@ -219,14 +222,28 @@ alwaysApply: false
 
 ## Бот MAX — оповещения
 
-- **MAX `max_id`** в коллекции `users` = chat_id для MAX Bot API. Поле уже существует — дополнительного поля не нужно.
-- Реализация через один файл `pb_hooks/bot_notifications.pb.js` — все helper-функции (`sendBotMessage`, `getModeratorMaxIds`, `formatDateTime`) и все обработчики в одном файле.
-- MAX Bot API: `POST https://botapi.max.ru/messages?access_token={MAX_BOT_TOKEN}` → `{ recipient: { chat_id: Number(maxId) }, type: "message", body: { text } }`.
-- Токен: env `MAX_BOT_TOKEN` (PocketBase env, `$os.getenv('MAX_BOT_TOKEN')`).
-- Обработчики: `onRecordAfterCreateRequest(users)` — новый пользователь модераторам; custom route `/api/bot-notify-training` — запись/снятие; `onRecordAfterCreateRequest` + `onRecordAfterUpdateRequest` на `comments/tournament_comments/gallery_comments` — комментарии; `onRecordAfterCreateRequest(posts/tournament_posts)` — всем пользователям; cron `training_reminder_evening` (13:00 UTC) + `training_reminder_morning` (03:00 UTC) — напоминания.
-- Клиент: `services/trainings.js` вызывает `pb.send('/api/bot-notify-training', ...)` после записи/снятия.
+- **MAX `max_id`** в коллекции `users` = `user_id` из MAX (`userData.user_id` при max-auth), не chat_id. Поле уже существует — дополнительного поля не нужно.
+- **Изоляция scope JSVM (критично)**: каждый хендлер (`onRecord*`, `routerAdd`, `cronAdd`) сериализуется и выполняется в отдельном контексте — **недоступны** верхнеуровневые функции/переменные из `.pb.js` и замыкания (`forEach(function (collection) { onRecord*(...) })`). Ошибки вида `ReferenceError: X is not defined` при `<eval>:N` — типичный симптом. Общий код — в `pb_hooks/botlib.js` (без `.pb.js`), подключение **внутри** хендлера: `const bot = require(__hooks + '/botlib.js')`. Регистрация хуков — явно по коллекции (не `forEach` с замыканием); имя коллекции в хендлере — `e.record.collection().name`.
+- Реализация: `pb_hooks/botlib.js` (логика) + `pb_hooks/bot_notifications.pb.js` (только регистрация хуков).
+- MAX Bot API: `POST https://botapi.max.ru/messages?user_id={max_id}` с заголовком `Authorization: {MAX_BOT_TOKEN}` (без Bearer). Тело: `{ text, format: "markdown" }`. **`platform-api2.max.ru` требует сертификат Минцифры** на сервере (TLS `unknown authority` без него) — до установки CA использовать `botapi.max.ru` с тем же форматом.
+- Токен: env `MAX_BOT_TOKEN` (PocketBase env, `$os.getenv('MAX_BOT_TOKEN')`). Если не задан — логируется `[bot] MAX_BOT_TOKEN не задан`; проверять env процесса PB (`/proc/<pid>/environ`).
+- **PB 0.23+: каждый event-хук ОБЯЗАН вызвать `e.next()`** (`onRecordAfterCreateSuccess` / `onRecordAfterUpdateSuccess`). Тело — `try/catch` + `console.log('[bot] ...')`, `e.next()` **всегда** после catch. `cronAdd` и `routerAdd` — `e.next()` не требуют.
+- **`$app.runInBackground` в JSVM НЕ существует** — не использовать. Рассылка синхронно в хендлере; долгие задачи — cron-очередь.
+- `sendBotMessage` логирует `res.statusCode >= 300` (`[bot] MAX API ...`).
+- Фильтры: модераторы — `role = "moderator" && max_id != ""`; рассылка публикаций — `max_id != "" && is_banned != true`.
+- Обработчики: `onRecordAfterCreateSuccess(users)` — новый пользователь модераторам; `POST /api/bot-notify-training` — запись/снятие; `onRecordAfterCreateSuccess` + `onRecordAfterUpdateSuccess` на `comments` / `tournament_comments` / `gallery_comments`; `onRecordAfterCreateSuccess` на `posts` / `tournament_posts`; cron `training_reminder_evening` (13:00 UTC) + `training_reminder_morning` (03:00 UTC).
+- Клиент: `services/trainings.js` → `pb.send('/api/bot-notify-training', ...)`.
 - В уведомлениях о комментариях указывается `post_number` публикации.
-- В уведомлениях о комментариях/публикациях указывается `post_number` публикации.
+
+## Онбординг (Onboarding)
+
+- **Компоненты**: `features/onboarding/OnboardingTutorial.jsx` + `OnboardingTutorial.css`; хук `hooks/useOnboarding.js`.
+- **Флаги в `users`**: `onboarding_completed: bool` (default `false`), `name_set_in_onboarding: bool` (default `false`).
+- **Запуск**: `App.jsx` — если `user && !user.onboarding_completed` → рендерить `<OnboardingTutorial>` вместо основного UI (аналог `BlockedPage`).
+- **Шаги (0–8)**: welcome → форма профиля → Profile/Абонемент → Лента → Тренировки → Магазин → Турнир → Галерея → финал. Переключение табов через `onTabChange(index)`. Spotlight: `position:fixed` overlay + highlight-div по `getBoundingClientRect()` target-элемента.
+- **Смена имени**: поле `full_name` редактируемо **только во время онбординга** и **только если `!user.name_set_in_onboarding`**. После сохранения → `users.update({ name_set_in_onboarding: true })`. В `ProfilePage`/`ProfileViewModal` — по-прежнему только модератор.
+- **Завершение**: кнопка «Начать» или «Пропустить» → `updateUserProfile(userId, { onboarding_completed: true })` + `onUpdate(freshUser)`.
+- **Функция**: `completeOnboarding(userId)` в `services/auth.js`.
 
 ## Ограничения при правках
 

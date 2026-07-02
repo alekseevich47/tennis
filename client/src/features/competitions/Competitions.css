@@ -104,10 +104,18 @@
 }
 
 .tournament-post-card {
+  position: relative;
   background: #fff;
   border-radius: 14px;
   padding: 16px;
   box-shadow: 0 2px 10px rgba(15, 23, 42, 0.08);
+}
+
+.tournament-post-card .post-card-comment-btn {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  z-index: 2;
 }
 
 .tournament-post-date {

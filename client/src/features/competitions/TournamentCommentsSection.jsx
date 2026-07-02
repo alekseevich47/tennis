@@ -18,10 +18,11 @@ const COMMENT_COLLECTION = 'tournament_comments';
  *   postId: string,
  *   user: any,
  *   userIsModerator: boolean,
- *   onOpenProfile?: (user: any) => void
+ *   onOpenProfile?: (user: any) => void,
+ *   onCommentMutated?: () => void
  * }} props
  */
-function TournamentCommentsSection({ postId, user, userIsModerator, onOpenProfile }) {
+function TournamentCommentsSection({ postId, user, userIsModerator, onOpenProfile, onCommentMutated }) {
   const [commentText, setCommentText] = useState('');
   const [isAddingComment, setIsAddingComment] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -61,6 +62,7 @@ function TournamentCommentsSection({ postId, user, userIsModerator, onOpenProfil
       await createTournamentComment(postId, text, user.id);
       setCommentText('');
       await mutateComments();
+      onCommentMutated?.();
     } catch (err) {
       error('Ошибка добавления комментария:', err);
     } finally {
@@ -74,6 +76,7 @@ function TournamentCommentsSection({ postId, user, userIsModerator, onOpenProfil
     try {
       await updateTournamentComment(commentId, { is_deleted: true });
       await mutateComments();
+      onCommentMutated?.();
     } catch (err) {
       error('soft delete tournament comment:', err);
     }
