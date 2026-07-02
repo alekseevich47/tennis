@@ -2,7 +2,8 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import clsx from 'clsx';
 import { usePlayers } from '../../hooks/usePlayers';
 import { useTournamentPosts } from '../../hooks/useTournamentPosts';
-import { isModerator } from '../../services/auth';
+import pb from '../../services/pb';
+import { getCurrentUser, isModerator } from '../../services/auth';
 import { updateTournamentPost } from '../../services/tournamentPosts';
 import Spinner from '../../components/ui/Spinner';
 import EmptyState from '../../components/ui/EmptyState';
@@ -30,7 +31,7 @@ const SCROLL_DELTA_THRESHOLD = 4;
 function CompetitionsPage({ user, onTabChange, onSubTabChange, searchQuery = '' }) {
   const moderator = isModerator();
   const { data: players } = usePlayers();
-  const { data: posts, isLoading: postsLoading, mutate: mutatePosts } = useTournamentPosts({
+  const { data: posts, isLoading: postsLoading, mutate: mutateTournamentPosts } = useTournamentPosts({
     includeDeleted: moderator
   });
   const [activeTab, setActiveTab] = useState('feed');
@@ -111,6 +112,22 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, searchQuery = '' 
     return () => container.removeEventListener('scroll', handleScroll);
   }, [moderator, activeTab]);
 
+  useEffect(() => {
+    if (!getCurrentUser()?.id) return undefined;
+
+    pb.collection('tournament_comments')
+      .subscribe('*', () => {
+        mutateTournamentPosts();
+      })
+      .catch((e) => {
+        error('Ошибка подписки на комментарии турнира:', e);
+      });
+
+    return () => {
+      pb.collection('tournament_comments').unsubscribe('*');
+    };
+  }, [mutateTournamentPosts]);
+
   const handleOpenFullscreen = useCallback((items, index = 0, originRect = null, originKey = null) => {
     setHiddenMediaKey(null);
     setFullscreenMedia({ items, index, originRect, originKey });
@@ -140,7 +157,7 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, searchQuery = '' 
 
   const handlePostSaved = useCallback(
     (updatedPost) => {
-      mutatePosts(
+      mutateTournamentPosts(
         (curr = []) =>
           curr.map((post) =>
             post.id === updatedPost.id ? { ...post, ...updatedPost } : post
@@ -152,7 +169,7 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, searchQuery = '' 
       );
       setEditingPost(null);
     },
-    [mutatePosts]
+    [mutateTournamentPosts]
   );
 
   const handleDeletePost = useCallback(
@@ -160,7 +177,7 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, searchQuery = '' 
       setDeletedPostIds((prev) => [...prev, postId]);
       try {
         await updateTournamentPost(postId, { is_deleted: true });
-        mutatePosts(
+        mutateTournamentPosts(
           (curr = []) =>
             curr.map((p) => (p.id === postId ? { ...p, is_deleted: true } : p)),
           false
@@ -169,7 +186,7 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, searchQuery = '' 
         error('soft delete tournament post:', err);
       }
     },
-    [mutatePosts]
+    [mutateTournamentPosts]
   );
 
   const handleCreated = useCallback(
@@ -185,7 +202,7 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, searchQuery = '' 
       setDeletedPostIds((prev) => prev.filter((id) => id !== postId));
       try {
         await updateTournamentPost(postId, { is_deleted: false });
-        mutatePosts(
+        mutateTournamentPosts(
           (curr = []) =>
             curr.map((p) => (p.id === postId ? { ...p, is_deleted: false } : p)),
           false
@@ -194,7 +211,7 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, searchQuery = '' 
         error('restore tournament post:', err);
       }
     },
-    [mutatePosts]
+    [mutateTournamentPosts]
   );
 
   return (
@@ -305,6 +322,7 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, searchQuery = '' 
         onOpenProfile={setViewingPlayer}
         hiddenMediaKey={hiddenMediaKey}
         onOpenFullscreen={handleOpenFullscreen}
+        onCommentMutated={mutateTournamentPosts}
       />
 
       <ProfileViewModal

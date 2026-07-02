@@ -23,6 +23,8 @@ import { auditProfile } from '../lib/audit';
  * @property {string} [banned_at]
  * @property {boolean} [can_comment]
  * @property {string} [comment_restriction_reason]
+ * @property {boolean} [onboarding_completed]
+ * @property {boolean} [name_set_in_onboarding]
  */
 
 const BAN_INFO_KEY = 'tennis_ban_info';
@@ -254,6 +256,20 @@ export async function showInRating(targetUserId) {
   const updated = await pb.collection('users').update(targetUserId, { is_visible: true });
   auditProfile.userRevealed(targetUserId);
   return /** @type {UserRecord} */ (updated);
+}
+
+/**
+ * Безопасное обновление профиля + actualisation через authRefresh (исправляет C10).
+ * @param {string} userId
+ * @param {Partial<UserRecord> | FormData} patch
+ * @returns {Promise<UserRecord>}
+ */
+/**
+ * @param {string} userId
+ * @returns {Promise<UserRecord>}
+ */
+export async function completeOnboarding(userId) {
+  return updateUserProfile(userId, { onboarding_completed: true });
 }
 
 /**

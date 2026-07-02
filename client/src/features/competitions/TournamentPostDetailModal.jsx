@@ -19,7 +19,8 @@ import { formatPostDate } from '../../lib/format';
  *   onOpenEdit?: (post: import('../../services/tournamentPosts').TournamentPostRecord) => void,
  *   onOpenProfile?: (user: any) => void,
  *   hiddenMediaKey?: string | null,
- *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, thumbUrl: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void
+ *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, thumbUrl: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void,
+ *   onCommentMutated?: () => void
  * }} props
  */
 function TournamentPostDetailModal({
@@ -32,7 +33,8 @@ function TournamentPostDetailModal({
   onOpenEdit,
   onOpenProfile,
   hiddenMediaKey = null,
-  onOpenFullscreen
+  onOpenFullscreen,
+  onCommentMutated
 }) {
   const participants = Array.isArray(post?.participants) ? post.participants : [];
 
@@ -142,6 +144,7 @@ function TournamentPostDetailModal({
         user={user}
         userIsModerator={userIsModerator}
         onOpenProfile={onOpenProfile}
+        onCommentMutated={onCommentMutated}
       />
     </Modal>
   );
