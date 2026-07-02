@@ -54,6 +54,11 @@ const CARD_STEPS = new Set([0, 1, 8]);
 const NAV_STEPS = new Set([2, 3, 4, 5, 6, 7]);
 const TOTAL_STEPS = 9;
 
+function normalizeDateInput(value) {
+  if (!value) return '';
+  return String(value).slice(0, 10);
+}
+
 function scrollTargetIntoView(target, scrollBlock = 'center') {
   const margin = scrollBlock === 'start' ? 12 : null;
   let node = target.parentElement;
