@@ -69,6 +69,25 @@
   margin-bottom: 20px;
 }
 
+.onboarding-header-banner {
+  position: fixed;
+  z-index: 9002;
+  top: 56px;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  padding: 14px 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+  pointer-events: auto;
+}
+
+.onboarding-header-banner p {
+  font-size: 15px;
+  color: #333;
+  margin: 0;
+  line-height: 1.45;
+}
+
 .onboarding-tooltip {
   position: fixed;
   z-index: 9002;

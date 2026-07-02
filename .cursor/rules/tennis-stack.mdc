@@ -240,12 +240,14 @@ alwaysApply: false
 - **Компоненты**: `features/onboarding/OnboardingTutorial.jsx` + `OnboardingTutorial.css`; хук `hooks/useOnboarding.js`.
 - **Флаги в `users`**: `onboarding_completed: bool` (default `false`), `name_set_in_onboarding: bool` (default `false`).
 - **Запуск**: `App.jsx` — если `user && !user.onboarding_completed` → рендерить `<OnboardingTutorial>` поверх основного UI + класс `.onboarding-active` на `.app` (блокирует клики по `AppHeader` и `BottomNav`).
-- **Шаги (0–8)**: welcome → форма профиля → Profile/Абонемент → Лента → Тренировки → Магазин → Турнир → Галерея → финал. Переключение табов через `onTabChange(index)`. Spotlight: `position:fixed` overlay + highlight-div по `getBoundingClientRect()` target-элемента; перед измерением — `scrollTargetIntoView` (программный скролл scrollable-предков + `scrollIntoView`).
+- **Шаги (0–8)**: welcome → форма профиля → Profile/Абонемент → Лента → Тренировки → Магазин → Турнир → Галерея → финал. Переключение табов через `onTabChange(index)`.
+- **Spotlight (только шаги 2 и 4)**: «Абонемент» (`.membership-btn`) и «Тренировки» (`.calendar-strip`) — `position:fixed` overlay + highlight-div по `getBoundingClientRect()` target-элемента; tooltip рядом с фокусом; перед измерением — `scrollTargetIntoView`.
+- **Инфо-баннер (шаги 3, 5, 6, 7)**: Лента, Магазин, Турнир, Галерея — без spotlight/highlight; текст в `.onboarding-header-banner` сразу под `AppHeader` (`top: 56px`), контент раздела затемнён overlay без выреза.
 - **Пропустить обучение нельзя** — кнопка «Пропустить» удалена.
 - **Навигация обучения**: только на шагах 2–7; «Назад» слева, «Далее» справа; позиция `bottom: calc(60px + 12px)` — над `BottomNav`, чтобы был виден активный таб. На шагах 0, 1, 8 нижняя навигация не показывается (только кнопки внутри карточки).
 - **Блокировка UI**: overlay `.onboarding-overlay--fullscreen` на карточных шагах (0, 1, 8); `.onboarding-overlay--main` (между header и BottomNav) на spotlight-шагах. Скролл заблокирован (`html.onboarding-scroll-locked`, `main.onboarding-scroll-locked`) **кроме шага 1** (форма профиля в `.onboarding-card` с `overflow-y: auto`).
 - **Смена имени**: поле `full_name` редактируемо **только во время онбординга** и **только если `!user.name_set_in_onboarding`**. Подсказка: «Имя можно сменить только сейчас. Указывайте свои реальные данные.» После сохранения → `users.update({ name_set_in_onboarding: true })`.
-- **Тексты spotlight**: Лента / Магазин / Турнир / Галерея — tooltip **сверху** над фокусом (`placement: 'top'`); Тренировки — снизу. Галерея: `scrollBlock: 'start'`.
+- **Тексты**: spotlight-шаги — tooltip рядом с highlight (Тренировки — снизу, Абонемент — снизу); инфо-шаги — баннер под шапкой, без привязки к DOM-элементу.
 - **Завершение**: только кнопка «Начать» на финальном шаге → `updateUserProfile(userId, { onboarding_completed: true })` + `onUpdate(freshUser)`.
 - **Функция**: `completeOnboarding(userId)` в `services/auth.js`.
 
