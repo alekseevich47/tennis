@@ -215,7 +215,7 @@ function AppInner() {
           : undefined;
 
   return (
-    <div className="app">
+    <div className={`app${user && !user.onboarding_completed ? ' onboarding-active' : ''}`}>
       {user && !user.onboarding_completed && (
         <OnboardingTutorial
           user={user}

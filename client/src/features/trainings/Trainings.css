@@ -241,6 +241,41 @@
   align-items: center;
 }
 
+.training-action-text-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.training-action-text-btn--book {
+  background: #007aff;
+  color: #ffffff;
+}
+
+.training-action-text-btn--book:hover:not(:disabled) {
+  background: #0063cc;
+}
+
+.training-action-text-btn--cancel {
+  background: #e63946;
+  color: #ffffff;
+}
+
+.training-action-text-btn--cancel:hover:not(:disabled) {
+  background: #cc2a36;
+}
+
+.training-action-text-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .action-circle-btn {
   width: 44px !important;
   height: 44px !important;

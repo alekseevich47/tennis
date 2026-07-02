@@ -9,23 +9,74 @@ import './OnboardingTutorial.css';
 
 const DEFAULT_HAND = 'Правая';
 const HIGHLIGHT_PADDING = 8;
-const SPOTLIGHT_DELAY_MS = 150;
+const SPOTLIGHT_DELAY_MS = 280;
+const SCROLL_LOCK_CLASS = 'onboarding-scroll-locked';
 
 const SPOTLIGHT_STEPS = {
-  2: { tab: 5, selector: '.membership-btn', text: 'Кнопка "Абонемент" — здесь ваш тип абонемента, количество оставшихся занятий и период действия.' },
-  3: { tab: 0, selector: '.feed-card', text: 'Лента — новости секции. Ставьте лайки ♥ и пишите комментарии 💬.' },
-  4: { tab: 1, selector: '.calendar-strip', text: 'Выберите день в полосе, откройте тренировку и нажмите "Записаться". Снять запись — не позднее чем за 1 час до начала.' },
-  5: { tab: 2, selector: '.product-card', text: 'Магазин секции: открывайте карточку товара и добавляйте в избранное ♥.' },
-  6: { tab: 3, selector: '.tournament-post-card', text: 'Здесь — результаты соревнований. Комментируйте публикации 💬 и ставьте лайки.' },
-  7: { tab: 4, selector: '.gallery-grid, .gallery-grid-item', text: 'Галерея: фото и видео секции. Ставьте лайки ♥ на медиа.' }
+  2: {
+    tab: 5,
+    selector: '.membership-btn',
+    text: 'Кнопка "Абонемент" — здесь ваш тип абонемента, количество оставшихся занятий и период действия.'
+  },
+  3: {
+    tab: 0,
+    selector: '.feed-card',
+    text: 'Лента — мы очень рады делиться с Вами нашими новостями! Ставьте лайки ♥ и пишите комментарии 💬.',
+    placement: 'top'
+  },
+  4: {
+    tab: 1,
+    selector: '.calendar-strip',
+    text: 'Выберите день в полосе, откройте тренировку и нажмите "Записаться". Снять запись возможно — не позднее чем за 1 час до начала.'
+  },
+  5: {
+    tab: 2,
+    selector: '.product-card',
+    text: 'Магазин секции: открывайте карточку товара и добавляйте в избранное ♥. Если хотите узнать о товаре — нажимайте на кнопку "Купить"',
+    placement: 'top'
+  },
+  6: {
+    tab: 3,
+    selector: '.tournament-post-card',
+    text: 'Здесь — результаты соревнований. Комментируйте публикации 💬 и ставьте лайки.',
+    placement: 'top'
+  },
+  7: {
+    tab: 4,
+    selector: '.gallery-grid, .gallery-grid-item',
+    text: 'Галерея: фото и видео секции. Ставьте лайки ♥ на медиа.',
+    placement: 'top',
+    scrollBlock: 'start'
+  }
 };
 
 const CARD_STEPS = new Set([0, 1, 8]);
+const NAV_STEPS = new Set([2, 3, 4, 5, 6, 7]);
 const TOTAL_STEPS = 9;
 
-function normalizeDateInput(value) {
-  if (!value) return '';
-  return String(value).slice(0, 10);
+function scrollTargetIntoView(target, scrollBlock = 'center') {
+  const margin = scrollBlock === 'start' ? 12 : null;
+  let node = target.parentElement;
+
+  while (node) {
+    const style = window.getComputedStyle(node);
+    const canScroll =
+      /(auto|scroll)/.test(style.overflowY) && node.scrollHeight > node.clientHeight + 1;
+
+    if (canScroll) {
+      const nodeRect = node.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      const offset =
+        margin != null
+          ? targetRect.top - nodeRect.top - margin
+          : targetRect.top - nodeRect.top - (nodeRect.height - targetRect.height) / 2;
+      node.scrollTop += offset;
+    }
+
+    node = node.parentElement;
+  }
+
+  target.scrollIntoView({ block: scrollBlock, inline: 'nearest', behavior: 'instant' });
 }
 
 /**
@@ -33,14 +84,15 @@ function normalizeDateInput(value) {
  * @param {'top' | 'bottom'} placement
  */
 function getTooltipStyle(rect, placement) {
-  if (!rect) return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
+  if (!rect) return { top: '72px', left: '16px', right: '16px', width: 'auto' };
 
   const tooltipGap = 12;
   if (placement === 'top') {
     return {
       left: Math.max(16, Math.min(rect.left, window.innerWidth - 356)),
-      bottom: window.innerHeight - rect.top + tooltipGap,
-      top: 'auto'
+      top: Math.max(72, rect.top - tooltipGap),
+      transform: 'translateY(-100%)',
+      bottom: 'auto'
     };
   }
 
@@ -59,7 +111,7 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
   const [highlightRect, setHighlightRect] = useState(null);
   const [tooltipPlacement, setTooltipPlacement] = useState(/** @type {'top' | 'bottom'} */ ('bottom'));
   const [saving, setSaving] = useState(false);
-  const [skipping, setSkipping] = useState(false);
+  const [finishing, setFinishing] = useState(false);
 
   const [fullName, setFullName] = useState(user?.full_name || '');
   const [birthDate, setBirthDate] = useState(normalizeDateInput(user?.birth_date));
@@ -73,26 +125,59 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
   const spotlightConfig = SPOTLIGHT_STEPS[step];
   const isCardStep = CARD_STEPS.has(step);
   const isSpotlightStep = Boolean(spotlightConfig);
+  const showNav = NAV_STEPS.has(step);
 
-  const measureTarget = useCallback((selector) => {
+  const measureTarget = useCallback((selector, forcedPlacement, scrollBlock = 'center') => {
     const target = document.querySelector(selector);
     if (!target) {
       setHighlightRect(null);
       return;
     }
 
-    const rect = target.getBoundingClientRect();
-    const padded = {
-      top: rect.top - HIGHLIGHT_PADDING,
-      left: rect.left - HIGHLIGHT_PADDING,
-      width: rect.width + HIGHLIGHT_PADDING * 2,
-      height: rect.height + HIGHLIGHT_PADDING * 2
-    };
+    scrollTargetIntoView(target, scrollBlock);
 
-    setHighlightRect(padded);
-    const spaceBelow = window.innerHeight - (padded.top + padded.height);
-    setTooltipPlacement(spaceBelow < 160 && padded.top > 160 ? 'top' : 'bottom');
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        const rect = target.getBoundingClientRect();
+        const padded = {
+          top: rect.top - HIGHLIGHT_PADDING,
+          left: rect.left - HIGHLIGHT_PADDING,
+          width: rect.width + HIGHLIGHT_PADDING * 2,
+          height: rect.height + HIGHLIGHT_PADDING * 2
+        };
+
+        setHighlightRect(padded);
+
+        if (forcedPlacement) {
+          setTooltipPlacement(forcedPlacement);
+          return;
+        }
+
+        const spaceBelow = window.innerHeight - (padded.top + padded.height);
+        setTooltipPlacement(spaceBelow < 160 && padded.top > 160 ? 'top' : 'bottom');
+      });
+    });
   }, []);
+
+  useEffect(() => {
+    document.documentElement.classList.add(SCROLL_LOCK_CLASS);
+    return () => {
+      document.documentElement.classList.remove(SCROLL_LOCK_CLASS);
+    };
+  }, []);
+
+  useEffect(() => {
+    const main = document.querySelector('main.content-with-header');
+    if (!main) return undefined;
+
+    if (step === 1) {
+      main.classList.remove(SCROLL_LOCK_CLASS);
+      return () => main.classList.remove(SCROLL_LOCK_CLASS);
+    }
+
+    main.classList.add(SCROLL_LOCK_CLASS);
+    return () => main.classList.remove(SCROLL_LOCK_CLASS);
+  }, [step]);
 
   useEffect(() => {
     if (!isSpotlightStep || !spotlightConfig) {
@@ -103,17 +188,17 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
     onTabChange(spotlightConfig.tab);
 
     const timer = window.setTimeout(() => {
-      measureTarget(spotlightConfig.selector);
+      measureTarget(spotlightConfig.selector, spotlightConfig.placement, spotlightConfig.scrollBlock);
     }, SPOTLIGHT_DELAY_MS);
 
-    const handleLayoutChange = () => measureTarget(spotlightConfig.selector);
+    const handleLayoutChange = () => {
+      measureTarget(spotlightConfig.selector, spotlightConfig.placement, spotlightConfig.scrollBlock);
+    };
     window.addEventListener('resize', handleLayoutChange);
-    window.addEventListener('scroll', handleLayoutChange, true);
 
     return () => {
       window.clearTimeout(timer);
       window.removeEventListener('resize', handleLayoutChange);
-      window.removeEventListener('scroll', handleLayoutChange, true);
     };
   }, [step, isSpotlightStep, spotlightConfig, onTabChange, measureTarget]);
 
@@ -132,29 +217,16 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
     return () => URL.revokeObjectURL(previewUrl);
   }, [avatarFile]);
 
-  const handleSkip = async () => {
-    if (skipping) return;
-    setSkipping(true);
-    try {
-      await completeOnboarding();
-      await onComplete();
-    } catch (err) {
-      error('onboarding skip:', err);
-    } finally {
-      setSkipping(false);
-    }
-  };
-
   const handleFinish = async () => {
-    if (skipping) return;
-    setSkipping(true);
+    if (finishing) return;
+    setFinishing(true);
     try {
       await completeOnboarding();
       await onComplete();
     } catch (err) {
       error('onboarding finish:', err);
     } finally {
-      setSkipping(false);
+      setFinishing(false);
     }
   };
 
@@ -238,11 +310,14 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
     if (step > 0) setStep((s) => s - 1);
   };
 
+  const tooltipPlacementResolved = spotlightConfig?.placement || tooltipPlacement;
+
   return (
     <>
-      {isCardStep && (
-        <div className="onboarding-overlay onboarding-overlay--blocking" aria-hidden="true" />
-      )}
+      <div
+        className={`onboarding-overlay${isCardStep ? ' onboarding-overlay--blocking onboarding-overlay--fullscreen' : ' onboarding-overlay--blocking onboarding-overlay--main'}`}
+        aria-hidden="true"
+      />
 
       {isSpotlightStep && highlightRect && (
         <div
@@ -274,7 +349,7 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
           <h2>Ваш профиль</h2>
           <p className="onboarding-hint">
             {canEditName
-              ? 'Данные видны только участникам секции. Имя можно сменить только сейчас.'
+              ? 'Данные видны только участникам секции. Имя можно сменить только сейчас. Указывайте свои реальные данные.'
               : 'Данные видны только участникам секции. Имя уже задано и не может быть изменено.'}
           </p>
           <form className="onboarding-form" onSubmit={handleProfileSave}>
@@ -347,10 +422,10 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
 
       {isSpotlightStep && spotlightConfig && (
         <div
-          className="onboarding-tooltip"
+          className={`onboarding-tooltip${tooltipPlacementResolved === 'top' ? ' onboarding-tooltip--top' : ''}`}
           role="dialog"
           aria-modal="true"
-          style={getTooltipStyle(highlightRect, tooltipPlacement)}
+          style={getTooltipStyle(highlightRect, tooltipPlacementResolved)}
         >
           <p>{spotlightConfig.text}</p>
         </div>
@@ -364,55 +439,31 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
               type="button"
               className="onboarding-btn onboarding-btn--primary"
               onClick={handleFinish}
-              disabled={skipping}
+              disabled={finishing}
             >
-              {skipping ? 'Загрузка...' : 'Начать'}
+              {finishing ? 'Загрузка...' : 'Начать'}
             </button>
           </div>
         </div>
       )}
 
-      {step > 0 && step < 8 && (
+      {showNav && (
         <nav className="onboarding-nav" aria-label="Навигация по обучению">
+          {step > 2 ? (
+            <button type="button" className="onboarding-btn onboarding-btn--secondary" onClick={goBack}>
+              Назад
+            </button>
+          ) : (
+            <span className="onboarding-nav-spacer" aria-hidden="true" />
+          )}
           <button
             type="button"
-            className="onboarding-btn onboarding-btn--ghost"
-            onClick={handleSkip}
-            disabled={skipping || saving}
+            className="onboarding-btn onboarding-btn--primary"
+            onClick={goNext}
+            disabled={isSpotlightStep && !highlightRect}
           >
-            Пропустить
+            Далее
           </button>
-          <div className="onboarding-nav-group">
-            {step > 1 && (
-              <button type="button" className="onboarding-btn onboarding-btn--secondary" onClick={goBack}>
-                Назад
-              </button>
-            )}
-            {step !== 1 && (
-              <button
-                type="button"
-                className="onboarding-btn onboarding-btn--primary"
-                onClick={goNext}
-                disabled={isSpotlightStep && !highlightRect}
-              >
-                Далее
-              </button>
-            )}
-          </div>
-        </nav>
-      )}
-
-      {step === 0 && (
-        <nav className="onboarding-nav" aria-label="Навигация по обучению">
-          <button
-            type="button"
-            className="onboarding-btn onboarding-btn--ghost"
-            onClick={handleSkip}
-            disabled={skipping}
-          >
-            Пропустить
-          </button>
-          <span />
         </nav>
       )}
 
