@@ -477,6 +477,24 @@
       },
       {
         "hidden": false,
+        "id": "bool4248919572",
+        "name": "onboarding_completed",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "hidden": false,
+        "id": "bool2572971533",
+        "name": "name_set_in_onboarding",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "hidden": false,
         "id": "autodate2990389176",
         "name": "created",
         "onCreate": true,

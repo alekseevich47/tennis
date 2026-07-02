@@ -183,18 +183,16 @@ function TournamentPostCard({
         </ol>
       ) : null}
 
-      <div className="feed-card-footer feed-card-bottom-bar">
-        <button
-          type="button"
-          className="post-card-comment-btn"
-          aria-label={`Комментариев: ${commentCount}`}
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.5-4.5A8 8 0 1 1 21 12Z" />
-          </svg>
-          <span className="post-card-comment-btn__count">{commentCount}</span>
-        </button>
-      </div>
+      <button
+        type="button"
+        className="post-card-comment-btn"
+        aria-label={`Комментариев: ${commentCount}`}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.5-4.5A8 8 0 1 1 21 12Z" />
+        </svg>
+        <span className="post-card-comment-btn__count">{commentCount}</span>
+      </button>
 
       {previewComments.length > 0 && (
         <div
