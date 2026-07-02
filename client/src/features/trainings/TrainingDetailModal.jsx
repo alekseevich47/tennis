@@ -97,6 +97,10 @@ function TrainingDetailModal({
         await alert({ title: 'Запись невозможна', message: /** @type {Error} */ (err).message });
         return;
       }
+      if (/** @type {{ code?: string }} */ (err).code === 'NO_AVAILABLE_SESSIONS') {
+        await alert({ title: 'Запись невозможна', message: 'Нет доступных посещений.' });
+        return;
+      }
       if (/** @type {{ code?: string }} */ (err).code === 'ANNUAL_DAILY_LIMIT') {
         const ok = await confirm({
           title: 'Годовой абонемент',
