@@ -136,26 +136,33 @@ function TrainingCard({
               </button>
             )
           ) : !userIsModerator && isUserBooked && !isBookingLocked ? (
-            <IconButton
-              ariaLabel="Отменить запись на тренировку"
-              variant="ghost"
-              size="sm"
-              className="action-circle-btn btn-cancel-cross"
+            <button
+              type="button"
+              className="training-action-text-btn training-action-text-btn--cancel"
               onClick={handleCancel}
             >
-              <span aria-hidden="true">✕</span>
-            </IconButton>
+              Снять запись
+            </button>
           ) : !userIsModerator && isUserBooked ? (
             <span className="text-status-full-label card-booked-status-label">Вы записаны</span>
           ) : isFull ? (
             null
+          ) : !userIsModerator ? (
+            <button
+              type="button"
+              className="training-action-text-btn training-action-text-btn--book"
+              disabled={isBookingLocked}
+              onClick={handleBook}
+            >
+              Записаться
+            </button>
           ) : (
             <IconButton
               ariaLabel="Записаться на тренировку"
               variant="ghost"
               size="sm"
               className="action-circle-btn btn-add-plus"
-              disabled={!userIsModerator && isBookingLocked}
+              disabled={isBookingLocked}
               onClick={handleBook}
             >
               <span aria-hidden="true">+</span>
