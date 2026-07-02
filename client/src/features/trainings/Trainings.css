@@ -715,6 +715,19 @@
   border-color: #8ce99a;
 }
 
+.user-picker-option.is-disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.user-picker-option.is-disabled:active {
+  transform: none;
+}
+
+.user-picker-option.is-disabled input[type='checkbox'] {
+  cursor: not-allowed;
+}
+
 .user-picker-option input[type='checkbox'] {
   width: 18px;
   height: 18px;

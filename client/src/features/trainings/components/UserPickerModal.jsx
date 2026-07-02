@@ -1,7 +1,7 @@
 import React, { useEffect, useId, useMemo, useState } from 'react';
 import Modal from '../../../components/ui/Modal';
 import Avatar from '../../../components/ui/Avatar';
-import { listUsers } from '../../../services/users';
+import pb from '../../../services/pb';
 import { error } from '../../../lib/log';
 
 /**
@@ -34,7 +34,10 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
     setLoading(true);
     setErrorMessage('');
 
-    listUsers()
+    pb.collection('users').getFullList({
+      fields: 'id,full_name,avatar,avatar_url,available_sessions,membership_type,membership_frozen',
+      sort: 'full_name'
+    })
       .then((nextUsers) => {
         if (!cancelled) setUsers(nextUsers);
       })
@@ -65,7 +68,8 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
 
   const selectedCount = selectedIds.size;
 
-  const handleToggleUser = (userId) => {
+  const handleToggleUser = (userId, disabled) => {
+    if (disabled) return;
     setSelectedIds((prev) => {
       const next = new Set(prev);
       if (next.has(userId)) next.delete(userId);
@@ -127,15 +131,23 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
           ) : filteredUsers.length === 0 ? (
             <p className="user-picker-status">Подходящих игроков нет.</p>
           ) : (
-            filteredUsers.map((user) => (
+            filteredUsers.map((user) => {
+              const membershipType = user.membership_type || 'regular';
+              const noSessions =
+                membershipType === 'regular' && (user.available_sessions ?? 0) <= 0;
+              const isFrozen = user.membership_frozen === true;
+              const isDisabled = isFrozen || noSessions;
+
+              return (
               <label
                 key={user.id}
-                className={`user-picker-option${selectedIds.has(user.id) ? ' is-selected' : ''}`}
+                className={`user-picker-option${selectedIds.has(user.id) ? ' is-selected' : ''}${isDisabled ? ' is-disabled' : ''}`}
               >
                 <input
                   type="checkbox"
                   checked={selectedIds.has(user.id)}
-                  onChange={() => handleToggleUser(user.id)}
+                  disabled={isDisabled}
+                  onChange={() => handleToggleUser(user.id, isDisabled)}
                 />
                 <Avatar
                   user={user}
@@ -143,9 +155,14 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
                   className="training-player-avatar"
                   alt={user.full_name || 'Теннисист'}
                 />
-                <span>{user.full_name || 'Теннисист'}</span>
+                <span>
+                  {user.full_name || 'Теннисист'}
+                  {noSessions ? ' — нет посещений' : ''}
+                  {isFrozen ? ' — абонемент заморожен' : ''}
+                </span>
               </label>
-            ))
+              );
+            })
           )}
         </div>
       </div>
