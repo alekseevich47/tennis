@@ -114,26 +114,63 @@ async function resolveAuditUsers(userIds, knownUsers = []) {
 }
 
 /**
+ * @param {string} userId
+ * @returns {Promise<{ available_sessions?: number | null, membership_type?: string }>}
+ */
+async function fetchMembershipSessionInfo(userId) {
+  return /** @type {{ available_sessions?: number | null, membership_type?: string }} */ (
+    await pb.collection('users').getOne(userId, {
+      fields: 'available_sessions,membership_type',
+      requestKey: null
+    })
+  );
+}
+
+/**
+ * @param {string | undefined} membershipType
+ */
+function isUnlimitedMembership(membershipType) {
+  return membershipType === 'annual' || membershipType === 'corporate';
+}
+
+/**
+ * Проверить, что у обычного абонемента есть доступные посещения.
+ * Вызывать до обновления booked_users.
+ * @param {string} userId
+ */
+async function assertMembershipSessionAvailable(userId) {
+  const user = await fetchMembershipSessionInfo(userId);
+  if (isUnlimitedMembership(user.membership_type)) return;
+
+  if ((user.available_sessions || 0) <= 0) {
+    throw Object.assign(new Error('Нет доступных посещений'), { code: 'NO_AVAILABLE_SESSIONS' });
+  }
+}
+
+/**
  * Списать одно посещение абонемента при записи на тренировку.
  * @param {string} userId
  */
 async function consumeMembershipSession(userId) {
-  const user = /** @type {{ available_sessions?: number | null, membership_type?: string }} */ (
-    await pb.collection('users').getOne(userId, {
-      fields: 'available_sessions,membership_type'
-    })
-  );
-
-  if (user.membership_type === 'annual' || user.membership_type === 'corporate') return;
+  const user = await fetchMembershipSessionInfo(userId);
+  if (isUnlimitedMembership(user.membership_type)) return;
 
   if ((user.available_sessions || 0) <= 0) {
-    throw new Error('Нет доступных посещений');
+    throw Object.assign(new Error('Нет доступных посещений'), { code: 'NO_AVAILABLE_SESSIONS' });
   }
 
   await pb.collection('users').update(userId, {
     'available_sessions-': 1,
     'used_sessions+': 1
   });
+}
+
+/**
+ * @param {string} trainingId
+ * @param {string[]} bookedUsersBefore
+ */
+async function rollbackTrainingBooking(trainingId, bookedUsersBefore) {
+  await pb.collection('trainings').update(trainingId, { booked_users: bookedUsersBefore });
 }
 
 /**
@@ -415,10 +452,23 @@ export async function bookTraining(training, userId) {
         { code: 'ANNUAL_DAILY_LIMIT' }
       );
     }
-    const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
-      booked_users: [...current, userId]
-    }));
-    await consumeMembershipSession(userId);
+    await assertMembershipSessionAvailable(userId);
+    let record;
+    try {
+      record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
+        booked_users: [...current, userId]
+      }));
+      await consumeMembershipSession(userId);
+    } catch (err) {
+      if (record) {
+        try {
+          await rollbackTrainingBooking(training.id, current);
+        } catch (rollbackErr) {
+          error('rollback self-booking:', rollbackErr);
+        }
+      }
+      throw err;
+    }
     auditTrainings.bookSelf(/** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)));
     await notifyTrainingBot({
       event: 'book',
@@ -461,10 +511,23 @@ export async function bookUserToTraining(training, userId, targetUser, { overrid
         { code: 'MEMBERSHIP_FROZEN' }
       );
     }
-    const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
-      booked_users: [...current, userId]
-    }));
-    await consumeMembershipSession(userId);
+    await assertMembershipSessionAvailable(userId);
+    let record;
+    try {
+      record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
+        booked_users: [...current, userId]
+      }));
+      await consumeMembershipSession(userId);
+    } catch (err) {
+      if (record) {
+        try {
+          await rollbackTrainingBooking(training.id, current);
+        } catch (rollbackErr) {
+          error('rollback moderator booking:', rollbackErr);
+        }
+      }
+      throw err;
+    }
     const [auditUser] = await resolveAuditUsers(userId ? [userId] : [], targetUser ? [targetUser] : []);
     auditTrainings.bookUser(
       /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
@@ -533,10 +596,26 @@ export async function bookUsersToTraining(training, userIds, targetUsers = [], {
       }
     }
 
-    const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
-      booked_users: [...current, ...nextUserIds]
-    }));
-    await Promise.allSettled(nextUserIds.map((id) => consumeMembershipSession(id)));
+    for (const userId of nextUserIds) {
+      await assertMembershipSessionAvailable(userId);
+    }
+
+    let record;
+    try {
+      record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
+        booked_users: [...current, ...nextUserIds]
+      }));
+      await Promise.all(nextUserIds.map((id) => consumeMembershipSession(id)));
+    } catch (err) {
+      if (record) {
+        try {
+          await rollbackTrainingBooking(training.id, current);
+        } catch (rollbackErr) {
+          error('rollback bulk booking:', rollbackErr);
+        }
+      }
+      throw err;
+    }
     const auditUsers = await resolveAuditUsers(nextUserIds, targetUsers);
     auditTrainings.bookUsers(
       /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),

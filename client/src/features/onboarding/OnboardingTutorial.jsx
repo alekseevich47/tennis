@@ -21,7 +21,7 @@ const TOUR_STEPS = {
   },
   3: {
     tab: 0,
-    text: 'Лента — мы очень рады делиться с Вами нашими новостями! Ставьте лайки ♥ и пишите комментарии 💬.'
+    text: 'Лента — мы очень рады делиться с Вами нашими новостями! Ставьте лайки ❤️ и пишите комментарии 💬.'
   },
   4: {
     tab: 1,
@@ -35,11 +35,11 @@ const TOUR_STEPS = {
   },
   6: {
     tab: 3,
-    text: 'Здесь — результаты соревнований. Комментируйте публикации 💬 и ставьте лайки.'
+    text: 'Здесь Вы можете ознакомиться с результатами соревнований и прокомментиравать публикации 💬.'
   },
   7: {
     tab: 4,
-    text: 'Галерея: фото и видео секции. Ставьте лайки ♥ на медиа.'
+    text: 'В разделе галерея вы можете прочувствовать нашу дружескую атмосферу.'
   }
 };
 
@@ -339,8 +339,8 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
 
       {step === 0 && (
         <div className="onboarding-card onboarding-card--welcome" role="dialog" aria-modal="true">
-          <h2>Вас приветствует Секция Миленьких! 🎾</h2>
-          <p>Мы рады, что вы с нами. Давайте познакомимся!</p>
+          <h2>Вас приветствует Секция Миленьких! 🏓</h2>
+          <p>Мы рады, что Вы с нами. Давайте познакомимся!</p>
           <div className="onboarding-card-actions">
             <button type="button" className="onboarding-btn onboarding-btn--primary" onClick={goNext}>
               Далее
@@ -444,7 +444,7 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
 
       {step === 8 && (
         <div className="onboarding-card onboarding-card--welcome" role="dialog" aria-modal="true">
-          <h2>Всё готово! Добро пожаловать в Секцию Миленьких 🎾</h2>
+          <h2>Всё готово! Добро пожаловать в Секцию Миленьких 🏓</h2>
           <div className="onboarding-card-actions">
             <button
               type="button"

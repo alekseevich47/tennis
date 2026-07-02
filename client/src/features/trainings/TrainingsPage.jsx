@@ -47,6 +47,12 @@ const DAYS_COUNT = 14;
  */
 function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
   const userIsModerator = isModerator();
+  const canSelfBook = useMemo(() => {
+    if (!user) return false;
+    const membershipType = user.membership_type || 'regular';
+    if (membershipType === 'corporate' || membershipType === 'annual') return true;
+    return (user.available_sessions ?? 0) > 0;
+  }, [user]);
   const { data: trainings, isLoading, mutate } = useTrainings();
   const { alert, confirm } = useAlertDialog();
   const { showToast } = useToast();
@@ -137,6 +143,14 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
         });
         return;
       }
+      const membershipType = user?.membership_type || 'regular';
+      if (
+        membershipType === 'regular' &&
+        (user?.available_sessions ?? 0) <= 0
+      ) {
+        showToast({ text: 'Нет доступных посещений.' });
+        return;
+      }
       try {
         await bookTraining(training, user?.id);
         mutate();
@@ -148,6 +162,10 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
           showToast({ text: 'Годовой абонемент: только одна тренировка в день.' });
           return;
         }
+        if (/** @type {{ code?: string }} */ (err).code === 'NO_AVAILABLE_SESSIONS') {
+          showToast({ text: 'Нет доступных посещений.' });
+          return;
+        }
         error('book training:', err);
         await alert({
           title: 'Ошибка',
@@ -155,7 +173,7 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
         });
       }
     },
-    [user?.id, user?.membership_frozen, mutate, alert, showToast]
+    [user?.id, user?.membership_frozen, user?.membership_type, user?.available_sessions, mutate, alert, showToast]
   );
 
   const handleCancelBooking = useCallback(
@@ -309,6 +327,10 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
           await alert({ title: 'Запись невозможна', message: /** @type {Error} */ (err).message });
           return;
         }
+        if (/** @type {{ code?: string }} */ (err).code === 'NO_AVAILABLE_SESSIONS') {
+          await alert({ title: 'Запись невозможна', message: 'Нет доступных посещений.' });
+          return;
+        }
         if (/** @type {{ code?: string }} */ (err).code === 'ANNUAL_DAILY_LIMIT') {
           const ok = await confirm({
             title: 'Годовой абонемент',
@@ -391,6 +413,7 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
             training={training}
             userId={user?.id}
             userIsModerator={userIsModerator}
+            canSelfBook={canSelfBook}
             onOpen={handleOpenDetail}
             onBook={handleBook}
             onBookUser={handleBookUser}

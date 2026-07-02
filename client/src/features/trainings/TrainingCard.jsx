@@ -15,7 +15,8 @@ import { isModerator } from '../../services/auth';
  *   onBookUser?: (training: any) => void,
  *   onCancelBooking: (training: any) => void,
  *   onToggleClose?: (training: any) => void,
- *   onRestore?: (trainingId: string) => void
+ *   onRestore?: (trainingId: string) => void,
+ *   canSelfBook?: boolean
  * }} props
  */
 function TrainingCard({
@@ -27,7 +28,8 @@ function TrainingCard({
   onBookUser,
   onCancelBooking,
   onToggleClose,
-  onRestore
+  onRestore,
+  canSelfBook = true
 }) {
   const userIsModerator = isModerator();
   const handleOpen = useCallback(() => onOpen(training), [onOpen, training]);
@@ -151,7 +153,7 @@ function TrainingCard({
             <button
               type="button"
               className="training-action-text-btn training-action-text-btn--book"
-              disabled={isBookingLocked}
+              disabled={isBookingLocked || !canSelfBook}
               onClick={handleBook}
             >
               Записаться
