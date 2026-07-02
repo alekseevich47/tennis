@@ -12,41 +12,34 @@ const HIGHLIGHT_PADDING = 8;
 const SPOTLIGHT_DELAY_MS = 280;
 const SCROLL_LOCK_CLASS = 'onboarding-scroll-locked';
 
-const SPOTLIGHT_STEPS = {
+const TOUR_STEPS = {
   2: {
     tab: 5,
+    spotlight: true,
     selector: '.membership-btn',
     text: 'Кнопка "Абонемент" — здесь ваш тип абонемента, количество оставшихся занятий и период действия.'
   },
   3: {
     tab: 0,
-    selector: '.feed-card',
-    text: 'Лента — мы очень рады делиться с Вами нашими новостями! Ставьте лайки ♥ и пишите комментарии 💬.',
-    placement: 'top'
+    text: 'Лента — мы очень рады делиться с Вами нашими новостями! Ставьте лайки ♥ и пишите комментарии 💬.'
   },
   4: {
     tab: 1,
+    spotlight: true,
     selector: '.calendar-strip',
     text: 'Выберите день в полосе, откройте тренировку и нажмите "Записаться". Снять запись возможно — не позднее чем за 1 час до начала.'
   },
   5: {
     tab: 2,
-    selector: '.product-card',
-    text: 'Магазин секции: открывайте карточку товара и добавляйте в избранное ♥. Если хотите узнать о товаре — нажимайте на кнопку "Купить"',
-    placement: 'top'
+    text: 'Магазин секции: открывайте карточку товара и добавляйте в избранное ♥. Если хотите узнать о товаре — нажимайте на кнопку "Купить"'
   },
   6: {
     tab: 3,
-    selector: '.tournament-post-card',
-    text: 'Здесь — результаты соревнований. Комментируйте публикации 💬 и ставьте лайки.',
-    placement: 'top'
+    text: 'Здесь — результаты соревнований. Комментируйте публикации 💬 и ставьте лайки.'
   },
   7: {
     tab: 4,
-    selector: '.gallery-grid, .gallery-grid-item',
-    text: 'Галерея: фото и видео секции. Ставьте лайки ♥ на медиа.',
-    placement: 'top',
-    scrollBlock: 'start'
+    text: 'Галерея: фото и видео секции. Ставьте лайки ♥ на медиа.'
   }
 };
 
@@ -127,9 +120,11 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const avatarInputRef = useRef(null);
 
-  const spotlightConfig = SPOTLIGHT_STEPS[step];
+  const tourConfig = TOUR_STEPS[step];
   const isCardStep = CARD_STEPS.has(step);
-  const isSpotlightStep = Boolean(spotlightConfig);
+  const isTourStep = Boolean(tourConfig);
+  const isSpotlightStep = Boolean(tourConfig?.spotlight);
+  const isHeaderInfoStep = isTourStep && !isSpotlightStep;
   const showNav = NAV_STEPS.has(step);
 
   const measureTarget = useCallback((selector, forcedPlacement, scrollBlock = 'center') => {
@@ -185,19 +180,24 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
   }, [step]);
 
   useEffect(() => {
-    if (!isSpotlightStep || !spotlightConfig) {
+    if (!isTourStep || !tourConfig) {
       setHighlightRect(null);
       return undefined;
     }
 
-    onTabChange(spotlightConfig.tab);
+    onTabChange(tourConfig.tab);
+
+    if (!isSpotlightStep) {
+      setHighlightRect(null);
+      return undefined;
+    }
 
     const timer = window.setTimeout(() => {
-      measureTarget(spotlightConfig.selector, spotlightConfig.placement, spotlightConfig.scrollBlock);
+      measureTarget(tourConfig.selector, tourConfig.placement, tourConfig.scrollBlock);
     }, SPOTLIGHT_DELAY_MS);
 
     const handleLayoutChange = () => {
-      measureTarget(spotlightConfig.selector, spotlightConfig.placement, spotlightConfig.scrollBlock);
+      measureTarget(tourConfig.selector, tourConfig.placement, tourConfig.scrollBlock);
     };
     window.addEventListener('resize', handleLayoutChange);
 
@@ -205,7 +205,7 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
       window.clearTimeout(timer);
       window.removeEventListener('resize', handleLayoutChange);
     };
-  }, [step, isSpotlightStep, spotlightConfig, onTabChange, measureTarget]);
+  }, [step, isTourStep, isSpotlightStep, tourConfig, onTabChange, measureTarget]);
 
   useEffect(() => {
     setFullName(user?.full_name || '');
@@ -315,7 +315,7 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
     if (step > 0) setStep((s) => s - 1);
   };
 
-  const tooltipPlacementResolved = spotlightConfig?.placement || tooltipPlacement;
+  const tooltipPlacementResolved = tourConfig?.placement || tooltipPlacement;
 
   return (
     <>
@@ -425,14 +425,20 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
         </div>
       )}
 
-      {isSpotlightStep && spotlightConfig && (
+      {isHeaderInfoStep && tourConfig && (
+        <div className="onboarding-header-banner" role="dialog" aria-modal="true">
+          <p>{tourConfig.text}</p>
+        </div>
+      )}
+
+      {isSpotlightStep && tourConfig && (
         <div
           className={`onboarding-tooltip${tooltipPlacementResolved === 'top' ? ' onboarding-tooltip--top' : ''}`}
           role="dialog"
           aria-modal="true"
           style={getTooltipStyle(highlightRect, tooltipPlacementResolved)}
         >
-          <p>{spotlightConfig.text}</p>
+          <p>{tourConfig.text}</p>
         </div>
       )}
 
