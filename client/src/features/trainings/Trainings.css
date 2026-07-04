@@ -225,6 +225,11 @@
   background: #e9ecef;
 }
 
+.card-status-badge--cancelled {
+  color: #c92a2a;
+  background: #ffe3e3;
+}
+
 .card-slots-counter {
   color: #007aff;
   background: #eef2ff;
@@ -446,24 +451,50 @@
 }
 
 .archive-search-wrapper {
-  position: relative;
+  display: flex;
+  gap: 8px;
   margin-bottom: 16px;
+  align-items: stretch;
 }
 
-.archive-search-input {
+.archive-search-field {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.archive-search-input,
+.archive-category-select {
   width: 100%;
-  padding: 10px 40px 10px 14px;
+  padding: 10px 14px;
   border: 1px solid #e9ecef;
   border-radius: 10px;
   font-size: 14px;
   background: #f8f9fa;
   outline: none;
   box-sizing: border-box;
+  color: #212529;
 }
 
-.archive-search-input:focus {
+.archive-search-input {
+  padding-right: 40px;
+}
+
+.archive-category-select {
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23868e96' d='M1.41 0L6 4.58 10.59 0 12 1.41l-6 6-6-6z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+.archive-search-input:focus,
+.archive-category-select:focus {
   border-color: #007aff;
-  background: #ffffff;
+  background-color: #ffffff;
 }
 
 .archive-search-clear {

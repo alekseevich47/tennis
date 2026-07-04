@@ -123,8 +123,9 @@ routerAdd('POST', '/api/bot-notify-training-status', (c) => {
   }
 
   const typeAcc = training.getString('type') === 'tournament' ? 'турнир' : 'тренировку';
+  const dateFormatted = bot.formatDateTimeGmt7(training.getString('date'));
   const statusWord = isClosed ? 'закрыта' : 'открыта';
-  const text = 'Уважаемые участники, запись на ' + typeAcc + ' ' + statusWord + '.';
+  const text = 'Уважаемые участники, запись на ' + typeAcc + ' ' + dateFormatted + ' ' + statusWord + '.';
 
   try {
     bot.broadcastToAllUsers(text);
@@ -179,7 +180,7 @@ routerAdd('POST', '/api/bot-notify-training-edit', (c) => {
     }
     if (field === 'duration') {
       if (value === null || value === undefined || value === '') return 'не указано';
-      return String(value);
+      return String(value) + ' минут';
     }
     if (field === 'type') {
       return value === 'tournament' ? 'турнир' : 'тренировка';
@@ -202,8 +203,16 @@ routerAdd('POST', '/api/bot-notify-training-edit', (c) => {
     return c.json(200, { success: true });
   }
 
+  let originalDate = training.getString('date');
+  for (let i = 0; i < changes.length; i++) {
+    if (changes[i].field === 'date') {
+      originalDate = changes[i].from;
+      break;
+    }
+  }
+  const dateId = bot.formatDateTimeGmt7(originalDate);
   const typeGen = training.getString('type') === 'tournament' ? 'турнира' : 'тренировки';
-  const text = 'Уважаемые участники, у ' + typeGen + ' изменилось: ' + phrases.join('; ') + '.';
+  const text = 'Уважаемые участники, у ' + typeGen + ' ' + dateId + ' изменилось: ' + phrases.join('; ') + '.';
 
   try {
     bot.broadcastToAllUsers(text);
@@ -308,8 +317,8 @@ routerAdd('POST', '/api/max-bot-webhook', (c) => {
     const info = c.requestInfo();
     const headers = info.headers || {};
     const secretHeader =
-      headers['x-max-bot-api-secret'] ||
-      headers['X-Max-Bot-Api-Secret'] ||
+      c.request.header.get('X-Max-Bot-Api-Secret') ||
+      (info.headers && info.headers['x_max_bot_api_secret']) ||
       '';
     const expectedSecret = $os.getenv('MAX_BOT_WEBHOOK_SECRET') || '';
 

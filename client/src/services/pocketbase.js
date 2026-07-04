@@ -31,7 +31,7 @@ export {
   listTrainings,
   createTraining,
   updateTraining,
-  deleteTraining,
+  finalizeCancelledTraining,
   softDeleteTraining,
   restoreTraining,
   closeTraining,
