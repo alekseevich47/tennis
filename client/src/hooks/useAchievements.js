@@ -2,7 +2,7 @@
 import useSWR from 'swr';
 import pb from '../services/pb';
 import { getMediaUrl } from '../lib/media';
-import { listAchievements, listMatches, getUserAchievements, calcNextLevel } from '../services/achievements';
+import { listAchievements, getUserAchievements, calcNextLevel } from '../services/achievements';
 
 /**
  * @typedef {import('../services/achievements').AchievementRecord} AchievementRecord
@@ -27,16 +27,15 @@ function getAchievementLevels(achievement) {
  */
 export function useAchievements(userId) {
   return useSWR(userId ? ['achievements', userId] : null, async ([, id]) => {
-    const [achievements, matches, user] = await Promise.all([
+    const [achievements, user] = await Promise.all([
       listAchievements(),
-      listMatches({ userId: id }),
       pb.collection('users').getOne(id, {
         fields: 'id,rating_points,wins,attendance_count',
         requestKey: null
       })
     ]);
 
-    const progressMap = getUserAchievements(id, achievements, user, matches);
+    const progressMap = getUserAchievements(id, achievements, user);
 
     return achievements.map((achievement) => {
       const levels = getAchievementLevels(achievement);

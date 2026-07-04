@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
+import useSWR from 'swr';
 import AchievementsBlock from '../../components/AchievementsBlock';
 import FloatingAchievements from '../../components/FloatingAchievements';
 import AvatarCropModal from '../../components/AvatarCropModal';
@@ -9,7 +10,7 @@ import Modal from '../../components/ui/Modal';
 import Spinner from '../../components/ui/Spinner';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { usePlayers } from '../../hooks/usePlayers';
-import { listTrainings } from '../../services/trainings';
+import { listCancelledTrainingsForUser, listTrainings } from '../../services/trainings';
 import {
   banUser,
   hideFromRating,
@@ -109,7 +110,12 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
   const isOwnProfile = Boolean(targetUserId && targetUserId === currentUserId);
   const canEditSectionStartDate = isModerator(currentUser);
   const canManageProfile = Boolean(isOwnProfile || canEditSectionStartDate);
-  const displayName = displayUser?.full_name || displayUser?.name || 'Профиль';
+  const displayName = displayUser?.full_name || 'Профиль';
+
+  const { data: cancelledTrainings, isLoading: cancelledLoading } = useSWR(
+    isOpen && targetUserId ? ['cancelled-trainings', targetUserId] : null,
+    () => listCancelledTrainingsForUser(targetUserId)
+  );
 
   const ratingPosition = useMemo(
     () => getPlayerRatingRank(players, targetUserId),
@@ -199,10 +205,22 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
     return () => controller.abort();
   }, [isOpen, targetUserId]);
 
-  const userTrainings = useMemo(
-    () => getUserPastTrainings(trainings, targetUserId),
-    [targetUserId, trainings]
-  );
+  const userTrainings = useMemo(() => {
+    if (!targetUserId) return [];
+    const past = getUserPastTrainings(trainings, targetUserId)
+      .filter((t) => !t.is_deleted)
+      .map((t) => ({
+        ...t,
+        status: (t.attended_users || []).includes(targetUserId) ? 'attended' : 'missed'
+      }));
+    const cancelled = (cancelledTrainings || []).map((t) => ({
+      ...t,
+      status: 'cancelled'
+    }));
+    return [...past, ...cancelled].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+  }, [targetUserId, trainings, cancelledTrainings]);
 
   const filteredTrainings = useMemo(() => {
     if (!searchDate.trim()) return userTrainings;
@@ -742,7 +760,7 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
 
                 <div className="profile-meta-info">
                   <p><strong>Дата рождения:</strong> {formatDate(displayUser?.birth_date) || 'Не указана'}</p>
-                  <p><strong>Рука:</strong> {displayUser?.dominant_hand || displayUser?.hand || 'Не указана'}</p>
+                  <p><strong>Рука:</strong> {displayUser?.dominant_hand || 'Не указана'}</p>
                   <p><strong>В секции с:</strong> {formatDate(displayUser?.section_start_date || displayUser?.created) || 'Не указана'}</p>
                 </div>
               </div>
@@ -762,7 +780,7 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                   </span>
                 </button>
                 {trainingsExpanded && (
-                  loadingDetails ? (
+                  loadingDetails || cancelledLoading ? (
                     <Spinner label="Загрузка тренировок..." inline />
                   ) : userTrainings.length > 0 ? (
                     <>
@@ -804,7 +822,8 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                       ) : (
                     <div className="profile-trainings-list">
                       {filteredTrainings.map((training) => {
-                        const attended = (training.attended_users || []).includes(targetUserId);
+                        const isCancelled = training.status === 'cancelled';
+                        const attended = training.status === 'attended';
                         return (
                           <div key={training.id} className="profile-training-card">
                             <div className="profile-training-card__info">
@@ -817,12 +836,14 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                             <span
                               className={clsx(
                                 'training-attendance-badge',
-                                attended
-                                  ? 'training-attendance-badge--attended'
-                                  : 'training-attendance-badge--missed'
+                                isCancelled
+                                  ? 'training-attendance-badge--cancelled'
+                                  : attended
+                                    ? 'training-attendance-badge--attended'
+                                    : 'training-attendance-badge--missed'
                               )}
                             >
-                              {attended ? 'Посетил' : 'Не посетил'}
+                              {isCancelled ? 'Отмена' : attended ? 'Посетил' : 'Не посетил'}
                             </span>
                           </div>
                         );

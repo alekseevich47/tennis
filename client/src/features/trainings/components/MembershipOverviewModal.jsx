@@ -226,8 +226,8 @@ function MembershipOverviewModal({ isOpen, onClose, currentUser }) {
                 }}
               >
                 <div className="player-info">
-                  <Avatar user={player} size="md" alt={player.full_name || player.name} />
-                  <div className="player-name">{player.full_name || player.name || 'Без имени'}</div>
+                  <Avatar user={player} size="md" alt={player.full_name || 'Игрок'} />
+                  <div className="player-name">{player.full_name || 'Без имени'}</div>
                 </div>
                 <span className="membership-col-num">{player.availableSessions}</span>
                 <span className="membership-col-num">{player.usedSessions}</span>

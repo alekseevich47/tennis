@@ -39,19 +39,21 @@ function getModeratorMaxIds() {
   return ids;
 }
 
-function formatDateTime(isoStr) {
-  const d = new Date(isoStr || Date.now());
+const GMT7_OFFSET_MS = 7 * 60 * 60 * 1000;
+
+function formatDateTimeGmt7(isoStr) {
+  const d = new Date(new Date(isoStr || Date.now()).getTime() + GMT7_OFFSET_MS);
   const pad = function (n) { return String(n).padStart(2, '0'); };
-  return pad(d.getHours()) + ':' + pad(d.getMinutes()) + ' ' +
-    pad(d.getDate()) + '.' + pad(d.getMonth() + 1) + '.' + d.getFullYear();
+  return pad(d.getUTCHours()) + ':' + pad(d.getUTCMinutes()) + ' ' +
+    pad(d.getUTCDate()) + '.' + pad(d.getUTCMonth() + 1) + '.' + d.getUTCFullYear();
 }
 
-function getMoscowDateString(dayOffset) {
+function getLocalDateString(dayOffset) {
   const now = new Date();
-  const msk = new Date(now.getTime() + 3 * 60 * 60 * 1000);
-  msk.setUTCDate(msk.getUTCDate() + dayOffset);
+  const local = new Date(now.getTime() + GMT7_OFFSET_MS);
+  local.setUTCDate(local.getUTCDate() + dayOffset);
   const pad = function (n) { return String(n).padStart(2, '0'); };
-  return msk.getUTCFullYear() + '-' + pad(msk.getUTCMonth() + 1) + '-' + pad(msk.getUTCDate());
+  return local.getUTCFullYear() + '-' + pad(local.getUTCMonth() + 1) + '-' + pad(local.getUTCDate());
 }
 
 function notifyModerators(text) {
@@ -102,9 +104,9 @@ function buildCommentBotMessage(comment, collection, actionVerb) {
     if (author) authorName = author.getString('full_name') || 'Игрок';
   } catch (_) {}
 
-  const time = formatDateTime(new Date().toISOString());
-  return '*' + authorName + '* ' + actionVerb + ' комментарий: ' + text +
-    ' в *' + info.sectionName + '* на публикации №' + info.postNum + ' ' + time;
+  const time = formatDateTimeGmt7(new Date().toISOString());
+  return '*' + authorName + '* ' + actionVerb + ' комментарий: "' + text + '"' +
+    ' в *' + info.sectionName + '* на публикации №' + info.postNum + ' в ' + time;
 }
 
 function sendTrainingRemindersForDate(dateStr) {
@@ -115,7 +117,7 @@ function sendTrainingRemindersForDate(dateStr) {
     const training = trainings[t];
     const bookedUsers = training.get('booked_users') || [];
     const type = training.getString('type') === 'tournament' ? 'турнир' : 'тренировку';
-    const dateStrFormatted = formatDateTime(training.getString('date'));
+    const dateStrFormatted = formatDateTimeGmt7(training.getString('date'));
     const msg = 'Напоминаем Вам, что вы записаны на *' + type + '* на *' + dateStrFormatted +
       '*. Если у Вас изменились планы — пожалуйста, снимите запись и сообщите об этом тренеру.';
 
@@ -129,20 +131,24 @@ function sendTrainingRemindersForDate(dateStr) {
   }
 }
 
-function broadcastNewPublication() {
+function broadcastToAllUsers(text) {
   const allUsers = $app.findRecordsByFilter('users', 'max_id != "" && is_banned != true', '', 0, 0);
-  const msg = 'Появилось что-то новенькое! Зайдите в приложение 🎾';
   for (let i = 0; i < allUsers.length; i++) {
-    sendBotMessage(allUsers[i].getString('max_id'), msg);
+    sendBotMessage(allUsers[i].getString('max_id'), text);
   }
+}
+
+function broadcastNewPublication() {
+  broadcastToAllUsers('Появилось что-то новенькое! Зайдите в приложение 🎾');
 }
 
 module.exports = {
   sendBotMessage: sendBotMessage,
   notifyModerators: notifyModerators,
-  formatDateTime: formatDateTime,
-  getMoscowDateString: getMoscowDateString,
+  formatDateTimeGmt7: formatDateTimeGmt7,
+  getLocalDateString: getLocalDateString,
   buildCommentBotMessage: buildCommentBotMessage,
   sendTrainingRemindersForDate: sendTrainingRemindersForDate,
+  broadcastToAllUsers: broadcastToAllUsers,
   broadcastNewPublication: broadcastNewPublication
 };

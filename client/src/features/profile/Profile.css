@@ -606,6 +606,11 @@
   background: #fff0f1;
 }
 
+.training-attendance-badge--cancelled {
+  color: #1c7ed6;
+  background: #e7f5ff;
+}
+
 .profile-edit-form {
   display: flex;
   flex-direction: column;

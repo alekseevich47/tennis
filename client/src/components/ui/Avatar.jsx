@@ -13,7 +13,7 @@ import './Avatar.css';
  */
 function Avatar({ user, size = 'sm', className, alt }) {
   const data = getUserAvatarData(user);
-  const fullAlt = alt || (user?.full_name || user?.name || 'Пользователь');
+  const fullAlt = alt || (user?.full_name || 'Пользователь');
 
   return (
     <div className={clsx('ui-avatar', `ui-avatar--${size}`, className)}>

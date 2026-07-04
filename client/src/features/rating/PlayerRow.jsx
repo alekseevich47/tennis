@@ -50,10 +50,10 @@ function PlayerRow({ player, rank, hidden = false, banned = false, onPlayerClick
         <Avatar
           user={player}
           size="md"
-          alt={player.full_name || player.name}
+          alt={player.full_name || 'Игрок'}
         />
         <div>
-          <div className="player-name">{player.full_name || player.name || 'Без имени'}</div>
+          <div className="player-name">{player.full_name || 'Без имени'}</div>
         </div>
       </div>
       <span className="rating-points">{player.rating_points || 0}</span>
