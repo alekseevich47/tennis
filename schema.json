@@ -71,6 +71,17 @@
       },
       {
         "hidden": false,
+        "id": "date3360840220",
+        "max": "",
+        "min": "",
+        "name": "banned_at",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "date"
+      },
+      {
+        "hidden": false,
         "id": "bool2368411861",
         "name": "can_comment",
         "presentable": false,
@@ -184,18 +195,6 @@
       },
       {
         "hidden": false,
-        "id": "number2732118329",
-        "max": null,
-        "min": null,
-        "name": "wins",
-        "onlyInt": false,
-        "presentable": false,
-        "required": false,
-        "system": false,
-        "type": "number"
-      },
-      {
-        "hidden": false,
         "id": "select1466534506",
         "maxSelect": 1,
         "name": "role",
@@ -276,6 +275,18 @@
       },
       {
         "hidden": false,
+        "id": "number1348307132",
+        "max": null,
+        "min": 0,
+        "name": "used_sessions",
+        "onlyInt": false,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      },
+      {
+        "hidden": false,
         "id": "date3845444698",
         "max": "",
         "min": "",
@@ -291,17 +302,6 @@
         "max": "",
         "min": "",
         "name": "section_start_date",
-        "presentable": false,
-        "required": false,
-        "system": false,
-        "type": "date"
-      },
-      {
-        "hidden": false,
-        "id": "date3360840220",
-        "max": "",
-        "min": "",
-        "name": "banned_at",
         "presentable": false,
         "required": false,
         "system": false,
@@ -379,18 +379,6 @@
       },
       {
         "hidden": false,
-        "id": "number1348307132",
-        "max": null,
-        "min": 0,
-        "name": "used_sessions",
-        "onlyInt": false,
-        "presentable": false,
-        "required": false,
-        "system": false,
-        "type": "number"
-      },
-      {
-        "hidden": false,
         "id": "json1524298993",
         "maxSize": 0,
         "name": "membership_freeze_log",
@@ -455,7 +443,7 @@
     "oauth2": {
       "mappedFields": {
         "id": "",
-        "name": "name",
+        "name": "",
         "username": "",
         "avatarURL": "avatar"
       },
@@ -1327,130 +1315,6 @@
     "system": false
   },
   {
-    "id": "pbc_2541054544",
-    "listRule": "",
-    "viewRule": "",
-    "createRule": "@request.auth.id != \"\"",
-    "updateRule": "@request.auth.id != \"\"",
-    "deleteRule": "@request.auth.id != \"\"",
-    "name": "matches",
-    "type": "base",
-    "fields": [
-      {
-        "autogeneratePattern": "[a-z0-9]{15}",
-        "hidden": false,
-        "id": "text3208210256",
-        "max": 15,
-        "min": 15,
-        "name": "id",
-        "pattern": "^[a-z0-9]+$",
-        "presentable": false,
-        "primaryKey": true,
-        "required": true,
-        "system": true,
-        "type": "text"
-      },
-      {
-        "hidden": false,
-        "id": "date1330254257",
-        "max": "",
-        "min": "",
-        "name": "date_time",
-        "presentable": false,
-        "required": false,
-        "system": false,
-        "type": "date"
-      },
-      {
-        "hidden": false,
-        "id": "select2063623452",
-        "maxSelect": 1,
-        "name": "status",
-        "presentable": false,
-        "required": false,
-        "system": false,
-        "type": "select",
-        "values": [
-          "scheduled",
-          "finished",
-          "cancelled"
-        ]
-      },
-      {
-        "hidden": false,
-        "id": "number2464810546",
-        "max": null,
-        "min": null,
-        "name": "score_p1",
-        "onlyInt": false,
-        "presentable": false,
-        "required": false,
-        "system": false,
-        "type": "number"
-      },
-      {
-        "hidden": false,
-        "id": "number199448456",
-        "max": null,
-        "min": null,
-        "name": "score_p2",
-        "onlyInt": false,
-        "presentable": false,
-        "required": false,
-        "system": false,
-        "type": "number"
-      },
-      {
-        "cascadeDelete": false,
-        "collectionId": "_pb_users_auth_",
-        "hidden": false,
-        "id": "relation3197920026",
-        "maxSelect": 1,
-        "minSelect": 0,
-        "name": "player1",
-        "presentable": false,
-        "required": false,
-        "system": false,
-        "type": "relation"
-      },
-      {
-        "cascadeDelete": false,
-        "collectionId": "_pb_users_auth_",
-        "hidden": false,
-        "id": "relation664089248",
-        "maxSelect": 1,
-        "minSelect": 0,
-        "name": "player2",
-        "presentable": false,
-        "required": false,
-        "system": false,
-        "type": "relation"
-      },
-      {
-        "hidden": false,
-        "id": "autodate2990389176",
-        "name": "created",
-        "onCreate": true,
-        "onUpdate": false,
-        "presentable": false,
-        "system": false,
-        "type": "autodate"
-      },
-      {
-        "hidden": false,
-        "id": "autodate3332085495",
-        "name": "updated",
-        "onCreate": true,
-        "onUpdate": true,
-        "presentable": false,
-        "system": false,
-        "type": "autodate"
-      }
-    ],
-    "indexes": [],
-    "system": false
-  },
-  {
     "id": "pbc_2875396114",
     "listRule": "",
     "viewRule": "",
@@ -2195,6 +2059,15 @@
         "hidden": false,
         "id": "bool1418641467",
         "name": "is_closed",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "hidden": false,
+        "id": "bool4262303400",
+        "name": "is_cancelled",
         "presentable": false,
         "required": false,
         "system": false,

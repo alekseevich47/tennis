@@ -18,6 +18,9 @@
   margin: 0;
   flex: 1;
   min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .header-search-row {
@@ -154,6 +157,7 @@
 .header-membership-btn {
   color: #007aff;
   flex-shrink: 0;
+  margin-left: 12px;
 }
 
 .header-membership-btn svg {

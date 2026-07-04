@@ -3,6 +3,7 @@ import pb from './pb';
 import { isModerator, getCurrentUser } from './auth';
 import { error } from '../lib/log';
 import { auditTrainings } from '../lib/audit';
+import { hasTimeRangeEnded } from '../lib/format';
 
 export const PENDING_DELETE_TRAININGS_KEY = 'pending_delete_trainings';
 
@@ -35,6 +36,7 @@ async function notifyTrainingBot(payload) {
  * @property {string} [location]
  * @property {string} [description]
  * @property {boolean} [is_deleted]
+ * @property {boolean} [is_cancelled]
  * @property {boolean} [is_closed]
  * @property {string[]} [booked_users]
  * @property {string[]} [unbooked_users]
@@ -284,7 +286,7 @@ export async function listTrainings({ signal } = {}) {
 }
 
 /**
- * Удалённые тренировки, где пользователь был в booked_users / unbooked_users (бейдж «Отмена»).
+ * Отменённые тренировки, где пользователь был в booked_users / unbooked_users (бейдж «Отмена»).
  * @param {string} userId
  * @param {{ signal?: AbortSignal }} [options]
  * @returns {Promise<TrainingRecord[]>}
@@ -294,7 +296,7 @@ export async function listCancelledTrainingsForUser(userId, { signal } = {}) {
   try {
     return /** @type {TrainingRecord[]} */ (await pb.collection('trainings').getFullList({
       sort: '-date',
-      filter: 'is_deleted = true && (booked_users ~ "' + userId + '" || unbooked_users ~ "' + userId + '")',
+      filter: 'is_cancelled = true && (booked_users ~ "' + userId + '" || unbooked_users ~ "' + userId + '")',
       fields: 'id,date,duration,type',
       requestKey: null,
       signal
@@ -341,13 +343,18 @@ export async function updateTraining(trainingId, patch) {
     const changedFields = getTrainingChangedFields(previous, record, patch);
     if (changedFields.length > 0) {
       auditTrainings.trainingEdit(trainingId, changedFields);
-      try {
-        await pb.send('/api/bot-notify-training-edit', {
-          method: 'POST',
-          body: { trainingId, changes: changedFields }
-        });
-      } catch (err) {
-        error('Ошибка уведомления бота о редактировании тренировки:', err);
+      const skipNotify =
+        previous.is_cancelled === true ||
+        hasTimeRangeEnded(previous.date, previous.duration || 0);
+      if (!skipNotify) {
+        try {
+          await pb.send('/api/bot-notify-training-edit', {
+            method: 'POST',
+            body: { trainingId, changes: changedFields }
+          });
+        } catch (err) {
+          error('Ошибка уведомления бота о редактировании тренировки:', err);
+        }
       }
     }
     return record;
@@ -358,13 +365,61 @@ export async function updateTraining(trainingId, patch) {
 }
 
 /**
+ * Финализация отмены: is_cancelled = true (запись сохраняется).
+ * Восстановление посещений и уведомление — только для ещё не прошедших и не отменённых.
  * @param {string} trainingId
  */
-export async function deleteTraining(trainingId) {
+export async function finalizeCancelledTraining(trainingId) {
   try {
-    const result = await pb.collection('trainings').delete(trainingId);
-    auditTrainings.trainingHardDelete(trainingId);
-    return result;
+    const training = /** @type {TrainingRecord} */ (
+      await pb.collection('trainings').getOne(trainingId, {
+        expand: 'booked_users',
+        requestKey: null
+      })
+    );
+    const alreadyCancelled = training.is_cancelled === true;
+    if (alreadyCancelled) {
+      return training;
+    }
+
+    const ended = hasTimeRangeEnded(training.date, training.duration || 0);
+    if (!ended) {
+      const bookedUsers = training.booked_users || [];
+      const attended = training.attended_users || [];
+      const attendedSet = new Set(attended);
+      const attendedBookedUserIds = bookedUsers.filter((userId) => attendedSet.has(userId));
+
+      await Promise.all(bookedUsers.map((userId) => restoreMembershipSession(userId)));
+      await Promise.all(
+        attendedBookedUserIds.map((userId) =>
+          pb.collection('users').update(userId, { 'attendance_count-': 1 })
+        )
+      );
+      attendedBookedUserIds.forEach((userId) => {
+        auditTrainings.unmarkAttendance(
+          /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (training)),
+          userId
+        );
+      });
+    }
+
+    const record = /** @type {TrainingRecord} */ (
+      await pb.collection('trainings').update(trainingId, { is_cancelled: true })
+    );
+    auditTrainings.trainingCancelFinalized(trainingId);
+
+    if (!ended) {
+      try {
+        await pb.send('/api/bot-notify-training-cancelled', {
+          method: 'POST',
+          body: { trainingId }
+        });
+      } catch (err) {
+        error('Ошибка уведомления бота об отмене тренировки:', err);
+      }
+    }
+
+    return record;
   } catch (err) {
     auditTrainings.trainingDeleteError(err, trainingId);
     throw err;
@@ -414,48 +469,16 @@ export function removePendingDeleteTrainingId(trainingId) {
 }
 
 /**
+ * Мягкое скрытие тренировки (обратимо до финализации отмены).
+ * Без уведомлений и восстановления посещений.
  * @param {string} trainingId
  */
 export async function softDeleteTraining(trainingId) {
   try {
-    const training = /** @type {TrainingRecord} */ (
-      await pb.collection('trainings').getOne(trainingId, {
-        expand: 'booked_users',
-        requestKey: null
-      })
-    );
-    const bookedUsers = training.booked_users || [];
-    const attended = training.attended_users || [];
-    const attendedSet = new Set(attended);
-    const attendedBookedUserIds = bookedUsers.filter((userId) => attendedSet.has(userId));
-
-    await Promise.all(bookedUsers.map((userId) => restoreMembershipSession(userId)));
-    await Promise.all(
-      attendedBookedUserIds.map((userId) =>
-        pb.collection('users').update(userId, { 'attendance_count-': 1 })
-      )
-    );
-    attendedBookedUserIds.forEach((userId) => {
-      auditTrainings.unmarkAttendance(
-        /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (training)),
-        userId
-      );
-    });
-
     const record = /** @type {TrainingRecord} */ (
       await pb.collection('trainings').update(trainingId, { is_deleted: true })
     );
     auditTrainings.trainingSoftDelete(trainingId);
-
-    try {
-      await pb.send('/api/bot-notify-training-cancelled', {
-        method: 'POST',
-        body: { trainingId }
-      });
-    } catch (err) {
-      error('Ошибка уведомления бота об отмене тренировки:', err);
-    }
-
     return record;
   } catch (err) {
     auditTrainings.trainingDeleteError(err, trainingId);
