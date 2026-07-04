@@ -62,7 +62,7 @@ function getAuthorName(record) {
     record?.expand
   );
   const actor = getActor();
-  return expand?.author?.full_name || expand?.author?.name || expand?.author?.email || actor.userFullName;
+  return expand?.author?.full_name || expand?.author?.email || actor.userFullName;
 }
 
 export const auditFeed = {

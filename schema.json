@@ -149,20 +149,6 @@
         "type": "bool"
       },
       {
-        "autogeneratePattern": "",
-        "hidden": false,
-        "id": "text1579384326",
-        "max": 255,
-        "min": 0,
-        "name": "name",
-        "pattern": "",
-        "presentable": false,
-        "primaryKey": false,
-        "required": false,
-        "system": false,
-        "type": "text"
-      },
-      {
         "hidden": false,
         "id": "file376926767",
         "maxSelect": 1,
@@ -186,32 +172,6 @@
       },
       {
         "hidden": false,
-        "id": "number4096299031",
-        "max": null,
-        "min": null,
-        "name": "birth_year",
-        "onlyInt": false,
-        "presentable": false,
-        "required": false,
-        "system": false,
-        "type": "number"
-      },
-      {
-        "hidden": false,
-        "id": "select660750991",
-        "maxSelect": 1,
-        "name": "hand",
-        "presentable": false,
-        "required": false,
-        "system": false,
-        "type": "select",
-        "values": [
-          "Правая",
-          "Левая"
-        ]
-      },
-      {
-        "hidden": false,
         "id": "number138994849",
         "max": null,
         "min": null,
@@ -224,34 +184,10 @@
       },
       {
         "hidden": false,
-        "id": "number2060015326",
-        "max": null,
-        "min": null,
-        "name": "games_count",
-        "onlyInt": false,
-        "presentable": false,
-        "required": false,
-        "system": false,
-        "type": "number"
-      },
-      {
-        "hidden": false,
         "id": "number2732118329",
         "max": null,
         "min": null,
         "name": "wins",
-        "onlyInt": false,
-        "presentable": false,
-        "required": false,
-        "system": false,
-        "type": "number"
-      },
-      {
-        "hidden": false,
-        "id": "number724428801",
-        "max": null,
-        "min": null,
-        "name": "losses",
         "onlyInt": false,
         "presentable": false,
         "required": false,
@@ -285,18 +221,6 @@
         "required": false,
         "system": false,
         "type": "text"
-      },
-      {
-        "hidden": false,
-        "id": "number2704281778",
-        "max": null,
-        "min": null,
-        "name": "age",
-        "onlyInt": false,
-        "presentable": false,
-        "required": false,
-        "system": false,
-        "type": "number"
       },
       {
         "autogeneratePattern": "",
@@ -925,77 +849,6 @@
     "system": false
   },
   {
-    "id": "pbc_1605818338",
-    "listRule": "",
-    "viewRule": "",
-    "createRule": "@request.auth.id != \"\"",
-    "updateRule": "@request.auth.id != \"\"",
-    "deleteRule": "@request.auth.id != \"\"",
-    "name": "championships",
-    "type": "base",
-    "fields": [
-      {
-        "autogeneratePattern": "[a-z0-9]{15}",
-        "hidden": false,
-        "id": "text3208210256",
-        "max": 15,
-        "min": 15,
-        "name": "id",
-        "pattern": "^[a-z0-9]+$",
-        "presentable": false,
-        "primaryKey": true,
-        "required": true,
-        "system": true,
-        "type": "text"
-      },
-      {
-        "autogeneratePattern": "",
-        "hidden": false,
-        "id": "text1579384326",
-        "max": 0,
-        "min": 0,
-        "name": "name",
-        "pattern": "",
-        "presentable": false,
-        "primaryKey": false,
-        "required": false,
-        "system": false,
-        "type": "text"
-      },
-      {
-        "hidden": false,
-        "id": "bool458715613",
-        "name": "is_active",
-        "presentable": false,
-        "required": false,
-        "system": false,
-        "type": "bool"
-      },
-      {
-        "hidden": false,
-        "id": "autodate2990389176",
-        "name": "created",
-        "onCreate": true,
-        "onUpdate": false,
-        "presentable": false,
-        "system": false,
-        "type": "autodate"
-      },
-      {
-        "hidden": false,
-        "id": "autodate3332085495",
-        "name": "updated",
-        "onCreate": true,
-        "onUpdate": true,
-        "presentable": false,
-        "system": false,
-        "type": "autodate"
-      }
-    ],
-    "indexes": [],
-    "system": false
-  },
-  {
     "id": "pbc_157608957",
     "listRule": "@request.auth.id != \"\"",
     "viewRule": "@request.auth.id != \"\"",
@@ -1546,33 +1399,6 @@
         "required": false,
         "system": false,
         "type": "number"
-      },
-      {
-        "autogeneratePattern": "",
-        "hidden": false,
-        "id": "text2492286417",
-        "max": 0,
-        "min": 0,
-        "name": "sets",
-        "pattern": "",
-        "presentable": false,
-        "primaryKey": false,
-        "required": false,
-        "system": false,
-        "type": "text"
-      },
-      {
-        "cascadeDelete": false,
-        "collectionId": "pbc_1605818338",
-        "hidden": false,
-        "id": "relation3954040426",
-        "maxSelect": 1,
-        "minSelect": 0,
-        "name": "championship",
-        "presentable": false,
-        "required": false,
-        "system": false,
-        "type": "relation"
       },
       {
         "cascadeDelete": false,

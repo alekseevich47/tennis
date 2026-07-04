@@ -30,10 +30,10 @@ function getUserId(user) {
  * @param {unknown} user
  */
 function getUserFullName(user) {
-  const record = /** @type {{ fullName?: unknown, full_name?: unknown, name?: unknown, email?: unknown } | null | undefined} */ (
+  const record = /** @type {{ fullName?: unknown, full_name?: unknown, email?: unknown } | null | undefined} */ (
     user
   );
-  return String(record?.fullName || record?.full_name || record?.name || record?.email || 'Пользователь');
+  return String(record?.fullName || record?.full_name || record?.email || 'Пользователь');
 }
 
 /**

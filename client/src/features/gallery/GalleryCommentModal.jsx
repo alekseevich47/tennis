@@ -238,7 +238,7 @@ function GalleryCommentModal({ isOpen, mediaItem, user, userIsModerator, onClose
                         onOpenProfile?.(comment.expand?.author);
                       }
                     }}
-                    aria-label={`Открыть профиль ${comment.expand?.author?.full_name || comment.expand?.author?.name || 'игрока'}`}
+                    aria-label={`Открыть профиль ${comment.expand?.author?.full_name || 'игрока'}`}
                   >
                     <Avatar
                       user={comment.expand?.author}
@@ -246,7 +246,7 @@ function GalleryCommentModal({ isOpen, mediaItem, user, userIsModerator, onClose
                       className="gallery-comment-item__avatar"
                     />
                     <span className="gallery-comment-item__author">
-                      {comment.expand?.author?.name || comment.expand?.author?.full_name || 'Игрок секции'}
+                      {comment.expand?.author?.full_name || 'Игрок секции'}
                     </span>
                   </div>
 

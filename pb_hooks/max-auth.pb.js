@@ -56,9 +56,7 @@ routerAdd("POST", "/api/max-auth", (c) => {
             user.set("avatar_url", maxAvatarUrl);
             user.set("role", "user");
             user.set("rating_points", 0);
-            user.set("games_count", 0);
             user.set("wins", 0);
-            user.set("losses", 0);
             user.set("email", "max_" + maxId + "@max-app.local");
             user.setPassword($security.randomString(30));
             $app.save(user);
@@ -84,12 +82,9 @@ routerAdd("POST", "/api/max-auth", (c) => {
                 "max_id": user.get("max_id"),
                 "full_name": user.get("full_name"),
                 "avatar_url": user.get("avatar_url"),
-                "age": user.get("age"),
                 "dominant_hand": user.get("dominant_hand"),
                 "role": user.get("role"),
-                "games_count": user.get("games_count"),
-                "wins": user.get("wins"),
-                "losses": user.get("losses")
+                "wins": user.get("wins")
             }
         });
 

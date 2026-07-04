@@ -7,7 +7,6 @@ import { getMediaThumbUrl } from './media';
  * @property {string} [collectionId]
  * @property {string} [collectionName]
  * @property {string} [full_name]
- * @property {string} [name]
  * @property {string | string[] | null} [avatar]
  * @property {string} [avatar_url]
  */
@@ -18,7 +17,7 @@ import { getMediaThumbUrl } from './media';
  * @returns {{ hasAvatar: boolean, src: string, initial: string }}
  */
 export function getUserAvatarData(user) {
-  const displayName = user?.full_name || user?.name || '';
+  const displayName = user?.full_name || '';
   const initial = displayName ? displayName.charAt(0).toUpperCase() : 'U';
 
   // 1. Локально загруженный аватар должен перекрывать внешний MAX URL.
