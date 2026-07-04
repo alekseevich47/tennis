@@ -17,7 +17,7 @@ import GalleryPage from './features/gallery/GalleryPage';
 import ProfilePage from './features/profile/ProfilePage';
 import BlockedPage from './features/profile/BlockedPage';
 import {
-  deleteTraining,
+  finalizeCancelledTraining,
   readPendingDeleteTrainingIds,
   writePendingDeleteTrainingIds
 } from './services/trainings';
@@ -61,7 +61,7 @@ function AppInner() {
   pendingDeleteTrainingIdsRef.current = pendingDeleteTrainingIds;
   pendingDeleteProductIdsRef.current = pendingDeleteProductIds;
 
-  // Окончательное удаление мягко-скрытых сущностей в БД.
+  // Финализация soft-delete: посты/товары/комменты — hard-delete; тренировки — is_cancelled.
   const flushPendingDeletes = useCallback(async () => {
     const postIds = pendingDeletePostIdsRef.current;
     const trainingIds = Array.from(
@@ -86,7 +86,7 @@ function AppInner() {
 
     if (trainingIds.length > 0) {
       trainingIds.forEach((id) => {
-        deleteTraining(id).catch((e) => error('flush training:', e));
+        finalizeCancelledTraining(id).catch((e) => error('flush training:', e));
       });
       pendingDeleteTrainingIdsRef.current = [];
       setPendingDeleteTrainingIds([]);

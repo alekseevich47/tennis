@@ -110,6 +110,8 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
     today.setHours(0, 0, 0, 0);
     return trainings
       .filter((t) => {
+        if (t.is_cancelled === true) return true;
+        // Soft-delete до финализации — ещё не в архиве.
         if (t.is_deleted) return false;
         return new Date(t.date) < today;
       })

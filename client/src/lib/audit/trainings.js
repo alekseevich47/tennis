@@ -111,8 +111,8 @@ export const auditTrainings = {
   /**
    * @param {string} trainingId
    */
-  trainingHardDelete(trainingId) {
-    writeAudit(DOMAIN, 'Тренировка удалена', { trainingId });
+  trainingCancelFinalized(trainingId) {
+    writeAudit(DOMAIN, 'Отмена тренировки финализирована', { trainingId });
   },
 
   /**
