@@ -55,11 +55,6 @@ export {
   listPlayers,
   createPlayer,
   updatePlayer,
-  listChampionships,
-  createChampionship,
-  listMatches,
-  createMatch,
-  updateMatchResult,
   listGallery,
   addGalleryImage,
   deleteGalleryImage

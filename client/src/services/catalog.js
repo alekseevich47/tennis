@@ -33,15 +33,10 @@ import { PB_URL } from '../config';
  * @property {string} id
  * @property {string} collectionId
  * @property {string} collectionName
- * @property {string} [name]
  * @property {string} [full_name]
- * @property {number} [birth_year]
- * @property {string} [hand]
  * @property {string} [dominant_hand]
  * @property {number} [rating_points]
- * @property {number} [games_count]
  * @property {number} [wins]
- * @property {number} [losses]
  * @property {string | string[]} [avatar]
  * @property {string} [avatar_url]
  * @property {string} [birth_date]
@@ -53,29 +48,6 @@ import { PB_URL } from '../config';
  * @property {string} [role]
  * @property {string} [email]
  * @property {string | number} [max_id]
- */
-
-/**
- * @typedef {Object} ChampionshipRecord
- * @property {string} id
- * @property {string} name
- * @property {boolean} [is_active]
- */
-
-/**
- * @typedef {Object} MatchRecord
- * @property {string} id
- * @property {string} collectionId
- * @property {string} collectionName
- * @property {string} championship
- * @property {string} player1
- * @property {string} player2
- * @property {string} date_time
- * @property {'scheduled' | 'finished' | 'cancelled'} status
- * @property {number} [score_p1]
- * @property {number} [score_p2]
- * @property {string} [sets]
- * @property {Record<string, unknown>} [expand]
  */
 
 /**
@@ -276,12 +248,9 @@ export async function listPlayers({ signal, filter } = {}) {
         'collectionId',
         'collectionName',
         'full_name',
-        'name',
         'avatar',
         'avatar_url',
-        'birth_year',
         'birth_date',
-        'hand',
         'dominant_hand',
         'section_start_date',
         'created',
@@ -289,9 +258,7 @@ export async function listPlayers({ signal, filter } = {}) {
         'used_sessions',
         'attendance_count',
         'rating_points',
-        'games_count',
         'wins',
-        'losses',
         'role',
         'email',
         'max_id',
@@ -319,140 +286,6 @@ export async function createPlayer(payload) {
  */
 export async function updatePlayer(playerId, payload) {
   return pb.collection('users').update(playerId, /** @type {Record<string, unknown>} */ (payload));
-}
-
-// --- ЧЕМПИОНАТЫ / МАТЧИ ----------------------------------------------------
-
-/** @param {{ signal?: AbortSignal }} [options] */
-export async function listChampionships({ signal } = {}) {
-  try {
-    return /** @type {ChampionshipRecord[]} */ (await pb.collection('championships').getFullList({
-      filter: 'is_active = true',
-      requestKey: null,
-      signal
-    }));
-  } catch (err) {
-    if (err && /** @type {Error} */ (err).name === 'AbortError') return [];
-    error('Ошибка получения чемпионатов:', err);
-    throw err;
-  }
-}
-
-/** @param {{ name: string, is_active?: boolean }} payload */
-export async function createChampionship(payload) {
-  return pb.collection('championships').create({ is_active: true, ...payload });
-}
-
-/**
- * @param {string} championshipId
- * @param {{ signal?: AbortSignal }} [options]
- */
-export async function listMatches(championshipId, { signal } = {}) {
-  try {
-    return /** @type {MatchRecord[]} */ (await pb.collection('matches').getFullList({
-      filter: championshipId ? pb.filter('championship = {:championshipId}', { championshipId }) : '',
-      sort: 'date_time',
-      expand: 'player1,player2,championship',
-      requestKey: null,
-      signal
-    }));
-  } catch (err) {
-    if (err && /** @type {Error} */ (err).name === 'AbortError') return [];
-    error('Ошибка получения матчей:', err);
-    throw err;
-  }
-}
-
-/** @param {Record<string, unknown>} payload */
-export async function createMatch(payload) {
-  return pb.collection('matches').create(payload);
-}
-
-/**
- * Обновление результата матча. Если матч завершён — параллельно подтягиваем игроков и
- * пересчитываем их статистику (применено правило async-parallel).
- *
- * @param {string} matchId
- * @param {{
- *   status: 'scheduled' | 'finished' | 'cancelled',
- *   score_p1?: number,
- *   score_p2?: number,
- *   sets?: string,
- *   player1?: string,
- *   player2?: string
- * }} payload
- */
-export async function updateMatchResult(matchId, payload) {
-  const record = await pb.collection('matches').update(matchId, payload);
-
-  if (
-    payload.status === 'finished' &&
-    typeof payload.score_p1 === 'number' &&
-    typeof payload.score_p2 === 'number' &&
-    payload.player1 &&
-    payload.player2
-  ) {
-    await updatePlayerStats({
-      player1Id: payload.player1,
-      player2Id: payload.player2,
-      score1: payload.score_p1,
-      score2: payload.score_p2
-    });
-  }
-
-  return record;
-}
-
-/**
- * @param {{ player1Id: string, player2Id: string, score1: number, score2: number }} params
- */
-async function updatePlayerStats({ player1Id, player2Id, score1, score2 }) {
-  try {
-    // Параллельный fetch обоих игроков (H1 / async-parallel).
-    const [player1, player2] = await Promise.all([
-      pb.collection('users').getOne(player1Id),
-      pb.collection('users').getOne(player2Id)
-    ]);
-
-    const p1Games = (player1.games_count || 0) + 1;
-    const p2Games = (player2.games_count || 0) + 1;
-
-    let p1Wins = player1.wins || 0;
-    let p1Losses = player1.losses || 0;
-    let p2Wins = player2.wins || 0;
-    let p2Losses = player2.losses || 0;
-    let p1Rating = player1.rating_points || 0;
-    let p2Rating = player2.rating_points || 0;
-
-    if (score1 > score2) {
-      p1Wins += 1;
-      p2Losses += 1;
-      p1Rating += 10;
-      p2Rating -= 5;
-    } else if (score2 > score1) {
-      p2Wins += 1;
-      p1Losses += 1;
-      p2Rating += 10;
-      p1Rating -= 5;
-    }
-
-    await Promise.all([
-      pb.collection('users').update(player1Id, {
-        games_count: p1Games,
-        wins: p1Wins,
-        losses: p1Losses,
-        rating_points: p1Rating
-      }),
-      pb.collection('users').update(player2Id, {
-        games_count: p2Games,
-        wins: p2Wins,
-        losses: p2Losses,
-        rating_points: p2Rating
-      })
-    ]);
-  } catch (err) {
-    error('Ошибка обновления статистики игроков:', err);
-  }
 }
 
 // --- ГАЛЕРЕЯ ---------------------------------------------------------------

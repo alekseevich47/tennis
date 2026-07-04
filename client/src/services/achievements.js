@@ -26,17 +26,6 @@ import { auditAchievements } from '../lib/audit';
  */
 
 /**
- * @typedef {Object} MatchRecord
- * @property {string} id
- * @property {string} [player1]
- * @property {string} [player2]
- * @property {string} [date_time]
- * @property {'scheduled' | 'finished' | 'cancelled'} [status]
- * @property {number} [score_p1]
- * @property {number} [score_p2]
- */
-
-/**
  * @typedef {Object} UserAchievementProgress
  * @property {boolean} achieved
  * @property {number} level
@@ -63,24 +52,6 @@ export async function listAchievements({ signal } = {}) {
   } catch (err) {
     if (err && /** @type {Error} */ (err).name === 'AbortError') return [];
     error('Ошибка получения достижений:', err);
-    throw err;
-  }
-}
-
-/**
- * @param {{ userId: string, signal?: AbortSignal }} options
- */
-export async function listMatches({ userId, signal } = /** @type {{ userId: string, signal?: AbortSignal }} */ ({})) {
-  try {
-    return /** @type {MatchRecord[]} */ (await pb.collection('matches').getFullList({
-      filter: pb.filter('(player1 = {:userId} || player2 = {:userId}) && status = "finished"', { userId }),
-      sort: 'date_time',
-      requestKey: null,
-      signal
-    }));
-  } catch (err) {
-    if (err && /** @type {Error} */ (err).name === 'AbortError') return [];
-    error('Ошибка получения матчей:', err);
     throw err;
   }
 }
@@ -187,62 +158,9 @@ export function calcAttendanceAchievement(attendanceCount, levels) {
 }
 
 /**
- * @param {MatchRecord} match
- * @param {string} userId
- * @returns {boolean}
- */
-function isMatchWin(match, userId) {
-  if (match.player1 === userId) {
-    return (match.score_p1 ?? 0) > (match.score_p2 ?? 0);
-  }
-  if (match.player2 === userId) {
-    return (match.score_p2 ?? 0) > (match.score_p1 ?? 0);
-  }
-  return false;
-}
-
-/**
- * @param {MatchRecord[]} matches
- * @param {string} userId
- * @returns {number}
- */
-function calcMaxWinStreak(matches, userId) {
-  const userMatches = matches
-    .filter(
-      (match) =>
-        match.status === 'finished' && (match.player1 === userId || match.player2 === userId)
-    )
-    .sort((a, b) => new Date(a.date_time || 0).getTime() - new Date(b.date_time || 0).getTime());
-
-  let maxStreak = 0;
-  let currentStreak = 0;
-
-  for (const match of userMatches) {
-    if (isMatchWin(match, userId)) {
-      currentStreak += 1;
-      maxStreak = Math.max(maxStreak, currentStreak);
-    } else {
-      currentStreak = 0;
-    }
-  }
-
-  return maxStreak;
-}
-
-/**
- * @param {MatchRecord[]} matches
- * @param {string} userId
- * @param {AchievementLevelRecord[]} levels
  * @returns {UserAchievementProgress}
  */
-export function calcWinStreakAchievement(matches, userId, levels) {
-  return calcLevelFromValue(levels, calcMaxWinStreak(matches, userId));
-}
-
-/**
- * @returns {UserAchievementProgress}
- */
-export function calcPodiumAchievement() {
+function calcUnavailableAchievement() {
   return {
     achieved: false,
     level: 0,
@@ -254,13 +172,11 @@ export function calcPodiumAchievement() {
 
 /**
  * @param {number} sortOrder
- * @param {string} userId
  * @param {Record<string, unknown>} user
- * @param {MatchRecord[]} matches
  * @param {AchievementLevelRecord[]} levels
  * @returns {{ progress: UserAchievementProgress, userValue: number }}
  */
-function calcAchievementProgress(sortOrder, userId, user, matches, levels) {
+function calcAchievementProgress(sortOrder, user, levels) {
   switch (sortOrder) {
     case 1:
       return {
@@ -278,13 +194,13 @@ function calcAchievementProgress(sortOrder, userId, user, matches, levels) {
         userValue: Number(user.attendance_count) || 0
       };
     case 4:
-      return {
-        progress: calcWinStreakAchievement(matches, userId, levels),
-        userValue: calcMaxWinStreak(matches, userId)
-      };
+      // Серия побед — раньше считалась по matches (коллекция удалена).
+      return { progress: calcUnavailableAchievement(), userValue: 0 };
     case 5:
+      // Призовой пьедестал — по tournament_posts (пока не реализовано).
+      return { progress: calcUnavailableAchievement(), userValue: 0 };
     default:
-      return { progress: calcPodiumAchievement(), userValue: 0 };
+      return { progress: calcUnavailableAchievement(), userValue: 0 };
   }
 }
 
@@ -292,10 +208,9 @@ function calcAchievementProgress(sortOrder, userId, user, matches, levels) {
  * @param {string} userId
  * @param {AchievementRecord[]} achievements
  * @param {Record<string, unknown>} user
- * @param {MatchRecord[]} matches
  * @returns {Map<string, UserAchievementResult>}
  */
-export function getUserAchievements(userId, achievements, user, matches) {
+export function getUserAchievements(userId, achievements, user) {
   /** @type {Map<string, UserAchievementResult>} */
   const result = new Map();
 
@@ -303,13 +218,7 @@ export function getUserAchievements(userId, achievements, user, matches) {
     for (const achievement of achievements) {
       const levels = getAchievementLevels(achievement);
       const sortOrder = Number(achievement.sort_order) || 0;
-      const { progress, userValue } = calcAchievementProgress(
-        sortOrder,
-        userId,
-        user,
-        matches,
-        levels
-      );
+      const { progress, userValue } = calcAchievementProgress(sortOrder, user, levels);
 
       result.set(achievement.id, { progress, userValue });
 

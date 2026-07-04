@@ -4,11 +4,9 @@ import Modal from '../../components/ui/Modal';
 const INITIAL = {
   name: '',
   birth_date: '',
-  hand: 'Правая',
+  dominant_hand: 'Правая',
   rating_points: '0',
-  games_count: '0',
   wins: '0',
-  losses: '0',
   avatar: /** @type {File | null} */ (null)
 };
 
@@ -34,11 +32,9 @@ function PlayerForm({ isOpen, onClose, onSubmit }) {
       const data = new FormData();
       data.append('full_name', form.name);
       data.append('birth_date', form.birth_date);
-      data.append('hand', form.hand);
+      data.append('dominant_hand', form.dominant_hand);
       data.append('rating_points', String(parseInt(form.rating_points, 10) || 0));
-      data.append('games_count', String(parseInt(form.games_count, 10) || 0));
       data.append('wins', String(parseInt(form.wins, 10) || 0));
-      data.append('losses', String(parseInt(form.losses, 10) || 0));
       if (form.avatar) data.append('avatar', form.avatar);
       await onSubmit(data);
       setForm(INITIAL);
@@ -75,8 +71,8 @@ function PlayerForm({ isOpen, onClose, onSubmit }) {
           <label htmlFor="player-hand">Ведущая рука</label>
           <select
             id="player-hand"
-            value={form.hand}
-            onChange={(e) => updateField('hand')(e.target.value)}
+            value={form.dominant_hand}
+            onChange={(e) => updateField('dominant_hand')(e.target.value)}
           >
             <option value="Правая">Правая</option>
             <option value="Левая">Левая</option>
@@ -94,32 +90,12 @@ function PlayerForm({ isOpen, onClose, onSubmit }) {
         </div>
 
         <div className="form-group">
-          <label htmlFor="player-games">Игр сыграно</label>
-          <input
-            id="player-games"
-            type="number"
-            value={form.games_count}
-            onChange={(e) => updateField('games_count')(e.target.value)}
-          />
-        </div>
-
-        <div className="form-group">
           <label htmlFor="player-wins">Побед</label>
           <input
             id="player-wins"
             type="number"
             value={form.wins}
             onChange={(e) => updateField('wins')(e.target.value)}
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="player-losses">Поражений</label>
-          <input
-            id="player-losses"
-            type="number"
-            value={form.losses}
-            onChange={(e) => updateField('losses')(e.target.value)}
           />
         </div>
 

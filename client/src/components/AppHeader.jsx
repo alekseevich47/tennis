@@ -44,7 +44,7 @@ function AppHeader({
   const favoritesAnchorRef = useRef(null);
   const searchInputRef = useRef(null);
   const dateInputRef = useRef(null);
-  const displayName = user?.full_name || user?.name || 'Гость';
+  const displayName = user?.full_name || 'Гость';
 
   useEffect(() => {
     if (searchConfig?.open) {

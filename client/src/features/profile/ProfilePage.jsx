@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import useSWR from 'swr';
 import AchievementsBlock from '../../components/AchievementsBlock';
 import FloatingAchievements from '../../components/FloatingAchievements';
 import AvatarCropModal from '../../components/AvatarCropModal';
@@ -10,6 +11,7 @@ import { usePlayers } from '../../hooks/usePlayers';
 import { useTrainings } from '../../hooks/useTrainings';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { isModerator, updateUserProfile } from '../../services/auth';
+import { listCancelledTrainingsForUser } from '../../services/trainings';
 import pb from '../../services/pb';
 import { error } from '../../lib/log';
 import { getPlayerRatingRank } from '../../lib/rating';
@@ -55,6 +57,10 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
   const { alert } = useAlertDialog();
   const { data: players } = usePlayers();
   const { data: trainings, isLoading: trainingsLoading } = useTrainings();
+  const { data: cancelledTrainings, isLoading: cancelledLoading } = useSWR(
+    user?.id ? ['cancelled-trainings', user.id] : null,
+    () => listCancelledTrainingsForUser(user.id)
+  );
   const canEditSectionStartDate = isModerator();
   const avatarInputRef = useRef(null);
 
@@ -114,10 +120,22 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
   }, [avatarFile]);
 
   // Профильный список — производное от SWR-данных (H4).
-  const myTrainings = useMemo(
-    () => getUserPastTrainings(trainings || [], user?.id),
-    [trainings, user?.id]
-  );
+  const myTrainings = useMemo(() => {
+    if (!user?.id) return [];
+    const past = getUserPastTrainings(trainings || [], user.id)
+      .filter((t) => !t.is_deleted)
+      .map((t) => ({
+        ...t,
+        status: (t.attended_users || []).includes(user.id) ? 'attended' : 'missed'
+      }));
+    const cancelled = (cancelledTrainings || []).map((t) => ({
+      ...t,
+      status: 'cancelled'
+    }));
+    return [...past, ...cancelled].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+  }, [trainings, cancelledTrainings, user?.id]);
 
   const filteredTrainings = useMemo(() => {
     if (!searchDate.trim()) return myTrainings;
@@ -432,7 +450,7 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
               </span>
             </button>
             {trainingsExpanded && (
-              trainingsLoading ? (
+              trainingsLoading || cancelledLoading ? (
                 <Spinner label="Загрузка тренировок..." inline />
               ) : myTrainings.length === 0 ? (
                 <p className="no-data-text">Вы ещё не посещали тренировки</p>
@@ -464,7 +482,8 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
                   ) : (
                 <div className="profile-trainings-list">
                   {filteredTrainings.map((t) => {
-                    const attended = (t.attended_users || []).includes(user.id);
+                    const isCancelled = t.status === 'cancelled';
+                    const attended = t.status === 'attended';
                     return (
                       <div key={t.id} className="profile-training-card">
                         <div className="profile-training-card__info">
@@ -475,9 +494,15 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
                           <span className="training-title">{getTrainingTitle(t)}</span>
                         </div>
                         <span
-                          className={`training-attendance-badge ${attended ? 'training-attendance-badge--attended' : 'training-attendance-badge--missed'}`}
+                          className={`training-attendance-badge ${
+                            isCancelled
+                              ? 'training-attendance-badge--cancelled'
+                              : attended
+                                ? 'training-attendance-badge--attended'
+                                : 'training-attendance-badge--missed'
+                          }`}
                         >
-                          {attended ? 'Посетил' : 'Не посетил'}
+                          {isCancelled ? 'Отмена' : attended ? 'Посетил' : 'Не посетил'}
                         </span>
                       </div>
                     );

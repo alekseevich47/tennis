@@ -32,7 +32,7 @@ export function getActor() {
 
   return {
     userId: user.id || ANONYMOUS_ACTOR.userId,
-    userFullName: user.full_name || user.name || 'Пользователь',
+    userFullName: user.full_name || 'Пользователь',
     role: isModerator ? 'МОДЕРАТОР' : 'ПОЛЬЗОВАТЕЛЬ'
   };
 }
