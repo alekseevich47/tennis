@@ -49,10 +49,11 @@ function TrainingDetailModal({
 
   const bookedUserIds = training.booked_users || [];
   const bookedUserIdSet = new Set(bookedUserIds);
-  const unbookedPlayers = (training.expand?.unbooked_users || []).filter(
-    (player) => !bookedUserIdSet.has(player.id)
-  );
   const restoreInsufficientPlayers = training.expand?.restore_insufficient_users || [];
+  const restoreInsufficientIdSet = new Set(restoreInsufficientPlayers.map((p) => p.id));
+  const unbookedPlayers = (training.expand?.unbooked_users || []).filter(
+    (player) => !bookedUserIdSet.has(player.id) && !restoreInsufficientIdSet.has(player.id)
+  );
   const hasLimit = training.max_slots !== null && training.max_slots !== undefined && training.max_slots > 0;
   const isFull = hasLimit && bookedUserIds.length >= (training.max_slots || 0);
   const isClosed = training.is_closed === true;

@@ -6,6 +6,7 @@ import { auditTrainings } from '../lib/audit';
 import { hasTimeRangeEnded } from '../lib/format';
 
 export const PENDING_DELETE_TRAININGS_KEY = 'pending_delete_trainings';
+export const SHOW_DELETED_TRAININGS_KEY = 'trainings_show_deleted_moderator';
 
 /**
  * Уведомить модераторов через MAX Bot API (pb_hooks/bot_notifications.pb.js).
@@ -492,6 +493,32 @@ export function removePendingDeleteTrainingId(trainingId) {
   return writePendingDeleteTrainingIds(
     readPendingDeleteTrainingIds().filter((id) => id !== trainingId)
   );
+}
+
+/**
+ * @returns {boolean} true — показывать удалённые тренировки (дефолт)
+ */
+export function readShowDeletedTrainingsPreference() {
+  try {
+    const raw = localStorage.getItem(SHOW_DELETED_TRAININGS_KEY);
+    if (raw === null) return true;
+    return raw === 'true';
+  } catch (err) {
+    error('Не удалось прочитать trainings_show_deleted_moderator:', err);
+    return true;
+  }
+}
+
+/**
+ * @param {boolean} value
+ */
+export function writeShowDeletedTrainingsPreference(value) {
+  try {
+    localStorage.setItem(SHOW_DELETED_TRAININGS_KEY, value ? 'true' : 'false');
+  } catch (err) {
+    error('Не удалось сохранить trainings_show_deleted_moderator:', err);
+  }
+  return value;
 }
 
 /**

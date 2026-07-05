@@ -10,7 +10,9 @@ import {
   cancelTrainingBooking,
   closeTraining,
   readPendingDeleteTrainingIds,
+  readShowDeletedTrainingsPreference,
   removePendingDeleteTrainingId,
+  writeShowDeletedTrainingsPreference,
   reopenTraining,
   restoreTraining,
   softDeleteTraining
@@ -69,6 +71,9 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
   const [hiddenDeletedTrainingIds, setHiddenDeletedTrainingIds] = useState(() =>
     readPendingDeleteTrainingIds()
   );
+  const [showDeletedTrainings, setShowDeletedTrainings] = useState(() =>
+    readShowDeletedTrainingsPreference()
+  );
 
   useEffect(() => {
     onDeletedIdsChange?.(hiddenDeletedTrainingIds);
@@ -99,10 +104,13 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
     if (!trainings) return [];
     return trainings.filter((t) => {
       if (!isSameDay(new Date(t.date), selectedDate)) return false;
-      if (userIsModerator) return true;
+      if (userIsModerator) {
+        if (t.is_deleted) return showDeletedTrainings;
+        return true;
+      }
       return !t.is_deleted && !hiddenDeletedTrainingIds.includes(t.id);
     });
-  }, [hiddenDeletedTrainingIds, trainings, selectedDate, userIsModerator]);
+  }, [hiddenDeletedTrainingIds, trainings, selectedDate, userIsModerator, showDeletedTrainings]);
 
   const pastTrainings = useMemo(() => {
     if (!trainings) return [];
@@ -385,6 +393,34 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
         </h2>
         {userIsModerator && (
           <div className="selected-day-actions">
+            <IconButton
+              ariaLabel={
+                showDeletedTrainings
+                  ? 'Скрыть удалённые тренировки'
+                  : 'Показать удалённые тренировки'
+              }
+              variant="soft"
+              size="sm"
+              className="show-deleted-training-btn"
+              onClick={() => {
+                const next = !showDeletedTrainings;
+                setShowDeletedTrainings(next);
+                writeShowDeletedTrainingsPreference(next);
+              }}
+            >
+              {showDeletedTrainings ? (
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="m3 3 18 18" />
+                </svg>
+              )}
+            </IconButton>
             <IconButton
               ariaLabel="Архив прошедших тренировок"
               variant="soft"
