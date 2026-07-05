@@ -103,9 +103,13 @@ export const auditTrainings = {
 
   /**
    * @param {string} trainingId
+   * @param {string[]} [insufficientUserIds]
    */
-  trainingRestore(trainingId) {
-    writeAudit(DOMAIN, 'Тренировка восстановлена', { trainingId });
+  trainingRestore(trainingId, insufficientUserIds = []) {
+    writeAudit(DOMAIN, 'Тренировка восстановлена', {
+      trainingId,
+      ...(insufficientUserIds.length > 0 ? { insufficientUserIds } : {})
+    });
   },
 
   /**

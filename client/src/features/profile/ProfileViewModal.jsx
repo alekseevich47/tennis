@@ -10,7 +10,8 @@ import Modal from '../../components/ui/Modal';
 import Spinner from '../../components/ui/Spinner';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { usePlayers } from '../../hooks/usePlayers';
-import { listCancelledTrainingsForUser, listTrainings } from '../../services/trainings';
+import { useTrainings } from '../../hooks/useTrainings';
+import { listCancelledTrainingsForUser } from '../../services/trainings';
 import {
   banUser,
   hideFromRating,
@@ -47,17 +48,41 @@ function getTrainingTitle(training) {
   return training.type === 'tournament' ? 'Турнир секции' : 'Тренировка';
 }
 
+function getTrainingStatusForUser(training, userId) {
+  const kicked = training.moderator_kicked_users || [];
+  if (kicked.includes(userId)) return 'kicked';
+  if (!hasTimeRangeEnded(training.date, training.duration || 0)) return 'booked';
+  return (training.attended_users || []).includes(userId) ? 'attended' : 'missed';
+}
+
 function getUserPastTrainings(trainings, userId) {
   if (!userId) return [];
   return trainings
     .filter((training) => {
-      if (!hasTimeRangeEnded(training.date, training.duration || 0)) return false;
+      if (training.is_deleted === true) return false;
+      const ended = hasTimeRangeEnded(training.date, training.duration || 0);
       const booked = training.booked_users || [];
       const unbooked = training.unbooked_users || [];
-      return booked.includes(userId) || unbooked.includes(userId);
+      const kicked = training.moderator_kicked_users || [];
+      if (ended) {
+        return booked.includes(userId) || unbooked.includes(userId) || kicked.includes(userId);
+      }
+      return booked.includes(userId) || kicked.includes(userId);
     })
+    .map((training) => ({
+      ...training,
+      status: getTrainingStatusForUser(training, userId)
+    }))
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
+
+const TRAINING_BADGE = {
+  cancelled: { className: 'training-attendance-badge--cancelled', label: 'Отмена' },
+  kicked: { className: 'training-attendance-badge--kicked', label: 'Снят модератором' },
+  booked: { className: 'training-attendance-badge--booked', label: 'Записан' },
+  attended: { className: 'training-attendance-badge--attended', label: 'Посетил' },
+  missed: { className: 'training-attendance-badge--missed', label: 'Не посетил' }
+};
 
 function isModerator(user) {
   return user?.role === 'moderator' || user?.email === 'admin@example.com';
@@ -79,8 +104,7 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
   const avatarInputRef = useRef(null);
   const menuBtnRef = useRef(null);
   const menuDropdownRef = useRef(null);
-  const [trainings, setTrainings] = useState([]);
-  const [loadingDetails, setLoadingDetails] = useState(false);
+  const { data: trainings, isLoading: trainingsLoading } = useTrainings();
   const [membershipOpen, setMembershipOpen] = useState(false);
   const [displayUser, setDisplayUser] = useState(targetUser || null);
   const [isEditing, setIsEditing] = useState(false);
@@ -164,10 +188,7 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
       return undefined;
     }
 
-    if (!targetUserId) {
-      setTrainings([]);
-      return undefined;
-    }
+    if (!targetUserId) return undefined;
 
     const controller = new AbortController();
 
@@ -186,33 +207,12 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
         error('load profile view user:', err);
       });
 
-    setLoadingDetails(true);
-
-    listTrainings({ signal: controller.signal })
-      .then((trainingRecords) => {
-        if (controller.signal.aborted) return;
-        setTrainings(trainingRecords);
-      })
-      .catch((err) => {
-        if (err && err.name === 'AbortError') return;
-        error('load profile view details:', err);
-        setTrainings([]);
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) setLoadingDetails(false);
-      });
-
     return () => controller.abort();
   }, [isOpen, targetUserId]);
 
   const userTrainings = useMemo(() => {
     if (!targetUserId) return [];
-    const past = getUserPastTrainings(trainings, targetUserId)
-      .filter((t) => !t.is_deleted)
-      .map((t) => ({
-        ...t,
-        status: (t.attended_users || []).includes(targetUserId) ? 'attended' : 'missed'
-      }));
+    const past = getUserPastTrainings(trainings || [], targetUserId);
     const cancelled = (cancelledTrainings || []).map((t) => ({
       ...t,
       status: 'cancelled'
@@ -780,7 +780,7 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                   </span>
                 </button>
                 {trainingsExpanded && (
-                  loadingDetails || cancelledLoading ? (
+                  trainingsLoading || cancelledLoading ? (
                     <Spinner label="Загрузка тренировок..." inline />
                   ) : userTrainings.length > 0 ? (
                     <>
@@ -822,8 +822,7 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                       ) : (
                     <div className="profile-trainings-list">
                       {filteredTrainings.map((training) => {
-                        const isCancelled = training.status === 'cancelled';
-                        const attended = training.status === 'attended';
+                        const badge = TRAINING_BADGE[training.status] || TRAINING_BADGE.missed;
                         return (
                           <div key={training.id} className="profile-training-card">
                             <div className="profile-training-card__info">
@@ -834,16 +833,9 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                               <span className="training-title">{getTrainingTitle(training)}</span>
                             </div>
                             <span
-                              className={clsx(
-                                'training-attendance-badge',
-                                isCancelled
-                                  ? 'training-attendance-badge--cancelled'
-                                  : attended
-                                    ? 'training-attendance-badge--attended'
-                                    : 'training-attendance-badge--missed'
-                              )}
+                              className={clsx('training-attendance-badge', badge.className)}
                             >
-                              {isCancelled ? 'Отмена' : attended ? 'Посетил' : 'Не посетил'}
+                              {badge.label}
                             </span>
                           </div>
                         );
