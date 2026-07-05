@@ -38,17 +38,41 @@ function getTrainingTitle(training) {
   return training.type === 'tournament' ? 'Турнир секции' : 'Тренировка';
 }
 
+function getTrainingStatusForUser(training, userId) {
+  const kicked = training.moderator_kicked_users || [];
+  if (kicked.includes(userId)) return 'kicked';
+  if (!hasTimeRangeEnded(training.date, training.duration || 0)) return 'booked';
+  return (training.attended_users || []).includes(userId) ? 'attended' : 'missed';
+}
+
 function getUserPastTrainings(trainings, userId) {
   if (!userId) return [];
   return trainings
     .filter((training) => {
-      if (!hasTimeRangeEnded(training.date, training.duration || 0)) return false;
+      if (training.is_deleted === true) return false;
+      const ended = hasTimeRangeEnded(training.date, training.duration || 0);
       const booked = training.booked_users || [];
       const unbooked = training.unbooked_users || [];
-      return booked.includes(userId) || unbooked.includes(userId);
+      const kicked = training.moderator_kicked_users || [];
+      if (ended) {
+        return booked.includes(userId) || unbooked.includes(userId) || kicked.includes(userId);
+      }
+      return booked.includes(userId) || kicked.includes(userId);
     })
+    .map((training) => ({
+      ...training,
+      status: getTrainingStatusForUser(training, userId)
+    }))
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
+
+const TRAINING_BADGE = {
+  cancelled: { className: 'training-attendance-badge--cancelled', label: 'Отмена' },
+  kicked: { className: 'training-attendance-badge--kicked', label: 'Снят модератором' },
+  booked: { className: 'training-attendance-badge--booked', label: 'Записан' },
+  attended: { className: 'training-attendance-badge--attended', label: 'Посетил' },
+  missed: { className: 'training-attendance-badge--missed', label: 'Не посетил' }
+};
 
 /**
  * @param {{ user: any, onUpdate?: (user: any) => void, onTabChange?: (tabIndex: number) => void }} props
@@ -122,12 +146,7 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
   // Профильный список — производное от SWR-данных (H4).
   const myTrainings = useMemo(() => {
     if (!user?.id) return [];
-    const past = getUserPastTrainings(trainings || [], user.id)
-      .filter((t) => !t.is_deleted)
-      .map((t) => ({
-        ...t,
-        status: (t.attended_users || []).includes(user.id) ? 'attended' : 'missed'
-      }));
+    const past = getUserPastTrainings(trainings || [], user.id);
     const cancelled = (cancelledTrainings || []).map((t) => ({
       ...t,
       status: 'cancelled'
@@ -482,8 +501,7 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
                   ) : (
                 <div className="profile-trainings-list">
                   {filteredTrainings.map((t) => {
-                    const isCancelled = t.status === 'cancelled';
-                    const attended = t.status === 'attended';
+                    const badge = TRAINING_BADGE[t.status] || TRAINING_BADGE.missed;
                     return (
                       <div key={t.id} className="profile-training-card">
                         <div className="profile-training-card__info">
@@ -493,16 +511,8 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
                           </span>
                           <span className="training-title">{getTrainingTitle(t)}</span>
                         </div>
-                        <span
-                          className={`training-attendance-badge ${
-                            isCancelled
-                              ? 'training-attendance-badge--cancelled'
-                              : attended
-                                ? 'training-attendance-badge--attended'
-                                : 'training-attendance-badge--missed'
-                          }`}
-                        >
-                          {isCancelled ? 'Отмена' : attended ? 'Посетил' : 'Не посетил'}
+                        <span className={`training-attendance-badge ${badge.className}`}>
+                          {badge.label}
                         </span>
                       </div>
                     );

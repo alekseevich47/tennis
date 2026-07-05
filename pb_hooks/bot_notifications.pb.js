@@ -307,6 +307,48 @@ routerAdd('POST', '/api/bot-notify-training-cancelled', (c) => {
   return c.json(200, { success: true });
 });
 
+// Восстановление тренировки модератором → всем пользователям
+routerAdd('POST', '/api/bot-notify-training-restored', (c) => {
+  const bot = require(__hooks + '/botlib.js');
+  const info = c.requestInfo();
+  const auth = info.auth;
+  if (!auth) {
+    return c.json(401, { error: 'Unauthorized' });
+  }
+  if (auth.getString('role') !== 'moderator') {
+    return c.json(403, { error: 'Forbidden' });
+  }
+
+  const body = info.body || {};
+  const trainingId = body.trainingId;
+  if (!trainingId) {
+    return c.json(400, { error: 'Missing required fields' });
+  }
+
+  let training;
+  try {
+    training = $app.findRecordById('trainings', trainingId);
+  } catch (_) {
+    return c.json(404, { error: 'Training not found' });
+  }
+
+  const typeWord = training.getString('type') === 'tournament' ? 'турнир' : 'тренировка';
+  const dateFormatted = bot.formatDateTimeGmt7(training.getString('date'));
+  const text =
+    'Уважаемые участники, запись на *' +
+    typeWord +
+    '* *' +
+    dateFormatted +
+    '* восстановлена.';
+
+  try {
+    bot.broadcastToAllUsers(text);
+  } catch (err) {
+    console.log('[bot] training restored notify: ' + err);
+  }
+  return c.json(200, { success: true });
+});
+
 // Приветствие при «Начать» в боте MAX (Webhook bot_started) — без auth PB, без коллекции users
 routerAdd('POST', '/api/max-bot-webhook', (c) => {
   const bot = require(__hooks + '/botlib.js');

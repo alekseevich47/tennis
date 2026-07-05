@@ -611,6 +611,16 @@
   background: #e7f5ff;
 }
 
+.training-attendance-badge--booked {
+  color: #e67700;
+  background: #fff9db;
+}
+
+.training-attendance-badge--kicked {
+  color: #1c7ed6;
+  background: #e7f5ff;
+}
+
 .profile-edit-form {
   display: flex;
   flex-direction: column;

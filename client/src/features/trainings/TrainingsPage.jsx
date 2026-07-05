@@ -216,7 +216,20 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
         false
       );
       try {
-        await restoreTraining(trainingId);
+        const { record, insufficientUsers } = await restoreTraining(trainingId);
+        mutate(
+          (curr = []) => curr.map((t) => (t.id === trainingId ? record : t)),
+          false
+        );
+        if (insufficientUsers.length > 0) {
+          const fullNamesJoined = insufficientUsers.map((u) => u.fullName).join(', ');
+          showToast({
+            text:
+              'У ' +
+              fullNamesJoined +
+              ' не хватает доступных посещений для записи на эту тренировку.'
+          });
+        }
       } catch (err) {
         addPendingDeleteTrainingId(trainingId);
         setHiddenDeletedTrainingIds((prev) =>
@@ -231,7 +244,7 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
         await alert({ title: 'Ошибка', message: 'Не удалось восстановить тренировку.' });
       }
     },
-    [mutate, alert]
+    [mutate, alert, showToast]
   );
 
   const handleSoftDelete = useCallback(

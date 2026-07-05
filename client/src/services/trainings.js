@@ -41,6 +41,8 @@ async function notifyTrainingBot(payload) {
  * @property {string[]} [booked_users]
  * @property {string[]} [unbooked_users]
  * @property {string[]} [attended_users]
+ * @property {string[]} [moderator_kicked_users]
+ * @property {string[]} [restore_insufficient_users]
  * @property {Record<string, unknown>} [expand]
  */
 
@@ -135,15 +137,22 @@ function isUnlimitedMembership(membershipType) {
 }
 
 /**
+ * @param {string} userId
+ * @returns {Promise<boolean>}
+ */
+async function hasAvailableMembershipSession(userId) {
+  const user = await fetchMembershipSessionInfo(userId);
+  if (isUnlimitedMembership(user.membership_type)) return true;
+  return (user.available_sessions || 0) > 0;
+}
+
+/**
  * Проверить, что у обычного абонемента есть доступные посещения.
  * Вызывать до обновления booked_users.
  * @param {string} userId
  */
 async function assertMembershipSessionAvailable(userId) {
-  const user = await fetchMembershipSessionInfo(userId);
-  if (isUnlimitedMembership(user.membership_type)) return;
-
-  if ((user.available_sessions || 0) <= 0) {
+  if (!(await hasAvailableMembershipSession(userId))) {
     throw Object.assign(new Error('Нет доступных посещений'), { code: 'NO_AVAILABLE_SESSIONS' });
   }
 }
@@ -175,6 +184,23 @@ async function consumeMembershipSession(userId) {
  */
 async function rollbackTrainingBooking(trainingId, bookedUsersBefore) {
   await pb.collection('trainings').update(trainingId, { booked_users: bookedUsersBefore });
+}
+
+/**
+ * @param {TrainingRecord} training
+ * @param {string[]} nextBookedUsers
+ * @param {string[]} addedUserIds
+ */
+function buildBookedUsersPatch(training, nextBookedUsers, addedUserIds) {
+  const patch = { booked_users: nextBookedUsers };
+  const addedSet = new Set(addedUserIds);
+  const kicked = training.moderator_kicked_users || [];
+  const insufficient = training.restore_insufficient_users || [];
+  const nextKicked = kicked.filter((id) => !addedSet.has(id));
+  const nextInsufficient = insufficient.filter((id) => !addedSet.has(id));
+  if (nextKicked.length !== kicked.length) patch.moderator_kicked_users = nextKicked;
+  if (nextInsufficient.length !== insufficient.length) patch.restore_insufficient_users = nextInsufficient;
+  return patch;
 }
 
 /**
@@ -274,7 +300,7 @@ export async function listTrainings({ signal } = {}) {
     return /** @type {TrainingRecord[]} */ (await pb.collection('trainings').getFullList({
       sort: 'date',
       filter: isModerator() ? '' : 'is_deleted != true',
-      expand: 'booked_users,attended_users,unbooked_users',
+      expand: 'booked_users,attended_users,unbooked_users,moderator_kicked_users,restore_insufficient_users',
       requestKey: null,
       signal
     }));
@@ -486,16 +512,108 @@ export async function softDeleteTraining(trainingId) {
   }
 }
 
+async function notifyTrainingRestoredBot(trainingId) {
+  try {
+    await pb.send('/api/bot-notify-training-restored', {
+      method: 'POST',
+      body: { trainingId }
+    });
+  } catch (err) {
+    error('Ошибка уведомления бота о восстановлении тренировки:', err);
+  }
+}
+
 /**
  * @param {string} trainingId
+ * @returns {Promise<{ record: TrainingRecord, insufficientUsers: UserAuditRecord[] }>}
  */
 export async function restoreTraining(trainingId) {
   try {
-    const record = /** @type {TrainingRecord} */ (
-      await pb.collection('trainings').update(trainingId, { is_deleted: false })
+    const training = /** @type {TrainingRecord} */ (
+      await pb.collection('trainings').getOne(trainingId, {
+        expand: 'booked_users',
+        requestKey: null
+      })
     );
-    auditTrainings.trainingRestore(trainingId);
-    return record;
+
+    let record;
+    let insufficientUserIds = [];
+
+    if (training.is_cancelled !== true) {
+      record = /** @type {TrainingRecord} */ (
+        await pb.collection('trainings').update(trainingId, { is_deleted: false })
+      );
+      auditTrainings.trainingRestore(trainingId);
+      await notifyTrainingRestoredBot(trainingId);
+      return { record, insufficientUsers: [] };
+    }
+
+    const ended = hasTimeRangeEnded(training.date, training.duration || 0);
+
+    if (ended) {
+      record = /** @type {TrainingRecord} */ (
+        await pb.collection('trainings').update(trainingId, {
+          is_cancelled: false,
+          is_deleted: false
+        })
+      );
+    } else {
+      const bookedUsers = training.booked_users || [];
+      const attendedSet = new Set(training.attended_users || []);
+      let nextUnbooked = [...(training.unbooked_users || [])];
+      let nextAttended = [...(training.attended_users || [])];
+      let nextKicked = [...(training.moderator_kicked_users || [])];
+      const nextBooked = [];
+
+      for (const userId of bookedUsers) {
+        if (await hasAvailableMembershipSession(userId)) {
+          nextBooked.push(userId);
+          await consumeMembershipSession(userId);
+          nextKicked = nextKicked.filter((id) => id !== userId);
+        } else {
+          insufficientUserIds.push(userId);
+          if (!nextUnbooked.includes(userId)) nextUnbooked.push(userId);
+          nextAttended = nextAttended.filter((id) => id !== userId);
+          if (!nextKicked.includes(userId)) nextKicked.push(userId);
+        }
+      }
+
+      const attendedToRestore = nextBooked.filter((userId) => attendedSet.has(userId));
+      await Promise.all(
+        attendedToRestore.map((userId) =>
+          pb.collection('users').update(userId, { 'attendance_count+': 1 })
+        )
+      );
+
+      record = /** @type {TrainingRecord} */ (
+        await pb.collection('trainings').update(trainingId, {
+          booked_users: nextBooked,
+          unbooked_users: nextUnbooked,
+          attended_users: nextAttended,
+          moderator_kicked_users: nextKicked,
+          restore_insufficient_users: insufficientUserIds,
+          is_cancelled: false,
+          is_deleted: false
+        })
+      );
+
+      attendedToRestore.forEach((userId) => {
+        auditTrainings.markAttendance(
+          /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
+          userId
+        );
+      });
+    }
+
+    auditTrainings.trainingRestore(trainingId, insufficientUserIds);
+    await notifyTrainingRestoredBot(trainingId);
+
+    const insufficientUsers =
+      insufficientUserIds.length > 0
+        ? await resolveAuditUsers(insufficientUserIds, getExpandedUsers(training, 'booked_users'))
+        : [];
+
+    return { record, insufficientUsers };
   } catch (err) {
     auditTrainings.trainingStatusError(err, trainingId);
     throw err;
@@ -574,9 +692,12 @@ export async function bookTraining(training, userId) {
     await assertMembershipSessionAvailable(userId);
     let record;
     try {
-      record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
-        booked_users: [...current, userId]
-      }));
+      record = /** @type {TrainingRecord} */ (
+        await pb.collection('trainings').update(
+          training.id,
+          buildBookedUsersPatch(training, [...current, userId], [userId])
+        )
+      );
       await consumeMembershipSession(userId);
     } catch (err) {
       if (record) {
@@ -634,9 +755,12 @@ export async function bookUserToTraining(training, userId, targetUser, { overrid
     await assertMembershipSessionAvailable(userId);
     let record;
     try {
-      record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
-        booked_users: [...current, userId]
-      }));
+      record = /** @type {TrainingRecord} */ (
+        await pb.collection('trainings').update(
+          training.id,
+          buildBookedUsersPatch(training, [...current, userId], [userId])
+        )
+      );
       await consumeMembershipSession(userId);
     } catch (err) {
       if (record) {
@@ -723,9 +847,12 @@ export async function bookUsersToTraining(training, userIds, targetUsers = [], {
 
     let record;
     try {
-      record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
-        booked_users: [...current, ...nextUserIds]
-      }));
+      record = /** @type {TrainingRecord} */ (
+        await pb.collection('trainings').update(
+          training.id,
+          buildBookedUsersPatch(training, [...current, ...nextUserIds], nextUserIds)
+        )
+      );
       await Promise.all(nextUserIds.map((id) => consumeMembershipSession(id)));
     } catch (err) {
       if (record) {
@@ -777,10 +904,13 @@ export async function removeUsersFromTraining(training, userIds) {
     const removedAttendedUserIds = removedUserIds.filter((userId) => attendedSet.has(userId));
     const currentUnbooked = training.unbooked_users || [];
     const nextUnbooked = Array.from(new Set([...currentUnbooked, ...removedUserIds]));
+    const currentKicked = training.moderator_kicked_users || [];
+    const nextKicked = Array.from(new Set([...currentKicked, ...removedUserIds]));
     const auditUsers = await resolveAuditUsers(removedUserIds, getExpandedUsers(training, 'booked_users'));
     const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
       booked_users: current.filter((id) => !removedUserIds.includes(id)),
       unbooked_users: nextUnbooked,
+      moderator_kicked_users: nextKicked,
       ...(removedAttendedUserIds.length > 0
         ? { attended_users: attended.filter((id) => !removedAttendedUserIds.includes(id)) }
         : {})

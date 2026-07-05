@@ -52,6 +52,7 @@ function TrainingDetailModal({
   const unbookedPlayers = (training.expand?.unbooked_users || []).filter(
     (player) => !bookedUserIdSet.has(player.id)
   );
+  const restoreInsufficientPlayers = training.expand?.restore_insufficient_users || [];
   const hasLimit = training.max_slots !== null && training.max_slots !== undefined && training.max_slots > 0;
   const isFull = hasLimit && bookedUserIds.length >= (training.max_slots || 0);
   const isClosed = training.is_closed === true;
@@ -241,7 +242,7 @@ function TrainingDetailModal({
                 variant="ghost"
                 size="sm"
                 className="action-circle-btn btn-add-plus"
-                disabled={isFull}
+                disabled={isFull || training.is_deleted}
                 onClick={() => setIsUserPickerOpen(true)}
               >
                 <span aria-hidden="true">+</span>
@@ -255,7 +256,7 @@ function TrainingDetailModal({
               training.expand.booked_users.map((player) => (
                 <div key={player.id} className="player-list-row">
                   <div className="player-meta-left">
-                    {userIsModerator && (
+                    {userIsModerator && !training.is_deleted && (
                       <input
                         type="checkbox"
                         className="attendance-checkbox"
@@ -272,7 +273,7 @@ function TrainingDetailModal({
                     />
                     <span className="player-name-label">{player.full_name || 'Теннисист'}</span>
                   </div>
-                  {userIsModerator && (
+                  {userIsModerator && !training.is_deleted && (
                     <button
                       type="button"
                       className="kick-player-btn"
@@ -291,6 +292,26 @@ function TrainingDetailModal({
               <div className="participants-list-wrapper">
                 {unbookedPlayers.map((player) => (
                   <div key={player.id} className="player-list-row player-row--unbooked">
+                    <div className="player-meta-left">
+                      <Avatar
+                        user={player}
+                        size="sm"
+                        className="training-player-avatar"
+                        alt={player.full_name || 'Теннисист'}
+                      />
+                      <span className="player-name-label">{player.full_name || 'Теннисист'}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+          {userIsModerator && restoreInsufficientPlayers.length > 0 && (
+            <>
+              <h3>Не хватило посещений для восстановления ({restoreInsufficientPlayers.length})</h3>
+              <div className="participants-list-wrapper">
+                {restoreInsufficientPlayers.map((player) => (
+                  <div key={player.id} className="player-list-row">
                     <div className="player-meta-left">
                       <Avatar
                         user={player}
