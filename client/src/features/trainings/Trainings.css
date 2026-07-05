@@ -95,11 +95,13 @@
   align-items: center;
 }
 
-.archive-training-btn {
+.archive-training-btn,
+.show-deleted-training-btn {
   color: #868e96 !important;
 }
 
-.archive-training-btn svg {
+.archive-training-btn svg,
+.show-deleted-training-btn svg {
   width: 18px;
   height: 18px;
   fill: none;
