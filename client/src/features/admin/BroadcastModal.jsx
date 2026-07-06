@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import UserMultiSelect from './UserMultiSelect';
+import pb from '../../services/pb';
 import {
   listScheduledBroadcasts,
   createScheduledBroadcast,
@@ -10,6 +11,8 @@ import {
 } from '../../services/admin';
 import { formatPostDate } from '../../lib/format';
 import { error } from '../../lib/log';
+import { useAlertDialog } from '../../components/ui/AlertDialog';
+import { buildSendResultAlert } from './adminResultAlert';
 import './BroadcastModal.css';
 
 function defaultDatetimeLocal() {
@@ -29,6 +32,7 @@ function getAudienceLabel(audience) {
  * @param {{ isOpen: boolean, onClose: () => void }} props
  */
 export default function BroadcastModal({ isOpen, onClose }) {
+  const { alert } = useAlertDialog();
   const [text, setText] = useState('');
   const [audience, setAudience] = useState('all');
   const [recipients, setRecipients] = useState([]);
@@ -38,6 +42,7 @@ export default function BroadcastModal({ isOpen, onClose }) {
   const [editingId, setEditingId] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
+  const [formNotice, setFormNotice] = useState('');
 
   const resetForm = useCallback(() => {
     setText('');
@@ -47,14 +52,25 @@ export default function BroadcastModal({ isOpen, onClose }) {
     setSendNow(false);
     setEditingId(null);
     setFormError('');
+    setFormNotice('');
   }, []);
 
   const loadPending = useCallback(async () => {
     try {
       const items = await listScheduledBroadcasts();
       setPending(items);
+      setEditingId((prevId) => {
+        if (prevId && !items.some((item) => item.id === prevId)) {
+          // Рассылка уже отправлена (сработал крон/ручная отправка) — редактировать больше нечего.
+          setFormNotice('Эта рассылка уже была отправлена, форма переключена в режим создания новой.');
+          return null;
+        }
+        return prevId;
+      });
+      return items;
     } catch (err) {
       error('load scheduled broadcasts:', err);
+      return null;
     }
   }, []);
 
@@ -65,6 +81,24 @@ export default function BroadcastModal({ isOpen, onClose }) {
     }
     loadPending();
   }, [isOpen, resetForm, loadPending]);
+
+  // Real-time удаление из списка запланированных рассылок, когда рассылка
+  // отправляется кроном или другим администратором, пока модалка открыта.
+  useEffect(() => {
+    if (!isOpen) return undefined;
+
+    pb.collection('scheduled_broadcasts')
+      .subscribe('*', () => {
+        loadPending();
+      })
+      .catch((err) => {
+        error('subscribe scheduled broadcasts:', err);
+      });
+
+    return () => {
+      pb.collection('scheduled_broadcasts').unsubscribe('*');
+    };
+  }, [isOpen, loadPending]);
 
   const handleAudienceChange = useCallback((value) => {
     setAudience(value.audience);
@@ -79,7 +113,19 @@ export default function BroadcastModal({ isOpen, onClose }) {
     setScheduledAt(toDatetimeLocalValue(item.scheduled_at) || defaultDatetimeLocal());
     setSendNow(false);
     setFormError('');
+    setFormNotice('');
   }, []);
+
+  const handleEditClick = useCallback(
+    async (item) => {
+      await alert({
+        title: 'Редактирование рассылки',
+        message: `Вы редактируете уже запланированную рассылку (${formatPostDate(item.scheduled_at)}, ${getAudienceLabel(item.audience)}), а не создаёте новую. Внесите изменения в форму выше и сохраните их.`
+      });
+      handleEdit(item);
+    },
+    [alert, handleEdit]
+  );
 
   const handleCancel = useCallback(
     async (id) => {
@@ -123,21 +169,39 @@ export default function BroadcastModal({ isOpen, onClose }) {
       scheduledAt
     };
 
+    const wasEditing = Boolean(editingId);
+
     try {
-      if (editingId) {
-        await updateScheduledBroadcast(editingId, payload);
-      } else {
-        await createScheduledBroadcast(payload);
-      }
+      const result = wasEditing
+        ? await updateScheduledBroadcast(editingId, payload)
+        : await createScheduledBroadcast(payload);
       resetForm();
       await loadPending();
+      const { title, message } = buildSendResultAlert({
+        kind: 'broadcast',
+        editing: wasEditing,
+        result
+      });
+      await alert({ title, message });
     } catch (err) {
       error('save broadcast:', err);
       setFormError('Не удалось сохранить рассылку');
+      await alert({
+        title: 'Рассылка',
+        message: 'Не удалось сохранить рассылку. Проверьте подключение и попробуйте ещё раз.'
+      });
     } finally {
       setSubmitting(false);
     }
   };
+
+  const submitLabel = submitting
+    ? 'Сохраняем...'
+    : sendNow
+      ? 'Отправить'
+      : editingId
+        ? 'Сохранить изменения'
+        : 'Запланировать';
 
   return (
     <Modal
@@ -152,12 +216,13 @@ export default function BroadcastModal({ isOpen, onClose }) {
           className="submit-btn-full"
           disabled={submitting}
         >
-          {submitting ? 'Сохраняем...' : editingId ? 'Сохранить изменения' : 'Запланировать'}
+          {submitLabel}
         </button>
       }
     >
       <form id="broadcast-form" onSubmit={handleSubmit}>
         {formError && <p className="admin-modal__error">{formError}</p>}
+        {!formError && formNotice && <p className="admin-modal__notice">{formNotice}</p>}
 
         <div className="admin-modal__field">
           <label className="admin-modal__label" htmlFor="broadcast-text">
@@ -222,7 +287,7 @@ export default function BroadcastModal({ isOpen, onClose }) {
                   <button
                     type="button"
                     className="admin-modal__action-btn"
-                    onClick={() => handleEdit(item)}
+                    onClick={() => handleEditClick(item)}
                   >
                     Изменить
                   </button>

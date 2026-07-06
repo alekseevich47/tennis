@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import UserMultiSelect from './UserMultiSelect';
+import pb from '../../services/pb';
 import {
   listScheduledNotifications,
   createScheduledNotification,
@@ -10,6 +11,8 @@ import {
 } from '../../services/admin';
 import { formatPostDate } from '../../lib/format';
 import { error } from '../../lib/log';
+import { useAlertDialog } from '../../components/ui/AlertDialog';
+import { buildSendResultAlert } from './adminResultAlert';
 import './NotificationSendModal.css';
 
 function defaultDatetimeLocal() {
@@ -29,6 +32,7 @@ function getAudienceLabel(audience) {
  * @param {{ isOpen: boolean, onClose: () => void }} props
  */
 export default function NotificationSendModal({ isOpen, onClose }) {
+  const { alert } = useAlertDialog();
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [audience, setAudience] = useState('all');
@@ -39,6 +43,7 @@ export default function NotificationSendModal({ isOpen, onClose }) {
   const [editingId, setEditingId] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
+  const [formNotice, setFormNotice] = useState('');
 
   const resetForm = useCallback(() => {
     setTitle('');
@@ -49,14 +54,25 @@ export default function NotificationSendModal({ isOpen, onClose }) {
     setSendNow(false);
     setEditingId(null);
     setFormError('');
+    setFormNotice('');
   }, []);
 
   const loadPending = useCallback(async () => {
     try {
       const items = await listScheduledNotifications();
       setPending(items);
+      setEditingId((prevId) => {
+        if (prevId && !items.some((item) => item.id === prevId)) {
+          // Уведомление уже отправлено (сработал крон/ручная отправка) — редактировать больше нечего.
+          setFormNotice('Это уведомление уже было отправлено, форма переключена в режим создания нового.');
+          return null;
+        }
+        return prevId;
+      });
+      return items;
     } catch (err) {
       error('load scheduled notifications:', err);
+      return null;
     }
   }, []);
 
@@ -67,6 +83,24 @@ export default function NotificationSendModal({ isOpen, onClose }) {
     }
     loadPending();
   }, [isOpen, resetForm, loadPending]);
+
+  // Real-time удаление из списка запланированных уведомлений, когда уведомление
+  // отправляется кроном или другим администратором, пока модалка открыта.
+  useEffect(() => {
+    if (!isOpen) return undefined;
+
+    pb.collection('scheduled_notifications')
+      .subscribe('*', () => {
+        loadPending();
+      })
+      .catch((err) => {
+        error('subscribe scheduled notifications:', err);
+      });
+
+    return () => {
+      pb.collection('scheduled_notifications').unsubscribe('*');
+    };
+  }, [isOpen, loadPending]);
 
   const handleAudienceChange = useCallback((value) => {
     setAudience(value.audience);
@@ -82,7 +116,19 @@ export default function NotificationSendModal({ isOpen, onClose }) {
     setScheduledAt(toDatetimeLocalValue(item.scheduled_at) || defaultDatetimeLocal());
     setSendNow(false);
     setFormError('');
+    setFormNotice('');
   }, []);
+
+  const handleEditClick = useCallback(
+    async (item) => {
+      await alert({
+        title: 'Редактирование уведомления',
+        message: `Вы редактируете уже запланированное уведомление (${formatPostDate(item.scheduled_at)}, ${getAudienceLabel(item.audience)}), а не создаёте новое. Внесите изменения в форму выше и сохраните их.`
+      });
+      handleEdit(item);
+    },
+    [alert, handleEdit]
+  );
 
   const handleCancel = useCallback(
     async (id) => {
@@ -132,21 +178,39 @@ export default function NotificationSendModal({ isOpen, onClose }) {
       scheduledAt
     };
 
+    const wasEditing = Boolean(editingId);
+
     try {
-      if (editingId) {
-        await updateScheduledNotification(editingId, payload);
-      } else {
-        await createScheduledNotification(payload);
-      }
+      const result = wasEditing
+        ? await updateScheduledNotification(editingId, payload)
+        : await createScheduledNotification(payload);
       resetForm();
       await loadPending();
+      const { title: alertTitle, message } = buildSendResultAlert({
+        kind: 'notification',
+        editing: wasEditing,
+        result
+      });
+      await alert({ title: alertTitle, message });
     } catch (err) {
       error('save notification:', err);
       setFormError('Не удалось сохранить уведомление');
+      await alert({
+        title: 'Уведомление',
+        message: 'Не удалось сохранить уведомление. Проверьте подключение и попробуйте ещё раз.'
+      });
     } finally {
       setSubmitting(false);
     }
   };
+
+  const submitLabel = submitting
+    ? 'Сохраняем...'
+    : sendNow
+      ? 'Отправить'
+      : editingId
+        ? 'Сохранить изменения'
+        : 'Запланировать';
 
   return (
     <Modal
@@ -161,12 +225,13 @@ export default function NotificationSendModal({ isOpen, onClose }) {
           className="submit-btn-full"
           disabled={submitting}
         >
-          {submitting ? 'Сохраняем...' : editingId ? 'Сохранить изменения' : 'Запланировать'}
+          {submitLabel}
         </button>
       }
     >
       <form id="notification-send-form" onSubmit={handleSubmit}>
         {formError && <p className="admin-modal__error">{formError}</p>}
+        {!formError && formNotice && <p className="admin-modal__notice">{formNotice}</p>}
 
         <div className="admin-modal__field">
           <label className="admin-modal__label" htmlFor="notification-title">
@@ -247,7 +312,7 @@ export default function NotificationSendModal({ isOpen, onClose }) {
                   <button
                     type="button"
                     className="admin-modal__action-btn"
-                    onClick={() => handleEdit(item)}
+                    onClick={() => handleEditClick(item)}
                   >
                     Изменить
                   </button>
