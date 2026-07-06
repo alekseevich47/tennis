@@ -35,9 +35,11 @@ export default function NotificationCard({
   const cardRef = useRef(null);
   const markedRef = useRef(false);
   const [now, setNow] = useState(() => new Date());
+  const [readLocally, setReadLocally] = useState(false);
 
   const id = String(notification.id);
   const isRead = Boolean(notification.is_read);
+  const showUnreadDot = !isRead && !readLocally;
   const clickAction = notification.click_action;
   const badgeDynamicType = notification.badge_dynamic_type;
   const meta = /** @type {{ trainingId?: string } | undefined} */ (notification.meta);
@@ -60,10 +62,12 @@ export default function NotificationCard({
         if (!entries.some((entry) => entry.isIntersecting)) return;
         if (markedRef.current) return;
         markedRef.current = true;
+        setReadLocally(true);
         markNotificationRead(id)
           .then(() => onMarkRead?.())
           .catch(() => {
             markedRef.current = false;
+            setReadLocally(false);
           });
       },
       { root, threshold: 0.25 }
@@ -103,8 +107,11 @@ export default function NotificationCard({
   return (
     <article
       ref={cardRef}
-      className={clsx('notification-card', !isRead && 'notification-card--unread')}
+      className={clsx('notification-card', showUnreadDot && 'notification-card--unread')}
     >
+      {showUnreadDot ? (
+        <span className="notification-card__unread-dot" aria-hidden="true" />
+      ) : null}
       <div className="notification-card__header">
         <h3 className="notification-card__title">{notification.title || 'Уведомление'}</h3>
         <time className="notification-card__time" dateTime={String(notification.created || '')}>

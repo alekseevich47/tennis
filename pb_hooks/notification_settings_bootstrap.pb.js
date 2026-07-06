@@ -1,4 +1,5 @@
 onBootstrap((e) => {
+  e.next();
   try {
     $app.findFirstRecordByFilter('notification_settings', '');
     console.log('[admin] notification_settings: запись уже существует, пропуск');
@@ -12,5 +13,4 @@ onBootstrap((e) => {
     $app.save(record);
     console.log('[admin] notification_settings: создан singleton (все 4 поля = true)');
   }
-  e.next();
 });

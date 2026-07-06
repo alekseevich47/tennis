@@ -36,12 +36,20 @@ export default function UserMultiSelect({ audience, recipients, onChange, classN
   const collapsedLabel = getCollapsedLabel(audience, recipients);
 
   const handleSelectAll = useCallback(() => {
+    if (audience === 'all') {
+      onChange({ audience: 'selected', recipients: [] });
+      return;
+    }
     onChange({ audience: 'all', recipients: [] });
-  }, [onChange]);
+  }, [audience, onChange]);
 
   const handleSelectAllExceptBanned = useCallback(() => {
+    if (audience === 'all_except_banned') {
+      onChange({ audience: 'selected', recipients: [] });
+      return;
+    }
     onChange({ audience: 'all_except_banned', recipients: [] });
-  }, [onChange]);
+  }, [audience, onChange]);
 
   const handleUserToggle = useCallback(
     (userId) => {

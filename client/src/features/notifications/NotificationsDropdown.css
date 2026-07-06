@@ -1,6 +1,6 @@
 .notifications-dropdown {
   position: fixed;
-  left: 16px;
+  left: 0;
   z-index: 200;
   background: #ffffff;
   border-radius: 12px;

@@ -1,7 +1,19 @@
 .notification-card {
   position: relative;
-  padding: 12px 36px 12px 12px;
+  padding: 12px 36px 12px 20px;
   border-bottom: 1px solid #eef1f4;
+}
+
+.notification-card__unread-dot {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #007aff;
+  flex-shrink: 0;
 }
 
 .notification-card:last-child {
