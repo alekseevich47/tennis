@@ -1,5 +1,3 @@
-const TRAININGS_COLLECTION = 'trainings';
-
 // В PB-хуках helper-функции вне callback недоступны внутри onRecord* — логику дублируем inline.
 // PB хранит date с пробелом ("2026-07-06 11:00:00.000Z"); goja требует T — нормализуем перед парсингом.
 onRecordUpdateRequest((e) => {
@@ -10,7 +8,7 @@ onRecordUpdateRequest((e) => {
     e.record.set('is_closed', true);
   }
   e.next();
-}, TRAININGS_COLLECTION);
+}, 'trainings');
 
 onRecordViewRequest((e) => {
   const record = e.record;
@@ -24,7 +22,7 @@ onRecordViewRequest((e) => {
     }
   }
   e.next();
-}, TRAININGS_COLLECTION);
+}, 'trainings');
 
 // Основной механизм: каждую минуту закрываем запись на начавшиеся тренировки.
 // onRecordUpdateRequest / onRecordViewRequest выше — доп. подстраховка.

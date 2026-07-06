@@ -70,12 +70,10 @@ export default function NotificationsDropdown({
 
     const anchorRect = anchor.getBoundingClientRect();
     const top = anchorRect.bottom + 8;
-    const horizontalMargin = 16;
-    const width = Math.min(window.innerWidth - horizontalMargin * 2, window.innerWidth - horizontalMargin * 2);
 
     dropdown.style.top = `${top}px`;
-    dropdown.style.left = `${horizontalMargin}px`;
-    dropdown.style.width = `${width}px`;
+    dropdown.style.left = '0';
+    dropdown.style.width = '100vw';
   }, [open, notificationsAnchorRef, notifications.length]);
 
   useEffect(() => {
