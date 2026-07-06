@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useMaxAuth } from './hooks/useMaxAuth';
 import { useSessionResetKey } from './hooks/useSessionResetKey';
-import { isUserBanned, completeOnboarding } from './services/auth';
+import { isUserBanned, isModerator, completeOnboarding } from './services/auth';
 import OnboardingTutorial from './features/onboarding/OnboardingTutorial';
 import AppHeader from './components/AppHeader';
 import BottomNav from './components/BottomNav';
@@ -16,11 +16,14 @@ import CompetitionsPage from './features/competitions/CompetitionsPage';
 import GalleryPage from './features/gallery/GalleryPage';
 import ProfilePage from './features/profile/ProfilePage';
 import BlockedPage from './features/profile/BlockedPage';
+import AdminPanelPage from './features/admin/AdminPanelPage';
+import { ADMIN_TAB_INDEX } from './components/BottomNav';
 import {
   finalizeCancelledTraining,
   readPendingDeleteTrainingIds,
   writePendingDeleteTrainingIds
 } from './services/trainings';
+import { useNotifications } from './services/notifications';
 import { deleteProduct } from './services/catalog';
 import { hardDeleteComment, hardDeletePost } from './services/posts';
 import { error } from './lib/log';
@@ -32,23 +35,65 @@ const TAB_TITLES = [
   'Магазин',
   'Турнир',
   'Галерея',
-  'Мой профиль'
+  'Мой профиль',
+  'Админ-панель'
 ];
 
 const PROFILE_TAB_INDEX = 5;
 
+function getInitialFavoriteProductIds(user) {
+  const favorites = user?.favorite_products;
+  if (!Array.isArray(favorites)) return [];
+  return favorites
+    .map((entry) => (typeof entry === 'string' ? entry : entry?.id))
+    .filter(Boolean);
+}
+
 function AppInner() {
+  const { user, isLoading, setUser } = useMaxAuth();
+
+  if (isLoading) {
+    return (
+      <div className="app-boot">
+        <Spinner label="Загрузка профиля MAX..." />
+      </div>
+    );
+  }
+
+  if (isUserBanned(user)) {
+    return (
+      <div className="app">
+        <BlockedPage user={user} />
+      </div>
+    );
+  }
+
+  return (
+    <FavoritesProvider
+      userId={user?.id}
+      initialProductIds={getInitialFavoriteProductIds(user)}
+    >
+      <AppMain user={user} setUser={setUser} />
+    </FavoritesProvider>
+  );
+}
+
+function AppMain({ user, setUser }) {
   const [activeTab, setActiveTab] = useState(0);
   const [membershipOpen, setMembershipOpen] = useState(false);
   const [favoritesDropdownOpen, setFavoritesDropdownOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [favoriteProductToOpen, setFavoriteProductToOpen] = useState(null);
+  const [notificationTrainingId, setNotificationTrainingId] = useState(null);
+  const [notificationMembershipOpen, setNotificationMembershipOpen] = useState(false);
   const [feedSearch, setFeedSearch] = useState({ open: false, query: '' });
   const [competitionsSearch, setCompetitionsSearch] = useState({ open: false, query: '' });
   const [gallerySearch, setGallerySearch] = useState({ open: false, query: '' });
   const [competitionsSubTab, setCompetitionsSubTab] = useState('feed');
   const { totalCount: favoritesCount } = useFavorites();
+  const { data: notifications = [], mutate: mutateNotifications } = useNotifications(user?.id);
+  const unreadCount = notifications.filter((item) => !item.is_read).length;
   const sessionResetKey = useSessionResetKey();
-  const { user, isLoading, setUser } = useMaxAuth();
 
   // ID-буферы pending soft-delete. Передаются дочерним фичам через колбэки.
   const [pendingDeletePostIds, setPendingDeletePostIds] = useState([]);
@@ -125,16 +170,20 @@ function AppInner() {
   }, []);
 
   // Очистка при смене таба (старое поведение) + при закрытии webview (фикс C5).
+  const userIsModerator = isModerator();
+
   const handleTabChange = useCallback(
     (newTab) => {
+      if (newTab === ADMIN_TAB_INDEX && !userIsModerator) return;
       flushPendingDeletes();
       setFavoritesDropdownOpen(false);
+      setNotificationsOpen(false);
       setFeedSearch({ open: false, query: '' });
       setCompetitionsSearch({ open: false, query: '' });
       setGallerySearch({ open: false, query: '' });
       setActiveTab(newTab);
     },
-    [flushPendingDeletes]
+    [flushPendingDeletes, userIsModerator]
   );
 
   const handleCompetitionsSubTabChange = useCallback((subTab) => {
@@ -161,22 +210,6 @@ function AppInner() {
   const handleUserUpdate = useCallback((updated) => {
     setUser(updated);
   }, [setUser]);
-
-  if (isLoading) {
-    return (
-      <div className="app-boot">
-        <Spinner label="Загрузка профиля MAX..." />
-      </div>
-    );
-  }
-
-  if (isUserBanned(user)) {
-    return (
-      <div className="app">
-        <BlockedPage user={user} />
-      </div>
-    );
-  }
 
   const headerTitle = TAB_TITLES[activeTab] || TAB_TITLES[0];
   const contentClassName =
@@ -246,7 +279,22 @@ function AppInner() {
           setFavoriteProductToOpen(product);
           setFavoritesDropdownOpen(false);
         }}
-        onNotificationsClick={() => {}}
+        onNotificationsClick={() => setNotificationsOpen((open) => !open)}
+        unreadCount={unreadCount}
+        hasUnread={unreadCount > 0}
+        notificationsDropdownOpen={notificationsOpen}
+        onNotificationsDropdownClose={() => setNotificationsOpen(false)}
+        notifications={notifications}
+        onNotificationsMutate={mutateNotifications}
+        userId={user?.id}
+        onOpenTrainingFromNotification={(trainingId) => {
+          setActiveTab(1);
+          setNotificationTrainingId(trainingId);
+        }}
+        onOpenMembershipFromNotification={() => {
+          setActiveTab(PROFILE_TAB_INDEX);
+          setNotificationMembershipOpen(true);
+        }}
         searchConfig={searchConfig}
       />
 
@@ -264,6 +312,8 @@ function AppInner() {
               user={user}
               onDeletedIdsChange={setPendingDeleteTrainingIds}
               onFlushPendingDeletes={flushPendingDeletes}
+              trainingIdToOpen={notificationTrainingId}
+              onTrainingOpened={() => setNotificationTrainingId(null)}
             />
             <MembershipOverviewModal
               key={sessionResetKey}
@@ -294,24 +344,28 @@ function AppInner() {
           <GalleryPage user={user} searchQuery={gallerySearch.query} />
         )}
         {activeTab === PROFILE_TAB_INDEX && (
-          <ProfilePage user={user} onUpdate={handleUserUpdate} onTabChange={handleTabChange} />
+          <ProfilePage
+            user={user}
+            onUpdate={handleUserUpdate}
+            onTabChange={handleTabChange}
+            openMembershipFromNotification={notificationMembershipOpen}
+            onMembershipOpened={() => setNotificationMembershipOpen(false)}
+          />
         )}
+        {activeTab === ADMIN_TAB_INDEX && userIsModerator && <AdminPanelPage />}
       </main>
 
       <BottomNav
         activeTab={activeTab === PROFILE_TAB_INDEX ? -1 : activeTab}
         onTabChange={handleTabChange}
+        showAdmin={userIsModerator}
       />
     </div>
   );
 }
 
 function App() {
-  return (
-    <FavoritesProvider>
-      <AppInner />
-    </FavoritesProvider>
-  );
+  return <AppInner />;
 }
 
 export default App;

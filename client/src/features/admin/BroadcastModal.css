@@ -1,0 +1,142 @@
+.admin-modal__field {
+  margin-bottom: 16px;
+}
+
+.admin-modal__label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.admin-modal__textarea,
+.admin-modal__input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid #dce6f2;
+  border-radius: 6px;
+  font-size: 15px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.admin-modal__textarea:focus-visible,
+.admin-modal__input:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: 0;
+  border-color: #007aff;
+}
+
+.admin-modal__schedule {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-modal__datetime {
+  flex: 1;
+  min-width: 180px;
+  padding: 10px 12px;
+  border: 1px solid #dce6f2;
+  border-radius: 6px;
+  font-size: 15px;
+  font-family: inherit;
+}
+
+.admin-modal__datetime:disabled {
+  opacity: 0.5;
+  background: #f5f5f5;
+}
+
+.admin-modal__now {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.admin-modal__pending {
+  margin-top: 20px;
+  border-top: 1px solid #e8edf3;
+  padding-top: 16px;
+}
+
+.admin-modal__pending-title {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+}
+
+.admin-modal__pending-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-modal__pending-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.admin-modal__pending-text {
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
+}
+
+.admin-modal__pending-meta {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #8b98a5;
+}
+
+.admin-modal__pending-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.admin-modal__action-btn {
+  border: none;
+  background: none;
+  color: #007aff;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+
+.admin-modal__action-btn:active {
+  opacity: 0.7;
+}
+
+.admin-modal__action-btn--danger {
+  color: #e53935;
+}
+
+.admin-modal__error {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: #e53935;
+}
+
+.admin-modal__empty {
+  font-size: 14px;
+  color: #8b98a5;
+}

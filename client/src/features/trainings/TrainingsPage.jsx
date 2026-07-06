@@ -44,10 +44,18 @@ const DAYS_COUNT = 14;
  * @param {{
  *   user: any,
  *   onDeletedIdsChange?: (ids: string[]) => void,
- *   onFlushPendingDeletes?: () => void
+ *   onFlushPendingDeletes?: () => void,
+ *   trainingIdToOpen?: string | null,
+ *   onTrainingOpened?: () => void
  * }} props
  */
-function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
+function TrainingsPage({
+  user,
+  onDeletedIdsChange,
+  onFlushPendingDeletes,
+  trainingIdToOpen = null,
+  onTrainingOpened
+}) {
   const userIsModerator = isModerator();
   const canSelfBook = useMemo(() => {
     if (!user) return false;
@@ -78,6 +86,18 @@ function TrainingsPage({ user, onDeletedIdsChange, onFlushPendingDeletes }) {
   useEffect(() => {
     onDeletedIdsChange?.(hiddenDeletedTrainingIds);
   }, [hiddenDeletedTrainingIds, onDeletedIdsChange]);
+
+  useEffect(() => {
+    if (!trainingIdToOpen || !trainings) return;
+    const training = trainings.find((item) => item.id === trainingIdToOpen);
+    if (!training) return;
+
+    const trainingDay = new Date(training.date);
+    trainingDay.setHours(0, 0, 0, 0);
+    setSelectedDate(trainingDay);
+    setSelectedTrainingId(training.id);
+    onTrainingOpened?.();
+  }, [trainingIdToOpen, trainings, onTrainingOpened]);
 
   useEffect(() => {
     if (hiddenDeletedTrainingIds.length === 0) return;

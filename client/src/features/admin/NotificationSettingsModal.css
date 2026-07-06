@@ -1,0 +1,29 @@
+.notification-settings-modal__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid #e8edf3;
+}
+
+.notification-settings-modal__row:last-child {
+  border-bottom: none;
+}
+
+.notification-settings-modal__label {
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.notification-settings-modal__loading,
+.notification-settings-modal__error {
+  font-size: 14px;
+  color: #8b98a5;
+}
+
+.notification-settings-modal__error {
+  color: #e53935;
+}

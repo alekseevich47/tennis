@@ -1,0 +1,147 @@
+.user-multi-select {
+  --border: #dce6f2;
+  --borderActive: #007aff;
+  --background: #fff;
+  --arrow: #8b98a5;
+  --listText: #1f2937;
+  --listBackground: #fff;
+  --listActive: #eef6ff;
+  --listTextActive: #0969c3;
+  --listBorder: #e4ecfa;
+
+  position: relative;
+  width: 100%;
+}
+
+.user-multi-select__trigger {
+  cursor: pointer;
+  padding: 9px 36px 9px 16px;
+  border-radius: 6px;
+  display: block;
+  position: relative;
+  color: var(--listText);
+  border: 1px solid var(--border);
+  background: var(--background);
+  transition: border-color 0.2s ease;
+  user-select: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 44px;
+  line-height: 24px;
+  font-size: 16px;
+  font-family: inherit;
+  box-sizing: border-box;
+  width: 100%;
+  text-align: left;
+}
+
+.user-multi-select__trigger::before,
+.user-multi-select__trigger::after {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 8px;
+  height: 2px;
+  border-radius: 1px;
+  top: 50%;
+  right: 15px;
+  background: var(--arrow);
+  transition: all 0.3s ease;
+}
+
+.user-multi-select__trigger::before {
+  transform: translate(-3px, -50%) rotate(45deg);
+}
+
+.user-multi-select__trigger::after {
+  transform: translate(3px, -50%) rotate(-45deg);
+}
+
+.user-multi-select.open .user-multi-select__trigger {
+  border-color: var(--borderActive);
+}
+
+.user-multi-select.open .user-multi-select__trigger::before {
+  transform: translate(-3px, -50%) rotate(-45deg);
+}
+
+.user-multi-select.open .user-multi-select__trigger::after {
+  transform: translate(3px, -50%) rotate(45deg);
+}
+
+.user-multi-select__list {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 25;
+  max-height: 240px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 4px 0;
+  list-style: none;
+  background: var(--listBackground);
+  border: 1px solid var(--listBorder);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  scrollbar-width: none;
+}
+
+.user-multi-select__list::-webkit-scrollbar {
+  display: none;
+}
+
+.user-multi-select__option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  background: none;
+  font-size: 15px;
+  text-align: left;
+  cursor: pointer;
+  color: var(--listText);
+}
+
+.user-multi-select__option:hover,
+.user-multi-select__option.active {
+  background: var(--listActive);
+  color: var(--listTextActive);
+}
+
+.user-multi-select__option--preset {
+  font-weight: 500;
+  border-bottom: 1px solid var(--listBorder);
+}
+
+.user-multi-select__check {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid #c5ced8;
+  border-radius: 4px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #fff;
+  background: #fff;
+}
+
+.user-multi-select__option.active .user-multi-select__check {
+  background: var(--borderActive);
+  border-color: var(--borderActive);
+}
+
+.user-multi-select__name--banned {
+  opacity: 0.55;
+}
+
+.user-multi-select__loading {
+  padding: 12px 16px;
+  color: #8b98a5;
+  font-size: 14px;
+}
