@@ -113,21 +113,36 @@ function sendTrainingRemindersForDate(dateStr) {
   const filter = 'date >= "' + dateStr + ' 00:00:00" && date <= "' + dateStr + ' 23:59:59" && is_deleted = false';
   const trainings = $app.findRecordsByFilter('trainings', filter, 'date', 0, 0);
 
+  const byUser = {};
   for (let t = 0; t < trainings.length; t++) {
     const training = trainings[t];
     const bookedUsers = training.get('booked_users') || [];
     const type = training.getString('type') === 'tournament' ? 'турнир' : 'тренировку';
-    const dateStrFormatted = formatDateTimeGmt7(training.getString('date'));
-    const msg = 'Напоминаем Вам, что вы записаны на *' + type + '* на *' + dateStrFormatted +
-      '*. Если у Вас изменились планы — пожалуйста, снимите запись и сообщите об этом тренеру.';
+    const timeFormatted = formatDateTimeGmt7(training.getString('date'));
 
     for (let u = 0; u < bookedUsers.length; u++) {
-      try {
-        const user = $app.findRecordById('users', bookedUsers[u]);
-        const maxId = user.getString('max_id');
-        if (maxId) sendBotMessage(maxId, msg);
-      } catch (_) {}
+      const userId = bookedUsers[u];
+      if (!byUser[userId]) byUser[userId] = [];
+      byUser[userId].push({ type: type, timeFormatted: timeFormatted });
     }
+  }
+
+  const userIds = Object.keys(byUser);
+  for (let i = 0; i < userIds.length; i++) {
+    const userId = userIds[i];
+    const items = byUser[userId];
+    const parts = [];
+    for (let j = 0; j < items.length; j++) {
+      parts.push('*' + items[j].type + '* на *' + items[j].timeFormatted + '*');
+    }
+    const msg = 'Напоминаем Вам, что вы записаны на ' + parts.join(', ') +
+      '. Если у Вас изменились планы — пожалуйста, снимите запись и сообщите об этом тренеру.';
+
+    try {
+      const user = $app.findRecordById('users', userId);
+      const maxId = user.getString('max_id');
+      if (maxId) sendBotMessage(maxId, msg);
+    } catch (_) {}
   }
 }
 
@@ -135,6 +150,17 @@ function broadcastToAllUsers(text) {
   const allUsers = $app.findRecordsByFilter('users', 'max_id != "" && is_banned != true', '', 0, 0);
   for (let i = 0; i < allUsers.length; i++) {
     sendBotMessage(allUsers[i].getString('max_id'), text);
+  }
+}
+
+function broadcastToUserIds(userIds, text) {
+  if (!userIds || !userIds.length) return;
+  for (let i = 0; i < userIds.length; i++) {
+    try {
+      const user = $app.findRecordById('users', userIds[i]);
+      const maxId = user.getString('max_id');
+      if (maxId) sendBotMessage(maxId, text);
+    } catch (_) {}
   }
 }
 
@@ -150,5 +176,6 @@ module.exports = {
   buildCommentBotMessage: buildCommentBotMessage,
   sendTrainingRemindersForDate: sendTrainingRemindersForDate,
   broadcastToAllUsers: broadcastToAllUsers,
+  broadcastToUserIds: broadcastToUserIds,
   broadcastNewPublication: broadcastNewPublication
 };

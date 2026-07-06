@@ -77,7 +77,13 @@ const TRAINING_BADGE = {
 /**
  * @param {{ user: any, onUpdate?: (user: any) => void, onTabChange?: (tabIndex: number) => void }} props
  */
-function ProfilePage({ user, onUpdate, onTabChange }) {
+function ProfilePage({
+  user,
+  onUpdate,
+  onTabChange,
+  openMembershipFromNotification = false,
+  onMembershipOpened
+}) {
   const { alert } = useAlertDialog();
   const { data: players } = usePlayers();
   const { data: trainings, isLoading: trainingsLoading } = useTrainings();
@@ -101,6 +107,12 @@ function ProfilePage({ user, onUpdate, onTabChange }) {
   const [membershipOpen, setMembershipOpen] = useState(false);
   const [trainingsExpanded, setTrainingsExpanded] = useState(false);
   const [searchDate, setSearchDate] = useState('');
+
+  useEffect(() => {
+    if (!openMembershipFromNotification) return;
+    setMembershipOpen(true);
+    onMembershipOpened?.();
+  }, [openMembershipFromNotification, onMembershipOpened]);
 
   useEffect(() => {
     setFullName(user?.full_name || '');

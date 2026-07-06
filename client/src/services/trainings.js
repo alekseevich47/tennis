@@ -2,6 +2,7 @@
 import pb from './pb';
 import { isModerator, getCurrentUser } from './auth';
 import { error } from '../lib/log';
+import { maybeNotifySessionsLeft } from './notifications';
 import { auditTrainings } from '../lib/audit';
 import { hasTimeRangeEnded } from '../lib/format';
 
@@ -166,8 +167,9 @@ async function assertMembershipSessionAvailable(userId) {
 async function consumeMembershipSession(userId) {
   const user = await fetchMembershipSessionInfo(userId);
   const unlimited = isUnlimitedMembership(user.membership_type);
+  const previousAvailable = user.available_sessions || 0;
 
-  if (!unlimited && (user.available_sessions || 0) <= 0) {
+  if (!unlimited && previousAvailable <= 0) {
     throw Object.assign(new Error('Нет доступных посещений'), { code: 'NO_AVAILABLE_SESSIONS' });
   }
 
@@ -177,6 +179,15 @@ async function consumeMembershipSession(userId) {
   }
 
   await pb.collection('users').update(userId, patch);
+
+  if (!unlimited) {
+    await maybeNotifySessionsLeft(
+      userId,
+      previousAvailable,
+      previousAvailable - 1,
+      user.membership_type
+    );
+  }
 }
 
 /**
@@ -210,20 +221,32 @@ function buildBookedUsersPatch(training, nextBookedUsers, addedUserIds) {
  * @param {string} userId
  */
 async function restoreMembershipSession(userId) {
-  const user = /** @type {{ membership_type?: string, used_sessions?: number | null }} */ (
+  const user = /** @type {{ membership_type?: string, used_sessions?: number | null, available_sessions?: number | null }} */ (
     await pb.collection('users').getOne(userId, {
-      fields: 'membership_type,used_sessions'
+      fields: 'membership_type,used_sessions,available_sessions'
     })
   );
+
+  const unlimited = isUnlimitedMembership(user.membership_type);
+  const previousAvailable = user.available_sessions || 0;
 
   const patch = {
     used_sessions: Math.max(0, (user.used_sessions || 0) - 1)
   };
-  if (!isUnlimitedMembership(user.membership_type)) {
+  if (!unlimited) {
     patch['available_sessions+'] = 1;
   }
 
   await pb.collection('users').update(userId, patch);
+
+  if (!unlimited) {
+    await maybeNotifySessionsLeft(
+      userId,
+      previousAvailable,
+      previousAvailable + 1,
+      user.membership_type
+    );
+  }
 }
 
 /**

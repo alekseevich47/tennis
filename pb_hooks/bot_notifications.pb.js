@@ -215,6 +215,10 @@ routerAdd('POST', '/api/bot-notify-training-edit', (c) => {
   const text = 'Уважаемые участники, у ' + typeGen + ' ' + dateId + ' изменилось: ' + phrases.join('; ') + '.';
 
   try {
+    const settings = $app.findFirstRecordByFilter('notification_settings', '');
+    if (settings && !settings.getBool('training_edited_enabled')) {
+      return c.json(200, { success: true, skipped: true });
+    }
     bot.broadcastToAllUsers(text);
   } catch (err) {
     console.log('[bot] training edit notify: ' + err);
@@ -258,6 +262,10 @@ routerAdd('POST', '/api/bot-notify-training-create', (c) => {
     '*. Вы можете произвести запись в приложении.';
 
   try {
+    const settings = $app.findFirstRecordByFilter('notification_settings', '');
+    if (settings && !settings.getBool('training_created_enabled')) {
+      return c.json(200, { success: true, skipped: true });
+    }
     bot.broadcastToAllUsers(text);
   } catch (err) {
     console.log('[bot] training create notify: ' + err);
@@ -300,6 +308,10 @@ routerAdd('POST', '/api/bot-notify-training-cancelled', (c) => {
     '* по техническим причинам не состоится. Количество доступных посещений будет восстановлено.';
 
   try {
+    const settings = $app.findFirstRecordByFilter('notification_settings', '');
+    if (settings && !settings.getBool('training_deleted_enabled')) {
+      return c.json(200, { success: true, skipped: true });
+    }
     bot.broadcastToAllUsers(text);
   } catch (err) {
     console.log('[bot] training cancelled notify: ' + err);
@@ -490,22 +502,15 @@ onRecordAfterUpdateSuccess((e) => {
   e.next();
 }, 'gallery_comments');
 
-// Напоминания: 16:00 GMT+7 = 09:00 UTC (вечер, завтра); 06:00 GMT+7 = 23:00 UTC (утро, «сегодня» в GMT+7 уже следующий календарный день)
-cronAdd('training_reminder_evening', '0 9 * * *', () => {
+// Напоминание: 20:00 GMT+7 = 13:00 UTC (накануне дня тренировки)
+cronAdd('training_reminder_evening', '0 13 * * *', () => {
   const bot = require(__hooks + '/botlib.js');
   try {
+    const settings = $app.findFirstRecordByFilter('notification_settings', '');
+    if (settings && !settings.getBool('training_reminder_enabled')) return;
     bot.sendTrainingRemindersForDate(bot.getLocalDateString(1));
   } catch (err) {
     console.log('[bot] reminder evening: ' + err);
-  }
-});
-
-cronAdd('training_reminder_morning', '0 23 * * *', () => {
-  const bot = require(__hooks + '/botlib.js');
-  try {
-    bot.sendTrainingRemindersForDate(bot.getLocalDateString(0));
-  } catch (err) {
-    console.log('[bot] reminder morning: ' + err);
   }
 });
 
