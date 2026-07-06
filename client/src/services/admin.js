@@ -8,7 +8,7 @@ import { error } from '../lib/log';
  */
 async function dispatchNow(collection, id) {
   try {
-    await pb.send('/api/admin-dispatch-now', {
+    return await pb.send('/api/admin-dispatch-now', {
       method: 'POST',
       body: { collection, id }
     });
@@ -49,6 +49,15 @@ export async function listScheduledBroadcasts() {
 /**
  * @param {{ text: string, audience: string, recipients?: string[], sendNow?: boolean, scheduledAt?: string }} payload
  */
+/**
+ * Создание/обновление записи в `scheduled_*` — самостоятельная операция: если она
+ * прошла успешно, запись гарантированно сохранена в БД, даже если последующая
+ * немедленная отправка («Сейчас») упадёт по сети/на сервере. Раньше ошибка на шаге
+ * отправки трактовалась как «не удалось сохранить», хотя запись (и часть уведомлений
+ * получателям) уже была создана — отсюда путаница «ошибка в форме, но уведомление
+ * в колокольчике появилось».
+ * @returns {Promise<{ record: any, sendNow: boolean, dispatched: boolean, dispatchFailed: boolean, recipientsCount?: number }>}
+ */
 export async function createScheduledBroadcast({
   text,
   audience,
@@ -64,12 +73,24 @@ export async function createScheduledBroadcast({
     status: 'pending'
   });
 
-  if (sendNow) {
-    await dispatchNow('scheduled_broadcasts', record.id);
-    return pb.collection('scheduled_broadcasts').getOne(record.id);
+  if (!sendNow) {
+    return { record, sendNow: false, dispatched: false, dispatchFailed: false };
   }
 
-  return record;
+  try {
+    const result = await dispatchNow('scheduled_broadcasts', record.id);
+    const updated = await pb.collection('scheduled_broadcasts').getOne(record.id);
+    return {
+      record: updated,
+      sendNow: true,
+      dispatched: true,
+      dispatchFailed: false,
+      recipientsCount: result?.recipientsCount
+    };
+  } catch (err) {
+    error('dispatch scheduled broadcast now:', err);
+    return { record, sendNow: true, dispatched: false, dispatchFailed: true };
+  }
 }
 
 /**
@@ -85,12 +106,24 @@ export async function updateScheduledBroadcast(id, payload) {
     scheduled_at: sendNow ? new Date().toISOString() : fromDatetimeLocalValue(scheduledAt || '')
   });
 
-  if (sendNow) {
-    await dispatchNow('scheduled_broadcasts', record.id);
-    return pb.collection('scheduled_broadcasts').getOne(record.id);
+  if (!sendNow) {
+    return { record, sendNow: false, dispatched: false, dispatchFailed: false };
   }
 
-  return record;
+  try {
+    const result = await dispatchNow('scheduled_broadcasts', record.id);
+    const updated = await pb.collection('scheduled_broadcasts').getOne(record.id);
+    return {
+      record: updated,
+      sendNow: true,
+      dispatched: true,
+      dispatchFailed: false,
+      recipientsCount: result?.recipientsCount
+    };
+  } catch (err) {
+    error('dispatch scheduled broadcast now:', err);
+    return { record, sendNow: true, dispatched: false, dispatchFailed: true };
+  }
 }
 
 /**
@@ -110,6 +143,9 @@ export async function listScheduledNotifications() {
 /**
  * @param {{ title: string, body: string, audience: string, recipients?: string[], sendNow?: boolean, scheduledAt?: string }} payload
  */
+/**
+ * @returns {Promise<{ record: any, sendNow: boolean, dispatched: boolean, dispatchFailed: boolean, recipientsCount?: number }>}
+ */
 export async function createScheduledNotification({
   title,
   body,
@@ -127,12 +163,24 @@ export async function createScheduledNotification({
     status: 'pending'
   });
 
-  if (sendNow) {
-    await dispatchNow('scheduled_notifications', record.id);
-    return pb.collection('scheduled_notifications').getOne(record.id);
+  if (!sendNow) {
+    return { record, sendNow: false, dispatched: false, dispatchFailed: false };
   }
 
-  return record;
+  try {
+    const result = await dispatchNow('scheduled_notifications', record.id);
+    const updated = await pb.collection('scheduled_notifications').getOne(record.id);
+    return {
+      record: updated,
+      sendNow: true,
+      dispatched: true,
+      dispatchFailed: false,
+      recipientsCount: result?.recipientsCount
+    };
+  } catch (err) {
+    error('dispatch scheduled notification now:', err);
+    return { record, sendNow: true, dispatched: false, dispatchFailed: true };
+  }
 }
 
 /**
@@ -149,12 +197,24 @@ export async function updateScheduledNotification(id, payload) {
     scheduled_at: sendNow ? new Date().toISOString() : fromDatetimeLocalValue(scheduledAt || '')
   });
 
-  if (sendNow) {
-    await dispatchNow('scheduled_notifications', record.id);
-    return pb.collection('scheduled_notifications').getOne(record.id);
+  if (!sendNow) {
+    return { record, sendNow: false, dispatched: false, dispatchFailed: false };
   }
 
-  return record;
+  try {
+    const result = await dispatchNow('scheduled_notifications', record.id);
+    const updated = await pb.collection('scheduled_notifications').getOne(record.id);
+    return {
+      record: updated,
+      sendNow: true,
+      dispatched: true,
+      dispatchFailed: false,
+      recipientsCount: result?.recipientsCount
+    };
+  } catch (err) {
+    error('dispatch scheduled notification now:', err);
+    return { record, sendNow: true, dispatched: false, dispatchFailed: true };
+  }
 }
 
 /**

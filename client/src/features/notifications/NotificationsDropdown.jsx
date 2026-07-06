@@ -72,8 +72,6 @@ export default function NotificationsDropdown({
     const top = anchorRect.bottom + 8;
 
     dropdown.style.top = `${top}px`;
-    dropdown.style.left = '0';
-    dropdown.style.width = '100vw';
   }, [open, notificationsAnchorRef, notifications.length]);
 
   useEffect(() => {
