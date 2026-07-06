@@ -1,0 +1,178 @@
+// @ts-check
+import pb from './pb';
+import { error } from '../lib/log';
+
+/**
+ * @param {string} collection
+ * @param {string} id
+ */
+async function dispatchNow(collection, id) {
+  try {
+    await pb.send('/api/admin-dispatch-now', {
+      method: 'POST',
+      body: { collection, id }
+    });
+  } catch (err) {
+    error('admin dispatch-now:', err);
+    throw err;
+  }
+}
+
+/**
+ * @param {string} [isoString]
+ */
+function toDatetimeLocalValue(isoString) {
+  if (!isoString) return '';
+  const date = new Date(isoString);
+  if (Number.isNaN(date.getTime())) return '';
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+/**
+ * @param {string} value
+ */
+function fromDatetimeLocalValue(value) {
+  if (!value) return new Date().toISOString();
+  return new Date(value).toISOString();
+}
+
+export { toDatetimeLocalValue, fromDatetimeLocalValue };
+
+export async function listScheduledBroadcasts() {
+  return pb.collection('scheduled_broadcasts').getFullList({
+    filter: "status = 'pending'",
+    sort: 'scheduled_at'
+  });
+}
+
+/**
+ * @param {{ text: string, audience: string, recipients?: string[], sendNow?: boolean, scheduledAt?: string }} payload
+ */
+export async function createScheduledBroadcast({
+  text,
+  audience,
+  recipients = [],
+  sendNow = false,
+  scheduledAt
+}) {
+  const record = await pb.collection('scheduled_broadcasts').create({
+    text,
+    audience,
+    recipients: audience === 'selected' ? recipients : [],
+    scheduled_at: sendNow ? new Date().toISOString() : fromDatetimeLocalValue(scheduledAt || ''),
+    status: 'pending'
+  });
+
+  if (sendNow) {
+    await dispatchNow('scheduled_broadcasts', record.id);
+    return pb.collection('scheduled_broadcasts').getOne(record.id);
+  }
+
+  return record;
+}
+
+/**
+ * @param {string} id
+ * @param {{ text: string, audience: string, recipients?: string[], sendNow?: boolean, scheduledAt?: string }} payload
+ */
+export async function updateScheduledBroadcast(id, payload) {
+  const { text, audience, recipients = [], sendNow = false, scheduledAt } = payload;
+  const record = await pb.collection('scheduled_broadcasts').update(id, {
+    text,
+    audience,
+    recipients: audience === 'selected' ? recipients : [],
+    scheduled_at: sendNow ? new Date().toISOString() : fromDatetimeLocalValue(scheduledAt || '')
+  });
+
+  if (sendNow) {
+    await dispatchNow('scheduled_broadcasts', record.id);
+    return pb.collection('scheduled_broadcasts').getOne(record.id);
+  }
+
+  return record;
+}
+
+/**
+ * @param {string} id
+ */
+export async function cancelScheduledBroadcast(id) {
+  return pb.collection('scheduled_broadcasts').update(id, { status: 'cancelled' });
+}
+
+export async function listScheduledNotifications() {
+  return pb.collection('scheduled_notifications').getFullList({
+    filter: "status = 'pending'",
+    sort: 'scheduled_at'
+  });
+}
+
+/**
+ * @param {{ title: string, body: string, audience: string, recipients?: string[], sendNow?: boolean, scheduledAt?: string }} payload
+ */
+export async function createScheduledNotification({
+  title,
+  body,
+  audience,
+  recipients = [],
+  sendNow = false,
+  scheduledAt
+}) {
+  const record = await pb.collection('scheduled_notifications').create({
+    title,
+    body,
+    audience,
+    recipients: audience === 'selected' ? recipients : [],
+    scheduled_at: sendNow ? new Date().toISOString() : fromDatetimeLocalValue(scheduledAt || ''),
+    status: 'pending'
+  });
+
+  if (sendNow) {
+    await dispatchNow('scheduled_notifications', record.id);
+    return pb.collection('scheduled_notifications').getOne(record.id);
+  }
+
+  return record;
+}
+
+/**
+ * @param {string} id
+ * @param {{ title: string, body: string, audience: string, recipients?: string[], sendNow?: boolean, scheduledAt?: string }} payload
+ */
+export async function updateScheduledNotification(id, payload) {
+  const { title, body, audience, recipients = [], sendNow = false, scheduledAt } = payload;
+  const record = await pb.collection('scheduled_notifications').update(id, {
+    title,
+    body,
+    audience,
+    recipients: audience === 'selected' ? recipients : [],
+    scheduled_at: sendNow ? new Date().toISOString() : fromDatetimeLocalValue(scheduledAt || '')
+  });
+
+  if (sendNow) {
+    await dispatchNow('scheduled_notifications', record.id);
+    return pb.collection('scheduled_notifications').getOne(record.id);
+  }
+
+  return record;
+}
+
+/**
+ * @param {string} id
+ */
+export async function cancelScheduledNotification(id) {
+  return pb.collection('scheduled_notifications').update(id, { status: 'cancelled' });
+}
+
+export async function getNotificationSettings() {
+  const records = await pb.collection('notification_settings').getFullList();
+  return records[0] || null;
+}
+
+/**
+ * @param {string} id
+ * @param {Record<string, boolean>} patch
+ */
+export async function updateNotificationSettings(id, patch) {
+  return pb.collection('notification_settings').update(id, patch);
+}

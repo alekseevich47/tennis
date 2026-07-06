@@ -1,0 +1,108 @@
+.notification-card {
+  position: relative;
+  padding: 12px 36px 12px 12px;
+  border-bottom: 1px solid #eef1f4;
+}
+
+.notification-card:last-child {
+  border-bottom: none;
+}
+
+.notification-card--unread {
+  background: #f8fbff;
+}
+
+.notification-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.notification-card__title {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.notification-card__time {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: #8b98a5;
+  white-space: nowrap;
+}
+
+.notification-card__body {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #4b5563;
+}
+
+.notification-card__badge {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: #eef1f4;
+  font-size: 12px;
+  font-weight: 500;
+  color: #4b5563;
+}
+
+.notification-card__action {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 500;
+  color: #0056b3;
+  cursor: pointer;
+  text-align: left;
+}
+
+.notification-card__action:hover {
+  text-decoration: underline;
+}
+
+.notification-card__action:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: 2px;
+}
+
+.notification-card__delete {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #8b98a5;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.notification-card__delete svg {
+  width: 14px;
+  height: 14px;
+}
+
+.notification-card__delete:hover {
+  color: #6b7280;
+  background: #f0f2f5;
+}
+
+.notification-card__delete:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: 2px;
+}

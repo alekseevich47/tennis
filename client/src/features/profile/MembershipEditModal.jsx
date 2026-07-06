@@ -5,6 +5,7 @@ import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { isModerator } from '../../services/auth';
 import pb from '../../services/pb';
 import { auditMembership } from '../../lib/audit';
+import { maybeNotifySessionsLeft } from '../../services/notifications';
 import './Profile.css';
 
 function getCurrentSessions(user) {
@@ -97,6 +98,8 @@ function MembershipEditModal({ isOpen, onClose, user, mode = 'add', onMutated })
     try {
       const updated = await pb.collection('users').update(user.id, { available_sessions: newValue });
 
+      await maybeNotifySessionsLeft(user.id, current, newValue, user.membership_type || 'regular');
+
       if (mode === 'subtract') {
         auditMembership.sessionsSubtracted(user.id, delta, newValue);
       } else {
@@ -184,6 +187,17 @@ function MembershipEditModal({ isOpen, onClose, user, mode = 'add', onMutated })
     setSubmitting(true);
     try {
       const updated = await pb.collection('users').update(user.id, payload);
+
+      if (payload.available_sessions !== undefined) {
+        const initialSessions = Number.parseInt(initialSnapshot.availableSessions, 10) || 0;
+        const nextSessions = getCurrentSessions(updated);
+        await maybeNotifySessionsLeft(
+          user.id,
+          initialSessions,
+          nextSessions,
+          updated.membership_type || membershipType
+        );
+      }
 
       if (payload.membership_type && payload.membership_type !== initialSnapshot.membershipType) {
         auditMembership.membershipTypeChanged(

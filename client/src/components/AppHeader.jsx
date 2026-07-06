@@ -1,8 +1,10 @@
 import React, { memo, useEffect, useRef } from 'react';
+import clsx from 'clsx';
 import Avatar from './ui/Avatar';
 import IconButton from './ui/IconButton';
 import FavoriteIcon from '../features/shop/FavoriteIcon';
 import FavoritesDropdown from '../features/shop/FavoritesDropdown';
+import NotificationsDropdown from '../features/notifications/NotificationsDropdown';
 import './AppHeader.css';
 
 /**
@@ -18,6 +20,15 @@ import './AppHeader.css';
  *   onFavoritesDropdownClose?: () => void,
  *   onOpenProduct?: (product: import('../services/catalog').ProductRecord) => void,
  *   onNotificationsClick?: () => void,
+ *   unreadCount?: number,
+ *   hasUnread?: boolean,
+ *   notificationsDropdownOpen?: boolean,
+ *   onNotificationsDropdownClose?: () => void,
+ *   notifications?: Record<string, unknown>[],
+ *   onNotificationsMutate?: () => void,
+ *   userId?: string,
+ *   onOpenTrainingFromNotification?: (trainingId: string) => void,
+ *   onOpenMembershipFromNotification?: () => void,
  *   searchConfig?: {
  *     open: boolean,
  *     query: string,
@@ -39,9 +50,19 @@ function AppHeader({
   onFavoritesDropdownClose,
   onOpenProduct,
   onNotificationsClick,
+  unreadCount = 0,
+  hasUnread = false,
+  notificationsDropdownOpen = false,
+  onNotificationsDropdownClose,
+  notifications = [],
+  onNotificationsMutate,
+  userId,
+  onOpenTrainingFromNotification,
+  onOpenMembershipFromNotification,
   searchConfig
 }) {
   const favoritesAnchorRef = useRef(null);
+  const notificationsAnchorRef = useRef(null);
   const searchInputRef = useRef(null);
   const dateInputRef = useRef(null);
   const displayName = user?.full_name || 'Гость';
@@ -155,17 +176,36 @@ function AppHeader({
           </IconButton>
         ) : null}
         {onNotificationsClick !== undefined && (
-          <IconButton
-            ariaLabel="Уведомления"
-            variant="ghost"
-            className="header-bell-btn"
-            onClick={onNotificationsClick}
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-            </svg>
-          </IconButton>
+          <div ref={notificationsAnchorRef} className="header-notifications-anchor">
+            <IconButton
+              ariaLabel={`Уведомления${unreadCount > 0 ? `, ${unreadCount} непрочитанных` : ''}`}
+              variant="ghost"
+              className={clsx('header-bell-btn', hasUnread && 'header-bell-btn--shake')}
+              onClick={onNotificationsClick}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+              {unreadCount > 0 ? (
+                <span className="header-bell-btn__badge" aria-hidden="true">
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </span>
+              ) : null}
+            </IconButton>
+            {userId && onNotificationsDropdownClose && onNotificationsMutate ? (
+              <NotificationsDropdown
+                open={notificationsDropdownOpen}
+                onClose={onNotificationsDropdownClose}
+                userId={userId}
+                notifications={notifications}
+                onMutate={onNotificationsMutate}
+                notificationsAnchorRef={notificationsAnchorRef}
+                onOpenTraining={onOpenTrainingFromNotification}
+                onOpenMembership={onOpenMembershipFromNotification}
+              />
+            ) : null}
+          </div>
         )}
         <button
           type="button"

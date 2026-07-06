@@ -6,56 +6,114 @@ import React, {
   useMemo,
   useState
 } from 'react';
-
-const FAVORITES_STORAGE_KEY = 'favorite_items';
+import pb from '../services/pb';
+import { error } from '../lib/log';
 
 const FavoritesContext = createContext(null);
 
-function readStoredItems() {
-  try {
-    const raw = localStorage.getItem(FAVORITES_STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    return parsed.filter(
-      (entry) =>
-        entry &&
-        typeof entry === 'object' &&
-        entry.product &&
-        typeof entry.product.id === 'string'
-    );
-  } catch {
-    return [];
-  }
+async function loadFavoriteProducts(productIds, signal) {
+  const ids = productIds.filter(Boolean);
+  if (ids.length === 0) return [];
+
+  const filter = ids.map((id) => pb.filter('id = {:id}', { id })).join(' || ');
+  const products = await pb.collection('products').getFullList({
+    filter: `(${filter}) && is_deleted = false`,
+    requestKey: null,
+    signal
+  });
+
+  const byId = new Map(products.map((product) => [product.id, product]));
+  return ids
+    .map((id) => byId.get(id))
+    .filter(Boolean)
+    .map((product) => ({ product, quantity: 1 }));
 }
 
-export function FavoritesProvider({ children }) {
-  const [items, setItems] = useState(readStoredItems);
+export function FavoritesProvider({ children, userId, initialProductIds = [] }) {
+  const [items, setItems] = useState([]);
+  const initialIdsKey = initialProductIds.join(',');
 
   useEffect(() => {
-    localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(items));
-  }, [items]);
+    if (!userId) {
+      setItems([]);
+      return undefined;
+    }
 
-  const addItem = useCallback((product) => {
-    if (!product?.id) return;
-    setItems((current) => {
-      if (current.some((entry) => entry.product.id === product.id)) {
-        return current;
+    const controller = new AbortController();
+
+    (async () => {
+      try {
+        const loaded = await loadFavoriteProducts(initialProductIds, controller.signal);
+        if (!controller.signal.aborted) {
+          setItems(loaded);
+        }
+      } catch (err) {
+        if (err?.name === 'AbortError') return;
+        error('Ошибка загрузки избранного:', err);
       }
-      return [...current, { product, quantity: 1 }];
-    });
-  }, []);
+    })();
 
-  const removeItem = useCallback((productId) => {
-    if (!productId) return;
-    setItems((current) =>
-      current.filter((entry) => entry.product.id !== productId)
-    );
-  }, []);
+    return () => controller.abort();
+  }, [userId, initialIdsKey]);
+
+  const addItem = useCallback(
+    (product) => {
+      if (!product?.id || !userId) return;
+      setItems((current) => {
+        if (current.some((entry) => entry.product.id === product.id)) {
+          return current;
+        }
+        return [...current, { product, quantity: 1 }];
+      });
+      pb.collection('users')
+        .update(userId, { 'favorite_products+': product.id })
+        .catch((err) => {
+          error('Ошибка добавления в избранное:', err);
+          setItems((current) =>
+            current.filter((entry) => entry.product.id !== product.id)
+          );
+        });
+    },
+    [userId]
+  );
+
+  const removeItem = useCallback(
+    (productId) => {
+      if (!productId || !userId) return;
+      let removed = null;
+      setItems((current) => {
+        removed = current.find((entry) => entry.product.id === productId);
+        if (!removed) return current;
+        return current.filter((entry) => entry.product.id !== productId);
+      });
+      if (!removed) return;
+      pb.collection('users')
+        .update(userId, { 'favorite_products-': productId })
+        .catch((err) => {
+          error('Ошибка удаления из избранного:', err);
+          setItems((prev) => {
+            if (prev.some((entry) => entry.product.id === productId)) return prev;
+            return [...prev, removed];
+          });
+        });
+    },
+    [userId]
+  );
 
   const clearFavorites = useCallback(() => {
-    setItems([]);
-  }, []);
+    if (!userId) return;
+    let snapshot = [];
+    setItems((current) => {
+      snapshot = [...current];
+      return [];
+    });
+    pb.collection('users')
+      .update(userId, { favorite_products: [] })
+      .catch((err) => {
+        error('Ошибка очистки избранного:', err);
+        setItems(snapshot);
+      });
+  }, [userId]);
 
   const totalCount = useMemo(() => items.length, [items]);
 
