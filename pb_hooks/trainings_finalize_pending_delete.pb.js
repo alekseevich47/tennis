@@ -1,5 +1,3 @@
-const TRAININGS_COLLECTION = 'trainings';
-
 // При soft-delete ставим delete_pending_at; при restore / финализации — сбрасываем.
 onRecordUpdateRequest((e) => {
   const isDeleted = e.record.getBool('is_deleted');
@@ -15,14 +13,14 @@ onRecordUpdateRequest((e) => {
   }
 
   e.next();
-}, TRAININGS_COLLECTION);
+}, 'trainings');
 
 // Каждую минуту финализируем soft-delete старше 2 минут (независимо от клиента / закрытия MAX).
 cronAdd('finalize_pending_deleted_trainings', '* * * * *', () => {
   const trainingslib = require(__hooks + '/trainingslib.js');
   try {
     const filter = 'is_deleted = true && is_cancelled = false';
-    const trainings = $app.findRecordsByFilter(TRAININGS_COLLECTION, filter, '', 0, 0);
+    const trainings = $app.findRecordsByFilter('trainings', filter, '', 0, 0);
     for (let i = 0; i < trainings.length; i++) {
       if (trainingslib.isReadyToFinalizePendingDelete(trainings[i])) {
         try {
