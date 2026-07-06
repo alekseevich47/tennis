@@ -38,6 +38,7 @@ function dispatchScheduledBroadcast(record) {
     record.set('status', 'sent');
     $app.save(record);
     console.log('[admin] broadcast sent: ' + record.getId() + ' → ' + userIds.length + ' users');
+    return userIds.length;
   } catch (err) {
     console.log('[admin] broadcast dispatch: ' + err);
     throw err;
@@ -64,6 +65,7 @@ function dispatchScheduledNotification(record) {
     record.set('status', 'sent');
     $app.save(record);
     console.log('[admin] notification sent: ' + record.getId() + ' → ' + userIds.length + ' users');
+    return userIds.length;
   } catch (err) {
     console.log('[admin] notification dispatch: ' + err);
     throw err;

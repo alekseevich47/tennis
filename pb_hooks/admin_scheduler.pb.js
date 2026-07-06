@@ -59,18 +59,19 @@ routerAdd('POST', '/api/admin-dispatch-now', (c) => {
     return c.json(200, { success: true, skipped: true });
   }
 
+  let recipientsCount = 0;
   try {
     if (collection === 'scheduled_broadcasts') {
-      adminlib.dispatchScheduledBroadcast(record);
+      recipientsCount = adminlib.dispatchScheduledBroadcast(record);
     } else {
-      adminlib.dispatchScheduledNotification(record);
+      recipientsCount = adminlib.dispatchScheduledNotification(record);
     }
   } catch (err) {
     console.log('[admin] dispatch-now ' + id + ': ' + err);
     return c.json(500, { error: 'Dispatch failed' });
   }
 
-  return c.json(200, { success: true });
+  return c.json(200, { success: true, recipientsCount: recipientsCount });
 });
 
 console.log('--- ADMIN SCHEDULER LOADED ---');

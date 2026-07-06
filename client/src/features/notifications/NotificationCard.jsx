@@ -10,6 +10,8 @@ const CLICK_ACTION_LABELS = {
   open_membership: 'Перейти к абонементу'
 };
 
+const READ_VISIBLE_DELAY_MS = 1200;
+
 /**
  * @param {{
  *   notification: Record<string, unknown>,
@@ -34,6 +36,7 @@ export default function NotificationCard({
 }) {
   const cardRef = useRef(null);
   const markedRef = useRef(false);
+  const readTimeoutRef = useRef(null);
   const [now, setNow] = useState(() => new Date());
   const [readLocally, setReadLocally] = useState(false);
 
@@ -59,22 +62,39 @@ export default function NotificationCard({
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (!entries.some((entry) => entry.isIntersecting)) return;
-        if (markedRef.current) return;
-        markedRef.current = true;
-        setReadLocally(true);
-        markNotificationRead(id)
-          .then(() => onMarkRead?.())
-          .catch(() => {
-            markedRef.current = false;
-            setReadLocally(false);
-          });
+        const visible = entries.some((entry) => entry.isIntersecting);
+        if (!visible) {
+          if (readTimeoutRef.current) {
+            window.clearTimeout(readTimeoutRef.current);
+            readTimeoutRef.current = null;
+          }
+          return;
+        }
+        if (markedRef.current || readTimeoutRef.current) return;
+        readTimeoutRef.current = window.setTimeout(() => {
+          readTimeoutRef.current = null;
+          if (markedRef.current) return;
+          markedRef.current = true;
+          setReadLocally(true);
+          markNotificationRead(id)
+            .then(() => onMarkRead?.())
+            .catch(() => {
+              markedRef.current = false;
+              setReadLocally(false);
+            });
+        }, READ_VISIBLE_DELAY_MS);
       },
       { root, threshold: 0.25 }
     );
 
     observer.observe(target);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      if (readTimeoutRef.current) {
+        window.clearTimeout(readTimeoutRef.current);
+        readTimeoutRef.current = null;
+      }
+    };
   }, [id, isRead, onMarkRead, scrollRootRef]);
 
   const badgeText = (() => {
