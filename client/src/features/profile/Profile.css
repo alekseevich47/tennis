@@ -204,6 +204,24 @@
   cursor: not-allowed;
 }
 
+.membership-buy-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #17171b;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.membership-buy-btn:hover {
+  background: #0a0a0c;
+}
+
 .membership-type-options {
   display: flex;
   gap: 16px;

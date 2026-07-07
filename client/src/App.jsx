@@ -26,12 +26,13 @@ import {
 import { useNotifications } from './services/notifications';
 import { deleteProduct } from './services/catalog';
 import { hardDeleteComment, hardDeletePost } from './services/posts';
+import { hardDeleteTournamentPost } from './services/tournamentPosts';
 import { error } from './lib/log';
 import './styles/global.css';
 
 const TAB_TITLES = [
   'Лента',
-  'Тренировки',
+  'Запись',
   'Магазин',
   'Турнир',
   'Галерея',
@@ -97,18 +98,22 @@ function AppMain({ user, setUser }) {
 
   // ID-буферы pending soft-delete. Передаются дочерним фичам через колбэки.
   const [pendingDeletePostIds, setPendingDeletePostIds] = useState([]);
+  const [pendingDeleteTournamentPostIds, setPendingDeleteTournamentPostIds] = useState([]);
   const [pendingDeleteTrainingIds, setPendingDeleteTrainingIds] = useState([]);
   const [pendingDeleteProductIds, setPendingDeleteProductIds] = useState([]);
   const pendingDeletePostIdsRef = useRef([]);
+  const pendingDeleteTournamentPostIdsRef = useRef([]);
   const pendingDeleteTrainingIdsRef = useRef([]);
   const pendingDeleteProductIdsRef = useRef([]);
   pendingDeletePostIdsRef.current = pendingDeletePostIds;
+  pendingDeleteTournamentPostIdsRef.current = pendingDeleteTournamentPostIds;
   pendingDeleteTrainingIdsRef.current = pendingDeleteTrainingIds;
   pendingDeleteProductIdsRef.current = pendingDeleteProductIds;
 
   // Финализация soft-delete: посты/товары/комменты — hard-delete; тренировки — is_cancelled.
   const flushPendingDeletes = useCallback(async () => {
     const postIds = pendingDeletePostIdsRef.current;
+    const tournamentPostIds = pendingDeleteTournamentPostIdsRef.current;
     const trainingIds = Array.from(
       new Set([
         ...pendingDeleteTrainingIdsRef.current,
@@ -127,6 +132,15 @@ function AppMain({ user, setUser }) {
         )
       );
       setPendingDeletePostIds([]);
+    }
+
+    if (tournamentPostIds.length > 0) {
+      tasks.push(
+        ...tournamentPostIds.map((id) =>
+          hardDeleteTournamentPost(id).catch((e) => error('flush tournament post:', e))
+        )
+      );
+      setPendingDeleteTournamentPostIds([]);
     }
 
     if (trainingIds.length > 0) {
@@ -337,6 +351,7 @@ function AppMain({ user, setUser }) {
             user={user}
             onTabChange={handleTabChange}
             onSubTabChange={handleCompetitionsSubTabChange}
+            onDeletedIdsChange={setPendingDeleteTournamentPostIds}
             searchQuery={competitionsSearch.query}
           />
         )}

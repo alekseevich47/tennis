@@ -518,6 +518,11 @@ cronAdd('training_reminder_evening', '0 13 * * *', () => {
 onRecordAfterCreateSuccess((e) => {
   const bot = require(__hooks + '/botlib.js');
   try {
+    const settings = $app.findFirstRecordByFilter('notification_settings', '');
+    if (settings && !settings.getBool('posts_created_enabled')) {
+      e.next();
+      return;
+    }
     bot.broadcastNewPublication();
   } catch (err) {
     console.log('[bot] posts broadcast: ' + err);
@@ -528,6 +533,11 @@ onRecordAfterCreateSuccess((e) => {
 onRecordAfterCreateSuccess((e) => {
   const bot = require(__hooks + '/botlib.js');
   try {
+    const settings = $app.findFirstRecordByFilter('notification_settings', '');
+    if (settings && !settings.getBool('tournament_posts_created_enabled')) {
+      e.next();
+      return;
+    }
     bot.broadcastNewPublication();
   } catch (err) {
     console.log('[bot] tournament_posts broadcast: ' + err);

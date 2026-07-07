@@ -3,9 +3,9 @@ import clsx from 'clsx';
 import './InfoTooltip.css';
 
 /**
- * @param {{ text: string, children: React.ReactNode, className?: string }} props
+ * @param {{ text: string, children: React.ReactNode, className?: string, placement?: 'bottom' | 'top' }} props
  */
-export default function InfoTooltip({ text, children, className }) {
+export default function InfoTooltip({ text, children, className, placement = 'bottom' }) {
   const rootRef = useRef(null);
   const bubbleRef = useRef(null);
   const [open, setOpen] = useState(false);
@@ -74,7 +74,11 @@ export default function InfoTooltip({ text, children, className }) {
         <span
           ref={bubbleRef}
           role="tooltip"
-          className={clsx('info-tooltip__bubble', visible && 'info-tooltip__bubble--visible')}
+          className={clsx(
+            'info-tooltip__bubble',
+            placement === 'top' && 'info-tooltip__bubble--top',
+            visible && 'info-tooltip__bubble--visible'
+          )}
           onTransitionEnd={handleTransitionEnd}
         >
           {text}

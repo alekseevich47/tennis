@@ -54,9 +54,16 @@
   color: #4b5563;
 }
 
+.notification-card__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 8px;
+}
+
 .notification-card__badge {
   display: inline-block;
-  margin-top: 8px;
   padding: 4px 8px;
   border-radius: 6px;
   background: #eef1f4;
@@ -67,7 +74,6 @@
 
 .notification-card__action {
   display: inline-block;
-  margin-top: 8px;
   padding: 0;
   border: none;
   background: transparent;

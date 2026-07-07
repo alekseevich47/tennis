@@ -91,6 +91,15 @@ export async function softDeleteTournamentPost(id) {
 }
 
 /**
+ * @param {string} id
+ */
+export async function hardDeleteTournamentPost(id) {
+  const result = await pb.collection('tournament_posts').delete(id);
+  invalidateTournamentCaches();
+  return result;
+}
+
+/**
  * @param {{
  *   content: string,
  *   files?: File[],
