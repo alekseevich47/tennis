@@ -23,13 +23,29 @@ const SETTINGS_ROWS = [
     field: 'training_edited_enabled',
     label: 'Изменение тренировки',
     tooltip:
-      'Сообщение в MAX при изменении времени, места или других параметров тренировки.'
+      'Сообщение в MAX при изменении времени, места или других параметров тренировки.',
+    tooltipPlacement: 'top'
   },
   {
     field: 'training_deleted_enabled',
     label: 'Отмена тренировки',
     tooltip:
-      'Сообщение в MAX при отмене тренировки. Возврат посещений и абонементов работает независимо от этого тумблера.'
+      'Сообщение в MAX при отмене тренировки. Возврат посещений и абонементов работает независимо от этого тумблера.',
+    tooltipPlacement: 'top'
+  },
+  {
+    field: 'posts_created_enabled',
+    label: 'Создание постов (лента)',
+    tooltip:
+      'Сообщение в MAX при публикации нового поста в ленте. Не влияет на саму публикацию.',
+    tooltipPlacement: 'top'
+  },
+  {
+    field: 'tournament_posts_created_enabled',
+    label: 'Создание постов (турнир)',
+    tooltip:
+      'Сообщение в MAX при публикации нового поста в турнирной ленте. Не влияет на саму публикацию.',
+    tooltipPlacement: 'top'
   }
 ];
 
@@ -90,7 +106,9 @@ export default function NotificationSettingsModal({ isOpen, onClose }) {
           {SETTINGS_ROWS.map((row) => (
             <div key={row.field} className="notification-settings-modal__row">
               <div className="notification-settings-modal__label">
-                <InfoTooltip text={row.tooltip}>{row.label}</InfoTooltip>
+                <InfoTooltip text={row.tooltip} placement={row.tooltipPlacement}>
+                  {row.label}
+                </InfoTooltip>
               </div>
               <Toggle
                 checked={settings[row.field] === true}

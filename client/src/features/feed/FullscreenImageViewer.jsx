@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { usePinchZoom } from '../../hooks/usePinchZoom';
 import IconButton from '../../components/ui/IconButton';
 import { videoPreviewUrl } from '../../lib/media';
@@ -53,6 +53,13 @@ function FullscreenImageViewer({
   const pointerDownRef = useRef({ x: 0, y: 0 });
   const gestureModeRef = useRef('idle');
   const wheelTargetRef = useRef(null);
+  const mediaRef = useRef(/** @type {HTMLImageElement | HTMLVideoElement | null} */ (null));
+  const panMetricsRef = useRef({
+    mediaWidth: 0,
+    mediaHeight: 0,
+    viewportWidth: 0,
+    viewportHeight: 0
+  });
   const slideTimerRef = useRef(null);
   const closeTimerRef = useRef(null);
   const rippleTimerRef = useRef(null);
@@ -84,6 +91,22 @@ function FullscreenImageViewer({
     window.clearTimeout(closeTimerRef.current);
     closeTimerRef.current = window.setTimeout(completeClose, SLIDE_ANIMATION_MS);
   }, [activeItem?.originKey, completeClose, hideActiveOrigin, isClosing, originKey, originRect]);
+  const updatePanMetrics = useCallback(() => {
+    const viewport = wheelTargetRef.current;
+    const media = mediaRef.current;
+    if (viewport) {
+      const rect = viewport.getBoundingClientRect();
+      panMetricsRef.current.viewportWidth = rect.width;
+      panMetricsRef.current.viewportHeight = rect.height;
+    }
+    if (media) {
+      panMetricsRef.current.mediaWidth = media.offsetWidth;
+      panMetricsRef.current.mediaHeight = media.offsetHeight;
+    }
+  }, []);
+
+  const getPanMetrics = useCallback(() => ({ ...panMetricsRef.current }), []);
+
   const {
     scale,
     position,
@@ -99,7 +122,8 @@ function FullscreenImageViewer({
   } = usePinchZoom({
     onClose: requestClose,
     onSwipeCloseStart: hideActiveOrigin,
-    onSwipeCloseCancel: showActiveOrigin
+    onSwipeCloseCancel: showActiveOrigin,
+    getPanMetrics
   });
 
   const isImage = activeItem && !activeItem.isVideo;
@@ -162,6 +186,35 @@ function FullscreenImageViewer({
   useEffect(() => {
     if (!hasItems) reset();
   }, [hasItems, reset]);
+
+  useLayoutEffect(() => {
+    updatePanMetrics();
+    const viewport = wheelTargetRef.current;
+    const media = mediaRef.current;
+    if (!viewport) return undefined;
+
+    const observer = new ResizeObserver(() => updatePanMetrics());
+    observer.observe(viewport);
+    if (media) observer.observe(media);
+
+    const handleMediaReady = () => updatePanMetrics();
+    if (media instanceof HTMLImageElement) {
+      if (media.complete) handleMediaReady();
+      else media.addEventListener('load', handleMediaReady);
+    } else if (media instanceof HTMLVideoElement) {
+      if (media.readyState >= 1) handleMediaReady();
+      else media.addEventListener('loadedmetadata', handleMediaReady);
+    }
+
+    return () => {
+      observer.disconnect();
+      if (media instanceof HTMLImageElement) {
+        media.removeEventListener('load', handleMediaReady);
+      } else if (media instanceof HTMLVideoElement) {
+        media.removeEventListener('loadedmetadata', handleMediaReady);
+      }
+    };
+  }, [activeIndex, activeItem?.url, activeItem?.isVideo, updatePanMetrics]);
 
   useEffect(() => {
     if (!activeItem?.isVideo) onActiveVideoRef?.(null);
@@ -417,7 +470,10 @@ function FullscreenImageViewer({
               >
                 {item.isVideo ? (
                   <video
-                    ref={isActiveSlide ? setActiveVideoRef : undefined}
+                    ref={isActiveSlide ? (el) => {
+                      mediaRef.current = el;
+                      setActiveVideoRef(el);
+                    } : undefined}
                     src={videoPreviewUrl(item.url)}
                     className="fullscreen-target-video"
                     controls
@@ -436,6 +492,7 @@ function FullscreenImageViewer({
                   />
                 ) : (
                   <img
+                    ref={isActiveSlide ? (el) => { mediaRef.current = el; } : undefined}
                     src={item.url}
                     alt={`Полноразмерное изображение ${activeIndex + 1}`}
                     className="fullscreen-target-img"

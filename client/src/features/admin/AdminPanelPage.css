@@ -13,7 +13,7 @@
   display: block;
   padding: 16px 20px;
   border: none;
-  border-bottom: 1px solid rgba(139, 152, 165, 0.25);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   background: none;
   font-size: 16px;
   text-align: left;
@@ -22,7 +22,7 @@
   transition: opacity 0.2s;
 }
 
-.admin-panel__item:last-child {
+.admin-panel__list > li:last-child .admin-panel__item {
   border-bottom: none;
 }
 

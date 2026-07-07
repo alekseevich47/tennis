@@ -155,6 +155,10 @@ function GalleryPage({ user, searchQuery = '' }) {
   const handleActiveVideoRef = useCallback((el) => {
     videoElRef.current = el;
     setActiveVideoEl(el);
+    if (el) {
+      setIsVideoPlaying(true);
+      el.play().catch(() => {});
+    }
   }, []);
 
   useEffect(() => {
@@ -178,8 +182,9 @@ function GalleryPage({ user, searchQuery = '' }) {
   }, [activeVideoEl]);
 
   useEffect(() => {
-    setIsVideoPlaying(false);
-  }, [activeViewerIndex]);
+    const item = fullscreenMedia?.items[activeViewerIndex];
+    setIsVideoPlaying(item?.isVideo === true);
+  }, [activeViewerIndex, fullscreenMedia]);
 
   useEffect(() => {
     if (!fullscreenMedia) {
@@ -354,6 +359,7 @@ function GalleryPage({ user, searchQuery = '' }) {
     setHiddenMediaKey(null);
     setActiveViewerIndex(index);
     setFullscreenMedia({ items, index, originRect, originKey });
+    setIsVideoPlaying(items[index]?.isVideo === true);
   }, [clearSelection]);
 
   const handleCloseFullscreen = useCallback(() => {

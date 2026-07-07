@@ -141,12 +141,15 @@ export default function NotificationCard({
 
       {notification.body ? <p className="notification-card__body">{notification.body}</p> : null}
 
-      {badgeText ? <span className="notification-card__badge">{badgeText}</span> : null}
-
-      {clickLabel ? (
-        <button type="button" className="notification-card__action" onClick={handleActionClick}>
-          {clickLabel}
-        </button>
+      {badgeText || clickLabel ? (
+        <div className="notification-card__meta">
+          {badgeText ? <span className="notification-card__badge">{badgeText}</span> : null}
+          {clickLabel ? (
+            <button type="button" className="notification-card__action" onClick={handleActionClick}>
+              {clickLabel}
+            </button>
+          ) : null}
+        </div>
       ) : null}
 
       <button

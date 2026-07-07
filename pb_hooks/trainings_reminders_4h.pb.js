@@ -6,17 +6,14 @@ cronAdd('training_reminder_4h', '*/5 * * * *', () => {
     'А мы напоминаем, совсем скоро у Вас запланирована тренировка! Мы Вас будем ждать! Но если что-то пошло не по плану, обязательно сообщите нам.';
 
   try {
-    const now = Date.now();
-    const minStr = new Date(now + (3 * 60 + 55) * 60 * 1000).toISOString().replace('T', ' ');
-    const maxStr = new Date(now + (4 * 60 + 5) * 60 * 1000).toISOString().replace('T', ' ');
+    // PB хранит date как "YYYY-MM-DD HH:mm:ss.000Z"; @now + strftime — тот же формат, что в trainings_auto_close.
     const filter =
-      'date >= "' +
-      minStr +
-      '" && date <= "' +
-      maxStr +
-      '" && is_deleted = false && reminder_4h_sent = false';
+      "date >= strftime('%Y-%m-%d %H:%M:%S.000Z', @now, '+3 hours', '+55 minutes')" +
+      " && date <= strftime('%Y-%m-%d %H:%M:%S.000Z', @now, '+4 hours', '+5 minutes')" +
+      ' && is_deleted = false && reminder_4h_sent = false';
 
     const trainings = $app.findRecordsByFilter('trainings', filter, 'date', 0, 0);
+    console.log('[reminder-4h] matched ' + trainings.length + ' trainings');
     if (!trainings.length) return;
 
     const notificationsCollection = $app.findCollectionByNameOrId('notifications');

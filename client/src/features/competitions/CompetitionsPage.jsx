@@ -28,7 +28,16 @@ const TABS = [
 const SCROLL_TOP_THRESHOLD = 8;
 const SCROLL_DELTA_THRESHOLD = 4;
 
-function CompetitionsPage({ user, onTabChange, onSubTabChange, searchQuery = '' }) {
+/**
+ * @param {{
+ *   user: any,
+ *   onTabChange?: (tab: number) => void,
+ *   onSubTabChange?: (subTab: string) => void,
+ *   onDeletedIdsChange?: (ids: string[]) => void,
+ *   searchQuery?: string
+ * }} props
+ */
+function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChange, searchQuery = '' }) {
   const moderator = isModerator();
   const { data: players } = usePlayers();
   const { data: posts, isLoading: postsLoading, mutate: mutateTournamentPosts } = useTournamentPosts({
@@ -46,6 +55,10 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, searchQuery = '' 
   const containerRef = useRef(null);
   const lastScrollTopRef = useRef(0);
   const { startUpload } = useTournamentPostUpload();
+
+  useEffect(() => {
+    onDeletedIdsChange?.(deletedPostIds);
+  }, [deletedPostIds, onDeletedIdsChange]);
 
   const visiblePosts = useMemo(() => {
     if (!posts) return [];
