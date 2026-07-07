@@ -68,6 +68,13 @@ export function useNotifications(userId) {
 }
 
 /**
+ * @param {Record<string, unknown>} notification
+ */
+export function isDeletableNotification(notification) {
+  return notification.badge_dynamic_type !== 'training_countdown';
+}
+
+/**
  * @param {string} id
  */
 export async function markNotificationRead(id) {
@@ -86,7 +93,8 @@ export async function deleteNotification(id) {
  */
 export async function clearAllNotifications(userId) {
   const records = await listNotifications(userId);
-  await Promise.all(records.map((record) => deleteNotification(record.id)));
+  const deletable = records.filter(isDeletableNotification);
+  await Promise.all(deletable.map((record) => deleteNotification(record.id)));
 }
 
 /**

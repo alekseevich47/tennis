@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { useTrainings } from '../../hooks/useTrainings';
-import { clearAllNotifications, deleteNotification } from '../../services/notifications';
+import { clearAllNotifications, deleteNotification, isDeletableNotification } from '../../services/notifications';
 import { error } from '../../lib/log';
 import NotificationCard from './NotificationCard';
 import './NotificationsDropdown.css';
@@ -42,6 +42,11 @@ export default function NotificationsDropdown({
     });
     return map;
   }, [trainings]);
+
+  const deletableCount = useMemo(
+    () => notifications.filter(isDeletableNotification).length,
+    [notifications]
+  );
 
   useEffect(() => {
     if (open) {
@@ -102,7 +107,7 @@ export default function NotificationsDropdown({
   );
 
   const handleClearAll = useCallback(async () => {
-    if (clearing || notifications.length === 0) return;
+    if (clearing || deletableCount === 0) return;
     setClearing(true);
     try {
       await clearAllNotifications(userId);
@@ -112,7 +117,7 @@ export default function NotificationsDropdown({
     } finally {
       setClearing(false);
     }
-  }, [clearing, notifications.length, onMutate, userId]);
+  }, [clearing, deletableCount, onMutate, userId]);
 
   const handleOpenTraining = useCallback(
     (trainingId) => {
@@ -143,7 +148,7 @@ export default function NotificationsDropdown({
           type="button"
           className="notifications-dropdown__clear"
           aria-label="Удалить все уведомления"
-          disabled={clearing || notifications.length === 0}
+          disabled={clearing || deletableCount === 0}
           onClick={handleClearAll}
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
