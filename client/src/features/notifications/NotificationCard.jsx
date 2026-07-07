@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { formatPostDate } from '../../lib/format';
-import { markNotificationRead } from '../../services/notifications';
+import { markNotificationRead, isDeletableNotification } from '../../services/notifications';
 import { formatTrainingCountdownBadge } from './notificationBadges';
 import './NotificationCard.css';
 
@@ -105,6 +105,7 @@ export default function NotificationCard({
   })();
 
   const clickLabel = clickAction ? CLICK_ACTION_LABELS[clickAction] : null;
+  const canDelete = isDeletableNotification(notification);
 
   const handleActionClick = useCallback(() => {
     if (clickAction === 'open_training' && meta?.trainingId) {
@@ -152,16 +153,18 @@ export default function NotificationCard({
         </div>
       ) : null}
 
-      <button
-        type="button"
-        className="notification-card__delete"
-        aria-label="Удалить уведомление"
-        onClick={handleDelete}
-      >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-          <path d="M18 6L6 18M6 6l12 12" />
-        </svg>
-      </button>
+      {canDelete ? (
+        <button
+          type="button"
+          className="notification-card__delete"
+          aria-label="Удалить уведомление"
+          onClick={handleDelete}
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      ) : null}
     </article>
   );
 }

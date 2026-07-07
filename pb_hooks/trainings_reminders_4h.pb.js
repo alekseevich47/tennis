@@ -1,50 +1,60 @@
-// In-app напоминание за ~4 часа до тренировки (колокольчик, не MAX-бот).
-// Окно 3h55m..4h05m от @now — крон каждые 5 минут перекрывает ±5 мин.
-cronAdd('training_reminder_4h', '*/5 * * * *', () => {
-  const TITLE = 'Не забыли? 😜';
-  const BODY =
-    'А мы напоминаем, совсем скоро у Вас запланирована тренировка! Мы Вас будем ждать! Но если что-то пошло не по плану, обязательно сообщите нам.';
-
+// In-app напоминание за ≤4 часа до тренировки (колокольчик, не MAX-бот).
+// Одно уведомление на пару user+training; бейдж обновляется на клиенте каждую минуту.
+cronAdd('training_reminder_4h', '* * * * *', () => {
   try {
-    // PB хранит date как "YYYY-MM-DD HH:mm:ss.000Z"; @now + strftime — тот же формат, что в trainings_auto_close.
-    const filter =
-      "date >= strftime('%Y-%m-%d %H:%M:%S.000Z', @now, '+3 hours', '+55 minutes')" +
-      " && date <= strftime('%Y-%m-%d %H:%M:%S.000Z', @now, '+4 hours', '+5 minutes')" +
-      ' && is_deleted = false && reminder_4h_sent = false';
+    var lib = require(__hooks + '/notificationslib.js');
+    var nowStr = lib.pbDateFilterStr(0);
+    var fourHoursStr = lib.pbDateFilterStr(lib.FOUR_HOURS_MS);
+    var filter =
+      'date > "' +
+      nowStr +
+      '" && date <= "' +
+      fourHoursStr +
+      '" && is_deleted = false && is_cancelled = false';
 
-    const trainings = $app.findRecordsByFilter('trainings', filter, 'date', 0, 0);
-    console.log('[reminder-4h] matched ' + trainings.length + ' trainings');
-    if (!trainings.length) return;
+    var trainings = $app.findRecordsByFilter('trainings', filter, 'date', 0, 0);
+    var created = 0;
+    var i;
+    var j;
 
-    const notificationsCollection = $app.findCollectionByNameOrId('notifications');
-
-    for (let i = 0; i < trainings.length; i++) {
-      const training = trainings[i];
-      const trainingId = training.getId();
-      const bookedUsers = training.get('booked_users') || [];
-
-      for (let j = 0; j < bookedUsers.length; j++) {
-        const userId = bookedUsers[j];
-        if (!userId) continue;
-
-        const notification = new Record(notificationsCollection);
-        notification.set('recipient', userId);
-        notification.set('title', TITLE);
-        notification.set('body', BODY);
-        notification.set('badge_dynamic_type', 'training_countdown');
-        notification.set('click_action', 'open_training');
-        notification.set('meta', { trainingId: trainingId });
-        notification.set('is_read', false);
-        $app.save(notification);
+    for (i = 0; i < trainings.length; i++) {
+      var training = trainings[i];
+      var trainingId = lib.relationId(training);
+      var bookedUsers = training.get('booked_users') || [];
+      for (j = 0; j < bookedUsers.length; j++) {
+        if (lib.ensureTrainingCountdownNotification(bookedUsers[j], trainingId)) created++;
       }
+    }
 
-      training.set('reminder_4h_sent', true);
-      $app.save(training);
-      console.log(
-        '[reminder-4h] training ' + trainingId + ' → ' + bookedUsers.length + ' notifications'
-      );
+    if (created > 0) {
+      console.log('[reminder-4h] cron: created ' + created + ' notifications');
     }
   } catch (err) {
     console.log('[reminder-4h] cron: ' + err);
   }
 });
+
+// Запись менее чем за 4 часа — уведомление сразу при добавлении в booked_users.
+onRecordAfterUpdateSuccess((e) => {
+  try {
+    var lib = require(__hooks + '/notificationslib.js');
+    var record = e.record;
+    var original = record.original();
+    if (!original) {
+      e.next();
+      return;
+    }
+
+    var oldBooked = original.get('booked_users') || [];
+    var newBooked = record.get('booked_users') || [];
+    var added = lib.newlyAddedUserIds(oldBooked, newBooked);
+    var created = lib.ensureCountdownForNewlyBookedUsers(record, added);
+
+    if (created > 0) {
+      console.log('[reminder-4h] booking: created ' + created + ' for training ' + lib.relationId(record));
+    }
+  } catch (err) {
+    console.log('[reminder-4h] booking: ' + err);
+  }
+  e.next();
+}, 'trainings');
