@@ -10,8 +10,37 @@ import {
   backdropOpacityForDrag,
   clamp,
   getTouchDistance,
-  maxPan
+  maxPanLimits
 } from '../lib/gestures';
+
+/** @typedef {{ mediaWidth: number, mediaHeight: number, viewportWidth: number, viewportHeight: number }} PanMetrics */
+
+const FALLBACK_MEDIA_SIZE = 400;
+
+/**
+ * @param {number} scale
+ * @param {() => PanMetrics | null | undefined} getPanMetrics
+ */
+function resolvePanLimits(scale, getPanMetrics) {
+  const metrics = getPanMetrics?.();
+  if (
+    metrics &&
+    metrics.mediaWidth > 0 &&
+    metrics.mediaHeight > 0 &&
+    metrics.viewportWidth > 0 &&
+    metrics.viewportHeight > 0
+  ) {
+    return maxPanLimits(
+      scale,
+      metrics.mediaWidth,
+      metrics.mediaHeight,
+      metrics.viewportWidth,
+      metrics.viewportHeight
+    );
+  }
+  const fallback = (scale - 1) * FALLBACK_MEDIA_SIZE;
+  return { limitX: fallback, limitY: fallback };
+}
 
 const WHEEL_ZOOM_STEP = 0.0015;
 const ZOOM_EDGE_CLOSE_ARM_PX = 18;
@@ -23,10 +52,13 @@ const ZOOM_EDGE_EPSILON_PX = 2;
  * @param {{
  *   onClose: () => void,
  *   onSwipeCloseStart?: () => void,
- *   onSwipeCloseCancel?: () => void
+ *   onSwipeCloseCancel?: () => void,
+ *   getPanMetrics?: () => PanMetrics | null | undefined
  * }} params
  */
-export function usePinchZoom({ onClose, onSwipeCloseStart, onSwipeCloseCancel }) {
+export function usePinchZoom({ onClose, onSwipeCloseStart, onSwipeCloseCancel, getPanMetrics }) {
+  const getPanMetricsRef = useRef(getPanMetrics);
+  getPanMetricsRef.current = getPanMetrics;
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [bgOpacity, setBgOpacity] = useState(1);
@@ -64,10 +96,10 @@ export function usePinchZoom({ onClose, onSwipeCloseStart, onSwipeCloseCancel })
     setPosition((prev) => {
       const nextX = prev.x + velocityRef.current.x * INERTIA_FRAME_MS;
       const nextY = prev.y + velocityRef.current.y * INERTIA_FRAME_MS;
-      const limit = maxPan(scaleRef.current);
+      const { limitX, limitY } = resolvePanLimits(scaleRef.current, getPanMetricsRef.current);
       return {
-        x: clamp(nextX, -limit, limit),
-        y: clamp(nextY, -limit, limit)
+        x: clamp(nextX, -limitX, limitX),
+        y: clamp(nextY, -limitY, limitY)
       };
     });
 
@@ -117,13 +149,13 @@ export function usePinchZoom({ onClose, onSwipeCloseStart, onSwipeCloseCancel })
       const nextX = touch.clientX - startTouchRef.current.x;
       const nextY = touch.clientY - startTouchRef.current.y;
       const currentScale = scaleRef.current;
-      const limit = maxPan(currentScale);
+      const { limitX, limitY } = resolvePanLimits(currentScale, getPanMetricsRef.current);
       const isAtZoomEdge =
         currentScale > MIN_SCALE &&
-        limit > 0 &&
+        limitY > 0 &&
         (
-          (nextY > limit + ZOOM_EDGE_CLOSE_ARM_PX && positionRef.current.y >= limit - ZOOM_EDGE_EPSILON_PX) ||
-          (nextY < -limit - ZOOM_EDGE_CLOSE_ARM_PX && positionRef.current.y <= -limit + ZOOM_EDGE_EPSILON_PX)
+          (nextY > limitY + ZOOM_EDGE_CLOSE_ARM_PX && positionRef.current.y >= limitY - ZOOM_EDGE_EPSILON_PX) ||
+          (nextY < -limitY - ZOOM_EDGE_CLOSE_ARM_PX && positionRef.current.y <= -limitY + ZOOM_EDGE_EPSILON_PX)
         );
 
       if (currentScale === MIN_SCALE || isSwipingToCloseRef.current || isAtZoomEdge) {
@@ -131,14 +163,14 @@ export function usePinchZoom({ onClose, onSwipeCloseStart, onSwipeCloseCancel })
         isSwipingToCloseRef.current = true;
         const dragY = nextY;
         setPosition({
-          x: currentScale === MIN_SCALE ? 0 : clamp(nextX, -limit, limit),
+          x: currentScale === MIN_SCALE ? 0 : clamp(nextX, -limitX, limitX),
           y: dragY
         });
         setBgOpacity(backdropOpacityForDrag(dragY));
       } else {
         setPosition({
-          x: clamp(nextX, -limit, limit),
-          y: clamp(nextY, -limit, limit)
+          x: clamp(nextX, -limitX, limitX),
+          y: clamp(nextY, -limitY, limitY)
         });
       }
 
@@ -171,9 +203,9 @@ export function usePinchZoom({ onClose, onSwipeCloseStart, onSwipeCloseCancel })
     startDistRef.current = 0;
 
     if (isSwipingToCloseRef.current) {
-      const limit = maxPan(scaleRef.current);
+      const { limitX, limitY } = resolvePanLimits(scaleRef.current, getPanMetricsRef.current);
       const closeDistance = scaleRef.current > MIN_SCALE
-        ? Math.max(0, Math.abs(positionRef.current.y) - limit)
+        ? Math.max(0, Math.abs(positionRef.current.y) - limitY)
         : Math.abs(positionRef.current.y);
 
       if (closeDistance > SWIPE_CLOSE_THRESHOLD) {
@@ -181,8 +213,8 @@ export function usePinchZoom({ onClose, onSwipeCloseStart, onSwipeCloseCancel })
         return;
       }
       setPosition({
-        x: scaleRef.current === MIN_SCALE ? 0 : clamp(positionRef.current.x, -limit, limit),
-        y: scaleRef.current === MIN_SCALE ? 0 : clamp(positionRef.current.y, -limit, limit)
+        x: scaleRef.current === MIN_SCALE ? 0 : clamp(positionRef.current.x, -limitX, limitX),
+        y: scaleRef.current === MIN_SCALE ? 0 : clamp(positionRef.current.y, -limitY, limitY)
       });
       setBgOpacity(1);
       isSwipingToCloseRef.current = false;
@@ -199,11 +231,11 @@ export function usePinchZoom({ onClose, onSwipeCloseStart, onSwipeCloseCancel })
   }, [animateInertia, onClose, onSwipeCloseCancel]);
 
   const panBy = useCallback((deltaX, deltaY) => {
-    const limit = maxPan(scaleRef.current);
-    if (scaleRef.current <= MIN_SCALE || limit <= 0) return;
+    const { limitX, limitY } = resolvePanLimits(scaleRef.current, getPanMetricsRef.current);
+    if (scaleRef.current <= MIN_SCALE || (limitX <= 0 && limitY <= 0)) return;
     setPosition((prev) => ({
-      x: clamp(prev.x + deltaX, -limit, limit),
-      y: clamp(prev.y + deltaY, -limit, limit)
+      x: clamp(prev.x + deltaX, -limitX, limitX),
+      y: clamp(prev.y + deltaY, -limitY, limitY)
     }));
   }, []);
 
@@ -220,10 +252,10 @@ export function usePinchZoom({ onClose, onSwipeCloseStart, onSwipeCloseCancel })
       setBgOpacity(1);
       velocityRef.current = { x: 0, y: 0 };
     } else {
-      const limit = maxPan(nextScale);
+      const { limitX, limitY } = resolvePanLimits(nextScale, getPanMetricsRef.current);
       setPosition((prev) => ({
-        x: clamp(prev.x, -limit, limit),
-        y: clamp(prev.y, -limit, limit)
+        x: clamp(prev.x, -limitX, limitX),
+        y: clamp(prev.y, -limitY, limitY)
       }));
     }
   }, []);

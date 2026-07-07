@@ -1,11 +1,18 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
+import { useToast } from '../../components/ui/ToastContext';
+import { MAX_SELLER_URL } from '../../config';
 import { isModerator } from '../../services/auth';
 import pb from '../../services/pb';
 import { auditMembership } from '../../lib/audit';
 import { formatPostDate, pluralize } from '../../lib/format';
 import { error } from '../../lib/log';
+import {
+  BUY_MOBILE_TOAST_ACTION_LABEL,
+  isMobileMaxPlatform,
+  openSellerChat
+} from '../shop/buyMessage';
 import MembershipEditModal from './MembershipEditModal';
 import './Profile.css';
 import '../trainings/Trainings.css';
@@ -53,6 +60,7 @@ function formatFreezeLogEntry(entry, index, total) {
 }
 
 function MembershipModal({ isOpen, onClose, user, onMutated }) {
+  const { showToast } = useToast();
   const [userSnapshot, setUserSnapshot] = useState(user);
   const [editMode, setEditMode] = useState(null);
   const [freezing, setFreezing] = useState(false);
@@ -168,6 +176,19 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
     onMutated?.(updated);
     setEditMode(null);
   };
+
+  const handleBuyClick = useCallback(() => {
+    if (isMobileMaxPlatform()) {
+      showToast({
+        text: 'Чат с администратором',
+        actionLabel: BUY_MOBILE_TOAST_ACTION_LABEL,
+        onAction: () => openSellerChat(MAX_SELLER_URL)
+      });
+      return;
+    }
+
+    openSellerChat(MAX_SELLER_URL);
+  }, [showToast]);
 
   const handleFreezeToggle = async () => {
     if (!moderator || !user?.id || freezing) return;
@@ -335,6 +356,16 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
             disabled={freezing}
           >
             {freezing ? 'Сохраняем...' : frozen ? 'Разморозить' : 'Заморозить'}
+          </button>
+        )}
+
+        {!moderator && (
+          <button
+            type="button"
+            className="membership-buy-btn"
+            onClick={handleBuyClick}
+          >
+            Купить
           </button>
         )}
       </Modal>

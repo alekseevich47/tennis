@@ -41,6 +41,16 @@
   pointer-events: none;
 }
 
+.info-tooltip__bubble--top {
+  top: auto;
+  bottom: calc(100% + 6px);
+  transform: translateY(4px);
+}
+
+.info-tooltip__bubble--top.info-tooltip__bubble--visible {
+  transform: translateY(0);
+}
+
 .info-tooltip__bubble--visible {
   opacity: 1;
   transform: translateY(0);

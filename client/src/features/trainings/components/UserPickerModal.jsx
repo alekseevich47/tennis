@@ -4,6 +4,13 @@ import Avatar from '../../../components/ui/Avatar';
 import pb from '../../../services/pb';
 import { error } from '../../../lib/log';
 
+function isUserBookingDisabled(user) {
+  const membershipType = user.membership_type || 'regular';
+  const noSessions =
+    membershipType === 'regular' && (user.available_sessions ?? 0) <= 0;
+  return user.membership_frozen === true || noSessions;
+}
+
 /**
  * @param {{
  *   isOpen: boolean,
@@ -59,11 +66,18 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
   const excludedUserIds = useMemo(() => new Set(excludeIds), [excludeIds]);
   const filteredUsers = useMemo(() => {
     const query = search.trim().toLowerCase();
-    return users.filter((user) => {
+    const matched = users.filter((user) => {
       if (excludedUserIds.has(user.id)) return false;
       const fullName = user.full_name || '';
       return !query || fullName.toLowerCase().includes(query);
     });
+    const available = [];
+    const disabled = [];
+    for (const user of matched) {
+      if (isUserBookingDisabled(user)) disabled.push(user);
+      else available.push(user);
+    }
+    return [...available, ...disabled];
   }, [excludedUserIds, search, users]);
 
   const selectedCount = selectedIds.size;
@@ -136,7 +150,7 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
               const noSessions =
                 membershipType === 'regular' && (user.available_sessions ?? 0) <= 0;
               const isFrozen = user.membership_frozen === true;
-              const isDisabled = isFrozen || noSessions;
+              const isDisabled = isUserBookingDisabled(user);
 
               return (
               <label

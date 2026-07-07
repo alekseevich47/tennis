@@ -28,11 +28,26 @@ export function clamp(value, min, max) {
 }
 
 /**
- * Расчёт допустимого смещения по осям для зумнутого изображения.
+ * Допустимое смещение по осям для зумнутого медиа (object-fit: contain).
  * @param {number} scale
+ * @param {number} mediaWidth — ширина медиа при scale=1 (без transform)
+ * @param {number} mediaHeight
+ * @param {number} viewportWidth
+ * @param {number} viewportHeight
  */
+export function maxPanLimits(scale, mediaWidth, mediaHeight, viewportWidth, viewportHeight) {
+  const scaledW = mediaWidth * scale;
+  const scaledH = mediaHeight * scale;
+  return {
+    limitX: Math.max(0, (scaledW - viewportWidth) / 2),
+    limitY: Math.max(0, (scaledH - viewportHeight) / 2)
+  };
+}
+
+/** @deprecated Используйте maxPanLimits; оставлено для обратной совместимости. */
 export function maxPan(scale) {
-  return (scale - 1) * 200;
+  const limit = (scale - 1) * 200;
+  return limit;
 }
 
 /**
