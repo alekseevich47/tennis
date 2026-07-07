@@ -1435,7 +1435,7 @@
     "viewRule": "recipient = @request.auth.id",
     "createRule": "@request.auth.id != \"\" && (recipient = @request.auth.id || @request.auth.role = \"moderator\")",
     "updateRule": "recipient = @request.auth.id",
-    "deleteRule": "recipient = @request.auth.id",
+    "deleteRule": "recipient = @request.auth.id && badge_dynamic_type != \"training_countdown\"",
     "name": "notifications",
     "type": "base",
     "fields": [
