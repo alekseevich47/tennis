@@ -227,15 +227,23 @@
 .header-profile-badge {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
   cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 20px;
+  padding: 8px;
+  border-radius: 50%;
   transition: background 0.2s;
   background: transparent;
   border: none;
   min-height: 44px;
+  min-width: 44px;
   flex-shrink: 0;
+}
+
+.header-profile-avatar {
+  border: 1px solid #000;
+  border-radius: 50%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .header-profile-badge:hover {
@@ -245,16 +253,6 @@
 .header-profile-badge:focus-visible {
   outline: 2px solid #007aff;
   outline-offset: 2px;
-}
-
-.profile-name-mini {
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
-  max-width: 100px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .header-shop-controls {

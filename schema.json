@@ -1389,6 +1389,15 @@
       },
       {
         "hidden": false,
+        "id": "bool3205515167",
+        "name": "training_booking_enabled",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "hidden": false,
         "id": "bool2480393007",
         "name": "posts_created_enabled",
         "presentable": false,
@@ -1400,6 +1409,15 @@
         "hidden": false,
         "id": "bool3184949641",
         "name": "tournament_posts_created_enabled",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "hidden": false,
+        "id": "bool3736312277",
+        "name": "comments_notification_enabled",
         "presentable": false,
         "required": false,
         "system": false,
@@ -1435,7 +1453,7 @@
     "viewRule": "recipient = @request.auth.id",
     "createRule": "@request.auth.id != \"\" && (recipient = @request.auth.id || @request.auth.role = \"moderator\")",
     "updateRule": "recipient = @request.auth.id",
-    "deleteRule": "recipient = @request.auth.id && badge_dynamic_type != \"training_countdown\"",
+    "deleteRule": "recipient = @request.auth.id && (training_state = \"farewell\" || training_state = \"completed\" || badge_dynamic_type != \"training_countdown\")",
     "name": "notifications",
     "type": "base",
     "fields": [
@@ -1532,7 +1550,8 @@
         "type": "select",
         "values": [
           "open_training",
-          "open_membership"
+          "open_membership",
+          "open_booking"
         ]
       },
       {
@@ -1553,6 +1572,35 @@
         "required": false,
         "system": false,
         "type": "bool"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text3204290769",
+        "max": 0,
+        "min": 0,
+        "name": "training_id",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "select1279875222",
+        "maxSelect": 1,
+        "name": "training_state",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "select",
+        "values": [
+          "countdown",
+          "farewell",
+          "completed"
+        ]
       },
       {
         "hidden": false,
@@ -2083,6 +2131,25 @@
           "all_except_banned",
           "selected"
         ]
+      },
+      {
+        "hidden": false,
+        "id": "file1781309708",
+        "maxSelect": 5,
+        "maxSize": 50,
+        "mimeTypes": [
+          "image/gif",
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "name": "media",
+        "presentable": false,
+        "protected": false,
+        "required": false,
+        "system": false,
+        "thumbs": [],
+        "type": "file"
       },
       {
         "hidden": false,
@@ -2676,6 +2743,15 @@
         "hidden": false,
         "id": "bool2856204283",
         "name": "reminder_4h_sent",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "hidden": false,
+        "id": "bool1805770024",
+        "name": "completion_notified",
         "presentable": false,
         "required": false,
         "system": false,

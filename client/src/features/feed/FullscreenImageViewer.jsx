@@ -9,6 +9,8 @@ const NAV_ZOOM_MAX_SCALE = 1.05;
 const GESTURE_LOCK_PX = 10;
 const SLIDE_ANIMATION_MS = 240;
 const RIPPLE_ANIMATION_MS = 420;
+/** Нижний отступ тап-зоны: нативная полоска controls (~44–56px, эмпирически под Chrome/Android WebView/iOS). */
+const VIDEO_CONTROLS_RESERVED_PX = 48;
 
 function getWindowWidth() {
   return window.innerWidth || document.documentElement.clientWidth || 360;
@@ -348,6 +350,17 @@ function FullscreenImageViewer({
     if (x > rect.width * 0.62) goNext({ animated: true });
   };
 
+  const handleVideoTapToggle = useCallback((event) => {
+    event.stopPropagation();
+    const video = mediaRef.current;
+    if (!(video instanceof HTMLVideoElement)) return;
+    if (video.paused) {
+      void video.play();
+    } else {
+      video.pause();
+    }
+  }, []);
+
   const handleNavClick = (event, direction) => {
     const rect = event.currentTarget.getBoundingClientRect();
     window.clearTimeout(rippleTimerRef.current);
@@ -469,27 +482,37 @@ function FullscreenImageViewer({
                 key={`${item.filename}-${index}`}
               >
                 {item.isVideo ? (
-                  <video
-                    ref={isActiveSlide ? (el) => {
-                      mediaRef.current = el;
-                      setActiveVideoRef(el);
-                    } : undefined}
-                    src={videoPreviewUrl(item.url)}
-                    className="fullscreen-target-video"
-                    controls
-                    preload="metadata"
-                    playsInline
-                    aria-label={`Полноэкранное видео ${activeIndex + 1}`}
-                    width="1200"
-                    height="900"
-                    style={{
-                      transform: isClosing && isActiveSlide && returnTransform
-                        ? returnTransform
-                        : isActiveSlide
-                        ? `translate(${position.x}px, ${position.y}px)`
-                        : undefined
-                    }}
-                  />
+                  <div className="fullscreen-video-container">
+                    <video
+                      ref={isActiveSlide ? (el) => {
+                        mediaRef.current = el;
+                        setActiveVideoRef(el);
+                      } : undefined}
+                      src={videoPreviewUrl(item.url)}
+                      className="fullscreen-target-video"
+                      controls
+                      preload="metadata"
+                      playsInline
+                      aria-label={`Полноэкранное видео ${activeIndex + 1}`}
+                      width="1200"
+                      height="900"
+                      style={{
+                        transform: isClosing && isActiveSlide && returnTransform
+                          ? returnTransform
+                          : isActiveSlide
+                          ? `translate(${position.x}px, ${position.y}px)`
+                          : undefined
+                      }}
+                    />
+                    {isActiveSlide && (
+                      <div
+                        className="fullscreen-video-tap-zone"
+                        style={{ bottom: VIDEO_CONTROLS_RESERVED_PX }}
+                        onClick={handleVideoTapToggle}
+                        aria-hidden="true"
+                      />
+                    )}
+                  </div>
                 ) : (
                   <img
                     ref={isActiveSlide ? (el) => { mediaRef.current = el; } : undefined}

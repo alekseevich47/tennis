@@ -6,7 +6,7 @@
  * @param {{
  *   kind: 'broadcast' | 'notification',
  *   editing: boolean,
- *   result: { sendNow: boolean, dispatched: boolean, dispatchFailed: boolean, recipientsCount?: number }
+ *   result: { sendNow: boolean, dispatched: boolean, dispatchFailed: boolean, accepted?: boolean }
  * }} params
  * @returns {{ title: string, message: string }}
  */
@@ -24,16 +24,14 @@ export function buildSendResultAlert({ kind, editing, result }) {
   }
 
   if (result.dispatched) {
-    const count = typeof result.recipientsCount === 'number' ? result.recipientsCount : null;
-    const recipientsText = count !== null ? ` Получателей: ${count}.` : '';
     return {
       title,
-      message: `${noun} успешно отправлен${kind === 'broadcast' ? 'а' : 'о'}.${recipientsText}`
+      message: `${noun} поставлен${kind === 'broadcast' ? 'а' : 'о'} в очередь. Отправка произойдёт в течение минуты.`
     };
   }
 
   return {
     title,
-    message: `${noun} сохранен${kind === 'broadcast' ? 'а' : 'о'}, но немедленная отправка не удалась (проблема с сетью или сервером). Повторная попытка будет выполнена автоматически в течение минуты.`
+    message: `${noun} сохранен${kind === 'broadcast' ? 'а' : 'о'}, но не удалось поставить в очередь (проблема с сетью или сервером). Повторная попытка будет выполнена автоматически в течение минуты.`
   };
 }

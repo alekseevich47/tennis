@@ -1,3 +1,18 @@
+.broadcast-modal-preview-grid {
+  margin-top: 10px;
+}
+
+.broadcast-modal-preview-grid.telegram-media-grid {
+  --broadcast-preview-size: 72px;
+  grid-template-columns: repeat(auto-fill, minmax(var(--broadcast-preview-size), 1fr));
+}
+
+.broadcast-modal-preview-grid .telegram-media-item img {
+  width: 100%;
+  height: var(--broadcast-preview-size);
+  object-fit: cover;
+}
+
 .admin-modal__field {
   margin-bottom: 16px;
 }
