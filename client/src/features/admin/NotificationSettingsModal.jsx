@@ -34,6 +34,19 @@ const SETTINGS_ROWS = [
     tooltipPlacement: 'top'
   },
   {
+    field: 'training_booking_enabled',
+    label: 'Запись участников',
+    tooltip:
+      'Рассылка от бота модераторам о новых записях на тренировку/турнир участниками (или модератором) и о снятии записи.',
+    tooltipPlacement: 'top'
+  },
+  {
+    field: 'comments_notification_enabled',
+    label: 'Уведомления о комментариях',
+    tooltip: 'Рассылка от бота модераторам о новых комментариях в лентах и галерее.',
+    tooltipPlacement: 'top'
+  },
+  {
     field: 'posts_created_enabled',
     label: 'Создание постов (лента)',
     tooltip:

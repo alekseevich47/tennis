@@ -29,6 +29,7 @@ import './AppHeader.css';
  *   userId?: string,
  *   onOpenTrainingFromNotification?: (trainingId: string) => void,
  *   onOpenMembershipFromNotification?: () => void,
+ *   onOpenBookingFromNotification?: () => void,
  *   searchConfig?: {
  *     open: boolean,
  *     query: string,
@@ -59,6 +60,7 @@ function AppHeader({
   userId,
   onOpenTrainingFromNotification,
   onOpenMembershipFromNotification,
+  onOpenBookingFromNotification,
   searchConfig
 }) {
   const favoritesAnchorRef = useRef(null);
@@ -203,6 +205,7 @@ function AppHeader({
                 notificationsAnchorRef={notificationsAnchorRef}
                 onOpenTraining={onOpenTrainingFromNotification}
                 onOpenMembership={onOpenMembershipFromNotification}
+                onOpenBooking={onOpenBookingFromNotification}
               />
             ) : null}
           </div>
@@ -213,8 +216,7 @@ function AppHeader({
           onClick={onProfileClick}
           aria-label={`Открыть мой профиль (${displayName})`}
         >
-          <Avatar user={user} size="sm" />
-          <span className="profile-name-mini">{displayName}</span>
+          <Avatar user={user} size="sm" className="header-profile-avatar" />
         </button>
       </div>
     </header>

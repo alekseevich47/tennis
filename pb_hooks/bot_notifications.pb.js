@@ -88,6 +88,11 @@ routerAdd('POST', '/api/bot-notify-training', (c) => {
     return c.json(400, { error: 'Invalid event' });
   }
 
+  const settings = $app.findFirstRecordByFilter('notification_settings', '');
+  if (settings && !settings.getBool('training_booking_enabled')) {
+    return c.json(200, { success: true, skipped: true });
+  }
+
   try {
     bot.notifyModerators(text);
   } catch (err) {
@@ -414,6 +419,11 @@ routerAdd('POST', '/api/max-bot-webhook', (c) => {
 onRecordAfterCreateSuccess((e) => {
   const bot = require(__hooks + '/botlib.js');
   try {
+    const settings = $app.findFirstRecordByFilter('notification_settings', '');
+    if (settings && !settings.getBool('comments_notification_enabled')) {
+      e.next();
+      return;
+    }
     const collection = e.record.collection().name;
     const msg = bot.buildCommentBotMessage(e.record, collection, 'написал');
     bot.notifyModerators(msg);
@@ -426,6 +436,11 @@ onRecordAfterCreateSuccess((e) => {
 onRecordAfterCreateSuccess((e) => {
   const bot = require(__hooks + '/botlib.js');
   try {
+    const settings = $app.findFirstRecordByFilter('notification_settings', '');
+    if (settings && !settings.getBool('comments_notification_enabled')) {
+      e.next();
+      return;
+    }
     const collection = e.record.collection().name;
     const msg = bot.buildCommentBotMessage(e.record, collection, 'написал');
     bot.notifyModerators(msg);
@@ -438,6 +453,11 @@ onRecordAfterCreateSuccess((e) => {
 onRecordAfterCreateSuccess((e) => {
   const bot = require(__hooks + '/botlib.js');
   try {
+    const settings = $app.findFirstRecordByFilter('notification_settings', '');
+    if (settings && !settings.getBool('comments_notification_enabled')) {
+      e.next();
+      return;
+    }
     const collection = e.record.collection().name;
     const msg = bot.buildCommentBotMessage(e.record, collection, 'написал');
     bot.notifyModerators(msg);
@@ -456,6 +476,11 @@ onRecordAfterUpdateSuccess((e) => {
     const newText = record.getString('text');
     const oldText = original ? original.getString('text') : newText;
     if (original && newText !== oldText) {
+      const settings = $app.findFirstRecordByFilter('notification_settings', '');
+      if (settings && !settings.getBool('comments_notification_enabled')) {
+        e.next();
+        return;
+      }
       const collection = record.collection().name;
       const msg = bot.buildCommentBotMessage(record, collection, 'отредактировал');
       bot.notifyModerators(msg);
@@ -474,6 +499,11 @@ onRecordAfterUpdateSuccess((e) => {
     const newText = record.getString('text');
     const oldText = original ? original.getString('text') : newText;
     if (original && newText !== oldText) {
+      const settings = $app.findFirstRecordByFilter('notification_settings', '');
+      if (settings && !settings.getBool('comments_notification_enabled')) {
+        e.next();
+        return;
+      }
       const collection = record.collection().name;
       const msg = bot.buildCommentBotMessage(record, collection, 'отредактировал');
       bot.notifyModerators(msg);
@@ -492,6 +522,11 @@ onRecordAfterUpdateSuccess((e) => {
     const newText = record.getString('text');
     const oldText = original ? original.getString('text') : newText;
     if (original && newText !== oldText) {
+      const settings = $app.findFirstRecordByFilter('notification_settings', '');
+      if (settings && !settings.getBool('comments_notification_enabled')) {
+        e.next();
+        return;
+      }
       const collection = record.collection().name;
       const msg = bot.buildCommentBotMessage(record, collection, 'отредактировал');
       bot.notifyModerators(msg);

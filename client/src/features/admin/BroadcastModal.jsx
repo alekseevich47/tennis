@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import UserMultiSelect from './UserMultiSelect';
+import MediaPreviewGrid from '../feed/MediaPreviewGrid';
 import pb from '../../services/pb';
 import {
   listScheduledBroadcasts,
@@ -11,9 +12,15 @@ import {
 } from '../../services/admin';
 import { formatPostDate } from '../../lib/format';
 import { error } from '../../lib/log';
+import { compressImage } from '../../lib/compress';
+import { MEDIA_BASE_URL } from '../../config';
+import { mediaNames, readSelectedFiles } from '../../lib/media';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { buildSendResultAlert } from './adminResultAlert';
 import './BroadcastModal.css';
+import '../feed/Feed.css';
+
+const MAX_BROADCAST_MEDIA_FILES = 5;
 
 function defaultDatetimeLocal() {
   const date = new Date();
@@ -43,6 +50,9 @@ export default function BroadcastModal({ isOpen, onClose }) {
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
   const [formNotice, setFormNotice] = useState('');
+  const [imageFiles, setImageFiles] = useState(/** @type {File[]} */ ([]));
+  const [existingMedia, setExistingMedia] = useState(/** @type {string[]} */ ([]));
+  const [mediaToDelete, setMediaToDelete] = useState(/** @type {string[]} */ ([]));
 
   const resetForm = useCallback(() => {
     setText('');
@@ -53,6 +63,9 @@ export default function BroadcastModal({ isOpen, onClose }) {
     setEditingId(null);
     setFormError('');
     setFormNotice('');
+    setImageFiles([]);
+    setExistingMedia([]);
+    setMediaToDelete([]);
   }, []);
 
   const loadPending = useCallback(async () => {
@@ -114,7 +127,49 @@ export default function BroadcastModal({ isOpen, onClose }) {
     setSendNow(false);
     setFormError('');
     setFormNotice('');
+    setImageFiles([]);
+    setExistingMedia(mediaNames(item.media));
+    setMediaToDelete([]);
   }, []);
+
+  const keptExistingCount = existingMedia.length - mediaToDelete.length;
+  const remainingImageSlots = Math.max(0, MAX_BROADCAST_MEDIA_FILES - keptExistingCount - imageFiles.length);
+
+  const previewItems = useMemo(() => {
+    const existing = existingMedia
+      .filter((filename) => !mediaToDelete.includes(filename))
+      .map((filename) => ({
+        key: `existing-${filename}`,
+        url: `${MEDIA_BASE_URL}/scheduled_broadcasts/${editingId}/${filename}`,
+        name: filename,
+        isVideo: false
+      }));
+    const incoming = imageFiles.map((file) => ({
+      key: `${file.name}-${file.lastModified}`,
+      url: URL.createObjectURL(file),
+      name: file.name,
+      isVideo: false
+    }));
+    return [...existing, ...incoming];
+  }, [existingMedia, mediaToDelete, imageFiles, editingId]);
+
+  useEffect(() => {
+    const incoming = previewItems.filter((item) => !item.key.startsWith('existing-'));
+    return () => incoming.forEach((item) => URL.revokeObjectURL(item.url));
+  }, [previewItems]);
+
+  const handleAddImages = useCallback(
+    async (event) => {
+      const incoming = readSelectedFiles(event.target.files, remainingImageSlots);
+      event.currentTarget.value = '';
+      if (!incoming.length) return;
+      const compressed = await Promise.all(incoming.map((file) => compressImage(file)));
+      setImageFiles((current) =>
+        [...current, ...compressed].slice(0, MAX_BROADCAST_MEDIA_FILES - keptExistingCount)
+      );
+    },
+    [keptExistingCount, remainingImageSlots]
+  );
 
   const handleEditClick = useCallback(
     async (item) => {
@@ -166,7 +221,9 @@ export default function BroadcastModal({ isOpen, onClose }) {
       audience,
       recipients,
       sendNow,
-      scheduledAt
+      scheduledAt,
+      files: imageFiles,
+      mediaToDelete
     };
 
     const wasEditing = Boolean(editingId);
@@ -235,6 +292,54 @@ export default function BroadcastModal({ isOpen, onClose }) {
             value={text}
             onChange={(event) => setText(event.target.value)}
             placeholder="Текст сообщения в MAX..."
+          />
+        </div>
+
+        <div className="admin-modal__field">
+          <span className="admin-modal__label">Фотографии</span>
+          <div className="media-upload-group">
+            <label htmlFor="broadcast-media" className="media-input-label">
+              <span aria-hidden="true">📎</span>{' '}
+              {imageFiles.length > 0 ? `Выбрано: ${imageFiles.length}` : 'Добавить фото'}
+              <input
+                id="broadcast-media"
+                type="file"
+                accept="image/*"
+                multiple
+                disabled={remainingImageSlots === 0}
+                onChange={handleAddImages}
+                className="visually-hidden"
+              />
+            </label>
+            <span className="file-name-preview">
+              До {MAX_BROADCAST_MEDIA_FILES} фото
+            </span>
+          </div>
+          <MediaPreviewGrid
+            items={previewItems}
+            className="broadcast-modal-preview-grid"
+            showCaption={false}
+            getAction={(item) => (
+              <button
+                type="button"
+                className="media-remove-btn"
+                onClick={() => {
+                  if (item.key.startsWith('existing-')) {
+                    const filename = item.key.slice('existing-'.length);
+                    setMediaToDelete((current) =>
+                      current.includes(filename) ? current : [...current, filename]
+                    );
+                    return;
+                  }
+                  setImageFiles((current) =>
+                    current.filter((file) => `${file.name}-${file.lastModified}` !== item.key)
+                  );
+                }}
+                aria-label={`Убрать файл ${item.name}`}
+              >
+                <span aria-hidden="true">×</span>
+              </button>
+            )}
           />
         </div>
 

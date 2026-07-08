@@ -1,7 +1,9 @@
 // Общая логика MAX Bot API. Файл без .pb.js — подключается через require() внутри хендлеров.
 // В PB JSVM хендлеры изолированы: верхнеуровневые функции из .pb.js им недоступны.
 
-function sendBotMessage(maxId, text) {
+const PB_PUBLIC_BASE = $os.getenv('PB_PUBLIC_URL') || 'https://urban42.online/tt';
+
+function sendBotMessage(maxId, text, attachments) {
   if (!maxId) return;
   const token = $os.getenv('MAX_BOT_TOKEN');
   if (!token) {
@@ -9,6 +11,10 @@ function sendBotMessage(maxId, text) {
     return;
   }
   try {
+    const body = { text: text, format: 'markdown' };
+    if (attachments && attachments.length) {
+      body.attachments = attachments;
+    }
     const res = $http.send({
       method: 'POST',
       url: 'https://botapi.max.ru/messages?user_id=' + Number(maxId),
@@ -16,11 +22,8 @@ function sendBotMessage(maxId, text) {
         'Content-Type': 'application/json',
         'Authorization': token
       },
-      body: JSON.stringify({
-        text: text,
-        format: 'markdown'
-      }),
-      timeout: 30
+      body: JSON.stringify(body),
+      timeout: 6
     });
     if (res.statusCode >= 300) {
       console.log('[bot] MAX API ' + res.statusCode + ': ' + res.raw);
@@ -153,15 +156,31 @@ function broadcastToAllUsers(text) {
   }
 }
 
-function broadcastToUserIds(userIds, text) {
+function broadcastToUserIds(userIds, text, attachments) {
   if (!userIds || !userIds.length) return;
   for (let i = 0; i < userIds.length; i++) {
     try {
       const user = $app.findRecordById('users', userIds[i]);
       const maxId = user.getString('max_id');
-      if (maxId) sendBotMessage(maxId, text);
+      if (maxId) sendBotMessage(maxId, text, attachments);
     } catch (_) {}
   }
+}
+
+function buildPublicFileAttachments(collectionName, recordId, filenames) {
+  if (!filenames || !filenames.length) return undefined;
+  const attachments = [];
+  for (let i = 0; i < filenames.length; i++) {
+    const filename = filenames[i];
+    if (!filename) continue;
+    attachments.push({
+      type: 'image',
+      payload: {
+        url: PB_PUBLIC_BASE + '/api/files/' + collectionName + '/' + recordId + '/' + filename
+      }
+    });
+  }
+  return attachments.length ? attachments : undefined;
 }
 
 function broadcastNewPublication() {
@@ -177,5 +196,7 @@ module.exports = {
   sendTrainingRemindersForDate: sendTrainingRemindersForDate,
   broadcastToAllUsers: broadcastToAllUsers,
   broadcastToUserIds: broadcastToUserIds,
-  broadcastNewPublication: broadcastNewPublication
+  broadcastNewPublication: broadcastNewPublication,
+  buildPublicFileAttachments: buildPublicFileAttachments,
+  PB_PUBLIC_BASE: PB_PUBLIC_BASE
 };

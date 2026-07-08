@@ -3,6 +3,14 @@
 var TRAINING_COUNTDOWN_TITLE = 'Не забыли? 😜';
 var TRAINING_COUNTDOWN_BODY =
   'А мы напоминаем, совсем скоро у Вас запланирована тренировка! Мы Вас будем ждать! Но если что-то пошло не по плану, обязательно сообщите нам.';
+var TRAINING_FAREWELL_TITLE = 'Будем скучать! 💔';
+var TRAINING_FAREWELL_BODY =
+  'Ваша запись на тренировку отменена. Не переживайте, главное — не терять настрой! Надеемся на скорую встречу. Выберите удобное время для следующего занятия, как только будете готовы.';
+var TRAINING_FAREWELL_BADGE = 'Очень жаль, что не увиделись 😢';
+var TRAINING_COMPLETED_TITLE = 'Тренировка завершена! 🎉';
+var TRAINING_COMPLETED_BODY =
+  'Поздравляем с мощной тренировкой! Вы отлично потрудились и сделали еще один важный шаг к своей цели. Отдыхайте, восстанавливайте силы и гордитесь собой!';
+var TRAINING_COMPLETED_BADGE = 'Отличная работа! 💪';
 var FOUR_HOURS_MS = 4 * 60 * 60 * 1000;
 
 function relationId(entry) {
@@ -46,8 +54,18 @@ function getMetaTrainingId(notification) {
   return meta && meta.trainingId ? String(meta.trainingId) : '';
 }
 
-function findTrainingCountdownNotification(userId, trainingId) {
+function findTrainingNotification(userId, trainingId) {
   var list = $app.findRecordsByFilter(
+    'notifications',
+    'recipient = "' + userId + '" && training_id = "' + trainingId + '"',
+    '',
+    0,
+    0
+  );
+  if (list.length > 0) return list[0];
+
+  // Fallback для записей до миграции на training_id
+  list = $app.findRecordsByFilter(
     'notifications',
     'recipient = "' + userId + '" && badge_dynamic_type = "training_countdown"',
     '',
@@ -60,25 +78,90 @@ function findTrainingCountdownNotification(userId, trainingId) {
   return null;
 }
 
+function getStateFields(targetState) {
+  if (targetState === 'countdown') {
+    return {
+      title: TRAINING_COUNTDOWN_TITLE,
+      body: TRAINING_COUNTDOWN_BODY,
+      badge_dynamic_type: 'training_countdown',
+      badge_text: '',
+      click_action: 'open_training',
+      training_state: 'countdown'
+    };
+  }
+  if (targetState === 'farewell') {
+    return {
+      title: TRAINING_FAREWELL_TITLE,
+      body: TRAINING_FAREWELL_BODY,
+      badge_dynamic_type: '',
+      badge_text: TRAINING_FAREWELL_BADGE,
+      click_action: 'open_booking',
+      training_state: 'farewell'
+    };
+  }
+  return {
+    title: TRAINING_COMPLETED_TITLE,
+    body: TRAINING_COMPLETED_BODY,
+    badge_dynamic_type: '',
+    badge_text: TRAINING_COMPLETED_BADGE,
+    click_action: 'open_booking',
+    training_state: 'completed'
+  };
+}
+
+function applyStateFields(notification, fields, trainingId) {
+  notification.set('title', fields.title);
+  notification.set('body', fields.body);
+  notification.set('badge_dynamic_type', fields.badge_dynamic_type);
+  notification.set('badge_text', fields.badge_text);
+  notification.set('click_action', fields.click_action);
+  notification.set('training_state', fields.training_state);
+  notification.set('training_id', trainingId);
+  notification.set('is_read', false);
+}
+
 /**
- * Создаёт одно in-app уведомление с обратным отсчётом (idempotent).
- * @returns {boolean} true если создано новое
+ * Find-or-transition-else-create уведомление «Не забыли?» на пару (user, training).
+ * @param {'countdown'|'farewell'|'completed'} targetState
+ * @returns {boolean} true если запись создана или обновлена
  */
-function ensureTrainingCountdownNotification(userId, trainingId) {
+function upsertTrainingNotification(userId, trainingId, targetState) {
   userId = relationId(userId);
   trainingId = relationId(trainingId);
-  if (!userId || !trainingId) return false;
-  if (findTrainingCountdownNotification(userId, trainingId)) return false;
+  if (!userId || !trainingId || !targetState) return false;
+
+  var existing = findTrainingNotification(userId, trainingId);
+  var fields = getStateFields(targetState);
+
+  if (existing) {
+    if (targetState === 'completed' && existing.getString('training_state') === 'farewell') {
+      return false;
+    }
+    if (existing.getString('training_state') === targetState) {
+      return false;
+    }
+    applyStateFields(existing, fields, trainingId);
+    $app.save(existing);
+    return true;
+  }
+
+  if (targetState === 'farewell') return false;
+
+  if (targetState === 'countdown') {
+    var training;
+    try {
+      training = $app.findRecordById('trainings', trainingId);
+    } catch (_) {
+      return false;
+    }
+    if (!isWithinCountdownWindow(training.getString('date'))) return false;
+  }
 
   var notificationsCollection = $app.findCollectionByNameOrId('notifications');
   var notification = new Record(notificationsCollection);
   notification.set('recipient', userId);
-  notification.set('title', TRAINING_COUNTDOWN_TITLE);
-  notification.set('body', TRAINING_COUNTDOWN_BODY);
-  notification.set('badge_dynamic_type', 'training_countdown');
-  notification.set('click_action', 'open_training');
+  applyStateFields(notification, fields, trainingId);
   notification.set('meta', { trainingId: trainingId });
-  notification.set('is_read', false);
   $app.save(notification);
   return true;
 }
@@ -102,26 +185,11 @@ function newlyAddedUserIds(oldBooked, newBooked) {
   return added;
 }
 
-function ensureCountdownForNewlyBookedUsers(record, userIds) {
-  if (!userIds.length) return 0;
-  if (record.getBool('is_deleted') || record.getBool('is_cancelled')) return 0;
-  if (!isWithinCountdownWindow(record.getString('date'))) return 0;
-
-  var trainingId = relationId(record);
-  var created = 0;
-  var j;
-  for (j = 0; j < userIds.length; j++) {
-    if (ensureTrainingCountdownNotification(userIds[j], trainingId)) created++;
-  }
-  return created;
-}
-
 module.exports = {
   FOUR_HOURS_MS: FOUR_HOURS_MS,
   relationId: relationId,
   pbDateFilterStr: pbDateFilterStr,
-  ensureTrainingCountdownNotification: ensureTrainingCountdownNotification,
-  ensureCountdownForNewlyBookedUsers: ensureCountdownForNewlyBookedUsers,
+  upsertTrainingNotification: upsertTrainingNotification,
   newlyAddedUserIds: newlyAddedUserIds,
   isWithinCountdownWindow: isWithinCountdownWindow
 };

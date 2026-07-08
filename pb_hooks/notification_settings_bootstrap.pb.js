@@ -12,7 +12,9 @@ onBootstrap((e) => {
     record.set('training_deleted_enabled', true);
     record.set('posts_created_enabled', true);
     record.set('tournament_posts_created_enabled', true);
+    record.set('training_booking_enabled', true);
+    record.set('comments_notification_enabled', true);
     $app.save(record);
-    console.log('[admin] notification_settings: создан singleton (все 6 полей = true)');
+    console.log('[admin] notification_settings: создан singleton (все 8 полей = true)');
   }
 });

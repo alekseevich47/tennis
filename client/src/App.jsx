@@ -309,6 +309,7 @@ function AppMain({ user, setUser }) {
           setActiveTab(PROFILE_TAB_INDEX);
           setNotificationMembershipOpen(true);
         }}
+        onOpenBookingFromNotification={() => setActiveTab(1)}
         searchConfig={searchConfig}
       />
 

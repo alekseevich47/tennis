@@ -28,7 +28,6 @@ cronAdd('dispatch_scheduled_items', '* * * * *', () => {
 });
 
 routerAdd('POST', '/api/admin-dispatch-now', (c) => {
-  const adminlib = require(__hooks + '/adminlib.js');
   const info = c.requestInfo();
   const auth = info.auth;
   if (!auth) {
@@ -59,19 +58,9 @@ routerAdd('POST', '/api/admin-dispatch-now', (c) => {
     return c.json(200, { success: true, skipped: true });
   }
 
-  let recipientsCount = 0;
-  try {
-    if (collection === 'scheduled_broadcasts') {
-      recipientsCount = adminlib.dispatchScheduledBroadcast(record);
-    } else {
-      recipientsCount = adminlib.dispatchScheduledNotification(record);
-    }
-  } catch (err) {
-    console.log('[admin] dispatch-now ' + id + ': ' + err);
-    return c.json(500, { error: 'Dispatch failed' });
-  }
-
-  return c.json(200, { success: true, recipientsCount: recipientsCount });
+  // Не отправляем синхронно — крон dispatch_scheduled_items подхватит запись
+  // (scheduled_at уже = now) в течение ближайшей минуты.
+  return c.json(200, { success: true, accepted: true });
 });
 
 console.log('--- ADMIN SCHEDULER LOADED ---');

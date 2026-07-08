@@ -15,7 +15,8 @@ import './NotificationsDropdown.css';
  *   onMutate: () => void,
  *   notificationsAnchorRef: React.RefObject<HTMLElement | null>,
  *   onOpenTraining?: (trainingId: string) => void,
- *   onOpenMembership?: () => void
+ *   onOpenMembership?: () => void,
+ *   onOpenBooking?: () => void
  * }} props
  */
 export default function NotificationsDropdown({
@@ -26,7 +27,8 @@ export default function NotificationsDropdown({
   onMutate,
   notificationsAnchorRef,
   onOpenTraining,
-  onOpenMembership
+  onOpenMembership,
+  onOpenBooking
 }) {
   const dropdownRef = useRef(null);
   const listRef = useRef(null);
@@ -132,6 +134,11 @@ export default function NotificationsDropdown({
     onClose();
   }, [onClose, onOpenMembership]);
 
+  const handleOpenBooking = useCallback(() => {
+    onOpenBooking?.();
+    onClose();
+  }, [onClose, onOpenBooking]);
+
   if (!mounted) return null;
 
   return (
@@ -164,7 +171,7 @@ export default function NotificationsDropdown({
         <div ref={listRef} className="notifications-dropdown__list">
           {notifications.map((notification) => {
             const meta = /** @type {{ trainingId?: string } | undefined} */ (notification.meta);
-            const trainingId = meta?.trainingId;
+            const trainingId = notification.training_id || meta?.trainingId;
             return (
               <NotificationCard
                 key={String(notification.id)}
@@ -176,6 +183,7 @@ export default function NotificationsDropdown({
                 onDelete={handleDelete}
                 onOpenTraining={handleOpenTraining}
                 onOpenMembership={handleOpenMembership}
+                onOpenBooking={handleOpenBooking}
               />
             );
           })}

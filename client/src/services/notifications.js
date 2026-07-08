@@ -71,6 +71,9 @@ export function useNotifications(userId) {
  * @param {Record<string, unknown>} notification
  */
 export function isDeletableNotification(notification) {
+  if (notification.training_state) {
+    return notification.training_state !== 'countdown';
+  }
   return notification.badge_dynamic_type !== 'training_countdown';
 }
 

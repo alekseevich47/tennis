@@ -32,9 +32,18 @@ function dispatchScheduledBroadcast(record) {
   const bot = require(__hooks + '/botlib.js');
   const text = record.getString('text');
   const userIds = resolveAudienceUserIds(record, { forBroadcast: true });
+  const mediaField = record.get('media');
+  const mediaFilenames = mediaField
+    ? (Array.isArray(mediaField) ? mediaField : [mediaField])
+    : [];
+  const attachments = bot.buildPublicFileAttachments(
+    'scheduled_broadcasts',
+    record.getId(),
+    mediaFilenames
+  );
 
   try {
-    bot.broadcastToUserIds(userIds, text);
+    bot.broadcastToUserIds(userIds, text, attachments);
     record.set('status', 'sent');
     $app.save(record);
     console.log('[admin] broadcast sent: ' + record.getId() + ' → ' + userIds.length + ' users');
