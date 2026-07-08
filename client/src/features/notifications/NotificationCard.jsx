@@ -21,7 +21,8 @@ const READ_VISIBLE_DELAY_MS = 1200;
  *   onMarkRead?: () => void,
  *   onDelete: (id: string) => void,
  *   onOpenTraining?: (trainingId: string) => void,
- *   onOpenMembership?: () => void
+ *   onOpenMembership?: () => void,
+ *   onOpenBooking?: () => void
  * }} props
  */
 export default function NotificationCard({
@@ -32,7 +33,8 @@ export default function NotificationCard({
   onMarkRead,
   onDelete,
   onOpenTraining,
-  onOpenMembership
+  onOpenMembership,
+  onOpenBooking
 }) {
   const cardRef = useRef(null);
   const markedRef = useRef(false);
@@ -104,7 +106,15 @@ export default function NotificationCard({
     return notification.badge_text || null;
   })();
 
-  const clickLabel = clickAction ? CLICK_ACTION_LABELS[clickAction] : null;
+  const trainingState = notification.training_state;
+  const clickLabel = (() => {
+    if (clickAction === 'open_booking') {
+      if (trainingState === 'farewell') return 'Записаться на тренировку';
+      if (trainingState === 'completed') return 'Записаться ещё';
+      return null;
+    }
+    return clickAction ? CLICK_ACTION_LABELS[clickAction] : null;
+  })();
   const canDelete = isDeletableNotification(notification);
 
   const handleActionClick = useCallback(() => {
@@ -114,8 +124,12 @@ export default function NotificationCard({
     }
     if (clickAction === 'open_membership') {
       onOpenMembership?.();
+      return;
     }
-  }, [clickAction, meta?.trainingId, onOpenMembership, onOpenTraining]);
+    if (clickAction === 'open_booking') {
+      onOpenBooking?.();
+    }
+  }, [clickAction, meta?.trainingId, onOpenBooking, onOpenMembership, onOpenTraining]);
 
   const handleDelete = useCallback(
     (event) => {

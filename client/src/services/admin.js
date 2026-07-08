@@ -39,6 +39,60 @@ function fromDatetimeLocalValue(value) {
 
 export { toDatetimeLocalValue, fromDatetimeLocalValue };
 
+/**
+ * @param {{
+ *   text: string,
+ *   audience: string,
+ *   recipients?: string[],
+ *   sendNow?: boolean,
+ *   scheduledAt?: string,
+ *   files?: File[],
+ *   mediaToDelete?: string[],
+ *   isUpdate?: boolean
+ * }} options
+ * @returns {FormData | Record<string, unknown>}
+ */
+function buildBroadcastRecordPayload({
+  text,
+  audience,
+  recipients = [],
+  sendNow = false,
+  scheduledAt,
+  files = [],
+  mediaToDelete = [],
+  isUpdate = false
+}) {
+  const scheduled_at = sendNow ? new Date().toISOString() : fromDatetimeLocalValue(scheduledAt || '');
+  const recipientsValue = audience === 'selected' ? recipients : [];
+  const hasFileOps = files.length > 0 || (isUpdate && mediaToDelete.length > 0);
+
+  if (!hasFileOps) {
+    const payload = {
+      text,
+      audience,
+      recipients: recipientsValue,
+      scheduled_at
+    };
+    if (!isUpdate) {
+      payload.status = 'pending';
+    }
+    return payload;
+  }
+
+  const formData = new FormData();
+  formData.append('text', text);
+  formData.append('audience', audience);
+  recipientsValue.forEach((recipientId) => formData.append('recipients', recipientId));
+  formData.append('scheduled_at', scheduled_at);
+  if (!isUpdate) {
+    formData.append('status', 'pending');
+  }
+  mediaToDelete.forEach((filename) => formData.append('media-', filename));
+  const mediaFieldName = isUpdate ? 'media+' : 'media';
+  files.forEach((file) => formData.append(mediaFieldName, file));
+  return formData;
+}
+
 export async function listScheduledBroadcasts() {
   return pb.collection('scheduled_broadcasts').getFullList({
     filter: "status = 'pending'",
@@ -47,7 +101,7 @@ export async function listScheduledBroadcasts() {
 }
 
 /**
- * @param {{ text: string, audience: string, recipients?: string[], sendNow?: boolean, scheduledAt?: string }} payload
+ * @param {{ text: string, audience: string, recipients?: string[], sendNow?: boolean, scheduledAt?: string, files?: File[], mediaToDelete?: string[] }} payload
  */
 /**
  * Создание/обновление записи в `scheduled_*` — самостоятельная операция: если она
@@ -56,22 +110,29 @@ export async function listScheduledBroadcasts() {
  * отправки трактовалась как «не удалось сохранить», хотя запись (и часть уведомлений
  * получателям) уже была создана — отсюда путаница «ошибка в форме, но уведомление
  * в колокольчике появилось».
- * @returns {Promise<{ record: any, sendNow: boolean, dispatched: boolean, dispatchFailed: boolean, recipientsCount?: number }>}
+ * @returns {Promise<{ record: any, sendNow: boolean, dispatched: boolean, dispatchFailed: boolean, accepted?: boolean }>}
  */
 export async function createScheduledBroadcast({
   text,
   audience,
   recipients = [],
   sendNow = false,
-  scheduledAt
+  scheduledAt,
+  files = [],
+  mediaToDelete = []
 }) {
-  const record = await pb.collection('scheduled_broadcasts').create({
-    text,
-    audience,
-    recipients: audience === 'selected' ? recipients : [],
-    scheduled_at: sendNow ? new Date().toISOString() : fromDatetimeLocalValue(scheduledAt || ''),
-    status: 'pending'
-  });
+  const record = await pb.collection('scheduled_broadcasts').create(
+    buildBroadcastRecordPayload({
+      text,
+      audience,
+      recipients,
+      sendNow,
+      scheduledAt,
+      files,
+      mediaToDelete,
+      isUpdate: false
+    })
+  );
 
   if (!sendNow) {
     return { record, sendNow: false, dispatched: false, dispatchFailed: false };
@@ -79,13 +140,13 @@ export async function createScheduledBroadcast({
 
   try {
     const result = await dispatchNow('scheduled_broadcasts', record.id);
-    const updated = await pb.collection('scheduled_broadcasts').getOne(record.id);
+    const accepted = result?.accepted === true || result?.skipped === true;
     return {
-      record: updated,
+      record,
       sendNow: true,
-      dispatched: true,
-      dispatchFailed: false,
-      recipientsCount: result?.recipientsCount
+      dispatched: accepted,
+      dispatchFailed: !accepted,
+      accepted
     };
   } catch (err) {
     error('dispatch scheduled broadcast now:', err);
@@ -95,16 +156,31 @@ export async function createScheduledBroadcast({
 
 /**
  * @param {string} id
- * @param {{ text: string, audience: string, recipients?: string[], sendNow?: boolean, scheduledAt?: string }} payload
+ * @param {{ text: string, audience: string, recipients?: string[], sendNow?: boolean, scheduledAt?: string, files?: File[], mediaToDelete?: string[] }} payload
  */
 export async function updateScheduledBroadcast(id, payload) {
-  const { text, audience, recipients = [], sendNow = false, scheduledAt } = payload;
-  const record = await pb.collection('scheduled_broadcasts').update(id, {
+  const {
     text,
     audience,
-    recipients: audience === 'selected' ? recipients : [],
-    scheduled_at: sendNow ? new Date().toISOString() : fromDatetimeLocalValue(scheduledAt || '')
-  });
+    recipients = [],
+    sendNow = false,
+    scheduledAt,
+    files = [],
+    mediaToDelete = []
+  } = payload;
+  const record = await pb.collection('scheduled_broadcasts').update(
+    id,
+    buildBroadcastRecordPayload({
+      text,
+      audience,
+      recipients,
+      sendNow,
+      scheduledAt,
+      files,
+      mediaToDelete,
+      isUpdate: true
+    })
+  );
 
   if (!sendNow) {
     return { record, sendNow: false, dispatched: false, dispatchFailed: false };
@@ -112,13 +188,13 @@ export async function updateScheduledBroadcast(id, payload) {
 
   try {
     const result = await dispatchNow('scheduled_broadcasts', record.id);
-    const updated = await pb.collection('scheduled_broadcasts').getOne(record.id);
+    const accepted = result?.accepted === true || result?.skipped === true;
     return {
-      record: updated,
+      record,
       sendNow: true,
-      dispatched: true,
-      dispatchFailed: false,
-      recipientsCount: result?.recipientsCount
+      dispatched: accepted,
+      dispatchFailed: !accepted,
+      accepted
     };
   } catch (err) {
     error('dispatch scheduled broadcast now:', err);
@@ -144,7 +220,7 @@ export async function listScheduledNotifications() {
  * @param {{ title: string, body: string, audience: string, recipients?: string[], sendNow?: boolean, scheduledAt?: string }} payload
  */
 /**
- * @returns {Promise<{ record: any, sendNow: boolean, dispatched: boolean, dispatchFailed: boolean, recipientsCount?: number }>}
+ * @returns {Promise<{ record: any, sendNow: boolean, dispatched: boolean, dispatchFailed: boolean, accepted?: boolean }>}
  */
 export async function createScheduledNotification({
   title,
@@ -169,13 +245,13 @@ export async function createScheduledNotification({
 
   try {
     const result = await dispatchNow('scheduled_notifications', record.id);
-    const updated = await pb.collection('scheduled_notifications').getOne(record.id);
+    const accepted = result?.accepted === true || result?.skipped === true;
     return {
-      record: updated,
+      record,
       sendNow: true,
-      dispatched: true,
-      dispatchFailed: false,
-      recipientsCount: result?.recipientsCount
+      dispatched: accepted,
+      dispatchFailed: !accepted,
+      accepted
     };
   } catch (err) {
     error('dispatch scheduled notification now:', err);
@@ -203,13 +279,13 @@ export async function updateScheduledNotification(id, payload) {
 
   try {
     const result = await dispatchNow('scheduled_notifications', record.id);
-    const updated = await pb.collection('scheduled_notifications').getOne(record.id);
+    const accepted = result?.accepted === true || result?.skipped === true;
     return {
-      record: updated,
+      record,
       sendNow: true,
-      dispatched: true,
-      dispatchFailed: false,
-      recipientsCount: result?.recipientsCount
+      dispatched: accepted,
+      dispatchFailed: !accepted,
+      accepted
     };
   } catch (err) {
     error('dispatch scheduled notification now:', err);
