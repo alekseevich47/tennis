@@ -1,7 +1,7 @@
 // @ts-check
 import pb from './pb';
 import { error } from '../lib/log';
-import { auditGallery, auditShop } from '../lib/audit';
+import { auditGallery, auditRating, auditShop } from '../lib/audit';
 import { PB_URL } from '../config';
 
 /**
@@ -300,9 +300,53 @@ export async function listPlayers({ signal, filter } = {}) {
   }
 }
 
+function randomAuthSecret() {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return `${crypto.randomUUID().replace(/-/g, '')}${crypto.randomUUID().replace(/-/g, '').slice(0, 8)}`;
+  }
+  return `${Date.now()}${Math.random().toString(36).slice(2)}${Math.random().toString(36).slice(2)}`;
+}
+
+/**
+ * @param {FormData | Record<string, unknown>} payload
+ * @returns {FormData | Record<string, unknown>}
+ */
+function buildManualPlayerPayload(payload) {
+  const email = `manual_${Date.now()}_${Math.random().toString(36).slice(2, 10)}@local.tennis`;
+  const password = randomAuthSecret();
+
+  if (payload instanceof FormData) {
+    const data = new FormData();
+    for (const [key, value] of payload.entries()) {
+      if (key === 'birth_date' && !value) continue;
+      data.append(key, value);
+    }
+    data.append('email', email);
+    data.append('password', password);
+    data.append('passwordConfirm', password);
+    data.append('role', 'user');
+    data.append('wins', '0');
+    return data;
+  }
+
+  const { birth_date, ...rest } = payload;
+  return {
+    ...rest,
+    ...(birth_date ? { birth_date } : {}),
+    email,
+    password,
+    passwordConfirm: password,
+    role: 'user',
+    wins: 0
+  };
+}
+
 /** @param {FormData | Record<string, unknown>} payload */
 export async function createPlayer(payload) {
-  return pb.collection('users').create(/** @type {Record<string, unknown>} */ (payload));
+  const data = buildManualPlayerPayload(payload);
+  const record = await pb.collection('users').create(/** @type {Record<string, unknown>} */ (data));
+  auditRating.playerCreate(record);
+  return record;
 }
 
 /**
