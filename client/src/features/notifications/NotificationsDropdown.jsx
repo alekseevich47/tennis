@@ -76,7 +76,7 @@ export default function NotificationsDropdown({
     if (!anchor || !dropdown) return;
 
     const anchorRect = anchor.getBoundingClientRect();
-    const top = anchorRect.bottom + 8;
+    const top = anchorRect.bottom + 2;
 
     dropdown.style.top = `${top}px`;
   }, [open, notificationsAnchorRef, notifications.length]);
@@ -150,21 +150,6 @@ export default function NotificationsDropdown({
       aria-hidden={!open}
       onTransitionEnd={handleDropdownTransitionEnd}
     >
-      <div className="notifications-dropdown__toolbar">
-        <button
-          type="button"
-          className="notifications-dropdown__clear"
-          aria-label="Удалить все уведомления"
-          disabled={clearing || deletableCount === 0}
-          onClick={handleClearAll}
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-            <path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14" />
-            <path d="M10 11v6M14 11v6" />
-          </svg>
-        </button>
-      </div>
-
       {notifications.length === 0 ? (
         <p className="notifications-dropdown__empty">Уведомлений нет</p>
       ) : (
@@ -189,6 +174,19 @@ export default function NotificationsDropdown({
           })}
         </div>
       )}
+
+      <button
+        type="button"
+        className="notifications-dropdown__clear"
+        aria-label="Удалить все уведомления"
+        disabled={clearing || deletableCount === 0}
+        onClick={handleClearAll}
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+          <path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14" />
+          <path d="M10 11v6M14 11v6" />
+        </svg>
+      </button>
     </div>
   );
 }

@@ -7,6 +7,7 @@ import TournamentCommentsSection from './TournamentCommentsSection';
 import Avatar from '../../components/ui/Avatar';
 import sectionAvatarUrl from '../../assets/sm-avatar.png';
 import { formatPostDate } from '../../lib/format';
+import { flushPendingTournamentCommentDeletes } from '../../services/tournamentComments';
 
 /**
  * @param {{
@@ -48,13 +49,27 @@ function TournamentPostDetailModal({
 
   const handleOpenEdit = () => {
     onOpenEdit?.(post);
+    handleClose();
+  };
+
+  const handleOpenParticipantProfile = (participant) => {
+    onOpenProfile?.(
+      playerMap.get(participant.userId) || {
+        id: participant.userId,
+        full_name: participant.fullName
+      }
+    );
+  };
+
+  const handleClose = () => {
     onClose();
+    flushPendingTournamentCommentDeletes();
   };
 
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       ariaLabel="Просмотр итогов турнира и комментариев"
       size="large"
       showCloseButton={false}
@@ -93,7 +108,7 @@ function TournamentPostDetailModal({
             type="button"
             className="ui-modal-close"
             ariaLabel="Закрыть"
-            onClick={onClose}
+            onClick={handleClose}
           >
             <span aria-hidden="true">✕</span>
           </IconButton>
@@ -112,7 +127,11 @@ function TournamentPostDetailModal({
       />
 
       {participants.length > 0 ? (
-        <TournamentPodium participants={participants} players={players} />
+        <TournamentPodium
+          participants={participants}
+          players={players}
+          onOpenProfile={onOpenProfile}
+        />
       ) : null}
 
       {participants.length > 0 ? (
@@ -126,8 +145,15 @@ function TournamentPostDetailModal({
             return (
               <li key={participant.userId} className="tournament-results-row">
                 <span className="tournament-results-place">{participant.place}</span>
-                <Avatar user={player} size="sm" />
-                <span className="tournament-results-name">{participant.fullName}</span>
+                <button
+                  type="button"
+                  className="tournament-participant-profile-link tournament-participant-profile-link--list"
+                  onClick={() => handleOpenParticipantProfile(participant)}
+                  aria-label={`Открыть профиль ${participant.fullName}`}
+                >
+                  <Avatar user={player} size="sm" />
+                  <span className="tournament-results-name">{participant.fullName}</span>
+                </button>
                 <span className="tournament-results-points">+{participant.points}</span>
               </li>
             );

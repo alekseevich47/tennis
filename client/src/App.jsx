@@ -27,6 +27,7 @@ import { useNotifications } from './services/notifications';
 import { deleteProduct } from './services/catalog';
 import { hardDeleteComment, hardDeletePost } from './services/posts';
 import { hardDeleteTournamentPost } from './services/tournamentPosts';
+import { flushPendingTournamentCommentDeletes } from './services/tournamentComments';
 import { error } from './lib/log';
 import './styles/global.css';
 
@@ -177,6 +178,8 @@ function AppMain({ user, setUser }) {
       }
       sessionStorage.removeItem('pending_delete_comments');
     }
+
+    tasks.push(flushPendingTournamentCommentDeletes());
 
     if (tasks.length > 0) {
       await Promise.all(tasks);
