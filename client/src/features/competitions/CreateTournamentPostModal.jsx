@@ -10,6 +10,7 @@ import {
   isVideoFile,
   readSelectedFiles
 } from '../../lib/media';
+import { BOT_BLOCKED_TOURNAMENT_MESSAGE } from '../../services/auth';
 /**
  * @param {{
  *   isOpen: boolean,
@@ -61,10 +62,17 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
 
   const filteredPlayers = useMemo(() => {
     const query = search.trim().toLowerCase();
-    return players.filter((player) => {
+    const matched = players.filter((player) => {
       const fullName = player.full_name || '';
       return !query || fullName.toLowerCase().includes(query);
     });
+    const available = [];
+    const disabled = [];
+    for (const player of matched) {
+      if (player.bot_blocked === true) disabled.push(player);
+      else available.push(player);
+    }
+    return [...available, ...disabled];
   }, [players, search]);
 
   const selectedParticipants = useMemo(() => {
@@ -77,13 +85,17 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
       .filter((item) => Number.isFinite(item.points) && item.points >= 0);
   }, [pointsByUserId, players]);
 
-  const handleTogglePlayer = (playerId, checked) => {
+  const handleTogglePlayer = (player, checked) => {
+    if (player.bot_blocked === true) {
+      showToast({ text: BOT_BLOCKED_TOURNAMENT_MESSAGE });
+      return;
+    }
     setPointsByUserId((current) => {
       const next = { ...current };
       if (checked) {
-        next[playerId] = current[playerId] ?? '0';
+        next[player.id] = current[player.id] ?? '0';
       } else {
-        delete next[playerId];
+        delete next[player.id];
       }
       return next;
     });
@@ -179,20 +191,25 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
           <div className="create-tournament-post-players">
             {filteredPlayers.map((player) => {
               const checked = player.id in pointsByUserId;
+              const isBotBlocked = player.bot_blocked === true;
               return (
                 <div
                   key={player.id}
-                  className="create-tournament-post-player-row"
+                  className={`create-tournament-post-player-row${isBotBlocked ? ' is-disabled' : ''}`}
                   data-player-id={player.id}
                 >
                   <label className="create-tournament-post-player-label">
                     <input
                       type="checkbox"
                       checked={checked}
-                      onChange={(event) => handleTogglePlayer(player.id, event.target.checked)}
+                      disabled={isBotBlocked}
+                      onChange={(event) => handleTogglePlayer(player, event.target.checked)}
                     />
                     <Avatar user={player} size="sm" />
-                    <span>{player.full_name}</span>
+                    <span>
+                      {player.full_name}
+                      {isBotBlocked ? ' — заблокировал бота' : ''}
+                    </span>
                   </label>
                   <div className="player-points-slot" aria-hidden={!checked}>
                     {checked ? (

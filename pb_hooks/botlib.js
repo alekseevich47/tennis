@@ -184,7 +184,7 @@ function buildPublicFileAttachments(collectionName, recordId, filenames) {
 }
 
 function broadcastNewPublication() {
-  broadcastToAllUsers('Появилось что-то новенькое! Зайдите в приложение 🎾');
+  broadcastToAllUsers('Появилось что-то новенькое! Зайдите в приложение 🏓');
 }
 
 module.exports = {

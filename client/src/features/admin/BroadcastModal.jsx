@@ -16,7 +16,7 @@ import { compressImage } from '../../lib/compress';
 import { MEDIA_BASE_URL } from '../../config';
 import { mediaNames, readSelectedFiles } from '../../lib/media';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
-import { buildSendResultAlert } from './adminResultAlert';
+import { buildSendResultAlert, formatAdminSaveError } from './adminResultAlert';
 import './BroadcastModal.css';
 import '../feed/Feed.css';
 
@@ -242,10 +242,14 @@ export default function BroadcastModal({ isOpen, onClose }) {
       await alert({ title, message });
     } catch (err) {
       error('save broadcast:', err);
-      setFormError('Не удалось сохранить рассылку');
+      const message = formatAdminSaveError(
+        err,
+        'Не удалось сохранить рассылку. Проверьте подключение и попробуйте ещё раз.'
+      );
+      setFormError(message);
       await alert({
         title: 'Рассылка',
-        message: 'Не удалось сохранить рассылку. Проверьте подключение и попробуйте ещё раз.'
+        message
       });
     } finally {
       setSubmitting(false);

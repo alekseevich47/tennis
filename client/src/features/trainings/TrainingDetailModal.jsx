@@ -11,6 +11,7 @@ import {
   removeUsersFromTraining,
   unmarkAttendance
 } from '../../services/trainings';
+import { BOT_BLOCKED_BOOKING_MESSAGE } from '../../services/auth';
 import { error } from '../../lib/log';
 import UserPickerModal from './components/UserPickerModal';
 
@@ -95,6 +96,10 @@ function TrainingDetailModal({
       onMutated();
       setIsUserPickerOpen(false);
     } catch (err) {
+      if (/** @type {{ code?: string }} */ (err).code === 'BOT_BLOCKED') {
+        await alert({ title: 'Запись невозможна', message: BOT_BLOCKED_BOOKING_MESSAGE });
+        return;
+      }
       if (/** @type {{ code?: string }} */ (err).code === 'MEMBERSHIP_FROZEN') {
         await alert({ title: 'Запись невозможна', message: /** @type {Error} */ (err).message });
         return;

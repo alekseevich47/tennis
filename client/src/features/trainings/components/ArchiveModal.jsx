@@ -4,9 +4,28 @@ import IconButton from '../../../components/ui/IconButton';
 import Modal from '../../../components/ui/Modal';
 import { isDateQueryParsed, matchesDateQuery, parseDateQuery } from '../../../lib/dateSearch';
 import { formatCardDateWithYear, formatTimeRange } from '../../../lib/format';
+import DateRangeModal from './DateRangeModal';
 import '../Trainings.css';
 
 /** @typedef {'all' | 'completed' | 'cancelled'} ArchiveCategory */
+
+function formatDateRangeLabel(start, end) {
+  const fmt = (value) => {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '';
+    return date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
+  };
+  return `${fmt(start)} — ${fmt(end)}`;
+}
+
+function CalendarIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <path d="M16 2v4M8 2v4M3 10h18" />
+    </svg>
+  );
+}
 
 /**
  * @param {{
@@ -20,27 +39,39 @@ function ArchiveModal({ isOpen, trainings, onClose, onOpenDetail }) {
   const [searchQuery, setSearchQuery] = useState('');
   /** @type {[ArchiveCategory, React.Dispatch<React.SetStateAction<ArchiveCategory>>]} */
   const [category, setCategory] = useState(/** @type {ArchiveCategory} */ ('all'));
+  const [showDateRangeModal, setShowDateRangeModal] = useState(false);
+  const [dateRange, setDateRange] = useState(null);
+
+  const hasDateFilter = Boolean(dateRange?.start && dateRange?.end);
 
   const filtered = useMemo(() => {
-    const byCategory = trainings.filter((training) => {
+    let list = trainings.filter((training) => {
       if (category === 'cancelled') return training.is_cancelled === true;
       if (category === 'completed') return training.is_cancelled !== true;
       return true;
     });
 
-    if (!searchQuery.trim()) return byCategory;
+    if (hasDateFilter) {
+      const { start, end } = dateRange;
+      list = list.filter((training) => {
+        const date = training.date?.slice(0, 10);
+        return date && date >= start && date <= end;
+      });
+    }
+
+    if (!searchQuery.trim()) return list;
 
     const q = searchQuery.trim();
     const parsed = parseDateQuery(q);
     if (isDateQueryParsed(parsed)) {
-      return byCategory.filter((training) => matchesDateQuery(training.date, parsed));
+      return list.filter((training) => matchesDateQuery(training.date, parsed));
     }
 
     const qLower = q.toLowerCase();
-    return byCategory.filter((training) =>
+    return list.filter((training) =>
       formatCardDateWithYear(training.date).toLowerCase().includes(qLower)
     );
-  }, [trainings, searchQuery, category]);
+  }, [trainings, searchQuery, category, dateRange, hasDateFilter]);
 
   if (!isOpen) return null;
 
@@ -74,6 +105,16 @@ function ArchiveModal({ isOpen, trainings, onClose, onOpenDetail }) {
             </IconButton>
           ) : null}
         </div>
+        <IconButton
+          type="button"
+          ariaLabel="Выбрать период"
+          aria-expanded={showDateRangeModal}
+          variant="ghost"
+          className="archive-calendar-btn"
+          onClick={() => setShowDateRangeModal(true)}
+        >
+          <CalendarIcon />
+        </IconButton>
         <select
           className="archive-category-select"
           value={category}
@@ -85,6 +126,23 @@ function ArchiveModal({ isOpen, trainings, onClose, onOpenDetail }) {
           <option value="cancelled">Отменённые</option>
         </select>
       </div>
+      {hasDateFilter ? (
+        <div className="archive-date-range-row">
+          <span className="archive-date-range-label">
+            {formatDateRangeLabel(dateRange.start, dateRange.end)}
+          </span>
+          <IconButton
+            type="button"
+            ariaLabel="Сбросить фильтр по датам"
+            variant="ghost"
+            size="sm"
+            className="archive-date-reset-btn"
+            onClick={() => setDateRange(null)}
+          >
+            <span aria-hidden="true">✕</span>
+          </IconButton>
+        </div>
+      ) : null}
       <div className="archive-list">
         {filtered.length === 0 ? (
           <EmptyState title="Пусто" description="Прошедших тренировок пока нет." />
@@ -135,6 +193,12 @@ function ArchiveModal({ isOpen, trainings, onClose, onOpenDetail }) {
           })
         )}
       </div>
+
+      <DateRangeModal
+        isOpen={showDateRangeModal}
+        onClose={() => setShowDateRangeModal(false)}
+        onConfirm={(range) => setDateRange(range)}
+      />
     </Modal>
   );
 }

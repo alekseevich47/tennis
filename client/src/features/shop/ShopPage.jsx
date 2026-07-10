@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import clsx from 'clsx';
 import { useProducts } from '../../hooks/useProducts';
 import { isModerator } from '../../services/auth';
-import { restoreProduct, softDeleteProduct } from '../../services/catalog';
+import { incrementProductViews, restoreProduct, softDeleteProduct } from '../../services/catalog';
 import { useProductUpload } from '../../components/ProductUploadProvider';
 import Spinner from '../../components/ui/Spinner';
 import EmptyState from '../../components/ui/EmptyState';
@@ -62,11 +62,27 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
     onDeletedIdsChange?.(deletedProductIds);
   }, [deletedProductIds, onDeletedIdsChange]);
 
+  const openProduct = useCallback((product) => {
+    if (!product?.id) return;
+    const nextViews = (Number(product.views) || 0) + 1;
+    const nextProduct = { ...product, views: nextViews };
+    setSelectedProduct(nextProduct);
+    mutate(
+      (curr = []) => curr.map((item) => (
+        item.id === product.id ? { ...item, views: nextViews } : item
+      )),
+      false
+    );
+    incrementProductViews(product.id).catch((err) => {
+      error('increment product views:', err);
+    });
+  }, [mutate]);
+
   useEffect(() => {
     if (!productToOpen) return;
-    setSelectedProduct(productToOpen);
+    openProduct(productToOpen);
     onProductOpened?.();
-  }, [productToOpen, onProductOpened]);
+  }, [productToOpen, onProductOpened, openProduct]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -245,7 +261,7 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
                 isSoftDeleted={isSoftDeleted}
                 moderator={moderator}
                 hiddenMediaKey={hiddenMediaKey}
-                onOpen={setSelectedProduct}
+                onOpen={openProduct}
                 onDelete={handleDelete}
                 onRestore={handleRestore}
                 onOpenFullscreen={handleOpenFullscreen}

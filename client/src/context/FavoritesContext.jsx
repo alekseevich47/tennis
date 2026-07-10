@@ -6,10 +6,30 @@ import React, {
   useMemo,
   useState
 } from 'react';
+import { mutate as mutateSWR } from 'swr';
 import pb from '../services/pb';
+import { adjustProductFavoritesCount } from '../services/catalog';
 import { error } from '../lib/log';
 
 const FavoritesContext = createContext(null);
+
+/** @param {string} productId @param {1 | -1} delta */
+function patchProductsFavoritesCount(productId, delta) {
+  mutateSWR(
+    (key) => Array.isArray(key) && key[0] === 'products',
+    (curr) => {
+      if (!Array.isArray(curr)) return curr;
+      return curr.map((product) => {
+        if (product.id !== productId) return product;
+        return {
+          ...product,
+          favorites_count: Math.max(0, (Number(product.favorites_count) || 0) + delta)
+        };
+      });
+    },
+    false
+  );
+}
 
 async function loadFavoriteProducts(productIds, signal) {
   const ids = productIds.filter(Boolean);
@@ -65,10 +85,13 @@ export function FavoritesProvider({ children, userId, initialProductIds = [] }) 
         }
         return [...current, { product, quantity: 1 }];
       });
+      patchProductsFavoritesCount(product.id, 1);
       pb.collection('users')
         .update(userId, { 'favorite_products+': product.id })
+        .then(() => adjustProductFavoritesCount(product.id, 1))
         .catch((err) => {
           error('Ошибка добавления в избранное:', err);
+          patchProductsFavoritesCount(product.id, -1);
           setItems((current) =>
             current.filter((entry) => entry.product.id !== product.id)
           );
@@ -87,10 +110,13 @@ export function FavoritesProvider({ children, userId, initialProductIds = [] }) 
         return current.filter((entry) => entry.product.id !== productId);
       });
       if (!removed) return;
+      patchProductsFavoritesCount(productId, -1);
       pb.collection('users')
         .update(userId, { 'favorite_products-': productId })
+        .then(() => adjustProductFavoritesCount(productId, -1))
         .catch((err) => {
           error('Ошибка удаления из избранного:', err);
+          patchProductsFavoritesCount(productId, 1);
           setItems((prev) => {
             if (prev.some((entry) => entry.product.id === productId)) return prev;
             return [...prev, removed];

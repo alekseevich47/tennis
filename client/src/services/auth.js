@@ -18,11 +18,22 @@ import { auditProfile } from '../lib/audit';
  * @property {boolean} [is_banned]
  * @property {string} [ban_reason]
  * @property {string} [banned_at]
+ * @property {boolean} [bot_blocked]
+ * @property {string} [bot_blocked_at]
  * @property {boolean} [can_comment]
  * @property {string} [comment_restriction_reason]
  * @property {boolean} [onboarding_completed]
  * @property {boolean} [name_set_in_onboarding]
  */
+
+export const BOT_BLOCKED_APP_MESSAGE =
+  'Вы заблокировали или удалили бота в MAX. Для доступа к приложению снова нажмите «Начать» в боте.';
+
+export const BOT_BLOCKED_BOOKING_MESSAGE =
+  'Невозможно записать: пользователь заблокировал бота в MAX, уведомления о тренировках недоступны.';
+
+export const BOT_BLOCKED_TOURNAMENT_MESSAGE =
+  'Нельзя выбрать: пользователь заблокировал бота в MAX.';
 
 const BAN_INFO_KEY = 'tennis_ban_info';
 
@@ -66,6 +77,14 @@ export function loadBanInfo() {
  */
 export function isUserBanned(user) {
   return user?.is_banned === true;
+}
+
+/**
+ * @param {UserRecord | null | undefined} user
+ * @returns {boolean}
+ */
+export function isUserBotBlocked(user) {
+  return user?.bot_blocked === true && user?.is_banned !== true;
 }
 
 /**
