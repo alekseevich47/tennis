@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import clsx from 'clsx';
 import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
@@ -14,6 +14,7 @@ import {
 import { BOT_BLOCKED_BOOKING_MESSAGE } from '../../services/auth';
 import { error } from '../../lib/log';
 import UserPickerModal from './components/UserPickerModal';
+import ProfileViewModal from '../profile/ProfileViewModal';
 
 /**
  * @param {{
@@ -24,7 +25,8 @@ import UserPickerModal from './components/UserPickerModal';
  *   onMutated: () => void,
  *   onToggleClose?: (training: any) => void,
  *   onEdit?: (training: any) => void,
- *   onDelete?: (trainingId: string) => void
+ *   onDelete?: (trainingId: string) => void,
+ *   currentUser?: any
  * }} props
  */
 function TrainingDetailModal({
@@ -35,16 +37,27 @@ function TrainingDetailModal({
   onMutated,
   onToggleClose,
   onEdit,
-  onDelete
+  onDelete,
+  currentUser
 }) {
   const { confirm, alert } = useAlertDialog();
   const [isUserPickerOpen, setIsUserPickerOpen] = useState(false);
+  const [viewingPlayer, setViewingPlayer] = useState(null);
 
   useEffect(() => {
     if (!isOpen) {
       setIsUserPickerOpen(false);
+      setViewingPlayer(null);
     }
   }, [isOpen]);
+
+  const handleProfileMutated = useCallback(
+    (updatedPlayer) => {
+      if (updatedPlayer?.id) setViewingPlayer(updatedPlayer);
+      onMutated();
+    },
+    [onMutated]
+  );
 
   if (!training) return null;
 
@@ -271,13 +284,19 @@ function TrainingDetailModal({
                         onChange={(event) => handleAttendanceChange(player.id, event.target.checked)}
                       />
                     )}
-                    <Avatar
-                      user={player}
-                      size="sm"
-                      className="training-player-avatar"
-                      alt={player.full_name || 'Теннисист'}
-                    />
-                    <span className="player-name-label">{player.full_name || 'Теннисист'}</span>
+                    <button
+                      type="button"
+                      className="training-player-profile-link"
+                      onClick={() => setViewingPlayer(player)}
+                    >
+                      <Avatar
+                        user={player}
+                        size="sm"
+                        className="training-player-avatar"
+                        alt={player.full_name || 'Теннисист'}
+                      />
+                      <span className="player-name-label">{player.full_name || 'Теннисист'}</span>
+                    </button>
                   </div>
                   {userIsModerator && !training.is_deleted && (
                     <button
@@ -340,6 +359,14 @@ function TrainingDetailModal({
         onClose={() => setIsUserPickerOpen(false)}
         onConfirm={handleConfirmBookingUsers}
         excludeIds={bookedUserIds}
+      />
+
+      <ProfileViewModal
+        isOpen={!!viewingPlayer}
+        onClose={() => setViewingPlayer(null)}
+        targetUser={viewingPlayer}
+        currentUser={currentUser}
+        onMutated={handleProfileMutated}
       />
     </>
   );

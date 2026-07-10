@@ -73,6 +73,7 @@ function BottomNav({ activeTab, onTabChange, showAdmin = false }) {
             key={item.label}
             type="button"
             className={clsx('nav-item', isActive && 'active')}
+            data-nav-index={index}
             onClick={() => onTabChange(index)}
             aria-label={item.label}
             aria-current={isActive ? 'page' : undefined}

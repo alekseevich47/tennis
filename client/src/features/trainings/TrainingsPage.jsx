@@ -530,6 +530,7 @@ function TrainingsPage({
         isOpen={Boolean(selectedTraining)}
         training={selectedTraining}
         userIsModerator={userIsModerator}
+        currentUser={user}
         onClose={handleCloseDetail}
         onMutated={() => mutate()}
         onToggleClose={handleToggleClose}

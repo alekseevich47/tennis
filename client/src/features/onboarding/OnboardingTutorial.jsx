@@ -21,6 +21,10 @@ const TOUR_STEPS = {
   },
   3: {
     tab: 0,
+    spotlight: true,
+    selector: '.bottom-nav .nav-item[data-nav-index="0"]',
+    descriptionPlacement: 'top-card',
+    scrollBlock: 'nearest',
     text: 'Лента — мы очень рады делиться с Вами нашими новостями! Ставьте лайки ❤️ и пишите комментарии 💬.'
   },
   4: {
@@ -31,14 +35,26 @@ const TOUR_STEPS = {
   },
   5: {
     tab: 2,
+    spotlight: true,
+    selector: '.bottom-nav .nav-item[data-nav-index="2"]',
+    descriptionPlacement: 'top-card',
+    scrollBlock: 'nearest',
     text: 'Магазин секции: открывайте карточку товара и добавляйте в избранное ♥. Если хотите узнать о товаре — нажимайте на кнопку "Купить"'
   },
   6: {
     tab: 3,
+    spotlight: true,
+    selector: '.bottom-nav .nav-item[data-nav-index="3"]',
+    descriptionPlacement: 'top-card',
+    scrollBlock: 'nearest',
     text: 'Здесь Вы можете ознакомиться с результатами соревнований и прокомментиравать публикации 💬.'
   },
   7: {
     tab: 4,
+    spotlight: true,
+    selector: '.bottom-nav .nav-item[data-nav-index="4"]',
+    descriptionPlacement: 'top-card',
+    scrollBlock: 'nearest',
     text: 'В разделе галерея вы можете погрузиться в нашу дружескую атмосферу.'
   }
 };
@@ -124,7 +140,7 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
   const isCardStep = CARD_STEPS.has(step);
   const isTourStep = Boolean(tourConfig);
   const isSpotlightStep = Boolean(tourConfig?.spotlight);
-  const isHeaderInfoStep = isTourStep && !isSpotlightStep;
+  const isTopCardStep = tourConfig?.descriptionPlacement === 'top-card';
   const showNav = NAV_STEPS.has(step);
 
   const measureTarget = useCallback((selector, forcedPlacement, scrollBlock = 'center') => {
@@ -425,13 +441,13 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
         </div>
       )}
 
-      {isHeaderInfoStep && tourConfig && (
-        <div className="onboarding-header-banner" role="dialog" aria-modal="true">
+      {isSpotlightStep && isTopCardStep && tourConfig && (
+        <div className="onboarding-header-banner onboarding-header-banner--inset" role="dialog" aria-modal="true">
           <p>{tourConfig.text}</p>
         </div>
       )}
 
-      {isSpotlightStep && tourConfig && (
+      {isSpotlightStep && !isTopCardStep && tourConfig && (
         <div
           className={`onboarding-tooltip${tooltipPlacementResolved === 'top' ? ' onboarding-tooltip--top' : ''}`}
           role="dialog"
