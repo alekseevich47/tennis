@@ -81,11 +81,39 @@ export function formatAuditEventPreview(entry) {
 /**
  * @param {import('pocketbase').RecordModel} entry
  */
+function resolveProductArticle(entry) {
+  const details = entry.details;
+  if (details && typeof details === 'object' && details.article) {
+    return `#${details.article}`;
+  }
+  if (entry.object_type === 'product' && entry.object_id) {
+    return `#${entry.object_id}`;
+  }
+  return null;
+}
+
+/**
+ * @param {import('pocketbase').RecordModel} entry
+ */
+function resolveTrainingId(entry) {
+  if (entry.object_type !== 'training') return null;
+  const details = entry.details;
+  if (details && typeof details === 'object' && details.trainingId) {
+    return String(details.trainingId);
+  }
+  return entry.object_id ? String(entry.object_id) : null;
+}
+
+/**
+ * @param {import('pocketbase').RecordModel} entry
+ */
 export function formatAuditEventDetails(entry) {
   const role = resolveSubjectRole(entry);
   const objectTypeLabel = OBJECT_TYPE_LABELS[entry.object_type] || entry.object_type || '—';
   const subjectSource =
     SUBJECT_SOURCE_LABELS[entry.subject_source] || entry.subject_source || '—';
+  const productArticle = resolveProductArticle(entry);
+  const trainingId = resolveTrainingId(entry);
 
   /** @type {{ title: string, items: { label: string, value: string }[] }[]} */
   const sections = [
@@ -102,6 +130,8 @@ export function formatAuditEventDetails(entry) {
       items: [
         { label: 'Тип объекта', value: objectTypeLabel },
         { label: 'Объект', value: entry.object_label || entry.object_id || '—' },
+        ...(productArticle ? [{ label: 'Артикул', value: productArticle }] : []),
+        ...(trainingId ? [{ label: 'ID тренировки', value: trainingId }] : []),
         ...(entry.target_label
           ? [{ label: 'Цель', value: entry.target_label }]
           : [])

@@ -105,7 +105,7 @@ function buildAuditEventsFilter(filters) {
   const query = search?.trim();
   if (query) {
     parts.push(
-      '(summary_ru ~ {:q} || subject_label ~ {:q} || object_label ~ {:q} || target_label ~ {:q})'
+      '(summary_ru ~ {:q} || subject_label ~ {:q} || object_label ~ {:q} || target_label ~ {:q} || object_id ~ {:q})'
     );
     params.q = query;
   }

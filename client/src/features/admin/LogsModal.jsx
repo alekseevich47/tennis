@@ -227,7 +227,7 @@ function LogsModal({ isOpen, onClose }) {
         <div className="membership-search-row logs-modal__search-row">
           <input
             type="text"
-            placeholder="Поиск по тексту, именам, объектам…"
+            placeholder="Поиск по тексту, именам, ID…"
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
             className="rating-search-input"

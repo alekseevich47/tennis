@@ -103,6 +103,7 @@ function finalizeCancelledTrainingRecord(training) {
       objectId: training.id,
       objectLabel: objectLabel,
       effectiveAt: dateStr || undefined,
+      details: { trainingId: training.id },
       summaryRu: 'Система окончательно отменила тренировку ' + objectLabel,
       severity: 'warning'
     });
