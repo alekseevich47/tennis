@@ -4,7 +4,6 @@ import Modal from '../../components/ui/Modal';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { isModerator } from '../../services/auth';
 import pb from '../../services/pb';
-import { auditMembership } from '../../lib/audit';
 import { maybeNotifySessionsLeft } from '../../services/notifications';
 import MembershipPeriodRangeField from './MembershipPeriodRangeField';
 import MembershipStartDateField from './MembershipStartDateField';
@@ -102,12 +101,6 @@ function MembershipEditModal({ isOpen, onClose, user, mode = 'add', onMutated })
 
       await maybeNotifySessionsLeft(user.id, current, newValue, user.membership_type || 'regular');
 
-      if (mode === 'subtract') {
-        auditMembership.sessionsSubtracted(user.id, delta, newValue);
-      } else {
-        auditMembership.sessionsAdded(user.id, delta, newValue);
-      }
-
       await alert({
         title: copy.successTitle,
         message: `Доступные посещения: ${current} → ${newValue}.`,
@@ -117,12 +110,6 @@ function MembershipEditModal({ isOpen, onClose, user, mode = 'add', onMutated })
       onClose?.();
       onMutated?.(updated);
     } catch (err) {
-      if (mode === 'subtract') {
-        auditMembership.sessionsSubtractError(err, user.id);
-      } else {
-        auditMembership.sessionsAddError(err, user.id);
-      }
-
       await alert({
         title: 'Ошибка',
         message: 'Не удалось изменить количество посещений.'
@@ -206,19 +193,6 @@ function MembershipEditModal({ isOpen, onClose, user, mode = 'add', onMutated })
           nextSessions,
           updated.membership_type || membershipType
         );
-      }
-
-      if (payload.membership_type && payload.membership_type !== initialSnapshot.membershipType) {
-        auditMembership.membershipTypeChanged(
-          user.id,
-          initialSnapshot.membershipType,
-          payload.membership_type
-        );
-      }
-
-      const otherFields = changedFields.filter((field) => field !== 'membership_type');
-      if (otherFields.length > 0) {
-        auditMembership.membershipEdited(user.id, otherFields);
       }
 
       await alert({

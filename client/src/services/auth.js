@@ -2,8 +2,6 @@
 import pb from './pb';
 import { MAX_AUTH_URL } from '../config';
 import { log, error } from '../lib/log';
-import { auditProfile } from '../lib/audit';
-
 /**
  * @typedef {Object} UserRecord
  * @property {string} [id]
@@ -209,7 +207,6 @@ export async function banUser(targetUserId, reason) {
     ban_reason: reason || '',
     banned_at: new Date().toISOString()
   });
-  auditProfile.userBanned(targetUserId, reason);
   return /** @type {UserRecord} */ (updated);
 }
 
@@ -223,7 +220,6 @@ export async function unbanUser(targetUserId) {
     ban_reason: '',
     banned_at: ''
   });
-  auditProfile.userUnbanned(targetUserId);
   return /** @type {UserRecord} */ (updated);
 }
 
@@ -237,7 +233,6 @@ export async function restrictComments(targetUserId, reason) {
     can_comment: false,
     comment_restriction_reason: reason || ''
   });
-  auditProfile.commentsRestricted(targetUserId, reason);
   return /** @type {UserRecord} */ (updated);
 }
 
@@ -250,7 +245,6 @@ export async function unrestrictComments(targetUserId) {
     can_comment: true,
     comment_restriction_reason: ''
   });
-  auditProfile.commentsUnrestricted(targetUserId);
   return /** @type {UserRecord} */ (updated);
 }
 
@@ -260,7 +254,6 @@ export async function unrestrictComments(targetUserId) {
  */
 export async function hideFromRating(targetUserId) {
   const updated = await pb.collection('users').update(targetUserId, { is_visible: false });
-  auditProfile.userHidden(targetUserId);
   return /** @type {UserRecord} */ (updated);
 }
 
@@ -270,7 +263,6 @@ export async function hideFromRating(targetUserId) {
  */
 export async function showInRating(targetUserId) {
   const updated = await pb.collection('users').update(targetUserId, { is_visible: true });
-  auditProfile.userRevealed(targetUserId);
   return /** @type {UserRecord} */ (updated);
 }
 
@@ -297,11 +289,6 @@ export async function completeOnboarding(userId) {
 export async function updateUserProfile(userId, patch) {
   try {
     const updated = await pb.collection('users').update(userId, /** @type {Record<string, unknown>} */ (patch));
-    auditProfile.profileEdit(userId, patch);
-
-    if (hasAvatarPatch(patch)) {
-      auditProfile.avatarUpload(userId);
-    }
 
     if (getCurrentUser()?.id === userId) {
       const refreshed = await pb.collection('users').authRefresh();
@@ -310,7 +297,6 @@ export async function updateUserProfile(userId, patch) {
 
     return /** @type {UserRecord} */ (updated);
   } catch (err) {
-    auditProfile.profileEditError(err, userId);
     throw err;
   }
 }
