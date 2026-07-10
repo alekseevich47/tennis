@@ -10,10 +10,11 @@ const PODIUM_ORDER = [
 /**
  * @param {{
  *   participants: Array<{ userId: string, fullName: string, place: number }>,
- *   players?: any[]
+ *   players?: any[],
+ *   onOpenProfile?: (user: any) => void
  * }} props
  */
-function TournamentPodium({ participants, players = [] }) {
+function TournamentPodium({ participants, players = [], onOpenProfile }) {
   const playerMap = useMemo(() => {
     const map = new Map();
     players.forEach((player) => map.set(player.id, player));
@@ -42,16 +43,30 @@ function TournamentPodium({ participants, players = [] }) {
                 <span className="tournament-podium-medal" aria-hidden="true">
                   {medal}
                 </span>
-                <Avatar
-                  user={
-                    playerMap.get(participant.userId) || {
-                      id: participant.userId,
-                      full_name: participant.fullName
-                    }
+                <button
+                  type="button"
+                  className="tournament-participant-profile-link tournament-participant-profile-link--podium"
+                  onClick={() =>
+                    onOpenProfile?.(
+                      playerMap.get(participant.userId) || {
+                        id: participant.userId,
+                        full_name: participant.fullName
+                      }
+                    )
                   }
-                  size="md"
-                />
-                <span className="tournament-podium-name">{participant.fullName}</span>
+                  aria-label={`Открыть профиль ${participant.fullName}`}
+                >
+                  <Avatar
+                    user={
+                      playerMap.get(participant.userId) || {
+                        id: participant.userId,
+                        full_name: participant.fullName
+                      }
+                    }
+                    size="md"
+                  />
+                  <span className="tournament-podium-name">{participant.fullName}</span>
+                </button>
                 <span className="tournament-podium-place">{place}-е место</span>
               </div>
             ) : (

@@ -64,3 +64,28 @@ export async function updateTournamentComment(commentId, patch) {
 export async function hardDeleteTournamentComment(commentId) {
   return pb.collection('tournament_comments').delete(commentId);
 }
+
+export const PENDING_DELETE_TOURNAMENT_COMMENTS_KEY = 'pending_delete_tournament_comments';
+
+/**
+ * Физически удаляет комментарии, помеченные soft-delete в sessionStorage.
+ */
+export async function flushPendingTournamentCommentDeletes() {
+  const commentJson = sessionStorage.getItem(PENDING_DELETE_TOURNAMENT_COMMENTS_KEY);
+  if (!commentJson) return;
+
+  try {
+    const commentIds = JSON.parse(commentJson);
+    if (Array.isArray(commentIds) && commentIds.length > 0) {
+      await Promise.all(
+        commentIds.map((id) =>
+          hardDeleteTournamentComment(id).catch((err) => error('flush tournament comment:', err))
+        )
+      );
+    }
+  } catch (err) {
+    error('Не удалось распарсить pending_delete_tournament_comments:', err);
+  } finally {
+    sessionStorage.removeItem(PENDING_DELETE_TOURNAMENT_COMMENTS_KEY);
+  }
+}

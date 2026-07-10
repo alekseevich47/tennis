@@ -21,14 +21,11 @@
   transform: translateY(0);
 }
 
-.notifications-dropdown__toolbar {
-  display: flex;
-  justify-content: flex-end;
-  padding: 8px 8px 0;
-  flex-shrink: 0;
-}
-
 .notifications-dropdown__clear {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -36,10 +33,11 @@
   height: 32px;
   padding: 0;
   border: none;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.92);
   color: #8b98a5;
   cursor: pointer;
   border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
 .notifications-dropdown__clear svg {
