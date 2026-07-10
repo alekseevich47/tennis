@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { formatDateDisplay, parseDateDisplay, toDateInputValue } from '../../lib/datePickerUtils';
+import {
+  formatDateDisplay,
+  maskDateInput,
+  parseDateDisplay,
+  toDateInputValue
+} from '../../lib/datePickerUtils';
 import DatePickerModal from '../trainings/components/DatePickerModal';
 
 function CalendarIcon() {
@@ -54,6 +59,17 @@ function MembershipStartDateField({ id, label = 'Начало периода', v
     setText(formatDateDisplay(next));
   };
 
+  const handleChange = (event) => {
+    setText(maskDateInput(event.target.value));
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
+    if (event.key.length === 1 && !/\d/.test(event.key)) {
+      event.preventDefault();
+    }
+  };
+
   return (
     <div className="form-group">
       <label htmlFor={id}>{label}</label>
@@ -63,8 +79,10 @@ function MembershipStartDateField({ id, label = 'Начало периода', v
           type="text"
           className="membership-date-field-input"
           placeholder="дд.мм.гггг"
+          inputMode="numeric"
           value={text}
-          onChange={(event) => setText(event.target.value)}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
           onBlur={handleBlur}
           autoComplete="off"
         />

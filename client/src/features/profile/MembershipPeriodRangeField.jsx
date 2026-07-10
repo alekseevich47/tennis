@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   formatDateRangeDisplay,
+  maskDateRangeInput,
   parseDateRangeDisplay
 } from '../../lib/datePickerUtils';
 import DateRangeModal from '../trainings/components/DateRangeModal';
@@ -60,6 +61,17 @@ function MembershipPeriodRangeField({ id, label, startDate, endDate, onChange })
   const defaultRange =
     startDate ? { start: startDate, end: endDate || startDate } : null;
 
+  const handleChange = (event) => {
+    setText(maskDateRangeInput(event.target.value));
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
+    if (event.key.length === 1 && !/\d/.test(event.key)) {
+      event.preventDefault();
+    }
+  };
+
   return (
     <div className="form-group">
       <label htmlFor={id}>{label}</label>
@@ -69,8 +81,10 @@ function MembershipPeriodRangeField({ id, label, startDate, endDate, onChange })
           type="text"
           className="membership-date-field-input"
           placeholder="дд.мм.гггг - дд.мм.гггг"
+          inputMode="numeric"
           value={text}
-          onChange={(event) => setText(event.target.value)}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
           onBlur={handleBlur}
           autoComplete="off"
         />
