@@ -49,12 +49,14 @@ function DateRangeModal({ isOpen, onClose, onConfirm, defaultRange = null }) {
   const [selected, setSelected] = useState(undefined);
   const [displayAnchor, setDisplayAnchor] = useState(() => new Date());
 
+  const defaultRangeKey = defaultRange ? `${defaultRange.start}|${defaultRange.end}` : '';
+
   useEffect(() => {
     if (!isOpen) return;
     const defaults = defaultRange || getDefaultDateRange();
     setSelected(toSelectedRange(defaults));
     setDisplayAnchor(new Date());
-  }, [isOpen, defaultRange]);
+  }, [isOpen, defaultRangeKey]);
 
   const handleConfirm = async () => {
     if (!selected?.from) {
