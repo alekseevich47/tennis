@@ -152,6 +152,7 @@ function TrainingDetailModal({
   };
 
   return (
+    <>
       <Modal
         isOpen={isOpen}
         onClose={onClose}
