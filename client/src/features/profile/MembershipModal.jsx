@@ -5,7 +5,6 @@ import { useToast } from '../../components/ui/ToastContext';
 import { MAX_SELLER_URL } from '../../config';
 import { isModerator } from '../../services/auth';
 import pb from '../../services/pb';
-import { auditMembership } from '../../lib/audit';
 import { formatPostDate, pluralize } from '../../lib/format';
 import { error } from '../../lib/log';
 import {
@@ -220,7 +219,6 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
           ...(updatedEndDate !== endDate ? { membership_end_date: updatedEndDate } : {})
         });
 
-        auditMembership.membershipUnfrozen(user.id, { extendedDays: frozenDays });
       } else {
         const newEntry = { frozen_at: new Date().toISOString(), unfrozen_at: null };
         const updatedLog = [...freezeLog, newEntry];
@@ -230,7 +228,6 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
           membership_frozen_at: newEntry.frozen_at,
           membership_freeze_log: updatedLog
         });
-        auditMembership.membershipFrozen(user.id);
       }
 
       applyMembership(updated);

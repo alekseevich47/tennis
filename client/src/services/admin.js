@@ -1,7 +1,6 @@
 // @ts-check
 import pb from './pb';
 import { error } from '../lib/log';
-import { auditAdmin } from '../lib/audit';
 
 /**
  * @param {string} collection
@@ -94,89 +93,6 @@ function buildBroadcastRecordPayload({
   return formData;
 }
 
-/**
- * @param {Record<string, unknown>} before
- * @param {Record<string, unknown>} after
- * @param {string[]} keys
- * @returns {string[]}
- */
-function getChangedKeys(before, after, keys) {
-  return keys.filter((key) => {
-    const from = before[key];
-    const to = after[key];
-    if (Array.isArray(from) && Array.isArray(to)) {
-      return JSON.stringify(from) !== JSON.stringify(to);
-    }
-    return from !== to;
-  });
-}
-
-/**
- * @param {string} isoString
- */
-function toScheduledAtMinute(isoString) {
-  if (!isoString) return '';
-  const date = new Date(isoString);
-  if (Number.isNaN(date.getTime())) return '';
-  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}-${date.getHours()}-${date.getMinutes()}`;
-}
-
-/**
- * @param {{
- *   text: string,
- *   audience: string,
- *   recipients?: string[],
- *   sendNow?: boolean,
- *   scheduledAt?: string,
- *   files?: File[],
- *   mediaToDelete?: string[]
- * }} payload
- */
-function getBroadcastChangedFields(existing, payload) {
-  const { text, audience, recipients = [], sendNow = false, scheduledAt, files = [], mediaToDelete = [] } =
-    payload;
-  const next = {
-    text,
-    audience,
-    recipients: audience === 'selected' ? recipients : [],
-    scheduled_at: sendNow ? new Date().toISOString() : fromDatetimeLocalValue(scheduledAt || '')
-  };
-  const changedFields = getChangedKeys(existing, next, ['text', 'audience', 'recipients']);
-  if (toScheduledAtMinute(existing.scheduled_at) !== toScheduledAtMinute(next.scheduled_at)) {
-    changedFields.push('scheduled_at');
-  }
-  if (files.length > 0 || mediaToDelete.length > 0) {
-    changedFields.push('media');
-  }
-  return changedFields;
-}
-
-/**
- * @param {{
- *   title: string,
- *   body: string,
- *   audience: string,
- *   recipients?: string[],
- *   sendNow?: boolean,
- *   scheduledAt?: string
- * }} payload
- */
-function getNotificationChangedFields(existing, payload) {
-  const { title, body, audience, recipients = [], sendNow = false, scheduledAt } = payload;
-  const next = {
-    title,
-    body,
-    audience,
-    recipients: audience === 'selected' ? recipients : [],
-    scheduled_at: sendNow ? new Date().toISOString() : fromDatetimeLocalValue(scheduledAt || '')
-  };
-  const changedFields = getChangedKeys(existing, next, ['title', 'body', 'audience', 'recipients']);
-  if (toScheduledAtMinute(existing.scheduled_at) !== toScheduledAtMinute(next.scheduled_at)) {
-    changedFields.push('scheduled_at');
-  }
-  return changedFields;
-}
-
 export async function listScheduledBroadcasts() {
   return pb.collection('scheduled_broadcasts').getFullList({
     filter: "status = 'pending'",
@@ -217,8 +133,6 @@ export async function createScheduledBroadcast({
       isUpdate: false
     })
   );
-  auditAdmin.broadcastCreate(record, sendNow);
-
   if (!sendNow) {
     return { record, sendNow: false, dispatched: false, dispatchFailed: false };
   }
@@ -244,7 +158,6 @@ export async function createScheduledBroadcast({
  * @param {{ text: string, audience: string, recipients?: string[], sendNow?: boolean, scheduledAt?: string, files?: File[], mediaToDelete?: string[] }} payload
  */
 export async function updateScheduledBroadcast(id, payload) {
-  const existing = await pb.collection('scheduled_broadcasts').getOne(id);
   const {
     text,
     audience,
@@ -254,7 +167,6 @@ export async function updateScheduledBroadcast(id, payload) {
     files = [],
     mediaToDelete = []
   } = payload;
-  const changedFields = getBroadcastChangedFields(existing, payload);
   const record = await pb.collection('scheduled_broadcasts').update(
     id,
     buildBroadcastRecordPayload({
@@ -268,10 +180,6 @@ export async function updateScheduledBroadcast(id, payload) {
       isUpdate: true
     })
   );
-  if (changedFields.length > 0) {
-    auditAdmin.broadcastEdit(id, changedFields);
-  }
-
   if (!sendNow) {
     return { record, sendNow: false, dispatched: false, dispatchFailed: false };
   }
@@ -296,9 +204,7 @@ export async function updateScheduledBroadcast(id, payload) {
  * @param {string} id
  */
 export async function cancelScheduledBroadcast(id) {
-  const record = await pb.collection('scheduled_broadcasts').update(id, { status: 'cancelled' });
-  auditAdmin.broadcastCancel(id);
-  return record;
+  return pb.collection('scheduled_broadcasts').update(id, { status: 'cancelled' });
 }
 
 export async function listScheduledNotifications() {
@@ -330,8 +236,6 @@ export async function createScheduledNotification({
     scheduled_at: sendNow ? new Date().toISOString() : fromDatetimeLocalValue(scheduledAt || ''),
     status: 'pending'
   });
-  auditAdmin.notificationCreate(record, sendNow);
-
   if (!sendNow) {
     return { record, sendNow: false, dispatched: false, dispatchFailed: false };
   }
@@ -357,9 +261,7 @@ export async function createScheduledNotification({
  * @param {{ title: string, body: string, audience: string, recipients?: string[], sendNow?: boolean, scheduledAt?: string }} payload
  */
 export async function updateScheduledNotification(id, payload) {
-  const existing = await pb.collection('scheduled_notifications').getOne(id);
   const { title, body, audience, recipients = [], sendNow = false, scheduledAt } = payload;
-  const changedFields = getNotificationChangedFields(existing, payload);
   const record = await pb.collection('scheduled_notifications').update(id, {
     title,
     body,
@@ -367,10 +269,6 @@ export async function updateScheduledNotification(id, payload) {
     recipients: audience === 'selected' ? recipients : [],
     scheduled_at: sendNow ? new Date().toISOString() : fromDatetimeLocalValue(scheduledAt || '')
   });
-  if (changedFields.length > 0) {
-    auditAdmin.notificationEdit(id, changedFields);
-  }
-
   if (!sendNow) {
     return { record, sendNow: false, dispatched: false, dispatchFailed: false };
   }
@@ -395,9 +293,7 @@ export async function updateScheduledNotification(id, payload) {
  * @param {string} id
  */
 export async function cancelScheduledNotification(id) {
-  const record = await pb.collection('scheduled_notifications').update(id, { status: 'cancelled' });
-  auditAdmin.notificationCancel(id);
-  return record;
+  return pb.collection('scheduled_notifications').update(id, { status: 'cancelled' });
 }
 
 export async function getNotificationSettings() {
@@ -410,50 +306,5 @@ export async function getNotificationSettings() {
  * @param {Record<string, boolean>} patch
  */
 export async function updateNotificationSettings(id, patch) {
-  const record = await pb.collection('notification_settings').update(id, patch);
-  const [field, value] = Object.entries(patch)[0];
-  auditAdmin.settingToggled(field, value);
-  return record;
-}
-
-export const MODERATOR_LOG_DOMAINS = [
-  'ТРЕНИРОВКИ',
-  'АБОНЕМЕНТ',
-  'ПРОФИЛЬ',
-  'РЕЙТИНГ',
-  'АДМИНИСТРИРОВАНИЕ'
-];
-
-export const PROFILE_EXCLUDED_ACTIONS = ['Аватар обновлён'];
-
-/**
- * @param {{ start: string, end: string }} params
- */
-function addDaysToDateInput(value, days) {
-  const [y, m, d] = value.split('-').map(Number);
-  const date = new Date(y, m - 1, d + days);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-
-export async function listModeratorLogs({ start, end }) {
-  const domainParams = Object.fromEntries(
-    MODERATOR_LOG_DOMAINS.map((domain, i) => [`d${i}`, domain])
-  );
-  const domainFilter = MODERATOR_LOG_DOMAINS.map((_, i) => `domain = {:d${i}}`).join(' || ');
-  const endExclusive = addDaysToDateInput(end, 1);
-
-  const results = await pb.collection('audit_logs').getFullList({
-    filter: pb.filter(
-      `is_error = false && created >= {:start} && created < {:endExclusive} && (${domainFilter})`,
-      { start, endExclusive, ...domainParams }
-    ),
-    sort: '-created'
-  });
-
-  return results.filter(
-    (r) => !(r.domain === 'ПРОФИЛЬ' && PROFILE_EXCLUDED_ACTIONS.includes(r.action))
-  );
+  return pb.collection('notification_settings').update(id, patch);
 }

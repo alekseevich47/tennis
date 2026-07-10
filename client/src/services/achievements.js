@@ -2,8 +2,6 @@
 import pb from './pb';
 import { error } from '../lib/log';
 import { getMediaUrl } from '../lib/media';
-import { auditAchievements } from '../lib/audit';
-
 /**
  * @typedef {Object} AchievementLevelRecord
  * @property {string} id
@@ -221,21 +219,8 @@ export function getUserAchievements(userId, achievements, user) {
       const { progress, userValue } = calcAchievementProgress(sortOrder, user, levels);
 
       result.set(achievement.id, { progress, userValue });
-
-      if (progress.achieved) {
-        void auditAchievements.achievementUnlocked(
-          achievement.id,
-          achievement.name || '',
-          progress.level,
-          progress.title,
-          progress.required_value,
-          userValue,
-          userId
-        );
-      }
     }
   } catch (err) {
-    auditAchievements.achievementCalcError(err, userId);
     throw err;
   }
 
