@@ -931,6 +931,33 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  align-items: center;
+}
+
+.date-range-picker.rdp-root {
+  --rdp-accent-color: #007aff;
+  --rdp-accent-background-color: rgba(0, 122, 255, 0.12);
+  --rdp-range_middle-background-color: rgba(0, 122, 255, 0.1);
+  --rdp-range_middle-color: #1c1c1e;
+  --rdp-range_start-color: #fff;
+  --rdp-range_end-color: #fff;
+  --rdp-today-color: #007aff;
+  --rdp-day-height: 40px;
+  --rdp-day-width: 40px;
+  --rdp-day_button-height: 38px;
+  --rdp-day_button-width: 38px;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.date-range-hint {
+  width: 100%;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.35;
+  color: #868e96;
+  text-align: center;
 }
 
 .date-range-confirm-btn {
