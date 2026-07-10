@@ -1,9 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { DayPicker } from '@daypicker/react';
-import { ru } from '@daypicker/react/locale';
-import '@daypicker/react/style.css';
 import Modal from '../../../components/ui/Modal';
 import { useAlertDialog } from '../../../components/ui/AlertDialog';
+import DateRangePicker from './DateRangePicker';
 import '../Trainings.css';
 
 function toDateInputValue(date) {
@@ -22,6 +20,16 @@ export function getDefaultDateRange() {
   const now = new Date();
   const start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
   const end = new Date(now.getFullYear(), now.getMonth(), 1);
+  return {
+    start: toDateInputValue(start),
+    end: toDateInputValue(end)
+  };
+}
+
+export function getArchiveDefaultDateRange() {
+  const end = new Date();
+  const start = new Date();
+  start.setMonth(start.getMonth() - 1);
   return {
     start: toDateInputValue(start),
     end: toDateInputValue(end)
@@ -96,16 +104,10 @@ function DateRangeModal({ isOpen, onClose, onConfirm, defaultRange = null }) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Выбрать период" showCloseButton>
       <div className="date-range-modal-body">
-        <DayPicker
-          animate
-          mode="range"
-          locale={ru}
-          weekStartsOn={1}
-          className="date-range-picker"
-          defaultMonth={defaultMonth}
+        <DateRangePicker
           selected={selected}
           onSelect={setSelected}
-          showOutsideDays
+          defaultMonth={defaultMonth}
         />
         <p className="date-range-hint" aria-live="polite">
           {formatRangeHint(selected)}
