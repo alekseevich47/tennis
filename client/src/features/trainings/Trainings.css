@@ -684,6 +684,22 @@
   white-space: nowrap;
 }
 
+.training-player-profile-link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.training-player-profile-link:hover {
+  opacity: 0.8;
+}
+
 .player-row--unbooked {
   color: var(--color-text-secondary, #8b98a5);
 }

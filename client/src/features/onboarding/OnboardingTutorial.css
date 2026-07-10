@@ -81,6 +81,14 @@
   pointer-events: auto;
 }
 
+.onboarding-header-banner--inset {
+  top: calc(56px + 12px);
+  left: 16px;
+  right: 16px;
+  border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+}
+
 .onboarding-header-banner p {
   font-size: 15px;
   color: #333;
