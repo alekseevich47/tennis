@@ -24,20 +24,21 @@ export function getDefaultDateRange() {
  * @param {{
  *   isOpen: boolean,
  *   onClose: () => void,
- *   onConfirm: (range: { start: string, end: string }) => void
+ *   onConfirm: (range: { start: string, end: string }) => void,
+ *   defaultRange?: { start: string, end: string } | null
  * }} props
  */
-function DateRangeModal({ isOpen, onClose, onConfirm }) {
+function DateRangeModal({ isOpen, onClose, onConfirm, defaultRange = null }) {
   const { alert } = useAlertDialog();
   const [start, setStart] = useState('');
   const [end, setEnd] = useState('');
 
   useEffect(() => {
     if (!isOpen) return;
-    const defaults = getDefaultDateRange();
+    const defaults = defaultRange || getDefaultDateRange();
     setStart(defaults.start);
     setEnd(defaults.end);
-  }, [isOpen]);
+  }, [isOpen, defaultRange]);
 
   const handleConfirm = async () => {
     if (!start || !end || start > end) {

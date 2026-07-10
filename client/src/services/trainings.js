@@ -470,7 +470,9 @@ export async function finalizeCancelledTraining(trainingId) {
     const record = /** @type {TrainingRecord} */ (
       await pb.collection('trainings').update(trainingId, { is_cancelled: true })
     );
-    auditTrainings.trainingCancelFinalized(trainingId);
+    auditTrainings.trainingCancelFinalized(
+      /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (training))
+    );
 
     if (!ended) {
       try {
@@ -568,7 +570,9 @@ export async function softDeleteTraining(trainingId) {
     const record = /** @type {TrainingRecord} */ (
       await pb.collection('trainings').update(trainingId, { is_deleted: true })
     );
-    auditTrainings.trainingSoftDelete(trainingId);
+    auditTrainings.trainingSoftDelete(
+      /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record))
+    );
     return record;
   } catch (err) {
     auditTrainings.trainingDeleteError(err, trainingId);
@@ -607,7 +611,9 @@ export async function restoreTraining(trainingId) {
       record = /** @type {TrainingRecord} */ (
         await pb.collection('trainings').update(trainingId, { is_deleted: false })
       );
-      auditTrainings.trainingRestore(trainingId);
+      auditTrainings.trainingRestore(
+        /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (training))
+      );
       await notifyTrainingRestoredBot(trainingId);
       return { record, insufficientUsers: [] };
     }
@@ -669,7 +675,10 @@ export async function restoreTraining(trainingId) {
       });
     }
 
-    auditTrainings.trainingRestore(trainingId, insufficientUserIds);
+    auditTrainings.trainingRestore(
+      /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
+      insufficientUserIds
+    );
     await notifyTrainingRestoredBot(trainingId);
 
     const insufficientUsers =
@@ -708,7 +717,9 @@ export async function closeTraining(trainingId) {
     const record = /** @type {TrainingRecord} */ (
       await pb.collection('trainings').update(trainingId, { is_closed: true })
     );
-    auditTrainings.trainingClose(trainingId);
+    auditTrainings.trainingClose(
+      /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record))
+    );
     await notifyTrainingStatusBot(trainingId, true);
     return record;
   } catch (err) {
@@ -725,7 +736,9 @@ export async function reopenTraining(trainingId) {
     const record = /** @type {TrainingRecord} */ (
       await pb.collection('trainings').update(trainingId, { is_closed: false })
     );
-    auditTrainings.trainingReopen(trainingId);
+    auditTrainings.trainingReopen(
+      /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record))
+    );
     await notifyTrainingStatusBot(trainingId, false);
     return record;
   } catch (err) {

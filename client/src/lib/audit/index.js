@@ -5,3 +5,5 @@ export { auditShop } from './shop';
 export { auditProfile } from './profile';
 export { auditMembership } from './membership';
 export { auditAchievements } from './achievements';
+export { auditRating } from './rating';
+export { auditAdmin } from './admin';

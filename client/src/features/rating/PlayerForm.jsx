@@ -6,7 +6,6 @@ const INITIAL = {
   birth_date: '',
   dominant_hand: 'Правая',
   rating_points: '0',
-  wins: '0',
   avatar: /** @type {File | null} */ (null)
 };
 
@@ -34,7 +33,6 @@ function PlayerForm({ isOpen, onClose, onSubmit }) {
       data.append('birth_date', form.birth_date);
       data.append('dominant_hand', form.dominant_hand);
       data.append('rating_points', String(parseInt(form.rating_points, 10) || 0));
-      data.append('wins', String(parseInt(form.wins, 10) || 0));
       if (form.avatar) data.append('avatar', form.avatar);
       await onSubmit(data);
       setForm(INITIAL);
@@ -86,16 +84,6 @@ function PlayerForm({ isOpen, onClose, onSubmit }) {
             type="number"
             value={form.rating_points}
             onChange={(e) => updateField('rating_points')(e.target.value)}
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="player-wins">Побед</label>
-          <input
-            id="player-wins"
-            type="number"
-            value={form.wins}
-            onChange={(e) => updateField('wins')(e.target.value)}
           />
         </div>
 

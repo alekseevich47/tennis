@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import BroadcastModal from './BroadcastModal';
+import LogsModal from './LogsModal';
 import NotificationSendModal from './NotificationSendModal';
 import NotificationSettingsModal from './NotificationSettingsModal';
 import './AdminPanelPage.css';
@@ -11,6 +12,7 @@ export default function AdminPanelPage() {
   const [broadcastOpen, setBroadcastOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [logsOpen, setLogsOpen] = useState(false);
 
   return (
     <div className="admin-panel">
@@ -48,7 +50,11 @@ export default function AdminPanelPage() {
           </button>
         </li>
         <li>
-          <button type="button" className="admin-panel__item admin-panel__item--stub">
+          <button
+            type="button"
+            className="admin-panel__item"
+            onClick={() => setLogsOpen(true)}
+          >
             Логи
           </button>
         </li>
@@ -63,6 +69,7 @@ export default function AdminPanelPage() {
         isOpen={settingsOpen}
         onClose={() => setSettingsOpen(false)}
       />
+      <LogsModal isOpen={logsOpen} onClose={() => setLogsOpen(false)} />
     </div>
   );
 }

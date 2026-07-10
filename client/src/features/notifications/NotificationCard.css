@@ -96,7 +96,7 @@
 .notification-card__delete {
   position: absolute;
   right: 8px;
-  bottom: 8px;
+  top: 8px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
