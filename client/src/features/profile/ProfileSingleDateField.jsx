@@ -15,7 +15,6 @@ const PICKER_ZONE_WIDTH = 40;
 function ProfileSingleDateField({ id, label, value, onChange }) {
   const [pickerOpen, setPickerOpen] = useState(false);
   const inputRef = useRef(null);
-  const defaultDate = value ? parseDateInputValue(value) : null;
 
   const isPickerZoneClick = (event) => {
     const input = inputRef.current;
@@ -60,7 +59,7 @@ function ProfileSingleDateField({ id, label, value, onChange }) {
       <DatePickerModal
         isOpen={pickerOpen}
         onClose={() => setPickerOpen(false)}
-        defaultDate={defaultDate}
+        defaultDate={value || null}
         onConfirm={handleConfirm}
       />
     </div>

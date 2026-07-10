@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Modal from '../../../components/ui/Modal';
 import { useAlertDialog } from '../../../components/ui/AlertDialog';
+import { parseDateInputValue } from '../../../lib/datePickerUtils';
 import DateRangePicker from './DateRangePicker';
 import '../Trainings.css';
 
@@ -9,7 +10,7 @@ import '../Trainings.css';
  *   isOpen: boolean,
  *   onClose: () => void,
  *   onConfirm: (date: Date) => void,
- *   defaultDate?: Date | null
+ *   defaultDate?: string | null
  * }} props
  */
 function DatePickerModal({ isOpen, onClose, onConfirm, defaultDate = null }) {
@@ -19,7 +20,7 @@ function DatePickerModal({ isOpen, onClose, onConfirm, defaultDate = null }) {
 
   useEffect(() => {
     if (!isOpen) return;
-    setSelectedDate(defaultDate || undefined);
+    setSelectedDate(defaultDate ? parseDateInputValue(defaultDate) : undefined);
     setDisplayAnchor(new Date());
   }, [isOpen, defaultDate]);
 
