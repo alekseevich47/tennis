@@ -236,6 +236,14 @@
   cursor: pointer;
 }
 
+.membership-calendar-group .date-range-picker-shell {
+  margin-top: 4px;
+}
+
+.membership-calendar-group .form-group-label {
+  margin-bottom: 4px;
+}
+
 .form-group-label {
   font-size: 14px;
   font-weight: 600;
@@ -527,26 +535,25 @@
   margin: 20px 0;
 }
 
-.profile-trainings-search {
-  position: relative;
-  margin-bottom: 12px;
+.profile-trainings-search-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
-.profile-trainings-search-icon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #868e96;
-  pointer-events: none;
+.profile-trainings-search-field {
+  position: relative;
+  flex: 1;
+  min-width: 0;
 }
 
 .profile-trainings-search-input {
   width: 100%;
-  padding: 10px 36px 10px 38px;
+  padding: 8px 32px 8px 12px;
   border: 1px solid #e9ecef;
   border-radius: 10px;
-  font-size: 14px;
+  font-size: 13px;
   background: #f8f9fa;
   outline: none;
   box-sizing: border-box;
@@ -559,9 +566,39 @@
 
 .profile-trainings-search-clear {
   position: absolute;
-  right: 4px;
+  right: 2px;
   top: 50%;
   transform: translateY(-50%);
+  color: #868e96 !important;
+}
+
+.profile-trainings-calendar-btn {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  color: #007aff !important;
+  border: 1px solid #007aff;
+  border-radius: 10px;
+}
+
+.profile-trainings-calendar-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.profile-trainings-date-range-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.profile-trainings-date-range-label {
+  font-size: 13px;
+  color: #868e96;
+}
+
+.profile-trainings-date-reset-btn {
   color: #868e96 !important;
 }
 

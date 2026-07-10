@@ -16,9 +16,10 @@ import pb from '../../services/pb';
 import { error } from '../../lib/log';
 import { getPlayerRatingRank } from '../../lib/rating';
 import { compressImage } from '../../lib/compress';
-import { isDateQueryParsed, matchesDateQuery, parseDateQuery } from '../../lib/dateSearch';
 import { formatCardDateWithYear, formatTimeRange, hasTimeRangeEnded } from '../../lib/format';
 import MembershipModal from './MembershipModal';
+import ProfileSingleDateField from './ProfileSingleDateField';
+import ProfileTrainingsSearch, { filterProfileTrainings } from './ProfileTrainingsSearch';
 import './Profile.css';
 
 const DEFAULT_HAND = 'Правая';
@@ -107,6 +108,8 @@ function ProfilePage({
   const [membershipOpen, setMembershipOpen] = useState(false);
   const [trainingsExpanded, setTrainingsExpanded] = useState(false);
   const [searchDate, setSearchDate] = useState('');
+  const [trainingsDateRange, setTrainingsDateRange] = useState(null);
+  const [editCalendarAnchor, setEditCalendarAnchor] = useState(() => new Date());
 
   useEffect(() => {
     if (!openMembershipFromNotification) return;
@@ -168,14 +171,10 @@ function ProfilePage({
     );
   }, [trainings, cancelledTrainings, user?.id]);
 
-  const filteredTrainings = useMemo(() => {
-    if (!searchDate.trim()) return myTrainings;
-
-    const parsed = parseDateQuery(searchDate);
-    if (!isDateQueryParsed(parsed)) return [];
-
-    return myTrainings.filter((t) => matchesDateQuery(t.date, parsed));
-  }, [myTrainings, searchDate]);
+  const filteredTrainings = useMemo(
+    () => filterProfileTrainings(myTrainings, { searchDate, dateRange: trainingsDateRange }),
+    [myTrainings, searchDate, trainingsDateRange]
+  );
 
   const ratingPosition = useMemo(
     () => getPlayerRatingRank(players, user?.id),
@@ -210,6 +209,7 @@ function ProfilePage({
 
   const handleEditToggle = () => {
     if (isEditing) resetEditForm();
+    else setEditCalendarAnchor(new Date());
     setIsEditing((prev) => !prev);
   };
 
@@ -399,15 +399,12 @@ function ProfilePage({
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="profile-birth-date">Дата рождения</label>
-            <input
-              id="profile-birth-date"
-              type="date"
-              value={birthDate}
-              onChange={(e) => setBirthDate(e.target.value)}
-            />
-          </div>
+          <ProfileSingleDateField
+            label="Дата рождения"
+            value={birthDate}
+            onChange={setBirthDate}
+            initialDisplayMonth={editCalendarAnchor}
+          />
 
           <div className="form-group">
             <label htmlFor="profile-hand">Ведущая рука</label>
@@ -422,17 +419,14 @@ function ProfilePage({
             </select>
           </div>
 
-          {canEditSectionStartDate && (
-            <div className="form-group">
-              <label htmlFor="profile-section-start-date">В секции с</label>
-              <input
-                id="profile-section-start-date"
-                type="date"
-                value={sectionStartDate}
-                onChange={(e) => setSectionStartDate(e.target.value)}
-              />
-            </div>
-          )}
+          {canEditSectionStartDate ? (
+            <ProfileSingleDateField
+              label="В секции с"
+              value={sectionStartDate}
+              onChange={setSectionStartDate}
+              initialDisplayMonth={editCalendarAnchor}
+            />
+          ) : null}
 
           <button type="submit" className="save-profile-btn" disabled={saving}>
             {saving ? 'Сохраняем...' : 'Сохранить'}
@@ -487,27 +481,12 @@ function ProfilePage({
                 <p className="no-data-text">Вы ещё не посещали тренировки</p>
               ) : (
                 <>
-                  <div className="profile-trainings-search">
-                    <input
-                      type="text"
-                      className="profile-trainings-search-input"
-                      placeholder="Поиск по дате..."
-                      value={searchDate}
-                      onChange={(e) => setSearchDate(e.target.value)}
-                      aria-label="Поиск тренировок по дате"
-                    />
-                    {searchDate ? (
-                      <IconButton
-                        ariaLabel="Очистить поиск"
-                        variant="ghost"
-                        size="sm"
-                        className="profile-trainings-search-clear"
-                        onClick={() => setSearchDate('')}
-                      >
-                        <span aria-hidden="true">✕</span>
-                      </IconButton>
-                    ) : null}
-                  </div>
+                  <ProfileTrainingsSearch
+                    searchDate={searchDate}
+                    onSearchDateChange={setSearchDate}
+                    dateRange={trainingsDateRange}
+                    onDateRangeChange={setTrainingsDateRange}
+                  />
                   {filteredTrainings.length === 0 ? (
                     <p className="no-data-text">Ничего не найдено</p>
                   ) : (

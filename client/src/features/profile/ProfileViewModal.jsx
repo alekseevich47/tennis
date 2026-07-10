@@ -25,9 +25,10 @@ import pb from '../../services/pb';
 import { error } from '../../lib/log';
 import { getPlayerRatingRank } from '../../lib/rating';
 import { compressImage } from '../../lib/compress';
-import { isDateQueryParsed, matchesDateQuery, parseDateQuery } from '../../lib/dateSearch';
-import { formatCardDate, formatTimeRange, hasTimeRangeEnded } from '../../lib/format';
+import { formatCardDateWithYear, formatTimeRange, hasTimeRangeEnded } from '../../lib/format';
 import MembershipModal from './MembershipModal';
+import ProfileSingleDateField from './ProfileSingleDateField';
+import ProfileTrainingsSearch, { filterProfileTrainings } from './ProfileTrainingsSearch';
 import './Profile.css';
 
 const DEFAULT_HAND = 'Правая';
@@ -121,6 +122,8 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
   const [saving, setSaving] = useState(false);
   const [trainingsExpanded, setTrainingsExpanded] = useState(false);
   const [searchDate, setSearchDate] = useState('');
+  const [trainingsDateRange, setTrainingsDateRange] = useState(null);
+  const [editCalendarAnchor, setEditCalendarAnchor] = useState(() => new Date());
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuMounted, setMenuMounted] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
@@ -222,14 +225,10 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
     );
   }, [targetUserId, trainings, cancelledTrainings]);
 
-  const filteredTrainings = useMemo(() => {
-    if (!searchDate.trim()) return userTrainings;
-
-    const parsed = parseDateQuery(searchDate);
-    if (!isDateQueryParsed(parsed)) return [];
-
-    return userTrainings.filter((t) => matchesDateQuery(t.date, parsed));
-  }, [userTrainings, searchDate]);
+  const filteredTrainings = useMemo(
+    () => filterProfileTrainings(userTrainings, { searchDate, dateRange: trainingsDateRange }),
+    [userTrainings, searchDate, trainingsDateRange]
+  );
 
   const closeMenu = useCallback(() => {
     setMenuOpen(false);
@@ -321,6 +320,7 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
   const handleEditToggle = () => {
     if (!canManageProfile || saving) return;
     if (isEditing) resetEditForm();
+    else setEditCalendarAnchor(new Date());
     setIsEditing((prev) => !prev);
   };
 
@@ -697,15 +697,12 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                 />
               </div>
 
-              <div className="form-group">
-                <label htmlFor="profile-view-birth-date">Дата рождения</label>
-                <input
-                  id="profile-view-birth-date"
-                  type="date"
-                  value={birthDate}
-                  onChange={(e) => setBirthDate(e.target.value)}
-                />
-              </div>
+              <ProfileSingleDateField
+                label="Дата рождения"
+                value={birthDate}
+                onChange={setBirthDate}
+                initialDisplayMonth={editCalendarAnchor}
+              />
 
               <div className="form-group">
                 <label htmlFor="profile-view-hand">Ведущая рука</label>
@@ -720,17 +717,14 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                 </select>
               </div>
 
-              {canEditSectionStartDate && (
-                <div className="form-group">
-                  <label htmlFor="profile-view-section-start-date">В секции с</label>
-                  <input
-                    id="profile-view-section-start-date"
-                    type="date"
-                    value={sectionStartDate}
-                    onChange={(e) => setSectionStartDate(e.target.value)}
-                  />
-                </div>
-              )}
+              {canEditSectionStartDate ? (
+                <ProfileSingleDateField
+                  label="В секции с"
+                  value={sectionStartDate}
+                  onChange={setSectionStartDate}
+                  initialDisplayMonth={editCalendarAnchor}
+                />
+              ) : null}
 
               <button type="submit" className="save-profile-btn" disabled={saving}>
                 {saving ? 'Сохраняем...' : 'Сохранить'}
@@ -784,39 +778,12 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                     <Spinner label="Загрузка тренировок..." inline />
                   ) : userTrainings.length > 0 ? (
                     <>
-                      <div className="profile-trainings-search">
-                        <svg
-                          className="profile-trainings-search-icon"
-                          viewBox="0 0 24 24"
-                          width="18"
-                          height="18"
-                          aria-hidden="true"
-                        >
-                          <g strokeLinecap="square" strokeLinejoin="miter" stroke="currentColor" fill="none">
-                            <line strokeMiterlimit="10" x1="22" y1="22" x2="16.4" y2="16.4" />
-                            <circle stroke="currentColor" strokeMiterlimit="10" cx="10" cy="10" r="9" />
-                          </g>
-                        </svg>
-                        <input
-                          type="text"
-                          className="profile-trainings-search-input"
-                          placeholder="Поиск по дате..."
-                          value={searchDate}
-                          onChange={(e) => setSearchDate(e.target.value)}
-                          aria-label="Поиск тренировок по дате"
-                        />
-                        {searchDate ? (
-                          <IconButton
-                            ariaLabel="Очистить поиск"
-                            variant="ghost"
-                            size="sm"
-                            className="profile-trainings-search-clear"
-                            onClick={() => setSearchDate('')}
-                          >
-                            <span aria-hidden="true">✕</span>
-                          </IconButton>
-                        ) : null}
-                      </div>
+                      <ProfileTrainingsSearch
+                        searchDate={searchDate}
+                        onSearchDateChange={setSearchDate}
+                        dateRange={trainingsDateRange}
+                        onDateRangeChange={setTrainingsDateRange}
+                      />
                       {filteredTrainings.length === 0 ? (
                         <p className="no-data-text">Ничего не найдено</p>
                       ) : (
@@ -826,7 +793,7 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                         return (
                           <div key={training.id} className="profile-training-card">
                             <div className="profile-training-card__info">
-                              <span className="training-date">{formatCardDate(training.date)}</span>
+                              <span className="training-date">{formatCardDateWithYear(training.date)}</span>
                               <span className="training-time">
                                 {formatTimeRange(training.date, training.duration || 0)}
                               </span>

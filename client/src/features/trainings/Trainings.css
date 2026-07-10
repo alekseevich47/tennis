@@ -989,6 +989,7 @@
 .date-range-picker-view {
   min-height: 292px;
   transition: opacity 0.15s ease, transform 0.15s ease;
+  touch-action: pan-y;
 }
 
 .date-range-picker-view--exit {
