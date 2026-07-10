@@ -5,10 +5,24 @@ import Spinner from '../../../components/ui/Spinner';
 import Avatar from '../../../components/ui/Avatar';
 import { usePlayers } from '../../../hooks/usePlayers';
 import { useTrainings } from '../../../hooks/useTrainings';
+import { hasTimeRangeEnded } from '../../../lib/format';
 import ProfileViewModal from '../../profile/ProfileViewModal';
 import DateRangeModal from './DateRangeModal';
 import '../../rating/Rating.css';
 import '../Trainings.css';
+
+/** Запись с потраченным посещением: в booked_users и сессия не возвращена при отмене тренировки. */
+function trainingCountsAsUsedSession(training, userId) {
+  const booked = training.booked_users || [];
+  if (!booked.includes(userId)) return false;
+  if (
+    training.is_cancelled === true &&
+    !hasTimeRangeEnded(training.date, training.duration || 0)
+  ) {
+    return false;
+  }
+  return true;
+}
 
 function formatDateRangeLabel(start, end) {
   const fmt = (value) => {
@@ -51,7 +65,7 @@ function MembershipOverviewModal({ isOpen, onClose, currentUser }) {
   const isLoading = playersLoading || trainingsLoading;
   const hasDateFilter = Boolean(dateRange?.start && dateRange?.end);
 
-  const periodAttendanceCounts = useMemo(() => {
+  const periodUsedSessionsCounts = useMemo(() => {
     if (!hasDateFilter || !trainings) return null;
 
     const { start, end } = dateRange;
@@ -61,7 +75,8 @@ function MembershipOverviewModal({ isOpen, onClose, currentUser }) {
       const date = training.date?.slice(0, 10);
       if (!date || date < start || date > end) continue;
 
-      for (const userId of training.attended_users || []) {
+      for (const userId of training.booked_users || []) {
+        if (!trainingCountsAsUsedSession(training, userId)) continue;
         counts.set(userId, (counts.get(userId) ?? 0) + 1);
       }
     }
@@ -75,11 +90,11 @@ function MembershipOverviewModal({ isOpen, onClose, currentUser }) {
     return players.map((player) => ({
       ...player,
       availableSessions: Number(player.available_sessions ?? 0),
-      usedSessions: periodAttendanceCounts
-        ? (periodAttendanceCounts.get(player.id) ?? 0)
+      usedSessions: periodUsedSessionsCounts
+        ? (periodUsedSessionsCounts.get(player.id) ?? 0)
         : Number(player.used_sessions ?? 0)
     }));
-  }, [players, periodAttendanceCounts]);
+  }, [players, periodUsedSessionsCounts]);
 
   const sortedPlayers = useMemo(() => {
     if (!sortField) return [...playersWithStats];
