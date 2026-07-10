@@ -7,6 +7,7 @@ onRecordUpdateRequest((e) => {
   if (!e.record.getBool('is_closed') && started) {
     e.record.set('is_closed', true);
   }
+  console.log('[audit-probe] auth:', require(__hooks + '/auditlib.js').resolveAuth(e));
   e.next();
 }, 'trainings');
 

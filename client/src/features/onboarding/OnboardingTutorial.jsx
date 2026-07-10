@@ -30,7 +30,8 @@ const TOUR_STEPS = {
   4: {
     tab: 1,
     spotlight: true,
-    selector: '.calendar-strip',
+    selectors: ['.calendar-strip', '.bottom-nav .nav-item[data-nav-index="1"]'],
+    tooltipSelector: '.calendar-strip',
     text: 'Выберите день в полосе, откройте тренировку и нажмите "Записаться". Снять запись возможно — не позднее чем за 1 час до начала.'
   },
   5: {
@@ -93,6 +94,15 @@ function scrollTargetIntoView(target, scrollBlock = 'center') {
   target.scrollIntoView({ block: scrollBlock, inline: 'nearest', behavior: 'instant' });
 }
 
+function padHighlightRect(rect) {
+  return {
+    top: rect.top - HIGHLIGHT_PADDING,
+    left: rect.left - HIGHLIGHT_PADDING,
+    width: rect.width + HIGHLIGHT_PADDING * 2,
+    height: rect.height + HIGHLIGHT_PADDING * 2
+  };
+}
+
 /**
  * @param {{ top: number, left: number, width: number, height: number } | null} rect
  * @param {'top' | 'bottom'} placement
@@ -116,13 +126,21 @@ function getTooltipStyle(rect, placement) {
   };
 }
 
+function getStepSelectors(tourConfig) {
+  if (!tourConfig) return [];
+  if (tourConfig.selectors) return tourConfig.selectors;
+  if (tourConfig.selector) return [tourConfig.selector];
+  return [];
+}
+
 /**
  * @param {{ user: import('../../services/auth').UserRecord, onUpdate?: (user: import('../../services/auth').UserRecord) => void, onComplete: () => void | Promise<void>, onTabChange: (tabIndex: number) => void }} props
  */
 export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabChange }) {
   const { completeOnboarding, canEditName } = useOnboarding(user, onUpdate);
   const [step, setStep] = useState(0);
-  const [highlightRect, setHighlightRect] = useState(null);
+  const [highlightRects, setHighlightRects] = useState(/** @type {{ top: number, left: number, width: number, height: number, primary: boolean }[]} */ ([]));
+  const [tooltipAnchorRect, setTooltipAnchorRect] = useState(/** @type {{ top: number, left: number, width: number, height: number } | null} */ (null));
   const [tooltipPlacement, setTooltipPlacement] = useState(/** @type {'top' | 'bottom'} */ ('bottom'));
   const [saving, setSaving] = useState(false);
   const [finishing, setFinishing] = useState(false);
@@ -143,34 +161,42 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
   const isTopCardStep = tourConfig?.descriptionPlacement === 'top-card';
   const showNav = NAV_STEPS.has(step);
 
-  const measureTarget = useCallback((selector, forcedPlacement, scrollBlock = 'center') => {
-    const target = document.querySelector(selector);
-    if (!target) {
-      setHighlightRect(null);
+  const measureTargets = useCallback((selectors, tooltipSelector, forcedPlacement, scrollBlock = 'center') => {
+    const targets = selectors.map((selector) => document.querySelector(selector));
+    if (targets.some((target) => !target)) {
+      setHighlightRects([]);
+      setTooltipAnchorRect(null);
       return;
     }
 
-    scrollTargetIntoView(target, scrollBlock);
+    const anchorTarget = document.querySelector(tooltipSelector || selectors[0]);
+    if (anchorTarget) {
+      scrollTargetIntoView(anchorTarget, scrollBlock);
+    }
 
     window.requestAnimationFrame(() => {
       window.requestAnimationFrame(() => {
-        const rect = target.getBoundingClientRect();
-        const padded = {
-          top: rect.top - HIGHLIGHT_PADDING,
-          left: rect.left - HIGHLIGHT_PADDING,
-          width: rect.width + HIGHLIGHT_PADDING * 2,
-          height: rect.height + HIGHLIGHT_PADDING * 2
-        };
+        const rects = selectors.map((selector, index) => ({
+          ...padHighlightRect(document.querySelector(selector).getBoundingClientRect()),
+          primary: index === 0
+        }));
 
-        setHighlightRect(padded);
+        const anchorPadded = anchorTarget
+          ? padHighlightRect(anchorTarget.getBoundingClientRect())
+          : null;
+
+        setHighlightRects(rects);
+        setTooltipAnchorRect(anchorPadded);
+
+        if (!anchorPadded) return;
 
         if (forcedPlacement) {
           setTooltipPlacement(forcedPlacement);
           return;
         }
 
-        const spaceBelow = window.innerHeight - (padded.top + padded.height);
-        setTooltipPlacement(spaceBelow < 160 && padded.top > 160 ? 'top' : 'bottom');
+        const spaceBelow = window.innerHeight - (anchorPadded.top + anchorPadded.height);
+        setTooltipPlacement(spaceBelow < 160 && anchorPadded.top > 160 ? 'top' : 'bottom');
       });
     });
   }, []);
@@ -197,23 +223,28 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
 
   useEffect(() => {
     if (!isTourStep || !tourConfig) {
-      setHighlightRect(null);
+      setHighlightRects([]);
+      setTooltipAnchorRect(null);
       return undefined;
     }
 
     onTabChange(tourConfig.tab);
 
     if (!isSpotlightStep) {
-      setHighlightRect(null);
+      setHighlightRects([]);
+      setTooltipAnchorRect(null);
       return undefined;
     }
 
+    const selectors = getStepSelectors(tourConfig);
+    const tooltipSelector = tourConfig.tooltipSelector || selectors[0];
+
     const timer = window.setTimeout(() => {
-      measureTarget(tourConfig.selector, tourConfig.placement, tourConfig.scrollBlock);
+      measureTargets(selectors, tooltipSelector, tourConfig.placement, tourConfig.scrollBlock);
     }, SPOTLIGHT_DELAY_MS);
 
     const handleLayoutChange = () => {
-      measureTarget(tourConfig.selector, tourConfig.placement, tourConfig.scrollBlock);
+      measureTargets(selectors, tooltipSelector, tourConfig.placement, tourConfig.scrollBlock);
     };
     window.addEventListener('resize', handleLayoutChange);
 
@@ -221,7 +252,7 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
       window.clearTimeout(timer);
       window.removeEventListener('resize', handleLayoutChange);
     };
-  }, [step, isTourStep, isSpotlightStep, tourConfig, onTabChange, measureTarget]);
+  }, [step, isTourStep, isSpotlightStep, tourConfig, onTabChange, measureTargets]);
 
   useEffect(() => {
     setFullName(user?.full_name || '');
@@ -340,18 +371,20 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
         aria-hidden="true"
       />
 
-      {isSpotlightStep && highlightRect && (
-        <div
-          className="onboarding-highlight"
-          style={{
-            top: highlightRect.top,
-            left: highlightRect.left,
-            width: highlightRect.width,
-            height: highlightRect.height
-          }}
-          aria-hidden="true"
-        />
-      )}
+      {isSpotlightStep &&
+        highlightRects.map((rect, index) => (
+          <div
+            key={index}
+            className={`onboarding-highlight${rect.primary ? '' : ' onboarding-highlight--ring'}`}
+            style={{
+              top: rect.top,
+              left: rect.left,
+              width: rect.width,
+              height: rect.height
+            }}
+            aria-hidden="true"
+          />
+        ))}
 
       {step === 0 && (
         <div className="onboarding-card onboarding-card--welcome" role="dialog" aria-modal="true">
@@ -452,7 +485,7 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
           className={`onboarding-tooltip${tooltipPlacementResolved === 'top' ? ' onboarding-tooltip--top' : ''}`}
           role="dialog"
           aria-modal="true"
-          style={getTooltipStyle(highlightRect, tooltipPlacementResolved)}
+          style={getTooltipStyle(tooltipAnchorRect, tooltipPlacementResolved)}
         >
           <p>{tourConfig.text}</p>
         </div>
@@ -487,7 +520,7 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
             type="button"
             className="onboarding-btn onboarding-btn--primary"
             onClick={goNext}
-            disabled={isSpotlightStep && !highlightRect}
+            disabled={isSpotlightStep && !tooltipAnchorRect}
           >
             Далее
           </button>
