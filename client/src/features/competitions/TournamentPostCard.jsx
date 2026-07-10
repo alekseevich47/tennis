@@ -4,6 +4,7 @@ import Avatar from '../../components/ui/Avatar';
 import PostMedia from '../feed/PostMedia';
 import CommentsPreview from '../feed/CommentsPreview';
 import TournamentPodium from './TournamentPodium';
+import { getParticipantDisplayName, getParticipantPlayer } from './tournamentParticipants';
 import sectionAvatarUrl from '../../assets/sm-avatar.png';
 import { formatPostDate } from '../../lib/format';
 
@@ -25,6 +26,7 @@ function readTournamentComments(post) {
  *   isSoftDeleted?: boolean,
  *   onOpenDetail: (post: import('../../services/tournamentPosts').TournamentPostRecord) => void,
  *   onOpenEdit: (post: import('../../services/tournamentPosts').TournamentPostRecord) => void,
+ *   onOpenProfile?: (user: any) => void,
  *   onDelete: (postId: string) => void,
  *   onRestore: (postId: string) => void,
  *   hiddenMediaKey?: string | null,
@@ -38,6 +40,7 @@ function TournamentPostCard({
   isSoftDeleted = false,
   onOpenDetail,
   onOpenEdit,
+  onOpenProfile,
   onDelete,
   onRestore,
   hiddenMediaKey = null,
@@ -76,6 +79,11 @@ function TournamentPostCard({
     if (event.key !== 'Enter' && event.key !== ' ') return;
     event.preventDefault();
     handleOpenDetail();
+  };
+
+  const handleOpenParticipantProfile = (event, participant) => {
+    event.stopPropagation();
+    onOpenProfile?.(getParticipantPlayer(participant, playerMap));
   };
 
   if (isSoftDeleted && userIsModerator) {
@@ -160,22 +168,31 @@ function TournamentPostCard({
       </div>
 
       {participants.length > 0 ? (
-        <TournamentPodium participants={participants} players={players} />
+        <TournamentPodium
+          participants={participants}
+          players={players}
+          onOpenProfile={onOpenProfile}
+        />
       ) : null}
 
       {participants.length > 0 ? (
         <ol className="tournament-results-list">
           {participants.map((participant) => {
-            const user = playerMap.get(participant.userId) || {
-              id: participant.userId,
-              full_name: participant.fullName
-            };
+            const player = getParticipantPlayer(participant, playerMap);
+            const displayName = getParticipantDisplayName(participant, playerMap);
 
             return (
               <li key={participant.userId} className="tournament-results-row">
                 <span className="tournament-results-place">{participant.place}</span>
-                <Avatar user={user} size="sm" />
-                <span className="tournament-results-name">{participant.fullName}</span>
+                <button
+                  type="button"
+                  className="tournament-participant-profile-link tournament-participant-profile-link--list"
+                  onClick={(event) => handleOpenParticipantProfile(event, participant)}
+                  aria-label={`Открыть профиль ${displayName}`}
+                >
+                  <Avatar user={player} size="sm" />
+                  <span className="tournament-results-name">{displayName}</span>
+                </button>
                 <span className="tournament-results-points">+{participant.points}</span>
               </li>
             );

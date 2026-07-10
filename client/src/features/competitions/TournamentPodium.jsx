@@ -1,5 +1,6 @@
 import React, { memo, useMemo } from 'react';
 import Avatar from '../../components/ui/Avatar';
+import { getParticipantDisplayName, getParticipantPlayer } from './tournamentParticipants';
 
 const PODIUM_ORDER = [
   { place: 2, medal: '🥈', className: 'tournament-podium-column--second' },
@@ -46,26 +47,16 @@ function TournamentPodium({ participants, players = [], onOpenProfile }) {
                 <button
                   type="button"
                   className="tournament-participant-profile-link tournament-participant-profile-link--podium"
-                  onClick={() =>
-                    onOpenProfile?.(
-                      playerMap.get(participant.userId) || {
-                        id: participant.userId,
-                        full_name: participant.fullName
-                      }
-                    )
-                  }
-                  aria-label={`Открыть профиль ${participant.fullName}`}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    onOpenProfile?.(getParticipantPlayer(participant, playerMap));
+                  }}
+                  aria-label={`Открыть профиль ${getParticipantDisplayName(participant, playerMap)}`}
                 >
-                  <Avatar
-                    user={
-                      playerMap.get(participant.userId) || {
-                        id: participant.userId,
-                        full_name: participant.fullName
-                      }
-                    }
-                    size="md"
-                  />
-                  <span className="tournament-podium-name">{participant.fullName}</span>
+                  <Avatar user={getParticipantPlayer(participant, playerMap)} size="md" />
+                  <span className="tournament-podium-name">
+                    {getParticipantDisplayName(participant, playerMap)}
+                  </span>
                 </button>
                 <span className="tournament-podium-place">{place}-е место</span>
               </div>

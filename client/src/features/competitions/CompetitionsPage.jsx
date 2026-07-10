@@ -292,6 +292,7 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
                     onRestore={handleRestorePost}
                     hiddenMediaKey={hiddenMediaKey}
                     onOpenFullscreen={handleOpenFullscreen}
+                    onOpenProfile={setViewingPlayer}
                   />
                 );
               })}
