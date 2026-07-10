@@ -23,7 +23,7 @@ onRecordCreateRequest((e) => {
       objectType: 'product',
       objectId: record.id,
       objectLabel: objectLabel,
-      details: { title: title, price: record.getFloat('price') },
+      details: { article: record.id, title: title, price: record.getFloat('price') },
       summaryRu: name + ' создал(а) ' + objectLabel,
       severity: 'info'
     });
@@ -64,6 +64,7 @@ onRecordUpdateRequest((e) => {
         objectType: 'product',
         objectId: record.id,
         objectLabel: objectLabel,
+        details: { article: record.id },
         summaryRu: name + ' скрыл(а) ' + objectLabel,
         severity: 'info'
       });
@@ -79,6 +80,7 @@ onRecordUpdateRequest((e) => {
         objectType: 'product',
         objectId: record.id,
         objectLabel: objectLabel,
+        details: { article: record.id },
         summaryRu: name + ' восстановил(а) ' + objectLabel,
         severity: 'info'
       });
@@ -98,6 +100,7 @@ onRecordUpdateRequest((e) => {
         objectId: record.id,
         objectLabel: objectLabel,
         diff: diff,
+        details: { article: record.id },
         summaryRu: name + ' отредактировал(а) ' + objectLabel,
         severity: 'info'
       });
@@ -132,6 +135,7 @@ onRecordDeleteRequest((e) => {
       objectType: 'product',
       objectId: record.id,
       objectLabel: objectLabel,
+      details: { article: record.id },
       summaryRu: name + ' окончательно удалил(а) ' + objectLabel,
       severity: 'info'
     });
@@ -184,6 +188,7 @@ routerAdd('POST', '/api/audit-buy-click', (c) => {
         objectType: 'product',
         objectId: productId,
         objectLabel: objectLabel,
+        details: { article: productId },
         summaryRu: name + ' нажал(а) «Купить» для ' + objectLabel,
         severity: 'info'
       });

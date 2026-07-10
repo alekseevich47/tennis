@@ -51,6 +51,7 @@ cronAdd('auto_close_started_trainings', '* * * * *', () => {
         objectId: trainings[i].id,
         objectLabel: objectLabel,
         effectiveAt: dateStr || undefined,
+        details: { trainingId: trainings[i].id },
         summaryRu: 'Система автоматически закрыла запись на тренировку ' + objectLabel,
         severity: 'info'
       });

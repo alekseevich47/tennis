@@ -47,13 +47,14 @@
 }
 
 .logs-modal__row-title {
+  display: block;
   font-size: 14px;
   line-height: 1.45;
   color: #1f2937;
-  margin-bottom: 4px;
 }
 
 .logs-modal__row-meta {
+  display: block;
   font-size: 12px;
   color: #868e96;
   line-height: 1.35;
@@ -138,6 +139,9 @@
 }
 
 .logs-modal__row-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   flex: 1;
   min-width: 0;
 }

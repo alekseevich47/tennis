@@ -192,6 +192,7 @@ onRecordUpdateRequest((e) => {
         objectType: 'product',
         objectId: productId,
         objectLabel: productObjectLabel(productId),
+        details: { article: productId },
         summaryRu: favName + ' добавил(а) в избранное ' + productObjectLabel(productId),
         severity: 'info'
       });
