@@ -429,16 +429,26 @@ export const PROFILE_EXCLUDED_ACTIONS = ['Аватар обновлён'];
 /**
  * @param {{ start: string, end: string }} params
  */
+function addDaysToDateInput(value, days) {
+  const [y, m, d] = value.split('-').map(Number);
+  const date = new Date(y, m - 1, d + days);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 export async function listModeratorLogs({ start, end }) {
   const domainParams = Object.fromEntries(
     MODERATOR_LOG_DOMAINS.map((domain, i) => [`d${i}`, domain])
   );
   const domainFilter = MODERATOR_LOG_DOMAINS.map((_, i) => `domain = {:d${i}}`).join(' || ');
+  const endExclusive = addDaysToDateInput(end, 1);
 
   const results = await pb.collection('audit_logs').getFullList({
     filter: pb.filter(
-      `is_error = false && created >= {:start} && created <= {:end} && (${domainFilter})`,
-      { start, end, ...domainParams }
+      `is_error = false && created >= {:start} && created < {:endExclusive} && (${domainFilter})`,
+      { start, endExclusive, ...domainParams }
     ),
     sort: '-created'
   });

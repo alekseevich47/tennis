@@ -4,7 +4,7 @@ import IconButton from '../../../components/ui/IconButton';
 import Modal from '../../../components/ui/Modal';
 import { isDateQueryParsed, matchesDateQuery, parseDateQuery } from '../../../lib/dateSearch';
 import { formatCardDateWithYear, formatTimeRange } from '../../../lib/format';
-import DateRangeModal from './DateRangeModal';
+import DateRangeModal, { getArchiveDefaultDateRange } from './DateRangeModal';
 import '../Trainings.css';
 
 /** @typedef {'all' | 'completed' | 'cancelled'} ArchiveCategory */
@@ -197,6 +197,7 @@ function ArchiveModal({ isOpen, trainings, onClose, onOpenDetail }) {
       <DateRangeModal
         isOpen={showDateRangeModal}
         onClose={() => setShowDateRangeModal(false)}
+        defaultRange={dateRange || getArchiveDefaultDateRange()}
         onConfirm={(range) => setDateRange(range)}
       />
     </Modal>
