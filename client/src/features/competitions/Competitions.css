@@ -38,17 +38,17 @@
   height: calc(100% - 57px);
   overflow-y: auto;
   position: relative;
-}
-
-.competitions-scroll-container > :not(.floating-btn-wrapper) {
-  margin-top: 25px;
+  padding: 16px;
+  background: #f8f9fa;
+  box-sizing: border-box;
 }
 
 .competitions-feed-list {
-  padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  margin-top: 0;
+  padding-bottom: 25px;
 }
 
 .floating-btn-wrapper {

@@ -95,42 +95,65 @@ export const auditTrainings = {
   },
 
   /**
-   * @param {string} trainingId
+   * @param {Record<string, unknown>} training
    */
-  trainingSoftDelete(trainingId) {
-    writeAudit(DOMAIN, 'Тренировка скрыта', { trainingId });
+  trainingSoftDelete(training) {
+    writeAudit(DOMAIN, 'Тренировка скрыта', {
+      trainingId: getTrainingId(training),
+      date: training.date,
+      location: training.location,
+      type: training.type
+    });
   },
 
   /**
-   * @param {string} trainingId
+   * @param {Record<string, unknown>} training
    * @param {string[]} [insufficientUserIds]
    */
-  trainingRestore(trainingId, insufficientUserIds = []) {
+  trainingRestore(training, insufficientUserIds = []) {
     writeAudit(DOMAIN, 'Тренировка восстановлена', {
-      trainingId,
+      trainingId: getTrainingId(training),
+      date: training.date,
+      location: training.location,
+      type: training.type,
       ...(insufficientUserIds.length > 0 ? { insufficientUserIds } : {})
     });
   },
 
   /**
-   * @param {string} trainingId
+   * @param {Record<string, unknown>} training
    */
-  trainingCancelFinalized(trainingId) {
-    writeAudit(DOMAIN, 'Отмена тренировки финализирована', { trainingId });
+  trainingCancelFinalized(training) {
+    writeAudit(DOMAIN, 'Отмена тренировки финализирована', {
+      trainingId: getTrainingId(training),
+      date: training.date,
+      location: training.location,
+      type: training.type
+    });
   },
 
   /**
-   * @param {string} trainingId
+   * @param {Record<string, unknown>} training
    */
-  trainingClose(trainingId) {
-    writeAudit(DOMAIN, 'Тренировка закрыта', { trainingId });
+  trainingClose(training) {
+    writeAudit(DOMAIN, 'Тренировка закрыта', {
+      trainingId: getTrainingId(training),
+      date: training.date,
+      location: training.location,
+      type: training.type
+    });
   },
 
   /**
-   * @param {string} trainingId
+   * @param {Record<string, unknown>} training
    */
-  trainingReopen(trainingId) {
-    writeAudit(DOMAIN, 'Тренировка открыта', { trainingId });
+  trainingReopen(training) {
+    writeAudit(DOMAIN, 'Тренировка открыта', {
+      trainingId: getTrainingId(training),
+      date: training.date,
+      location: training.location,
+      type: training.type
+    });
   },
 
   /**
