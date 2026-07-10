@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import IconButton from '../../components/ui/IconButton';
 import Avatar from '../../components/ui/Avatar';
 import { useTournamentComments } from '../../hooks/useTournamentComments';
@@ -6,7 +6,8 @@ import { useCommentLikes } from '../../hooks/useCommentLikes';
 import { toggleCommentLike } from '../../services/posts';
 import {
   createTournamentComment,
-  updateTournamentComment
+  updateTournamentComment,
+  PENDING_DELETE_TOURNAMENT_COMMENTS_KEY
 } from '../../services/tournamentComments';
 import { formatPostDate } from '../../lib/format';
 import { error } from '../../lib/log';
@@ -48,6 +49,22 @@ function TournamentCommentsSection({ postId, user, userIsModerator, onOpenProfil
     user?.id
   );
 
+  useEffect(() => {
+    setEditingId(null);
+    setEditingText('');
+    setIsAddingComment(false);
+    isAddingCommentRef.current = false;
+    setSoftDeletedIds([]);
+  }, [postId]);
+
+  const persistPendingDeletes = (idsList) => {
+    if (idsList.length > 0) {
+      sessionStorage.setItem(PENDING_DELETE_TOURNAMENT_COMMENTS_KEY, JSON.stringify(idsList));
+    } else {
+      sessionStorage.removeItem(PENDING_DELETE_TOURNAMENT_COMMENTS_KEY);
+    }
+  };
+
   const handleAdd = async (e) => {
     e.preventDefault();
     const text = commentText.trim();
@@ -72,7 +89,11 @@ function TournamentCommentsSection({ postId, user, userIsModerator, onOpenProfil
   };
 
   const handleSoftDelete = async (commentId) => {
-    setSoftDeletedIds((prev) => [...prev, commentId]);
+    setSoftDeletedIds((prev) => {
+      const next = [...prev, commentId];
+      persistPendingDeletes(next);
+      return next;
+    });
     try {
       await updateTournamentComment(commentId, { is_deleted: true });
       await mutateComments();
@@ -83,7 +104,11 @@ function TournamentCommentsSection({ postId, user, userIsModerator, onOpenProfil
   };
 
   const handleRestore = async (commentId) => {
-    setSoftDeletedIds((prev) => prev.filter((id) => id !== commentId));
+    setSoftDeletedIds((prev) => {
+      const next = prev.filter((id) => id !== commentId);
+      persistPendingDeletes(next);
+      return next;
+    });
     try {
       await updateTournamentComment(commentId, { is_deleted: false });
       await mutateComments();

@@ -5,6 +5,7 @@ import { useTournamentPosts } from '../../hooks/useTournamentPosts';
 import pb from '../../services/pb';
 import { getCurrentUser, isModerator } from '../../services/auth';
 import { updateTournamentPost } from '../../services/tournamentPosts';
+import { flushPendingTournamentCommentDeletes } from '../../services/tournamentComments';
 import Spinner from '../../components/ui/Spinner';
 import EmptyState from '../../components/ui/EmptyState';
 import CreateTournamentPostModal from './CreateTournamentPostModal';
@@ -91,10 +92,14 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
 
   const handleSubTabClick = useCallback(
     (tabId) => {
+      if (tabId !== activeTab) {
+        setOpenedPost(null);
+        flushPendingTournamentCommentDeletes();
+      }
       setActiveTab(tabId);
       onSubTabChange?.(tabId);
     },
-    [onSubTabChange]
+    [activeTab, onSubTabChange]
   );
 
   useEffect(() => {
