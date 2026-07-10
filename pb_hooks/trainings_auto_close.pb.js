@@ -7,7 +7,6 @@ onRecordUpdateRequest((e) => {
   if (!e.record.getBool('is_closed') && started) {
     e.record.set('is_closed', true);
   }
-  console.log('[audit-probe] auth:', require(__hooks + '/auditlib.js').resolveAuth(e));
   e.next();
 }, 'trainings');
 
@@ -29,11 +28,32 @@ onRecordViewRequest((e) => {
 // onRecordUpdateRequest / onRecordViewRequest выше — доп. подстраховка.
 cronAdd('auto_close_started_trainings', '* * * * *', () => {
   try {
+    const audit = require(__hooks + '/auditlib.js');
+    const bot = require(__hooks + '/botlib.js');
     const filter = 'date <= @now && is_closed = false && is_deleted = false';
     const trainings = $app.findRecordsByFilter('trainings', filter, '', 0, 0);
     for (let i = 0; i < trainings.length; i++) {
       trainings[i].set('is_closed', true);
       $app.save(trainings[i]);
+      const dateStr = trainings[i].getString('date');
+      const location = trainings[i].getString('location') || '';
+      const dateFormatted = dateStr ? bot.formatDateTimeGmt7(String(dateStr).replace(' ', 'T')) : '';
+      const objectLabel = (dateFormatted && location)
+        ? (dateFormatted + ', ' + location)
+        : (dateFormatted || location || trainings[i].id);
+      audit.logEvent($app, {
+        category: 'booking',
+        action: 'booking.enrollment.close',
+        actionKind: 'update',
+        subject: null,
+        subjectSource: 'system',
+        objectType: 'training',
+        objectId: trainings[i].id,
+        objectLabel: objectLabel,
+        effectiveAt: dateStr || undefined,
+        summaryRu: 'Система автоматически закрыла запись на тренировку ' + objectLabel,
+        severity: 'info'
+      });
     }
   } catch (err) {
     console.log('[auto-close] ' + err);

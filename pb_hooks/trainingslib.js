@@ -84,6 +84,32 @@ function finalizeCancelledTrainingRecord(training) {
   training.set('delete_pending_at', '');
   $app.save(training);
 
+  try {
+    var audit = require(__hooks + '/auditlib.js');
+    var bot = require(__hooks + '/botlib.js');
+    var dateStr = training.getString('date');
+    var location = training.getString('location') || '';
+    var dateFormatted = dateStr ? bot.formatDateTimeGmt7(String(dateStr).replace(' ', 'T')) : '';
+    var objectLabel = (dateFormatted && location)
+      ? (dateFormatted + ', ' + location)
+      : (dateFormatted || location || training.id);
+    audit.logEvent($app, {
+      category: 'booking',
+      action: 'booking.training.delete',
+      actionKind: 'delete',
+      subject: null,
+      subjectSource: 'system',
+      objectType: 'training',
+      objectId: training.id,
+      objectLabel: objectLabel,
+      effectiveAt: dateStr || undefined,
+      summaryRu: 'Система окончательно отменила тренировку ' + objectLabel,
+      severity: 'warning'
+    });
+  } catch (auditErr) {
+    console.log('[trainingslib] audit finalize: ' + auditErr);
+  }
+
   if (!ended) {
     notifyTrainingCancelled(training);
   }

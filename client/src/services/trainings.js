@@ -3,7 +3,6 @@ import pb from './pb';
 import { isModerator, getCurrentUser, BOT_BLOCKED_BOOKING_MESSAGE } from './auth';
 import { error } from '../lib/log';
 import { maybeNotifySessionsLeft } from './notifications';
-import { auditTrainings } from '../lib/audit';
 import { hasTimeRangeEnded } from '../lib/format';
 
 export const PENDING_DELETE_TRAININGS_KEY = 'pending_delete_trainings';
@@ -376,22 +375,16 @@ export async function listCancelledTrainingsForUser(userId, { signal } = {}) {
  * @param {Record<string, unknown>} payload
  */
 export async function createTraining(payload) {
+  const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').create(payload));
   try {
-    const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').create(payload));
-    auditTrainings.trainingCreate(/** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)));
-    try {
-      await pb.send('/api/bot-notify-training-create', {
-        method: 'POST',
-        body: { trainingId: record.id }
-      });
-    } catch (err) {
-      error('Ошибка уведомления бота о создании тренировки:', err);
-    }
-    return record;
+    await pb.send('/api/bot-notify-training-create', {
+      method: 'POST',
+      body: { trainingId: record.id }
+    });
   } catch (err) {
-    auditTrainings.trainingCreateError(err);
-    throw err;
+    error('Ошибка уведомления бота о создании тренировки:', err);
   }
+  return record;
 }
 
 /**
@@ -406,7 +399,6 @@ export async function updateTraining(trainingId, patch) {
     const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(trainingId, patch));
     const changedFields = getTrainingChangedFields(previous, record, patch);
     if (changedFields.length > 0) {
-      auditTrainings.trainingEdit(trainingId, changedFields);
       const skipNotify =
         previous.is_cancelled === true ||
         hasTimeRangeEnded(previous.date, previous.duration || 0);
@@ -423,7 +415,6 @@ export async function updateTraining(trainingId, patch) {
     }
     return record;
   } catch (err) {
-    auditTrainings.trainingEditError(err, trainingId);
     throw err;
   }
 }
@@ -459,19 +450,10 @@ export async function finalizeCancelledTraining(trainingId) {
           pb.collection('users').update(userId, { 'attendance_count-': 1 })
         )
       );
-      attendedBookedUserIds.forEach((userId) => {
-        auditTrainings.unmarkAttendance(
-          /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (training)),
-          userId
-        );
-      });
     }
 
     const record = /** @type {TrainingRecord} */ (
       await pb.collection('trainings').update(trainingId, { is_cancelled: true })
-    );
-    auditTrainings.trainingCancelFinalized(
-      /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (training))
     );
 
     if (!ended) {
@@ -487,7 +469,6 @@ export async function finalizeCancelledTraining(trainingId) {
 
     return record;
   } catch (err) {
-    auditTrainings.trainingDeleteError(err, trainingId);
     throw err;
   }
 }
@@ -566,18 +547,9 @@ export function writeShowDeletedTrainingsPreference(value) {
  * @param {string} trainingId
  */
 export async function softDeleteTraining(trainingId) {
-  try {
-    const record = /** @type {TrainingRecord} */ (
-      await pb.collection('trainings').update(trainingId, { is_deleted: true })
-    );
-    auditTrainings.trainingSoftDelete(
-      /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record))
-    );
-    return record;
-  } catch (err) {
-    auditTrainings.trainingDeleteError(err, trainingId);
-    throw err;
-  }
+  return /** @type {TrainingRecord} */ (
+    await pb.collection('trainings').update(trainingId, { is_deleted: true })
+  );
 }
 
 async function notifyTrainingRestoredBot(trainingId) {
@@ -610,9 +582,6 @@ export async function restoreTraining(trainingId) {
     if (training.is_cancelled !== true) {
       record = /** @type {TrainingRecord} */ (
         await pb.collection('trainings').update(trainingId, { is_deleted: false })
-      );
-      auditTrainings.trainingRestore(
-        /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (training))
       );
       await notifyTrainingRestoredBot(trainingId);
       return { record, insufficientUsers: [] };
@@ -667,18 +636,8 @@ export async function restoreTraining(trainingId) {
         })
       );
 
-      attendedToRestore.forEach((userId) => {
-        auditTrainings.markAttendance(
-          /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
-          userId
-        );
-      });
     }
 
-    auditTrainings.trainingRestore(
-      /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
-      insufficientUserIds
-    );
     await notifyTrainingRestoredBot(trainingId);
 
     const insufficientUsers =
@@ -688,7 +647,6 @@ export async function restoreTraining(trainingId) {
 
     return { record, insufficientUsers };
   } catch (err) {
-    auditTrainings.trainingStatusError(err, trainingId);
     throw err;
   }
 }
@@ -713,38 +671,22 @@ async function notifyTrainingStatusBot(trainingId, isClosed) {
  * @param {string} trainingId
  */
 export async function closeTraining(trainingId) {
-  try {
-    const record = /** @type {TrainingRecord} */ (
-      await pb.collection('trainings').update(trainingId, { is_closed: true })
-    );
-    auditTrainings.trainingClose(
-      /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record))
-    );
-    await notifyTrainingStatusBot(trainingId, true);
-    return record;
-  } catch (err) {
-    auditTrainings.trainingStatusError(err, trainingId);
-    throw err;
-  }
+  const record = /** @type {TrainingRecord} */ (
+    await pb.collection('trainings').update(trainingId, { is_closed: true })
+  );
+  await notifyTrainingStatusBot(trainingId, true);
+  return record;
 }
 
 /**
  * @param {string} trainingId
  */
 export async function reopenTraining(trainingId) {
-  try {
-    const record = /** @type {TrainingRecord} */ (
-      await pb.collection('trainings').update(trainingId, { is_closed: false })
-    );
-    auditTrainings.trainingReopen(
-      /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record))
-    );
-    await notifyTrainingStatusBot(trainingId, false);
-    return record;
-  } catch (err) {
-    auditTrainings.trainingStatusError(err, trainingId);
-    throw err;
-  }
+  const record = /** @type {TrainingRecord} */ (
+    await pb.collection('trainings').update(trainingId, { is_closed: false })
+  );
+  await notifyTrainingStatusBot(trainingId, false);
+  return record;
 }
 
 /**
@@ -787,7 +729,6 @@ export async function bookTraining(training, userId) {
       }
       throw err;
     }
-    auditTrainings.bookSelf(/** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)));
     await notifyTrainingBot({
       event: 'book',
       userIds: [userId],
@@ -797,7 +738,6 @@ export async function bookTraining(training, userId) {
     });
     return record;
   } catch (err) {
-    auditTrainings.bookError(err, training.id);
     throw err;
   }
 }
@@ -851,12 +791,6 @@ export async function bookUserToTraining(training, userId, targetUser, { overrid
       }
       throw err;
     }
-    const [auditUser] = await resolveAuditUsers(userId ? [userId] : [], targetUser ? [targetUser] : []);
-    auditTrainings.bookUser(
-      /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
-      userId,
-      auditUser
-    );
     await notifyTrainingBot({
       event: 'book',
       userIds: [userId],
@@ -866,7 +800,6 @@ export async function bookUserToTraining(training, userId, targetUser, { overrid
     });
     return record;
   } catch (err) {
-    auditTrainings.bookError(err, training.id);
     throw err;
   }
 }
@@ -946,12 +879,6 @@ export async function bookUsersToTraining(training, userIds, targetUsers = [], {
       }
       throw err;
     }
-    const auditUsers = await resolveAuditUsers(nextUserIds, targetUsers);
-    auditTrainings.bookUsers(
-      /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
-      nextUserIds,
-      auditUsers
-    );
     await notifyTrainingBot({
       event: 'book',
       userIds: nextUserIds,
@@ -961,7 +888,6 @@ export async function bookUsersToTraining(training, userIds, targetUsers = [], {
     });
     return record;
   } catch (err) {
-    auditTrainings.bookError(err, training.id);
     throw err;
   }
 }
@@ -988,7 +914,6 @@ export async function removeUsersFromTraining(training, userIds) {
     const nextUnbooked = Array.from(new Set([...currentUnbooked, ...removedUserIds]));
     const currentKicked = training.moderator_kicked_users || [];
     const nextKicked = Array.from(new Set([...currentKicked, ...removedUserIds]));
-    const auditUsers = await resolveAuditUsers(removedUserIds, getExpandedUsers(training, 'booked_users'));
     const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
       booked_users: current.filter((id) => !removedUserIds.includes(id)),
       unbooked_users: nextUnbooked,
@@ -1003,17 +928,6 @@ export async function removeUsersFromTraining(training, userIds) {
         pb.collection('users').update(userId, { 'attendance_count-': 1 })
       )
     );
-    auditTrainings.unbookUsers(
-      /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
-      removedUserIds,
-      auditUsers
-    );
-    removedAttendedUserIds.forEach((userId) => {
-      auditTrainings.unmarkAttendance(
-        /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
-        userId
-      );
-    });
     await notifyTrainingBot({
       event: 'unbook',
       userIds: removedUserIds,
@@ -1023,7 +937,6 @@ export async function removeUsersFromTraining(training, userIds) {
     });
     return record;
   } catch (err) {
-    auditTrainings.bookError(err, training.id);
     throw err;
   }
 }
@@ -1046,14 +959,7 @@ export async function cancelTrainingBooking(training, userId) {
     await restoreMembershipSession(userId);
     if (shouldRemoveAttendance) {
       await pb.collection('users').update(userId, { 'attendance_count-': 1 });
-      auditTrainings.unmarkAttendance(
-        /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
-        userId
-      );
     }
-    auditTrainings.cancelBookingSelf(
-      /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record))
-    );
     await notifyTrainingBot({
       event: 'unbook',
       userIds: [userId],
@@ -1063,7 +969,6 @@ export async function cancelTrainingBooking(training, userId) {
     });
     return record;
   } catch (err) {
-    auditTrainings.bookError(err, training.id);
     throw err;
   }
 }
@@ -1081,13 +986,8 @@ export async function markAttendance(training, userId) {
       attended_users: [...current, userId]
     }));
     await pb.collection('users').update(userId, { 'attendance_count+': 1 });
-    auditTrainings.markAttendance(
-      /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
-      userId
-    );
     return record;
   } catch (err) {
-    auditTrainings.bookError(err, training.id);
     throw err;
   }
 }
@@ -1105,13 +1005,8 @@ export async function unmarkAttendance(training, userId) {
       attended_users: current.filter((id) => id !== userId)
     }));
     await pb.collection('users').update(userId, { 'attendance_count-': 1 });
-    auditTrainings.unmarkAttendance(
-      /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)),
-      userId
-    );
     return record;
   } catch (err) {
-    auditTrainings.bookError(err, training.id);
     throw err;
   }
 }

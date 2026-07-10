@@ -1,23 +1,23 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
 import Spinner from '../../components/ui/Spinner';
 import EmptyState from '../../components/ui/EmptyState';
-import { useModeratorLogs } from '../../hooks/useModeratorLogs';
-import { formatModeratorLogEntry } from '../../lib/moderatorLogFormat';
+import { useAuditEvents } from '../../hooks/useAuditEvents';
+import { usePlayers } from '../../hooks/usePlayers';
+import {
+  AUDIT_EVENT_CATEGORIES,
+  AUDIT_OBJECT_TYPES,
+  exportAuditEvents
+} from '../../services/auditLog';
+import { formatAuditEventDetails, formatAuditEventPreview } from '../../lib/auditEventFormat';
 import DateRangeModal from '../trainings/components/DateRangeModal';
 import '../rating/Rating.css';
 import '../trainings/Trainings.css';
 import './LogsModal.css';
 
-const DOMAIN_FILTER_OPTIONS = [
-  { value: null, label: 'Все' },
-  { value: 'ТРЕНИРОВКИ', label: 'Тренировки' },
-  { value: 'АБОНЕМЕНТ', label: 'Абонемент' },
-  { value: 'ПРОФИЛЬ', label: 'Профиль' },
-  { value: 'РЕЙТИНГ', label: 'Рейтинг' },
-  { value: 'АДМИНИСТРИРОВАНИЕ', label: 'Администрирование' }
-];
+const ALL_CATEGORY_VALUES = AUDIT_EVENT_CATEGORIES.map((item) => item.value);
+const PER_PAGE_STEP = 30;
 
 function toDateInputValue(date) {
   const y = date.getFullYear();
@@ -55,15 +55,62 @@ function CalendarIcon() {
 }
 
 /**
- * @param {{ entry: import('pocketbase').RecordModel }} props
+ * @param {{ entry: import('pocketbase').RecordModel, expanded: boolean, onToggle: () => void }} props
  */
-function LogRow({ entry }) {
-  const { title, meta } = formatModeratorLogEntry(entry);
+function AuditEventRow({ entry, expanded, onToggle }) {
+  const { title, meta, color, categoryLabel } = formatAuditEventPreview(entry);
+  const { sections, details } = formatAuditEventDetails(entry);
 
   return (
-    <div className="logs-modal__row">
-      <div className="logs-modal__row-title">{title}</div>
-      <div className="logs-modal__row-meta">{meta}</div>
+    <div
+      className={`logs-modal__row${expanded ? ' logs-modal__row--expanded' : ''}`}
+    >
+      <button
+        type="button"
+        className="logs-modal__row-toggle"
+        onClick={onToggle}
+        aria-expanded={expanded}
+      >
+        <span
+          className="logs-modal__row-accent"
+          style={{ backgroundColor: color }}
+          title={categoryLabel}
+          aria-hidden="true"
+        />
+        <span className="logs-modal__row-content">
+          <span className="logs-modal__row-title">{title}</span>
+          <span className="logs-modal__row-meta">{meta}</span>
+        </span>
+        <span className="logs-modal__row-chevron" aria-hidden="true">
+          {expanded ? '▾' : '▸'}
+        </span>
+      </button>
+
+      {expanded ? (
+        <div className="logs-modal__row-details">
+          {sections.map((section) => (
+            <div key={section.title} className="logs-modal__detail-section">
+              <div className="logs-modal__detail-section-title">{section.title}</div>
+              <dl className="logs-modal__detail-list">
+                {section.items.map((item) => (
+                  <div key={`${section.title}-${item.label}`} className="logs-modal__detail-item">
+                    <dt>{item.label}</dt>
+                    <dd>{item.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          ))}
+          {details ? (
+            <div className="logs-modal__detail-section">
+              <div className="logs-modal__detail-section-title">Технические детали</div>
+              <pre className="logs-modal__details-json">
+                {JSON.stringify(details, null, 2)}
+              </pre>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -72,12 +119,37 @@ function LogRow({ entry }) {
  * @param {{ isOpen: boolean, onClose: () => void }} props
  */
 function LogsModal({ isOpen, onClose }) {
-  const [dateRange, setDateRange] = useState(getLogsDefaultDateRange);
-  const [domainFilter, setDomainFilter] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showDateModal, setShowDateModal] = useState(false);
+  const { data: players = [] } = usePlayers();
 
-  const { data: entries, isLoading, mutate } = useModeratorLogs(dateRange);
+  const [dateRange, setDateRange] = useState(getLogsDefaultDateRange);
+  const [selectedCategories, setSelectedCategories] = useState(
+    () => new Set(ALL_CATEGORY_VALUES)
+  );
+  const [searchQuery, setSearchQuery] = useState('');
+  const [objectType, setObjectType] = useState('');
+  const [subjectInput, setSubjectInput] = useState('');
+  const [subjectId, setSubjectId] = useState('');
+  const [perPage, setPerPage] = useState(PER_PAGE_STEP);
+  const [expandedId, setExpandedId] = useState(null);
+  const [showDateModal, setShowDateModal] = useState(false);
+  const [exporting, setExporting] = useState(false);
+
+  const filters = useMemo(() => {
+    const categories =
+      selectedCategories.size === ALL_CATEGORY_VALUES.length
+        ? undefined
+        : Array.from(selectedCategories);
+
+    return {
+      dateRange,
+      categories,
+      objectType: objectType || null,
+      subjectId: subjectId || null,
+      search: searchQuery.trim() || undefined
+    };
+  }, [dateRange, selectedCategories, objectType, subjectId, searchQuery]);
+
+  const { items, totalItems, isLoading, mutate } = useAuditEvents(filters, 1, perPage);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -86,44 +158,62 @@ function LogsModal({ isOpen, onClose }) {
 
   useEffect(() => {
     if (isOpen) return;
-    setDomainFilter(null);
+    setSelectedCategories(new Set(ALL_CATEGORY_VALUES));
     setSearchQuery('');
+    setObjectType('');
+    setSubjectInput('');
+    setSubjectId('');
+    setPerPage(PER_PAGE_STEP);
+    setExpandedId(null);
     setDateRange(getLogsDefaultDateRange());
   }, [isOpen]);
 
-  const filteredEntries = useMemo(() => {
-    if (!entries) return [];
+  const filtersKey = JSON.stringify(filters);
 
-    let result = entries;
+  useEffect(() => {
+    setPerPage(PER_PAGE_STEP);
+    setExpandedId(null);
+  }, [filtersKey]);
 
-    if (domainFilter) {
-      result = result.filter((entry) => entry.domain === domainFilter);
-    }
-
-    const q = searchQuery.trim().toLowerCase();
-    if (!q) return result;
-
-    return result.filter((entry) => {
-      if ((entry.actor_name || '').toLowerCase().includes(q)) return true;
-
-      const details = entry.details || {};
-      if (details.targetUserName && String(details.targetUserName).toLowerCase().includes(q)) {
-        return true;
+  const toggleCategory = useCallback((value) => {
+    setSelectedCategories((prev) => {
+      const next = new Set(prev);
+      if (next.has(value)) {
+        if (next.size === 1) return prev;
+        next.delete(value);
+      } else {
+        next.add(value);
       }
-
-      if (Array.isArray(details.targetUserNames)) {
-        if (details.targetUserNames.some((name) => String(name).toLowerCase().includes(q))) {
-          return true;
-        }
-      }
-
-      if (details.fullName && String(details.fullName).toLowerCase().includes(q)) {
-        return true;
-      }
-
-      return false;
+      return next;
     });
-  }, [entries, domainFilter, searchQuery]);
+  }, []);
+
+  const handleSubjectInputChange = useCallback(
+    (event) => {
+      const value = event.target.value;
+      setSubjectInput(value);
+      const match = players.find(
+        (player) => (player.full_name || '').toLowerCase() === value.trim().toLowerCase()
+      );
+      setSubjectId(match?.id || '');
+    },
+    [players]
+  );
+
+  const handleExport = useCallback(async () => {
+    if (exporting) return;
+    setExporting(true);
+    try {
+      await exportAuditEvents(filters);
+    } catch {
+      // экспорт не блокирует UI
+    } finally {
+      setExporting(false);
+    }
+  }, [exporting, filters]);
+
+  const hasMore = items.length < totalItems;
+  const noCategoriesSelected = selectedCategories.size === 0;
 
   return (
     <>
@@ -137,7 +227,7 @@ function LogsModal({ isOpen, onClose }) {
         <div className="membership-search-row logs-modal__search-row">
           <input
             type="text"
-            placeholder="Поиск по имени…"
+            placeholder="Поиск по тексту, именам, объектам…"
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
             className="rating-search-input"
@@ -157,30 +247,104 @@ function LogsModal({ isOpen, onClose }) {
           </IconButton>
         </div>
 
+        <div className="logs-modal__extra-filters">
+          <label className="logs-modal__filter-field">
+            <span className="logs-modal__filter-label">Субъект</span>
+            <input
+              type="text"
+              list="logs-subject-options"
+              placeholder="Имя пользователя"
+              value={subjectInput}
+              onChange={handleSubjectInputChange}
+              className="rating-search-input"
+            />
+            <datalist id="logs-subject-options">
+              {players.map((player) => (
+                <option key={player.id} value={player.full_name || ''} />
+              ))}
+            </datalist>
+          </label>
+
+          <label className="logs-modal__filter-field">
+            <span className="logs-modal__filter-label">Объект</span>
+            <select
+              value={objectType}
+              onChange={(event) => setObjectType(event.target.value)}
+              className="logs-modal__object-select"
+            >
+              <option value="">Все типы</option>
+              {AUDIT_OBJECT_TYPES.map((item) => (
+                <option key={item.value} value={item.value}>
+                  {item.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+
         <div className="logs-modal__domain-filters" role="group" aria-label="Фильтр по разделу">
-          {DOMAIN_FILTER_OPTIONS.map((option) => (
+          {AUDIT_EVENT_CATEGORIES.map((option) => (
             <button
-              key={option.label}
+              key={option.value}
               type="button"
-              className={`logs-modal__domain-chip${domainFilter === option.value ? ' logs-modal__domain-chip--active' : ''}`}
-              aria-pressed={domainFilter === option.value}
-              onClick={() => setDomainFilter(option.value)}
+              className={`logs-modal__domain-chip${
+                selectedCategories.has(option.value) ? ' logs-modal__domain-chip--active' : ''
+              }`}
+              aria-pressed={selectedCategories.has(option.value)}
+              onClick={() => toggleCategory(option.value)}
             >
               {option.label}
             </button>
           ))}
         </div>
 
-        {isLoading ? (
+        <div className="logs-modal__toolbar">
+          <button
+            type="button"
+            className="logs-modal__export-btn"
+            onClick={handleExport}
+            disabled={exporting || noCategoriesSelected}
+          >
+            {exporting ? 'Экспорт…' : 'Экспорт CSV'}
+          </button>
+          {!isLoading && totalItems > 0 ? (
+            <span className="logs-modal__count">
+              {items.length} из {totalItems}
+            </span>
+          ) : null}
+        </div>
+
+        {noCategoriesSelected ? (
+          <EmptyState title="Выберите хотя бы один раздел" />
+        ) : isLoading && items.length === 0 ? (
           <Spinner label="Загрузка логов..." />
-        ) : filteredEntries.length === 0 ? (
+        ) : items.length === 0 ? (
           <EmptyState title="Нет записей за выбранный период" />
         ) : (
-          <div className="logs-modal__list">
-            {filteredEntries.map((entry) => (
-              <LogRow key={entry.id} entry={entry} />
-            ))}
-          </div>
+          <>
+            <div className="logs-modal__list">
+              {items.map((entry) => (
+                <AuditEventRow
+                  key={entry.id}
+                  entry={entry}
+                  expanded={expandedId === entry.id}
+                  onToggle={() =>
+                    setExpandedId((prev) => (prev === entry.id ? null : entry.id))
+                  }
+                />
+              ))}
+            </div>
+            {hasMore ? (
+              <button
+                type="button"
+                className="logs-modal__load-more"
+                onClick={() => setPerPage((prev) => prev + PER_PAGE_STEP)}
+                disabled={isLoading}
+              >
+                {isLoading ? 'Загрузка…' : `Показать ещё (${totalItems - items.length})`}
+              </button>
+            ) : null}
+          </>
         )}
       </Modal>
 

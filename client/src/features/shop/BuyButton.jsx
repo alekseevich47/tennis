@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { useToast } from '../../components/ui/ToastContext';
 import { MAX_SELLER_URL } from '../../config';
 import { error } from '../../lib/log';
+import pb from '../../services/pb';
 import {
   buildBuyMessage,
   BUY_MOBILE_TOAST_ACTION_LABEL,
@@ -36,6 +37,14 @@ export default function BuyButton({ className, product = null, products, disable
       await navigator.clipboard.writeText(message);
     } catch (err) {
       error('copy buy message:', err);
+    }
+
+    const productIds = items.map((item) => item.id).filter(Boolean);
+    if (productIds.length) {
+      pb.send('/api/audit-buy-click', {
+        method: 'POST',
+        body: { productIds }
+      }).catch(() => {});
     }
 
     if (isMobileMaxPlatform()) {

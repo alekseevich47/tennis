@@ -1,7 +1,6 @@
 // @ts-check
 import pb from './pb';
 import { error } from '../lib/log';
-import { auditFeed } from '../lib/audit';
 import { PB_URL } from '../config';
 
 /**
@@ -133,7 +132,6 @@ export async function togglePostLike(postId, userId) {
 
   if (existing[0]) {
     await pb.collection('post_likes').delete(existing[0].id);
-    auditFeed.likeRemove(postId);
     return null;
   }
 
@@ -141,7 +139,6 @@ export async function togglePostLike(postId, userId) {
     post: postId,
     user: userId
   }));
-  auditFeed.likeAdd(postId);
   return record;
 }
 
@@ -149,16 +146,9 @@ export async function togglePostLike(postId, userId) {
  * @param {FormData | Record<string, unknown>} payload
  */
 export async function createPost(payload) {
-  try {
-    const record = /** @type {PostRecord} */ (
-      await pb.collection('posts').create(/** @type {Record<string, unknown>} */ (payload))
-    );
-    auditFeed.postCreate(/** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)));
-    return record;
-  } catch (err) {
-    auditFeed.postCreateError(err);
-    throw err;
-  }
+  return /** @type {PostRecord} */ (
+    await pb.collection('posts').create(/** @type {Record<string, unknown>} */ (payload))
+  );
 }
 
 /**
@@ -204,7 +194,6 @@ export function createPostWithProgress(payload, { signal, onProgress } = {}) {
         try {
           const record = /** @type {PostRecord} */ (JSON.parse(xhr.responseText));
           resolve(record);
-          auditFeed.postCreate(/** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)));
         } catch (parseErr) {
           reject(parseErr);
         }
@@ -239,25 +228,16 @@ export function createPostWithProgress(payload, { signal, onProgress } = {}) {
  * @param {Partial<PostRecord> | FormData} patch
  */
 export async function updatePost(postId, patch) {
-  const record = /** @type {PostRecord} */ (
+  return /** @type {PostRecord} */ (
     await pb.collection('posts').update(postId, /** @type {Record<string, unknown>} */ (patch))
   );
-  const isDeleted = getIsDeletedPatchValue(patch);
-  if (isDeleted === true) {
-    auditFeed.postSoftDelete(postId);
-  } else if (isDeleted === null) {
-    auditFeed.postEdit(postId, patch);
-  }
-  return record;
 }
 
 /**
  * @param {string} postId
  */
 export async function hardDeletePost(postId) {
-  const result = await pb.collection('posts').delete(postId);
-  auditFeed.postHardDelete(postId);
-  return result;
+  return pb.collection('posts').delete(postId);
 }
 
 /**
@@ -265,18 +245,11 @@ export async function hardDeletePost(postId) {
  */
 export async function createComment({ postId, authorId, text }) {
   if (!authorId) throw new Error('Не авторизован: нельзя создать комментарий без author.id');
-  try {
-    const record = /** @type {CommentRecord} */ (await pb.collection('comments').create({
-      post: postId,
-      author: authorId,
-      text
-    }, { expand: 'author' }));
-    auditFeed.commentCreate(/** @type {Record<string, unknown>} */ (/** @type {unknown} */ (record)), postId);
-    return record;
-  } catch (err) {
-    auditFeed.commentCreateError(err, postId);
-    throw err;
-  }
+  return /** @type {CommentRecord} */ (await pb.collection('comments').create({
+    post: postId,
+    author: authorId,
+    text
+  }, { expand: 'author' }));
 }
 
 /**
@@ -284,16 +257,9 @@ export async function createComment({ postId, authorId, text }) {
  * @param {Partial<CommentRecord>} patch
  */
 export async function updateComment(commentId, patch) {
-  const record = /** @type {CommentRecord} */ (
+  return /** @type {CommentRecord} */ (
     await pb.collection('comments').update(commentId, /** @type {Record<string, unknown>} */ (patch))
   );
-  const isDeleted = getIsDeletedPatchValue(patch);
-  if (isDeleted === true) {
-    auditFeed.commentSoftDelete(commentId, record.post);
-  } else if (isDeleted === null) {
-    auditFeed.commentEdit(commentId, record.post, record.text);
-  }
-  return record;
 }
 
 /**
@@ -301,12 +267,7 @@ export async function updateComment(commentId, patch) {
  * @param {string} [postId]
  */
 export async function hardDeleteComment(commentId, postId) {
-  const comment = postId
-    ? null
-    : /** @type {CommentRecord} */ (await pb.collection('comments').getOne(commentId, { requestKey: null }));
-  const result = await pb.collection('comments').delete(commentId);
-  auditFeed.commentDelete(commentId, postId || comment?.post || '');
-  return result;
+  return pb.collection('comments').delete(commentId);
 }
 
 /**
