@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DayPicker } from '@daypicker/react';
 import { ru } from '@daypicker/react/locale';
 import '@daypicker/react/style.css';
@@ -9,6 +9,7 @@ const MONTH_LABELS = Array.from({ length: 12 }, (_, index) =>
 );
 
 const YEARS_PER_PAGE = 12;
+const SWIPE_THRESHOLD = 50;
 
 /**
  * @param {Date} date
@@ -21,21 +22,32 @@ function startOfDecadePage(date) {
 
 /**
  * @param {{
- *   selected: import('@daypicker/react').DateRange | undefined,
- *   onSelect: (range: import('@daypicker/react').DateRange | undefined) => void,
- *   defaultMonth?: Date
+ *   mode?: 'single' | 'range',
+ *   selectedRange?: import('@daypicker/react').DateRange | undefined,
+ *   selectedDate?: Date | undefined,
+ *   onSelectRange?: (range: import('@daypicker/react').DateRange | undefined) => void,
+ *   onSelectDate?: (date: Date | undefined) => void,
+ *   initialDisplayMonth?: Date
  * }} props
  */
-function DateRangePicker({ selected, onSelect, defaultMonth = new Date() }) {
+function DateRangePicker({
+  mode = 'range',
+  selectedRange,
+  selectedDate,
+  onSelectRange,
+  onSelectDate,
+  initialDisplayMonth = new Date()
+}) {
   const [view, setView] = useState('days');
-  const [displayMonth, setDisplayMonth] = useState(defaultMonth);
+  const [displayMonth, setDisplayMonth] = useState(initialDisplayMonth);
   const [viewPhase, setViewPhase] = useState('enter');
+  const touchStartRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
-    setDisplayMonth(defaultMonth);
+    setDisplayMonth(initialDisplayMonth);
     setView('days');
     setViewPhase('enter');
-  }, [defaultMonth]);
+  }, [initialDisplayMonth]);
 
   const switchView = useCallback((nextView) => {
     setViewPhase('exit');
@@ -58,7 +70,7 @@ function DateRangePicker({ selected, onSelect, defaultMonth = new Date() }) {
   const decadeStart = startOfDecadePage(displayMonth).getFullYear();
   const decadeLabel = `${decadeStart}–${decadeStart + YEARS_PER_PAGE - 1}`;
 
-  const handlePrev = () => {
+  const handlePrev = useCallback(() => {
     if (view === 'days') {
       setDisplayMonth((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
       return;
@@ -68,19 +80,19 @@ function DateRangePicker({ selected, onSelect, defaultMonth = new Date() }) {
       return;
     }
     setDisplayMonth((prev) => new Date(prev.getFullYear() - YEARS_PER_PAGE, prev.getMonth(), 1));
-  };
+  }, [view]);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (view === 'days') {
       setDisplayMonth((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
       return;
     }
     if (view === 'months') {
-      setDisplayMonth((prev) => new Date(prev.getFullYear() + 1, prev.getMonth(), 1));
+      setDisplayMonth((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
       return;
     }
     setDisplayMonth((prev) => new Date(prev.getFullYear() + YEARS_PER_PAGE, prev.getMonth(), 1));
-  };
+  }, [view]);
 
   const handleSelectMonth = (monthIndex) => {
     setDisplayMonth(new Date(displayMonth.getFullYear(), monthIndex, 1));
@@ -98,6 +110,28 @@ function DateRangePicker({ selected, onSelect, defaultMonth = new Date() }) {
   }, [displayMonth]);
 
   const EmptyCaption = useCallback(() => null, []);
+
+  const handleTouchStart = (event) => {
+    const touch = event.touches[0];
+    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+  };
+
+  const handleTouchEnd = (event) => {
+    const touch = event.changedTouches[0];
+    const deltaX = touch.clientX - touchStartRef.current.x;
+    const deltaY = touch.clientY - touchStartRef.current.y;
+    if (Math.abs(deltaY) > Math.abs(deltaX) * 1.5) return;
+    if (Math.abs(deltaX) < SWIPE_THRESHOLD) return;
+    if (deltaX > 0) handlePrev();
+    else handleNext();
+  };
+
+  const selectedMonthIndex =
+    mode === 'single'
+      ? selectedDate?.getMonth()
+      : selectedRange?.from?.getMonth();
+  const selectedYear =
+    mode === 'single' ? selectedDate?.getFullYear() : selectedRange?.from?.getFullYear();
 
   return (
     <div className="date-range-picker-shell">
@@ -148,18 +182,21 @@ function DateRangePicker({ selected, onSelect, defaultMonth = new Date() }) {
       <div
         className={`date-range-picker-view date-range-picker-view--${viewPhase}`}
         key={view}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
         {view === 'days' ? (
           <DayPicker
             animate
-            mode="range"
+            autoFocus
+            mode={mode}
             locale={ru}
             weekStartsOn={1}
             className="date-range-picker"
             month={displayMonth}
             onMonthChange={setDisplayMonth}
-            selected={selected}
-            onSelect={onSelect}
+            selected={mode === 'single' ? selectedDate : selectedRange}
+            onSelect={mode === 'single' ? onSelectDate : onSelectRange}
             showOutsideDays
             hideNavigation
             components={{ MonthCaption: EmptyCaption, Nav: EmptyCaption }}
@@ -173,9 +210,8 @@ function DateRangePicker({ selected, onSelect, defaultMonth = new Date() }) {
                 displayMonth.getMonth() === index &&
                 displayMonth.getFullYear() === new Date().getFullYear();
               const isSelectedMonth =
-                selected?.from &&
-                selected.from.getMonth() === index &&
-                selected.from.getFullYear() === displayMonth.getFullYear();
+                selectedMonthIndex === index &&
+                selectedYear === displayMonth.getFullYear();
               return (
                 <button
                   key={label}
@@ -201,8 +237,7 @@ function DateRangePicker({ selected, onSelect, defaultMonth = new Date() }) {
           <div className="date-range-year-grid" role="grid" aria-label="Выбор года">
             {years.map((year) => {
               const isCurrent = year === new Date().getFullYear();
-              const isSelectedYear =
-                selected?.from && selected.from.getFullYear() === year;
+              const isSelectedYear = selectedYear === year;
               return (
                 <button
                   key={year}
