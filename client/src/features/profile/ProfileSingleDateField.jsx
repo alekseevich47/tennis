@@ -1,16 +1,8 @@
-import React, { useState } from 'react';
-import IconButton from '../../components/ui/IconButton';
+import React, { useRef, useState } from 'react';
 import { parseDateInputValue, toDateInputValue } from '../../lib/datePickerUtils';
 import DatePickerModal from '../trainings/components/DatePickerModal';
 
-function CalendarIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-      <rect x="3" y="4" width="18" height="18" rx="2" />
-      <path d="M16 2v4M8 2v4M3 10h18" />
-    </svg>
-  );
-}
+const PICKER_ZONE_WIDTH = 40;
 
 /**
  * @param {{
@@ -22,7 +14,29 @@ function CalendarIcon() {
  */
 function ProfileSingleDateField({ id, label, value, onChange }) {
   const [pickerOpen, setPickerOpen] = useState(false);
+  const inputRef = useRef(null);
   const defaultDate = value ? parseDateInputValue(value) : null;
+
+  const isPickerZoneClick = (event) => {
+    const input = inputRef.current;
+    if (!input) return false;
+    const rect = input.getBoundingClientRect();
+    return event.clientX >= rect.right - PICKER_ZONE_WIDTH;
+  };
+
+  const openPicker = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setPickerOpen(true);
+  };
+
+  const handleInputPointerDown = (event) => {
+    if (isPickerZoneClick(event)) openPicker(event);
+  };
+
+  const handleInputClick = (event) => {
+    if (isPickerZoneClick(event)) openPicker(event);
+  };
 
   const handleConfirm = (date) => {
     onChange(toDateInputValue(date));
@@ -31,24 +45,17 @@ function ProfileSingleDateField({ id, label, value, onChange }) {
   return (
     <div className="form-group">
       <label htmlFor={id}>{label}</label>
-      <div className="profile-date-field-row">
+      <div className="profile-date-field-wrap">
         <input
+          ref={inputRef}
           id={id}
           type="date"
           className="profile-date-field-input"
           value={value}
           onChange={(event) => onChange(event.target.value)}
+          onPointerDown={handleInputPointerDown}
+          onClick={handleInputClick}
         />
-        <IconButton
-          type="button"
-          ariaLabel={`Выбрать ${label.toLowerCase()} в календаре`}
-          aria-expanded={pickerOpen}
-          variant="ghost"
-          className="profile-date-field-calendar-btn"
-          onClick={() => setPickerOpen(true)}
-        >
-          <CalendarIcon />
-        </IconButton>
       </div>
       <DatePickerModal
         isOpen={pickerOpen}

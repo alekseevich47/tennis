@@ -535,29 +535,17 @@
   margin: 20px 0;
 }
 
-.profile-date-field-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.profile-date-field-wrap {
+  position: relative;
 }
 
 .profile-date-field-input {
-  flex: 1;
-  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.profile-date-field-calendar-btn {
-  flex-shrink: 0;
-  width: 36px;
-  height: 36px;
-  color: #007aff !important;
-  border: 1px solid #007aff;
-  border-radius: 10px;
-}
-
-.profile-date-field-calendar-btn svg {
-  width: 16px;
-  height: 16px;
+.profile-date-field-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
 }
 
 .profile-trainings-search-row {
