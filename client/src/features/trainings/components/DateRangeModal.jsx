@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { DayPicker } from '@daypicker/react';
+import { ru } from '@daypicker/react/locale';
+import '@daypicker/react/style.css';
 import Modal from '../../../components/ui/Modal';
 import { useAlertDialog } from '../../../components/ui/AlertDialog';
 import '../Trainings.css';
@@ -8,6 +11,11 @@ function toDateInputValue(date) {
   const m = String(date.getMonth() + 1).padStart(2, '0');
   const d = String(date.getDate()).padStart(2, '0');
   return `${y}-${m}-${d}`;
+}
+
+function parseDateInputValue(value) {
+  const [y, m, d] = value.split('-').map(Number);
+  return new Date(y, m - 1, d);
 }
 
 export function getDefaultDateRange() {
@@ -20,6 +28,24 @@ export function getDefaultDateRange() {
   };
 }
 
+function toSelectedRange(range) {
+  if (!range?.start) return undefined;
+  const from = parseDateInputValue(range.start);
+  const to = range.end ? parseDateInputValue(range.end) : undefined;
+  return { from, to };
+}
+
+function formatRangeHint(selected) {
+  if (!selected?.from) return 'Выберите дату или период';
+  const fmt = (date) =>
+    date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+  if (!selected.to) return fmt(selected.from);
+  if (toDateInputValue(selected.from) === toDateInputValue(selected.to)) {
+    return fmt(selected.from);
+  }
+  return `${fmt(selected.from)} — ${fmt(selected.to)}`;
+}
+
 /**
  * @param {{
  *   isOpen: boolean,
@@ -30,18 +56,32 @@ export function getDefaultDateRange() {
  */
 function DateRangeModal({ isOpen, onClose, onConfirm, defaultRange = null }) {
   const { alert } = useAlertDialog();
-  const [start, setStart] = useState('');
-  const [end, setEnd] = useState('');
+  const [selected, setSelected] = useState(undefined);
 
   useEffect(() => {
     if (!isOpen) return;
     const defaults = defaultRange || getDefaultDateRange();
-    setStart(defaults.start);
-    setEnd(defaults.end);
+    setSelected(toSelectedRange(defaults));
   }, [isOpen, defaultRange]);
 
+  const defaultMonth = useMemo(
+    () => selected?.from || new Date(),
+    [selected?.from]
+  );
+
   const handleConfirm = async () => {
-    if (!start || !end || start > end) {
+    if (!selected?.from) {
+      await alert({
+        title: 'Ошибка',
+        message: 'Выберите дату или период на календаре.'
+      });
+      return;
+    }
+
+    const start = toDateInputValue(selected.from);
+    const end = toDateInputValue(selected.to || selected.from);
+
+    if (start > end) {
       await alert({
         title: 'Ошибка',
         message: 'Дата начала не может быть позже даты окончания.'
@@ -56,24 +96,20 @@ function DateRangeModal({ isOpen, onClose, onConfirm, defaultRange = null }) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Выбрать период" showCloseButton>
       <div className="date-range-modal-body">
-        <label htmlFor="date-range-start">
-          Начало отчётного периода
-          <input
-            id="date-range-start"
-            type="date"
-            value={start}
-            onChange={(event) => setStart(event.target.value)}
-          />
-        </label>
-        <label htmlFor="date-range-end">
-          Конец отчётного периода
-          <input
-            id="date-range-end"
-            type="date"
-            value={end}
-            onChange={(event) => setEnd(event.target.value)}
-          />
-        </label>
+        <DayPicker
+          animate
+          mode="range"
+          locale={ru}
+          weekStartsOn={1}
+          className="date-range-picker"
+          defaultMonth={defaultMonth}
+          selected={selected}
+          onSelect={setSelected}
+          showOutsideDays
+        />
+        <p className="date-range-hint" aria-live="polite">
+          {formatRangeHint(selected)}
+        </p>
         <button type="button" className="date-range-confirm-btn" onClick={handleConfirm}>
           Подтвердить
         </button>
