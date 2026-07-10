@@ -109,7 +109,6 @@ function ProfilePage({
   const [trainingsExpanded, setTrainingsExpanded] = useState(false);
   const [searchDate, setSearchDate] = useState('');
   const [trainingsDateRange, setTrainingsDateRange] = useState(null);
-  const [editCalendarAnchor, setEditCalendarAnchor] = useState(() => new Date());
 
   useEffect(() => {
     if (!openMembershipFromNotification) return;
@@ -209,7 +208,6 @@ function ProfilePage({
 
   const handleEditToggle = () => {
     if (isEditing) resetEditForm();
-    else setEditCalendarAnchor(new Date());
     setIsEditing((prev) => !prev);
   };
 
@@ -400,10 +398,10 @@ function ProfilePage({
           </div>
 
           <ProfileSingleDateField
+            id="profile-birth-date"
             label="Дата рождения"
             value={birthDate}
             onChange={setBirthDate}
-            initialDisplayMonth={editCalendarAnchor}
           />
 
           <div className="form-group">
@@ -421,10 +419,10 @@ function ProfilePage({
 
           {canEditSectionStartDate ? (
             <ProfileSingleDateField
+              id="profile-section-start-date"
               label="В секции с"
               value={sectionStartDate}
               onChange={setSectionStartDate}
-              initialDisplayMonth={editCalendarAnchor}
             />
           ) : null}
 

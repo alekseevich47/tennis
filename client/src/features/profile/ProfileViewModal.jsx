@@ -123,7 +123,6 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
   const [trainingsExpanded, setTrainingsExpanded] = useState(false);
   const [searchDate, setSearchDate] = useState('');
   const [trainingsDateRange, setTrainingsDateRange] = useState(null);
-  const [editCalendarAnchor, setEditCalendarAnchor] = useState(() => new Date());
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuMounted, setMenuMounted] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
@@ -320,7 +319,6 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
   const handleEditToggle = () => {
     if (!canManageProfile || saving) return;
     if (isEditing) resetEditForm();
-    else setEditCalendarAnchor(new Date());
     setIsEditing((prev) => !prev);
   };
 
@@ -698,10 +696,10 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
               </div>
 
               <ProfileSingleDateField
+                id="profile-view-birth-date"
                 label="Дата рождения"
                 value={birthDate}
                 onChange={setBirthDate}
-                initialDisplayMonth={editCalendarAnchor}
               />
 
               <div className="form-group">
@@ -719,10 +717,10 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
 
               {canEditSectionStartDate ? (
                 <ProfileSingleDateField
+                  id="profile-view-section-start-date"
                   label="В секции с"
                   value={sectionStartDate}
                   onChange={setSectionStartDate}
-                  initialDisplayMonth={editCalendarAnchor}
                 />
               ) : null}
 
