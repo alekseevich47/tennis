@@ -37,6 +37,8 @@ function ProductDetail({
   const { data: categories = [] } = useProductCategories();
   const { isFavorite, addItem, removeItem } = useFavorites();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [favoritesCount, setFavoritesCount] = useState(0);
+  const [viewsCount, setViewsCount] = useState(0);
   const touchStartRef = useRef({ x: 0, y: 0 });
   const suppressClickRef = useRef(false);
   const suppressClickTimerRef = useRef(null);
@@ -78,6 +80,11 @@ function ProductDetail({
     setCurrentImageIndex(0);
   }, [isOpen, product?.id]);
 
+  useEffect(() => {
+    setViewsCount(Number(product?.views) || 0);
+    setFavoritesCount(Math.max(0, Number(product?.favorites_count) || 0));
+  }, [product?.id, product?.views, product?.favorites_count]);
+
   useEffect(() => () => {
     window.clearTimeout(suppressClickTimerRef.current);
   }, []);
@@ -87,8 +94,10 @@ function ProductDetail({
     if (!product) return;
     if (isFavorite(product.id)) {
       removeItem(product.id);
+      setFavoritesCount((count) => Math.max(0, count - 1));
     } else {
       addItem(product);
+      setFavoritesCount((count) => count + 1);
     }
   }, [isFavorite, addItem, removeItem, product]);
 
@@ -177,6 +186,29 @@ function ProductDetail({
           >
             Артикул: #{product.id} <span aria-hidden="true">📋</span>
           </button>
+          <div className="product-detail-stats" aria-label="Статистика товара">
+            <span className="product-detail-stat">
+              <span aria-hidden="true">👁</span>
+              <span>{viewsCount}</span>
+            </span>
+            <span className="product-detail-stat">
+              <svg
+                className="product-detail-stat-heart"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                width="14"
+                height="14"
+                aria-hidden="true"
+              >
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+              <span>{favoritesCount}</span>
+            </span>
+          </div>
         </div>
         <div className="post-card-actions" role="group" aria-label="Действия с товаром">
           {moderator && (

@@ -8,7 +8,11 @@ function isUserBookingDisabled(user) {
   const membershipType = user.membership_type || 'regular';
   const noSessions =
     membershipType === 'regular' && (user.available_sessions ?? 0) <= 0;
-  return user.membership_frozen === true || noSessions;
+  return (
+    user.bot_blocked === true ||
+    user.membership_frozen === true ||
+    noSessions
+  );
 }
 
 /**
@@ -42,7 +46,7 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
     setErrorMessage('');
 
     pb.collection('users').getFullList({
-      fields: 'id,full_name,avatar,avatar_url,available_sessions,membership_type,membership_frozen',
+      fields: 'id,full_name,avatar,avatar_url,available_sessions,membership_type,membership_frozen,bot_blocked',
       sort: 'full_name'
     })
       .then((nextUsers) => {
@@ -150,6 +154,7 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
               const noSessions =
                 membershipType === 'regular' && (user.available_sessions ?? 0) <= 0;
               const isFrozen = user.membership_frozen === true;
+              const isBotBlocked = user.bot_blocked === true;
               const isDisabled = isUserBookingDisabled(user);
 
               return (
@@ -171,8 +176,9 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
                 />
                 <span>
                   {user.full_name || 'Теннисист'}
-                  {noSessions ? ' — нет посещений' : ''}
-                  {isFrozen ? ' — абонемент заморожен' : ''}
+                  {isBotBlocked ? ' — заблокировал бота' : ''}
+                  {!isBotBlocked && noSessions ? ' — нет посещений' : ''}
+                  {!isBotBlocked && isFrozen ? ' — абонемент заморожен' : ''}
                 </span>
               </label>
               );

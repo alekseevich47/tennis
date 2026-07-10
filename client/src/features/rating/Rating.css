@@ -205,6 +205,17 @@
   color: #9ca3af;
 }
 
+.player-row--bot-blocked {
+  color: #9ca3af;
+  opacity: 0.7;
+}
+
+.player-row--bot-blocked .player-name,
+.player-row--bot-blocked .rank,
+.player-row--bot-blocked .rating-points {
+  color: #9ca3af;
+}
+
 .rank--banned {
   display: flex;
   align-items: center;
@@ -226,5 +237,17 @@
   font-size: 13px;
   color: #e53935;
   border-top: 1px solid #fecaca;
+  margin-bottom: 8px;
+}
+
+.rating-bot-blocked-section {
+  margin-top: 24px;
+}
+
+.rating-bot-blocked-divider {
+  padding: 8px 16px;
+  font-size: 13px;
+  color: #9ca3af;
+  border-top: 1px solid #e5e7eb;
   margin-bottom: 8px;
 }

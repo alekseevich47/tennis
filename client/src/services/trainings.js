@@ -1,6 +1,6 @@
 // @ts-check
 import pb from './pb';
-import { isModerator, getCurrentUser } from './auth';
+import { isModerator, getCurrentUser, BOT_BLOCKED_BOOKING_MESSAGE } from './auth';
 import { error } from '../lib/log';
 import { maybeNotifySessionsLeft } from './notifications';
 import { auditTrainings } from '../lib/audit';
@@ -156,6 +156,20 @@ async function hasAvailableMembershipSession(userId) {
 async function assertMembershipSessionAvailable(userId) {
   if (!(await hasAvailableMembershipSession(userId))) {
     throw Object.assign(new Error('Нет доступных посещений'), { code: 'NO_AVAILABLE_SESSIONS' });
+  }
+}
+
+/**
+ * Пользователь с bot_blocked не может быть записан (нет уведомлений в MAX).
+ * @param {string} userId
+ */
+async function assertNotBotBlocked(userId) {
+  const user = await pb.collection('users').getOne(userId, {
+    fields: 'bot_blocked',
+    requestKey: null
+  });
+  if (user.bot_blocked === true) {
+    throw Object.assign(new Error(BOT_BLOCKED_BOOKING_MESSAGE), { code: 'BOT_BLOCKED' });
   }
 }
 
@@ -728,6 +742,7 @@ export async function reopenTraining(trainingId) {
 export async function bookTraining(training, userId) {
   try {
     if (!userId) throw new Error('Не авторизован');
+    await assertNotBotBlocked(userId);
     const current = training.booked_users || [];
     if (current.includes(userId)) throw new Error('Вы уже записаны на эту тренировку');
     if (training.max_slots && current.length >= training.max_slots) {
@@ -784,6 +799,7 @@ export async function bookTraining(training, userId) {
 export async function bookUserToTraining(training, userId, targetUser, { overrideAnnualLimit } = {}) {
   try {
     if (!userId) throw new Error('Не выбран пользователь');
+    await assertNotBotBlocked(userId);
     const current = training.booked_users || [];
     if (current.includes(userId)) throw new Error('Игрок уже записан на эту тренировку');
     if (training.max_slots && current.length >= training.max_slots) {
@@ -863,12 +879,15 @@ export async function bookUsersToTraining(training, userIds, targetUsers = [], {
     }
 
     if (nextUserIds.length > 0) {
-      const frozenUsers = await pb.collection('users').getFullList({
+      const statusUsers = await pb.collection('users').getFullList({
         filter: nextUserIds.map((id) => `id = "${id}"`).join(' || '),
-        fields: 'id,membership_frozen',
+        fields: 'id,membership_frozen,bot_blocked',
         requestKey: null
       });
-      if (frozenUsers.some((u) => u.membership_frozen)) {
+      if (statusUsers.some((u) => u.bot_blocked === true)) {
+        throw Object.assign(new Error(BOT_BLOCKED_BOOKING_MESSAGE), { code: 'BOT_BLOCKED' });
+      }
+      if (statusUsers.some((u) => u.membership_frozen)) {
         throw Object.assign(
           new Error('Абонемент пользователя заморожен. Запись невозможна.'),
           { code: 'MEMBERSHIP_FROZEN' }

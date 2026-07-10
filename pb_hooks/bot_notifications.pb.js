@@ -349,7 +349,7 @@ routerAdd('POST', '/api/bot-notify-training-restored', (c) => {
     return c.json(404, { error: 'Training not found' });
   }
 
-  const typeWord = training.getString('type') === 'tournament' ? 'турнир' : 'тренировка';
+  const typeWord = training.getString('type') === 'tournament' ? 'турнир' : 'тренировку';
   const dateFormatted = bot.formatDateTimeGmt7(training.getString('date'));
   const text =
     'Уважаемые участники, запись на *' +
@@ -366,7 +366,7 @@ routerAdd('POST', '/api/bot-notify-training-restored', (c) => {
   return c.json(200, { success: true });
 });
 
-// Приветствие при «Начать» в боте MAX (Webhook bot_started) — без auth PB, без коллекции users
+// Webhook MAX: bot_started (приветствие + снятие bot_blocked) / bot_stopped (неактивный аккаунт)
 routerAdd('POST', '/api/max-bot-webhook', (c) => {
   const bot = require(__hooks + '/botlib.js');
   const WELCOME_TEXT =
@@ -374,7 +374,6 @@ routerAdd('POST', '/api/max-bot-webhook', (c) => {
 
   try {
     const info = c.requestInfo();
-    const headers = info.headers || {};
     const secretHeader =
       c.request.header.get('X-Max-Bot-Api-Secret') ||
       (info.headers && info.headers['x_max_bot_api_secret']) ||
@@ -394,18 +393,55 @@ routerAdd('POST', '/api/max-bot-webhook', (c) => {
     console.log('[bot] webhook payload: ' + JSON.stringify(body));
 
     const updateType = body.update_type || body.type || '';
+    const userObj = body.user || {};
+    const maxUserId = String(
+      body.user_id ||
+      userObj.user_id ||
+      userObj.id ||
+      body.chat_id ||
+      ''
+    );
+
     if (updateType === 'bot_started') {
-      const userObj = body.user || {};
-      const userId =
-        body.user_id ||
-        userObj.user_id ||
-        userObj.id ||
-        body.chat_id ||
-        '';
-      if (userId) {
-        bot.sendBotMessage(String(userId), WELCOME_TEXT);
+      if (maxUserId) {
+        bot.sendBotMessage(maxUserId, WELCOME_TEXT);
+        try {
+          const user = $app.findFirstRecordByFilter(
+            'users',
+            'max_id = {:maxId}',
+            { maxId: maxUserId }
+          );
+          if (user && user.getBool('bot_blocked')) {
+            user.set('bot_blocked', false);
+            user.set('bot_blocked_at', '');
+            $app.save(user);
+            console.log('[bot] webhook bot_started: снят bot_blocked для max_id=' + maxUserId);
+          }
+        } catch (_) {
+          // пользователь ещё не создан в PB — ок
+        }
       } else {
         console.log('[bot] webhook bot_started: user_id не найден в теле');
+      }
+    } else if (updateType === 'bot_stopped') {
+      if (maxUserId) {
+        try {
+          const user = $app.findFirstRecordByFilter(
+            'users',
+            'max_id = {:maxId}',
+            { maxId: maxUserId }
+          );
+          if (user) {
+            user.set('bot_blocked', true);
+            user.set('bot_blocked_at', new Date().toISOString());
+            $app.save(user);
+            console.log('[bot] webhook bot_stopped: bot_blocked для max_id=' + maxUserId);
+          }
+        } catch (err) {
+          console.log('[bot] webhook bot_stopped: пользователь не найден max_id=' + maxUserId + ' ' + err);
+        }
+      } else {
+        console.log('[bot] webhook bot_stopped: user_id не найден в теле');
       }
     }
   } catch (err) {

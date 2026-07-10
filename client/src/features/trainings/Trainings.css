@@ -454,6 +454,7 @@
 
 .archive-search-wrapper {
   display: flex;
+  flex-wrap: nowrap;
   gap: 8px;
   margin-bottom: 16px;
   align-items: stretch;
@@ -483,14 +484,51 @@
 }
 
 .archive-category-select {
-  flex: 1;
-  min-width: 0;
+  flex: 0 1 auto;
+  width: auto;
+  min-width: 88px;
+  max-width: 140px;
   cursor: pointer;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23868e96' d='M1.41 0L6 4.58 10.59 0 12 1.41l-6 6-6-6z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 32px;
+  background-position: right 10px center;
+  padding-right: 28px;
+}
+
+.archive-search-wrapper .archive-calendar-btn {
+  width: 40px;
+  height: 40px;
+  min-height: 40px;
+  align-self: center;
+  border: 1.5px solid #007aff;
+  color: #007aff;
+  background: transparent;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.archive-calendar-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.archive-date-range-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: -8px 0 12px;
+}
+
+.archive-date-range-label {
+  font-size: 13px;
+  color: #868e96;
+  white-space: nowrap;
+}
+
+.archive-date-reset-btn {
+  color: #868e96 !important;
+  flex-shrink: 0;
 }
 
 .archive-search-input:focus,

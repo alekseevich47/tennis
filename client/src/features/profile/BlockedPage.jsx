@@ -1,17 +1,26 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { MAX_SELLER_URL } from '../../config';
+import { BOT_BLOCKED_APP_MESSAGE, isUserBotBlocked } from '../../services/auth';
 import { openSellerChat } from '../shop/buyMessage';
 import './BlockedPage.css';
 
 /**
- * @param {{ user: { banned_at?: string, ban_reason?: string } }} props
+ * @param {{ user: {
+ *   banned_at?: string,
+ *   ban_reason?: string,
+ *   bot_blocked?: boolean,
+ *   bot_blocked_at?: string,
+ *   is_banned?: boolean
+ * } }} props
  */
 function BlockedPage({ user }) {
-  const bannedAt = user?.banned_at ? new Date(user.banned_at) : null;
+  const botBlocked = isUserBotBlocked(user);
+  const blockedAtRaw = botBlocked ? user?.bot_blocked_at : user?.banned_at;
+  const blockedAt = blockedAtRaw ? new Date(blockedAtRaw) : null;
   const formattedDate =
-    bannedAt && !Number.isNaN(bannedAt.getTime())
-      ? format(bannedAt, 'HH:mm dd.MM.yyyy')
+    blockedAt && !Number.isNaN(blockedAt.getTime())
+      ? format(blockedAt, 'HH:mm dd.MM.yyyy')
       : null;
 
   return (
@@ -19,27 +28,35 @@ function BlockedPage({ user }) {
       <div className="blocked-icon" aria-hidden="true">
         ⚠️
       </div>
-      <h1 className="blocked-title">Доступ заблокирован</h1>
+      <h1 className="blocked-title">
+        {botBlocked ? 'Доступ ограничен' : 'Доступ заблокирован'}
+      </h1>
 
       {formattedDate && (
         <p className="blocked-details">Дата: {formattedDate}</p>
       )}
 
-      {user?.ban_reason && (
+      {botBlocked ? (
+        <p className="blocked-reason">Причина: {BOT_BLOCKED_APP_MESSAGE}</p>
+      ) : user?.ban_reason ? (
         <p className="blocked-reason">Причина: {user.ban_reason}</p>
-      )}
+      ) : null}
 
       <p className="blocked-contact-hint">
-        Вы можете связаться с администратором для решения проблемы.
+        {botBlocked
+          ? 'После повторного запуска бота обновите мини-приложение.'
+          : 'Вы можете связаться с администратором для решения проблемы.'}
       </p>
 
-      <button
-        type="button"
-        className="blocked-chat-btn"
-        onClick={() => openSellerChat(MAX_SELLER_URL)}
-      >
-        Перейти в чат
-      </button>
+      {!botBlocked && (
+        <button
+          type="button"
+          className="blocked-chat-btn"
+          onClick={() => openSellerChat(MAX_SELLER_URL)}
+        >
+          Перейти в чат
+        </button>
+      )}
     </div>
   );
 }

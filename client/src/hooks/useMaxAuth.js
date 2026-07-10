@@ -107,7 +107,7 @@ export function useMaxAuth() {
     return unsubscribe;
   }, []);
 
-  // Realtime: мгновенная реакция на бан, заморозку абонемента, ограничение комментариев.
+  // Realtime: бан, bot_blocked, заморозка абонемента, ограничение комментариев.
   useEffect(() => {
     const userId = user?.id;
     if (!userId || isUserBanned(user)) return;
@@ -136,7 +136,9 @@ export function useMaxAuth() {
         if (!prev) return prev;
         if (
           prev.membership_frozen !== record.membership_frozen ||
-          prev.can_comment !== record.can_comment
+          prev.can_comment !== record.can_comment ||
+          prev.bot_blocked !== record.bot_blocked ||
+          prev.bot_blocked_at !== record.bot_blocked_at
         ) {
           return { ...prev, .../** @type {UserRecord} */ (record) };
         }

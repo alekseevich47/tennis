@@ -1,5 +1,6 @@
 // Админ: аудитория рассылок/уведомлений и диспетчер scheduled_*.
 // Файл без .pb.js — require() внутри хендлеров/cron.
+// PB 0.23+: у Record нет getId() — использовать record.id.
 
 function resolveAudienceUserIds(record, options) {
   const forBroadcast = options && options.forBroadcast;
@@ -21,7 +22,7 @@ function resolveAudienceUserIds(record, options) {
   const users = $app.findRecordsByFilter('users', filter, '', 0, 0);
   const ids = [];
   for (let i = 0; i < users.length; i++) {
-    ids.push(users[i].getId());
+    ids.push(users[i].id);
   }
   return ids;
 }
@@ -29,27 +30,27 @@ function resolveAudienceUserIds(record, options) {
 function dispatchScheduledBroadcast(record) {
   if (!record || record.getString('status') !== 'pending') return;
 
-  const bot = require(__hooks + '/botlib.js');
-  const text = record.getString('text');
-  const userIds = resolveAudienceUserIds(record, { forBroadcast: true });
-  const mediaField = record.get('media');
-  const mediaFilenames = mediaField
-    ? (Array.isArray(mediaField) ? mediaField : [mediaField])
-    : [];
-  const attachments = bot.buildPublicFileAttachments(
-    'scheduled_broadcasts',
-    record.getId(),
-    mediaFilenames
-  );
-
   try {
+    const bot = require(__hooks + '/botlib.js');
+    const text = record.getString('text');
+    const userIds = resolveAudienceUserIds(record, { forBroadcast: true });
+    const mediaField = record.get('media');
+    const mediaFilenames = mediaField
+      ? (Array.isArray(mediaField) ? mediaField : [mediaField])
+      : [];
+    const attachments = bot.buildPublicFileAttachments(
+      'scheduled_broadcasts',
+      record.id,
+      mediaFilenames
+    );
+
     bot.broadcastToUserIds(userIds, text, attachments);
     record.set('status', 'sent');
     $app.save(record);
-    console.log('[admin] broadcast sent: ' + record.getId() + ' → ' + userIds.length + ' users');
+    console.log('[admin] broadcast sent: ' + record.id + ' → ' + userIds.length + ' users');
     return userIds.length;
   } catch (err) {
-    console.log('[admin] broadcast dispatch: ' + err);
+    console.log('[admin] broadcast dispatch: ' + (err && err.stack ? err.stack : err));
     throw err;
   }
 }
@@ -57,12 +58,12 @@ function dispatchScheduledBroadcast(record) {
 function dispatchScheduledNotification(record) {
   if (!record || record.getString('status') !== 'pending') return;
 
-  const title = record.getString('title');
-  const body = record.getString('body');
-  const userIds = resolveAudienceUserIds(record, { forBroadcast: false });
-  const collection = $app.findCollectionByNameOrId('notifications');
-
   try {
+    const title = record.getString('title');
+    const body = record.getString('body');
+    const userIds = resolveAudienceUserIds(record, { forBroadcast: false });
+    const collection = $app.findCollectionByNameOrId('notifications');
+
     for (let i = 0; i < userIds.length; i++) {
       const notification = new Record(collection);
       notification.set('recipient', userIds[i]);
@@ -73,10 +74,10 @@ function dispatchScheduledNotification(record) {
     }
     record.set('status', 'sent');
     $app.save(record);
-    console.log('[admin] notification sent: ' + record.getId() + ' → ' + userIds.length + ' users');
+    console.log('[admin] notification sent: ' + record.id + ' → ' + userIds.length + ' users');
     return userIds.length;
   } catch (err) {
-    console.log('[admin] notification dispatch: ' + err);
+    console.log('[admin] notification dispatch: ' + (err && err.stack ? err.stack : err));
     throw err;
   }
 }

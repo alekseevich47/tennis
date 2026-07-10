@@ -420,6 +420,26 @@
       },
       {
         "hidden": false,
+        "id": "bool631473829",
+        "name": "bot_blocked",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "hidden": false,
+        "id": "date1318718829",
+        "max": "",
+        "min": "",
+        "name": "bot_blocked_at",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "date"
+      },
+      {
+        "hidden": false,
         "id": "autodate2990389176",
         "name": "created",
         "onCreate": true,
@@ -2005,6 +2025,18 @@
       },
       {
         "hidden": false,
+        "id": "number300981383",
+        "max": null,
+        "min": 0,
+        "name": "views",
+        "onlyInt": false,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      },
+      {
+        "hidden": false,
         "id": "autodate2990389176",
         "name": "created",
         "onCreate": true,
@@ -2136,7 +2168,7 @@
         "hidden": false,
         "id": "file1781309708",
         "maxSelect": 5,
-        "maxSize": 50,
+        "maxSize": 100000000,
         "mimeTypes": [
           "image/gif",
           "image/jpeg",
