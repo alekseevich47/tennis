@@ -1,20 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Modal from '../../../components/ui/Modal';
 import { useAlertDialog } from '../../../components/ui/AlertDialog';
+import { parseDateInputValue, toDateInputValue, toSelectedRange } from '../../../lib/datePickerUtils';
 import DateRangePicker from './DateRangePicker';
 import '../Trainings.css';
-
-function toDateInputValue(date) {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const d = String(date.getDate()).padStart(2, '0');
-  return `${y}-${m}-${d}`;
-}
-
-function parseDateInputValue(value) {
-  const [y, m, d] = value.split('-').map(Number);
-  return new Date(y, m - 1, d);
-}
 
 export function getDefaultDateRange() {
   const now = new Date();
@@ -34,13 +23,6 @@ export function getArchiveDefaultDateRange() {
     start: toDateInputValue(start),
     end: toDateInputValue(end)
   };
-}
-
-function toSelectedRange(range) {
-  if (!range?.start) return undefined;
-  const from = parseDateInputValue(range.start);
-  const to = range.end ? parseDateInputValue(range.end) : undefined;
-  return { from, to };
 }
 
 function formatRangeHint(selected) {
@@ -65,17 +47,14 @@ function formatRangeHint(selected) {
 function DateRangeModal({ isOpen, onClose, onConfirm, defaultRange = null }) {
   const { alert } = useAlertDialog();
   const [selected, setSelected] = useState(undefined);
+  const [displayAnchor, setDisplayAnchor] = useState(() => new Date());
 
   useEffect(() => {
     if (!isOpen) return;
     const defaults = defaultRange || getDefaultDateRange();
     setSelected(toSelectedRange(defaults));
+    setDisplayAnchor(new Date());
   }, [isOpen, defaultRange]);
-
-  const defaultMonth = useMemo(
-    () => selected?.from || new Date(),
-    [selected?.from]
-  );
 
   const handleConfirm = async () => {
     if (!selected?.from) {
@@ -105,9 +84,9 @@ function DateRangeModal({ isOpen, onClose, onConfirm, defaultRange = null }) {
     <Modal isOpen={isOpen} onClose={onClose} title="Выбрать период" showCloseButton>
       <div className="date-range-modal-body">
         <DateRangePicker
-          selected={selected}
-          onSelect={setSelected}
-          defaultMonth={defaultMonth}
+          selectedRange={selected}
+          onSelectRange={setSelected}
+          initialDisplayMonth={displayAnchor}
         />
         <p className="date-range-hint" aria-live="polite">
           {formatRangeHint(selected)}

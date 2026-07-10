@@ -1,10 +1,12 @@
-import React, { memo, useEffect, useRef } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import Avatar from './ui/Avatar';
 import IconButton from './ui/IconButton';
 import FavoriteIcon from '../features/shop/FavoriteIcon';
 import FavoritesDropdown from '../features/shop/FavoritesDropdown';
 import NotificationsDropdown from '../features/notifications/NotificationsDropdown';
+import DatePickerModal from '../features/trainings/components/DatePickerModal';
+import { formatDateForSearch } from '../lib/datePickerUtils';
 import './AppHeader.css';
 
 /**
@@ -66,7 +68,7 @@ function AppHeader({
   const favoritesAnchorRef = useRef(null);
   const notificationsAnchorRef = useRef(null);
   const searchInputRef = useRef(null);
-  const dateInputRef = useRef(null);
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
   const displayName = user?.full_name || 'Гость';
 
   useEffect(() => {
@@ -75,12 +77,9 @@ function AppHeader({
     }
   }, [searchConfig?.open]);
 
-  const handleDatePick = (event) => {
-    const value = event.target.value;
-    if (!value || !searchConfig) return;
-    const [year, month, day] = value.split('-');
-    searchConfig.onChange(`${day}.${month}.${year}`);
-    event.target.value = '';
+  const handleDateConfirm = (date) => {
+    if (!searchConfig) return;
+    searchConfig.onChange(formatDateForSearch(date));
   };
 
   return (
@@ -108,19 +107,18 @@ function AppHeader({
             />
             <div className="header-search-field-actions">
               {searchConfig.showDateSearch ? (
-                <label className="header-date-btn" aria-label="Выбрать дату">
-                  <input
-                    ref={dateInputRef}
-                    type="date"
-                    className="header-date-input-overlay"
-                    tabIndex={-1}
-                    onChange={handleDatePick}
-                  />
+                <IconButton
+                  ariaLabel="Выбрать дату"
+                  variant="ghost"
+                  size="sm"
+                  className="header-date-btn"
+                  onClick={() => setDatePickerOpen(true)}
+                >
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                     <rect x="3" y="4" width="18" height="18" rx="2" />
                     <path d="M16 2v4M8 2v4M3 10h18" />
                   </svg>
-                </label>
+                </IconButton>
               ) : null}
               <IconButton
                 ariaLabel="Закрыть поиск"
@@ -219,6 +217,13 @@ function AppHeader({
           <Avatar user={user} size="sm" className="header-profile-avatar" />
         </button>
       </div>
+      {searchConfig?.showDateSearch ? (
+        <DatePickerModal
+          isOpen={datePickerOpen}
+          onClose={() => setDatePickerOpen(false)}
+          onConfirm={handleDateConfirm}
+        />
+      ) : null}
     </header>
   );
 }
