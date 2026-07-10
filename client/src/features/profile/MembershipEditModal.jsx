@@ -6,8 +6,8 @@ import { isModerator } from '../../services/auth';
 import pb from '../../services/pb';
 import { auditMembership } from '../../lib/audit';
 import { maybeNotifySessionsLeft } from '../../services/notifications';
-import { parseDateInputValue, toDateInputValue } from '../../lib/datePickerUtils';
-import DateRangePicker from '../trainings/components/DateRangePicker';
+import MembershipPeriodRangeField from './MembershipPeriodRangeField';
+import MembershipStartDateField from './MembershipStartDateField';
 import './Profile.css';
 
 function getCurrentSessions(user) {
@@ -57,9 +57,6 @@ function MembershipEditModal({ isOpen, onClose, user, mode = 'add', onMutated })
   const [availableSessions, setAvailableSessions] = useState('0');
   const [comment, setComment] = useState('');
   const [initialSnapshot, setInitialSnapshot] = useState(null);
-  const [calendarAnchor, setCalendarAnchor] = useState(() => new Date());
-  const [selectedRange, setSelectedRange] = useState(undefined);
-  const [selectedStartDate, setSelectedStartDate] = useState(undefined);
 
   const copy = useMemo(() => getModeCopy(mode), [mode]);
 
@@ -80,18 +77,6 @@ function MembershipEditModal({ isOpen, onClose, user, mode = 'add', onMutated })
       setAvailableSessions(snapshot.availableSessions);
       setComment(snapshot.comment);
       setInitialSnapshot(snapshot);
-      setCalendarAnchor(new Date());
-      setSelectedRange(
-        snapshot.startDate
-          ? {
-              from: parseDateInputValue(snapshot.startDate),
-              to: snapshot.endDate ? parseDateInputValue(snapshot.endDate) : undefined
-            }
-          : undefined
-      );
-      setSelectedStartDate(
-        snapshot.startDate ? parseDateInputValue(snapshot.startDate) : undefined
-      );
       return;
     }
 
@@ -147,17 +132,6 @@ function MembershipEditModal({ isOpen, onClose, user, mode = 'add', onMutated })
     }
   };
 
-  const handleRangeSelect = (range) => {
-    setSelectedRange(range);
-    if (range?.from) setStartDate(toDateInputValue(range.from));
-    setEndDate(range?.to ? toDateInputValue(range.to) : '');
-  };
-
-  const handleStartDateSelect = (date) => {
-    setSelectedStartDate(date);
-    if (date) setStartDate(toDateInputValue(date));
-  };
-
   const handleFullSubmit = async (e) => {
     e.preventDefault();
     if (submitting || !user?.id || !initialSnapshot) return;
@@ -171,7 +145,11 @@ function MembershipEditModal({ isOpen, onClose, user, mode = 'add', onMutated })
       changedFields.push('membership_type');
     }
 
-    if (membershipType === 'regular' || membershipType === 'annual') {
+    if (
+      membershipType === 'regular' ||
+      membershipType === 'annual' ||
+      membershipType === 'corporate'
+    ) {
       if (startDate !== initialSnapshot.startDate) {
         payload.membership_start_date = startDate || '';
         changedFields.push('membership_start_date');
@@ -314,41 +292,38 @@ function MembershipEditModal({ isOpen, onClose, user, mode = 'add', onMutated })
             </div>
           </div>
 
-          {(membershipType === 'regular' || membershipType === 'annual') && (
+          {membershipType === 'regular' && (
             <>
-              <div className="form-group membership-calendar-group">
-                <span className="form-group-label">
-                  {membershipType === 'annual' ? 'Начало периода' : 'Период действия'}
-                </span>
-                {membershipType === 'annual' ? (
-                  <DateRangePicker
-                    mode="single"
-                    selectedDate={selectedStartDate}
-                    onSelectDate={handleStartDateSelect}
-                    initialDisplayMonth={calendarAnchor}
-                  />
-                ) : (
-                  <DateRangePicker
-                    selectedRange={selectedRange}
-                    onSelectRange={handleRangeSelect}
-                    initialDisplayMonth={calendarAnchor}
-                  />
-                )}
+              <MembershipPeriodRangeField
+                id="membership-period-range"
+                label="Период действия"
+                startDate={startDate}
+                endDate={endDate}
+                onChange={({ start, end }) => {
+                  setStartDate(start);
+                  setEndDate(end);
+                }}
+              />
+              <div className="form-group">
+                <label htmlFor="membership-available-sessions">Доступные посещения</label>
+                <input
+                  id="membership-available-sessions"
+                  type="number"
+                  min="0"
+                  value={availableSessions}
+                  onChange={(e) => setAvailableSessions(e.target.value)}
+                  required
+                />
               </div>
-              {membershipType === 'regular' && (
-                <div className="form-group">
-                  <label htmlFor="membership-available-sessions">Доступные посещения</label>
-                  <input
-                    id="membership-available-sessions"
-                    type="number"
-                    min="0"
-                    value={availableSessions}
-                    onChange={(e) => setAvailableSessions(e.target.value)}
-                    required
-                  />
-                </div>
-              )}
             </>
+          )}
+
+          {(membershipType === 'corporate' || membershipType === 'annual') && (
+            <MembershipStartDateField
+              id="membership-start-date"
+              value={startDate}
+              onChange={setStartDate}
+            />
           )}
 
           {moderator && (
