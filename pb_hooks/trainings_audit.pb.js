@@ -29,6 +29,7 @@ onRecordCreateRequest((e) => {
       objectId: record.id,
       objectLabel: objectLabel,
       effectiveAt: dateStr || undefined,
+      details: { trainingId: record.id },
       summaryRu: name + ' создал(а) тренировку ' + objectLabel,
       severity: 'info'
     });
@@ -74,7 +75,8 @@ onRecordUpdateRequest((e) => {
       objectType: 'training',
       objectId: record.id,
       objectLabel: objectLabel,
-      effectiveAt: dateStr || undefined
+      effectiveAt: dateStr || undefined,
+      details: { trainingId: record.id }
     };
 
     var wasDeleted = original.getBool('is_deleted');
@@ -147,6 +149,8 @@ onRecordUpdateRequest((e) => {
     }
 
     var addedBooked = audit.newlyAdded(original.get('booked_users'), record.get('booked_users'));
+    var totalBookedCount = audit.newlyAdded([], record.get('booked_users')).length;
+    var bookedSuffix = '. Всего записано: ' + totalBookedCount + '.';
     var i;
     for (i = 0; i < addedBooked.length; i++) {
       var bookedUserId = addedBooked[i];
@@ -156,7 +160,8 @@ onRecordUpdateRequest((e) => {
           action: 'booking.booking.create_self',
           actionKind: 'create',
           subject: subject,
-          summaryRu: name + ' записался(ась) на тренировку ' + objectLabel,
+          details: { trainingId: record.id, totalBookedCount: totalBookedCount },
+          summaryRu: name + ' записался(ась) на тренировку ' + objectLabel + bookedSuffix,
           severity: 'info'
         }));
       } else {
@@ -167,7 +172,8 @@ onRecordUpdateRequest((e) => {
           actionKind: 'create',
           subject: modSubject,
           target: { id: bookedUserId, label: bookedLabel },
-          summaryRu: name + ' записал(а) ' + bookedLabel + ' на тренировку ' + objectLabel,
+          details: { trainingId: record.id, totalBookedCount: totalBookedCount },
+          summaryRu: name + ' записал(а) ' + bookedLabel + ' на тренировку ' + objectLabel + bookedSuffix,
           severity: 'info'
         }));
       }
@@ -193,7 +199,7 @@ onRecordUpdateRequest((e) => {
           subject: null,
           subjectSource: 'system',
           target: { id: unbookedUserId, label: unbookedLabel },
-          details: { reason: 'insufficient_sessions' },
+          details: { trainingId: record.id, reason: 'insufficient_sessions' },
           summaryRu: 'Система сняла ' + unbookedLabel + ' с тренировки ' + objectLabel + ' (недостаточно посещений)',
           severity: 'info'
         }));
@@ -284,6 +290,7 @@ onRecordDeleteRequest((e) => {
       objectId: record.id,
       objectLabel: objectLabel,
       effectiveAt: dateStr || undefined,
+      details: { trainingId: record.id },
       summaryRu: name + ' окончательно удалил(а) тренировку ' + objectLabel,
       severity: 'warning'
     });

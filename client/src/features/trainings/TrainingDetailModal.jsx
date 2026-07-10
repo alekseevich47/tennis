@@ -142,8 +142,16 @@ function TrainingDetailModal({
     }
   };
 
+  const handleCopyTrainingId = async () => {
+    try {
+      await navigator.clipboard.writeText(training.id);
+      await alert({ title: 'Скопировано', message: 'ID тренировки скопирован в буфер обмена.' });
+    } catch {
+      await alert({ title: 'Не получилось', message: 'Скопируйте ID вручную.' });
+    }
+  };
+
   return (
-    <>
       <Modal
         isOpen={isOpen}
         onClose={onClose}
@@ -224,6 +232,15 @@ function TrainingDetailModal({
         <p className="detail-location-text">
           <span aria-hidden="true">📍</span> {training.location}
         </p>
+        {userIsModerator && (
+          <button
+            type="button"
+            className="training-detail-id"
+            onClick={handleCopyTrainingId}
+          >
+            ID: {training.id} <span aria-hidden="true">📋</span>
+          </button>
+        )}
 
         {training.description && (
           <div className="detail-desc-box">
