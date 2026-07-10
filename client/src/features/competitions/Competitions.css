@@ -285,6 +285,15 @@
   border-bottom: none;
 }
 
+.create-tournament-post-player-row.is-disabled {
+  opacity: 0.55;
+}
+
+.create-tournament-post-player-row.is-disabled .create-tournament-post-player-label {
+  cursor: not-allowed;
+  color: #9ca3af;
+}
+
 .create-tournament-post-player-label {
   display: flex;
   align-items: center;

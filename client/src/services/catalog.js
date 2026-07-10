@@ -17,6 +17,8 @@ import { PB_URL } from '../config';
  * @property {string[]} [categories]
  * @property {boolean} [out_of_stock]
  * @property {boolean} [is_deleted]
+ * @property {number} [views]
+ * @property {number} [favorites_count]
  * @property {string} created
  */
 
@@ -107,7 +109,7 @@ export async function listProducts({ categoryId, signal } = {}) {
       : 'is_deleted = false';
 
     return /** @type {ProductRecord[]} */ (await pb.collection('products').getFullList({
-      sort: '-created',
+      sort: '-views,-created',
       filter,
       requestKey: null,
       signal
@@ -117,6 +119,28 @@ export async function listProducts({ categoryId, signal } = {}) {
     error('Ошибка получения товаров:', err);
     throw err;
   }
+}
+
+/** @param {string} productId */
+export async function incrementProductViews(productId) {
+  if (!productId) return null;
+  return /** @type {ProductRecord} */ (
+    await pb.collection('products').update(productId, { 'views+': 1 })
+  );
+}
+
+/**
+ * @param {string} productId
+ * @param {1 | -1} delta
+ */
+export async function adjustProductFavoritesCount(productId, delta) {
+  if (!productId || (delta !== 1 && delta !== -1)) return null;
+  const patch = delta === 1
+    ? { 'favorites_count+': 1 }
+    : { 'favorites_count-': 1 };
+  return /** @type {ProductRecord} */ (
+    await pb.collection('products').update(productId, patch)
+  );
 }
 
 /** @param {FormData | Record<string, unknown>} payload */
@@ -263,7 +287,8 @@ export async function listPlayers({ signal, filter } = {}) {
         'email',
         'max_id',
         'is_visible',
-        'is_banned'
+        'is_banned',
+        'bot_blocked'
       ].join(','),
       requestKey: null,
       signal

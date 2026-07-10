@@ -7,7 +7,11 @@ export function getRatingPoints(player) {
 
 /** @param {any} player */
 export function isRatingVisible(player) {
-  return player?.is_visible !== false && player?.is_banned !== true;
+  return (
+    player?.is_visible !== false &&
+    player?.is_banned !== true &&
+    player?.bot_blocked !== true
+  );
 }
 
 /**

@@ -774,6 +774,27 @@ label.product-category-option {
   border-radius: 6px;
 }
 
+.product-detail-stats {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 4px;
+  color: #8b98a5;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.product-detail-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.product-detail-stat-heart {
+  display: block;
+  flex-shrink: 0;
+}
+
 .product-detail-gallery {
   position: relative;
   overflow: hidden;

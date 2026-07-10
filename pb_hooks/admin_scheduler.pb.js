@@ -10,7 +10,9 @@ cronAdd('dispatch_scheduled_items', '* * * * *', () => {
       try {
         adminlib.dispatchScheduledBroadcast(broadcasts[i]);
       } catch (err) {
-        console.log('[admin] cron broadcast ' + broadcasts[i].getId() + ': ' + err);
+        var rid = '';
+        try { rid = broadcasts[i].id; } catch (_) {}
+        console.log('[admin] cron broadcast ' + rid + ': ' + (err && err.stack ? err.stack : err));
       }
     }
 
@@ -19,11 +21,13 @@ cronAdd('dispatch_scheduled_items', '* * * * *', () => {
       try {
         adminlib.dispatchScheduledNotification(notifications[j]);
       } catch (err) {
-        console.log('[admin] cron notification ' + notifications[j].getId() + ': ' + err);
+        var nid = '';
+        try { nid = notifications[j].id; } catch (_) {}
+        console.log('[admin] cron notification ' + nid + ': ' + (err && err.stack ? err.stack : err));
       }
     }
   } catch (err) {
-    console.log('[admin] dispatch cron: ' + err);
+    console.log('[admin] dispatch cron: ' + (err && err.stack ? err.stack : err));
   }
 });
 

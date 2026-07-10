@@ -26,7 +26,7 @@ cronAdd('finalize_pending_deleted_trainings', '* * * * *', () => {
         try {
           trainingslib.finalizeCancelledTrainingRecord(trainings[i]);
         } catch (err) {
-          console.log('[finalize-pending-delete] training ' + trainings[i].getId() + ': ' + err);
+          console.log('[finalize-pending-delete] training ' + trainings[i].id + ': ' + err);
         }
       }
     }

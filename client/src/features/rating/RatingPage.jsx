@@ -14,7 +14,9 @@ import './Rating.css';
 function RatingPage({ user, onTabChange }) {
   const moderator = isModerator();
   const { data: players, isLoading, mutate } = usePlayers(
-    moderator ? undefined : 'is_visible = true && is_banned = false'
+    moderator
+      ? undefined
+      : 'is_visible = true && is_banned = false && bot_blocked = false'
   );
   const [showAddModal, setShowAddModal] = useState(false);
   const [viewingPlayer, setViewingPlayer] = useState(null);
@@ -29,7 +31,19 @@ function RatingPage({ user, onTabChange }) {
 
   const hiddenPlayers = useMemo(() => {
     if (!moderator || !players) return [];
-    return players.filter((player) => player.is_visible === false && player.is_banned !== true);
+    return players.filter(
+      (player) => player.is_visible === false && player.is_banned !== true
+    );
+  }, [players, moderator]);
+
+  const botBlockedPlayers = useMemo(() => {
+    if (!moderator || !players) return [];
+    return players.filter(
+      (player) =>
+        player.bot_blocked === true &&
+        player.is_banned !== true &&
+        player.is_visible !== false
+    );
   }, [players, moderator]);
 
   const bannedPlayers = useMemo(() => {
@@ -160,7 +174,10 @@ function RatingPage({ user, onTabChange }) {
       {isLoading ? (
         <Spinner label="Загрузка рейтинга..." />
       ) : visiblePlayers.length === 0 &&
-        (!moderator || (hiddenPlayers.length === 0 && bannedPlayers.length === 0)) ? (
+        (!moderator ||
+          (hiddenPlayers.length === 0 &&
+            botBlockedPlayers.length === 0 &&
+            bannedPlayers.length === 0)) ? (
         <EmptyState title="Пока нет игроков" description="Добавьте первого участника секции." />
       ) : (
         <>
@@ -197,6 +214,24 @@ function RatingPage({ user, onTabChange }) {
                     player={player}
                     rank={null}
                     hidden
+                    onPlayerClick={setViewingPlayer}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+          {moderator && botBlockedPlayers.length > 0 && (
+            <div className="rating-bot-blocked-section">
+              <div className="rating-bot-blocked-divider">
+                Заблокировали бота ({botBlockedPlayers.length})
+              </div>
+              <div className="players-table">
+                {botBlockedPlayers.map((player) => (
+                  <PlayerRow
+                    key={player.id}
+                    player={player}
+                    rank={null}
+                    botBlocked
                     onPlayerClick={setViewingPlayer}
                   />
                 ))}

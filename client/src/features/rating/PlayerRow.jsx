@@ -20,9 +20,9 @@ function StopSignIcon() {
 }
 
 /**
- * @param {{ player: any, rank: number | null, hidden?: boolean, banned?: boolean, onPlayerClick?: (player: any) => void }} props
+ * @param {{ player: any, rank: number | null, hidden?: boolean, banned?: boolean, botBlocked?: boolean, onPlayerClick?: (player: any) => void }} props
  */
-function PlayerRow({ player, rank, hidden = false, banned = false, onPlayerClick }) {
+function PlayerRow({ player, rank, hidden = false, banned = false, botBlocked = false, onPlayerClick }) {
   const handleClick = () => {
     onPlayerClick?.(player);
   };
@@ -30,7 +30,8 @@ function PlayerRow({ player, rank, hidden = false, banned = false, onPlayerClick
   const rowClass = [
     'player-row',
     hidden ? 'player-row--hidden' : '',
-    banned ? 'player-row--banned' : ''
+    banned ? 'player-row--banned' : '',
+    botBlocked ? 'player-row--bot-blocked' : ''
   ]
     .filter(Boolean)
     .join(' ');
@@ -40,7 +41,7 @@ function PlayerRow({ player, rank, hidden = false, banned = false, onPlayerClick
       <StopSignIcon />
     </span>
   ) : (
-    <span className="rank">{hidden ? '—' : rank}</span>
+    <span className="rank">{hidden || botBlocked ? '—' : rank}</span>
   );
 
   return (

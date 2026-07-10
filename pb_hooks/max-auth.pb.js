@@ -84,7 +84,9 @@ routerAdd("POST", "/api/max-auth", (c) => {
                 "avatar_url": user.get("avatar_url"),
                 "dominant_hand": user.get("dominant_hand"),
                 "role": user.get("role"),
-                "wins": user.get("wins")
+                "wins": user.get("wins"),
+                "bot_blocked": user.getBool("bot_blocked"),
+                "bot_blocked_at": user.get("bot_blocked_at") || ""
             }
         });
 

@@ -12,7 +12,7 @@ import {
 import { formatPostDate } from '../../lib/format';
 import { error } from '../../lib/log';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
-import { buildSendResultAlert } from './adminResultAlert';
+import { buildSendResultAlert, formatAdminSaveError } from './adminResultAlert';
 import './NotificationSendModal.css';
 
 function defaultDatetimeLocal() {
@@ -194,10 +194,14 @@ export default function NotificationSendModal({ isOpen, onClose }) {
       await alert({ title: alertTitle, message });
     } catch (err) {
       error('save notification:', err);
-      setFormError('Не удалось сохранить уведомление');
+      const message = formatAdminSaveError(
+        err,
+        'Не удалось сохранить уведомление. Проверьте подключение и попробуйте ещё раз.'
+      );
+      setFormError(message);
       await alert({
         title: 'Уведомление',
-        message: 'Не удалось сохранить уведомление. Проверьте подключение и попробуйте ещё раз.'
+        message
       });
     } finally {
       setSubmitting(false);
