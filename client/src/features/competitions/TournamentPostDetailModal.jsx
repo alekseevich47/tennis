@@ -8,6 +8,7 @@ import Avatar from '../../components/ui/Avatar';
 import sectionAvatarUrl from '../../assets/sm-avatar.png';
 import { formatPostDate } from '../../lib/format';
 import { flushPendingTournamentCommentDeletes } from '../../services/tournamentComments';
+import { getParticipantDisplayName, getParticipantPlayer } from './tournamentParticipants';
 
 /**
  * @param {{
@@ -53,12 +54,7 @@ function TournamentPostDetailModal({
   };
 
   const handleOpenParticipantProfile = (participant) => {
-    onOpenProfile?.(
-      playerMap.get(participant.userId) || {
-        id: participant.userId,
-        full_name: participant.fullName
-      }
-    );
+    onOpenProfile?.(getParticipantPlayer(participant, playerMap));
   };
 
   const handleClose = () => {
@@ -137,10 +133,8 @@ function TournamentPostDetailModal({
       {participants.length > 0 ? (
         <ol className="tournament-results-list">
           {participants.map((participant) => {
-            const player = playerMap.get(participant.userId) || {
-              id: participant.userId,
-              full_name: participant.fullName
-            };
+            const player = getParticipantPlayer(participant, playerMap);
+            const displayName = getParticipantDisplayName(participant, playerMap);
 
             return (
               <li key={participant.userId} className="tournament-results-row">
@@ -149,10 +143,10 @@ function TournamentPostDetailModal({
                   type="button"
                   className="tournament-participant-profile-link tournament-participant-profile-link--list"
                   onClick={() => handleOpenParticipantProfile(participant)}
-                  aria-label={`Открыть профиль ${participant.fullName}`}
+                  aria-label={`Открыть профиль ${displayName}`}
                 >
                   <Avatar user={player} size="sm" />
-                  <span className="tournament-results-name">{participant.fullName}</span>
+                  <span className="tournament-results-name">{displayName}</span>
                 </button>
                 <span className="tournament-results-points">+{participant.points}</span>
               </li>
