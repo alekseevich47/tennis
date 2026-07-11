@@ -126,6 +126,67 @@ function newlyRemoved(oldArr, newArr) {
   return removed;
 }
 
+function displayName(actor) {
+  if (!actor || !actor.label) return 'Пользователь';
+  var label = actor.label;
+  var idx = label.indexOf(' (');
+  return idx > -1 ? label.slice(0, idx) : label;
+}
+
+function resolveUser(app, userId) {
+  if (!userId) return null;
+  try {
+    var user = app.findRecordById('users', userId);
+    if (user) {
+      return { id: userId, label: user.getString('full_name') || 'Игрок' };
+    }
+  } catch (_) {}
+  return { id: userId, label: 'Игрок' };
+}
+
+function resolveCommentAuthor(app, record, original) {
+  var authorId = '';
+  try {
+    authorId = record.getString('author') || '';
+  } catch (_) {}
+  if (!authorId && original) {
+    try {
+      authorId = original.getString('author') || '';
+    } catch (_) {}
+  }
+  return resolveUser(app, authorId);
+}
+
+function buildCommentDetails(opts) {
+  opts = opts || {};
+  var details = {
+    commentId: opts.commentId || '',
+    text: opts.text || '',
+    authorId: opts.author && opts.author.id ? opts.author.id : '',
+    authorName: opts.author && opts.author.label ? opts.author.label : ''
+  };
+  if (opts.actor && opts.actor.id) {
+    details.actorId = opts.actor.id;
+    details.actorName = displayName(opts.actor);
+  }
+  if (opts.extra) {
+    var k;
+    for (k in opts.extra) {
+      if (Object.prototype.hasOwnProperty.call(opts.extra, k)) {
+        details[k] = opts.extra[k];
+      }
+    }
+  }
+  return details;
+}
+
+function truncateText(text, maxLen) {
+  text = text || '';
+  maxLen = maxLen || 80;
+  if (text.length <= maxLen) return text;
+  return text.slice(0, maxLen) + '…';
+}
+
 function logEvent(app, payload) {
   try {
     payload = payload || {};
@@ -172,6 +233,11 @@ function logEvent(app, payload) {
 module.exports = {
   resolveAuth: resolveAuth,
   actorInfo: actorInfo,
+  displayName: displayName,
+  resolveUser: resolveUser,
+  resolveCommentAuthor: resolveCommentAuthor,
+  buildCommentDetails: buildCommentDetails,
+  truncateText: truncateText,
   diffFields: diffFields,
   newlyAdded: newlyAdded,
   newlyRemoved: newlyRemoved,
