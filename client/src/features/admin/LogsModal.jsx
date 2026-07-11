@@ -55,6 +55,32 @@ function CalendarIcon() {
 }
 
 /**
+ * @param {{ label: string, value: string, copyValue?: string }} props
+ */
+function AuditDetailValue({ value, copyValue }) {
+  const textToCopy = copyValue ?? value;
+
+  const handleCopy = useCallback(async (event) => {
+    event.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(textToCopy);
+    } catch {
+      // копирование не блокирует UI
+    }
+  }, [textToCopy]);
+
+  if (!copyValue) {
+    return value;
+  }
+
+  return (
+    <button type="button" className="logs-modal__copyable" onClick={handleCopy}>
+      {value}
+    </button>
+  );
+}
+
+/**
  * @param {{ entry: import('pocketbase').RecordModel, expanded: boolean, onToggle: () => void }} props
  */
 function AuditEventRow({ entry, expanded, onToggle }) {
@@ -95,7 +121,12 @@ function AuditEventRow({ entry, expanded, onToggle }) {
                 {section.items.map((item) => (
                   <div key={`${section.title}-${item.label}`} className="logs-modal__detail-item">
                     <dt>{item.label}</dt>
-                    <dd>{item.value}</dd>
+                    <dd>
+                      <AuditDetailValue
+                        value={item.value}
+                        copyValue={item.copyValue}
+                      />
+                    </dd>
                   </div>
                 ))}
               </dl>

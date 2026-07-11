@@ -27,7 +27,7 @@ export const AUDIT_EVENT_CATEGORIES = [
 
 export const AUDIT_OBJECT_TYPES = [
   { value: 'post', label: 'Пост' },
-  { value: 'comment', label: 'Комментарий' },
+  { value: 'comment', label: 'Комментарий (лента)' },
   { value: 'training', label: 'Тренировка' },
   { value: 'product', label: 'Товар' },
   { value: 'tournament_post', label: 'Турнирный пост' },
