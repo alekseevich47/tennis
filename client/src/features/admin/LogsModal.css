@@ -204,6 +204,22 @@
   word-break: break-word;
 }
 
+.logs-modal__copyable {
+  display: inline;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: #007aff;
+  text-align: left;
+  cursor: pointer;
+  word-break: break-word;
+}
+
+.logs-modal__copyable:hover {
+  text-decoration: underline;
+}
+
 .logs-modal__details-json {
   margin: 0;
   padding: 10px;
