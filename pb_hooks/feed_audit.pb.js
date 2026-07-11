@@ -53,17 +53,6 @@ onRecordUpdateRequest((e) => {
     var isDeleted = record.getBool('is_deleted');
 
     if (!wasDeleted && isDeleted) {
-      audit.logEvent($app, {
-        category: 'feed',
-        action: 'feed.post.delete',
-        actionKind: 'delete',
-        subject: subject,
-        objectType: 'post',
-        objectId: record.id,
-        objectLabel: objectLabel,
-        summaryRu: name + ' удалил(а) пост ' + objectLabel,
-        severity: 'info'
-      });
       return;
     }
 
@@ -124,7 +113,7 @@ onRecordDeleteRequest((e) => {
       objectType: 'post',
       objectId: record.id,
       objectLabel: objectLabel,
-      summaryRu: name + ' окончательно удалил(а) пост ' + objectLabel,
+      summaryRu: name + ' удалил(а) пост ' + objectLabel,
       severity: 'info'
     });
   } catch (err) {
@@ -142,39 +131,34 @@ onRecordCreateRequest((e) => {
     var record = e.record;
     var postId = record.getString('post');
     var postLabel = postId || '';
-    var target = null;
     if (postId) {
       try {
         var post = $app.findRecordById('posts', postId);
         var pn = post.getFloat('post_number');
         postLabel = pn ? '#' + pn : '#' + postId;
-        var authorId = post.getString('author');
-        if (authorId) {
-          try {
-            var author = $app.findRecordById('users', authorId);
-            if (author) {
-              target = { id: authorId, label: author.getString('full_name') || 'Игрок' };
-            }
-          } catch (_) {}
-        }
       } catch (_) {}
     }
     var text = record.getString('text') || '';
-    var name = subject && subject.label
-      ? (subject.label.indexOf(' (') > -1 ? subject.label.slice(0, subject.label.indexOf(' (')) : subject.label)
-      : 'Пользователь';
+    var commentId = record.id;
+    var author = audit.resolveCommentAuthor($app, record, null);
+    var name = audit.displayName(subject);
 
     audit.logEvent($app, {
       category: 'feed',
       action: 'feed.comment.create',
       actionKind: 'create',
       subject: subject,
-      target: target,
+      target: author,
       objectType: 'comment',
-      objectId: record.id,
+      objectId: commentId,
       objectLabel: postLabel,
-      details: { postId: postId, textPreview: text.slice(0, 120) },
-      summaryRu: name + ' оставил(а) комментарий к посту ' + postLabel,
+      details: audit.buildCommentDetails({
+        commentId: commentId,
+        text: text,
+        author: author,
+        extra: { postId: postId }
+      }),
+      summaryRu: name + ' оставил(а) комментарий (id ' + commentId + ') к посту ' + postLabel + ': «' + audit.truncateText(text) + '»',
       severity: 'info'
     });
   } catch (err) {
@@ -195,42 +179,22 @@ onRecordUpdateRequest((e) => {
 
     var postId = record.getString('post') || original.getString('post');
     var postLabel = postId || '';
-    var target = null;
     if (postId) {
       try {
         var post = $app.findRecordById('posts', postId);
         var pn = post.getFloat('post_number');
         postLabel = pn ? '#' + pn : '#' + postId;
-        var authorId = post.getString('author');
-        if (authorId) {
-          try {
-            var author = $app.findRecordById('users', authorId);
-            if (author) {
-              target = { id: authorId, label: author.getString('full_name') || 'Игрок' };
-            }
-          } catch (_) {}
-        }
       } catch (_) {}
     }
-    var name = subject && subject.label
-      ? (subject.label.indexOf(' (') > -1 ? subject.label.slice(0, subject.label.indexOf(' (')) : subject.label)
-      : 'Пользователь';
+    var commentId = record.id;
+    var author = audit.resolveCommentAuthor($app, record, original);
+    var authorLabel = author ? author.label : 'Игрок';
+    var authorId = author ? author.id : '';
+    var name = audit.displayName(subject);
     var wasDeleted = original.getBool('is_deleted');
     var isDeleted = record.getBool('is_deleted');
 
     if (!wasDeleted && isDeleted) {
-      audit.logEvent($app, {
-        category: 'feed',
-        action: 'feed.comment.delete',
-        actionKind: 'delete',
-        subject: subject,
-        target: target,
-        objectType: 'comment',
-        objectId: record.id,
-        objectLabel: postLabel,
-        summaryRu: name + ' удалил(а) комментарий к посту ' + postLabel,
-        severity: 'info'
-      });
       return;
     }
 
@@ -240,11 +204,18 @@ onRecordUpdateRequest((e) => {
         action: 'feed.comment.restore',
         actionKind: 'restore',
         subject: subject,
-        target: target,
+        target: author,
         objectType: 'comment',
-        objectId: record.id,
+        objectId: commentId,
         objectLabel: postLabel,
-        summaryRu: name + ' восстановил(а) комментарий к посту ' + postLabel,
+        details: audit.buildCommentDetails({
+          commentId: commentId,
+          text: original.getString('text') || '',
+          author: author,
+          actor: subject,
+          extra: { postId: postId }
+        }),
+        summaryRu: name + ' восстановил(а) комментарий (id ' + commentId + ') автора ' + authorLabel + ' (id ' + authorId + ')',
         severity: 'info'
       });
       return;
@@ -252,17 +223,25 @@ onRecordUpdateRequest((e) => {
 
     var diff = audit.diffFields(original, record, ['text']);
     if (diff.length) {
+      var commentText = original.getString('text') || '';
       audit.logEvent($app, {
         category: 'feed',
         action: 'feed.comment.update',
         actionKind: 'update',
         subject: subject,
-        target: target,
+        target: author,
         objectType: 'comment',
-        objectId: record.id,
+        objectId: commentId,
         objectLabel: postLabel,
         diff: diff,
-        summaryRu: name + ' отредактировал(а) комментарий к посту ' + postLabel,
+        details: audit.buildCommentDetails({
+          commentId: commentId,
+          text: commentText,
+          author: author,
+          actor: subject,
+          extra: { postId: postId }
+        }),
+        summaryRu: name + ' отредактировал(а) комментарий (id ' + commentId + ') автора ' + authorLabel + ' (id ' + authorId + '): «' + audit.truncateText(commentText) + '»',
         severity: 'info'
       });
     }
@@ -281,37 +260,37 @@ onRecordDeleteRequest((e) => {
     var record = e.record;
     var postId = record.getString('post');
     var postLabel = postId || '';
-    var target = null;
     if (postId) {
       try {
         var post = $app.findRecordById('posts', postId);
         var pn = post.getFloat('post_number');
         postLabel = pn ? '#' + pn : '#' + postId;
-        var authorId = post.getString('author');
-        if (authorId) {
-          try {
-            var author = $app.findRecordById('users', authorId);
-            if (author) {
-              target = { id: authorId, label: author.getString('full_name') || 'Игрок' };
-            }
-          } catch (_) {}
-        }
       } catch (_) {}
     }
-    var name = subject && subject.label
-      ? (subject.label.indexOf(' (') > -1 ? subject.label.slice(0, subject.label.indexOf(' (')) : subject.label)
-      : 'Пользователь';
+    var text = record.getString('text') || '';
+    var commentId = record.id;
+    var author = audit.resolveCommentAuthor($app, record, null);
+    var authorLabel = author ? author.label : 'Игрок';
+    var authorId = author ? author.id : '';
+    var name = audit.displayName(subject);
 
     audit.logEvent($app, {
       category: 'feed',
       action: 'feed.comment.delete',
       actionKind: 'delete',
       subject: subject,
-      target: target,
+      target: author,
       objectType: 'comment',
-      objectId: record.id,
+      objectId: commentId,
       objectLabel: postLabel,
-      summaryRu: name + ' окончательно удалил(а) комментарий к посту ' + postLabel,
+      details: audit.buildCommentDetails({
+        commentId: commentId,
+        text: text,
+        author: author,
+        actor: subject,
+        extra: { postId: postId }
+      }),
+      summaryRu: name + ' удалил(а) комментарий (id ' + commentId + ') автора ' + authorLabel + ' (id ' + authorId + '): «' + audit.truncateText(text) + '»',
       severity: 'info'
     });
   } catch (err) {

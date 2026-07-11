@@ -81,20 +81,26 @@ onRecordCreateRequest((e) => {
       } catch (_) {}
     }
     var text = record.getString('text') || '';
-    var name = subject && subject.label
-      ? (subject.label.indexOf(' (') > -1 ? subject.label.slice(0, subject.label.indexOf(' (')) : subject.label)
-      : 'Пользователь';
+    var commentId = record.id;
+    var author = audit.resolveCommentAuthor($app, record, null);
+    var name = audit.displayName(subject);
 
     audit.logEvent($app, {
       category: 'gallery',
       action: 'gallery.comment.create',
       actionKind: 'create',
       subject: subject,
+      target: author,
       objectType: 'gallery_comment',
-      objectId: record.id,
+      objectId: commentId,
       objectLabel: mediaLabel,
-      details: { mediaId: mediaId, textPreview: text.slice(0, 120) },
-      summaryRu: name + ' оставил(а) комментарий к ' + mediaLabel + ' в галерее',
+      details: audit.buildCommentDetails({
+        commentId: commentId,
+        text: text,
+        author: author,
+        extra: { mediaId: mediaId }
+      }),
+      summaryRu: name + ' оставил(а) комментарий (id ' + commentId + ') к ' + mediaLabel + ' в галерее: «' + audit.truncateText(text) + '»',
       severity: 'info'
     });
   } catch (err) {
@@ -122,24 +128,15 @@ onRecordUpdateRequest((e) => {
         mediaLabel = pn ? '#' + pn : '#' + mediaId;
       } catch (_) {}
     }
-    var name = subject && subject.label
-      ? (subject.label.indexOf(' (') > -1 ? subject.label.slice(0, subject.label.indexOf(' (')) : subject.label)
-      : 'Пользователь';
+    var commentId = record.id;
+    var author = audit.resolveCommentAuthor($app, record, original);
+    var authorLabel = author ? author.label : 'Игрок';
+    var authorId = author ? author.id : '';
+    var name = audit.displayName(subject);
     var wasDeleted = original.getBool('is_deleted');
     var isDeleted = record.getBool('is_deleted');
 
     if (!wasDeleted && isDeleted) {
-      audit.logEvent($app, {
-        category: 'gallery',
-        action: 'gallery.comment.delete',
-        actionKind: 'delete',
-        subject: subject,
-        objectType: 'gallery_comment',
-        objectId: record.id,
-        objectLabel: mediaLabel,
-        summaryRu: name + ' удалил(а) комментарий к ' + mediaLabel + ' в галерее',
-        severity: 'info'
-      });
       return;
     }
 
@@ -149,10 +146,18 @@ onRecordUpdateRequest((e) => {
         action: 'gallery.comment.restore',
         actionKind: 'restore',
         subject: subject,
+        target: author,
         objectType: 'gallery_comment',
-        objectId: record.id,
+        objectId: commentId,
         objectLabel: mediaLabel,
-        summaryRu: name + ' восстановил(а) комментарий к ' + mediaLabel + ' в галерее',
+        details: audit.buildCommentDetails({
+          commentId: commentId,
+          text: original.getString('text') || '',
+          author: author,
+          actor: subject,
+          extra: { mediaId: mediaId }
+        }),
+        summaryRu: name + ' восстановил(а) комментарий (id ' + commentId + ') автора ' + authorLabel + ' (id ' + authorId + ')',
         severity: 'info'
       });
       return;
@@ -160,16 +165,25 @@ onRecordUpdateRequest((e) => {
 
     var diff = audit.diffFields(original, record, ['text']);
     if (diff.length) {
+      var commentText = original.getString('text') || '';
       audit.logEvent($app, {
         category: 'gallery',
         action: 'gallery.comment.update',
         actionKind: 'update',
         subject: subject,
+        target: author,
         objectType: 'gallery_comment',
-        objectId: record.id,
+        objectId: commentId,
         objectLabel: mediaLabel,
         diff: diff,
-        summaryRu: name + ' отредактировал(а) комментарий к ' + mediaLabel + ' в галерее',
+        details: audit.buildCommentDetails({
+          commentId: commentId,
+          text: commentText,
+          author: author,
+          actor: subject,
+          extra: { mediaId: mediaId }
+        }),
+        summaryRu: name + ' отредактировал(а) комментарий (id ' + commentId + ') автора ' + authorLabel + ' (id ' + authorId + '): «' + audit.truncateText(commentText) + '»',
         severity: 'info'
       });
     }
@@ -195,19 +209,30 @@ onRecordDeleteRequest((e) => {
         mediaLabel = pn ? '#' + pn : '#' + mediaId;
       } catch (_) {}
     }
-    var name = subject && subject.label
-      ? (subject.label.indexOf(' (') > -1 ? subject.label.slice(0, subject.label.indexOf(' (')) : subject.label)
-      : 'Пользователь';
+    var text = record.getString('text') || '';
+    var commentId = record.id;
+    var author = audit.resolveCommentAuthor($app, record, null);
+    var authorLabel = author ? author.label : 'Игрок';
+    var authorId = author ? author.id : '';
+    var name = audit.displayName(subject);
 
     audit.logEvent($app, {
       category: 'gallery',
       action: 'gallery.comment.delete',
       actionKind: 'delete',
       subject: subject,
+      target: author,
       objectType: 'gallery_comment',
-      objectId: record.id,
+      objectId: commentId,
       objectLabel: mediaLabel,
-      summaryRu: name + ' окончательно удалил(а) комментарий к ' + mediaLabel + ' в галерее',
+      details: audit.buildCommentDetails({
+        commentId: commentId,
+        text: text,
+        author: author,
+        actor: subject,
+        extra: { mediaId: mediaId }
+      }),
+      summaryRu: name + ' удалил(а) комментарий (id ' + commentId + ') автора ' + authorLabel + ' (id ' + authorId + '): «' + audit.truncateText(text) + '»',
       severity: 'info'
     });
   } catch (err) {

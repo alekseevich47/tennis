@@ -107,6 +107,30 @@ function resolveTrainingId(entry) {
 /**
  * @param {import('pocketbase').RecordModel} entry
  */
+function resolveCommentMeta(entry) {
+  const commentTypes = ['comment', 'tournament_comment', 'gallery_comment'];
+  if (!commentTypes.includes(entry.object_type)) return null;
+
+  const details = entry.details;
+  if (!details || typeof details !== 'object') {
+    return entry.object_id
+      ? { commentId: String(entry.object_id), text: null, authorName: null, authorId: null, actorName: null, actorId: null }
+      : null;
+  }
+
+  return {
+    commentId: details.commentId ? String(details.commentId) : entry.object_id ? String(entry.object_id) : null,
+    text: details.text != null ? String(details.text) : null,
+    authorName: details.authorName ? String(details.authorName) : null,
+    authorId: details.authorId ? String(details.authorId) : null,
+    actorName: details.actorName ? String(details.actorName) : null,
+    actorId: details.actorId ? String(details.actorId) : null
+  };
+}
+
+/**
+ * @param {import('pocketbase').RecordModel} entry
+ */
 export function formatAuditEventDetails(entry) {
   const role = resolveSubjectRole(entry);
   const objectTypeLabel = OBJECT_TYPE_LABELS[entry.object_type] || entry.object_type || '—';
@@ -114,6 +138,7 @@ export function formatAuditEventDetails(entry) {
     SUBJECT_SOURCE_LABELS[entry.subject_source] || entry.subject_source || '—';
   const productArticle = resolveProductArticle(entry);
   const trainingId = resolveTrainingId(entry);
+  const commentMeta = resolveCommentMeta(entry);
 
   /** @type {{ title: string, items: { label: string, value: string }[] }[]} */
   const sections = [
@@ -132,6 +157,24 @@ export function formatAuditEventDetails(entry) {
         { label: 'Объект', value: entry.object_label || entry.object_id || '—' },
         ...(productArticle ? [{ label: 'Артикул', value: productArticle }] : []),
         ...(trainingId ? [{ label: 'ID тренировки', value: trainingId }] : []),
+        ...(commentMeta?.commentId ? [{ label: 'ID комментария', value: commentMeta.commentId }] : []),
+        ...(commentMeta?.text ? [{ label: 'Текст комментария', value: commentMeta.text }] : []),
+        ...(commentMeta?.authorName
+          ? [{
+              label: 'Автор комментария',
+              value: commentMeta.authorId
+                ? `${commentMeta.authorName} (id ${commentMeta.authorId})`
+                : commentMeta.authorName
+            }]
+          : []),
+        ...(commentMeta?.actorName
+          ? [{
+              label: 'Кто выполнил действие',
+              value: commentMeta.actorId
+                ? `${commentMeta.actorName} (id ${commentMeta.actorId})`
+                : commentMeta.actorName
+            }]
+          : []),
         ...(entry.target_label
           ? [{ label: 'Цель', value: entry.target_label }]
           : [])
