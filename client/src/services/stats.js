@@ -52,7 +52,7 @@ export async function fetchStatsGrowth(range) {
  *     post: { viewsTotal: number, activeCount: number },
  *     tournament_post: { viewsTotal: number, activeCount: number }
  *   },
- *   topPosts: Array<{ object_type: string, object_id: string, views: number }>
+ *   topPosts: Array<{ object_type: string, object_id: string, views: number, post_number?: number | null }>
  * }>}
  */
 export async function fetchStatsReach(range) {

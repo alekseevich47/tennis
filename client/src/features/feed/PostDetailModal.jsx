@@ -32,7 +32,8 @@ const COMMENT_COLLECTION = 'comments';
  *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void,
  *   onClose: () => void,
  *   onAfterClose: () => void,
- *   onOpenProfile?: (user: any) => void
+ *   onOpenProfile?: (user: any) => void,
+ *   trackView?: boolean
  * }} props
  */
 function PostDetailModal({
@@ -47,7 +48,8 @@ function PostDetailModal({
   onOpenFullscreen,
   onClose,
   onAfterClose,
-  onOpenProfile
+  onOpenProfile,
+  trackView = true
 }) {
   const postId = post?.id || null;
   const { data: comments = [], mutate: mutateComments } = useComments(postId);
@@ -90,13 +92,13 @@ function PostDetailModal({
   }, [isOpen, postId]);
 
   useEffect(() => {
-    if (!isOpen || !postId || !user?.id) return;
+    if (!trackView || !isOpen || !postId || !user?.id) return;
     void recordContentView({
       objectType: 'post',
       objectId: postId,
       source: 'modal'
     }).catch(() => {});
-  }, [isOpen, postId, user?.id]);
+  }, [trackView, isOpen, postId, user?.id]);
 
   useEffect(() => {
     if (!isOpen || !focusComment) return undefined;

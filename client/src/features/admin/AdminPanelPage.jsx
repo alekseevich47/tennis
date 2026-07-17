@@ -30,6 +30,11 @@ export default function AdminPanelPage() {
     setStatsMetric(id);
   }, []);
 
+  const handleStatsBack = useCallback(() => {
+    setStatsMetric(null);
+    setStatsHubOpen(true);
+  }, []);
+
   return (
     <div className="admin-panel">
       <ul className="admin-panel__list">
@@ -88,22 +93,27 @@ export default function AdminPanelPage() {
       <StatsGrowthModal
         isOpen={statsMetric === 'growth'}
         onClose={() => setStatsMetric(null)}
+        onBack={handleStatsBack}
       />
       <StatsReachModal
         isOpen={statsMetric === 'reach'}
         onClose={() => setStatsMetric(null)}
+        onBack={handleStatsBack}
       />
       <StatsBookingModal
         isOpen={statsMetric === 'booking'}
         onClose={() => setStatsMetric(null)}
+        onBack={handleStatsBack}
       />
       <StatsTrainingsCountModal
         isOpen={statsMetric === 'trainings'}
         onClose={() => setStatsMetric(null)}
+        onBack={handleStatsBack}
       />
       <StatsAchievementsModal
         isOpen={statsMetric === 'achievements'}
         onClose={() => setStatsMetric(null)}
+        onBack={handleStatsBack}
       />
       <BroadcastModal isOpen={broadcastOpen} onClose={() => setBroadcastOpen(false)} />
       <NotificationSendModal
