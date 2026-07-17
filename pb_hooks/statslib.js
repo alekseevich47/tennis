@@ -306,14 +306,23 @@ function getReach(period) {
 
   for (i = 0; i < topPosts.length; i++) {
     var item = topPosts[i];
+    var postNumber = null;
     var collectionName =
       item.object_type === 'tournament_post' ? 'tournament_posts' : 'posts';
     try {
       var postRec = $app.findRecordById(collectionName, item.object_id);
-      item.post_number = Number(postRec.getFloat('post_number')) || null;
+      // как в posts_autonumber / feed_audit — порядковый номер публикации
+      var n = postRec.getFloat('post_number');
+      if (n > 0) postNumber = n;
     } catch (err) {
-      item.post_number = null;
+      postNumber = null;
     }
+    topPosts[i] = {
+      object_type: item.object_type,
+      object_id: item.object_id,
+      views: item.views,
+      post_number: postNumber
+    };
   }
 
   return {
