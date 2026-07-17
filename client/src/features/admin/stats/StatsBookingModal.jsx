@@ -4,6 +4,7 @@ import Spinner from '../../../components/ui/Spinner';
 import EmptyState from '../../../components/ui/EmptyState';
 import { fetchStatsBooking } from '../../../services/stats';
 import StatsPeriodToolbar, { getStatsDefaultDateRange } from './StatsPeriodToolbar';
+import StatsMetricTitle from './StatsMetricTitle';
 import '../Statistics.css';
 
 /** @typedef {'total' | 'group' | 'tournament'} BookingSlice */
@@ -50,10 +51,11 @@ function hasAnyActivity(counters) {
  *
  * @param {{
  *   isOpen: boolean,
- *   onClose: () => void
+ *   onClose: () => void,
+ *   onBack: () => void
  * }} props
  */
-export default function StatsBookingModal({ isOpen, onClose }) {
+export default function StatsBookingModal({ isOpen, onClose, onBack }) {
   const [range, setRange] = useState(getStatsDefaultDateRange);
   const [users, setUsers] = useState(/** @type {StatsBookingUser[]} */ ([]));
   const [loading, setLoading] = useState(false);
@@ -151,7 +153,7 @@ export default function StatsBookingModal({ isOpen, onClose }) {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Записи и посещаемость"
+      title={<StatsMetricTitle onBack={onBack}>Записи и посещаемость</StatsMetricTitle>}
       className="stats-metric-modal stats-booking-modal"
       size="tall"
     >

@@ -304,6 +304,18 @@ function getReach(period) {
   });
   if (topPosts.length > 20) topPosts = topPosts.slice(0, 20);
 
+  for (i = 0; i < topPosts.length; i++) {
+    var item = topPosts[i];
+    var collectionName =
+      item.object_type === 'tournament_post' ? 'tournament_posts' : 'posts';
+    try {
+      var postRec = $app.findRecordById(collectionName, item.object_id);
+      item.post_number = Number(postRec.getFloat('post_number')) || null;
+    } catch (err) {
+      item.post_number = null;
+    }
+  }
+
   return {
     viewsTotal: viewsTotal,
     activeCount: activeCount,
