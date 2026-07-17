@@ -12,6 +12,7 @@ import {
 } from '../../services/auditLog';
 import { formatAuditEventDetails, formatAuditEventPreview } from '../../lib/auditEventFormat';
 import DateRangeModal from '../trainings/components/DateRangeModal';
+import exportIconUrl from '../../assets/icon_export.png';
 import '../rating/Rating.css';
 import '../trainings/Trainings.css';
 import './LogsModal.css';
@@ -166,10 +167,13 @@ function LogsModal({ isOpen, onClose }) {
   const [exporting, setExporting] = useState(false);
 
   const filters = useMemo(() => {
-    const categories =
-      selectedCategories.size === ALL_CATEGORY_VALUES.length
-        ? undefined
-        : Array.from(selectedCategories);
+    let categories;
+    if (selectedCategories.size === 0) {
+      // пустой выбор → заведомо пустой результат (без category-фильтра PB вернул бы всё)
+      categories = ['__none__'];
+    } else if (selectedCategories.size !== ALL_CATEGORY_VALUES.length) {
+      categories = Array.from(selectedCategories);
+    }
 
     return {
       dateRange,
@@ -206,17 +210,27 @@ function LogsModal({ isOpen, onClose }) {
     setExpandedId(null);
   }, [filtersKey]);
 
+  const allCategoriesSelected =
+    selectedCategories.size === ALL_CATEGORY_VALUES.length;
+
   const toggleCategory = useCallback((value) => {
     setSelectedCategories((prev) => {
       const next = new Set(prev);
       if (next.has(value)) {
-        if (next.size === 1) return prev;
         next.delete(value);
       } else {
         next.add(value);
       }
       return next;
     });
+  }, []);
+
+  const toggleAllCategories = useCallback(() => {
+    setSelectedCategories((prev) =>
+      prev.size === ALL_CATEGORY_VALUES.length
+        ? new Set()
+        : new Set(ALL_CATEGORY_VALUES)
+    );
   }, []);
 
   const handleSubjectInputChange = useCallback(
@@ -254,6 +268,24 @@ function LogsModal({ isOpen, onClose }) {
         title="Логи"
         size="tall"
         className="logs-modal"
+        headerActions={(
+          <IconButton
+            type="button"
+            ariaLabel={exporting ? 'Экспорт…' : 'Экспорт CSV'}
+            variant="ghost"
+            onClick={handleExport}
+            disabled={exporting || noCategoriesSelected}
+          >
+            <img
+              src={exportIconUrl}
+              alt=""
+              className="logs-modal__export-icon"
+              width={18}
+              height={18}
+              aria-hidden="true"
+            />
+          </IconButton>
+        )}
       >
         <div className="membership-search-row logs-modal__search-row">
           <input
@@ -314,6 +346,16 @@ function LogsModal({ isOpen, onClose }) {
         </div>
 
         <div className="logs-modal__domain-filters" role="group" aria-label="Фильтр по разделу">
+          <button
+            type="button"
+            className={`logs-modal__domain-chip${
+              allCategoriesSelected ? ' logs-modal__domain-chip--active' : ''
+            }`}
+            aria-pressed={allCategoriesSelected}
+            onClick={toggleAllCategories}
+          >
+            Все
+          </button>
           {AUDIT_EVENT_CATEGORIES.map((option) => (
             <button
               key={option.value}
@@ -329,21 +371,13 @@ function LogsModal({ isOpen, onClose }) {
           ))}
         </div>
 
-        <div className="logs-modal__toolbar">
-          <button
-            type="button"
-            className="logs-modal__export-btn"
-            onClick={handleExport}
-            disabled={exporting || noCategoriesSelected}
-          >
-            {exporting ? 'Экспорт…' : 'Экспорт CSV'}
-          </button>
-          {!isLoading && totalItems > 0 ? (
+        {!isLoading && totalItems > 0 && !noCategoriesSelected ? (
+          <div className="logs-modal__toolbar">
             <span className="logs-modal__count">
               {items.length} из {totalItems}
             </span>
-          ) : null}
-        </div>
+          </div>
+        ) : null}
 
         {noCategoriesSelected ? (
           <EmptyState title="Выберите хотя бы один раздел" />

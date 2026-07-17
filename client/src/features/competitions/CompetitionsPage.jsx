@@ -284,6 +284,7 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
                     key={post.id}
                     post={post}
                     players={players || []}
+                    user={user}
                     userIsModerator={moderator}
                     isSoftDeleted={isSoftDeleted}
                     onOpenDetail={handleOpenDetail}
@@ -293,6 +294,7 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
                     hiddenMediaKey={hiddenMediaKey}
                     onOpenFullscreen={handleOpenFullscreen}
                     onOpenProfile={setViewingPlayer}
+                    scrollRootRef={containerRef}
                   />
                 );
               })}

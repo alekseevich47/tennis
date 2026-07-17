@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
 import PostMedia from '../feed/PostMedia';
@@ -9,6 +9,7 @@ import sectionAvatarUrl from '../../assets/sm-avatar.png';
 import { formatPostDate } from '../../lib/format';
 import { flushPendingTournamentCommentDeletes } from '../../services/tournamentComments';
 import { getParticipantDisplayName, getParticipantPlayer } from './tournamentParticipants';
+import { recordContentView } from '../../services/stats';
 
 /**
  * @param {{
@@ -39,12 +40,22 @@ function TournamentPostDetailModal({
   onCommentMutated
 }) {
   const participants = Array.isArray(post?.participants) ? post.participants : [];
+  const postId = post?.id || null;
 
   const playerMap = useMemo(() => {
     const map = new Map();
     players.forEach((player) => map.set(player.id, player));
     return map;
   }, [players]);
+
+  useEffect(() => {
+    if (!isOpen || !postId || !user?.id) return;
+    void recordContentView({
+      objectType: 'tournament_post',
+      objectId: postId,
+      source: 'modal'
+    }).catch(() => {});
+  }, [isOpen, postId, user?.id]);
 
   if (!post) return null;
 

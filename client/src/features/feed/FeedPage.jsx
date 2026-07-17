@@ -242,6 +242,7 @@ function FeedPage({ user, onDeletedIdsChange, searchQuery = '' }) {
               onRestore={handleRestorePost}
               hiddenMediaKey={hiddenMediaKey}
               onOpenFullscreen={handleOpenFullscreen}
+              scrollRootRef={containerRef}
             />
           );
         })}

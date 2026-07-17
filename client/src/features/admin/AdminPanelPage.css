@@ -29,7 +29,3 @@
 .admin-panel__item:active {
   opacity: 0.7;
 }
-
-.admin-panel__item--stub {
-  cursor: default;
-}
