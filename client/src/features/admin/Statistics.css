@@ -57,6 +57,17 @@
   margin-bottom: 12px;
 }
 
+.stats-period-toolbar__leading {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.stats-period-toolbar__spacer {
+  flex: 1;
+  min-width: 0;
+}
+
 .stats-period-toolbar__label {
   font-size: 13px;
   color: #868e96;
@@ -92,6 +103,47 @@
 
 .stats-metric-modal .ui-modal-body {
   padding-top: 4px;
+}
+
+.stats-metric-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+
+.stats-metric-back {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin: 0 0 0 -8px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #9ca3af;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.stats-metric-back:active {
+  opacity: 0.7;
+}
+
+.stats-metric-back svg {
+  width: 22px;
+  height: 22px;
+}
+
+.stats-metric-title__text {
+  min-width: 0;
+}
+
+.stats-metric-modal.ui-modal-large .ui-modal-title,
+.stats-metric-modal.ui-modal-tall .ui-modal-title {
+  padding-left: 12px;
 }
 
 .stats-growth__summary {
@@ -311,11 +363,37 @@
 
 /* —— Reach / post views —— */
 
-.stats-reach__hint {
-  margin: 0 0 12px;
-  font-size: 13px;
-  line-height: 1.4;
-  color: #868e96;
+.stats-reach__info-tooltip.info-tooltip {
+  display: inline-flex;
+}
+
+.stats-reach__info-tooltip .info-tooltip__trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  color: #9ca3af;
+  text-decoration: none;
+}
+
+.stats-reach__info-icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.stats-reach__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .stats-reach__summary {
@@ -379,7 +457,7 @@
 
 .stats-reach__top-item {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
   gap: 12px;
   padding: 10px 0;
@@ -390,24 +468,52 @@
   border-bottom: none;
 }
 
-.stats-reach__top-meta {
+.stats-reach__top-line {
   min-width: 0;
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 6px;
+  font-size: 13px;
+  color: #1f2937;
 }
 
 .stats-reach__top-type {
-  font-size: 12px;
-  color: #868e96;
+  font-weight: 500;
+  color: #1f2937;
 }
 
-.stats-reach__top-id {
-  font-size: 13px;
+.stats-reach__top-num {
+  font-variant-numeric: tabular-nums;
   color: #1f2937;
+}
+
+.stats-reach__top-id-wrap {
+  min-width: 0;
+  color: #868e96;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.stats-reach__top-id-btn {
+  display: inline;
+  max-width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: inherit;
+  color: #007aff;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.stats-reach__top-id-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
 }
 
 .stats-reach__top-views {

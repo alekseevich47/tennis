@@ -46,15 +46,24 @@ function CalendarIcon() {
  * @param {{
  *   range: { start: string, end: string },
  *   onChange: (range: { start: string, end: string }) => void,
- *   className?: string
+ *   className?: string,
+ *   leading?: React.ReactNode
  * }} props
  */
-export default function StatsPeriodToolbar({ range, onChange, className }) {
+export default function StatsPeriodToolbar({ range, onChange, className, leading = null }) {
   const [showDateModal, setShowDateModal] = useState(false);
 
   return (
     <>
-      <div className={className ? `stats-period-toolbar ${className}` : 'stats-period-toolbar'}>
+      <div
+        className={
+          className
+            ? `stats-period-toolbar ${className}`
+            : 'stats-period-toolbar'
+        }
+      >
+        {leading ? <div className="stats-period-toolbar__leading">{leading}</div> : null}
+        <span className="stats-period-toolbar__spacer" aria-hidden="true" />
         <span className="stats-period-toolbar__label">
           {formatDateRangeLabel(range.start, range.end)}
         </span>

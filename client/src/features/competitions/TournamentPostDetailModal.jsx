@@ -23,7 +23,8 @@ import { recordContentView } from '../../services/stats';
  *   onOpenProfile?: (user: any) => void,
  *   hiddenMediaKey?: string | null,
  *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, thumbUrl: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void,
- *   onCommentMutated?: () => void
+ *   onCommentMutated?: () => void,
+ *   trackView?: boolean
  * }} props
  */
 function TournamentPostDetailModal({
@@ -37,7 +38,8 @@ function TournamentPostDetailModal({
   onOpenProfile,
   hiddenMediaKey = null,
   onOpenFullscreen,
-  onCommentMutated
+  onCommentMutated,
+  trackView = true
 }) {
   const participants = Array.isArray(post?.participants) ? post.participants : [];
   const postId = post?.id || null;
@@ -49,13 +51,13 @@ function TournamentPostDetailModal({
   }, [players]);
 
   useEffect(() => {
-    if (!isOpen || !postId || !user?.id) return;
+    if (!trackView || !isOpen || !postId || !user?.id) return;
     void recordContentView({
       objectType: 'tournament_post',
       objectId: postId,
       source: 'modal'
     }).catch(() => {});
-  }, [isOpen, postId, user?.id]);
+  }, [trackView, isOpen, postId, user?.id]);
 
   if (!post) return null;
 

@@ -5,6 +5,7 @@ import EmptyState from '../../../components/ui/EmptyState';
 import { fetchStatsGrowth } from '../../../services/stats';
 import StatsPeriodToolbar, { getStatsDefaultDateRange } from './StatsPeriodToolbar';
 import StatsLineChart from './StatsLineChart';
+import StatsMetricTitle from './StatsMetricTitle';
 import '../Statistics.css';
 
 /**
@@ -12,10 +13,11 @@ import '../Statistics.css';
  *
  * @param {{
  *   isOpen: boolean,
- *   onClose: () => void
+ *   onClose: () => void,
+ *   onBack: () => void
  * }} props
  */
-export default function StatsGrowthModal({ isOpen, onClose }) {
+export default function StatsGrowthModal({ isOpen, onClose, onBack }) {
   const [range, setRange] = useState(getStatsDefaultDateRange);
   const [data, setData] = useState(
     /** @type {{ points: Array<{ date: string, count: number, cumulative: number }>, total: number } | null} */ (
@@ -57,7 +59,7 @@ export default function StatsGrowthModal({ isOpen, onClose }) {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Прирост людей"
+      title={<StatsMetricTitle onBack={onBack}>Прирост людей</StatsMetricTitle>}
       className="stats-metric-modal"
       size="large"
     >

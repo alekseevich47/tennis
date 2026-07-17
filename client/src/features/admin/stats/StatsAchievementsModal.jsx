@@ -8,6 +8,7 @@ import {
   fetchStatsAchievementGrants
 } from '../../../services/stats';
 import StatsPeriodToolbar, { getStatsDefaultDateRange } from './StatsPeriodToolbar';
+import StatsMetricTitle from './StatsMetricTitle';
 import '../Statistics.css';
 
 /** @typedef {'now' | 'period'} AchievementsMode */
@@ -44,10 +45,11 @@ const MODES = [
  *
  * @param {{
  *   isOpen: boolean,
- *   onClose: () => void
+ *   onClose: () => void,
+ *   onBack: () => void
  * }} props
  */
-export default function StatsAchievementsModal({ isOpen, onClose }) {
+export default function StatsAchievementsModal({ isOpen, onClose, onBack }) {
   const [mode, setMode] = useState(/** @type {AchievementsMode} */ ('now'));
   const [range, setRange] = useState(getStatsDefaultDateRange);
   const [achievements, setAchievements] = useState(/** @type {StatsAchievementItem[]} */ ([]));
@@ -121,7 +123,7 @@ export default function StatsAchievementsModal({ isOpen, onClose }) {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Достижения"
+      title={<StatsMetricTitle onBack={onBack}>Достижения</StatsMetricTitle>}
       className="stats-metric-modal"
       size="large"
     >

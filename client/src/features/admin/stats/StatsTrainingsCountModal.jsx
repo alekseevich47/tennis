@@ -14,6 +14,7 @@ import Spinner from '../../../components/ui/Spinner';
 import EmptyState from '../../../components/ui/EmptyState';
 import { fetchStatsTrainingsCount } from '../../../services/stats';
 import StatsPeriodToolbar, { getStatsDefaultDateRange } from './StatsPeriodToolbar';
+import StatsMetricTitle from './StatsMetricTitle';
 import '../Statistics.css';
 
 /**
@@ -39,10 +40,11 @@ function formatTooltipDate(value) {
  *
  * @param {{
  *   isOpen: boolean,
- *   onClose: () => void
+ *   onClose: () => void,
+ *   onBack: () => void
  * }} props
  */
-export default function StatsTrainingsCountModal({ isOpen, onClose }) {
+export default function StatsTrainingsCountModal({ isOpen, onClose, onBack }) {
   const [range, setRange] = useState(getStatsDefaultDateRange);
   const [data, setData] = useState(
     /** @type {{
@@ -89,7 +91,7 @@ export default function StatsTrainingsCountModal({ isOpen, onClose }) {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Проведённые тренировки"
+      title={<StatsMetricTitle onBack={onBack}>Проведённые тренировки</StatsMetricTitle>}
       className="stats-metric-modal"
       size="large"
     >
