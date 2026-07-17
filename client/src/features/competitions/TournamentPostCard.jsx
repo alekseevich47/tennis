@@ -7,6 +7,7 @@ import TournamentPodium from './TournamentPodium';
 import { getParticipantDisplayName, getParticipantPlayer } from './tournamentParticipants';
 import sectionAvatarUrl from '../../assets/sm-avatar.png';
 import { formatPostDate } from '../../lib/format';
+import { usePostViewTracker } from '../../hooks/usePostViewTracker';
 
 /**
  * @param {import('../../services/tournamentPosts').TournamentPostRecord} post
@@ -22,6 +23,7 @@ function readTournamentComments(post) {
  * @param {{
  *   post: import('../../services/tournamentPosts').TournamentPostRecord,
  *   players?: any[],
+ *   user?: any,
  *   userIsModerator?: boolean,
  *   isSoftDeleted?: boolean,
  *   onOpenDetail: (post: import('../../services/tournamentPosts').TournamentPostRecord) => void,
@@ -30,7 +32,8 @@ function readTournamentComments(post) {
  *   onDelete: (postId: string) => void,
  *   onRestore: (postId: string) => void,
  *   hiddenMediaKey?: string | null,
- *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, thumbUrl: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void
+ *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, thumbUrl: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void,
+ *   scrollRootRef?: React.RefObject<HTMLElement | null>
  * }} props
  */
 function TournamentPostCard({
@@ -44,7 +47,9 @@ function TournamentPostCard({
   onDelete,
   onRestore,
   hiddenMediaKey = null,
-  onOpenFullscreen
+  onOpenFullscreen,
+  scrollRootRef,
+  user = null
 }) {
   const participants = Array.isArray(post.participants) ? post.participants : [];
 
@@ -60,6 +65,14 @@ function TournamentPostCard({
   );
   const previewComments = comments.slice(-2);
   const commentCount = comments.length;
+
+  const trackViews = Boolean(user?.id) && !isSoftDeleted && post?.is_deleted !== true;
+  const viewRef = usePostViewTracker({
+    objectType: 'tournament_post',
+    objectId: post?.id,
+    enabled: trackViews,
+    scrollRootRef
+  });
 
   const handleOpenDetail = () => {
     onOpenDetail(post);
@@ -106,6 +119,7 @@ function TournamentPostCard({
 
   return (
     <article
+      ref={viewRef}
       className="tournament-post-card feed-card"
       onClick={handleOpenDetail}
       style={{ cursor: 'pointer' }}
