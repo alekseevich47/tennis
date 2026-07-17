@@ -5,6 +5,7 @@ import PostMedia from './PostMedia';
 import CommentsPreview from './CommentsPreview';
 import sectionAvatarUrl from '../../assets/sm-avatar.png';
 import { usePostLikes } from '../../hooks/usePostLikes';
+import { usePostViewTracker } from '../../hooks/usePostViewTracker';
 import { formatPostDate } from '../../lib/format';
 
 /**
@@ -68,7 +69,8 @@ function PostCardLike({ postId, user }) {
  *   onDelete: (postId: string) => void,
  *   onRestore: (postId: string) => void,
  *   hiddenMediaKey?: string | null,
- *   onOpenFullscreen: (items: Array<{ filename: string, url: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void
+ *   onOpenFullscreen: (items: Array<{ filename: string, url: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void,
+ *   scrollRootRef?: React.RefObject<HTMLElement | null>
  * }} props
  */
 function PostCard({
@@ -81,13 +83,22 @@ function PostCard({
   onDelete,
   onRestore,
   hiddenMediaKey,
-  onOpenFullscreen
+  onOpenFullscreen,
+  scrollRootRef
 }) {
   const comments = useMemo(() => {
     return readComments(post).filter((c) => !c.is_deleted);
   }, [post]);
   const previewComments = comments.slice(-2);
   const commentCount = comments.length;
+
+  const trackViews = Boolean(user?.id) && !isSoftDeleted && post?.is_deleted !== true;
+  const viewRef = usePostViewTracker({
+    objectType: 'post',
+    objectId: post?.id,
+    enabled: trackViews,
+    scrollRootRef
+  });
 
   const handleOpenDetail = () => {
     onOpenDetail(post);
@@ -139,6 +150,7 @@ function PostCard({
 
   return (
     <article
+      ref={viewRef}
       className="feed-card"
       onClick={handleOpenDetail}
       style={{ cursor: 'pointer' }}

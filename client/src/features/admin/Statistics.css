@@ -1,0 +1,534 @@
+.stats-hub-modal .ui-modal-body {
+  padding-top: 4px;
+  padding-bottom: 8px;
+}
+
+.stats-hub__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.stats-hub__item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 4px;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  background: none;
+  font-size: 16px;
+  text-align: left;
+  color: #1f2937;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.stats-hub__list > li:last-child .stats-hub__item {
+  border-bottom: none;
+}
+
+.stats-hub__item:active {
+  opacity: 0.7;
+}
+
+.stats-hub__item-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.stats-hub__item-chevron {
+  flex-shrink: 0;
+  font-size: 20px;
+  line-height: 1;
+  color: #9ca3af;
+}
+
+/* —— Period toolbar —— */
+
+.stats-period-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.stats-period-toolbar__label {
+  font-size: 13px;
+  color: #868e96;
+  white-space: nowrap;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+.stats-period-toolbar .stats-period-toolbar__calendar {
+  width: 40px;
+  height: 40px;
+  min-height: 40px;
+  border: 1.5px solid #007aff;
+  color: #007aff;
+  background: transparent;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.stats-period-toolbar__calendar svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* —— Line + Bar combo chart —— */
+
+.stats-line-chart {
+  width: 100%;
+  min-height: 180px;
+}
+
+/* —— Metric modals —— */
+
+.stats-metric-modal .ui-modal-body {
+  padding-top: 4px;
+}
+
+.stats-growth__summary {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #1f2937;
+}
+
+.stats-growth__summary strong {
+  font-weight: 600;
+}
+
+.stats-growth__loading {
+  margin-left: 6px;
+  color: #868e96;
+}
+
+/* —— Trainings count —— */
+
+.stats-trainings__summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px 24px;
+  margin: 0 0 16px;
+}
+
+.stats-trainings__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.stats-trainings__stat-label {
+  font-size: 12px;
+  color: #868e96;
+}
+
+.stats-trainings__stat-value {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #1f2937;
+}
+
+/* —— Booking / attendance —— */
+
+.stats-booking__search-row {
+  margin-bottom: 10px;
+}
+
+.stats-booking__search-input {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 14px;
+  background: #f5f5f5;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.stats-booking__search-input:focus {
+  border-color: #007aff;
+  background: #ffffff;
+}
+
+.stats-booking__slices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.stats-booking__slice {
+  -webkit-appearance: none;
+  appearance: none;
+  padding: 6px 12px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 20px;
+  background: #f5f5f5;
+  font-size: 13px;
+  color: #495057;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.stats-booking__slice--active {
+  background: #007aff;
+  border-color: #007aff;
+  color: #ffffff;
+}
+
+.stats-booking__table {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.stats-booking__header {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) repeat(4, minmax(36px, 0.55fr));
+  column-gap: 4px;
+  align-items: center;
+  padding: 4px 0 8px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.stats-booking__th {
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #868e96;
+  text-align: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.stats-booking__th:first-child {
+  text-align: left;
+}
+
+.stats-booking__sort {
+  margin-left: 2px;
+  font-size: 9px;
+}
+
+.stats-booking__block {
+  border-bottom: 1px solid #e8edf3;
+}
+
+.stats-booking__block:last-child {
+  border-bottom: none;
+}
+
+.stats-booking__row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) repeat(4, minmax(36px, 0.55fr));
+  column-gap: 4px;
+  align-items: center;
+  padding: 12px 0;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.stats-booking__row:active {
+  opacity: 0.75;
+}
+
+.stats-booking__name {
+  min-width: 0;
+  font-size: 14px;
+  color: #1f2937;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stats-booking__num {
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  color: #1f2937;
+}
+
+.stats-booking__details {
+  padding: 0 0 12px;
+}
+
+.stats-booking__detail-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #868e96;
+  margin-bottom: 6px;
+}
+
+.stats-booking__detail-list {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stats-booking__detail-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  color: #1f2937;
+}
+
+.stats-booking__detail-item dt {
+  margin: 0;
+  color: #495057;
+}
+
+.stats-booking__detail-item dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.stats-booking__refresh {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: #868e96;
+}
+
+/* —— Reach / post views —— */
+
+.stats-reach__hint {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #868e96;
+}
+
+.stats-reach__summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px 24px;
+  margin: 0 0 16px;
+}
+
+.stats-reach__by-type {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.stats-reach__type-card {
+  padding: 10px 12px;
+  border: 1px solid #e8edf3;
+  border-radius: 10px;
+  background: #f8fafc;
+}
+
+.stats-reach__type-title {
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.stats-reach__type-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+  color: #1f2937;
+}
+
+.stats-reach__type-row + .stats-reach__type-row {
+  margin-top: 4px;
+}
+
+.stats-reach__type-row strong {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.stats-reach__top-title {
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #868e96;
+}
+
+.stats-reach__top-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stats-reach__top-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #e8edf3;
+}
+
+.stats-reach__top-item:last-child {
+  border-bottom: none;
+}
+
+.stats-reach__top-meta {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stats-reach__top-type {
+  font-size: 12px;
+  color: #868e96;
+}
+
+.stats-reach__top-id {
+  font-size: 13px;
+  color: #1f2937;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stats-reach__top-views {
+  flex-shrink: 0;
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #1f2937;
+}
+
+@media (max-width: 420px) {
+  .stats-reach__by-type {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* —— Achievements —— */
+
+.stats-achievements__modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.stats-achievements__list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stats-achievements__block {
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e8edf3;
+}
+
+.stats-achievements__block:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.stats-achievements__name {
+  margin: 0 0 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.stats-achievements__levels {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.stats-achievements__level {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.stats-achievements__level:last-child {
+  border-bottom: none;
+}
+
+.stats-achievements__level-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.stats-achievements__level-row:disabled {
+  cursor: default;
+  opacity: 0.85;
+}
+
+.stats-achievements__level-row:not(:disabled):active {
+  opacity: 0.75;
+}
+
+.stats-achievements__level-meta {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stats-achievements__level-title {
+  font-size: 14px;
+  color: #1f2937;
+}
+
+.stats-achievements__level-hint {
+  font-size: 12px;
+  color: #868e96;
+}
+
+.stats-achievements__level-count {
+  flex-shrink: 0;
+  font-size: 16px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #1f2937;
+}
+
+.stats-achievements__users {
+  margin: 0 0 10px;
+  padding: 0 0 0 12px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-left: 2px solid #e8edf3;
+}
+
+.stats-achievements__user {
+  font-size: 13px;
+  color: #495057;
+}

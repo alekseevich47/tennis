@@ -26,6 +26,7 @@ const FOCUSABLE_SELECTORS = [
  * - `overlayClassName` (string) — доп.класс для `.ui-modal-overlay`
  * - `closeOnOverlay` (bool, default true)
  * - `showCloseButton` (bool, default true)
+ * - `headerActions` (node) — кнопки слева от крестика закрытия
  * - `footer` (node) — sticky-блок под скроллом
  * - `size` ('default' | 'large' | 'tall')
  */
@@ -39,6 +40,7 @@ function Modal({
   overlayClassName,
   closeOnOverlay = true,
   showCloseButton = true,
+  headerActions,
   footer,
   size = 'default'
 }) {
@@ -126,19 +128,27 @@ function Modal({
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleKeyDown}
       >
-        {showCloseButton && (
-          <IconButton
-            type="button"
-            className="ui-modal-close"
-            ariaLabel="Закрыть"
-            onClick={onClose}
-          >
-            <span aria-hidden="true">✕</span>
-          </IconButton>
+        {(headerActions || showCloseButton) && (
+          <div className="ui-modal-header-actions">
+            {headerActions}
+            {showCloseButton ? (
+              <IconButton
+                type="button"
+                className="ui-modal-close"
+                ariaLabel="Закрыть"
+                onClick={onClose}
+              >
+                <span aria-hidden="true">✕</span>
+              </IconButton>
+            ) : null}
+          </div>
         )}
 
         {title && (
-          <h2 className="ui-modal-title" id={titleId}>
+          <h2
+            className={clsx('ui-modal-title', headerActions && 'ui-modal-title--with-actions')}
+            id={titleId}
+          >
             {title}
           </h2>
         )}

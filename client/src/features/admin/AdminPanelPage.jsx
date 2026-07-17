@@ -1,8 +1,14 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import BroadcastModal from './BroadcastModal';
 import LogsModal from './LogsModal';
 import NotificationSendModal from './NotificationSendModal';
 import NotificationSettingsModal from './NotificationSettingsModal';
+import StatisticsHubModal from './StatisticsHubModal';
+import StatsGrowthModal from './stats/StatsGrowthModal';
+import StatsReachModal from './stats/StatsReachModal';
+import StatsBookingModal from './stats/StatsBookingModal';
+import StatsTrainingsCountModal from './stats/StatsTrainingsCountModal';
+import StatsAchievementsModal from './stats/StatsAchievementsModal';
 import './AdminPanelPage.css';
 
 /**
@@ -13,12 +19,26 @@ export default function AdminPanelPage() {
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [logsOpen, setLogsOpen] = useState(false);
+  const [statsHubOpen, setStatsHubOpen] = useState(false);
+  /** Выбранная метрика; модалки — шаги 7–11 TASKS_121 */
+  const [statsMetric, setStatsMetric] = useState(
+    /** @type {'growth' | 'reach' | 'booking' | 'trainings' | 'achievements' | null} */ (null)
+  );
+
+  const handleSelectMetric = useCallback((id) => {
+    setStatsHubOpen(false);
+    setStatsMetric(id);
+  }, []);
 
   return (
     <div className="admin-panel">
       <ul className="admin-panel__list">
         <li>
-          <button type="button" className="admin-panel__item admin-panel__item--stub">
+          <button
+            type="button"
+            className="admin-panel__item"
+            onClick={() => setStatsHubOpen(true)}
+          >
             Статистика
           </button>
         </li>
@@ -60,6 +80,31 @@ export default function AdminPanelPage() {
         </li>
       </ul>
 
+      <StatisticsHubModal
+        isOpen={statsHubOpen}
+        onClose={() => setStatsHubOpen(false)}
+        onSelect={handleSelectMetric}
+      />
+      <StatsGrowthModal
+        isOpen={statsMetric === 'growth'}
+        onClose={() => setStatsMetric(null)}
+      />
+      <StatsReachModal
+        isOpen={statsMetric === 'reach'}
+        onClose={() => setStatsMetric(null)}
+      />
+      <StatsBookingModal
+        isOpen={statsMetric === 'booking'}
+        onClose={() => setStatsMetric(null)}
+      />
+      <StatsTrainingsCountModal
+        isOpen={statsMetric === 'trainings'}
+        onClose={() => setStatsMetric(null)}
+      />
+      <StatsAchievementsModal
+        isOpen={statsMetric === 'achievements'}
+        onClose={() => setStatsMetric(null)}
+      />
       <BroadcastModal isOpen={broadcastOpen} onClose={() => setBroadcastOpen(false)} />
       <NotificationSendModal
         isOpen={notificationOpen}

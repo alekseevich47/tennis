@@ -13,6 +13,7 @@ import {
   toggleCommentLike,
   updateComment
 } from '../../services/posts';
+import { recordContentView } from '../../services/stats';
 import { error } from '../../lib/log';
 
 const SCROLL_INTO_VIEW_DELAY_MS = 200;
@@ -87,6 +88,15 @@ function PostDetailModal({
     isAddingCommentRef.current = false;
     setSoftDeletedIds([]);
   }, [isOpen, postId]);
+
+  useEffect(() => {
+    if (!isOpen || !postId || !user?.id) return;
+    void recordContentView({
+      objectType: 'post',
+      objectId: postId,
+      source: 'modal'
+    }).catch(() => {});
+  }, [isOpen, postId, user?.id]);
 
   useEffect(() => {
     if (!isOpen || !focusComment) return undefined;
