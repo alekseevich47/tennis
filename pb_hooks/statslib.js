@@ -360,6 +360,10 @@ function getBooking(period) {
   var events = $app.findRecordsByFilter('audit_events', filter, 'created', 0, 0);
   var typeCache = {};
   var byUser = {};
+  // Дедуп: пара (user, training) — не более одной «зап.» и одной «отм.» на тренировку
+  // (повторная запись/снятие с той же тренировки не раздувает счётчики).
+  var bookedSeen = {};
+  var cancelSeen = {};
 
   var i;
   for (i = 0; i < events.length; i++) {
@@ -380,17 +384,26 @@ function getBooking(period) {
     }
     if (!userId) continue;
 
+    var pairKey = trainingId ? userId + '|' + trainingId : '';
     var row = ensureBookingUser(byUser, userId, userFullName(userId));
 
     if (action === 'booking.booking.create_self' || action === 'booking.booking.create_moderator') {
+      if (pairKey && bookedSeen[pairKey]) continue;
+      if (pairKey) bookedSeen[pairKey] = true;
       bumpCounter(row, trainingType, 'booked', 1);
     } else if (action === 'booking.booking.cancel_self') {
+      if (pairKey && cancelSeen[pairKey]) continue;
+      if (pairKey) cancelSeen[pairKey] = true;
       bumpCounter(row, trainingType, 'cancelledSelf', 1);
       bumpCounter(row, trainingType, 'cancelledTotal', 1);
     } else if (action === 'booking.booking.cancel_moderator') {
+      if (pairKey && cancelSeen[pairKey]) continue;
+      if (pairKey) cancelSeen[pairKey] = true;
       bumpCounter(row, trainingType, 'cancelledModerator', 1);
       bumpCounter(row, trainingType, 'cancelledTotal', 1);
     } else if (action === 'booking.booking.cancel_system') {
+      if (pairKey && cancelSeen[pairKey]) continue;
+      if (pairKey) cancelSeen[pairKey] = true;
       bumpCounter(row, trainingType, 'cancelledSystem', 1);
       bumpCounter(row, trainingType, 'cancelledTotal', 1);
     }
