@@ -150,11 +150,11 @@ function PostCard({
 
   return (
     <article
-      ref={viewRef}
       className="feed-card"
       onClick={handleOpenDetail}
       style={{ cursor: 'pointer' }}
     >
+      <div ref={viewRef} className="post-view-sentinel" aria-hidden="true" />
       <div className="feed-card-header">
         <div className="section-avatar" aria-hidden="true">
           <img className="section-avatar__image" src={sectionAvatarUrl} alt="" decoding="async" />

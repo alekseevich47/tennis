@@ -78,6 +78,17 @@
   position: relative;
 }
 
+/* Компактный якорь для IntersectionObserver (просмотры ленты/турнира) */
+.post-view-sentinel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  pointer-events: none;
+  opacity: 0;
+}
+
 .feed-card-header {
   display: flex;
   align-items: center;

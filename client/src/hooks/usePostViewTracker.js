@@ -1,13 +1,17 @@
 // @ts-check
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { recordContentView } from '../services/stats';
 
 /** Задержка удержания во viewport (как READ_VISIBLE_DELAY_MS у уведомлений). */
 export const POST_VIEW_VISIBLE_DELAY_MS = 1200;
 
 /**
- * Viewport-просмотр: ≥~50% видимости ≥ 1200 ms → +1 в content_views (source: viewport).
+ * Viewport-просмотр через компактный якорь (1px вверху карточки).
+ * Якорь ≥~50% видимости ≥ 1200 ms → +1 в content_views (source: viewport).
  * Без дедупа: таймер сбрасывается при уходе; повторное удержание = новая запись.
+ *
+ * Важно: наблюдать якорь, а не всю карточку — у высоких постов с медиа
+ * intersectionRatio всей карточки часто < 0.5, и просмотр не фиксировался.
  *
  * @param {{
  *   objectType: 'post' | 'tournament_post',
@@ -15,7 +19,7 @@ export const POST_VIEW_VISIBLE_DELAY_MS = 1200;
  *   enabled?: boolean,
  *   scrollRootRef?: React.RefObject<HTMLElement | null> | null
  * }} params
- * @returns {React.RefObject<HTMLElement | null>}
+ * @returns {(node: HTMLElement | null) => void} callback-ref на якорь
  */
 export function usePostViewTracker({
   objectType,
@@ -23,16 +27,17 @@ export function usePostViewTracker({
   enabled = true,
   scrollRootRef = null
 }) {
-  const targetRef = useRef(/** @type {HTMLElement | null} */ (null));
+  const [node, setNode] = useState(/** @type {HTMLElement | null} */ (null));
   const timeoutRef = useRef(/** @type {number | null} */ (null));
   /** Уже записали за текущую сессию видимости (сброс при уходе из зоны). */
   const recordedSessionRef = useRef(false);
 
-  useEffect(() => {
-    if (!enabled || !objectId) return undefined;
+  const setRef = useCallback((/** @type {HTMLElement | null} */ el) => {
+    setNode(el);
+  }, []);
 
-    const target = targetRef.current;
-    if (!target) return undefined;
+  useEffect(() => {
+    if (!enabled || !objectId || !node) return undefined;
 
     const root = scrollRootRef?.current ?? null;
 
@@ -46,6 +51,7 @@ export function usePostViewTracker({
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
+        // Для 1px-якоря ratio ≈ 0 или 1; берём isIntersecting + небольшой порог.
         const visible =
           Boolean(entry?.isIntersecting) && (entry?.intersectionRatio ?? 0) >= 0.5;
 
@@ -73,13 +79,13 @@ export function usePostViewTracker({
       { root, threshold: [0, 0.5, 1] }
     );
 
-    observer.observe(target);
+    observer.observe(node);
     return () => {
       observer.disconnect();
       clearTimer();
       recordedSessionRef.current = false;
     };
-  }, [objectType, objectId, enabled, scrollRootRef]);
+  }, [objectType, objectId, enabled, scrollRootRef, node]);
 
-  return targetRef;
+  return setRef;
 }

@@ -503,6 +503,85 @@ function getTrainingsCount(period) {
   return { total: total, group: group, tournament: tournament, byDay: days };
 }
 
+/**
+ * Тренировки за один календарный день (GMT+7), те же правила что getTrainingsCount.
+ * @param {string} dateYmd
+ */
+function getTrainingsForDay(dateYmd) {
+  var period = parsePeriod(dateYmd, dateYmd);
+  if (period.error) return period;
+
+  var filter =
+    'is_cancelled != true && is_deleted != true && date >= "' +
+    pbTimestamp(period.startUtc) +
+    '" && date < "' +
+    pbTimestamp(period.endExclusiveUtc) +
+    '"';
+  var trainings = $app.findRecordsByFilter('trainings', filter, 'date', 0, 0);
+  var list = [];
+  var i;
+  for (i = 0; i < trainings.length; i++) {
+    var training = trainings[i];
+    var dateStr = training.getString('date') || '';
+    var day = toGmt7Ymd(dateStr);
+    if (!day || day !== period.start) continue;
+    if (!hasTimeRangeEnded(dateStr, training.getFloat('duration') || 0)) continue;
+
+    list.push({
+      id: training.id,
+      date: dateStr,
+      duration: training.getFloat('duration') || 0,
+      type: training.getString('type') || 'group',
+      booked_users: relationIds(training.get('booked_users')),
+      is_cancelled: training.getBool('is_cancelled') === true,
+      is_closed: training.getBool('is_closed') === true,
+      is_deleted: training.getBool('is_deleted') === true,
+      max_slots: training.get('max_slots')
+    });
+  }
+
+  return { date: period.start, trainings: list };
+}
+
+/**
+ * Новые пользователи за один календарный день (GMT+7).
+ * @param {string} dateYmd
+ */
+function getGrowthUsersForDay(dateYmd) {
+  var period = parsePeriod(dateYmd, dateYmd);
+  if (period.error) return period;
+
+  var filter =
+    'created >= "' +
+    pbTimestamp(period.startUtc) +
+    '" && created < "' +
+    pbTimestamp(period.endExclusiveUtc) +
+    '"';
+  var users = $app.findRecordsByFilter('users', filter, 'created', 0, 0);
+  var list = [];
+  var i;
+  for (i = 0; i < users.length; i++) {
+    var user = users[i];
+    var day = toGmt7Ymd(user.get('created'));
+    if (!day || day !== period.start) continue;
+
+    var collection = user.collection();
+    var avatar = user.get('avatar');
+    list.push({
+      id: user.id,
+      collectionId: collection ? collection.id : '',
+      collectionName: collection ? collection.name : 'users',
+      full_name: user.getString('full_name') || '',
+      birth_date: user.getString('birth_date') || '',
+      avatar: avatar || '',
+      avatar_url: user.getString('avatar_url') || '',
+      created: String(user.get('created') || '')
+    });
+  }
+
+  return { date: period.start, users: list };
+}
+
 function getAchievementsNow() {
   var achievements = $app.findRecordsByFilter('achievements', '', 'sort_order', 0, 0);
   var users = $app.findRecordsByFilter('users', '', '', 0, 0);
@@ -746,9 +825,11 @@ module.exports = {
   requireModerator: requireModerator,
   periodFromRequest: periodFromRequest,
   getGrowth: getGrowth,
+  getGrowthUsersForDay: getGrowthUsersForDay,
   getReach: getReach,
   getBooking: getBooking,
   getTrainingsCount: getTrainingsCount,
+  getTrainingsForDay: getTrainingsForDay,
   getAchievementsNow: getAchievementsNow,
   getAchievementGrants: getAchievementGrants,
   createContentView: createContentView
