@@ -1,13 +1,18 @@
-# Graph Report - .  (2026-07-24)
+# Graph Report - tennis  (2026-07-24)
 
 ## Corpus Check
-- 208 files · ~171,271 words
+- 175 files · ~171,356 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
 - 886 nodes · 2711 edges · 56 communities (50 shown, 6 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 106 edges (avg confidence: 0.62)
 - Token cost: 0 input · 0 output
+
+## Graph Freshness
+- Built from commit: `fcb26556`
+- Run `git rev-parse HEAD` and compare to check if the graph is stale.
+- Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - App Shell Navigation

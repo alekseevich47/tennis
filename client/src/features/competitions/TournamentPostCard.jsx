@@ -119,11 +119,11 @@ function TournamentPostCard({
 
   return (
     <article
-      ref={viewRef}
       className="tournament-post-card feed-card"
       onClick={handleOpenDetail}
       style={{ cursor: 'pointer' }}
     >
+      <div ref={viewRef} className="post-view-sentinel" aria-hidden="true" />
       <div className="feed-card-header">
         <div className="section-avatar" aria-hidden="true">
           <img className="section-avatar__image" src={sectionAvatarUrl} alt="" decoding="async" />

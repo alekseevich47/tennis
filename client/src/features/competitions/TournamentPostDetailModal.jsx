@@ -51,12 +51,20 @@ function TournamentPostDetailModal({
   }, [players]);
 
   useEffect(() => {
-    if (!trackView || !isOpen || !postId || !user?.id) return;
-    void recordContentView({
-      objectType: 'tournament_post',
-      objectId: postId,
-      source: 'modal'
-    }).catch(() => {});
+    if (!trackView || !isOpen || !postId || !user?.id) return undefined;
+    let cancelled = false;
+    const timer = window.setTimeout(() => {
+      if (cancelled) return;
+      void recordContentView({
+        objectType: 'tournament_post',
+        objectId: postId,
+        source: 'modal'
+      }).catch(() => {});
+    }, 0);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
   }, [trackView, isOpen, postId, user?.id]);
 
   if (!post) return null;

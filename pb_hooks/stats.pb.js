@@ -86,6 +86,46 @@ routerAdd('GET', '/api/stats/trainings-count', (c) => {
   }
 });
 
+routerAdd('GET', '/api/stats/growth/day', (c) => {
+  try {
+    var stats = require(__hooks + '/statslib.js');
+    var gate = stats.requireModerator(c);
+    if (gate.error) {
+      return c.json(gate.errorStatus, { error: gate.error });
+    }
+    var info = c.requestInfo();
+    var date = (info.query && info.query.date) || '';
+    var result = stats.getGrowthUsersForDay(date);
+    if (result.error) {
+      return c.json(result.status || 400, { error: result.error });
+    }
+    return c.json(200, result);
+  } catch (err) {
+    console.log('[stats] growth/day: ' + (err && err.stack ? err.stack : err));
+    return c.json(500, { error: 'Internal error' });
+  }
+});
+
+routerAdd('GET', '/api/stats/trainings-count/day', (c) => {
+  try {
+    var stats = require(__hooks + '/statslib.js');
+    var gate = stats.requireModerator(c);
+    if (gate.error) {
+      return c.json(gate.errorStatus, { error: gate.error });
+    }
+    var info = c.requestInfo();
+    var date = (info.query && info.query.date) || '';
+    var result = stats.getTrainingsForDay(date);
+    if (result.error) {
+      return c.json(result.status || 400, { error: result.error });
+    }
+    return c.json(200, result);
+  } catch (err) {
+    console.log('[stats] trainings-count/day: ' + (err && err.stack ? err.stack : err));
+    return c.json(500, { error: 'Internal error' });
+  }
+});
+
 routerAdd('GET', '/api/stats/achievements', (c) => {
   try {
     var stats = require(__hooks + '/statslib.js');

@@ -90,6 +90,47 @@ export async function fetchStatsTrainingsCount(range) {
 }
 
 /**
+ * @param {string} date YYYY-MM-DD
+ * @returns {Promise<{ date: string, users: Array<{
+ *   id: string,
+ *   collectionId?: string,
+ *   collectionName?: string,
+ *   full_name: string,
+ *   birth_date?: string,
+ *   avatar?: string,
+ *   avatar_url?: string,
+ *   created?: string
+ * }> }>}
+ */
+export async function fetchStatsGrowthDay(date) {
+  return pb.send('/api/stats/growth/day', {
+    method: 'GET',
+    query: { date }
+  });
+}
+
+/**
+ * @param {string} date YYYY-MM-DD
+ * @returns {Promise<{ date: string, trainings: Array<{
+ *   id: string,
+ *   date: string,
+ *   duration: number,
+ *   type: string,
+ *   booked_users: string[],
+ *   is_cancelled: boolean,
+ *   is_closed?: boolean,
+ *   is_deleted?: boolean,
+ *   max_slots?: number | null
+ * }> }>}
+ */
+export async function fetchStatsTrainingsDay(date) {
+  return pb.send('/api/stats/trainings-count/day', {
+    method: 'GET',
+    query: { date }
+  });
+}
+
+/**
  * Режим «сейчас» — период не нужен.
  * @returns {Promise<{
  *   achievements: Array<{
