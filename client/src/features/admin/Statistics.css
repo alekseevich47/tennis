@@ -99,6 +99,89 @@
   min-height: 180px;
 }
 
+/* Убрать focus/active обводку Recharts при клике по столбцам */
+.stats-line-chart .recharts-wrapper,
+.stats-line-chart .recharts-wrapper *:focus,
+.stats-line-chart .recharts-surface:focus,
+.stats-line-chart svg:focus,
+.stats-line-chart .recharts-rectangle:focus,
+.stats-line-chart .recharts-bar-rectangle:focus,
+.stats-line-chart .recharts-layer:focus {
+  outline: none !important;
+}
+
+.stats-line-chart .recharts-active-bar,
+.stats-line-chart .recharts-bar-rectangle:focus {
+  stroke: none !important;
+  filter: none !important;
+}
+
+.stats-day-detail {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.stats-day-detail__header {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.stats-day-detail__list {
+  margin-top: 0;
+}
+
+.stats-user-preview-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stats-user-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid #eaeaea;
+  border-radius: 12px;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.stats-user-preview:active {
+  background: #f8f9fa;
+}
+
+.stats-user-preview__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.stats-user-preview__name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2937;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stats-user-preview__line {
+  font-size: 12px;
+  color: #868e96;
+}
+
 /* —— Metric modals —— */
 
 .stats-metric-modal .ui-modal-body {

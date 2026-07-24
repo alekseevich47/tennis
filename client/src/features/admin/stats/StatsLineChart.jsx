@@ -37,14 +37,16 @@ function formatTooltipDate(value) {
  *   points: Array<{ date: string, count: number, cumulative: number }>,
  *   height?: number,
  *   countLabel?: string,
- *   cumulativeLabel?: string
+ *   cumulativeLabel?: string,
+ *   onBarClick?: (date: string, count: number) => void
  * }} props
  */
 export default function StatsLineChart({
   points,
   height = 240,
   countLabel = 'За день',
-  cumulativeLabel = 'Накопительно'
+  cumulativeLabel = 'Накопительно',
+  onBarClick
 }) {
   const data = (points || []).map((p) => ({
     date: p.date,
@@ -108,6 +110,16 @@ export default function StatsLineChart({
             fillOpacity={0.55}
             radius={[3, 3, 0, 0]}
             maxBarSize={28}
+            activeBar={false}
+            cursor={onBarClick ? 'pointer' : undefined}
+            onClick={(item) => {
+              if (!onBarClick) return;
+              const payload = item?.payload;
+              const date = payload?.date;
+              const count = Number(payload?.count) || 0;
+              if (!date || count <= 0) return;
+              onBarClick(date, count);
+            }}
           />
           <Line
             yAxisId="cumulative"
@@ -118,6 +130,7 @@ export default function StatsLineChart({
             strokeWidth={2}
             dot={false}
             activeDot={{ r: 4 }}
+            isAnimationActive={false}
           />
         </ComposedChart>
       </ResponsiveContainer>

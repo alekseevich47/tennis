@@ -92,12 +92,21 @@ function PostDetailModal({
   }, [isOpen, postId]);
 
   useEffect(() => {
-    if (!trackView || !isOpen || !postId || !user?.id) return;
-    void recordContentView({
-      objectType: 'post',
-      objectId: postId,
-      source: 'modal'
-    }).catch(() => {});
+    if (!trackView || !isOpen || !postId || !user?.id) return undefined;
+    let cancelled = false;
+    // Небольшая отсрочка: модалка успевает смонтироваться; повтор при смене postId.
+    const timer = window.setTimeout(() => {
+      if (cancelled) return;
+      void recordContentView({
+        objectType: 'post',
+        objectId: postId,
+        source: 'modal'
+      }).catch(() => {});
+    }, 0);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
   }, [trackView, isOpen, postId, user?.id]);
 
   useEffect(() => {

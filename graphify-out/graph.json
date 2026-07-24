@@ -578,8 +578,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_app",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "app.jsx"
     },
     {
@@ -589,8 +589,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "client_src_app_tab_titles",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "tab_titles"
     },
     {
@@ -600,8 +600,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "client_src_app_getinitialfavoriteproductids",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "getinitialfavoriteproductids()"
     },
     {
@@ -611,8 +611,8 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "client_src_app_appinner",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "appinner()"
     },
     {
@@ -622,8 +622,8 @@
       "source_location": "L83",
       "_origin": "ast",
       "id": "client_src_app_appmain",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "appmain()"
     },
     {
@@ -798,8 +798,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_bottomnav",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "bottomnav.jsx"
     },
     {
@@ -809,8 +809,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_components_bottomnav_nav_items",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "nav_items"
     },
     {
@@ -820,8 +820,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "client_src_components_bottomnav_admin_nav_item",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "admin_nav_item"
     },
     {
@@ -831,8 +831,8 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "client_src_components_bottomnav_bottomnav",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "bottomnav()"
     },
     {
@@ -963,8 +963,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_postuploadprovider",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "postuploadprovider.jsx"
     },
     {
@@ -974,8 +974,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_components_postuploadprovider_postuploadcontext",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "postuploadcontext"
     },
     {
@@ -985,8 +985,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_components_postuploadprovider_postuploadprovider",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "postuploadprovider()"
     },
     {
@@ -996,8 +996,8 @@
       "source_location": "L92",
       "_origin": "ast",
       "id": "client_src_components_postuploadprovider_usepostupload",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "usepostupload()"
     },
     {
@@ -1183,8 +1183,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_emptystate",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "emptystate.jsx"
     },
     {
@@ -1194,8 +1194,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_components_ui_emptystate_emptystate",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "emptystate()"
     },
     {
@@ -1392,8 +1392,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_config",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "config.js"
     },
     {
@@ -1403,8 +1403,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 3,
+      "community_name": "Modal and Alert Dialog",
       "norm_label": "favoritescontext.jsx"
     },
     {
@@ -1414,8 +1414,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_favoritescontext",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 3,
+      "community_name": "Modal and Alert Dialog",
       "norm_label": "favoritescontext"
     },
     {
@@ -1425,8 +1425,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_patchproductsfavoritescount",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 3,
+      "community_name": "Modal and Alert Dialog",
       "norm_label": "patchproductsfavoritescount()"
     },
     {
@@ -1436,8 +1436,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_loadfavoriteproducts",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 3,
+      "community_name": "Modal and Alert Dialog",
       "norm_label": "loadfavoriteproducts()"
     },
     {
@@ -1447,8 +1447,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_favoritesprovider",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 3,
+      "community_name": "Modal and Alert Dialog",
       "norm_label": "favoritesprovider()"
     },
     {
@@ -1491,8 +1491,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_broadcastmodal",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 3,
+      "community_name": "Modal and Alert Dialog",
       "norm_label": "broadcastmodal.jsx"
     },
     {
@@ -1744,8 +1744,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 1,
+      "community_name": "Feed and Profile Pages",
       "norm_label": "usermultiselect.jsx"
     },
     {
@@ -1755,8 +1755,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect_getcollapsedlabel",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 1,
+      "community_name": "Feed and Profile Pages",
       "norm_label": "getcollapsedlabel()"
     },
     {
@@ -1766,8 +1766,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect_isuserchecked",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 1,
+      "community_name": "Feed and Profile Pages",
       "norm_label": "isuserchecked()"
     },
     {
@@ -1777,8 +1777,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect_usermultiselect",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 1,
+      "community_name": "Feed and Profile Pages",
       "norm_label": "usermultiselect()"
     },
     {
@@ -1903,10 +1903,32 @@
       "norm_label": "statsgrowthmodal.jsx"
     },
     {
+      "label": "formatBirthDate()",
+      "file_type": "code",
+      "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
+      "source_location": "L18",
+      "_origin": "ast",
+      "id": "client_src_features_admin_stats_statsgrowthmodal_formatbirthdate",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
+      "norm_label": "formatbirthdate()"
+    },
+    {
+      "label": "formatDayTitle()",
+      "file_type": "code",
+      "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
+      "source_location": "L28",
+      "_origin": "ast",
+      "id": "client_src_features_admin_stats_statsgrowthmodal_formatdaytitle",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
+      "norm_label": "formatdaytitle()"
+    },
+    {
       "label": "StatsGrowthModal()",
       "file_type": "code",
       "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
-      "source_location": "L20",
+      "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsgrowthmodal_statsgrowthmodal",
       "community": 7,
@@ -1950,7 +1972,7 @@
       "label": "StatsLineChart()",
       "file_type": "code",
       "source_file": "client/src/features/admin/stats/StatsLineChart.jsx",
-      "source_location": "L43",
+      "source_location": "L44",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statslinechart_statslinechart",
       "community": 7,
@@ -2104,7 +2126,7 @@
       "label": "formatAxisDate()",
       "file_type": "code",
       "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
-      "source_location": "L23",
+      "source_location": "L28",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statstrainingscountmodal_formataxisdate",
       "community": 7,
@@ -2115,7 +2137,7 @@
       "label": "formatTooltipDate()",
       "file_type": "code",
       "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
-      "source_location": "L32",
+      "source_location": "L37",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statstrainingscountmodal_formattooltipdate",
       "community": 7,
@@ -2123,10 +2145,21 @@
       "norm_label": "formattooltipdate()"
     },
     {
+      "label": "formatDayTitle()",
+      "file_type": "code",
+      "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
+      "source_location": "L46",
+      "_origin": "ast",
+      "id": "client_src_features_admin_stats_statstrainingscountmodal_formatdaytitle",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
+      "norm_label": "formatdaytitle()"
+    },
+    {
       "label": "StatsTrainingsCountModal()",
       "file_type": "code",
       "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
-      "source_location": "L47",
+      "source_location": "L64",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statstrainingscountmodal_statstrainingscountmodal",
       "community": 7,
@@ -2426,8 +2459,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_feedpage",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "feedpage.jsx"
     },
     {
@@ -2437,8 +2470,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "client_src_features_feed_feedpage_feedpage",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "feedpage()"
     },
     {
@@ -2558,8 +2591,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_postdetailmodal",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "postdetailmodal.jsx"
     },
     {
@@ -2569,8 +2602,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "client_src_features_feed_postdetailmodal_postdetailmodal",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "postdetailmodal()"
     },
     {
@@ -2624,8 +2657,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_gallery_gallerycommentmodal",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "gallerycommentmodal.jsx"
     },
     {
@@ -2635,8 +2668,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "client_src_features_gallery_gallerycommentmodal_gallerycommentmodal",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "gallerycommentmodal()"
     },
     {
@@ -2954,8 +2987,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_profile_blockedpage",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "blockedpage.jsx"
     },
     {
@@ -2965,8 +2998,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_features_profile_blockedpage_blockedpage",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "blockedpage()"
     },
     {
@@ -3471,8 +3504,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_rating_playerrow",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "playerrow.jsx"
     },
     {
@@ -3482,8 +3515,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_features_rating_playerrow_stopsignicon",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "stopsignicon()"
     },
     {
@@ -3493,8 +3526,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "client_src_features_rating_playerrow_playerrow",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "playerrow()"
     },
     {
@@ -3570,8 +3603,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_shop_favoriteicon",
-      "community": 6,
-      "community_name": "Header and Membership",
+      "community": 3,
+      "community_name": "Modal and Alert Dialog",
       "norm_label": "favoriteicon.jsx"
     },
     {
@@ -3581,8 +3614,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_features_shop_favoriteicon_favoriteicon",
-      "community": 6,
-      "community_name": "Header and Membership",
+      "community": 3,
+      "community_name": "Modal and Alert Dialog",
       "norm_label": "favoriteicon()"
     },
     {
@@ -3878,8 +3911,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_calendarstrip",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "calendarstrip.jsx"
     },
     {
@@ -3889,8 +3922,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_features_trainings_calendarstrip_calendarstrip",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "calendarstrip()"
     },
     {
@@ -3933,8 +3966,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_trainingcard",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "trainingcard.jsx"
     },
     {
@@ -3944,8 +3977,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_features_trainings_trainingcard_trainingcard",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 1,
+      "community_name": "Feed and Profile Pages",
       "norm_label": "trainingcard()"
     },
     {
@@ -4164,8 +4197,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_edittrainingmodal",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "edittrainingmodal.jsx"
     },
     {
@@ -4175,8 +4208,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_edittrainingmodal_initial_form",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "initial_form"
     },
     {
@@ -4186,8 +4219,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_edittrainingmodal_todatetimelocalvalue",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "todatetimelocalvalue()"
     },
     {
@@ -4197,8 +4230,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_edittrainingmodal_getformfromtraining",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "getformfromtraining()"
     },
     {
@@ -4208,8 +4241,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_edittrainingmodal_getpatchfromform",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "getpatchfromform()"
     },
     {
@@ -4219,8 +4252,8 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_edittrainingmodal_getpatchfromtraining",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "getpatchfromtraining()"
     },
     {
@@ -4230,8 +4263,8 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_edittrainingmodal_buildtrainingpatch",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "buildtrainingpatch()"
     },
     {
@@ -4241,8 +4274,8 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_edittrainingmodal_edittrainingmodal",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "edittrainingmodal()"
     },
     {
@@ -4307,8 +4340,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_userpickermodal",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "userpickermodal.jsx"
     },
     {
@@ -4318,8 +4351,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_userpickermodal_isuserbookingdisabled",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "isuserbookingdisabled()"
     },
     {
@@ -4329,8 +4362,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_userpickermodal_userpickermodal",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "userpickermodal()"
     },
     {
@@ -4395,8 +4428,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usecommentlikes",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "usecommentlikes.js"
     },
     {
@@ -4406,8 +4439,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "client_src_hooks_usecommentlikes_usecommentlikes",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "usecommentlikes()"
     },
     {
@@ -4417,8 +4450,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usecomments",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "usecomments.js"
     },
     {
@@ -4428,8 +4461,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_hooks_usecomments_usecomments",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "usecomments()"
     },
     {
@@ -4461,8 +4494,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usegallerycomments",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "usegallerycomments.js"
     },
     {
@@ -4472,8 +4505,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_hooks_usegallerycomments_usegallerycomments",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "usegallerycomments()"
     },
     {
@@ -4505,8 +4538,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usemaxauth",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "usemaxauth.js"
     },
     {
@@ -4516,8 +4549,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_hooks_usemaxauth_getinitialuser",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "getinitialuser()"
     },
     {
@@ -4527,8 +4560,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "client_src_hooks_usemaxauth_usemaxauth",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "usemaxauth()"
     },
     {
@@ -4615,8 +4648,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usepostlikes",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "usepostlikes.js"
     },
     {
@@ -4626,8 +4659,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "client_src_hooks_usepostlikes_usepostlikes",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "usepostlikes()"
     },
     {
@@ -4645,7 +4678,7 @@
       "label": "usePostViewTracker()",
       "file_type": "code",
       "source_file": "client/src/hooks/usePostViewTracker.js",
-      "source_location": "L20",
+      "source_location": "L24",
       "_origin": "ast",
       "id": "client_src_hooks_usepostviewtracker_usepostviewtracker",
       "community": 2,
@@ -4659,8 +4692,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_useposts",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "useposts.js"
     },
     {
@@ -4670,8 +4703,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_hooks_useposts_useposts",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "useposts()"
     },
     {
@@ -4725,8 +4758,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usesessionresetkey",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "usesessionresetkey.js"
     },
     {
@@ -4736,8 +4769,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_hooks_usesessionresetkey_usesessionresetkey",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "usesessionresetkey()"
     },
     {
@@ -4791,8 +4824,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usetrainings",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "usetrainings.js"
     },
     {
@@ -4802,8 +4835,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_hooks_usetrainings_usetrainings",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 1,
+      "community_name": "Feed and Profile Pages",
       "norm_label": "usetrainings()"
     },
     {
@@ -5319,8 +5352,8 @@
       "source_location": "L125",
       "_origin": "ast",
       "id": "client_src_lib_datesearch_isdatequeryparsed",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "isdatequeryparsed()"
     },
     {
@@ -5330,8 +5363,8 @@
       "source_location": "L134",
       "_origin": "ast",
       "id": "client_src_lib_datesearch_matchesdatequery",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "matchesdatequery()"
     },
     {
@@ -5341,8 +5374,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_format",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "format.js"
     },
     {
@@ -5352,8 +5385,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_lib_format_days_short",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "days_short"
     },
     {
@@ -5363,8 +5396,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_lib_format_days_full",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "days_full"
     },
     {
@@ -5374,8 +5407,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_lib_format_months_genitive",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "months_genitive"
     },
     {
@@ -5385,8 +5418,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_lib_format_pad2",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "pad2()"
     },
     {
@@ -5429,8 +5462,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "client_src_lib_format_formattimerange",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 1,
+      "community_name": "Feed and Profile Pages",
       "norm_label": "formattimerange()"
     },
     {
@@ -5440,8 +5473,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "client_src_lib_format_hastimerangeended",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 1,
+      "community_name": "Feed and Profile Pages",
       "norm_label": "hastimerangeended()"
     },
     {
@@ -5462,8 +5495,8 @@
       "source_location": "L87",
       "_origin": "ast",
       "id": "client_src_lib_format_formatdatetimeshort",
-      "community": 9,
-      "community_name": "Audit Logs Modal",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "formatdatetimeshort()"
     },
     {
@@ -5473,8 +5506,8 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "client_src_lib_format_daykey",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "daykey()"
     },
     {
@@ -5484,8 +5517,8 @@
       "source_location": "L105",
       "_origin": "ast",
       "id": "client_src_lib_format_issameday",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "issameday()"
     },
     {
@@ -5583,8 +5616,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_log",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "log.js"
     },
     {
@@ -5594,8 +5627,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_lib_log_noop",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "noop()"
     },
     {
@@ -6199,8 +6232,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_auth",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "auth.js"
     },
     {
@@ -6210,8 +6243,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "client_src_services_auth_buildbanneduser",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "buildbanneduser()"
     },
     {
@@ -6221,8 +6254,8 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "client_src_services_auth_savebaninfo",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "savebaninfo()"
     },
     {
@@ -6232,8 +6265,8 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "client_src_services_auth_clearbaninfo",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "clearbaninfo()"
     },
     {
@@ -6243,8 +6276,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "client_src_services_auth_loadbaninfo",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "loadbaninfo()"
     },
     {
@@ -6254,8 +6287,8 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "client_src_services_auth_isuserbanned",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "isuserbanned()"
     },
     {
@@ -6265,8 +6298,8 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "client_src_services_auth_isuserbotblocked",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "isuserbotblocked()"
     },
     {
@@ -6276,8 +6309,8 @@
       "source_location": "L92",
       "_origin": "ast",
       "id": "client_src_services_auth_finalizebanneduser",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "finalizebanneduser()"
     },
     {
@@ -6287,8 +6320,8 @@
       "source_location": "L104",
       "_origin": "ast",
       "id": "client_src_services_auth_refreshauthuser",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "refreshauthuser()"
     },
     {
@@ -6298,8 +6331,8 @@
       "source_location": "L120",
       "_origin": "ast",
       "id": "client_src_services_auth_initmaxauth",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "initmaxauth()"
     },
     {
@@ -6309,8 +6342,8 @@
       "source_location": "L172",
       "_origin": "ast",
       "id": "client_src_services_auth_getcurrentuser",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "getcurrentuser()"
     },
     {
@@ -6331,8 +6364,8 @@
       "source_location": "L190",
       "_origin": "ast",
       "id": "client_src_services_auth_hasavatarpatch",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "hasavatarpatch()"
     },
     {
@@ -6474,8 +6507,8 @@
       "source_location": "L135",
       "_origin": "ast",
       "id": "client_src_services_catalog_adjustproductfavoritescount",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 3,
+      "community_name": "Modal and Alert Dialog",
       "norm_label": "adjustproductfavoritescount()"
     },
     {
@@ -6540,8 +6573,8 @@
       "source_location": "L246",
       "_origin": "ast",
       "id": "client_src_services_catalog_deleteproduct",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "deleteproduct()"
     },
     {
@@ -6705,8 +6738,8 @@
       "source_location": "L544",
       "_origin": "ast",
       "id": "client_src_services_catalog_listgallerycomments",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "listgallerycomments()"
     },
     {
@@ -6716,8 +6749,8 @@
       "source_location": "L565",
       "_origin": "ast",
       "id": "client_src_services_catalog_creategallerycomment",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "creategallerycomment()"
     },
     {
@@ -6727,8 +6760,8 @@
       "source_location": "L579",
       "_origin": "ast",
       "id": "client_src_services_catalog_deletegallerycomment",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "deletegallerycomment()"
     },
     {
@@ -6738,8 +6771,8 @@
       "source_location": "L588",
       "_origin": "ast",
       "id": "client_src_services_catalog_updategallerycomment",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "updategallerycomment()"
     },
     {
@@ -6837,8 +6870,8 @@
       "source_location": "L109",
       "_origin": "ast",
       "id": "client_src_services_notifications_maybenotifysessionsleft",
-      "community": 6,
-      "community_name": "Header and Membership",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "maybenotifysessionsleft()"
     },
     {
@@ -6848,8 +6881,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_pb",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "pb.js"
     },
     {
@@ -6859,8 +6892,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_services_pb_pb",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "pb"
     },
     {
@@ -6870,8 +6903,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_pocketbase",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "pocketbase.js"
     },
     {
@@ -6881,8 +6914,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_posts",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "posts.js"
     },
     {
@@ -6892,8 +6925,8 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "client_src_services_posts_getisdeletedpatchvalue",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "getisdeletedpatchvalue()"
     },
     {
@@ -6903,8 +6936,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "client_src_services_posts_listposts",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "listposts()"
     },
     {
@@ -6914,8 +6947,8 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "client_src_services_posts_listcommentsforpost",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "listcommentsforpost()"
     },
     {
@@ -6925,8 +6958,8 @@
       "source_location": "L103",
       "_origin": "ast",
       "id": "client_src_services_posts_listpostlikes",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "listpostlikes()"
     },
     {
@@ -6936,8 +6969,8 @@
       "source_location": "L125",
       "_origin": "ast",
       "id": "client_src_services_posts_togglepostlike",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "togglepostlike()"
     },
     {
@@ -6947,8 +6980,8 @@
       "source_location": "L148",
       "_origin": "ast",
       "id": "client_src_services_posts_createpost",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "createpost()"
     },
     {
@@ -6958,8 +6991,8 @@
       "source_location": "L162",
       "_origin": "ast",
       "id": "client_src_services_posts_createpostwithprogress",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "createpostwithprogress()"
     },
     {
@@ -6969,8 +7002,8 @@
       "source_location": "L230",
       "_origin": "ast",
       "id": "client_src_services_posts_updatepost",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "updatepost()"
     },
     {
@@ -6980,8 +7013,8 @@
       "source_location": "L239",
       "_origin": "ast",
       "id": "client_src_services_posts_harddeletepost",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "harddeletepost()"
     },
     {
@@ -6991,8 +7024,8 @@
       "source_location": "L246",
       "_origin": "ast",
       "id": "client_src_services_posts_createcomment",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "createcomment()"
     },
     {
@@ -7002,8 +7035,8 @@
       "source_location": "L259",
       "_origin": "ast",
       "id": "client_src_services_posts_updatecomment",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "updatecomment()"
     },
     {
@@ -7013,8 +7046,8 @@
       "source_location": "L269",
       "_origin": "ast",
       "id": "client_src_services_posts_harddeletecomment",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "harddeletecomment()"
     },
     {
@@ -7024,8 +7057,8 @@
       "source_location": "L288",
       "_origin": "ast",
       "id": "client_src_services_posts_listcommentlikes",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "listcommentlikes()"
     },
     {
@@ -7046,8 +7079,8 @@
       "source_location": "L341",
       "_origin": "ast",
       "id": "client_src_services_posts_purgeabandonedcomments",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "purgeabandonedcomments()"
     },
     {
@@ -7117,10 +7150,32 @@
       "norm_label": "fetchstatstrainingscount()"
     },
     {
+      "label": "fetchStatsGrowthDay()",
+      "file_type": "code",
+      "source_file": "client/src/services/stats.js",
+      "source_location": "L105",
+      "_origin": "ast",
+      "id": "client_src_services_stats_fetchstatsgrowthday",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
+      "norm_label": "fetchstatsgrowthday()"
+    },
+    {
+      "label": "fetchStatsTrainingsDay()",
+      "file_type": "code",
+      "source_file": "client/src/services/stats.js",
+      "source_location": "L126",
+      "_origin": "ast",
+      "id": "client_src_services_stats_fetchstatstrainingsday",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
+      "norm_label": "fetchstatstrainingsday()"
+    },
+    {
       "label": "fetchStatsAchievements()",
       "file_type": "code",
       "source_file": "client/src/services/stats.js",
-      "source_location": "L109",
+      "source_location": "L150",
       "_origin": "ast",
       "id": "client_src_services_stats_fetchstatsachievements",
       "community": 7,
@@ -7131,7 +7186,7 @@
       "label": "fetchStatsAchievementGrants()",
       "file_type": "code",
       "source_file": "client/src/services/stats.js",
-      "source_location": "L130",
+      "source_location": "L171",
       "_origin": "ast",
       "id": "client_src_services_stats_fetchstatsachievementgrants",
       "community": 7,
@@ -7142,7 +7197,7 @@
       "label": "recordContentView()",
       "file_type": "code",
       "source_file": "client/src/services/stats.js",
-      "source_location": "L146",
+      "source_location": "L187",
       "_origin": "ast",
       "id": "client_src_services_stats_recordcontentview",
       "community": 2,
@@ -7541,8 +7596,8 @@
       "source_location": "L335",
       "_origin": "ast",
       "id": "client_src_services_trainings_listtrainings",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 1,
+      "community_name": "Feed and Profile Pages",
       "norm_label": "listtrainings()"
     },
     {
@@ -7574,8 +7629,8 @@
       "source_location": "L394",
       "_origin": "ast",
       "id": "client_src_services_trainings_updatetraining",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "updatetraining()"
     },
     {
@@ -7585,8 +7640,8 @@
       "source_location": "L427",
       "_origin": "ast",
       "id": "client_src_services_trainings_finalizecancelledtraining",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "finalizecancelledtraining()"
     },
     {
@@ -7805,8 +7860,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_users",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "users.js"
     },
     {
@@ -7816,8 +7871,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_services_users_listusers",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "listusers()"
     },
     {
@@ -8723,10 +8778,32 @@
       "norm_label": "gettrainingscount()"
     },
     {
+      "label": "getTrainingsForDay()",
+      "file_type": "code",
+      "source_file": "pb_hooks/statslib.js",
+      "source_location": "L510",
+      "_origin": "ast",
+      "id": "pb_hooks_statslib_gettrainingsforday",
+      "community": 11,
+      "community_name": "Stats Library Helpers",
+      "norm_label": "gettrainingsforday()"
+    },
+    {
+      "label": "getGrowthUsersForDay()",
+      "file_type": "code",
+      "source_file": "pb_hooks/statslib.js",
+      "source_location": "L550",
+      "_origin": "ast",
+      "id": "pb_hooks_statslib_getgrowthusersforday",
+      "community": 11,
+      "community_name": "Stats Library Helpers",
+      "norm_label": "getgrowthusersforday()"
+    },
+    {
       "label": "getAchievementsNow()",
       "file_type": "code",
       "source_file": "pb_hooks/statslib.js",
-      "source_location": "L506",
+      "source_location": "L585",
       "_origin": "ast",
       "id": "pb_hooks_statslib_getachievementsnow",
       "community": 11,
@@ -8737,7 +8814,7 @@
       "label": "getAchievementGrants()",
       "file_type": "code",
       "source_file": "pb_hooks/statslib.js",
-      "source_location": "L582",
+      "source_location": "L661",
       "_origin": "ast",
       "id": "pb_hooks_statslib_getachievementgrants",
       "community": 11,
@@ -8748,7 +8825,7 @@
       "label": "requireModerator()",
       "file_type": "code",
       "source_file": "pb_hooks/statslib.js",
-      "source_location": "L693",
+      "source_location": "L772",
       "_origin": "ast",
       "id": "pb_hooks_statslib_requiremoderator",
       "community": 11,
@@ -8759,7 +8836,7 @@
       "label": "periodFromRequest()",
       "file_type": "code",
       "source_file": "pb_hooks/statslib.js",
-      "source_location": "L708",
+      "source_location": "L787",
       "_origin": "ast",
       "id": "pb_hooks_statslib_periodfromrequest",
       "community": 11,
@@ -8770,7 +8847,7 @@
       "label": "createContentView()",
       "file_type": "code",
       "source_file": "pb_hooks/statslib.js",
-      "source_location": "L714",
+      "source_location": "L793",
       "_origin": "ast",
       "id": "pb_hooks_statslib_createcontentview",
       "community": 11,
@@ -9041,8 +9118,8 @@
       "contributor": null,
       "community": 21,
       "norm_label": "\u0441\u0435\u043a\u0446\u0438\u044f \u043c\u0438\u043b\u0435\u043d\u044c\u043a\u0438\u0445 mini app",
-      "id": "readme_sekciya_milenkih",
-      "community_name": "Brand Assets Gallery Docs"
+      "community_name": "Brand Assets Gallery Docs",
+      "id": "readme_sekciya_milenkih"
     },
     {
       "label": "MAX Bridge",
@@ -9055,8 +9132,8 @@
       "contributor": null,
       "community": 22,
       "norm_label": "max bridge",
-      "id": "readme_max_bridge",
-      "community_name": "MAX Bridge Auth Docs"
+      "community_name": "MAX Bridge Auth Docs",
+      "id": "readme_max_bridge"
     },
     {
       "label": "PocketBase Backend",
@@ -9069,8 +9146,8 @@
       "contributor": null,
       "community": 22,
       "norm_label": "pocketbase backend",
-      "id": "readme_pocketbase",
-      "community_name": "MAX Bridge Auth Docs"
+      "community_name": "MAX Bridge Auth Docs",
+      "id": "readme_pocketbase"
     },
     {
       "label": "\u041b\u0435\u043d\u0442\u0430 (Feed)",
@@ -9083,8 +9160,8 @@
       "contributor": null,
       "community": 20,
       "norm_label": "\u043b\u0435\u043d\u0442\u0430 (feed)",
-      "id": "readme_feed",
-      "community_name": "Audit Docs and Feed"
+      "community_name": "Audit Docs and Feed",
+      "id": "readme_feed"
     },
     {
       "label": "\u0422\u0440\u0435\u043d\u0438\u0440\u043e\u0432\u043a\u0438",
@@ -9097,8 +9174,8 @@
       "contributor": null,
       "community": 21,
       "norm_label": "\u0442\u0440\u0435\u043d\u0438\u0440\u043e\u0432\u043a\u0438",
-      "id": "readme_trainings",
-      "community_name": "Brand Assets Gallery Docs"
+      "community_name": "Brand Assets Gallery Docs",
+      "id": "readme_trainings"
     },
     {
       "label": "\u041c\u0430\u0433\u0430\u0437\u0438\u043d",
@@ -9111,8 +9188,8 @@
       "contributor": null,
       "community": 27,
       "norm_label": "\u043c\u0430\u0433\u0430\u0437\u0438\u043d",
-      "id": "readme_shop",
-      "community_name": "Shop Cart Docs"
+      "community_name": "Shop Cart Docs",
+      "id": "readme_shop"
     },
     {
       "label": "\u0420\u0435\u0439\u0442\u0438\u043d\u0433",
@@ -9125,8 +9202,8 @@
       "contributor": null,
       "community": 24,
       "norm_label": "\u0440\u0435\u0438\u0442\u0438\u043d\u0433",
-      "id": "readme_rating",
-      "community_name": "Competitions Rating Schema"
+      "community_name": "Competitions Rating Schema",
+      "id": "readme_rating"
     },
     {
       "label": "\u0421\u043e\u0440\u0435\u0432\u043d\u043e\u0432\u0430\u043d\u0438\u044f",
@@ -9139,8 +9216,8 @@
       "contributor": null,
       "community": 24,
       "norm_label": "\u0441\u043e\u0440\u0435\u0432\u043d\u043e\u0432\u0430\u043d\u0438\u044f",
-      "id": "readme_competitions",
-      "community_name": "Competitions Rating Schema"
+      "community_name": "Competitions Rating Schema",
+      "id": "readme_competitions"
     },
     {
       "label": "\u0413\u0430\u043b\u0435\u0440\u0435\u044f",
@@ -9153,8 +9230,8 @@
       "contributor": null,
       "community": 21,
       "norm_label": "\u0433\u0430\u043b\u0435\u0440\u0435\u044f",
-      "id": "readme_gallery",
-      "community_name": "Brand Assets Gallery Docs"
+      "community_name": "Brand Assets Gallery Docs",
+      "id": "readme_gallery"
     },
     {
       "label": "\u041f\u0440\u043e\u0444\u0438\u043b\u044c",
@@ -9167,8 +9244,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "\u043f\u0440\u043e\u0444\u0438\u043b\u044c",
-      "id": "readme_profile",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "readme_profile"
     },
     {
       "label": "MAX Auth /api/max-auth",
@@ -9181,8 +9258,8 @@
       "contributor": null,
       "community": 22,
       "norm_label": "max auth /api/max-auth",
-      "id": "readme_max_auth",
-      "community_name": "MAX Bridge Auth Docs"
+      "community_name": "MAX Bridge Auth Docs",
+      "id": "readme_max_auth"
     },
     {
       "label": "\u0420\u043e\u043b\u0438 user/moderator",
@@ -9195,8 +9272,8 @@
       "contributor": null,
       "community": 24,
       "norm_label": "\u0440\u043e\u043b\u0438 user/moderator",
-      "id": "readme_roles",
-      "community_name": "Competitions Rating Schema"
+      "community_name": "Competitions Rating Schema",
+      "id": "readme_roles"
     },
     {
       "label": "Soft-delete flush",
@@ -9209,8 +9286,8 @@
       "contributor": null,
       "community": 20,
       "norm_label": "soft-delete flush",
-      "id": "readme_soft_delete",
-      "community_name": "Audit Docs and Feed"
+      "community_name": "Audit Docs and Feed",
+      "id": "readme_soft_delete"
     },
     {
       "label": "React 18 + Vite 5 + SWR",
@@ -9223,8 +9300,8 @@
       "contributor": null,
       "community": 21,
       "norm_label": "react 18 + vite 5 + swr",
-      "id": "readme_stack_react",
-      "community_name": "Brand Assets Gallery Docs"
+      "community_name": "Brand Assets Gallery Docs",
+      "id": "readme_stack_react"
     },
     {
       "label": "Nginx reverse proxy",
@@ -9237,8 +9314,8 @@
       "contributor": null,
       "community": 22,
       "norm_label": "nginx reverse proxy",
-      "id": "readme_nginx",
-      "community_name": "MAX Bridge Auth Docs"
+      "community_name": "MAX Bridge Auth Docs",
+      "id": "readme_nginx"
     },
     {
       "label": "PB collection users",
@@ -9251,8 +9328,8 @@
       "contributor": null,
       "community": 24,
       "norm_label": "pb collection users",
-      "id": "readme_schema_users",
-      "community_name": "Competitions Rating Schema"
+      "community_name": "Competitions Rating Schema",
+      "id": "readme_schema_users"
     },
     {
       "label": "PB collection posts",
@@ -9265,8 +9342,8 @@
       "contributor": null,
       "community": 20,
       "norm_label": "pb collection posts",
-      "id": "readme_schema_posts",
-      "community_name": "Audit Docs and Feed"
+      "community_name": "Audit Docs and Feed",
+      "id": "readme_schema_posts"
     },
     {
       "label": "PB collection comments",
@@ -9279,8 +9356,8 @@
       "contributor": null,
       "community": 20,
       "norm_label": "pb collection comments",
-      "id": "readme_schema_comments",
-      "community_name": "Audit Docs and Feed"
+      "community_name": "Audit Docs and Feed",
+      "id": "readme_schema_comments"
     },
     {
       "label": "PB collection trainings",
@@ -9293,8 +9370,8 @@
       "contributor": null,
       "community": 21,
       "norm_label": "pb collection trainings",
-      "id": "readme_schema_trainings",
-      "community_name": "Brand Assets Gallery Docs"
+      "community_name": "Brand Assets Gallery Docs",
+      "id": "readme_schema_trainings"
     },
     {
       "label": "PB collection products",
@@ -9307,8 +9384,8 @@
       "contributor": null,
       "community": 27,
       "norm_label": "pb collection products",
-      "id": "readme_schema_products",
-      "community_name": "Shop Cart Docs"
+      "community_name": "Shop Cart Docs",
+      "id": "readme_schema_products"
     },
     {
       "label": "PB collection championships",
@@ -9321,8 +9398,8 @@
       "contributor": null,
       "community": 24,
       "norm_label": "pb collection championships",
-      "id": "readme_schema_championships",
-      "community_name": "Competitions Rating Schema"
+      "community_name": "Competitions Rating Schema",
+      "id": "readme_schema_championships"
     },
     {
       "label": "PB collection matches",
@@ -9335,8 +9412,8 @@
       "contributor": null,
       "community": 24,
       "norm_label": "pb collection matches",
-      "id": "readme_schema_matches",
-      "community_name": "Competitions Rating Schema"
+      "community_name": "Competitions Rating Schema",
+      "id": "readme_schema_matches"
     },
     {
       "label": "PB collection gallery",
@@ -9349,8 +9426,8 @@
       "contributor": null,
       "community": 21,
       "norm_label": "pb collection gallery",
-      "id": "readme_schema_gallery",
-      "community_name": "Brand Assets Gallery Docs"
+      "community_name": "Brand Assets Gallery Docs",
+      "id": "readme_schema_gallery"
     },
     {
       "label": "SWR cache dedupe 5s",
@@ -9364,8 +9441,8 @@
       "rationale": "webview-friendly: no revalidateOnFocus",
       "community": 20,
       "norm_label": "swr cache dedupe 5s",
-      "id": "readme_swr_cache",
-      "community_name": "Audit Docs and Feed"
+      "community_name": "Audit Docs and Feed",
+      "id": "readme_swr_cache"
     },
     {
       "label": "Touch UI 60 FPS",
@@ -9378,8 +9455,8 @@
       "contributor": null,
       "community": 55,
       "norm_label": "touch ui 60 fps",
-      "id": "readme_touch_60fps",
-      "community_name": "Touch UI Performance"
+      "community_name": "Touch UI Performance",
+      "id": "readme_touch_60fps"
     },
     {
       "label": "Audit & Refactor Report",
@@ -9392,8 +9469,8 @@
       "contributor": null,
       "community": 20,
       "norm_label": "audit & refactor report",
-      "id": "audit_report",
-      "community_name": "Audit Docs and Feed"
+      "community_name": "Audit Docs and Feed",
+      "id": "audit_report"
     },
     {
       "label": "PB filter-injection fix",
@@ -9407,8 +9484,8 @@
       "rationale": "use pb.filter parameterized queries",
       "community": 20,
       "norm_label": "pb filter-injection fix",
-      "id": "audit_filter_injection",
-      "community_name": "Audit Docs and Feed"
+      "community_name": "Audit Docs and Feed",
+      "id": "audit_filter_injection"
     },
     {
       "label": "Soft-delete zombie records",
@@ -9422,8 +9499,8 @@
       "rationale": "flush on pagehide/visibilitychange",
       "community": 20,
       "norm_label": "soft-delete zombie records",
-      "id": "audit_soft_delete_zombies",
-      "community_name": "Audit Docs and Feed"
+      "community_name": "Audit Docs and Feed",
+      "id": "audit_soft_delete_zombies"
     },
     {
       "label": "AlertDialog replaces native dialogs",
@@ -9437,8 +9514,8 @@
       "rationale": "native alert/confirm broken in MAX webview",
       "community": 22,
       "norm_label": "alertdialog replaces native dialogs",
-      "id": "audit_alert_dialog",
-      "community_name": "MAX Bridge Auth Docs"
+      "community_name": "MAX Bridge Auth Docs",
+      "id": "audit_alert_dialog"
     },
     {
       "label": "Modal focus-trap a11y",
@@ -9451,8 +9528,8 @@
       "contributor": null,
       "community": 20,
       "norm_label": "modal focus-trap a11y",
-      "id": "audit_modal_a11y",
-      "community_name": "Audit Docs and Feed"
+      "community_name": "Audit Docs and Feed",
+      "id": "audit_modal_a11y"
     },
     {
       "label": "SWR data fetching migration",
@@ -9465,8 +9542,8 @@
       "contributor": null,
       "community": 20,
       "norm_label": "swr data fetching migration",
-      "id": "audit_swr_migration",
-      "community_name": "Audit Docs and Feed"
+      "community_name": "Audit Docs and Feed",
+      "id": "audit_swr_migration"
     },
     {
       "label": "useMaxAuth idempotent init",
@@ -9479,8 +9556,8 @@
       "contributor": null,
       "community": 22,
       "norm_label": "usemaxauth idempotent init",
-      "id": "audit_usemaxauth",
-      "community_name": "MAX Bridge Auth Docs"
+      "community_name": "MAX Bridge Auth Docs",
+      "id": "audit_usemaxauth"
     },
     {
       "label": "services split auth/posts/trainings/catalog",
@@ -9493,8 +9570,8 @@
       "contributor": null,
       "community": 33,
       "norm_label": "services split auth/posts/trainings/catalog",
-      "id": "audit_service_split",
-      "community_name": "Services Module Split"
+      "community_name": "Services Module Split",
+      "id": "audit_service_split"
     },
     {
       "label": "features/* folder structure",
@@ -9507,8 +9584,8 @@
       "contributor": null,
       "community": 32,
       "norm_label": "features/* folder structure",
-      "id": "audit_feature_folders",
-      "community_name": "Features Folder Structure"
+      "community_name": "Features Folder Structure",
+      "id": "audit_feature_folders"
     },
     {
       "label": "client/index.html entry",
@@ -9521,8 +9598,8 @@
       "contributor": null,
       "community": 22,
       "norm_label": "client/index.html entry",
-      "id": "client_index_html",
-      "community_name": "MAX Bridge Auth Docs"
+      "community_name": "MAX Bridge Auth Docs",
+      "id": "client_index_html"
     },
     {
       "label": "max-web-app.js SDK script",
@@ -9535,8 +9612,8 @@
       "contributor": null,
       "community": 22,
       "norm_label": "max-web-app.js sdk script",
-      "id": "client_index_max_sdk",
-      "community_name": "MAX Bridge Auth Docs"
+      "community_name": "MAX Bridge Auth Docs",
+      "id": "client_index_max_sdk"
     },
     {
       "label": "Title \u0421\u0435\u043a\u0446\u0438\u044f \u041c\u0438\u043b\u0435\u043d\u044c\u043a\u0438\u0445",
@@ -9549,8 +9626,8 @@
       "contributor": null,
       "community": 21,
       "norm_label": "title \u0441\u0435\u043a\u0446\u0438\u044f \u043c\u0438\u043b\u0435\u043d\u044c\u043a\u0438\u0445",
-      "id": "client_index_title",
-      "community_name": "Brand Assets Gallery Docs"
+      "community_name": "Brand Assets Gallery Docs",
+      "id": "client_index_title"
     },
     {
       "label": "Dropdown UI snippet",
@@ -9563,8 +9640,8 @@
       "contributor": null,
       "community": 29,
       "norm_label": "dropdown ui snippet",
-      "id": "drop_category_doc",
-      "community_name": "Dropdown UI Snippet"
+      "community_name": "Dropdown UI Snippet",
+      "id": "drop_category_doc"
     },
     {
       "label": "Dropdown UI",
@@ -9577,8 +9654,8 @@
       "contributor": null,
       "community": 29,
       "norm_label": "dropdown ui",
-      "id": "drop_category_ui_dropdown_snippet",
-      "community_name": "Dropdown UI Snippet"
+      "community_name": "Dropdown UI Snippet",
+      "id": "drop_category_ui_dropdown_snippet"
     },
     {
       "label": "Search input animation snippet",
@@ -9591,8 +9668,8 @@
       "contributor": null,
       "community": 31,
       "norm_label": "search input animation snippet",
-      "id": "search_button_1_doc",
-      "community_name": "Search UI Snippet"
+      "community_name": "Search UI Snippet",
+      "id": "search_button_1_doc"
     },
     {
       "label": "Search input animation",
@@ -9605,8 +9682,8 @@
       "contributor": null,
       "community": 31,
       "norm_label": "search input animation",
-      "id": "search_button_1_ui_search_snippet",
-      "community_name": "Search UI Snippet"
+      "community_name": "Search UI Snippet",
+      "id": "search_button_1_ui_search_snippet"
     },
     {
       "label": "Shopping cart animation snippet",
@@ -9619,8 +9696,8 @@
       "contributor": null,
       "community": 27,
       "norm_label": "shopping cart animation snippet",
-      "id": "shop_cart_button_doc",
-      "community_name": "Shop Cart Docs"
+      "community_name": "Shop Cart Docs",
+      "id": "shop_cart_button_doc"
     },
     {
       "label": "Shopping cart animation",
@@ -9633,8 +9710,8 @@
       "contributor": null,
       "community": 27,
       "norm_label": "shopping cart animation",
-      "id": "shop_cart_button_ui_cart_snippet",
-      "community_name": "Shop Cart Docs"
+      "community_name": "Shop Cart Docs",
+      "id": "shop_cart_button_ui_cart_snippet"
     },
     {
       "label": "Achievement badge tier 1 level 1",
@@ -9647,8 +9724,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "achievement badge tier 1 level 1",
-      "id": "client_src_assets_ach_1_1_png_badge",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_ach_1_1_png_badge"
     },
     {
       "label": "Achievement badge tier 1 level 2",
@@ -9661,8 +9738,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "achievement badge tier 1 level 2",
-      "id": "client_src_assets_ach_1_2_png_badge",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_ach_1_2_png_badge"
     },
     {
       "label": "Achievement badge tier 1 level 3",
@@ -9675,8 +9752,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "achievement badge tier 1 level 3",
-      "id": "client_src_assets_ach_1_3_png_badge",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_ach_1_3_png_badge"
     },
     {
       "label": "Achievement badge tier 1 level 4",
@@ -9689,8 +9766,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "achievement badge tier 1 level 4",
-      "id": "client_src_assets_ach_1_4_png_badge",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_ach_1_4_png_badge"
     },
     {
       "label": "Achievement badge tier 1 level 5",
@@ -9703,8 +9780,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "achievement badge tier 1 level 5",
-      "id": "client_src_assets_ach_1_5_png_badge",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_ach_1_5_png_badge"
     },
     {
       "label": "Achievement badge tier 2 level 1",
@@ -9717,8 +9794,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "achievement badge tier 2 level 1",
-      "id": "client_src_assets_ach_2_1_png_badge",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_ach_2_1_png_badge"
     },
     {
       "label": "Achievement badge tier 2 level 2",
@@ -9731,8 +9808,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "achievement badge tier 2 level 2",
-      "id": "client_src_assets_ach_2_2_png_badge",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_ach_2_2_png_badge"
     },
     {
       "label": "Achievement badge tier 2 level 3",
@@ -9745,8 +9822,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "achievement badge tier 2 level 3",
-      "id": "client_src_assets_ach_2_3_png_badge",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_ach_2_3_png_badge"
     },
     {
       "label": "Achievement badge tier 2 level 4",
@@ -9759,8 +9836,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "achievement badge tier 2 level 4",
-      "id": "client_src_assets_ach_2_4_png_badge",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_ach_2_4_png_badge"
     },
     {
       "label": "Achievement badge tier 2 level 5",
@@ -9773,8 +9850,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "achievement badge tier 2 level 5",
-      "id": "client_src_assets_ach_2_5_png_badge",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_ach_2_5_png_badge"
     },
     {
       "label": "Achievement badge tier 3 level 1",
@@ -9787,8 +9864,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "achievement badge tier 3 level 1",
-      "id": "client_src_assets_ach_3_1_png_badge",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_ach_3_1_png_badge"
     },
     {
       "label": "Achievement badge tier 3 level 2",
@@ -9801,8 +9878,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "achievement badge tier 3 level 2",
-      "id": "client_src_assets_ach_3_2_png_badge",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_ach_3_2_png_badge"
     },
     {
       "label": "Achievement badge tier 3 level 3",
@@ -9815,8 +9892,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "achievement badge tier 3 level 3",
-      "id": "client_src_assets_ach_3_3_png_badge",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_ach_3_3_png_badge"
     },
     {
       "label": "Achievement badge tier 3 level 4",
@@ -9829,8 +9906,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "achievement badge tier 3 level 4",
-      "id": "client_src_assets_ach_3_4_png_badge",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_ach_3_4_png_badge"
     },
     {
       "label": "Achievement badge tier 3 level 5",
@@ -9843,8 +9920,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "achievement badge tier 3 level 5",
-      "id": "client_src_assets_ach_3_5_png_badge",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_ach_3_5_png_badge"
     },
     {
       "label": "Achievement badge tier 4 level 1",
@@ -9857,8 +9934,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "achievement badge tier 4 level 1",
-      "id": "client_src_assets_ach_4_1_png_badge",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_ach_4_1_png_badge"
     },
     {
       "label": "Achievement badge tier 4 level 2",
@@ -9871,8 +9948,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "achievement badge tier 4 level 2",
-      "id": "client_src_assets_ach_4_2_png_badge",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_ach_4_2_png_badge"
     },
     {
       "label": "Achievement badge tier 4 level 3",
@@ -9885,8 +9962,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "achievement badge tier 4 level 3",
-      "id": "client_src_assets_ach_4_3_png_badge",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_ach_4_3_png_badge"
     },
     {
       "label": "Achievement badge tier 4 level 4",
@@ -9899,8 +9976,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "achievement badge tier 4 level 4",
-      "id": "client_src_assets_ach_4_4_png_badge",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_ach_4_4_png_badge"
     },
     {
       "label": "Achievement badge tier 4 level 5",
@@ -9913,8 +9990,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "achievement badge tier 4 level 5",
-      "id": "client_src_assets_ach_4_5_png_badge",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_ach_4_5_png_badge"
     },
     {
       "label": "Achievement badge tier 5 level 1",
@@ -9927,8 +10004,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "achievement badge tier 5 level 1",
-      "id": "client_src_assets_ach_5_1_png_badge",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_ach_5_1_png_badge"
     },
     {
       "label": "Achievement badge tier 5 level 2",
@@ -9941,8 +10018,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "achievement badge tier 5 level 2",
-      "id": "client_src_assets_ach_5_2_png_badge",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_ach_5_2_png_badge"
     },
     {
       "label": "Achievement badge tier 5 level 3",
@@ -9955,8 +10032,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "achievement badge tier 5 level 3",
-      "id": "client_src_assets_ach_5_3_png_badge",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_ach_5_3_png_badge"
     },
     {
       "label": "Achievement badge tier 5 level 4",
@@ -9969,8 +10046,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "achievement badge tier 5 level 4",
-      "id": "client_src_assets_ach_5_4_png_badge",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_ach_5_4_png_badge"
     },
     {
       "label": "Achievement badge tier 5 level 5",
@@ -9983,8 +10060,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "achievement badge tier 5 level 5",
-      "id": "client_src_assets_ach_5_5_png_badge",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_ach_5_5_png_badge"
     },
     {
       "label": "Export icon asset",
@@ -9997,8 +10074,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "export icon asset",
-      "id": "client_src_assets_icon_export_png_asset",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_icon_export_png_asset"
     },
     {
       "label": "Loader SVG asset",
@@ -10011,8 +10088,8 @@
       "contributor": null,
       "community": 21,
       "norm_label": "loader svg asset",
-      "id": "client_src_assets_loader_svg_asset",
-      "community_name": "Brand Assets Gallery Docs"
+      "community_name": "Brand Assets Gallery Docs",
+      "id": "client_src_assets_loader_svg_asset"
     },
     {
       "label": "Default avatar asset",
@@ -10025,8 +10102,8 @@
       "contributor": null,
       "community": 12,
       "norm_label": "default avatar asset",
-      "id": "client_src_assets_sm_avatar_png_asset",
-      "community_name": "Achievement Badge Assets"
+      "community_name": "Achievement Badge Assets",
+      "id": "client_src_assets_sm_avatar_png_asset"
     },
     {
       "label": "Brand/logo sm.png",
@@ -10039,8 +10116,8 @@
       "contributor": null,
       "community": 21,
       "norm_label": "brand/logo sm.png",
-      "id": "client_src_assets_sm_png_asset",
-      "community_name": "Brand Assets Gallery Docs"
+      "community_name": "Brand Assets Gallery Docs",
+      "id": "client_src_assets_sm_png_asset"
     }
   ],
   "links": [
@@ -13767,6 +13844,18 @@
       "_origin": "ast",
       "source": "client_src_components_ui_avatar",
       "target": "client_src_lib_avatar_getuseravatardata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statsgrowthmodal",
+      "target": "client_src_components_ui_avatar",
       "confidence_score": 1.0
     },
     {
@@ -18744,7 +18833,29 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
-      "source_location": "L20",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statsgrowthmodal",
+      "target": "client_src_features_admin_stats_statsgrowthmodal_formatbirthdate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
+      "source_location": "L28",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statsgrowthmodal",
+      "target": "client_src_features_admin_stats_statsgrowthmodal_formatdaytitle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
+      "source_location": "L43",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_admin_stats_statsgrowthmodal",
@@ -18756,7 +18867,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
-      "source_location": "L7",
+      "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_admin_stats_statsgrowthmodal",
@@ -18768,7 +18879,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
-      "source_location": "L7",
+      "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_admin_stats_statsgrowthmodal",
@@ -18780,7 +18891,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
-      "source_location": "L8",
+      "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_admin_stats_statsgrowthmodal",
@@ -18792,7 +18903,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
-      "source_location": "L8",
+      "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_admin_stats_statsgrowthmodal",
@@ -18804,7 +18915,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
-      "source_location": "L6",
+      "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_admin_stats_statsgrowthmodal",
@@ -18816,7 +18927,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
-      "source_location": "L6",
+      "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_admin_stats_statsgrowthmodal",
@@ -18828,7 +18939,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
-      "source_location": "L6",
+      "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_admin_stats_statsgrowthmodal",
@@ -18840,7 +18951,79 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
-      "source_location": "L5",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statsgrowthmodal",
+      "target": "client_src_features_profile_profileviewmodal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statsgrowthmodal",
+      "target": "client_src_features_profile_profileviewmodal_profileviewmodal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statsgrowthmodal",
+      "target": "client_src_lib_format",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statsgrowthmodal",
+      "target": "client_src_lib_format_formatpostdate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statsgrowthmodal",
+      "target": "client_src_services_auth",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statsgrowthmodal",
+      "target": "client_src_services_auth_getcurrentuser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
+      "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_admin_stats_statsgrowthmodal",
@@ -18852,11 +19035,47 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
-      "source_location": "L5",
+      "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_admin_stats_statsgrowthmodal",
       "target": "client_src_services_stats_fetchstatsgrowth",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statsgrowthmodal",
+      "target": "client_src_services_stats_fetchstatsgrowthday",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
+      "source_location": "L172",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statsgrowthmodal_statsgrowthmodal",
+      "target": "client_src_features_admin_stats_statsgrowthmodal_formatbirthdate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
+      "source_location": "L147",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statsgrowthmodal_statsgrowthmodal",
+      "target": "client_src_features_admin_stats_statsgrowthmodal_formatdaytitle",
       "confidence_score": 1.0
     },
     {
@@ -18865,7 +19084,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
-      "source_location": "L21",
+      "source_location": "L45",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_admin_stats_statsgrowthmodal_statsgrowthmodal",
@@ -18877,11 +19096,47 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
-      "source_location": "L34",
+      "source_location": "L169",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statsgrowthmodal_statsgrowthmodal",
+      "target": "client_src_lib_format_formatpostdate"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
+      "source_location": "L44",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statsgrowthmodal_statsgrowthmodal",
+      "target": "client_src_services_auth_getcurrentuser"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
+      "source_location": "L64",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_admin_stats_statsgrowthmodal_statsgrowthmodal",
       "target": "client_src_services_stats_fetchstatsgrowth"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "client/src/features/admin/stats/StatsGrowthModal.jsx",
+      "source_location": "L101",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statsgrowthmodal_statsgrowthmodal",
+      "target": "client_src_services_stats_fetchstatsgrowthday"
     },
     {
       "relation": "contains",
@@ -18909,7 +19164,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/admin/stats/StatsLineChart.jsx",
-      "source_location": "L43",
+      "source_location": "L44",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_admin_stats_statslinechart",
@@ -18944,7 +19199,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
-      "source_location": "L17",
+      "source_location": "L21",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_admin_stats_statstrainingscountmodal",
@@ -18968,7 +19223,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
-      "source_location": "L17",
+      "source_location": "L21",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_admin_stats_statstrainingscountmodal",
@@ -19084,7 +19339,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
-      "source_location": "L16",
+      "source_location": "L20",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_admin_stats_statstrainingscountmodal",
@@ -19132,7 +19387,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
-      "source_location": "L16",
+      "source_location": "L20",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_admin_stats_statstrainingscountmodal",
@@ -19145,7 +19400,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
-      "source_location": "L48",
+      "source_location": "L67",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_admin_stats_statstrainingscountmodal_statstrainingscountmodal",
@@ -19180,7 +19435,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
-      "source_location": "L16",
+      "source_location": "L20",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_admin_stats_statstrainingscountmodal",
@@ -19427,7 +19682,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
-      "source_location": "L23",
+      "source_location": "L28",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_admin_stats_statstrainingscountmodal",
@@ -19438,7 +19693,18 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
-      "source_location": "L32",
+      "source_location": "L46",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statstrainingscountmodal",
+      "target": "client_src_features_admin_stats_statstrainingscountmodal_formatdaytitle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
+      "source_location": "L37",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_admin_stats_statstrainingscountmodal",
@@ -19449,7 +19715,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
-      "source_location": "L47",
+      "source_location": "L64",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_admin_stats_statstrainingscountmodal",
@@ -19465,7 +19731,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_admin_stats_statstrainingscountmodal",
-      "target": "client_src_services_stats",
+      "target": "client_src_features_trainings_trainingdetailmodal",
       "confidence_score": 1.0
     },
     {
@@ -19477,7 +19743,151 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_admin_stats_statstrainingscountmodal",
+      "target": "client_src_features_trainings_trainingdetailmodal_trainingdetailmodal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statstrainingscountmodal",
+      "target": "client_src_lib_format",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statstrainingscountmodal",
+      "target": "client_src_lib_format_formatcarddatewithyear",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statstrainingscountmodal",
+      "target": "client_src_lib_format_formattimerange",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statstrainingscountmodal",
+      "target": "client_src_services_auth",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statstrainingscountmodal",
+      "target": "client_src_services_auth_getcurrentuser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statstrainingscountmodal",
+      "target": "client_src_services_auth_ismoderator",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statstrainingscountmodal",
+      "target": "client_src_services_pb",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statstrainingscountmodal",
+      "target": "client_src_services_pb_pb",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statstrainingscountmodal",
+      "target": "client_src_services_stats",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statstrainingscountmodal",
       "target": "client_src_services_stats_fetchstatstrainingscount",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statstrainingscountmodal",
+      "target": "client_src_services_stats_fetchstatstrainingsday",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
+      "source_location": "L287",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statstrainingscountmodal_statstrainingscountmodal",
+      "target": "client_src_features_admin_stats_statstrainingscountmodal_formatdaytitle",
       "confidence_score": 1.0
     },
     {
@@ -19486,11 +19896,71 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
-      "source_location": "L64",
+      "source_location": "L311",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statstrainingscountmodal_statstrainingscountmodal",
+      "target": "client_src_lib_format_formatcarddatewithyear"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
+      "source_location": "L311",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statstrainingscountmodal_statstrainingscountmodal",
+      "target": "client_src_lib_format_formattimerange"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
+      "source_location": "L65",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statstrainingscountmodal_statstrainingscountmodal",
+      "target": "client_src_services_auth_getcurrentuser"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
+      "source_location": "L66",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statstrainingscountmodal_statstrainingscountmodal",
+      "target": "client_src_services_auth_ismoderator"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
+      "source_location": "L89",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_admin_stats_statstrainingscountmodal_statstrainingscountmodal",
       "target": "client_src_services_stats_fetchstatstrainingscount"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "client/src/features/admin/stats/StatsTrainingsCountModal.jsx",
+      "source_location": "L126",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_admin_stats_statstrainingscountmodal_statstrainingscountmodal",
+      "target": "client_src_services_stats_fetchstatstrainingsday"
     },
     {
       "relation": "contains",
@@ -21085,7 +21555,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/TournamentPostDetailModal.jsx",
-      "source_location": "L150",
+      "source_location": "L158",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_tournamentpostdetailmodal_tournamentpostdetailmodal",
@@ -21097,7 +21567,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/TournamentPostDetailModal.jsx",
-      "source_location": "L70",
+      "source_location": "L78",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_tournamentpostdetailmodal_tournamentpostdetailmodal",
@@ -21109,7 +21579,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/TournamentPostDetailModal.jsx",
-      "source_location": "L95",
+      "source_location": "L103",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_tournamentpostdetailmodal_tournamentpostdetailmodal",
@@ -21121,7 +21591,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/TournamentPostDetailModal.jsx",
-      "source_location": "L55",
+      "source_location": "L58",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_tournamentpostdetailmodal_tournamentpostdetailmodal",
@@ -21133,7 +21603,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/TournamentPostDetailModal.jsx",
-      "source_location": "L75",
+      "source_location": "L83",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_tournamentpostdetailmodal_tournamentpostdetailmodal",
@@ -22538,7 +23008,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L273",
+      "source_location": "L282",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -22550,7 +23020,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L134",
+      "source_location": "L143",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -22562,7 +23032,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L140",
+      "source_location": "L149",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -22574,7 +23044,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L217",
+      "source_location": "L226",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -22586,7 +23056,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L200",
+      "source_location": "L209",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -22598,7 +23068,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L158",
+      "source_location": "L167",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -22610,7 +23080,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L96",
+      "source_location": "L100",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -32514,7 +32984,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/hooks/usePostViewTracker.js",
-      "source_location": "L20",
+      "source_location": "L24",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_hooks_usepostviewtracker",
@@ -32551,7 +33021,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/hooks/usePostViewTracker.js",
-      "source_location": "L64",
+      "source_location": "L70",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_hooks_usepostviewtracker_usepostviewtracker",
@@ -37938,7 +38408,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/stats.js",
-      "source_location": "L130",
+      "source_location": "L171",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_stats",
@@ -37949,7 +38419,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/stats.js",
-      "source_location": "L109",
+      "source_location": "L150",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_stats",
@@ -37982,6 +38452,17 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/stats.js",
+      "source_location": "L105",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_services_stats",
+      "target": "client_src_services_stats_fetchstatsgrowthday",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/services/stats.js",
       "source_location": "L58",
       "weight": 1.0,
       "_origin": "ast",
@@ -38004,6 +38485,17 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/stats.js",
+      "source_location": "L126",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_services_stats",
+      "target": "client_src_services_stats_fetchstatstrainingsday",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/services/stats.js",
       "source_location": "L29",
       "weight": 1.0,
       "_origin": "ast",
@@ -38015,7 +38507,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/stats.js",
-      "source_location": "L146",
+      "source_location": "L187",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_stats",
@@ -38027,7 +38519,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/stats.js",
-      "source_location": "L133",
+      "source_location": "L174",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_stats_fetchstatsachievementgrants",
@@ -40222,7 +40714,7 @@
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "pb_hooks/statslib.js",
-      "source_location": "L754",
+      "source_location": "L835",
       "weight": 1.0,
       "_origin": "ast",
       "context": "collection",
@@ -40267,7 +40759,7 @@
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "pb_hooks/statslib.js",
-      "source_location": "L753",
+      "source_location": "L834",
       "weight": 1.0,
       "_origin": "ast",
       "context": "collection",
@@ -40279,7 +40771,7 @@
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "pb_hooks/statslib.js",
-      "source_location": "L752",
+      "source_location": "L833",
       "weight": 1.0,
       "_origin": "ast",
       "context": "collection",
@@ -40291,7 +40783,7 @@
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "pb_hooks/statslib.js",
-      "source_location": "L750",
+      "source_location": "L830",
       "weight": 1.0,
       "_origin": "ast",
       "context": "collection",
@@ -40303,7 +40795,7 @@
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "pb_hooks/statslib.js",
-      "source_location": "L748",
+      "source_location": "L827",
       "weight": 1.0,
       "_origin": "ast",
       "context": "collection",
@@ -40315,7 +40807,19 @@
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "pb_hooks/statslib.js",
-      "source_location": "L749",
+      "source_location": "L828",
+      "weight": 1.0,
+      "_origin": "ast",
+      "context": "collection",
+      "source": "pb_hooks_statslib",
+      "target": "pb_hooks_statslib_getgrowthusersforday",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "indirect_call",
+      "confidence": "INFERRED",
+      "source_file": "pb_hooks/statslib.js",
+      "source_location": "L829",
       "weight": 1.0,
       "_origin": "ast",
       "context": "collection",
@@ -40327,12 +40831,24 @@
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "pb_hooks/statslib.js",
-      "source_location": "L751",
+      "source_location": "L831",
       "weight": 1.0,
       "_origin": "ast",
       "context": "collection",
       "source": "pb_hooks_statslib",
       "target": "pb_hooks_statslib_gettrainingscount",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "indirect_call",
+      "confidence": "INFERRED",
+      "source_file": "pb_hooks/statslib.js",
+      "source_location": "L832",
+      "weight": 1.0,
+      "_origin": "ast",
+      "context": "collection",
+      "source": "pb_hooks_statslib",
+      "target": "pb_hooks_statslib_gettrainingsforday",
       "confidence_score": 0.5
     },
     {
@@ -40383,7 +40899,7 @@
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "pb_hooks/statslib.js",
-      "source_location": "L745",
+      "source_location": "L824",
       "weight": 1.0,
       "_origin": "ast",
       "context": "collection",
@@ -40417,7 +40933,7 @@
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "pb_hooks/statslib.js",
-      "source_location": "L747",
+      "source_location": "L826",
       "weight": 1.0,
       "_origin": "ast",
       "context": "collection",
@@ -40451,7 +40967,7 @@
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "pb_hooks/statslib.js",
-      "source_location": "L746",
+      "source_location": "L825",
       "weight": 1.0,
       "_origin": "ast",
       "context": "collection",
@@ -40651,10 +41167,34 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pb_hooks/statslib.js",
+      "source_location": "L565",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_statslib_getgrowthusersforday",
+      "target": "pb_hooks_statslib_togmt7ymd",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/statslib.js",
       "source_location": "L482",
       "weight": 1.0,
       "_origin": "ast",
       "source": "pb_hooks_statslib_gettrainingscount",
+      "target": "pb_hooks_statslib_togmt7ymd",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/statslib.js",
+      "source_location": "L526",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_statslib_gettrainingsforday",
       "target": "pb_hooks_statslib_togmt7ymd",
       "confidence_score": 1.0
     },
@@ -40699,7 +41239,43 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pb_hooks/statslib.js",
-      "source_location": "L711",
+      "source_location": "L528",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_statslib_gettrainingsforday",
+      "target": "pb_hooks_statslib_hastimerangeended",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/statslib.js",
+      "source_location": "L551",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_statslib_getgrowthusersforday",
+      "target": "pb_hooks_statslib_parseperiod",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/statslib.js",
+      "source_location": "L511",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_statslib_gettrainingsforday",
+      "target": "pb_hooks_statslib_parseperiod",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/statslib.js",
+      "source_location": "L790",
       "weight": 1.0,
       "_origin": "ast",
       "source": "pb_hooks_statslib_periodfromrequest",
@@ -40711,7 +41287,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pb_hooks/statslib.js",
-      "source_location": "L585",
+      "source_location": "L664",
       "weight": 1.0,
       "_origin": "ast",
       "source": "pb_hooks_statslib_getachievementgrants",
@@ -40747,6 +41323,18 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pb_hooks/statslib.js",
+      "source_location": "L556",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_statslib_getgrowthusersforday",
+      "target": "pb_hooks_statslib_pbtimestamp",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/statslib.js",
       "source_location": "L257",
       "weight": 1.0,
       "_origin": "ast",
@@ -40763,6 +41351,18 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "pb_hooks_statslib_gettrainingscount",
+      "target": "pb_hooks_statslib_pbtimestamp",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/statslib.js",
+      "source_location": "L516",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_statslib_gettrainingsforday",
       "target": "pb_hooks_statslib_pbtimestamp",
       "confidence_score": 1.0
     },
@@ -40799,6 +41399,18 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "pb_hooks_statslib_getbooking",
+      "target": "pb_hooks_statslib_relationids",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/statslib.js",
+      "source_location": "L535",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_statslib_gettrainingsforday",
       "target": "pb_hooks_statslib_relationids",
       "confidence_score": 1.0
     },
@@ -40855,7 +41467,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pb_hooks/statslib.js",
-      "source_location": "L626",
+      "source_location": "L705",
       "weight": 1.0,
       "_origin": "ast",
       "source": "pb_hooks_statslib_getachievementgrants",
@@ -40879,7 +41491,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pb_hooks/statslib.js",
-      "source_location": "L597",
+      "source_location": "L676",
       "weight": 1.0,
       "_origin": "ast",
       "source": "pb_hooks_statslib_getachievementgrants",
@@ -40903,7 +41515,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pb_hooks/statslib.js",
-      "source_location": "L539",
+      "source_location": "L618",
       "weight": 1.0,
       "_origin": "ast",
       "source": "pb_hooks_statslib_getachievementsnow",
@@ -40915,7 +41527,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pb_hooks/statslib.js",
-      "source_location": "L538",
+      "source_location": "L617",
       "weight": 1.0,
       "_origin": "ast",
       "source": "pb_hooks_statslib_getachievementsnow",
@@ -41931,5 +42543,5 @@
       "source_file": "client/src/assets/ach/1_1.png"
     }
   ],
-  "built_at_commit": "fcb26556b8b51749e6f7a9e8ee95e19f40b9ad22"
+  "built_at_commit": "aeca27a9d1929ae21e945044c682333524f05228"
 }
