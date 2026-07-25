@@ -8,17 +8,7 @@ const CATEGORY_STYLES = Object.fromEntries(
     item.value,
     {
       label: item.label,
-      color:
-        {
-          feed: '#007aff',
-          tournament_feed: '#5856d6',
-          booking: '#34c759',
-          shop: '#ff9500',
-          gallery: '#af52de',
-          profile: '#5ac8fa',
-          subscription: '#00c7be',
-          admin: '#ff3b30'
-        }[item.value] || '#868e96'
+      color: item.color || '#868e96'
     }
   ])
 );
