@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import MediaPreviewGrid from './MediaPreviewGrid';
+import PostRichTextField from './PostRichTextField';
 import { compressImage } from '../../lib/compress';
 import {
   MAX_POST_MEDIA_FILES,
   isVideoFile,
   readSelectedFiles
 } from '../../lib/media';
+import { hasVisibleText } from './postRichText';
 
 /**
  * @param {{
@@ -34,13 +36,15 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
     return () => items.forEach((item) => URL.revokeObjectURL(item.url));
   }, [files]);
 
+  const hasText = hasVisibleText(text);
+
   const reset = () => {
     setText('');
     setFiles([]);
   };
 
   const handleClose = async () => {
-    if (text.trim() || files.length > 0) {
+    if (hasText || files.length > 0) {
       const ok = await confirm({
         title: 'Отменить публикацию?',
         message: 'Введённый текст и выбранные файлы будут потеряны.',
@@ -55,7 +59,7 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!text.trim() && files.length === 0) return;
+    if (!hasText && files.length === 0) return;
     const formData = new FormData();
     formData.append('content', text.trim());
     formData.append('author', user?.id || '');
@@ -69,18 +73,22 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Новая публикация">
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      title="Новая публикация"
+      className="create-post-modal"
+      overlayClassName="create-post-modal-overlay"
+    >
       <form onSubmit={handleSubmit} className="create-post-form">
         <label htmlFor="create-post-text" className="visually-hidden">
           Текст публикации
         </label>
-        <textarea
+        <PostRichTextField
           id="create-post-text"
-          name="post-content"
-          autoComplete="off"
-          placeholder="Что нового в секции?…"
           value={text}
-          onChange={(e) => setText(e.target.value)}
+          onChange={setText}
+          placeholder="Что нового в секции?…"
         />
 
         <div className="media-upload-group">
@@ -118,11 +126,11 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
           )}
         />
 
-        <div className="modal-actions">
+        <div className="modal-actions create-post-form__actions">
           <button
             type="submit"
             className="submit-btn-full"
-            disabled={!text.trim() && files.length === 0}
+            disabled={!hasText && files.length === 0}
           >
             Опубликовать
           </button>

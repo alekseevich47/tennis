@@ -2,6 +2,7 @@ import React, { memo, useMemo } from 'react';
 import clsx from 'clsx';
 import IconButton from '../../components/ui/IconButton';
 import PostMedia from './PostMedia';
+import PostContentHtml from './PostContentHtml';
 import CommentsPreview from './CommentsPreview';
 import sectionAvatarUrl from '../../assets/sm-avatar.png';
 import { usePostLikes } from '../../hooks/usePostLikes';
@@ -200,13 +201,13 @@ function PostCard({
       </div>
 
       <div className="feed-card-body">
-        <button
+        <PostContentHtml
+          as="button"
           type="button"
           className="post-text"
           onClick={handlePostTextClick}
-        >
-          {post.content || post.text}
-        </button>
+          content={post.content || post.text}
+        />
         <PostMedia
           post={post}
           hiddenMediaKey={hiddenMediaKey}
