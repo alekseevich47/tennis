@@ -4,7 +4,7 @@
   --bottom-nav-height: 56px;
 
   position: fixed;
-  bottom: calc(var(--bottom-nav-bottom) + env(safe-area-inset-bottom, 0px));
+  bottom: var(--bottom-nav-bottom);
   left: max(var(--bottom-nav-side), env(safe-area-inset-left, 0px));
   right: max(var(--bottom-nav-side), env(safe-area-inset-right, 0px));
   /* relative-containing block for sliding indicator */
