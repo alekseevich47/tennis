@@ -76,6 +76,7 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
   border: 1px solid #eaeaea;
   position: relative;
+  scroll-margin-top: 72px;
 }
 
 /* Компактный якорь для IntersectionObserver (просмотры ленты/турнира) */
@@ -599,6 +600,25 @@ button.post-card-like:hover:not(:disabled) {
   flex: 0 0 auto;
   min-height: 0;
   gap: 8px;
+}
+
+.post-rich-text--compact {
+  gap: 4px;
+}
+
+.post-rich-text--compact .post-rich-text__editor {
+  min-height: 44px;
+  max-height: min(28vh, 160px);
+  padding: 8px 10px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.post-rich-text--compact .post-format-toolbar--permanent .post-format-toolbar__btn {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
 }
 
 .post-rich-text__toolbar-row {
@@ -1658,21 +1678,12 @@ button.post-card-like:hover:not(:disabled) {
   padding: 0;
   background: #ffffff;
   gap: 10px;
+  align-items: flex-end;
 }
 
-.modal-comment-form-footer input {
+.modal-comment-form-footer .post-rich-text {
   flex: 1;
-  padding: 10px 14px;
-  border: 1px solid #ddd;
-  border-radius: 20px;
-  outline: none;
-  font-size: 14px;
-  margin: 0;
-}
-
-.modal-comment-form-footer input:focus-visible {
-  outline: 2px solid #007aff;
-  outline-offset: 2px;
+  min-width: 0;
 }
 
 .modal-comment-form-footer button {
@@ -1684,9 +1695,9 @@ button.post-card-like:hover:not(:disabled) {
   font-weight: 600;
   cursor: pointer;
   min-height: 44px;
+  flex-shrink: 0;
 }
 
-.modal-comment-form-footer input:disabled,
 .modal-comment-form-footer button:disabled {
   cursor: not-allowed;
   opacity: 0.65;
@@ -1694,20 +1705,17 @@ button.post-card-like:hover:not(:disabled) {
 
 .comment-edit-inline-form {
   display: flex;
-  gap: 6px;
+  flex-direction: column;
+  gap: 8px;
   margin-top: 6px;
 }
 
-.comment-edit-inline-form input {
-  flex: 1;
-  padding: 6px 10px;
-  border: 1px solid #ced4da;
-  border-radius: 8px;
-  font-size: 13px;
-  margin: 0;
+.comment-edit-inline-form__actions {
+  display: flex;
+  gap: 6px;
 }
 
-.comment-edit-inline-form button {
+.comment-edit-inline-form__actions button {
   background: #007aff;
   color: white;
   border: none;
@@ -1719,7 +1727,12 @@ button.post-card-like:hover:not(:disabled) {
   min-height: 32px;
 }
 
-.comment-edit-inline-form button[type='button'] {
+.comment-edit-inline-form__actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.comment-edit-inline-form__actions button[type='button'] {
   background: #f1f3f5;
   color: #495057;
 }
@@ -1832,4 +1845,218 @@ button.post-card-like:hover:not(:disabled) {
   font-size: 12px;
   font-weight: 600;
   line-height: 1;
+}
+
+/* Pinned posts sticky banner */
+.pinned-banner {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px) saturate(1.35);
+  -webkit-backdrop-filter: blur(16px) saturate(1.35);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.pinned-banner:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: 2px;
+}
+
+.pinned-banner__segments {
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  width: 100%;
+}
+
+.pinned-banner__segment {
+  flex: 1;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(0, 122, 255, 0.18);
+  transition: background 0.2s ease;
+}
+
+.pinned-banner__segment--active {
+  background: #007aff;
+}
+
+.pinned-banner__body {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.pinned-banner__thumb {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #eef1f4;
+}
+
+.pinned-banner__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+  will-change: transform, opacity;
+}
+
+.pinned-banner__text--exit {
+  animation: pinned-banner-exit 0.2s ease forwards;
+}
+
+.pinned-banner__text--enter {
+  animation: pinned-banner-enter 0.2s ease;
+}
+
+@keyframes pinned-banner-exit {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+}
+
+@keyframes pinned-banner-enter {
+  from {
+    transform: translateY(-8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.pinned-banner__label {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #007aff;
+}
+
+.pinned-banner__preview {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: #1f2937;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.pinned-banner__preview--empty {
+  min-height: 1.35em;
+}
+
+.pinned-banner__preview .post-anim-frame {
+  font-size: 12px;
+  height: 1.4em;
+  padding: 1px 8px;
+  vertical-align: baseline;
+}
+
+/* Long-press ring (portal to body) */
+.long-press-ring {
+  position: fixed;
+  z-index: 1150;
+  pointer-events: none;
+}
+
+.long-press-ring__track {
+  stroke: rgba(0, 0, 0, 0.12);
+}
+
+.long-press-ring__progress {
+  stroke: #007aff;
+}
+
+/* Post context menu (long-press, moderator) */
+.post-context-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  background: rgba(0, 0, 0, 0.02);
+  opacity: 0;
+  transition: opacity 150ms ease;
+  pointer-events: none;
+}
+
+.post-context-menu-backdrop--visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.post-context-menu {
+  position: fixed;
+  z-index: 1101;
+  min-width: 200px;
+  padding: 6px 0;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14), 0 2px 8px rgba(0, 0, 0, 0.06);
+  opacity: 0;
+  transform: scale(0.94);
+  transform-origin: top left;
+  transition: opacity 180ms ease, transform 180ms ease;
+  overflow: hidden;
+}
+
+.post-context-menu--visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.post-context-menu__item {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: none;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  color: #1f2937;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.post-context-menu__item:hover {
+  background: #f5f7fa;
+}
+
+.post-context-menu__item:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: -2px;
+}
+
+.post-context-menu__item--danger {
+  color: #ff3b30;
 }

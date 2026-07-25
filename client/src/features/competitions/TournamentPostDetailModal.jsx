@@ -19,7 +19,6 @@ import { recordContentView } from '../../services/stats';
  *   user?: any,
  *   userIsModerator?: boolean,
  *   onClose: () => void,
- *   onOpenEdit?: (post: import('../../services/tournamentPosts').TournamentPostRecord) => void,
  *   onOpenProfile?: (user: any) => void,
  *   hiddenMediaKey?: string | null,
  *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, thumbUrl: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void,
@@ -34,7 +33,6 @@ function TournamentPostDetailModal({
   user = null,
   userIsModerator = false,
   onClose,
-  onOpenEdit,
   onOpenProfile,
   hiddenMediaKey = null,
   onOpenFullscreen,
@@ -69,11 +67,6 @@ function TournamentPostDetailModal({
 
   if (!post) return null;
 
-  const handleOpenEdit = () => {
-    onOpenEdit?.(post);
-    handleClose();
-  };
-
   const handleOpenParticipantProfile = (participant) => {
     onOpenProfile?.(getParticipantPlayer(participant, playerMap));
   };
@@ -107,20 +100,6 @@ function TournamentPostDetailModal({
           </div>
         </div>
         <div className="tournament-post-detail-actions">
-          {userIsModerator && onOpenEdit ? (
-            <IconButton
-              ariaLabel="Редактировать публикацию"
-              variant="ghost"
-              size="sm"
-              className="edit-post-btn"
-              onClick={handleOpenEdit}
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path d="M4 20h4.2L19.3 8.9a2 2 0 0 0 0-2.8l-1.4-1.4a2 2 0 0 0-2.8 0L4 15.8V20Z" />
-                <path d="m13.7 6.1 4.2 4.2" />
-              </svg>
-            </IconButton>
-          ) : null}
           <IconButton
             type="button"
             className="ui-modal-close"

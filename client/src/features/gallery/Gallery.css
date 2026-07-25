@@ -487,26 +487,6 @@ button.gallery-item-like:hover:not(:disabled) {
   margin-top: 10px;
 }
 
-.gallery-comment-edit-form textarea {
-  width: 100%;
-  min-height: 78px;
-  resize: vertical;
-  border: 1px solid #dfe3e8;
-  border-radius: 12px;
-  padding: 10px 12px;
-  color: #333333;
-  font: inherit;
-  font-size: 14px;
-  line-height: 1.45;
-  box-sizing: border-box;
-}
-
-.gallery-comment-edit-form textarea:focus {
-  outline: none;
-  border-color: #007aff;
-  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12);
-}
-
 .gallery-comment-edit-form__actions {
   display: flex;
   justify-content: flex-end;
@@ -541,25 +521,6 @@ button.gallery-item-like:hover:not(:disabled) {
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 10px;
   align-items: end;
-}
-
-.gallery-comment-form textarea {
-  width: 100%;
-  min-height: 44px;
-  max-height: 120px;
-  resize: vertical;
-  border: 1px solid #dfe3e8;
-  border-radius: 12px;
-  padding: 10px 12px;
-  font: inherit;
-  line-height: 1.35;
-  box-sizing: border-box;
-}
-
-.gallery-comment-form textarea:focus {
-  outline: none;
-  border-color: #007aff;
-  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12);
 }
 
 .gallery-comment-form button {

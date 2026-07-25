@@ -2068,6 +2068,26 @@
       },
       {
         "hidden": false,
+        "id": "bool3043911736",
+        "name": "is_pinned",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "hidden": false,
+        "id": "date2575379294",
+        "max": "",
+        "min": "",
+        "name": "pinned_at",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "date"
+      },
+      {
+        "hidden": false,
         "id": "autodate2990389176",
         "name": "created",
         "onCreate": true,
@@ -2805,6 +2825,26 @@
         "hidden": false,
         "id": "bool4245145851",
         "name": "is_deleted",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "hidden": false,
+        "id": "date2575379294",
+        "max": "",
+        "min": "",
+        "name": "pinned_at",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "date"
+      },
+      {
+        "hidden": false,
+        "id": "bool3043911736",
+        "name": "is_pinned",
         "presentable": false,
         "required": false,
         "system": false,

@@ -4,6 +4,7 @@ import Avatar from '../../components/ui/Avatar';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { useToast } from '../../components/ui/ToastContext';
 import MediaPreviewGrid from '../feed/MediaPreviewGrid';
+import PostRichTextField from '../feed/PostRichTextField';
 import { compressImage } from '../../lib/compress';
 import {
   MAX_POST_MEDIA_FILES,
@@ -11,6 +12,7 @@ import {
   readSelectedFiles
 } from '../../lib/media';
 import { BOT_BLOCKED_TOURNAMENT_MESSAGE } from '../../services/auth';
+import { hasVisibleText } from '../feed/postRichText';
 /**
  * @param {{
  *   isOpen: boolean,
@@ -39,6 +41,8 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
     return () => items.forEach((item) => URL.revokeObjectURL(item.url));
   }, [files]);
 
+  const hasText = hasVisibleText(text);
+
   const reset = () => {
     setText('');
     setFiles([]);
@@ -47,7 +51,7 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
   };
 
   const handleClose = async () => {
-    if (text.trim() || files.length > 0 || Object.keys(pointsByUserId).length > 0) {
+    if (hasText || files.length > 0 || Object.keys(pointsByUserId).length > 0) {
       const ok = await confirm({
         title: 'Отменить публикацию?',
         message: 'Введённые данные будут потеряны.',
@@ -103,7 +107,7 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!text.trim()) return;
+    if (!hasText) return;
     if (selectedParticipants.length < 2) {
       showToast({ text: 'Выберите минимум двух участников с очками.' });
       return;
@@ -113,7 +117,7 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
       files.map((file) => (isVideoFile(file) ? file : compressImage(file)))
     );
     onCreated({
-      content: text.trim(),
+      content: text,
       files: preparedFiles,
       rawParticipants: selectedParticipants
     });
@@ -167,14 +171,11 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
         <label htmlFor="tournament-post-text" className="visually-hidden">
           Текст поста
         </label>
-        <textarea
+        <PostRichTextField
           id="tournament-post-text"
-          name="tournament-post-content"
-          autoComplete="off"
-          placeholder="Опишите итоги турнира…"
           value={text}
-          onChange={(event) => setText(event.target.value)}
-          required
+          onChange={setText}
+          placeholder="Опишите итоги турнира…"
         />
 
         <div className="create-tournament-post-participants">
@@ -244,7 +245,7 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
           <button
             type="submit"
             className="submit-btn-full"
-            disabled={!text.trim() || selectedParticipants.length < 2}
+            disabled={!hasText || selectedParticipants.length < 2}
           >
             Опубликовать
           </button>

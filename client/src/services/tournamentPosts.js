@@ -18,6 +18,8 @@ import { PB_URL } from '../config';
  * @property {TournamentParticipant[]} [participants]
  * @property {number} [post_number]
  * @property {boolean} [is_deleted]
+ * @property {boolean} [is_pinned]
+ * @property {string | null} [pinned_at]
  * @property {string} created
  * @property {Record<string, unknown>} [expand]
  */
@@ -80,6 +82,22 @@ export async function updateTournamentPost(id, data) {
   );
   invalidateTournamentCaches();
   return record;
+}
+
+/**
+ * @param {string} id
+ * @returns {Promise<TournamentPostRecord>}
+ */
+export async function pinTournamentPost(id) {
+  return updateTournamentPost(id, { is_pinned: true, pinned_at: new Date().toISOString() });
+}
+
+/**
+ * @param {string} id
+ * @returns {Promise<TournamentPostRecord>}
+ */
+export async function unpinTournamentPost(id) {
+  return updateTournamentPost(id, { is_pinned: false, pinned_at: null });
 }
 
 /**
