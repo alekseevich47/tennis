@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
+import FullscreenImageViewer from './FullscreenImageViewer';
 import MediaPreviewGrid from './MediaPreviewGrid';
 import PostRichTextField from './PostRichTextField';
+import { useLocalMediaFullscreen } from './useLocalMediaFullscreen';
 import { compressImage } from '../../lib/compress';
 import {
   MAX_POST_MEDIA_FILES,
@@ -24,6 +26,13 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
   const [files, setFiles] = useState(/** @type {File[]} */ ([]));
   const [previewItems, setPreviewItems] = useState([]);
   const { confirm } = useAlertDialog();
+  const {
+    openItem: openPreviewMedia,
+    fullscreen: previewFullscreen,
+    close: closePreviewFullscreen,
+    hiddenMediaKey,
+    onCloseStart: handlePreviewCloseStart
+  } = useLocalMediaFullscreen(previewItems, 'create-post');
 
   useEffect(() => {
     const items = files.map((file) => ({
@@ -114,11 +123,19 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
         <MediaPreviewGrid
           items={previewItems}
           className="create-post-preview-grid"
+          originKeyPrefix="create-post"
+          hiddenMediaKey={hiddenMediaKey}
+          onItemClick={openPreviewMedia}
           getAction={(item) => (
             <button
               type="button"
               className="media-remove-btn"
-              onClick={() => setFiles((current) => current.filter((file) => `${file.name}-${file.lastModified}` !== item.key))}
+              onClick={(event) => {
+                event.stopPropagation();
+                setFiles((current) =>
+                  current.filter((file) => `${file.name}-${file.lastModified}` !== item.key)
+                );
+              }}
               aria-label={`Убрать файл ${item.name}`}
             >
               <span aria-hidden="true">×</span>
@@ -136,6 +153,17 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
           </button>
         </div>
       </form>
+
+      {previewFullscreen ? (
+        <FullscreenImageViewer
+          items={previewFullscreen.items}
+          initialIndex={previewFullscreen.index}
+          originRect={previewFullscreen.originRect}
+          originKey={previewFullscreen.originKey}
+          onCloseStart={handlePreviewCloseStart}
+          onClose={closePreviewFullscreen}
+        />
+      ) : null}
     </Modal>
   );
 }

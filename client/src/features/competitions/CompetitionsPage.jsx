@@ -45,10 +45,18 @@ const SCROLL_DELTA_THRESHOLD = 4;
  *   onTabChange?: (tab: number) => void,
  *   onSubTabChange?: (subTab: string) => void,
  *   onDeletedIdsChange?: (ids: string[]) => void,
- *   searchQuery?: string
+ *   searchQuery?: string,
+ *   searchOpen?: boolean
  * }} props
  */
-function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChange, searchQuery = '' }) {
+function CompetitionsPage({
+  user,
+  onTabChange,
+  onSubTabChange,
+  onDeletedIdsChange,
+  searchQuery = '',
+  searchOpen = false
+}) {
   const moderator = isModerator();
   const { data: players } = usePlayers();
   const { data: posts, isLoading: postsLoading, mutate: mutateTournamentPosts } = useTournamentPosts({
@@ -96,13 +104,12 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
 
   const {
     activeIndex: activePinnedIndex,
-    advance: handleAdvancePinned,
     openPinned: handleOpenPinned
   } = usePinnedBannerIndex({
     pinnedPosts,
     containerRef,
     cardRefs,
-    enabled: activeTab === 'feed'
+    enabled: activeTab === 'feed' && !searchOpen
   });
 
   const filteredPosts = useMemo(() => {
@@ -354,12 +361,11 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
             </div>
           )}
 
-          {pinnedPosts.length > 0 && (
+          {pinnedPosts.length > 0 && !searchOpen && (
             <PinnedBanner
               pinnedPosts={pinnedPosts}
               collection="tournament_posts"
               activeIndex={activePinnedIndex}
-              onAdvance={handleAdvancePinned}
               onOpen={handleOpenPinned}
             />
           )}

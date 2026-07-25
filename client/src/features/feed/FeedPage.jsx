@@ -26,10 +26,11 @@ const SCROLL_DELTA_THRESHOLD = 4;
  * @param {{
  *   user: any,
  *   onDeletedIdsChange?: (ids: string[]) => void,
- *   searchQuery?: string
+ *   searchQuery?: string,
+ *   searchOpen?: boolean
  * }} props
  */
-function FeedPage({ user, onDeletedIdsChange, searchQuery = '' }) {
+function FeedPage({ user, onDeletedIdsChange, searchQuery = '', searchOpen = false }) {
   const userIsModerator = isModerator();
   const { data: posts, isLoading, mutate } = usePosts({ includeDeleted: userIsModerator });
 
@@ -103,12 +104,12 @@ function FeedPage({ user, onDeletedIdsChange, searchQuery = '' }) {
 
   const {
     activeIndex: activePinnedIndex,
-    advance: handleAdvancePinned,
     openPinned: handleOpenPinned
   } = usePinnedBannerIndex({
     pinnedPosts,
     containerRef,
-    cardRefs
+    cardRefs,
+    enabled: !searchOpen
   });
 
   const filteredPosts = useMemo(() => {
@@ -287,12 +288,11 @@ function FeedPage({ user, onDeletedIdsChange, searchQuery = '' }) {
         </div>
       )}
 
-      {pinnedPosts.length > 0 && (
+      {pinnedPosts.length > 0 && !searchOpen && (
         <PinnedBanner
           pinnedPosts={pinnedPosts}
           collection="posts"
           activeIndex={activePinnedIndex}
-          onAdvance={handleAdvancePinned}
           onOpen={handleOpenPinned}
         />
       )}

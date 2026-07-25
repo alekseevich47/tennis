@@ -60,6 +60,8 @@ export function usePinnedBannerIndex({
 }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const ignoreSyncRef = useRef(false);
+  /** Индекс, который держим после клика по плашке (не даём sync откатить). */
+  const lockedIndexRef = useRef(/** @type {number | null} */ (null));
   const rafRef = useRef(0);
   const pinnedIdsKey = pinnedPosts.map((p) => p.id).join(',');
 
@@ -91,6 +93,7 @@ export function usePinnedBannerIndex({
     if (!container) return undefined;
 
     const scheduleSync = () => {
+      if (ignoreSyncRef.current) return;
       if (rafRef.current) return;
       rafRef.current = window.requestAnimationFrame(() => {
         rafRef.current = 0;
@@ -98,11 +101,24 @@ export function usePinnedBannerIndex({
       });
     };
 
+    // После инерции/резкого скролла гарантируем финальный sync (иначе rAF мог
+    // посчитать позиции «между» кадрами и плашка остаётся на устаревшем индексе).
+    const syncSettled = () => {
+      if (ignoreSyncRef.current) return;
+      if (rafRef.current) {
+        window.cancelAnimationFrame(rafRef.current);
+        rafRef.current = 0;
+      }
+      syncFromScroll();
+    };
+
     syncFromScroll();
     container.addEventListener('scroll', scheduleSync, { passive: true });
+    container.addEventListener('scrollend', syncSettled);
     window.addEventListener('resize', scheduleSync);
     return () => {
       container.removeEventListener('scroll', scheduleSync);
+      container.removeEventListener('scrollend', syncSettled);
       window.removeEventListener('resize', scheduleSync);
       if (rafRef.current) window.cancelAnimationFrame(rafRef.current);
       rafRef.current = 0;
@@ -110,9 +126,14 @@ export function usePinnedBannerIndex({
   }, [enabled, pinnedIdsKey, syncFromScroll, containerRef]);
 
   const advance = useCallback(() => {
-    setActiveIndex((i) =>
-      pinnedPosts.length === 0 ? 0 : (i + 1) % pinnedPosts.length
-    );
+    setActiveIndex((i) => {
+      const next =
+        pinnedPosts.length === 0 ? 0 : (i + 1) % pinnedPosts.length;
+      if (ignoreSyncRef.current) {
+        lockedIndexRef.current = next;
+      }
+      return next;
+    });
   }, [pinnedPosts.length]);
 
   const openPinned = useCallback(
@@ -122,14 +143,33 @@ export function usePinnedBannerIndex({
       if (!el) return;
 
       const container = containerRef.current;
+      const openedIndex = pinnedPosts.findIndex((p) => p.id === post.id);
+      const nextIndex =
+        openedIndex >= 0 && pinnedPosts.length > 0
+          ? (openedIndex + 1) % pinnedPosts.length
+          : 0;
+
+      // Блокируем sync до конца программного скролла и фиксируем «следующий»
+      // индекс — иначе clearLock→syncFromScroll откатывает плашку назад,
+      // если карточка ещё не пересекла sticky-линию (почти нулевой скролл).
       ignoreSyncRef.current = true;
+      lockedIndexRef.current = nextIndex;
+      setActiveIndex(nextIndex);
+      if (rafRef.current) {
+        window.cancelAnimationFrame(rafRef.current);
+        rafRef.current = 0;
+      }
 
       let cleared = false;
       const clearLock = () => {
         if (cleared) return;
         cleared = true;
+        const keep = lockedIndexRef.current;
         ignoreSyncRef.current = false;
-        syncFromScroll();
+        lockedIndexRef.current = null;
+        if (keep != null) {
+          setActiveIndex(keep);
+        }
         container?.removeEventListener('scrollend', clearLock);
       };
 
@@ -137,7 +177,7 @@ export function usePinnedBannerIndex({
       window.setTimeout(clearLock, 900);
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     },
-    [cardRefs, containerRef, syncFromScroll]
+    [cardRefs, containerRef, pinnedPosts]
   );
 
   return { activeIndex, advance, openPinned, syncFromScroll };
