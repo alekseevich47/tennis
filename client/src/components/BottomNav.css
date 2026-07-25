@@ -56,14 +56,15 @@
   background: rgba(255, 255, 255, 0.97);
 }
 
-@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+/* TEMP: backdrop-filter отключён — проверка серого прямоугольника под пилюлей */
+/* @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
   .bottom-nav__glass {
     background: rgba(255, 255, 255, 0.28);
     backdrop-filter: blur(20px) saturate(1.5);
     -webkit-backdrop-filter: blur(20px) saturate(1.5);
     box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
   }
-}
+} */
 
 .bottom-nav__indicator {
   position: absolute;
