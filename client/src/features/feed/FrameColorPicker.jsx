@@ -86,6 +86,7 @@ function FrameColorPicker({ color, onChange, onApply, onClose }) {
     const s = Math.min(1, dist / radius);
     let h = (Math.atan2(dy, dx) * 180) / Math.PI;
     if (h < 0) h += 360;
+    // atan2: 0° = right; CSS conic uses from 90deg so hues align.
     const next = hsvToHex(h, s, 1);
     onChange(next);
     setHexInput(next);
@@ -146,7 +147,17 @@ function FrameColorPicker({ color, onChange, onApply, onClose }) {
       className="frame-color-picker"
       role="dialog"
       aria-label="Цвет анимационной рамки"
-      onMouseDown={(e) => e.preventDefault()}
+      onMouseDown={(e) => {
+        const target = e.target;
+        if (
+          target instanceof HTMLInputElement ||
+          target instanceof HTMLTextAreaElement ||
+          (target instanceof HTMLElement && target.closest('input, textarea'))
+        ) {
+          return;
+        }
+        e.preventDefault();
+      }}
     >
       <div className="frame-color-picker__row">
         <div className="frame-color-picker__wheel-col">
