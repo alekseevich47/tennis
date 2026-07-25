@@ -1,16 +1,16 @@
 # Graph Report - tennis  (2026-07-25)
 
 ## Corpus Check
-- 186 files · ~181,128 words
+- 187 files · ~181,336 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 947 nodes · 2990 edges · 55 communities (48 shown, 7 thin omitted)
+- 948 nodes · 2990 edges · 56 communities (49 shown, 7 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 108 edges (avg confidence: 0.61)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a098e088`
+- Built from commit: `ae0ac118`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -80,7 +80,7 @@
 - **PocketBase collections** — readme_schema_users, readme_schema_posts, readme_schema_comments, readme_schema_trainings, readme_schema_products, readme_schema_championships, readme_schema_matches, readme_schema_gallery [EXTRACTED 1.00]
 - **Achievement badge asset set** — client_src_assets_ach_1_1_png_badge, client_src_assets_ach_1_2_png_badge, client_src_assets_ach_1_3_png_badge, client_src_assets_ach_1_4_png_badge, client_src_assets_ach_1_5_png_badge, client_src_assets_ach_2_1_png_badge, client_src_assets_ach_2_2_png_badge, client_src_assets_ach_2_3_png_badge, client_src_assets_ach_2_4_png_badge, client_src_assets_ach_2_5_png_badge, client_src_assets_ach_3_1_png_badge, client_src_assets_ach_3_2_png_badge, client_src_assets_ach_3_3_png_badge, client_src_assets_ach_3_4_png_badge, client_src_assets_ach_3_5_png_badge, client_src_assets_ach_4_1_png_badge, client_src_assets_ach_4_2_png_badge, client_src_assets_ach_4_3_png_badge, client_src_assets_ach_4_4_png_badge, client_src_assets_ach_4_5_png_badge, client_src_assets_ach_5_1_png_badge, client_src_assets_ach_5_2_png_badge, client_src_assets_ach_5_3_png_badge, client_src_assets_ach_5_4_png_badge, client_src_assets_ach_5_5_png_badge [INFERRED 0.85]
 
-## Communities (55 total, 7 thin omitted)
+## Communities (56 total, 7 thin omitted)
 
 ### Community 0 - "App Shell Navigation"
 Cohesion: 0.07
@@ -191,9 +191,9 @@ Nodes (48): TournamentCommentsSection(), CommentSendButton(), FrameColorPicker()
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `error` connect `App Shell Navigation` to `Post Upload and UI Kit`, `Gallery Upload Flow`, `App.jsx`, `Audit Logs Modal`, `Achievements UI Block`, `FullscreenImageViewer.jsx`, `log.js`, `PostDetailModal.jsx`?**
-  _High betweenness centrality (0.115) - this node is a cross-community bridge._
+  _High betweenness centrality (0.114) - this node is a cross-community bridge._
 - **Why does `react` connect `Audit Logs Modal` to `NPM Dependencies`?**
-  _High betweenness centrality (0.068) - this node is a cross-community bridge._
+  _High betweenness centrality (0.067) - this node is a cross-community bridge._
 - **What connects `name`, `version`, `description` to the rest of the system?**
   _107 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `App Shell Navigation` be split into smaller, more focused modules?**
