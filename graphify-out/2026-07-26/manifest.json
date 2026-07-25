@@ -30,8 +30,8 @@
     "semantic_hash": "a5f97ceb0a531f5ce31a9216fa871c9a"
   },
   "client/src/components/BottomNav.jsx": {
-    "mtime": 1784997340.1695585,
-    "ast_hash": "880182cfb8740f4c468295a422a64177",
+    "mtime": 1784999915.8535972,
+    "ast_hash": "da4d69005f24d198d02a43fecc39f01a",
     "semantic_hash": ""
   },
   "client/src/components/FloatingAchievements.jsx": {
@@ -130,9 +130,9 @@
     "semantic_hash": "27fe46479a5bb300ab680199333238fd"
   },
   "client/src/features/admin/LogsModal.jsx": {
-    "mtime": 1784247569.0456307,
-    "ast_hash": "6862792d2925508121eb8a3290b33fb8",
-    "semantic_hash": "6862792d2925508121eb8a3290b33fb8"
+    "mtime": 1784999647.622814,
+    "ast_hash": "0ef3ddbe1051cb9a8823f6557083a733",
+    "semantic_hash": ""
   },
   "client/src/features/admin/NotificationSendModal.jsx": {
     "mtime": 1783649932.0885293,
@@ -500,9 +500,9 @@
     "semantic_hash": "ea0e061e0ed8950ccc1b992e5a66875a"
   },
   "client/src/hooks/useAuditEvents.js": {
-    "mtime": 1783703537.628997,
-    "ast_hash": "db18d1747449d06ae36ed755ef291330",
-    "semantic_hash": "db18d1747449d06ae36ed755ef291330"
+    "mtime": 1784999644.3837192,
+    "ast_hash": "783eeba0ef4a3c61566e216889d9a826",
+    "semantic_hash": ""
   },
   "client/src/hooks/useCommentLikes.js": {
     "mtime": 1782579147.2633572,
@@ -595,9 +595,9 @@
     "semantic_hash": "22244b070f519733a14fb8e4631148bf"
   },
   "client/src/lib/auditEventFormat.js": {
-    "mtime": 1783738880.8483064,
-    "ast_hash": "477bc127a4c508ae3df5cf975a2769cc",
-    "semantic_hash": "477bc127a4c508ae3df5cf975a2769cc"
+    "mtime": 1784999600.1016426,
+    "ast_hash": "188fd470cccd81c6eb6b65618d2e70b5",
+    "semantic_hash": ""
   },
   "client/src/lib/avatar.js": {
     "mtime": 1783157300.7778187,
@@ -660,9 +660,9 @@
     "semantic_hash": "4a209fb18279371b0b73c65e746cb873"
   },
   "client/src/services/auditLog.js": {
-    "mtime": 1783738875.9785798,
-    "ast_hash": "cc58eea7bc3c49f3b88f668e03c4375d",
-    "semantic_hash": "cc58eea7bc3c49f3b88f668e03c4375d"
+    "mtime": 1784999598.3464515,
+    "ast_hash": "902f54d9d7ac2ee23fbcbb4fec3c80d2",
+    "semantic_hash": ""
   },
   "client/src/services/auth.js": {
     "mtime": 1783702310.366938,
@@ -875,9 +875,9 @@
     "semantic_hash": "430ffb07fdf04da7c4013b537853ef5a"
   },
   "client/index.html": {
-    "mtime": 1778688871.7261171,
-    "ast_hash": "9dbec8f12bcf4e35846bc68c73394ea4",
-    "semantic_hash": "9dbec8f12bcf4e35846bc68c73394ea4"
+    "mtime": 1784999911.5483966,
+    "ast_hash": "83b091395ee514007e0d9fd17020629e",
+    "semantic_hash": ""
   },
   "drop_category.txt": {
     "mtime": 1780969502.2179108,
