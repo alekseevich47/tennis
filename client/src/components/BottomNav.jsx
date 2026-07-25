@@ -122,6 +122,7 @@ function BottomNav({ activeTab, onTabChange, showAdmin = false }) {
   return (
     <nav className="bottom-nav" aria-label="Основная навигация">
       <div ref={navRef} className="bottom-nav__pill">
+        <span className="bottom-nav__glass" aria-hidden="true" />
         <span
           className={clsx(
             'bottom-nav__indicator',

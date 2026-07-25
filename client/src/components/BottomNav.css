@@ -1,9 +1,10 @@
 .bottom-nav {
-  --bottom-nav-side: 16px;
-  --bottom-nav-bottom: 6px;
+  --bottom-nav-side: 20px;
+  --bottom-nav-bottom: 10px;
   --bottom-nav-height: 56px;
 
-  /* На весь низ экрана (без safe-area), пилюля внутри с отступом снизу */
+  /* Полоса на весь низ экрана (без safe-area) — пилюля внутри с отступами
+     от краёв, чтобы визуально «отлипала» от границ экрана. */
   position: fixed;
   left: 0;
   right: 0;
@@ -19,12 +20,9 @@
   background: transparent;
 }
 
-/*
- * Фолбэк без поддержки backdrop-filter (некоторые webview MAX): почти непрозрачный
- * белый фон и лёгкая тень без большого blur-радиуса — иначе получается серое
- * гало по краям вместо эффекта стекла.
- */
 .bottom-nav__pill {
+  /* Только форма + тень. Без overflow/border-radius-обрезки здесь, иначе
+     тень (box-shadow) обрезается вместе со стеклом. */
   position: relative;
   pointer-events: auto;
   display: flex;
@@ -36,20 +34,32 @@
   padding: 6px;
   box-sizing: border-box;
   border-radius: 28px;
-  border: none;
-  background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.14);
 }
 
-/* Эффект жидкого стекла — только там, где backdrop-filter реально поддерживается */
+/*
+ * Слой стекла — отдельный элемент с overflow:hidden, который обрезает
+ * backdrop-filter точно по скруглённому контуру. Если blur/backdrop-filter
+ * висит на том же элементе, что border-radius + box-shadow (без overflow),
+ * в некоторых webview он «протекает» за пределы скругления прямоугольным
+ * пятном — выглядит как серая рамка по краям пилюли. Разделение на два слоя
+ * убирает этот артефакт.
+ */
+.bottom-nav__glass {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: 28px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.97);
+}
+
 @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
-  .bottom-nav__pill {
-    background: rgba(255, 255, 255, 0.55);
-    backdrop-filter: blur(20px) saturate(1.45);
-    -webkit-backdrop-filter: blur(20px) saturate(1.45);
-    box-shadow:
-      0 8px 24px rgba(15, 23, 42, 0.1),
-      0 1px 0 rgba(255, 255, 255, 0.65) inset;
+  .bottom-nav__glass {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.7) inset;
   }
 }
 
@@ -58,6 +68,7 @@
   top: 6px;
   bottom: 6px;
   left: 0;
+  z-index: 1;
   border-radius: 22px;
   background: rgba(60, 60, 67, 0.1);
   pointer-events: none;
@@ -75,7 +86,7 @@
 
 .nav-item {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   flex: 1;
   display: flex;
   flex-direction: column;
