@@ -184,7 +184,7 @@ function LogsModal({ isOpen, onClose }) {
     };
   }, [dateRange, selectedCategories, objectType, subjectId, searchQuery]);
 
-  const { items, totalItems, isLoading, mutate } = useAuditEvents(filters, 1, perPage);
+  const { items, totalItems, isLoading, isValidating, mutate } = useAuditEvents(filters, 1, perPage);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -356,19 +356,27 @@ function LogsModal({ isOpen, onClose }) {
           >
             Все
           </button>
-          {AUDIT_EVENT_CATEGORIES.map((option) => (
-            <button
-              key={option.value}
-              type="button"
-              className={`logs-modal__domain-chip${
-                selectedCategories.has(option.value) ? ' logs-modal__domain-chip--active' : ''
-              }`}
-              aria-pressed={selectedCategories.has(option.value)}
-              onClick={() => toggleCategory(option.value)}
-            >
-              {option.label}
-            </button>
-          ))}
+          {AUDIT_EVENT_CATEGORIES.map((option) => {
+            const active = selectedCategories.has(option.value);
+            return (
+              <button
+                key={option.value}
+                type="button"
+                className={`logs-modal__domain-chip${
+                  active ? ' logs-modal__domain-chip--active' : ''
+                }`}
+                style={
+                  active
+                    ? { backgroundColor: option.color, borderColor: option.color }
+                    : undefined
+                }
+                aria-pressed={active}
+                onClick={() => toggleCategory(option.value)}
+              >
+                {option.label}
+              </button>
+            );
+          })}
         </div>
 
         {!isLoading && totalItems > 0 && !noCategoriesSelected ? (
@@ -403,10 +411,13 @@ function LogsModal({ isOpen, onClose }) {
               <button
                 type="button"
                 className="logs-modal__load-more"
-                onClick={() => setPerPage((prev) => prev + PER_PAGE_STEP)}
-                disabled={isLoading}
+                onClick={() => {
+                  if (isValidating) return;
+                  setPerPage((prev) => prev + PER_PAGE_STEP);
+                }}
+                aria-busy={isValidating || undefined}
               >
-                {isLoading ? 'Загрузка…' : `Показать ещё (${totalItems - items.length})`}
+                {isValidating ? 'Загрузка…' : `Показать ещё (${totalItems - items.length})`}
               </button>
             ) : null}
           </>

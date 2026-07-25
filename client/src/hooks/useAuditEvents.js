@@ -9,8 +9,11 @@ import { listAuditEvents } from '../services/auditLog';
  */
 export function useAuditEvents(filters, page = 1, perPage = 30) {
   const key = ['audit-events', JSON.stringify(filters), page, perPage];
-  const { data, error, isLoading, mutate } = useSWR(key, () =>
-    listAuditEvents({ ...filters, page, perPage })
+  // keepPreviousData: при «Показать ещё» (смена perPage) список не размонтируется → скролл/фокус не уезжают наверх
+  const { data, error, isLoading, isValidating, mutate } = useSWR(
+    key,
+    () => listAuditEvents({ ...filters, page, perPage }),
+    { keepPreviousData: true }
   );
 
   return {
@@ -20,6 +23,7 @@ export function useAuditEvents(filters, page = 1, perPage = 30) {
     page: data?.page ?? page,
     perPage: data?.perPage ?? perPage,
     isLoading,
+    isValidating,
     error,
     mutate
   };

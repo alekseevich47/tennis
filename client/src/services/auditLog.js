@@ -15,14 +15,14 @@ import pb from './pb';
  * }} AuditEventsFilters */
 
 export const AUDIT_EVENT_CATEGORIES = [
-  { value: 'feed', label: 'Лента' },
-  { value: 'tournament_feed', label: 'Турнир' },
-  { value: 'booking', label: 'Запись' },
-  { value: 'shop', label: 'Магазин' },
-  { value: 'gallery', label: 'Галерея' },
-  { value: 'profile', label: 'Профиль' },
-  { value: 'subscription', label: 'Абонемент' },
-  { value: 'admin', label: 'Админ-панель' }
+  { value: 'feed', label: 'Лента', color: '#007aff' },
+  { value: 'tournament_feed', label: 'Турнир', color: '#5856d6' },
+  { value: 'booking', label: 'Запись', color: '#34c759' },
+  { value: 'shop', label: 'Магазин', color: '#ff9500' },
+  { value: 'gallery', label: 'Галерея', color: '#af52de' },
+  { value: 'profile', label: 'Профиль', color: '#5ac8fa' },
+  { value: 'subscription', label: 'Абонемент', color: '#00c7be' },
+  { value: 'admin', label: 'Админ-панель', color: '#ff3b30' }
 ];
 
 export const AUDIT_OBJECT_TYPES = [
