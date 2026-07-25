@@ -6,7 +6,7 @@ const DEFAULT_PRESETS = ['#FF4D6D', '#FF9F0A', '#34C759', '#007AFF', '#AF52DE', 
 const ALLOWED_TAGS = new Set(['B', 'STRONG', 'I', 'EM', 'U', 'A', 'BR', 'DIV', 'P', 'SPAN']);
 const ALLOWED_ATTRS = {
   A: new Set(['href', 'target', 'rel']),
-  SPAN: new Set(['class', 'data-color', 'style'])
+  SPAN: new Set(['class', 'data-color', 'data-variants', 'style'])
 };
 
 /**
@@ -141,13 +141,21 @@ function serializeSanitized(node) {
 
   if (tag === 'SPAN' && isAnimFrame(el)) {
     const color = normalizeHexColor(el.getAttribute('data-color') || '') || '#FF4D6D';
-    const inner = Array.from(el.childNodes)
-      .map((child) => (child.nodeType === Node.TEXT_NODE ? (child.textContent || '') : child.textContent || ''))
-      .join('')
-      .replace(/\s+/g, ' ')
-      .trim();
-    const text = escapeHtml(inner || 'текст|вариант');
-    return `<span class="${FRAME_CLASS}" data-color="${color}" style="--frame-color:${color}">${text}</span>`;
+    const fromAttr = (el.getAttribute('data-variants') || '').trim();
+    const fromText = (el.textContent || '').replace(/\s+/g, ' ').trim();
+    // Prefer live text from editor (user may edit variants via `|`).
+    const raw = (fromText.includes('|') ? fromText : fromAttr || fromText) || 'текст|вариант';
+    const variants = raw
+      .split('|')
+      .map((part) => part.trim())
+      .filter(Boolean)
+      .join('|') || 'текст|вариант';
+    return (
+      `<span class="${FRAME_CLASS}" data-color="${color}" data-variants="${escapeHtml(variants)}" ` +
+      `style="--frame-color:${color}">` +
+      `<span class="post-anim-frame__text">${escapeHtml(variants)}</span>` +
+      `</span>`
+    );
   }
 
   if (tag === 'SPAN' || tag === 'DIV' || tag === 'P') {
@@ -195,22 +203,12 @@ export function toDisplayHtml(content) {
 }
 
 /**
- * @param {'bold' | 'italic' | 'underline' | 'link'} command
- * @param {string} [value]
+ * @param {'bold' | 'italic' | 'underline'} command
  */
-export function applyFormatCommand(command, value) {
+export function applyFormatCommand(command) {
   if (command === 'bold') document.execCommand('bold');
   else if (command === 'italic') document.execCommand('italic');
   else if (command === 'underline') document.execCommand('underline');
-  else if (command === 'link') {
-    const url = (value || '').trim();
-    if (!url) {
-      document.execCommand('unlink');
-      return;
-    }
-    const href = /^https?:\/\//i.test(url) || /^mailto:/i.test(url) ? url : `https://${url}`;
-    document.execCommand('createLink', false, href);
-  }
 }
 
 /**
@@ -235,24 +233,54 @@ export function applyAnimFrame(color, editor) {
     range.collapse(false);
   }
 
-  const selected = range.toString().replace(/\u200B/g, '').trim();
+  const selected = range.toString().replace(/[\u200B\u00A0]/g, '').trim();
   const text = selected || 'текст|вариант';
 
   const span = document.createElement('span');
   span.className = FRAME_CLASS;
   span.setAttribute('data-color', hex);
+  span.setAttribute('data-variants', text);
   span.style.setProperty('--frame-color', hex);
-  span.textContent = text;
+
+  const label = document.createElement('span');
+  label.className = 'post-anim-frame__text';
+  label.textContent = text;
+  span.appendChild(label);
 
   range.deleteContents();
   range.insertNode(span);
 
-  // caret after frame
-  range.setStartAfter(span);
+  const spacer = document.createTextNode('\u00A0');
+  if (span.nextSibling) {
+    span.parentNode?.insertBefore(spacer, span.nextSibling);
+  } else {
+    span.parentNode?.appendChild(spacer);
+  }
+
+  range.setStart(spacer, 1);
   range.collapse(true);
   selection.removeAllRanges();
   selection.addRange(range);
   return true;
+}
+
+/**
+ * Ensure each frame chip has a text node after it so the caret can sit outside.
+ * @param {HTMLElement | null} editor
+ */
+export function ensureFrameCarets(editor) {
+  if (!editor) return;
+  editor.querySelectorAll(`.${FRAME_CLASS}`).forEach((node) => {
+    const el = /** @type {HTMLElement} */ (node);
+    const next = el.nextSibling;
+    const hasSpacer =
+      next &&
+      next.nodeType === Node.TEXT_NODE &&
+      /[\u00A0\u200B\s]/.test(next.textContent || '');
+    if (!hasSpacer) {
+      el.after(document.createTextNode('\u00A0'));
+    }
+  });
 }
 
 /**
@@ -272,6 +300,7 @@ export function readActiveFormats() {
 
 /**
  * Cycle `|`-separated variants inside `.post-anim-frame` nodes.
+ * Animates only the inner text; the colored frame stays still.
  * @param {ParentNode | null} root
  * @param {number} [intervalMs]
  * @returns {() => void}
@@ -281,35 +310,58 @@ export function startAnimFrames(root, intervalMs = 1600) {
   const nodes = Array.from(root.querySelectorAll(`.${FRAME_CLASS}`));
   if (nodes.length === 0) return () => {};
 
-  /** @type {{ el: HTMLElement, variants: string[], index: number }[]} */
+  /** @type {{ el: HTMLElement, textEl: HTMLElement, variants: string[], index: number, busy: boolean }[]} */
   const items = nodes.map((node) => {
     const el = /** @type {HTMLElement} */ (node);
     const raw = (el.getAttribute('data-variants') || el.textContent || '').trim();
     const variants = raw.split('|').map((part) => part.trim()).filter(Boolean);
-    if (!el.getAttribute('data-variants')) {
-      el.setAttribute('data-variants', variants.join('|'));
-    }
+    const list = variants.length > 0 ? variants : [''];
+    el.setAttribute('data-variants', list.join('|'));
+
     const color = normalizeHexColor(el.getAttribute('data-color') || '') || '#FF4D6D';
     el.style.setProperty('--frame-color', color);
-    el.textContent = variants[0] || '';
-    return { el, variants: variants.length > 0 ? variants : [''], index: 0 };
+
+    let textEl = /** @type {HTMLElement | null} */ (el.querySelector('.post-anim-frame__text'));
+    if (!textEl) {
+      textEl = document.createElement('span');
+      textEl.className = 'post-anim-frame__text';
+      el.textContent = '';
+      el.appendChild(textEl);
+    }
+    textEl.textContent = list[0] || '';
+    return { el, textEl, variants: list, index: 0, busy: false };
   });
 
   const multi = items.filter((item) => item.variants.length > 1);
   if (multi.length === 0) return () => {};
 
+  /** @type {number[]} */
+  const timeouts = [];
+
   const timer = window.setInterval(() => {
     for (const item of multi) {
+      if (item.busy) continue;
+      item.busy = true;
       item.index = (item.index + 1) % item.variants.length;
-      item.el.classList.remove('is-swap');
-      // force reflow for CSS animation restart
-      void item.el.offsetWidth;
-      item.el.textContent = item.variants[item.index];
-      item.el.classList.add('is-swap');
+      const next = item.variants[item.index];
+
+      item.textEl.classList.remove('is-enter');
+      item.textEl.classList.add('is-exit');
+
+      const t = window.setTimeout(() => {
+        item.textEl.textContent = next;
+        item.textEl.classList.remove('is-exit');
+        item.textEl.classList.add('is-enter');
+        item.busy = false;
+      }, 220);
+      timeouts.push(t);
     }
   }, intervalMs);
 
-  return () => window.clearInterval(timer);
+  return () => {
+    window.clearInterval(timer);
+    timeouts.forEach((id) => window.clearTimeout(id));
+  };
 }
 
 export { FRAME_CLASS, DEFAULT_PRESETS };
