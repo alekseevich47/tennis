@@ -104,7 +104,7 @@ function PostRichTextField({
     }
 
     const toolbarWidth = floatingRef.current?.offsetWidth || 148;
-    const gap = 8;
+    const gap = 20;
     const left = Math.min(
       Math.max(8, rect.left + rect.width / 2 - toolbarWidth / 2),
       window.innerWidth - toolbarWidth - 8

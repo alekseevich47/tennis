@@ -250,7 +250,6 @@ function FrameColorPicker({ color, onChange, onApply, onClose }) {
               +
             </button>
           </div>
-          <p className="frame-color-picker__hint">+ добавить · удержать — удалить</p>
         </div>
       </div>
 

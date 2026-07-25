@@ -6,7 +6,7 @@ export const LONG_PRESS_DURATION_MS = 500;
 export const LONG_PRESS_MOVE_CANCEL_PX = 10;
 
 const RING_SIZE = 32;
-const RING_STROKE = 2.5;
+const RING_STROKE = 1.5;
 /** Смещение кольца вправо-вверх от точки касания (палец не перекрывает). */
 const RING_OFFSET_X = 28;
 const RING_OFFSET_Y = -40;

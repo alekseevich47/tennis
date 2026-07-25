@@ -37,7 +37,12 @@ const TABS = [
 ];
 
 const SCROLL_TOP_THRESHOLD = 8;
-const SCROLL_DELTA_THRESHOLD = 4;
+/** Накопленный сдвиг вниз, чтобы скрыть chrome */
+const SCROLL_HIDE_DELTA = 12;
+/** Накопленный сдвиг вверх (больше hide — анти-дребезг при fling) */
+const SCROLL_SHOW_DELTA = 28;
+/** Игнор scroll-событий после смены видимости (CSS transition + layout) */
+const SCROLL_CHROME_LOCK_MS = 280;
 
 /**
  * @param {{
@@ -77,6 +82,9 @@ function CompetitionsPage({
   const containerRef = useRef(null);
   const ratingScrollRef = useRef(null);
   const lastScrollTopRef = useRef(0);
+  const isChromeVisibleRef = useRef(true);
+  const chromeLockUntilRef = useRef(0);
+  const accumDeltaRef = useRef(0);
   const cardRefs = useRef(/** @type {Map<string, HTMLElement>} */ (new Map()));
   const { startUpload } = useTournamentPostUpload();
 
@@ -140,6 +148,9 @@ function CompetitionsPage({
         setContextMenuState(null);
         flushPendingTournamentCommentDeletes();
       }
+      isChromeVisibleRef.current = true;
+      chromeLockUntilRef.current = 0;
+      accumDeltaRef.current = 0;
       setIsChromeVisible(true);
       setActiveTab(tabId);
       onSubTabChange?.(tabId);
@@ -152,24 +163,52 @@ function CompetitionsPage({
       activeTab === 'feed' ? containerRef.current : ratingScrollRef.current;
     if (!container) return undefined;
 
+    const applyChromeVisible = (visible) => {
+      if (isChromeVisibleRef.current === visible) return;
+      isChromeVisibleRef.current = visible;
+      setIsChromeVisible(visible);
+      accumDeltaRef.current = 0;
+      chromeLockUntilRef.current = performance.now() + SCROLL_CHROME_LOCK_MS;
+      requestAnimationFrame(() => {
+        lastScrollTopRef.current = container.scrollTop;
+      });
+    };
+
     const syncVisibility = (scrollTop, delta) => {
       if (scrollTop <= SCROLL_TOP_THRESHOLD) {
-        setIsChromeVisible(true);
-      } else if (delta < -SCROLL_DELTA_THRESHOLD) {
-        setIsChromeVisible(true);
-      } else if (delta > SCROLL_DELTA_THRESHOLD) {
-        setIsChromeVisible(false);
+        accumDeltaRef.current = 0;
+        applyChromeVisible(true);
+        return;
+      }
+      if (performance.now() < chromeLockUntilRef.current) return;
+      if (delta === 0) return;
+
+      if (
+        accumDeltaRef.current !== 0
+        && Math.sign(accumDeltaRef.current) !== Math.sign(delta)
+      ) {
+        accumDeltaRef.current = delta;
+      } else {
+        accumDeltaRef.current += delta;
+      }
+
+      if (accumDeltaRef.current >= SCROLL_HIDE_DELTA) {
+        applyChromeVisible(false);
+      } else if (accumDeltaRef.current <= -SCROLL_SHOW_DELTA) {
+        applyChromeVisible(true);
       }
     };
 
     lastScrollTopRef.current = container.scrollTop;
+    accumDeltaRef.current = 0;
+    chromeLockUntilRef.current = 0;
     syncVisibility(container.scrollTop, 0);
 
     const handleScroll = () => {
       const scrollTop = container.scrollTop;
       const delta = scrollTop - lastScrollTopRef.current;
-      syncVisibility(scrollTop, delta);
       lastScrollTopRef.current = scrollTop;
+      syncVisibility(scrollTop, delta);
     };
 
     container.addEventListener('scroll', handleScroll, { passive: true });

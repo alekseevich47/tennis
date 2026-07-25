@@ -727,10 +727,12 @@ button.post-card-like:hover:not(:disabled) {
   gap: 0;
 }
 
-/* Всплывающий тулбар под выделением (portal → body) */
+/* Всплывающий тулбар под выделением (portal → body).
+   Выше `.gallery .ui-modal-overlay` (3200) и confirm (3300), иначе в
+   GalleryCommentModal тулбар оказывается под модалкой и не виден. */
 .post-format-toolbar-floating {
   position: fixed;
-  z-index: 2300;
+  z-index: 3400;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -1000,13 +1002,6 @@ button.post-card-like:hover:not(:disabled) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-}
-
-.frame-color-picker__hint {
-  margin: 8px 0 0;
-  font-size: 10px;
-  line-height: 1.3;
-  color: #aeaeb2;
 }
 
 .frame-color-picker__actions {
