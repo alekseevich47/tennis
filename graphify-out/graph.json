@@ -633,8 +633,8 @@
       "source_location": "L386",
       "_origin": "ast",
       "id": "client_src_app_app",
-      "community": 15,
-      "community_name": "Toast Notifications",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "app()"
     },
     {
@@ -963,8 +963,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_postuploadprovider",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "postuploadprovider.jsx"
     },
     {
@@ -974,8 +974,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_components_postuploadprovider_postuploadcontext",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "postuploadcontext"
     },
     {
@@ -985,8 +985,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_components_postuploadprovider_postuploadprovider",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "postuploadprovider()"
     },
     {
@@ -1062,8 +1062,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_tournamentpostuploadprovider",
-      "community": 15,
-      "community_name": "Toast Notifications",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "tournamentpostuploadprovider.jsx"
     },
     {
@@ -1073,8 +1073,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_components_tournamentpostuploadprovider_tournamentpostuploadcontext",
-      "community": 15,
-      "community_name": "Toast Notifications",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "tournamentpostuploadcontext"
     },
     {
@@ -1084,8 +1084,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_components_tournamentpostuploadprovider_tournamentpostuploadprovider",
-      "community": 15,
-      "community_name": "Toast Notifications",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "tournamentpostuploadprovider()"
     },
     {
@@ -1106,8 +1106,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_alertdialog",
-      "community": 3,
-      "community_name": "Modal and Alert Dialog",
+      "community": 6,
+      "community_name": "Header and Membership",
       "norm_label": "alertdialog.jsx"
     },
     {
@@ -1117,8 +1117,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "client_src_components_ui_alertdialog_alertdialogcontext",
-      "community": 3,
-      "community_name": "Modal and Alert Dialog",
+      "community": 6,
+      "community_name": "Header and Membership",
       "norm_label": "alertdialogcontext"
     },
     {
@@ -1128,8 +1128,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_components_ui_alertdialog_initial_state",
-      "community": 3,
-      "community_name": "Modal and Alert Dialog",
+      "community": 6,
+      "community_name": "Header and Membership",
       "norm_label": "initial_state"
     },
     {
@@ -1139,8 +1139,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "client_src_components_ui_alertdialog_alertdialogprovider",
-      "community": 15,
-      "community_name": "Toast Notifications",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "alertdialogprovider()"
     },
     {
@@ -1150,8 +1150,8 @@
       "source_location": "L133",
       "_origin": "ast",
       "id": "client_src_components_ui_alertdialog_usealertdialog",
-      "community": 3,
-      "community_name": "Modal and Alert Dialog",
+      "community": 6,
+      "community_name": "Header and Membership",
       "norm_label": "usealertdialog()"
     },
     {
@@ -1205,8 +1205,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_iconbutton",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "iconbutton.jsx"
     },
     {
@@ -1216,8 +1216,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_components_ui_iconbutton_iconbutton",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "iconbutton"
     },
     {
@@ -1249,8 +1249,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_modal",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 3,
+      "community_name": "Modal and Alert Dialog",
       "norm_label": "modal.jsx"
     },
     {
@@ -1260,8 +1260,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_components_ui_modal_focusable_selectors",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 3,
+      "community_name": "Modal and Alert Dialog",
       "norm_label": "focusable_selectors"
     },
     {
@@ -1271,8 +1271,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "client_src_components_ui_modal_modal",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 3,
+      "community_name": "Modal and Alert Dialog",
       "norm_label": "modal()"
     },
     {
@@ -1370,8 +1370,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_toggle",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "toggle.jsx"
     },
     {
@@ -1381,8 +1381,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_components_ui_toggle_toggle",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "toggle()"
     },
     {
@@ -1469,8 +1469,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_adminpanelpage",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "adminpanelpage.jsx"
     },
     {
@@ -1491,8 +1491,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_broadcastmodal",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "broadcastmodal.jsx"
     },
     {
@@ -1502,8 +1502,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "client_src_features_admin_broadcastmodal_defaultdatetimelocal",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "defaultdatetimelocal()"
     },
     {
@@ -1513,8 +1513,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "client_src_features_admin_broadcastmodal_getaudiencelabel",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "getaudiencelabel()"
     },
     {
@@ -1524,8 +1524,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "client_src_features_admin_broadcastmodal_broadcastmodal",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "broadcastmodal()"
     },
     {
@@ -1535,8 +1535,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_logsmodal",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 9,
+      "community_name": "Audit Logs Modal",
       "norm_label": "logsmodal.jsx"
     },
     {
@@ -1546,8 +1546,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "client_src_features_admin_logsmodal_all_category_values",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 9,
+      "community_name": "Audit Logs Modal",
       "norm_label": "all_category_values"
     },
     {
@@ -1557,8 +1557,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "client_src_features_admin_logsmodal_todateinputvalue",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 9,
+      "community_name": "Audit Logs Modal",
       "norm_label": "todateinputvalue()"
     },
     {
@@ -1568,8 +1568,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "client_src_features_admin_logsmodal_getlogsdefaultdaterange",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 9,
+      "community_name": "Audit Logs Modal",
       "norm_label": "getlogsdefaultdaterange()"
     },
     {
@@ -1579,8 +1579,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "client_src_features_admin_logsmodal_formatdaterangelabel",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 9,
+      "community_name": "Audit Logs Modal",
       "norm_label": "formatdaterangelabel()"
     },
     {
@@ -1590,8 +1590,8 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "client_src_features_admin_logsmodal_calendaricon",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 9,
+      "community_name": "Audit Logs Modal",
       "norm_label": "calendaricon()"
     },
     {
@@ -1601,8 +1601,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "client_src_features_admin_logsmodal_auditdetailvalue",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 9,
+      "community_name": "Audit Logs Modal",
       "norm_label": "auditdetailvalue()"
     },
     {
@@ -1623,8 +1623,8 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "client_src_features_admin_logsmodal_logsmodal",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 9,
+      "community_name": "Audit Logs Modal",
       "norm_label": "logsmodal()"
     },
     {
@@ -1634,8 +1634,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_notificationsendmodal",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "notificationsendmodal.jsx"
     },
     {
@@ -1645,8 +1645,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_admin_notificationsendmodal_defaultdatetimelocal",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "defaultdatetimelocal()"
     },
     {
@@ -1656,8 +1656,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "client_src_features_admin_notificationsendmodal_getaudiencelabel",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "getaudiencelabel()"
     },
     {
@@ -1667,8 +1667,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "client_src_features_admin_notificationsendmodal_notificationsendmodal",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "notificationsendmodal()"
     },
     {
@@ -1678,8 +1678,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_notificationsettingsmodal",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "notificationsettingsmodal.jsx"
     },
     {
@@ -1689,8 +1689,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_features_admin_notificationsettingsmodal_settings_rows",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "settings_rows"
     },
     {
@@ -1700,8 +1700,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "client_src_features_admin_notificationsettingsmodal_notificationsettingsmodal",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "notificationsettingsmodal()"
     },
     {
@@ -1711,8 +1711,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_statisticshubmodal",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "statisticshubmodal.jsx"
     },
     {
@@ -1722,8 +1722,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_features_admin_statisticshubmodal_metrics",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "metrics"
     },
     {
@@ -1733,8 +1733,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "client_src_features_admin_statisticshubmodal_statisticshubmodal",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "statisticshubmodal()"
     },
     {
@@ -1744,8 +1744,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 1,
+      "community_name": "Feed and Profile Pages",
       "norm_label": "usermultiselect.jsx"
     },
     {
@@ -1755,8 +1755,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect_getcollapsedlabel",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 1,
+      "community_name": "Feed and Profile Pages",
       "norm_label": "getcollapsedlabel()"
     },
     {
@@ -1766,8 +1766,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect_isuserchecked",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 1,
+      "community_name": "Feed and Profile Pages",
       "norm_label": "isuserchecked()"
     },
     {
@@ -1777,8 +1777,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect_usermultiselect",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 1,
+      "community_name": "Feed and Profile Pages",
       "norm_label": "usermultiselect()"
     },
     {
@@ -1788,8 +1788,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_adminresultalert",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "adminresultalert.js"
     },
     {
@@ -1799,8 +1799,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "client_src_features_admin_adminresultalert_formatadminsaveerror",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "formatadminsaveerror()"
     },
     {
@@ -1810,8 +1810,8 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "client_src_features_admin_adminresultalert_buildsendresultalert",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "buildsendresultalert()"
     },
     {
@@ -1821,8 +1821,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsachievementsmodal",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "statsachievementsmodal.jsx"
     },
     {
@@ -1832,8 +1832,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsachievementsmodal_modes",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "modes"
     },
     {
@@ -1843,8 +1843,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsachievementsmodal_statsachievementsmodal",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "statsachievementsmodal()"
     },
     {
@@ -1854,8 +1854,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsbookingmodal",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "statsbookingmodal.jsx"
     },
     {
@@ -1865,8 +1865,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsbookingmodal_slices",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "slices"
     },
     {
@@ -1876,8 +1876,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsbookingmodal_hasanyactivity",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "hasanyactivity()"
     },
     {
@@ -1887,8 +1887,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsbookingmodal_statsbookingmodal",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "statsbookingmodal()"
     },
     {
@@ -1898,8 +1898,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsgrowthmodal",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "statsgrowthmodal.jsx"
     },
     {
@@ -1909,8 +1909,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsgrowthmodal_formatbirthdate",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "formatbirthdate()"
     },
     {
@@ -1920,8 +1920,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsgrowthmodal_formatdaytitle",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "formatdaytitle()"
     },
     {
@@ -1931,8 +1931,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsgrowthmodal_statsgrowthmodal",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "statsgrowthmodal()"
     },
     {
@@ -1942,8 +1942,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statslinechart",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "statslinechart.jsx"
     },
     {
@@ -1953,8 +1953,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statslinechart_formataxisdate",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "formataxisdate()"
     },
     {
@@ -1964,8 +1964,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statslinechart_formattooltipdate",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "formattooltipdate()"
     },
     {
@@ -1975,8 +1975,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statslinechart_statslinechart",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "statslinechart()"
     },
     {
@@ -1986,8 +1986,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsmetrictitle",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "statsmetrictitle.jsx"
     },
     {
@@ -1997,8 +1997,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsmetrictitle_statsmetrictitle",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "statsmetrictitle()"
     },
     {
@@ -2008,8 +2008,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsperiodtoolbar",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "statsperiodtoolbar.jsx"
     },
     {
@@ -2019,8 +2019,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsperiodtoolbar_getstatsdefaultdaterange",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "getstatsdefaultdaterange()"
     },
     {
@@ -2030,8 +2030,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsperiodtoolbar_formatdaterangelabel",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "formatdaterangelabel()"
     },
     {
@@ -2041,8 +2041,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsperiodtoolbar_calendaricon",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "calendaricon()"
     },
     {
@@ -2052,8 +2052,8 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsperiodtoolbar_statsperiodtoolbar",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "statsperiodtoolbar()"
     },
     {
@@ -2063,8 +2063,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsreachmodal",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "statsreachmodal.jsx"
     },
     {
@@ -2074,8 +2074,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsreachmodal_typelabel",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "typelabel()"
     },
     {
@@ -2085,8 +2085,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsreachmodal_enrichtoppostnumbers",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "enrichtoppostnumbers()"
     },
     {
@@ -2096,8 +2096,8 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsreachmodal_infocircleicon",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "infocircleicon()"
     },
     {
@@ -2107,8 +2107,8 @@
       "source_location": "L99",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsreachmodal_statsreachmodal",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "statsreachmodal()"
     },
     {
@@ -2118,8 +2118,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statstrainingscountmodal",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "statstrainingscountmodal.jsx"
     },
     {
@@ -2129,8 +2129,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statstrainingscountmodal_formataxisdate",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "formataxisdate()"
     },
     {
@@ -2140,8 +2140,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statstrainingscountmodal_formattooltipdate",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "formattooltipdate()"
     },
     {
@@ -2151,8 +2151,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statstrainingscountmodal_formatdaytitle",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "formatdaytitle()"
     },
     {
@@ -2162,8 +2162,8 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statstrainingscountmodal_statstrainingscountmodal",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "statstrainingscountmodal()"
     },
     {
@@ -2475,6 +2475,50 @@
       "norm_label": "feedpage()"
     },
     {
+      "label": "FrameColorPicker.jsx",
+      "file_type": "code",
+      "source_file": "client/src/features/feed/FrameColorPicker.jsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "client_src_features_feed_framecolorpicker",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
+      "norm_label": "framecolorpicker.jsx"
+    },
+    {
+      "label": "hsvToHex()",
+      "file_type": "code",
+      "source_file": "client/src/features/feed/FrameColorPicker.jsx",
+      "source_location": "L16",
+      "_origin": "ast",
+      "id": "client_src_features_feed_framecolorpicker_hsvtohex",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
+      "norm_label": "hsvtohex()"
+    },
+    {
+      "label": "hexToHsv()",
+      "file_type": "code",
+      "source_file": "client/src/features/feed/FrameColorPicker.jsx",
+      "source_location": "L37",
+      "_origin": "ast",
+      "id": "client_src_features_feed_framecolorpicker_hextohsv",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
+      "norm_label": "hextohsv()"
+    },
+    {
+      "label": "FrameColorPicker()",
+      "file_type": "code",
+      "source_file": "client/src/features/feed/FrameColorPicker.jsx",
+      "source_location": "L66",
+      "_origin": "ast",
+      "id": "client_src_features_feed_framecolorpicker_framecolorpicker",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
+      "norm_label": "framecolorpicker()"
+    },
+    {
       "label": "FullscreenImageViewer.jsx",
       "file_type": "code",
       "source_file": "client/src/features/feed/FullscreenImageViewer.jsx",
@@ -2687,7 +2731,7 @@
       "label": "PostRichTextField()",
       "file_type": "code",
       "source_file": "client/src/features/feed/PostRichTextField.jsx",
-      "source_location": "L21",
+      "source_location": "L24",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtextfield_postrichtextfield",
       "community": 7,
@@ -2706,10 +2750,21 @@
       "norm_label": "postrichtext.js"
     },
     {
+      "label": "DEFAULT_PRESETS",
+      "file_type": "code",
+      "source_file": "client/src/features/feed/postRichText.js",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "client_src_features_feed_postrichtext_default_presets",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
+      "norm_label": "default_presets"
+    },
+    {
       "label": "ALLOWED_TAGS",
       "file_type": "code",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L1",
+      "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_allowed_tags",
       "community": 7,
@@ -2720,7 +2775,7 @@
       "label": "ALLOWED_ATTRS",
       "file_type": "code",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L2",
+      "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_allowed_attrs",
       "community": 7,
@@ -2731,7 +2786,7 @@
       "label": "escapeHtml()",
       "file_type": "code",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L10",
+      "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_escapehtml",
       "community": 7,
@@ -2739,10 +2794,43 @@
       "norm_label": "escapehtml()"
     },
     {
+      "label": "normalizeHexColor()",
+      "file_type": "code",
+      "source_file": "client/src/features/feed/postRichText.js",
+      "source_location": "L28",
+      "_origin": "ast",
+      "id": "client_src_features_feed_postrichtext_normalizehexcolor",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
+      "norm_label": "normalizehexcolor()"
+    },
+    {
+      "label": "loadFramePresets()",
+      "file_type": "code",
+      "source_file": "client/src/features/feed/postRichText.js",
+      "source_location": "L42",
+      "_origin": "ast",
+      "id": "client_src_features_feed_postrichtext_loadframepresets",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
+      "norm_label": "loadframepresets()"
+    },
+    {
+      "label": "saveFramePresets()",
+      "file_type": "code",
+      "source_file": "client/src/features/feed/postRichText.js",
+      "source_location": "L60",
+      "_origin": "ast",
+      "id": "client_src_features_feed_postrichtext_saveframepresets",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
+      "norm_label": "saveframepresets()"
+    },
+    {
       "label": "looksLikeRichHtml()",
       "file_type": "code",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L22",
+      "source_location": "L69",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_lookslikerichhtml",
       "community": 7,
@@ -2753,7 +2841,7 @@
       "label": "hasVisibleText()",
       "file_type": "code",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L30",
+      "source_location": "L77",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_hasvisibletext",
       "community": 7,
@@ -2764,7 +2852,7 @@
       "label": "isEditorEmpty()",
       "file_type": "code",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L41",
+      "source_location": "L88",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_iseditorempty",
       "community": 7,
@@ -2775,7 +2863,7 @@
       "label": "getEditorHtml()",
       "file_type": "code",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L51",
+      "source_location": "L98",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_geteditorhtml",
       "community": 7,
@@ -2786,7 +2874,7 @@
       "label": "sanitizePostHtml()",
       "file_type": "code",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L61",
+      "source_location": "L107",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_sanitizeposthtml",
       "community": 7,
@@ -2794,10 +2882,21 @@
       "norm_label": "sanitizeposthtml()"
     },
     {
+      "label": "isAnimFrame()",
+      "file_type": "code",
+      "source_file": "client/src/features/feed/postRichText.js",
+      "source_location": "L119",
+      "_origin": "ast",
+      "id": "client_src_features_feed_postrichtext_isanimframe",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
+      "norm_label": "isanimframe()"
+    },
+    {
       "label": "serializeSanitized()",
       "file_type": "code",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L73",
+      "source_location": "L127",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_serializesanitized",
       "community": 7,
@@ -2808,7 +2907,7 @@
       "label": "toDisplayHtml()",
       "file_type": "code",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L127",
+      "source_location": "L191",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_todisplayhtml",
       "community": 7,
@@ -2819,7 +2918,7 @@
       "label": "applyFormatCommand()",
       "file_type": "code",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L137",
+      "source_location": "L201",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_applyformatcommand",
       "community": 7,
@@ -2827,15 +2926,37 @@
       "norm_label": "applyformatcommand()"
     },
     {
+      "label": "applyAnimFrame()",
+      "file_type": "code",
+      "source_file": "client/src/features/feed/postRichText.js",
+      "source_location": "L222",
+      "_origin": "ast",
+      "id": "client_src_features_feed_postrichtext_applyanimframe",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
+      "norm_label": "applyanimframe()"
+    },
+    {
       "label": "readActiveFormats()",
       "file_type": "code",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L155",
+      "source_location": "L261",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_readactiveformats",
       "community": 7,
       "community_name": "Admin Panel Stats",
       "norm_label": "readactiveformats()"
+    },
+    {
+      "label": "startAnimFrames()",
+      "file_type": "code",
+      "source_file": "client/src/features/feed/postRichText.js",
+      "source_location": "L279",
+      "_origin": "ast",
+      "id": "client_src_features_feed_postrichtext_startanimframes",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
+      "norm_label": "startanimframes()"
     },
     {
       "label": "AddImageModal.jsx",
@@ -2866,8 +2987,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_gallery_gallerycommentmodal",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "gallerycommentmodal.jsx"
     },
     {
@@ -2877,8 +2998,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "client_src_features_gallery_gallerycommentmodal_gallerycommentmodal",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "gallerycommentmodal()"
     },
     {
@@ -3086,8 +3207,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial",
-      "community": 10,
-      "community_name": "Avatar Crop Viewer",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "onboardingtutorial.jsx"
     },
     {
@@ -3097,8 +3218,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_tour_steps",
-      "community": 10,
-      "community_name": "Avatar Crop Viewer",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "tour_steps"
     },
     {
@@ -3108,8 +3229,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_card_steps",
-      "community": 10,
-      "community_name": "Avatar Crop Viewer",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "card_steps"
     },
     {
@@ -3119,8 +3240,8 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_nav_steps",
-      "community": 10,
-      "community_name": "Avatar Crop Viewer",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "nav_steps"
     },
     {
@@ -3130,8 +3251,8 @@
       "source_location": "L67",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_normalizedateinput",
-      "community": 10,
-      "community_name": "Avatar Crop Viewer",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "normalizedateinput()"
     },
     {
@@ -3141,8 +3262,8 @@
       "source_location": "L72",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_scrolltargetintoview",
-      "community": 10,
-      "community_name": "Avatar Crop Viewer",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "scrolltargetintoview()"
     },
     {
@@ -3152,8 +3273,8 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_padhighlightrect",
-      "community": 10,
-      "community_name": "Avatar Crop Viewer",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "padhighlightrect()"
     },
     {
@@ -3163,8 +3284,8 @@
       "source_location": "L110",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_gettooltipstyle",
-      "community": 10,
-      "community_name": "Avatar Crop Viewer",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "gettooltipstyle()"
     },
     {
@@ -3174,8 +3295,8 @@
       "source_location": "L129",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_getstepselectors",
-      "community": 10,
-      "community_name": "Avatar Crop Viewer",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "getstepselectors()"
     },
     {
@@ -3185,8 +3306,8 @@
       "source_location": "L139",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_onboardingtutorial",
-      "community": 10,
-      "community_name": "Avatar Crop Viewer",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "onboardingtutorial()"
     },
     {
@@ -3680,8 +3801,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_rating_playerform",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 3,
+      "community_name": "Modal and Alert Dialog",
       "norm_label": "playerform.jsx"
     },
     {
@@ -3691,8 +3812,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_features_rating_playerform_initial",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 3,
+      "community_name": "Modal and Alert Dialog",
       "norm_label": "initial"
     },
     {
@@ -3702,8 +3823,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_features_rating_playerform_playerform",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 3,
+      "community_name": "Modal and Alert Dialog",
       "norm_label": "playerform()"
     },
     {
@@ -4175,8 +4296,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_trainingcard",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "trainingcard.jsx"
     },
     {
@@ -4307,8 +4428,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_daterangemodal",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 6,
+      "community_name": "Header and Membership",
       "norm_label": "daterangemodal.jsx"
     },
     {
@@ -4318,8 +4439,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_daterangemodal_getdefaultdaterange",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 6,
+      "community_name": "Header and Membership",
       "norm_label": "getdefaultdaterange()"
     },
     {
@@ -4340,8 +4461,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_daterangemodal_formatrangehint",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 6,
+      "community_name": "Header and Membership",
       "norm_label": "formatrangehint()"
     },
     {
@@ -4351,8 +4472,8 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_daterangemodal_daterangemodal",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 6,
+      "community_name": "Header and Membership",
       "norm_label": "daterangemodal()"
     },
     {
@@ -4703,8 +4824,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usegallerycomments",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "usegallerycomments.js"
     },
     {
@@ -4714,8 +4835,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_hooks_usegallerycomments_usegallerycomments",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "usegallerycomments()"
     },
     {
@@ -4780,8 +4901,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_useonboarding",
-      "community": 10,
-      "community_name": "Avatar Crop Viewer",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "useonboarding.js"
     },
     {
@@ -4791,8 +4912,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_hooks_useonboarding_useonboarding",
-      "community": 10,
-      "community_name": "Avatar Crop Viewer",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "useonboarding()"
     },
     {
@@ -5011,8 +5132,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usetournamentposts",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "usetournamentposts.js"
     },
     {
@@ -5022,8 +5143,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_hooks_usetournamentposts_usetournamentposts",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "usetournamentposts()"
     },
     {
@@ -5033,8 +5154,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usetrainings",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "usetrainings.js"
     },
     {
@@ -5044,8 +5165,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_hooks_usetrainings_usetrainings",
-      "community": 16,
-      "community_name": "Training Notification Badges",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "usetrainings()"
     },
     {
@@ -5330,8 +5451,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_datepickerutils_todateinputvalue",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 6,
+      "community_name": "Header and Membership",
       "norm_label": "todateinputvalue()"
     },
     {
@@ -5352,8 +5473,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_lib_datepickerutils_toselectedrange",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 6,
+      "community_name": "Header and Membership",
       "norm_label": "toselectedrange()"
     },
     {
@@ -5627,8 +5748,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_lib_format_pad2",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 9,
+      "community_name": "Audit Logs Modal",
       "norm_label": "pad2()"
     },
     {
@@ -5682,8 +5803,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "client_src_lib_format_hastimerangeended",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 1,
+      "community_name": "Feed and Profile Pages",
       "norm_label": "hastimerangeended()"
     },
     {
@@ -5825,8 +5946,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_log",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "log.js"
     },
     {
@@ -5836,8 +5957,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_lib_log_noop",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "noop()"
     },
     {
@@ -5847,8 +5968,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_lib_log_error",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "error"
     },
     {
@@ -6012,8 +6133,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_main",
-      "community": 15,
-      "community_name": "Toast Notifications",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "main.jsx"
     },
     {
@@ -6023,8 +6144,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_main_globalerrorfallback",
-      "community": 15,
-      "community_name": "Toast Notifications",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "globalerrorfallback()"
     },
     {
@@ -6166,8 +6287,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_admin",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "admin.js"
     },
     {
@@ -6177,8 +6298,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_services_admin_dispatchnow",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "dispatchnow()"
     },
     {
@@ -6188,8 +6309,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "client_src_services_admin_todatetimelocalvalue",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "todatetimelocalvalue()"
     },
     {
@@ -6199,8 +6320,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "client_src_services_admin_fromdatetimelocalvalue",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "fromdatetimelocalvalue()"
     },
     {
@@ -6210,8 +6331,8 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "client_src_services_admin_buildbroadcastrecordpayload",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "buildbroadcastrecordpayload()"
     },
     {
@@ -6221,8 +6342,8 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "client_src_services_admin_listscheduledbroadcasts",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "listscheduledbroadcasts()"
     },
     {
@@ -6232,8 +6353,8 @@
       "source_location": "L115",
       "_origin": "ast",
       "id": "client_src_services_admin_createscheduledbroadcast",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "createscheduledbroadcast()"
     },
     {
@@ -6243,8 +6364,8 @@
       "source_location": "L160",
       "_origin": "ast",
       "id": "client_src_services_admin_updatescheduledbroadcast",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "updatescheduledbroadcast()"
     },
     {
@@ -6254,8 +6375,8 @@
       "source_location": "L206",
       "_origin": "ast",
       "id": "client_src_services_admin_cancelscheduledbroadcast",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "cancelscheduledbroadcast()"
     },
     {
@@ -6265,8 +6386,8 @@
       "source_location": "L210",
       "_origin": "ast",
       "id": "client_src_services_admin_listschedulednotifications",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "listschedulednotifications()"
     },
     {
@@ -6276,8 +6397,8 @@
       "source_location": "L223",
       "_origin": "ast",
       "id": "client_src_services_admin_createschedulednotification",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "createschedulednotification()"
     },
     {
@@ -6287,8 +6408,8 @@
       "source_location": "L263",
       "_origin": "ast",
       "id": "client_src_services_admin_updateschedulednotification",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "updateschedulednotification()"
     },
     {
@@ -6298,8 +6419,8 @@
       "source_location": "L295",
       "_origin": "ast",
       "id": "client_src_services_admin_cancelschedulednotification",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "cancelschedulednotification()"
     },
     {
@@ -6309,8 +6430,8 @@
       "source_location": "L299",
       "_origin": "ast",
       "id": "client_src_services_admin_getnotificationsettings",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "getnotificationsettings()"
     },
     {
@@ -6320,8 +6441,8 @@
       "source_location": "L308",
       "_origin": "ast",
       "id": "client_src_services_admin_updatenotificationsettings",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "updatenotificationsettings()"
     },
     {
@@ -6551,8 +6672,8 @@
       "source_location": "L172",
       "_origin": "ast",
       "id": "client_src_services_auth_getcurrentuser",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "getcurrentuser()"
     },
     {
@@ -6562,8 +6683,8 @@
       "source_location": "L180",
       "_origin": "ast",
       "id": "client_src_services_auth_ismoderator",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "ismoderator()"
     },
     {
@@ -6650,8 +6771,8 @@
       "source_location": "L279",
       "_origin": "ast",
       "id": "client_src_services_auth_completeonboarding",
-      "community": 10,
-      "community_name": "Avatar Crop Viewer",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "completeonboarding()"
     },
     {
@@ -6661,8 +6782,8 @@
       "source_location": "L289",
       "_origin": "ast",
       "id": "client_src_services_auth_updateuserprofile",
-      "community": 10,
-      "community_name": "Avatar Crop Viewer",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "updateuserprofile()"
     },
     {
@@ -6826,8 +6947,8 @@
       "source_location": "L333",
       "_origin": "ast",
       "id": "client_src_services_catalog_createplayer",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 1,
+      "community_name": "Feed and Profile Pages",
       "norm_label": "createplayer()"
     },
     {
@@ -6947,8 +7068,8 @@
       "source_location": "L544",
       "_origin": "ast",
       "id": "client_src_services_catalog_listgallerycomments",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "listgallerycomments()"
     },
     {
@@ -6958,8 +7079,8 @@
       "source_location": "L565",
       "_origin": "ast",
       "id": "client_src_services_catalog_creategallerycomment",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "creategallerycomment()"
     },
     {
@@ -6969,8 +7090,8 @@
       "source_location": "L579",
       "_origin": "ast",
       "id": "client_src_services_catalog_deletegallerycomment",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "deletegallerycomment()"
     },
     {
@@ -6980,8 +7101,8 @@
       "source_location": "L588",
       "_origin": "ast",
       "id": "client_src_services_catalog_updategallerycomment",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "updategallerycomment()"
     },
     {
@@ -7090,8 +7211,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_pb",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "pb.js"
     },
     {
@@ -7101,8 +7222,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_services_pb_pb",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "pb"
     },
     {
@@ -7200,8 +7321,8 @@
       "source_location": "L162",
       "_origin": "ast",
       "id": "client_src_services_posts_createpostwithprogress",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "createpostwithprogress()"
     },
     {
@@ -7211,8 +7332,8 @@
       "source_location": "L230",
       "_origin": "ast",
       "id": "client_src_services_posts_updatepost",
-      "community": 3,
-      "community_name": "Modal and Alert Dialog",
+      "community": 1,
+      "community_name": "Feed and Profile Pages",
       "norm_label": "updatepost()"
     },
     {
@@ -7288,8 +7409,8 @@
       "source_location": "L341",
       "_origin": "ast",
       "id": "client_src_services_posts_purgeabandonedcomments",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "purgeabandonedcomments()"
     },
     {
@@ -7299,8 +7420,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_stats",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "stats.js"
     },
     {
@@ -7310,8 +7431,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "client_src_services_stats_periodquery",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "periodquery()"
     },
     {
@@ -7321,8 +7442,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "client_src_services_stats_fetchstatsgrowth",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "fetchstatsgrowth()"
     },
     {
@@ -7332,8 +7453,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "client_src_services_stats_fetchstatsreach",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "fetchstatsreach()"
     },
     {
@@ -7343,8 +7464,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "client_src_services_stats_fetchstatsbooking",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "fetchstatsbooking()"
     },
     {
@@ -7354,8 +7475,8 @@
       "source_location": "L85",
       "_origin": "ast",
       "id": "client_src_services_stats_fetchstatstrainingscount",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "fetchstatstrainingscount()"
     },
     {
@@ -7365,8 +7486,8 @@
       "source_location": "L105",
       "_origin": "ast",
       "id": "client_src_services_stats_fetchstatsgrowthday",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "fetchstatsgrowthday()"
     },
     {
@@ -7376,8 +7497,8 @@
       "source_location": "L126",
       "_origin": "ast",
       "id": "client_src_services_stats_fetchstatstrainingsday",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "fetchstatstrainingsday()"
     },
     {
@@ -7387,8 +7508,8 @@
       "source_location": "L150",
       "_origin": "ast",
       "id": "client_src_services_stats_fetchstatsachievements",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "fetchstatsachievements()"
     },
     {
@@ -7398,8 +7519,8 @@
       "source_location": "L171",
       "_origin": "ast",
       "id": "client_src_services_stats_fetchstatsachievementgrants",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "fetchstatsachievementgrants()"
     },
     {
@@ -7519,8 +7640,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_listtournamentposts",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "listtournamentposts()"
     },
     {
@@ -7530,8 +7651,8 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_updatetournamentpost",
-      "community": 3,
-      "community_name": "Modal and Alert Dialog",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "updatetournamentpost()"
     },
     {
@@ -7541,8 +7662,8 @@
       "source_location": "L89",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_softdeletetournamentpost",
-      "community": 3,
-      "community_name": "Modal and Alert Dialog",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "softdeletetournamentpost()"
     },
     {
@@ -7871,8 +7992,8 @@
       "source_location": "L492",
       "_origin": "ast",
       "id": "client_src_services_trainings_writependingdeletetrainingids",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "writependingdeletetrainingids()"
     },
     {
@@ -8069,8 +8190,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_users",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "users.js"
     },
     {
@@ -8080,8 +8201,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_services_users_listusers",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "listusers()"
     },
     {
@@ -22645,6 +22766,183 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/FrameColorPicker.jsx",
+      "source_location": "L66",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_framecolorpicker",
+      "target": "client_src_features_feed_framecolorpicker_framecolorpicker",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/FrameColorPicker.jsx",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_framecolorpicker",
+      "target": "client_src_features_feed_framecolorpicker_hextohsv",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/FrameColorPicker.jsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_framecolorpicker",
+      "target": "client_src_features_feed_framecolorpicker_hsvtohex",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/FrameColorPicker.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_framecolorpicker",
+      "target": "client_src_features_feed_postrichtext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/FrameColorPicker.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_framecolorpicker",
+      "target": "client_src_features_feed_postrichtext_loadframepresets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/FrameColorPicker.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_framecolorpicker",
+      "target": "client_src_features_feed_postrichtext_normalizehexcolor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/FrameColorPicker.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_framecolorpicker",
+      "target": "client_src_features_feed_postrichtext_saveframepresets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/PostRichTextField.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postrichtextfield",
+      "target": "client_src_features_feed_framecolorpicker",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/FrameColorPicker.jsx",
+      "source_location": "L89",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_framecolorpicker_framecolorpicker",
+      "target": "client_src_features_feed_framecolorpicker_hsvtohex",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/FrameColorPicker.jsx",
+      "source_location": "L70",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_framecolorpicker_framecolorpicker",
+      "target": "client_src_features_feed_framecolorpicker_hextohsv",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/FrameColorPicker.jsx",
+      "source_location": "L38",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_framecolorpicker_hextohsv",
+      "target": "client_src_features_feed_postrichtext_normalizehexcolor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/FrameColorPicker.jsx",
+      "source_location": "L69",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_framecolorpicker_framecolorpicker",
+      "target": "client_src_features_feed_postrichtext_loadframepresets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/FrameColorPicker.jsx",
+      "source_location": "L111",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_framecolorpicker_framecolorpicker",
+      "target": "client_src_features_feed_postrichtext_normalizehexcolor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/FrameColorPicker.jsx",
+      "source_location": "L126",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_framecolorpicker_framecolorpicker",
+      "target": "client_src_features_feed_postrichtext_saveframepresets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/PostRichTextField.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postrichtextfield",
+      "target": "client_src_features_feed_framecolorpicker_framecolorpicker",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/FullscreenImageViewer.jsx",
       "source_location": "L38",
       "weight": 1.0,
@@ -23101,6 +23399,18 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postcontenthtml",
+      "target": "client_src_features_feed_postrichtext_startanimframes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/PostContentHtml.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postcontenthtml",
       "target": "client_src_features_feed_postrichtext_todisplayhtml",
       "confidence_score": 1.0
     },
@@ -23114,6 +23424,18 @@
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
       "target": "client_src_features_feed_postcontenthtml",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/PostContentHtml.jsx",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postcontenthtml_postcontenthtml",
+      "target": "client_src_features_feed_postrichtext_startanimframes",
       "confidence_score": 1.0
     },
     {
@@ -23635,7 +23957,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostRichTextField.jsx",
-      "source_location": "L3",
+      "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtextfield",
@@ -23647,7 +23969,19 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostRichTextField.jsx",
-      "source_location": "L3",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postrichtextfield",
+      "target": "client_src_features_feed_postrichtext_applyanimframe",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/PostRichTextField.jsx",
+      "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtextfield",
@@ -23659,7 +23993,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostRichTextField.jsx",
-      "source_location": "L3",
+      "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtextfield",
@@ -23671,7 +24005,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostRichTextField.jsx",
-      "source_location": "L3",
+      "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtextfield",
@@ -23683,7 +24017,19 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostRichTextField.jsx",
-      "source_location": "L3",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postrichtextfield",
+      "target": "client_src_features_feed_postrichtext_normalizehexcolor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/PostRichTextField.jsx",
+      "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtextfield",
@@ -23694,7 +24040,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostRichTextField.jsx",
-      "source_location": "L21",
+      "source_location": "L24",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtextfield",
@@ -23706,7 +24052,19 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostRichTextField.jsx",
-      "source_location": "L84",
+      "source_location": "L144",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postrichtextfield_postrichtextfield",
+      "target": "client_src_features_feed_postrichtext_applyanimframe",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/PostRichTextField.jsx",
+      "source_location": "L129",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtextfield_postrichtextfield",
@@ -23718,23 +24076,11 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostRichTextField.jsx",
-      "source_location": "L41",
+      "source_location": "L46",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtextfield_postrichtextfield",
       "target": "client_src_features_feed_postrichtext_geteditorhtml",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostRichTextField.jsx",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtextfield_postrichtextfield",
-      "target": "client_src_features_feed_postrichtext_iseditorempty",
       "confidence_score": 1.0
     },
     {
@@ -23746,6 +24092,30 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtextfield_postrichtextfield",
+      "target": "client_src_features_feed_postrichtext_iseditorempty",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/PostRichTextField.jsx",
+      "source_location": "L142",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postrichtextfield_postrichtextfield",
+      "target": "client_src_features_feed_postrichtext_normalizehexcolor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/PostRichTextField.jsx",
+      "source_location": "L50",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postrichtextfield_postrichtextfield",
       "target": "client_src_features_feed_postrichtext_readactiveformats",
       "confidence_score": 1.0
     },
@@ -23753,7 +24123,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L2",
+      "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtext",
@@ -23764,7 +24134,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L1",
+      "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtext",
@@ -23775,7 +24145,18 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L137",
+      "source_location": "L222",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postrichtext",
+      "target": "client_src_features_feed_postrichtext_applyanimframe",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/postRichText.js",
+      "source_location": "L201",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtext",
@@ -23786,7 +24167,18 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L10",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postrichtext",
+      "target": "client_src_features_feed_postrichtext_default_presets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/postRichText.js",
+      "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtext",
@@ -23797,7 +24189,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L51",
+      "source_location": "L98",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtext",
@@ -23808,7 +24200,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L30",
+      "source_location": "L77",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtext",
@@ -23819,7 +24211,18 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L41",
+      "source_location": "L119",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postrichtext",
+      "target": "client_src_features_feed_postrichtext_isanimframe",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/postRichText.js",
+      "source_location": "L88",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtext",
@@ -23830,7 +24233,18 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L22",
+      "source_location": "L42",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postrichtext",
+      "target": "client_src_features_feed_postrichtext_loadframepresets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/postRichText.js",
+      "source_location": "L69",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtext",
@@ -23841,7 +24255,18 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L155",
+      "source_location": "L28",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postrichtext",
+      "target": "client_src_features_feed_postrichtext_normalizehexcolor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/postRichText.js",
+      "source_location": "L261",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtext",
@@ -23852,7 +24277,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L61",
+      "source_location": "L107",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtext",
@@ -23863,7 +24288,18 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L73",
+      "source_location": "L60",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postrichtext",
+      "target": "client_src_features_feed_postrichtext_saveframepresets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/postRichText.js",
+      "source_location": "L127",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtext",
@@ -23874,7 +24310,18 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L127",
+      "source_location": "L279",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postrichtext",
+      "target": "client_src_features_feed_postrichtext_startanimframes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/postRichText.js",
+      "source_location": "L191",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtext",
@@ -23887,7 +24334,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L84",
+      "source_location": "L138",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtext_serializesanitized",
@@ -23898,7 +24345,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L75",
+      "source_location": "L129",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtext_serializesanitized",
@@ -23910,7 +24357,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L130",
+      "source_location": "L194",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtext_todisplayhtml",
@@ -23922,7 +24369,67 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L32",
+      "source_location": "L223",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postrichtext_applyanimframe",
+      "target": "client_src_features_feed_postrichtext_normalizehexcolor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/postRichText.js",
+      "source_location": "L49",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postrichtext_loadframepresets",
+      "target": "client_src_features_feed_postrichtext_normalizehexcolor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/postRichText.js",
+      "source_location": "L61",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postrichtext_saveframepresets",
+      "target": "client_src_features_feed_postrichtext_normalizehexcolor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/postRichText.js",
+      "source_location": "L143",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postrichtext_serializesanitized",
+      "target": "client_src_features_feed_postrichtext_normalizehexcolor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/postRichText.js",
+      "source_location": "L292",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postrichtext_startanimframes",
+      "target": "client_src_features_feed_postrichtext_normalizehexcolor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/postRichText.js",
+      "source_location": "L79",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtext_hasvisibletext",
@@ -23934,7 +24441,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L129",
+      "source_location": "L193",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtext_todisplayhtml",
@@ -23946,7 +24453,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L52",
+      "source_location": "L99",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtext_geteditorhtml",
@@ -23958,7 +24465,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L53",
+      "source_location": "L100",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtext_geteditorhtml",
@@ -23970,7 +24477,7 @@
       "context": "argument",
       "confidence": "INFERRED",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L66",
+      "source_location": "L112",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtext_sanitizeposthtml",
@@ -23982,11 +24489,23 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L129",
+      "source_location": "L193",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtext_todisplayhtml",
       "target": "client_src_features_feed_postrichtext_sanitizeposthtml",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/postRichText.js",
+      "source_location": "L142",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postrichtext_serializesanitized",
+      "target": "client_src_features_feed_postrichtext_isanimframe",
       "confidence_score": 1.0
     },
     {
@@ -43301,5 +43820,5 @@
       "source_file": "client/src/assets/ach/1_1.png"
     }
   ],
-  "built_at_commit": "a30756e7439ed63559b4b027e9a59faf4687f371"
+  "built_at_commit": "7298e60da985902523acec9255de1b34d2b9691e"
 }
