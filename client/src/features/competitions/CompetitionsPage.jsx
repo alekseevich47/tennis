@@ -4,7 +4,11 @@ import { usePlayers } from '../../hooks/usePlayers';
 import { useTournamentPosts } from '../../hooks/useTournamentPosts';
 import pb from '../../services/pb';
 import { getCurrentUser, isModerator } from '../../services/auth';
-import { updateTournamentPost } from '../../services/tournamentPosts';
+import {
+  pinTournamentPost,
+  unpinTournamentPost,
+  updateTournamentPost
+} from '../../services/tournamentPosts';
 import { flushPendingTournamentCommentDeletes } from '../../services/tournamentComments';
 import Spinner from '../../components/ui/Spinner';
 import EmptyState from '../../components/ui/EmptyState';
@@ -13,6 +17,8 @@ import EditTournamentPostModal from './EditTournamentPostModal';
 import TournamentPostCard from './TournamentPostCard';
 import TournamentPostDetailModal from './TournamentPostDetailModal';
 import FullscreenImageViewer from '../feed/FullscreenImageViewer';
+import PinnedBanner from '../feed/PinnedBanner';
+import PostContextMenu from '../feed/PostContextMenu';
 import RatingPage from '../rating/RatingPage';
 import ProfileViewModal from '../profile/ProfileViewModal';
 import { useTournamentPostUpload } from '../../components/TournamentPostUploadProvider';
@@ -28,6 +34,7 @@ const TABS = [
 
 const SCROLL_TOP_THRESHOLD = 8;
 const SCROLL_DELTA_THRESHOLD = 4;
+const PINNED_BANNER_OFFSET_PX = 72;
 
 /**
  * @param {{
@@ -53,8 +60,13 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
   const [openedPost, setOpenedPost] = useState(null);
   const [editingPost, setEditingPost] = useState(null);
   const [deletedPostIds, setDeletedPostIds] = useState([]);
+  const [activePinnedIndex, setActivePinnedIndex] = useState(0);
+  const [contextMenuState, setContextMenuState] = useState(
+    /** @type {{ postId: string, anchorPoint: { x: number, y: number } } | null} */ (null)
+  );
   const containerRef = useRef(null);
   const lastScrollTopRef = useRef(0);
+  const cardRefs = useRef(/** @type {Map<string, HTMLElement>} */ (new Map()));
   const { startUpload } = useTournamentPostUpload();
 
   useEffect(() => {
@@ -68,6 +80,69 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
       (p) => !p.is_deleted && !deletedPostIds.includes(p.id)
     );
   }, [posts, moderator, deletedPostIds]);
+
+  const pinnedPosts = useMemo(
+    () =>
+      visiblePosts
+        .filter((p) => p.is_pinned && !p.is_deleted && !deletedPostIds.includes(p.id))
+        .sort((a, b) => {
+          const aTime = a.pinned_at ? Date.parse(a.pinned_at) : 0;
+          const bTime = b.pinned_at ? Date.parse(b.pinned_at) : 0;
+          return aTime - bTime;
+        }),
+    [visiblePosts, deletedPostIds]
+  );
+
+  const pinnedIdsKey = pinnedPosts.map((p) => p.id).join(',');
+
+  useEffect(() => {
+    setActivePinnedIndex((i) =>
+      pinnedPosts.length === 0 ? 0 : Math.min(i, pinnedPosts.length - 1)
+    );
+  }, [pinnedIdsKey, pinnedPosts.length]);
+
+  useEffect(() => {
+    if (activeTab !== 'feed') return undefined;
+
+    const container = containerRef.current;
+    if (!container || pinnedPosts.length < 2) return undefined;
+
+    const activePost = pinnedPosts[activePinnedIndex];
+    if (!activePost) return undefined;
+
+    const el = cardRefs.current.get(activePost.id);
+    if (!el) return undefined;
+
+    let wasIntersecting = /** @type {boolean | null} */ (null);
+    const band = PINNED_BANNER_OFFSET_PX;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (!entry) return;
+        if (wasIntersecting === null) {
+          wasIntersecting = entry.isIntersecting;
+          return;
+        }
+        const leftUpward =
+          wasIntersecting &&
+          !entry.isIntersecting &&
+          entry.rootBounds != null &&
+          entry.boundingClientRect.top < entry.rootBounds.top;
+        wasIntersecting = entry.isIntersecting;
+        if (leftUpward) {
+          setActivePinnedIndex((i) => (i + 1) % pinnedPosts.length);
+        }
+      },
+      {
+        root: container,
+        rootMargin: `-${band}px 0px ${-(container.clientHeight - band - 1)}px 0px`,
+        threshold: 0
+      }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [activeTab, activePinnedIndex, pinnedIdsKey, pinnedPosts]);
 
   const filteredPosts = useMemo(() => {
     if (!searchQuery.trim()) return visiblePosts;
@@ -94,6 +169,7 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
     (tabId) => {
       if (tabId !== activeTab) {
         setOpenedPost(null);
+        setContextMenuState(null);
         flushPendingTournamentCommentDeletes();
       }
       setActiveTab(tabId);
@@ -169,6 +245,54 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
     setEditingPost(post);
   }, [moderator]);
 
+  const handleTogglePin = useCallback(
+    async (post) => {
+      if (!moderator || !post?.id) return;
+      const nextPinned = !post.is_pinned;
+      const pinnedAt = nextPinned ? new Date().toISOString() : null;
+      mutateTournamentPosts(
+        (curr = []) =>
+          curr.map((p) =>
+            p.id === post.id ? { ...p, is_pinned: nextPinned, pinned_at: pinnedAt } : p
+          ),
+        false
+      );
+      try {
+        if (nextPinned) await pinTournamentPost(post.id);
+        else await unpinTournamentPost(post.id);
+      } catch (err) {
+        error('toggle pin tournament post:', err);
+        mutateTournamentPosts();
+      }
+    },
+    [moderator, mutateTournamentPosts]
+  );
+
+  const handleLongPress = useCallback((post, point) => {
+    if (!post?.id || !point) return;
+    setContextMenuState({ postId: post.id, anchorPoint: point });
+  }, []);
+
+  const handleCloseContextMenu = useCallback(() => {
+    setContextMenuState(null);
+  }, []);
+
+  const handleRegisterCardRef = useCallback((postId) => (el) => {
+    if (el) cardRefs.current.set(postId, el);
+    else cardRefs.current.delete(postId);
+  }, []);
+
+  const handleAdvancePinned = useCallback(() => {
+    setActivePinnedIndex((i) =>
+      pinnedPosts.length === 0 ? 0 : (i + 1) % pinnedPosts.length
+    );
+  }, [pinnedPosts.length]);
+
+  const handleOpenPinned = useCallback((post) => {
+    if (!post?.id) return;
+    cardRefs.current.get(post.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
+
   const handleCloseEdit = useCallback(() => {
     setEditingPost(null);
   }, []);
@@ -193,6 +317,7 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
   const handleDeletePost = useCallback(
     async (postId) => {
       setDeletedPostIds((prev) => [...prev, postId]);
+      setContextMenuState(null);
       try {
         await updateTournamentPost(postId, { is_deleted: true });
         mutateTournamentPosts(
@@ -232,6 +357,11 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
     [mutateTournamentPosts]
   );
 
+  const contextMenuPost = useMemo(() => {
+    if (!contextMenuState) return null;
+    return visiblePosts.find((p) => p.id === contextMenuState.postId) || null;
+  }, [contextMenuState, visiblePosts]);
+
   return (
     <section className="competitions" aria-label="Турнир">
       <div className="competitions-tabs" role="tablist" aria-label="Разделы соревнований">
@@ -263,20 +393,32 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
             </div>
           )}
 
-          {postsLoading ? (
-            <Spinner label="Загрузка ленты..." />
-          ) : filteredPosts.length === 0 ? (
-            <EmptyState
-              title={isSearchActive ? 'Ничего не найдено' : 'Пока нет итогов'}
-              description={
-                isSearchActive
-                  ? 'Попробуйте другой запрос.'
-                  : 'Здесь появятся результаты турниров секции.'
-              }
-            />
-          ) : (
-            <div className="competitions-feed-list">
-              {filteredPosts.map((post) => {
+          <div className="competitions-feed-list">
+            {pinnedPosts.length > 0 && (
+              <PinnedBanner
+                pinnedPosts={pinnedPosts}
+                collection="tournament_posts"
+                activeIndex={activePinnedIndex}
+                onAdvance={handleAdvancePinned}
+                onOpen={handleOpenPinned}
+              />
+            )}
+
+            {postsLoading && <Spinner label="Загрузка ленты..." />}
+
+            {!postsLoading && filteredPosts.length === 0 && (
+              <EmptyState
+                title={isSearchActive ? 'Ничего не найдено' : 'Пока нет итогов'}
+                description={
+                  isSearchActive
+                    ? 'Попробуйте другой запрос.'
+                    : 'Здесь появятся результаты турниров секции.'
+                }
+              />
+            )}
+
+            {!postsLoading &&
+              filteredPosts.map((post) => {
                 const isSoftDeleted =
                   deletedPostIds.includes(post.id) || post.is_deleted === true;
                 return (
@@ -288,9 +430,9 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
                     userIsModerator={moderator}
                     isSoftDeleted={isSoftDeleted}
                     onOpenDetail={handleOpenDetail}
-                    onOpenEdit={handleOpenEdit}
-                    onDelete={handleDeletePost}
                     onRestore={handleRestorePost}
+                    onLongPress={handleLongPress}
+                    cardRef={handleRegisterCardRef(post.id)}
                     hiddenMediaKey={hiddenMediaKey}
                     onOpenFullscreen={handleOpenFullscreen}
                     onOpenProfile={setViewingPlayer}
@@ -298,14 +440,23 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
                   />
                 );
               })}
-            </div>
-          )}
+          </div>
         </div>
       )}
 
       {activeTab === 'rating' && (
         <RatingPage user={user} onTabChange={onTabChange} />
       )}
+
+      <PostContextMenu
+        isOpen={Boolean(contextMenuPost && contextMenuState)}
+        anchorPoint={contextMenuState?.anchorPoint ?? null}
+        isPinned={Boolean(contextMenuPost?.is_pinned)}
+        onTogglePin={() => contextMenuPost && handleTogglePin(contextMenuPost)}
+        onEdit={() => contextMenuPost && handleOpenEdit(contextMenuPost)}
+        onDelete={() => contextMenuPost && handleDeletePost(contextMenuPost.id)}
+        onClose={handleCloseContextMenu}
+      />
 
       <CreateTournamentPostModal
         isOpen={showCreatePost}
@@ -339,7 +490,6 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
         user={user}
         userIsModerator={moderator}
         onClose={() => setOpenedPost(null)}
-        onOpenEdit={handleOpenEdit}
         onOpenProfile={setViewingPlayer}
         hiddenMediaKey={hiddenMediaKey}
         onOpenFullscreen={handleOpenFullscreen}

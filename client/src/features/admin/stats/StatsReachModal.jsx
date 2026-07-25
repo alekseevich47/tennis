@@ -285,8 +285,6 @@ export default function StatsReachModal({ isOpen, onClose, onBack }) {
         post={preview?.objectType === 'post' ? preview.post : null}
         user={user}
         userIsModerator={userIsModerator}
-        onOpenEdit={() => {}}
-        onDeletePost={() => {}}
         onClose={() => setPreview(null)}
         onAfterClose={() => {}}
         trackView={false}

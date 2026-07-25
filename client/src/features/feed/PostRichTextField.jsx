@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
+import clsx from 'clsx';
 import PostFormatToolbar from './PostFormatToolbar';
 import FrameColorPicker from './FrameColorPicker';
 import {
@@ -12,14 +13,16 @@ import {
 } from './postRichText';
 
 /**
- * Тестовый rich-text: статичный тулбар + анимационная рамка.
+ * Rich-text поле: статичный тулбар + опциональная анимационная рамка.
  *
  * @param {{
  *   id?: string,
  *   value: string,
  *   onChange: (html: string) => void,
  *   placeholder?: string,
- *   'aria-label'?: string
+ *   'aria-label'?: string,
+ *   enableFrame?: boolean,
+ *   compact?: boolean
  * }} props
  */
 function PostRichTextField({
@@ -27,7 +30,9 @@ function PostRichTextField({
   value,
   onChange,
   placeholder = 'Что нового в секции?…',
-  'aria-label': ariaLabel = 'Текст публикации'
+  'aria-label': ariaLabel = 'Текст публикации',
+  enableFrame = true,
+  compact = false
 }) {
   const autoId = useId();
   const id = idProp || autoId;
@@ -116,6 +121,7 @@ function PostRichTextField({
     if (!el) return;
 
     if (command === 'frame') {
+      if (!enableFrame) return;
       saveSelection();
       setFrameOpen((open) => !open);
       return;
@@ -145,14 +151,15 @@ function PostRichTextField({
   };
 
   return (
-    <div className="post-rich-text" ref={rootRef}>
+    <div className={clsx('post-rich-text', compact && 'post-rich-text--compact')} ref={rootRef}>
       <div className="post-rich-text__toolbar-row">
         <PostFormatToolbar
           active={active}
           frameOpen={frameOpen}
+          enableFrame={enableFrame}
           onCommand={handleCommand}
         />
-        {frameOpen ? (
+        {enableFrame && frameOpen ? (
           <FrameColorPicker
             color={frameColor}
             onChange={setFrameColor}

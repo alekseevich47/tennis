@@ -1,5 +1,4 @@
-import React, { memo, useMemo } from 'react';
-import IconButton from '../../components/ui/IconButton';
+import React, { memo, useCallback, useMemo } from 'react';
 import Avatar from '../../components/ui/Avatar';
 import PostMedia from '../feed/PostMedia';
 import CommentsPreview from '../feed/CommentsPreview';
@@ -8,6 +7,7 @@ import { getParticipantDisplayName, getParticipantPlayer } from './tournamentPar
 import sectionAvatarUrl from '../../assets/sm-avatar.png';
 import { formatPostDate } from '../../lib/format';
 import { usePostViewTracker } from '../../hooks/usePostViewTracker';
+import { LongPressRing, useLongPress } from '../../lib/longPress';
 
 /**
  * @param {import('../../services/tournamentPosts').TournamentPostRecord} post
@@ -27,10 +27,10 @@ function readTournamentComments(post) {
  *   userIsModerator?: boolean,
  *   isSoftDeleted?: boolean,
  *   onOpenDetail: (post: import('../../services/tournamentPosts').TournamentPostRecord) => void,
- *   onOpenEdit: (post: import('../../services/tournamentPosts').TournamentPostRecord) => void,
  *   onOpenProfile?: (user: any) => void,
- *   onDelete: (postId: string) => void,
  *   onRestore: (postId: string) => void,
+ *   onLongPress?: (post: import('../../services/tournamentPosts').TournamentPostRecord, point: { x: number, y: number }) => void,
+ *   cardRef?: (el: HTMLElement | null) => void,
  *   hiddenMediaKey?: string | null,
  *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, thumbUrl: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void,
  *   scrollRootRef?: React.RefObject<HTMLElement | null>
@@ -42,10 +42,10 @@ function TournamentPostCard({
   userIsModerator = false,
   isSoftDeleted = false,
   onOpenDetail,
-  onOpenEdit,
   onOpenProfile,
-  onDelete,
   onRestore,
+  onLongPress,
+  cardRef,
   hiddenMediaKey = null,
   onOpenFullscreen,
   scrollRootRef,
@@ -74,18 +74,26 @@ function TournamentPostCard({
     scrollRootRef
   });
 
+  const handleLongPress = useCallback(
+    (point) => {
+      onLongPress?.(post, point);
+    },
+    [onLongPress, post]
+  );
+
+  const { handlers: longPressHandlers, cardStyle, ringProps } = useLongPress({
+    enabled: userIsModerator && !isSoftDeleted,
+    onLongPress: handleLongPress
+  });
+
   const handleOpenDetail = () => {
     onOpenDetail(post);
   };
 
-  const handleOpenEdit = (event) => {
-    event.stopPropagation();
-    onOpenEdit(post);
-  };
-
-  const handleDelete = (event) => {
-    event.stopPropagation();
-    onDelete(post.id);
+  const handleCardClick = (event) => {
+    longPressHandlers.onClick(event);
+    if (event.defaultPrevented) return;
+    handleOpenDetail();
   };
 
   const handleCommentsPreviewKeyDown = (event) => {
@@ -118,135 +126,115 @@ function TournamentPostCard({
   }
 
   return (
-    <article
-      className="tournament-post-card feed-card"
-      onClick={handleOpenDetail}
-      style={{ cursor: 'pointer' }}
-    >
-      <div ref={viewRef} className="post-view-sentinel" aria-hidden="true" />
-      <div className="feed-card-header">
-        <div className="section-avatar" aria-hidden="true">
-          <img className="section-avatar__image" src={sectionAvatarUrl} alt="" decoding="async" />
+    <>
+      <article
+        ref={cardRef}
+        className="tournament-post-card feed-card"
+        onClick={handleCardClick}
+        onPointerDown={longPressHandlers.onPointerDown}
+        onPointerMove={longPressHandlers.onPointerMove}
+        onPointerUp={longPressHandlers.onPointerUp}
+        onPointerCancel={longPressHandlers.onPointerCancel}
+        onPointerLeave={longPressHandlers.onPointerLeave}
+        onContextMenu={longPressHandlers.onContextMenu}
+        style={{ cursor: 'pointer', ...cardStyle }}
+      >
+        <div ref={viewRef} className="post-view-sentinel" aria-hidden="true" />
+        <div className="feed-card-header">
+          <div className="section-avatar" aria-hidden="true">
+            <img className="section-avatar__image" src={sectionAvatarUrl} alt="" decoding="async" />
+          </div>
+          <div className="section-meta">
+            <span className="section-title-name">Секция Миленьких</span>
+            <span className="post-date-line">
+              <span className="post-date">{formatPostDate(post.created)}</span>
+              {post.post_number ? <span className="post-number">#{post.post_number}</span> : null}
+            </span>
+          </div>
         </div>
-        <div className="section-meta">
-          <span className="section-title-name">Секция Миленьких</span>
-          <span className="post-date-line">
-            <span className="post-date">{formatPostDate(post.created)}</span>
-            {post.post_number ? <span className="post-number">#{post.post_number}</span> : null}
-          </span>
+
+        {post.content ? <p className="tournament-post-content">{post.content}</p> : null}
+
+        <div onClick={(event) => event.stopPropagation()}>
+          <PostMedia
+            post={post}
+            collection="tournament_posts"
+            variant="card"
+            className="tournament-post-media"
+            hiddenMediaKey={hiddenMediaKey}
+            onOpenFullscreen={onOpenFullscreen}
+          />
         </div>
-        {userIsModerator && (
-          <div className="post-card-actions" role="group" aria-label="Действия с публикацией">
-            <IconButton
-              ariaLabel="Редактировать публикацию"
-              variant="ghost"
-              size="sm"
-              className="edit-post-btn"
-              onClick={handleOpenEdit}
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path d="M4 20h4.2L19.3 8.9a2 2 0 0 0 0-2.8l-1.4-1.4a2 2 0 0 0-2.8 0L4 15.8V20Z" />
-                <path d="m13.7 6.1 4.2 4.2" />
-              </svg>
-            </IconButton>
-            <IconButton
-              ariaLabel="Удалить публикацию"
-              variant="danger"
-              size="sm"
-              className="delete-post-btn"
-              onClick={handleDelete}
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path d="M4 7h16" />
-                <path d="M10 11v6" />
-                <path d="M14 11v6" />
-                <path d="M6 7l1 13h10l1-13" />
-                <path d="M9 7V4h6v3" />
-              </svg>
-            </IconButton>
+
+        {participants.length > 0 ? (
+          <TournamentPodium
+            participants={participants}
+            players={players}
+            onOpenProfile={onOpenProfile}
+          />
+        ) : null}
+
+        {participants.length > 0 ? (
+          <ol className="tournament-results-list">
+            {participants.map((participant) => {
+              const player = getParticipantPlayer(participant, playerMap);
+              const displayName = getParticipantDisplayName(participant, playerMap);
+
+              return (
+                <li key={participant.userId} className="tournament-results-row">
+                  <span className="tournament-results-place">{participant.place}</span>
+                  <button
+                    type="button"
+                    className="tournament-participant-profile-link tournament-participant-profile-link--list"
+                    onClick={(event) => handleOpenParticipantProfile(event, participant)}
+                    aria-label={`Открыть профиль ${displayName}`}
+                  >
+                    <Avatar user={player} size="sm" />
+                    <span className="tournament-results-name">{displayName}</span>
+                  </button>
+                  <span className="tournament-results-points">+{participant.points}</span>
+                </li>
+              );
+            })}
+          </ol>
+        ) : null}
+
+        <div className="feed-card-footer feed-card-bottom-bar tournament-post-card-footer">
+          <button
+            type="button"
+            className="post-card-comment-btn"
+            onClick={(event) => {
+              event.stopPropagation();
+              handleOpenDetail();
+            }}
+            aria-label={`Открыть комментарии к публикации. Комментариев: ${commentCount}`}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.5-4.5A8 8 0 1 1 21 12Z" />
+            </svg>
+            <span className="post-card-comment-btn__count">{commentCount}</span>
+          </button>
+        </div>
+
+        {previewComments.length > 0 && (
+          <div
+            role="button"
+            tabIndex={0}
+            className="comments-preview-trigger"
+            onClick={(event) => {
+              event.stopPropagation();
+              handleOpenDetail();
+            }}
+            onKeyDown={handleCommentsPreviewKeyDown}
+            aria-label="Открыть комментарии к публикации"
+          >
+            <CommentsPreview comments={previewComments} />
           </div>
         )}
-      </div>
+      </article>
 
-      {post.content ? <p className="tournament-post-content">{post.content}</p> : null}
-
-      <div onClick={(event) => event.stopPropagation()}>
-        <PostMedia
-          post={post}
-          collection="tournament_posts"
-          variant="card"
-          className="tournament-post-media"
-          hiddenMediaKey={hiddenMediaKey}
-          onOpenFullscreen={onOpenFullscreen}
-        />
-      </div>
-
-      {participants.length > 0 ? (
-        <TournamentPodium
-          participants={participants}
-          players={players}
-          onOpenProfile={onOpenProfile}
-        />
-      ) : null}
-
-      {participants.length > 0 ? (
-        <ol className="tournament-results-list">
-          {participants.map((participant) => {
-            const player = getParticipantPlayer(participant, playerMap);
-            const displayName = getParticipantDisplayName(participant, playerMap);
-
-            return (
-              <li key={participant.userId} className="tournament-results-row">
-                <span className="tournament-results-place">{participant.place}</span>
-                <button
-                  type="button"
-                  className="tournament-participant-profile-link tournament-participant-profile-link--list"
-                  onClick={(event) => handleOpenParticipantProfile(event, participant)}
-                  aria-label={`Открыть профиль ${displayName}`}
-                >
-                  <Avatar user={player} size="sm" />
-                  <span className="tournament-results-name">{displayName}</span>
-                </button>
-                <span className="tournament-results-points">+{participant.points}</span>
-              </li>
-            );
-          })}
-        </ol>
-      ) : null}
-
-      <div className="feed-card-footer feed-card-bottom-bar tournament-post-card-footer">
-        <button
-          type="button"
-          className="post-card-comment-btn"
-          onClick={(event) => {
-            event.stopPropagation();
-            handleOpenDetail();
-          }}
-          aria-label={`Открыть комментарии к публикации. Комментариев: ${commentCount}`}
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.5-4.5A8 8 0 1 1 21 12Z" />
-          </svg>
-          <span className="post-card-comment-btn__count">{commentCount}</span>
-        </button>
-      </div>
-
-      {previewComments.length > 0 && (
-        <div
-          role="button"
-          tabIndex={0}
-          className="comments-preview-trigger"
-          onClick={(event) => {
-            event.stopPropagation();
-            handleOpenDetail();
-          }}
-          onKeyDown={handleCommentsPreviewKeyDown}
-          aria-label="Открыть комментарии к публикации"
-        >
-          <CommentsPreview comments={previewComments} />
-        </div>
-      )}
-    </article>
+      <LongPressRing {...ringProps} />
+    </>
   );
 }
 

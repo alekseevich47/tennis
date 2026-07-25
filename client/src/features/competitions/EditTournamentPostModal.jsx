@@ -2,6 +2,7 @@ import React, { useEffect, useId, useMemo, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import { updateTournamentPost } from '../../services/tournamentPosts';
 import MediaPreviewGrid from '../feed/MediaPreviewGrid';
+import PostRichTextField from '../feed/PostRichTextField';
 import {
   MAX_POST_MEDIA_FILES,
   getMediaUrl,
@@ -11,6 +12,7 @@ import {
   readSelectedFiles
 } from '../../lib/media';
 import { error } from '../../lib/log';
+import { hasVisibleText, toDisplayHtml } from '../feed/postRichText';
 
 /**
  * @param {{
@@ -75,7 +77,7 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
 
   useEffect(() => {
     if (!isOpen || !post) return;
-    setText(post.content || '');
+    setText(toDisplayHtml(post.content || ''));
     setMediaFiles([]);
     setRemovedMediaNames([]);
   }, [isOpen, post]);
@@ -84,8 +86,8 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
     event.preventDefault();
     if (!post || submitting) return;
 
-    const nextContent = text.trim();
-    if (!nextContent) return;
+    if (!hasVisibleText(text)) return;
+    const nextContent = text;
 
     setSubmitting(true);
     try {
@@ -121,15 +123,12 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
           Текст поста
         </label>
         <div className="edit-post-bubble">
-          <textarea
+          <PostRichTextField
             id={textareaId}
-            name="edit-tournament-post-content"
-            autoComplete="off"
             value={text}
-            onChange={(event) => setText(event.target.value)}
+            onChange={setText}
             placeholder="Текст публикации…"
-            rows={6}
-            required
+            compact={false}
           />
         </div>
 
@@ -205,7 +204,7 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
           <button
             type="submit"
             className="submit-btn-full edit-post-save-btn"
-            disabled={submitting || !text.trim()}
+            disabled={submitting || !hasVisibleText(text)}
           >
             {submitting ? 'Сохраняем…' : 'Сохранить'}
           </button>

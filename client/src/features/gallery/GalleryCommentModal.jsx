@@ -1,6 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import Avatar from '../../components/ui/Avatar';
+import PostContentHtml from '../feed/PostContentHtml';
+import PostRichTextField from '../feed/PostRichTextField';
+import { hasVisibleText, toDisplayHtml } from '../feed/postRichText';
 import { useGalleryComments } from '../../hooks/useGalleryComments';
 import { useCommentLikes } from '../../hooks/useCommentLikes';
 import {
@@ -62,12 +65,11 @@ function GalleryCommentModal({ isOpen, mediaItem, user, userIsModerator, onClose
 
   const handleAdd = async (event) => {
     event.preventDefault();
-    const text = commentText.trim();
-    if (!text || !mediaId || !user?.id || isAddingComment) return;
+    if (!hasVisibleText(commentText) || !mediaId || !user?.id || isAddingComment) return;
 
     setIsAddingComment(true);
     try {
-      await createGalleryComment({ mediaId, authorId: user.id, text });
+      await createGalleryComment({ mediaId, authorId: user.id, text: commentText });
       setCommentText('');
       await mutate();
     } catch (err) {
@@ -93,7 +95,7 @@ function GalleryCommentModal({ isOpen, mediaItem, user, userIsModerator, onClose
 
   const handleStartEdit = (comment) => {
     setEditingId(comment.id);
-    setEditText(comment.text || '');
+    setEditText(toDisplayHtml(comment.text || ''));
   };
 
   const handleCancelEdit = () => {
@@ -103,11 +105,10 @@ function GalleryCommentModal({ isOpen, mediaItem, user, userIsModerator, onClose
 
   const handleSaveEdit = async (event, commentId) => {
     event.preventDefault();
-    const text = editText.trim();
-    if (!text || !commentId) return;
+    if (!hasVisibleText(editText) || !commentId) return;
 
     try {
-      await updateGalleryComment(commentId, text, mediaId);
+      await updateGalleryComment(commentId, editText, mediaId);
       setEditingId(null);
       setEditText('');
       await mutate();
@@ -148,16 +149,16 @@ function GalleryCommentModal({ isOpen, mediaItem, user, userIsModerator, onClose
             <label htmlFor="gallery-comment-input" className="visually-hidden">
               Написать комментарий
             </label>
-            <textarea
+            <PostRichTextField
               id="gallery-comment-input"
               value={commentText}
-              onChange={(event) => setCommentText(event.target.value)}
+              onChange={setCommentText}
+              enableFrame={false}
+              compact
               placeholder="Написать комментарий..."
-              rows={2}
-              disabled={isAddingComment}
-              required
+              aria-label="Написать комментарий"
             />
-            <button type="submit" disabled={isAddingComment || !commentText.trim()}>
+            <button type="submit" disabled={isAddingComment || !hasVisibleText(commentText)}>
               {isAddingComment ? 'Отправляем...' : 'Отправить'}
             </button>
           </form>
@@ -258,15 +259,17 @@ function GalleryCommentModal({ isOpen, mediaItem, user, userIsModerator, onClose
                       <label htmlFor={`gallery-comment-edit-${comment.id}`} className="visually-hidden">
                         Редактирование комментария
                       </label>
-                      <textarea
+                      <PostRichTextField
                         id={`gallery-comment-edit-${comment.id}`}
                         value={editText}
-                        onChange={(event) => setEditText(event.target.value)}
-                        rows={3}
-                        required
+                        onChange={setEditText}
+                        enableFrame={false}
+                        compact
+                        placeholder="Текст комментария…"
+                        aria-label="Редактирование комментария"
                       />
                       <div className="gallery-comment-edit-form__actions">
-                        <button type="submit" disabled={!editText.trim()}>
+                        <button type="submit" disabled={!hasVisibleText(editText)}>
                           Сохранить
                         </button>
                         <button type="button" onClick={handleCancelEdit}>
@@ -275,7 +278,11 @@ function GalleryCommentModal({ isOpen, mediaItem, user, userIsModerator, onClose
                       </div>
                     </form>
                   ) : (
-                    <p className="gallery-comment-item__text">{comment.text}</p>
+                    <PostContentHtml
+                      as="p"
+                      className="gallery-comment-item__text"
+                      content={comment.text}
+                    />
                   )}
 
                   {editingId !== comment.id && (

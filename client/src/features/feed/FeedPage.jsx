@@ -1,12 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { usePosts } from '../../hooks/usePosts';
-import { updatePost } from '../../services/posts';
+import { pinPost, unpinPost, updatePost } from '../../services/posts';
 import { isModerator } from '../../services/auth';
 import { usePostUpload } from '../../components/PostUploadProvider';
 import Spinner from '../../components/ui/Spinner';
 import EmptyState from '../../components/ui/EmptyState';
 import PostCard from './PostCard';
+import PinnedBanner from './PinnedBanner';
+import PostContextMenu from './PostContextMenu';
 import CreatePostModal from './CreatePostModal';
 import EditPostModal from './EditPostModal';
 import PostDetailModal from './PostDetailModal';
@@ -18,6 +20,8 @@ import './Feed.css';
 
 const SCROLL_TOP_THRESHOLD = 8;
 const SCROLL_DELTA_THRESHOLD = 4;
+/** Высота sticky-плашки — зона «прохождения через верх» для IO и scroll-margin. */
+const PINNED_BANNER_OFFSET_PX = 72;
 
 /**
  * @param {{
@@ -39,10 +43,15 @@ function FeedPage({ user, onDeletedIdsChange, searchQuery = '' }) {
   const [deletedPostIds, setDeletedPostIds] = useState([]);
   const [viewingPlayer, setViewingPlayer] = useState(null);
   const [isButtonVisible, setIsButtonVisible] = useState(true);
+  const [activePinnedIndex, setActivePinnedIndex] = useState(0);
+  const [contextMenuState, setContextMenuState] = useState(
+    /** @type {{ postId: string, anchorPoint: { x: number, y: number } } | null} */ (null)
+  );
   const { startUpload } = usePostUpload();
 
   const containerRef = useRef(null);
   const lastScrollTopRef = useRef(0);
+  const cardRefs = useRef(/** @type {Map<string, HTMLElement>} */ (new Map()));
 
   useEffect(() => {
     onDeletedIdsChange?.(deletedPostIds);
@@ -84,6 +93,67 @@ function FeedPage({ user, onDeletedIdsChange, searchQuery = '' }) {
     );
   }, [posts, userIsModerator, deletedPostIds]);
 
+  const pinnedPosts = useMemo(
+    () =>
+      visiblePosts
+        .filter((p) => p.is_pinned && !p.is_deleted && !deletedPostIds.includes(p.id))
+        .sort((a, b) => {
+          const aTime = a.pinned_at ? Date.parse(a.pinned_at) : 0;
+          const bTime = b.pinned_at ? Date.parse(b.pinned_at) : 0;
+          return aTime - bTime;
+        }),
+    [visiblePosts, deletedPostIds]
+  );
+
+  const pinnedIdsKey = pinnedPosts.map((p) => p.id).join(',');
+
+  useEffect(() => {
+    setActivePinnedIndex((i) =>
+      pinnedPosts.length === 0 ? 0 : Math.min(i, pinnedPosts.length - 1)
+    );
+  }, [pinnedIdsKey, pinnedPosts.length]);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || pinnedPosts.length < 2) return undefined;
+
+    const activePost = pinnedPosts[activePinnedIndex];
+    if (!activePost) return undefined;
+
+    const el = cardRefs.current.get(activePost.id);
+    if (!el) return undefined;
+
+    let wasIntersecting = /** @type {boolean | null} */ (null);
+    const band = PINNED_BANNER_OFFSET_PX;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (!entry) return;
+        if (wasIntersecting === null) {
+          wasIntersecting = entry.isIntersecting;
+          return;
+        }
+        const leftUpward =
+          wasIntersecting &&
+          !entry.isIntersecting &&
+          entry.rootBounds != null &&
+          entry.boundingClientRect.top < entry.rootBounds.top;
+        wasIntersecting = entry.isIntersecting;
+        if (leftUpward) {
+          setActivePinnedIndex((i) => (i + 1) % pinnedPosts.length);
+        }
+      },
+      {
+        root: container,
+        rootMargin: `-${band}px 0px ${-(container.clientHeight - band - 1)}px 0px`,
+        threshold: 0
+      }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [activePinnedIndex, pinnedIdsKey, pinnedPosts]);
+
   const filteredPosts = useMemo(() => {
     if (!searchQuery.trim()) return visiblePosts;
     const q = searchQuery.trim().toLowerCase();
@@ -109,6 +179,7 @@ function FeedPage({ user, onDeletedIdsChange, searchQuery = '' }) {
     async (postId) => {
       // Optimistic update в SWR-кэше + точечный апдейт без полной перезагрузки (H10).
       setDeletedPostIds((prev) => [...prev, postId]);
+      setContextMenuState(null);
       try {
         await updatePost(postId, { is_deleted: true });
         mutate(
@@ -149,6 +220,54 @@ function FeedPage({ user, onDeletedIdsChange, searchQuery = '' }) {
     if (!userIsModerator) return;
     setEditingPost(post);
   }, [userIsModerator]);
+
+  const handleTogglePin = useCallback(
+    async (post) => {
+      if (!userIsModerator || !post?.id) return;
+      const nextPinned = !post.is_pinned;
+      const pinnedAt = nextPinned ? new Date().toISOString() : null;
+      mutate(
+        (curr = []) =>
+          curr.map((p) =>
+            p.id === post.id ? { ...p, is_pinned: nextPinned, pinned_at: pinnedAt } : p
+          ),
+        false
+      );
+      try {
+        if (nextPinned) await pinPost(post.id);
+        else await unpinPost(post.id);
+      } catch (err) {
+        error('toggle pin post:', err);
+        mutate();
+      }
+    },
+    [mutate, userIsModerator]
+  );
+
+  const handleLongPress = useCallback((post, point) => {
+    if (!post?.id || !point) return;
+    setContextMenuState({ postId: post.id, anchorPoint: point });
+  }, []);
+
+  const handleCloseContextMenu = useCallback(() => {
+    setContextMenuState(null);
+  }, []);
+
+  const handleRegisterCardRef = useCallback((postId) => (el) => {
+    if (el) cardRefs.current.set(postId, el);
+    else cardRefs.current.delete(postId);
+  }, []);
+
+  const handleAdvancePinned = useCallback(() => {
+    setActivePinnedIndex((i) =>
+      pinnedPosts.length === 0 ? 0 : (i + 1) % pinnedPosts.length
+    );
+  }, [pinnedPosts.length]);
+
+  const handleOpenPinned = useCallback((post) => {
+    if (!post?.id) return;
+    cardRefs.current.get(post.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
 
   const handleCloseEdit = useCallback(() => {
     setEditingPost(null);
@@ -198,6 +317,11 @@ function FeedPage({ user, onDeletedIdsChange, searchQuery = '' }) {
     [startUpload]
   );
 
+  const contextMenuPost = useMemo(() => {
+    if (!contextMenuState) return null;
+    return visiblePosts.find((p) => p.id === contextMenuState.postId) || null;
+  }, [contextMenuState, visiblePosts]);
+
   return (
     <div className="feed-scroll-container" ref={containerRef}>
       {userIsModerator && (
@@ -213,6 +337,16 @@ function FeedPage({ user, onDeletedIdsChange, searchQuery = '' }) {
       )}
 
       <div className="feed-list">
+        {pinnedPosts.length > 0 && (
+          <PinnedBanner
+            pinnedPosts={pinnedPosts}
+            collection="posts"
+            activeIndex={activePinnedIndex}
+            onAdvance={handleAdvancePinned}
+            onOpen={handleOpenPinned}
+          />
+        )}
+
         {isLoading && <Spinner label="Загрузка ленты…" />}
 
         {!isLoading && filteredPosts.length === 0 && (
@@ -237,9 +371,9 @@ function FeedPage({ user, onDeletedIdsChange, searchQuery = '' }) {
               isSoftDeleted={isSoftDeleted}
               userIsModerator={userIsModerator}
               onOpenDetail={handleOpenDetail}
-              onOpenEdit={handleOpenEdit}
-              onDelete={handleDeletePost}
               onRestore={handleRestorePost}
+              onLongPress={handleLongPress}
+              cardRef={handleRegisterCardRef(post.id)}
               hiddenMediaKey={hiddenMediaKey}
               onOpenFullscreen={handleOpenFullscreen}
               scrollRootRef={containerRef}
@@ -248,14 +382,22 @@ function FeedPage({ user, onDeletedIdsChange, searchQuery = '' }) {
         })}
       </div>
 
+      <PostContextMenu
+        isOpen={Boolean(contextMenuPost && contextMenuState)}
+        anchorPoint={contextMenuState?.anchorPoint ?? null}
+        isPinned={Boolean(contextMenuPost?.is_pinned)}
+        onTogglePin={() => contextMenuPost && handleTogglePin(contextMenuPost)}
+        onEdit={() => contextMenuPost && handleOpenEdit(contextMenuPost)}
+        onDelete={() => contextMenuPost && handleDeletePost(contextMenuPost.id)}
+        onClose={handleCloseContextMenu}
+      />
+
       <PostDetailModal
         isOpen={Boolean(selectedPost)}
         post={selectedPost}
         focusComment={focusComment}
         user={user}
         userIsModerator={userIsModerator}
-        onOpenEdit={handleOpenEdit}
-        onDeletePost={handleDeletePost}
         hiddenMediaKey={hiddenMediaKey}
         onOpenFullscreen={handleOpenFullscreen}
         onClose={handleCloseDetail}

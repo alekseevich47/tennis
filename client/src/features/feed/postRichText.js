@@ -203,6 +203,63 @@ export function toDisplayHtml(content) {
 }
 
 /**
+ * Первая визуальная строка HTML поста для плашки закрепа.
+ * Обрезает по первому `<br>` или блоковому разрыву (`p`/`div`),
+ * сохраняя inline-разметку и `.post-anim-frame`.
+ * @param {string} html
+ * @returns {string}
+ */
+export function getFirstLine(html) {
+  const display = toDisplayHtml(html || '');
+  if (!display) return '';
+
+  const doc = new DOMParser().parseFromString(
+    `<div id="__first_line_root">${display}</div>`,
+    'text/html'
+  );
+  const root = doc.getElementById('__first_line_root');
+  if (!root) return '';
+
+  /**
+   * @param {ParentNode} parent
+   * @param {HTMLElement} out
+   * @returns {boolean} true — дальше не читать (разрыв строки)
+   */
+  function collect(parent, out) {
+    for (const child of Array.from(parent.childNodes)) {
+      if (child.nodeType === Node.TEXT_NODE) {
+        out.appendChild(doc.createTextNode(child.textContent || ''));
+        continue;
+      }
+      if (child.nodeType !== Node.ELEMENT_NODE) continue;
+      const el = /** @type {Element} */ (child);
+      const tag = el.tagName.toUpperCase();
+
+      if (tag === 'BR') return true;
+
+      if (tag === 'P' || tag === 'DIV') {
+        if (out.childNodes.length > 0) return true;
+        collect(el, out);
+        return true;
+      }
+
+      out.appendChild(el.cloneNode(true));
+    }
+    return false;
+  }
+
+  const out = doc.createElement('div');
+  collect(root, out);
+  const result = sanitizePostHtml(out.innerHTML);
+  // Plain-only строка уже entity-escaped; оборачиваем, чтобы повторный
+  // toDisplayHtml в PostContentHtml не экранировал `&lt;` ещё раз.
+  if (result && !looksLikeRichHtml(result)) {
+    return `<span>${result}</span>`;
+  }
+  return result;
+}
+
+/**
  * @param {'bold' | 'italic' | 'underline'} command
  */
 export function applyFormatCommand(command) {
@@ -299,6 +356,46 @@ export function readActiveFormats() {
 }
 
 /**
+ * Lock `.post-anim-frame` width to the widest `|`-variant so the chip
+ * does not jump when cycling text. Applied on display only (not in editor).
+ * @param {HTMLElement} el
+ * @param {HTMLElement} textEl
+ * @param {string[]} variants
+ */
+function lockAnimFrameWidth(el, textEl, variants) {
+  const style = window.getComputedStyle(textEl);
+  const probe = document.createElement('span');
+  probe.style.cssText = [
+    'position:absolute',
+    'visibility:hidden',
+    'pointer-events:none',
+    'white-space:nowrap',
+    'left:-9999px',
+    'top:0',
+    `font:${style.font}`,
+    `letter-spacing:${style.letterSpacing}`,
+    `text-transform:${style.textTransform}`,
+    'padding:0',
+    'margin:0',
+    'border:0'
+  ].join(';');
+  document.body.appendChild(probe);
+
+  let max = 0;
+  for (const variant of variants) {
+    probe.textContent = variant;
+    max = Math.max(max, probe.offsetWidth);
+  }
+  probe.remove();
+
+  const frameStyle = window.getComputedStyle(el);
+  const padX =
+    (parseFloat(frameStyle.paddingLeft) || 0) +
+    (parseFloat(frameStyle.paddingRight) || 0);
+  el.style.width = `${Math.ceil(max + padX)}px`;
+}
+
+/**
  * Cycle `|`-separated variants inside `.post-anim-frame` nodes.
  * Animates only the inner text; the colored frame stays still.
  * @param {ParentNode | null} root
@@ -331,6 +428,10 @@ export function startAnimFrames(root, intervalMs = 1600) {
     textEl.textContent = list[0] || '';
     return { el, textEl, variants: list, index: 0, busy: false };
   });
+
+  for (const item of items) {
+    lockAnimFrameWidth(item.el, item.textEl, item.variants);
+  }
 
   const multi = items.filter((item) => item.variants.length > 1);
   if (multi.length === 0) return () => {};

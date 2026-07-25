@@ -6,16 +6,14 @@
   "4": "Gallery Upload Flow",
   "5": "Admin UI Controls",
   "6": "Header and Membership",
-  "7": "Admin Panel Stats",
+  "7": "useMaxAuth.js",
   "8": "NPM Dependencies",
   "9": "Audit Logs Modal",
-  "10": "Avatar Crop Viewer",
+  "10": "LogsModal.jsx",
   "11": "Stats Library Helpers",
   "12": "Achievement Badge Assets",
   "13": "Achievements UI Block",
-  "14": "Tournament Upload Providers",
-  "15": "Toast Notifications",
-  "16": "Training Notification Badges",
+  "14": "datePickerUtils.js",
   "17": "Audit Diff Library",
   "18": "Bot Broadcast Library",
   "19": "Notifications State Lib",
@@ -54,5 +52,6 @@
   "52": "Trainings 4h Reminders",
   "53": "Users Ban Auth Hook",
   "54": "Users Default Visible",
-  "55": "Touch UI Performance"
+  "55": "Touch UI Performance",
+  "57": "log.js"
 }
