@@ -523,19 +523,24 @@ button.gallery-item-like:hover:not(:disabled) {
   align-items: end;
 }
 
-.gallery-comment-form button {
+.gallery-comment-form .comment-send-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-height: 44px;
+  width: 44px;
+  min-width: 44px;
   border: none;
   border-radius: 12px;
   background: #007aff;
   color: #ffffff;
-  padding: 0 14px;
+  padding: 0;
   font: inherit;
   font-weight: 700;
   cursor: pointer;
 }
 
-.gallery-comment-form button:disabled {
+.gallery-comment-form .comment-send-btn:disabled {
   cursor: not-allowed;
   opacity: 0.65;
 }
@@ -543,9 +548,5 @@ button.gallery-item-like:hover:not(:disabled) {
 @media (max-width: 480px) {
   .gallery-media-overlay {
     padding: 18px 16px 0;
-  }
-
-  .gallery-comment-form {
-    grid-template-columns: 1fr;
   }
 }
