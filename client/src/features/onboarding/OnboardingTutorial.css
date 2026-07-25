@@ -221,6 +221,7 @@ main.content-with-header.onboarding-scroll-locked {
 }
 
 .app.onboarding-active .app-header,
-.app.onboarding-active .bottom-nav {
+.app.onboarding-active .bottom-nav,
+.app.onboarding-active .bottom-nav__pill {
   pointer-events: none;
 }

@@ -120,47 +120,49 @@ function BottomNav({ activeTab, onTabChange, showAdmin = false }) {
   }, [showAdmin, activeTab]);
 
   return (
-    <nav ref={navRef} className="bottom-nav" aria-label="Основная навигация">
-      <span
-        className={clsx(
-          'bottom-nav__indicator',
-          indicator.ready && 'bottom-nav__indicator--ready'
-        )}
-        style={{
-          transform: `translateX(${indicator.left}px)`,
-          width: indicator.width
-        }}
-        aria-hidden="true"
-      />
-      {NAV_ITEMS.map((item, index) => {
-        const isActive = activeTab === index;
-        return (
+    <nav className="bottom-nav" aria-label="Основная навигация">
+      <div ref={navRef} className="bottom-nav__pill">
+        <span
+          className={clsx(
+            'bottom-nav__indicator',
+            indicator.ready && 'bottom-nav__indicator--ready'
+          )}
+          style={{
+            transform: `translateX(${indicator.left}px)`,
+            width: indicator.width
+          }}
+          aria-hidden="true"
+        />
+        {NAV_ITEMS.map((item, index) => {
+          const isActive = activeTab === index;
+          return (
+            <button
+              key={item.label}
+              ref={(el) => setItemRef(index, el)}
+              type="button"
+              className={clsx('nav-item', isActive && 'active')}
+              data-nav-index={index}
+              onClick={() => onTabChange(index)}
+              aria-label={item.label}
+              aria-current={isActive ? 'page' : undefined}
+            >
+              {item.icon}
+            </button>
+          );
+        })}
+        {showAdmin && (
           <button
-            key={item.label}
-            ref={(el) => setItemRef(index, el)}
+            ref={(el) => setItemRef(ADMIN_TAB_INDEX, el)}
             type="button"
-            className={clsx('nav-item', isActive && 'active')}
-            data-nav-index={index}
-            onClick={() => onTabChange(index)}
-            aria-label={item.label}
-            aria-current={isActive ? 'page' : undefined}
+            className={clsx('nav-item', activeTab === ADMIN_TAB_INDEX && 'active')}
+            onClick={() => onTabChange(ADMIN_TAB_INDEX)}
+            aria-label={ADMIN_NAV_ITEM.label}
+            aria-current={activeTab === ADMIN_TAB_INDEX ? 'page' : undefined}
           >
-            {item.icon}
+            {ADMIN_NAV_ITEM.icon}
           </button>
-        );
-      })}
-      {showAdmin && (
-        <button
-          ref={(el) => setItemRef(ADMIN_TAB_INDEX, el)}
-          type="button"
-          className={clsx('nav-item', activeTab === ADMIN_TAB_INDEX && 'active')}
-          onClick={() => onTabChange(ADMIN_TAB_INDEX)}
-          aria-label={ADMIN_NAV_ITEM.label}
-          aria-current={activeTab === ADMIN_TAB_INDEX ? 'page' : undefined}
-        >
-          {ADMIN_NAV_ITEM.icon}
-        </button>
-      )}
+        )}
+      </div>
     </nav>
   );
 }
