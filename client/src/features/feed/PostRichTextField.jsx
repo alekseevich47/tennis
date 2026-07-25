@@ -4,6 +4,7 @@ import FrameColorPicker from './FrameColorPicker';
 import {
   applyAnimFrame,
   applyFormatCommand,
+  ensureFrameCarets,
   getEditorHtml,
   isEditorEmpty,
   normalizeHexColor,
@@ -78,6 +79,7 @@ function PostRichTextField({
     const next = value || '';
     if (el.innerHTML !== next) {
       el.innerHTML = next;
+      ensureFrameCarets(el);
       setEmpty(isEditorEmpty(el));
     }
   }, [value]);
@@ -122,14 +124,7 @@ function PostRichTextField({
     setFrameOpen(false);
     restoreSelection();
     el.focus();
-
-    if (command === 'link') {
-      const url = window.prompt('Ссылка (https://…)', 'https://');
-      if (url === null) return;
-      applyFormatCommand('link', url);
-    } else {
-      applyFormatCommand(command);
-    }
+    applyFormatCommand(/** @type {'bold' | 'italic' | 'underline'} */ (command));
 
     skipNextSync.current = true;
     syncEmptyAndValue();
@@ -142,6 +137,7 @@ function PostRichTextField({
     const color = normalizeHexColor(hex) || frameColor;
     restoreSelection();
     applyAnimFrame(color, el);
+    ensureFrameCarets(el);
     setFrameColor(color);
     setFrameOpen(false);
     skipNextSync.current = true;
