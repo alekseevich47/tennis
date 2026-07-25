@@ -1,6 +1,5 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import clsx from 'clsx';
-import IconButton from '../../components/ui/IconButton';
 import PostMedia from './PostMedia';
 import PostContentHtml from './PostContentHtml';
 import CommentsPreview from './CommentsPreview';
@@ -8,6 +7,7 @@ import sectionAvatarUrl from '../../assets/sm-avatar.png';
 import { usePostLikes } from '../../hooks/usePostLikes';
 import { usePostViewTracker } from '../../hooks/usePostViewTracker';
 import { formatPostDate } from '../../lib/format';
+import { LongPressRing, useLongPress } from '../../lib/longPress';
 
 /**
  * Безопасное извлечение комментариев из expand.
@@ -66,9 +66,9 @@ function PostCardLike({ postId, user }) {
  *   isSoftDeleted: boolean,
  *   userIsModerator: boolean,
  *   onOpenDetail: (post: any, focusComment?: boolean) => void,
- *   onOpenEdit: (post: any) => void,
- *   onDelete: (postId: string) => void,
  *   onRestore: (postId: string) => void,
+ *   onLongPress?: (post: any, point: { x: number, y: number }) => void,
+ *   cardRef?: (el: HTMLElement | null) => void,
  *   hiddenMediaKey?: string | null,
  *   onOpenFullscreen: (items: Array<{ filename: string, url: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void,
  *   scrollRootRef?: React.RefObject<HTMLElement | null>
@@ -80,9 +80,9 @@ function PostCard({
   isSoftDeleted,
   userIsModerator,
   onOpenDetail,
-  onOpenEdit,
-  onDelete,
   onRestore,
+  onLongPress,
+  cardRef,
   hiddenMediaKey,
   onOpenFullscreen,
   scrollRootRef
@@ -101,8 +101,26 @@ function PostCard({
     scrollRootRef
   });
 
+  const handleLongPress = useCallback(
+    (point) => {
+      onLongPress?.(post, point);
+    },
+    [onLongPress, post]
+  );
+
+  const { handlers: longPressHandlers, cardStyle, ringProps } = useLongPress({
+    enabled: userIsModerator && !isSoftDeleted,
+    onLongPress: handleLongPress
+  });
+
   const handleOpenDetail = () => {
     onOpenDetail(post);
+  };
+
+  const handleCardClick = (event) => {
+    longPressHandlers.onClick(event);
+    if (event.defaultPrevented) return;
+    handleOpenDetail();
   };
 
   const handlePostTextClick = (event) => {
@@ -119,16 +137,6 @@ function PostCard({
     if (event.key !== 'Enter' && event.key !== ' ') return;
     event.preventDefault();
     handleOpenComments(event);
-  };
-
-  const handleOpenEdit = (event) => {
-    event.stopPropagation();
-    onOpenEdit(post);
-  };
-
-  const handleDelete = (event) => {
-    event.stopPropagation();
-    onDelete(post.id);
   };
 
   if (isSoftDeleted && userIsModerator) {
@@ -150,99 +158,79 @@ function PostCard({
   }
 
   return (
-    <article
-      className="feed-card"
-      onClick={handleOpenDetail}
-      style={{ cursor: 'pointer' }}
-    >
-      <div ref={viewRef} className="post-view-sentinel" aria-hidden="true" />
-      <div className="feed-card-header">
-        <div className="section-avatar" aria-hidden="true">
-          <img className="section-avatar__image" src={sectionAvatarUrl} alt="" decoding="async" />
+    <>
+      <article
+        ref={cardRef}
+        className="feed-card"
+        onClick={handleCardClick}
+        onPointerDown={longPressHandlers.onPointerDown}
+        onPointerMove={longPressHandlers.onPointerMove}
+        onPointerUp={longPressHandlers.onPointerUp}
+        onPointerCancel={longPressHandlers.onPointerCancel}
+        onPointerLeave={longPressHandlers.onPointerLeave}
+        onContextMenu={longPressHandlers.onContextMenu}
+        style={{ cursor: 'pointer', ...cardStyle }}
+      >
+        <div ref={viewRef} className="post-view-sentinel" aria-hidden="true" />
+        <div className="feed-card-header">
+          <div className="section-avatar" aria-hidden="true">
+            <img className="section-avatar__image" src={sectionAvatarUrl} alt="" decoding="async" />
+          </div>
+          <div className="section-meta">
+            <span className="section-title-name">Секция Миленьких</span>
+            <span className="post-date-line">
+              <span className="post-date">{formatPostDate(post.created)}</span>
+              {post.post_number ? <span className="post-number">#{post.post_number}</span> : null}
+            </span>
+          </div>
         </div>
-        <div className="section-meta">
-          <span className="section-title-name">Секция Миленьких</span>
-          <span className="post-date-line">
-            <span className="post-date">{formatPostDate(post.created)}</span>
-            {post.post_number ? <span className="post-number">#{post.post_number}</span> : null}
-          </span>
+
+        <div className="feed-card-body">
+          <PostContentHtml
+            as="button"
+            type="button"
+            className="post-text"
+            onClick={handlePostTextClick}
+            content={post.content || post.text}
+          />
+          <PostMedia
+            post={post}
+            hiddenMediaKey={hiddenMediaKey}
+            onOpenFullscreen={onOpenFullscreen}
+          />
         </div>
-        {userIsModerator && (
-          <div className="post-card-actions" role="group" aria-label="Действия с публикацией">
-            <IconButton
-              ariaLabel="Редактировать публикацию"
-              variant="ghost"
-              size="sm"
-              className="edit-post-btn"
-              onClick={handleOpenEdit}
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path d="M4 20h4.2L19.3 8.9a2 2 0 0 0 0-2.8l-1.4-1.4a2 2 0 0 0-2.8 0L4 15.8V20Z" />
-                <path d="m13.7 6.1 4.2 4.2" />
-              </svg>
-            </IconButton>
-            <IconButton
-              ariaLabel="Удалить публикацию"
-              variant="danger"
-              size="sm"
-              className="delete-post-btn"
-              onClick={handleDelete}
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path d="M4 7h16" />
-                <path d="M10 11v6" />
-                <path d="M14 11v6" />
-                <path d="M6 7l1 13h10l1-13" />
-                <path d="M9 7V4h6v3" />
-              </svg>
-            </IconButton>
+
+        <div className="feed-card-footer feed-card-bottom-bar">
+          <PostCardLike postId={post.id} user={user} />
+          <button
+            type="button"
+            className="post-card-comment-btn"
+            onClick={handleOpenComments}
+            aria-label={`Открыть комментарии к публикации. Комментариев: ${commentCount}`}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.5-4.5A8 8 0 1 1 21 12Z" />
+            </svg>
+            <span className="post-card-comment-btn__count">{commentCount}</span>
+          </button>
+        </div>
+
+        {previewComments.length > 0 && (
+          <div
+            role="button"
+            tabIndex={0}
+            className="comments-preview-trigger"
+            onClick={handleOpenComments}
+            onKeyDown={handleCommentsPreviewKeyDown}
+            aria-label="Открыть комментарии к публикации"
+          >
+            <CommentsPreview comments={previewComments} />
           </div>
         )}
-      </div>
+      </article>
 
-      <div className="feed-card-body">
-        <PostContentHtml
-          as="button"
-          type="button"
-          className="post-text"
-          onClick={handlePostTextClick}
-          content={post.content || post.text}
-        />
-        <PostMedia
-          post={post}
-          hiddenMediaKey={hiddenMediaKey}
-          onOpenFullscreen={onOpenFullscreen}
-        />
-      </div>
-
-      <div className="feed-card-footer feed-card-bottom-bar">
-        <PostCardLike postId={post.id} user={user} />
-        <button
-          type="button"
-          className="post-card-comment-btn"
-          onClick={handleOpenComments}
-          aria-label={`Открыть комментарии к публикации. Комментариев: ${commentCount}`}
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.5-4.5A8 8 0 1 1 21 12Z" />
-          </svg>
-          <span className="post-card-comment-btn__count">{commentCount}</span>
-        </button>
-      </div>
-
-      {previewComments.length > 0 && (
-        <div
-          role="button"
-          tabIndex={0}
-          className="comments-preview-trigger"
-          onClick={handleOpenComments}
-          onKeyDown={handleCommentsPreviewKeyDown}
-          aria-label="Открыть комментарии к публикации"
-        >
-          <CommentsPreview comments={previewComments} />
-        </div>
-      )}
-    </article>
+      <LongPressRing {...ringProps} />
+    </>
   );
 }
 

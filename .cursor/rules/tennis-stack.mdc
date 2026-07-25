@@ -28,7 +28,7 @@ alwaysApply: false
 | Путь | Назначение |
 |------|------------|
 | `App.jsx` | Shell: табы, `flushPendingDeletes`, soft-delete буферы, `ToastProvider` |
-| `features/*` | Страницы по разделам (feed, trainings, shop, competitions, …) |
+| `features/*` | Страницы по разделам (feed, trainings, shop, competitions, …). **Лента — rich-text**: `features/feed/PostRichTextField`, `PostFormatToolbar`, `FrameColorPicker`, `PostContentHtml`, `postRichText.js` (см. раздел «Rich-text в ленте»). |
 | `features/trainings/components/*` | Модалки тренировок: `EditTrainingModal`, `UserPickerModal`, `ArchiveModal`, `MembershipOverviewModal`, `DateRangePicker`, `DateRangeModal`, `DatePickerModal` |
 | `features/shop/*` | Магазин: `ShopPage`, `ProductCard`, `ProductDetail`, `ProductForm`, `FavoriteIcon`, `FavoritesDropdown`, `BuyButton`, `buyMessage`, `SearchBar`, `CategoryDropdown` |
 | `features/profile/*` | Профиль: `ProfilePage`, `MembershipModal`, `MembershipEditModal`, `MembershipPeriodRangeField`, `MembershipStartDateField`, `ProfileViewModal`, `ProfileSingleDateField`, `ProfileTrainingsSearch`, `BlockedPage` |
@@ -44,7 +44,7 @@ alwaysApply: false
 
 - Импорты PB: новый код — из `./pb`, `./auth`, `./posts`; `pocketbase.js` — только legacy re-export.
 - **Не** `window.alert` / `confirm` — `useAlertDialog`.
-- Модалки — `Modal` (focus-trap, `aria-modal`). Скроллбар в `.ui-modal-body` скрыт (`scrollbar-width: none`, `::webkit-scrollbar { display: none }`), прокрутка работает.
+- Модалки — `Modal` (focus-trap, `aria-modal`). В `FOCUSABLE_SELECTORS` есть `[contenteditable="true"]` (rich-text). Скроллбар в `.ui-modal-body` скрыт (`scrollbar-width: none`, `::webkit-scrollbar { display: none }`), прокрутка работает.
 - Роли: `user` / `moderator` — проверять через `isModerator` из `auth`.
 - Логи: `lib/log` (`warn`, `error`), не `console.log` в прод-путях.
 - `useMaxAuth`: идемпотентный init (`startedRef`), `AbortController`, не блокировать UI тяжёлой зачисткой. При бане — `bannedRef` + `loadBanInfo()`/`saveBanInfo()`; `setUser` через `applyUser`. Локальная сессия (без `initData`) — `refreshAuthUser` для проверки `is_banned`.
@@ -193,6 +193,41 @@ alwaysApply: false
 - В `PostCard` и `TournamentPostCard`: отображается как `#N` в `.section-meta` сразу после даты, тем же шрифтом/цветом через `<span className="post-number">`.
 - В `FullscreenImageViewer` для галереи: `items[i].postNumber` (берётся из `gallery.post_number`) отображается вместо/рядом с `activeIndex+1 / items.length`.
 - Используется в уведомлениях бота (комментарии, новые публикации) для идентификации.
+
+## Rich-text — везде (пост + комментарии, TASKS_1000)
+
+Rich-text (`PostRichTextField`) подключён во всех местах ввода текста публикаций и комментариев: `CreatePostModal`, `EditPostModal`, `CreateTournamentPostModal`, `EditTournamentPostModal` (полный тулбар — Ж/К/Ч + анимационная рамка), и во всех формах комментариев — `PostDetailModal` (лента), `TournamentCommentsSection` (турнир), `GalleryCommentModal` (галерея) — **compact-режим без рамки** (`enableFrame={false}`, проп `PostRichTextField`/`PostFormatToolbar`). Хранение — HTML в текстовом поле (`posts.content` / `tournament_posts.content` / `comments.text` / `tournament_comments.text` / `gallery_comments.text`), whitelist sanitize (`sanitizePostHtml`). Рендер текста комментариев — через `PostContentHtml`, не `{c.text}` напрямую (обратная совместимость с уже существующими plain-text комментариями через `toDisplayHtml`/`looksLikeRichHtml`). `EditPostModal`/`EditTournamentPostModal` сохраняют свою текущую вёрстку (`edit-post-form`, textarea-обёртка + отдельный блок медиа) — меняется только сам инпут (`textarea` → `PostRichTextField`), не вся форма. Системное long-press меню ОС **не** перехватывается (webview); форматирование — своя статичная панель кнопок.
+
+**Анимационная рамка — фиксированная ширина (TASKS_1000)**: при цикле `|`-вариантов текста внутри `.post-anim-frame` рамка **не** меняет размер — ширина фиксируется по самому длинному варианту (`startAnimFrames` измеряет ширину каждого варианта и выставляет `width`/`minWidth` на обёртку `.post-anim-frame` один раз при старте цикла); `.post-anim-frame__text` — `white-space: nowrap`. Фиксация — только в режиме отображения (`PostContentHtml`), не в `contenteditable` при редактировании.
+
+**Long-press меню карточек + закрепы (TASKS_1000, план — `tasks/TASKS_1000.md`)**: кнопки «Редактировать»/«Удалить» убраны из `PostCard`, `TournamentPostCard`, `PostDetailModal`, `TournamentPostDetailModal` — доступ к ним только через long-press по карточке в списке (основная «Лента» и «Турнир»-«Лента», **только модератор**): `lib/longPress.js` (хук `useLongPress`, 1000ms, анимация приближения+затемнения карточки + SVG-кольцо в точке нажатия) → `features/feed/PostContextMenu.jsx` (общий для обоих разделов, паттерн `FavoritesDropdown` — mounted/visible, `position: fixed`, закрытие по клику вне) с пунктами «Закрепить»/«Открепить», «Редактировать», «Удалить». Закреп — `posts.is_pinned`/`posts.pinned_at` и `tournament_posts.is_pinned`/`tournament_posts.pinned_at` (независимые списки по разделам, без лимита), сервис `pinPost`/`unpinPost` (`services/posts.js`), `pinTournamentPost`/`unpinTournamentPost` (`services/tournamentPosts.js`) — не меняют сортировку самой ленты (`-created`), только derived-список для `PinnedBanner`. `features/feed/PinnedBanner.jsx` — sticky-плашка под header поверх списка (эффект жидкого стекла), слева сегментированные полоски (по числу закрепов), превью медиа (квадрат) + «Закреплённое сообщение» (синий) + первая строка контента (с анимацией рамки, если есть); клик — скролл-фокус на пост + переход к следующему закрепу по кругу; при прокрутке мимо текущего показанного закрепа (`IntersectionObserver`) — плашка автоматически переключается на следующий.
+
+### Файлы
+
+| Файл | Роль |
+|------|------|
+| `features/feed/postRichText.js` | sanitize (`sanitizePostHtml` / `toDisplayHtml`), `applyFormatCommand` (Ж/К/Ч), `applyAnimFrame`, `startAnimFrames`, hex/presets (`loadFramePresets` / `saveFramePresets` → `localStorage` ключ `tennis.postFramePresets`), `hasVisibleText`, `ensureFrameCarets` |
+| `features/feed/PostRichTextField.jsx` | `contenteditable` + статичный тулбар + popover палитры |
+| `features/feed/PostFormatToolbar.jsx` | кнопки Ж / К / Ч / анимационная рамка (кнопки «Ссылка» нет) |
+| `features/feed/FrameColorPicker.jsx` | круговая палитра (`conic-gradient from 90deg` = согласовано с `atan2`), HEX (редактируемый + «Копировать»), пресеты справа (`+` добавить, удержание/ПКМ — удалить), «Вставить рамку» |
+| `features/feed/PostContentHtml.jsx` | безопасный рендер HTML + запуск `startAnimFrames` |
+| `features/feed/CreatePostModal.jsx` | использует `PostRichTextField`; модалка почти fullscreen |
+| `features/feed/PostCard.jsx` / `PostDetailModal.jsx` | текст через `PostContentHtml`, не plain text |
+| `features/feed/Feed.css` | стили `.create-post-modal*`, `.post-rich-text*`, `.post-format-toolbar*`, `.frame-color-picker*`, `.post-anim-frame*` |
+
+### Поведение редактора
+
+- Тулбар **только статичный** (плавающий по фокусу убран).
+- Команды: жирный / курсив / подчёркнутый (`document.execCommand`); ссылка **не** поддерживается.
+- **Анимационная рамка** (кнопка после Ч): открывает `FrameColorPicker`; «Вставить рамку» оборачивает выделение (или шаблон `текст|вариант`) в `<span class="post-anim-frame" data-color data-variants style="--frame-color">` + внутренний `.post-anim-frame__text`.
+- Варианты текста в рамке разделяются `|`; в ленте `startAnimFrames` циклически меняет **только** `.post-anim-frame__text` (рамка-оболочка не анимируется): exit вниз → enter сверху. Заливка рамки = выбранный цвет, текст = белый.
+- После вставки рамки — текстовый spacer `\u00A0` (`ensureFrameCarets`), чтобы курсор ставился после чипа.
+- Цветовой круг: угол `atan2` (0° справа) ↔ CSS `from 90deg`. `onMouseDown` на палитре не блокирует фокус у `<input>` HEX.
+- `CreatePostModal`: `className="create-post-modal"`, `overlayClassName="create-post-modal-overlay"` — почти на весь экран, отступы сверху/снизу для закрытия тапом по оверлею; превью медиа **под** редактором (не поверх), со своим `max-height`/scroll.
+
+### Реализовано по плану TASKS_1000
+
+- `EditPostModal`, турнирные create/edit, комментарии ленты/турнира/галереи, фиксированная ширина рамки, long-press меню карточки, закрепы — план в `tasks/TASKS_1000.md`, статус реализации — см. код (этот раздел выше уже описывает целевое поведение).
 
 ## Поиск в AppHeader (Feed, Competitions, Gallery)
 

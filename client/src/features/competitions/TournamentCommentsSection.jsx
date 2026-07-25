@@ -1,6 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import IconButton from '../../components/ui/IconButton';
 import Avatar from '../../components/ui/Avatar';
+import PostContentHtml from '../feed/PostContentHtml';
+import PostRichTextField from '../feed/PostRichTextField';
+import { hasVisibleText, toDisplayHtml } from '../feed/postRichText';
 import { useTournamentComments } from '../../hooks/useTournamentComments';
 import { useCommentLikes } from '../../hooks/useCommentLikes';
 import { toggleCommentLike } from '../../services/posts';
@@ -67,8 +70,7 @@ function TournamentCommentsSection({ postId, user, userIsModerator, onOpenProfil
 
   const handleAdd = async (e) => {
     e.preventDefault();
-    const text = commentText.trim();
-    if (!text || !postId || isAddingCommentRef.current) return;
+    if (!hasVisibleText(commentText) || !postId || isAddingCommentRef.current) return;
     if (!user?.id) {
       error('Нельзя создавать комментарий без авторизации.');
       return;
@@ -76,7 +78,7 @@ function TournamentCommentsSection({ postId, user, userIsModerator, onOpenProfil
     isAddingCommentRef.current = true;
     setIsAddingComment(true);
     try {
-      await createTournamentComment(postId, text, user.id);
+      await createTournamentComment(postId, commentText, user.id);
       setCommentText('');
       await mutateComments();
       onCommentMutated?.();
@@ -119,12 +121,12 @@ function TournamentCommentsSection({ postId, user, userIsModerator, onOpenProfil
 
   const handleStartEdit = (comment) => {
     setEditingId(comment.id);
-    setEditingText(comment.text || '');
+    setEditingText(toDisplayHtml(comment.text || ''));
   };
 
   const handleSaveEdit = async (commentId, e) => {
     e.preventDefault();
-    if (!editingText.trim()) return;
+    if (!hasVisibleText(editingText)) return;
     try {
       await updateTournamentComment(commentId, { text: editingText });
       setEditingId(null);
@@ -254,21 +256,27 @@ function TournamentCommentsSection({ postId, user, userIsModerator, onOpenProfil
                         <label htmlFor={`edit-tournament-comment-${c.id}`} className="visually-hidden">
                           Редактирование комментария
                         </label>
-                        <input
+                        <PostRichTextField
                           id={`edit-tournament-comment-${c.id}`}
-                          type="text"
                           value={editingText}
-                          onChange={(e) => setEditingText(e.target.value)}
-                          required
+                          onChange={setEditingText}
+                          enableFrame={false}
+                          compact
+                          placeholder="Текст комментария…"
+                          aria-label="Редактирование комментария"
                         />
-                        <button type="submit">ОК</button>
-                        <button type="button" onClick={() => setEditingId(null)}>
-                          Отмена
-                        </button>
+                        <div className="comment-edit-inline-form__actions">
+                          <button type="submit" disabled={!hasVisibleText(editingText)}>
+                            ОКК
+                          </button>
+                          <button type="button" onClick={() => setEditingId(null)}>
+                            Отмена
+                          </button>
+                        </div>
                       </form>
                     ) : (
                       <>
-                        <p className="comment-content-text">{c.text}</p>
+                        <PostContentHtml as="p" className="comment-content-text" content={c.text} />
                         <div className="comment-footer-row">
                           <button
                             type="button"
@@ -304,18 +312,16 @@ function TournamentCommentsSection({ postId, user, userIsModerator, onOpenProfil
           <label htmlFor={`tournament-comment-input-${postId}`} className="visually-hidden">
             Написать комментарий
           </label>
-          <input
+          <PostRichTextField
             id={`tournament-comment-input-${postId}`}
-            type="text"
-            name="tournament-comment"
-            autoComplete="off"
-            placeholder="Написать комментарий…"
             value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            disabled={isAddingComment}
-            required
+            onChange={setCommentText}
+            enableFrame={false}
+            compact
+            placeholder="Написать комментарий…"
+            aria-label="Написать комментарий"
           />
-          <button type="submit" disabled={isAddingComment || !commentText.trim()}>
+          <button type="submit" disabled={isAddingComment || !hasVisibleText(commentText)}>
             {isAddingComment ? '…' : 'Отправить'}
           </button>
         </form>

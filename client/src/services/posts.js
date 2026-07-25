@@ -13,6 +13,8 @@ import { PB_URL } from '../config';
  * @property {string | string[]} [media]
  * @property {string} [author]
  * @property {boolean} [is_deleted]
+ * @property {boolean} [is_pinned]
+ * @property {string | null} [pinned_at]
  * @property {number} [likes_count]
  * @property {string} created
  * @property {Record<string, unknown>} [expand]
@@ -231,6 +233,22 @@ export async function updatePost(postId, patch) {
   return /** @type {PostRecord} */ (
     await pb.collection('posts').update(postId, /** @type {Record<string, unknown>} */ (patch))
   );
+}
+
+/**
+ * @param {string} postId
+ * @returns {Promise<PostRecord>}
+ */
+export async function pinPost(postId) {
+  return updatePost(postId, { is_pinned: true, pinned_at: new Date().toISOString() });
+}
+
+/**
+ * @param {string} postId
+ * @returns {Promise<PostRecord>}
+ */
+export async function unpinPost(postId) {
+  return updatePost(postId, { is_pinned: false, pinned_at: null });
 }
 
 /**

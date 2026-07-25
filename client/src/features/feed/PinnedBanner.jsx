@@ -1,0 +1,113 @@
+import React, { useEffect, useState } from 'react';
+import clsx from 'clsx';
+import { getMediaThumbUrl, isVideoMediaName, mediaNames } from '../../lib/media';
+import PostContentHtml from './PostContentHtml';
+import { getFirstLine } from './postRichText';
+import './Feed.css';
+
+const CROSSFADE_MS = 200;
+
+/**
+ * Sticky-плашка закреплённых публикаций (Лента / Турнир-Лента).
+ *
+ * @param {{
+ *   pinnedPosts: Array<{ id: string, content?: string, text?: string, media?: string | string[] }>,
+ *   collection?: 'posts' | 'tournament_posts',
+ *   activeIndex?: number,
+ *   onAdvance?: () => void,
+ *   onOpen?: (post: any) => void
+ * }} props
+ */
+export default function PinnedBanner({
+  pinnedPosts = [],
+  collection = 'posts',
+  activeIndex = 0,
+  onAdvance,
+  onOpen
+}) {
+  const count = pinnedPosts.length;
+  const safeIndex = count > 0 ? ((activeIndex % count) + count) % count : 0;
+  const [shownIndex, setShownIndex] = useState(safeIndex);
+  const [animClass, setAnimClass] = useState('is-enter');
+
+  useEffect(() => {
+    if (count === 0) return undefined;
+    if (shownIndex >= count) {
+      setShownIndex(safeIndex);
+      setAnimClass('is-enter');
+      return undefined;
+    }
+    if (safeIndex === shownIndex) return undefined;
+
+    setAnimClass('is-exit');
+    const t = window.setTimeout(() => {
+      setShownIndex(safeIndex);
+      setAnimClass('is-enter');
+    }, CROSSFADE_MS);
+    return () => window.clearTimeout(t);
+  }, [safeIndex, shownIndex, count]);
+
+  if (count === 0) return null;
+
+  const displayIndex = shownIndex < count ? shownIndex : safeIndex;
+  const post = pinnedPosts[displayIndex];
+  const mediaName = mediaNames(post?.media)[0];
+  const thumbUrl =
+    mediaName && !isVideoMediaName(mediaName)
+      ? getMediaThumbUrl(post, collection, mediaName, '400x0')
+      : null;
+  const firstLineHtml = getFirstLine(post?.content || post?.text || '');
+
+  const handleClick = () => {
+    const current = pinnedPosts[safeIndex];
+    if (!current) return;
+    onOpen?.(current);
+    onAdvance?.();
+  };
+
+  return (
+    <button
+      type="button"
+      className="pinned-banner"
+      onClick={handleClick}
+      aria-label="Закреплённое сообщение"
+    >
+      <div className="pinned-banner__segments" aria-hidden="true">
+        {pinnedPosts.map((item, index) => (
+          <span
+            key={item.id || index}
+            className={clsx(
+              'pinned-banner__segment',
+              index === safeIndex && 'pinned-banner__segment--active'
+            )}
+          />
+        ))}
+      </div>
+
+      <div className="pinned-banner__body">
+        {thumbUrl ? (
+          <img src={thumbUrl} alt="" className="pinned-banner__thumb" />
+        ) : null}
+
+        <div
+          className={clsx(
+            'pinned-banner__text',
+            animClass === 'is-exit' && 'pinned-banner__text--exit',
+            animClass === 'is-enter' && 'pinned-banner__text--enter'
+          )}
+        >
+          <span className="pinned-banner__label">Закреплённое сообщение</span>
+          {firstLineHtml ? (
+            <PostContentHtml
+              as="span"
+              className="pinned-banner__preview"
+              content={firstLineHtml}
+            />
+          ) : (
+            <span className="pinned-banner__preview pinned-banner__preview--empty" />
+          )}
+        </div>
+      </div>
+    </button>
+  );
+}

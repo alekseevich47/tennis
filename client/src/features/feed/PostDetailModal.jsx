@@ -4,6 +4,8 @@ import IconButton from '../../components/ui/IconButton';
 import Avatar from '../../components/ui/Avatar';
 import PostMedia from './PostMedia';
 import PostContentHtml from './PostContentHtml';
+import PostRichTextField from './PostRichTextField';
+import { hasVisibleText, toDisplayHtml } from './postRichText';
 import sectionAvatarUrl from '../../assets/sm-avatar.png';
 import { useComments } from '../../hooks/useComments';
 import { useCommentLikes } from '../../hooks/useCommentLikes';
@@ -27,8 +29,6 @@ const COMMENT_COLLECTION = 'comments';
  *   focusComment?: boolean,
  *   user: any,
  *   userIsModerator: boolean,
- *   onOpenEdit: (post: any) => void,
- *   onDeletePost: (postId: string) => void,
  *   hiddenMediaKey?: string | null,
  *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void,
  *   onClose: () => void,
@@ -43,8 +43,6 @@ function PostDetailModal({
   focusComment = false,
   user,
   userIsModerator,
-  onOpenEdit,
-  onDeletePost,
   hiddenMediaKey,
   onOpenFullscreen,
   onClose,
@@ -138,8 +136,7 @@ function PostDetailModal({
 
   const handleAdd = async (e) => {
     e.preventDefault();
-    const text = commentText.trim();
-    if (!text || !postId || isAddingCommentRef.current) return;
+    if (!hasVisibleText(commentText) || !postId || isAddingCommentRef.current) return;
     if (!user?.id) {
       error('Нельзя создавать комментарий без авторизации.');
       return;
@@ -147,7 +144,7 @@ function PostDetailModal({
     isAddingCommentRef.current = true;
     setIsAddingComment(true);
     try {
-      await createComment({ postId, authorId: user.id, text });
+      await createComment({ postId, authorId: user.id, text: commentText });
       setCommentText('');
       await mutateComments();
     } catch (err) {
@@ -188,12 +185,12 @@ function PostDetailModal({
 
   const handleStartEdit = (comment) => {
     setEditingId(comment.id);
-    setEditingText(comment.text || '');
+    setEditingText(toDisplayHtml(comment.text || ''));
   };
 
   const handleSaveEdit = async (commentId, e) => {
     e.preventDefault();
-    if (!editingText.trim()) return;
+    if (!hasVisibleText(editingText)) return;
     try {
       await updateComment(commentId, { text: editingText });
       setEditingId(null);
@@ -256,18 +253,16 @@ function PostDetailModal({
             <label htmlFor="post-detail-comment-input" className="visually-hidden">
               Написать комментарий
             </label>
-            <input
+            <PostRichTextField
               id="post-detail-comment-input"
-              type="text"
-              name="post-comment"
-              autoComplete="off"
-              placeholder="Написать комментарий…"
               value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-              disabled={isAddingComment}
-              required
+              onChange={setCommentText}
+              enableFrame={false}
+              compact
+              placeholder="Написать комментарий…"
+              aria-label="Написать комментарий"
             />
-            <button type="submit" disabled={isAddingComment || !commentText.trim()}>
+            <button type="submit" disabled={isAddingComment || !hasVisibleText(commentText)}>
               {isAddingComment ? 'Отправляем…' : 'Отправить'}
             </button>
           </form>
@@ -282,43 +277,6 @@ function PostDetailModal({
           <span className="section-title-name">Секция Миленьких</span>
           <span className="post-date">{formatPostDate(post.created)}</span>
         </div>
-        {userIsModerator && (
-          <div className="post-card-actions" role="group" aria-label="Действия с публикацией">
-            <IconButton
-              ariaLabel="Редактировать публикацию"
-              variant="ghost"
-              size="sm"
-              className="edit-post-btn"
-              onClick={() => {
-                onOpenEdit(post);
-                handleClose();
-              }}
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path d="M4 20h4.2L19.3 8.9a2 2 0 0 0 0-2.8l-1.4-1.4a2 2 0 0 0-2.8 0L4 15.8V20Z" />
-                <path d="m13.7 6.1 4.2 4.2" />
-              </svg>
-            </IconButton>
-            <IconButton
-              ariaLabel="Удалить публикацию"
-              variant="danger"
-              size="sm"
-              className="delete-post-btn"
-              onClick={() => {
-                onDeletePost(post.id);
-                handleClose();
-              }}
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path d="M4 7h16" />
-                <path d="M10 11v6" />
-                <path d="M14 11v6" />
-                <path d="M6 7l1 13h10l1-13" />
-                <path d="M9 7V4h6v3" />
-              </svg>
-            </IconButton>
-          </div>
-        )}
       </div>
 
       <PostContentHtml
@@ -451,21 +409,27 @@ function PostDetailModal({
                     >
                       Редактирование комментария
                     </label>
-                    <input
+                    <PostRichTextField
                       id={`edit-comment-${c.id}`}
-                      type="text"
                       value={editingText}
-                      onChange={(e) => setEditingText(e.target.value)}
-                      required
+                      onChange={setEditingText}
+                      enableFrame={false}
+                      compact
+                      placeholder="Текст комментария…"
+                      aria-label="Редактирование комментария"
                     />
-                    <button type="submit">ОК</button>
-                    <button type="button" onClick={() => setEditingId(null)}>
-                      Отмена
-                    </button>
+                    <div className="comment-edit-inline-form__actions">
+                      <button type="submit" disabled={!hasVisibleText(editingText)}>
+                        ОКК
+                      </button>
+                      <button type="button" onClick={() => setEditingId(null)}>
+                        Отмена
+                      </button>
+                    </div>
                   </form>
                 ) : (
                   <>
-                    <p className="comment-content-text">{c.text}</p>
+                    <PostContentHtml as="p" className="comment-content-text" content={c.text} />
                     <div className="comment-footer-row">
                       <button
                         type="button"
