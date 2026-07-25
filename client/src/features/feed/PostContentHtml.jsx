@@ -1,5 +1,5 @@
-import React from 'react';
-import { toDisplayHtml } from './postRichText';
+import React, { useEffect, useRef } from 'react';
+import { startAnimFrames, toDisplayHtml } from './postRichText';
 
 /**
  * @param {{
@@ -13,10 +13,23 @@ import { toDisplayHtml } from './postRichText';
 function PostContentHtml({ content, className, as = 'div', onClick, type = 'button', ...rest }) {
   const html = toDisplayHtml(content || '');
   const Tag = as;
+  const ref = useRef(/** @type {HTMLElement | null} */ (null));
+
+  useEffect(() => {
+    let stop = () => {};
+    const raf = requestAnimationFrame(() => {
+      stop = startAnimFrames(ref.current);
+    });
+    return () => {
+      cancelAnimationFrame(raf);
+      stop();
+    };
+  }, [html]);
 
   if (as === 'button') {
     return (
       <button
+        ref={/** @type {any} */ (ref)}
         type={type}
         className={className}
         onClick={onClick}
@@ -28,6 +41,7 @@ function PostContentHtml({ content, className, as = 'div', onClick, type = 'butt
 
   return (
     <Tag
+      ref={/** @type {any} */ (ref)}
       className={className}
       onClick={onClick}
       dangerouslySetInnerHTML={{ __html: html }}

@@ -3,12 +3,12 @@ import clsx from 'clsx';
 
 /**
  * @param {{
- *   variant: 'floating' | 'permanent',
  *   active?: { bold?: boolean, italic?: boolean, underline?: boolean },
- *   onCommand: (command: 'bold' | 'italic' | 'underline' | 'link') => void
+ *   frameOpen?: boolean,
+ *   onCommand: (command: 'bold' | 'italic' | 'underline' | 'link' | 'frame') => void
  * }} props
  */
-function PostFormatToolbar({ variant, active = {}, onCommand }) {
+function PostFormatToolbar({ active = {}, frameOpen = false, onCommand }) {
   const run = (command) => (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -17,10 +17,7 @@ function PostFormatToolbar({ variant, active = {}, onCommand }) {
 
   return (
     <div
-      className={clsx(
-        'post-format-toolbar',
-        variant === 'floating' ? 'post-format-toolbar--floating' : 'post-format-toolbar--permanent'
-      )}
+      className="post-format-toolbar post-format-toolbar--permanent"
       role="toolbar"
       aria-label="Форматирование текста"
       onMouseDown={(e) => e.preventDefault()}
@@ -75,6 +72,33 @@ function PostFormatToolbar({ variant, active = {}, onCommand }) {
           />
           <path
             d="M14 11a5 5 0 0 0-7.07 0L5.52 12.4a5 5 0 0 0 7.07 7.07L14 18.07"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+          />
+        </svg>
+      </button>
+      <button
+        type="button"
+        className={clsx('post-format-toolbar__btn', frameOpen && 'is-active')}
+        aria-label="Анимационная рамка"
+        aria-pressed={frameOpen}
+        onClick={run('frame')}
+      >
+        <svg className="post-format-toolbar__icon" viewBox="0 0 24 24" aria-hidden="true">
+          <rect
+            x="4.5"
+            y="6.5"
+            width="15"
+            height="11"
+            rx="3.5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+          />
+          <path
+            d="M8 12h8"
             fill="none"
             stroke="currentColor"
             strokeWidth="1.8"
