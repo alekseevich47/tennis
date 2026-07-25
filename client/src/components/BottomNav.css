@@ -3,25 +3,42 @@
   --bottom-nav-bottom: 6px;
   --bottom-nav-height: 56px;
 
+  /* На весь низ экрана (без safe-area), пилюля внутри с отступом 6px */
   position: fixed;
-  bottom: var(--bottom-nav-bottom);
-  left: max(var(--bottom-nav-side), env(safe-area-inset-left, 0px));
-  right: max(var(--bottom-nav-side), env(safe-area-inset-right, 0px));
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  padding: 0 max(var(--bottom-nav-side), env(safe-area-inset-left, 0px))
+    var(--bottom-nav-bottom)
+    max(var(--bottom-nav-side), env(safe-area-inset-right, 0px));
+  box-sizing: border-box;
+  pointer-events: none;
+  background: transparent;
+}
+
+.bottom-nav__pill {
+  position: relative;
+  isolation: isolate;
+  pointer-events: auto;
   display: flex;
   justify-content: space-around;
   align-items: center;
   gap: 2px;
+  width: 100%;
   height: var(--bottom-nav-height);
   padding: 6px;
   box-sizing: border-box;
-  z-index: 1000;
-  overflow: hidden;
   border-radius: 28px;
   border: none;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.55);
   backdrop-filter: blur(20px) saturate(1.45);
   -webkit-backdrop-filter: blur(20px) saturate(1.45);
-  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+  box-shadow:
+    0 8px 28px rgba(15, 23, 42, 0.1),
+    0 1px 0 rgba(255, 255, 255, 0.65) inset;
 }
 
 .bottom-nav__indicator {
@@ -29,7 +46,6 @@
   top: 6px;
   bottom: 6px;
   left: 0;
-  z-index: 0;
   border-radius: 22px;
   background: rgba(60, 60, 67, 0.1);
   pointer-events: none;

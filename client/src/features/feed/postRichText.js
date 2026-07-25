@@ -121,6 +121,18 @@ function isAnimFrame(el) {
 }
 
 /**
+ * Блок/разрыв, который при сериализации уже даёт перевод строки
+ * (не нужно добавлять ведущий `<br>` у следующего DIV/P).
+ * @param {Node | null} node
+ * @returns {boolean}
+ */
+function isBlockBoundaryNode(node) {
+  if (!node || node.nodeType !== Node.ELEMENT_NODE) return false;
+  const tag = /** @type {Element} */ (node).tagName.toUpperCase();
+  return tag === 'DIV' || tag === 'P' || tag === 'BR';
+}
+
+/**
  * @param {Element} parent
  * @returns {string}
  */
@@ -182,7 +194,14 @@ function serializeSanitized(node, prevSibling = null) {
 
   if (tag === 'SPAN' || tag === 'DIV' || tag === 'P') {
     const inner = serializeChildren(el);
-    if (tag === 'P' || tag === 'DIV') return inner ? `${inner}<br>` : '';
+    if (tag === 'P' || tag === 'DIV') {
+      // Enter после inline (рамка, b/i/u, текст) даёт соседний <div>…</div>.
+      // Без ведущего <br> блок схлопывается в одну строку при sanitize → в state
+      // нет переноса, хотя в contenteditable он виден (skipNextSync).
+      const prefix = prevSibling && !isBlockBoundaryNode(prevSibling) ? '<br>' : '';
+      if (!inner || inner === '<br>') return `${prefix}<br>`;
+      return `${prefix}${inner}<br>`;
+    }
     return inner;
   }
 
