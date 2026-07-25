@@ -34,7 +34,9 @@
   padding: 6px;
   box-sizing: border-box;
   border-radius: 28px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.14);
+  /* blur-радиус тени должен быть меньше бокового отступа (--bottom-nav-side),
+     иначе тень «вылезает» до края экрана и читается как серая рамка/полоса. */
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.1);
 }
 
 /*
@@ -56,10 +58,10 @@
 
 @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
   .bottom-nav__glass {
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.28);
     backdrop-filter: blur(20px) saturate(1.5);
     -webkit-backdrop-filter: blur(20px) saturate(1.5);
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.7) inset;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
   }
 }
 
@@ -70,7 +72,7 @@
   left: 0;
   z-index: 1;
   border-radius: 22px;
-  background: rgba(60, 60, 67, 0.1);
+  background: rgba(60, 60, 67, 0.06);
   pointer-events: none;
   opacity: 0;
   transition:
