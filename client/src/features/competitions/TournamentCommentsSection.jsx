@@ -3,6 +3,7 @@ import IconButton from '../../components/ui/IconButton';
 import Avatar from '../../components/ui/Avatar';
 import PostContentHtml from '../feed/PostContentHtml';
 import PostRichTextField from '../feed/PostRichTextField';
+import CommentSendButton from '../feed/CommentSendButton';
 import { hasVisibleText, toDisplayHtml } from '../feed/postRichText';
 import { useTournamentComments } from '../../hooks/useTournamentComments';
 import { useCommentLikes } from '../../hooks/useCommentLikes';
@@ -321,9 +322,10 @@ function TournamentCommentsSection({ postId, user, userIsModerator, onOpenProfil
             placeholder="Написать комментарий…"
             aria-label="Написать комментарий"
           />
-          <button type="submit" disabled={isAddingComment || !hasVisibleText(commentText)}>
-            {isAddingComment ? '…' : 'Отправить'}
-          </button>
+          <CommentSendButton
+            disabled={isAddingComment || !hasVisibleText(commentText)}
+            busy={isAddingComment}
+          />
         </form>
       )}
     </div>

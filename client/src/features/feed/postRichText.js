@@ -356,43 +356,29 @@ export function readActiveFormats() {
 }
 
 /**
- * Lock `.post-anim-frame` width to the widest `|`-variant so the chip
- * does not jump when cycling text. Applied on display only (not in editor).
+ * Lock `.post-anim-frame` width to the widest `|`-variant + padding so the chip
+ * does not jump or ellipsize when cycling text. Display only (not in editor).
  * @param {HTMLElement} el
  * @param {HTMLElement} textEl
  * @param {string[]} variants
  */
 function lockAnimFrameWidth(el, textEl, variants) {
-  const style = window.getComputedStyle(textEl);
-  const probe = document.createElement('span');
-  probe.style.cssText = [
-    'position:absolute',
-    'visibility:hidden',
-    'pointer-events:none',
-    'white-space:nowrap',
-    'left:-9999px',
-    'top:0',
-    `font:${style.font}`,
-    `letter-spacing:${style.letterSpacing}`,
-    `text-transform:${style.textTransform}`,
-    'padding:0',
-    'margin:0',
-    'border:0'
-  ].join(';');
-  document.body.appendChild(probe);
+  const prev = textEl.textContent;
+  el.style.width = 'auto';
+  el.style.minWidth = '';
+  el.style.maxWidth = 'none';
 
   let max = 0;
   for (const variant of variants) {
-    probe.textContent = variant;
-    max = Math.max(max, probe.offsetWidth);
+    textEl.textContent = variant;
+    max = Math.max(max, el.offsetWidth);
   }
-  probe.remove();
+  textEl.textContent = prev;
 
-  const frameStyle = window.getComputedStyle(el);
-  const padX =
-    (parseFloat(frameStyle.paddingLeft) || 0) +
-    (parseFloat(frameStyle.paddingRight) || 0);
-  el.style.width = `${Math.ceil(max + padX)}px`;
+  const px = `${Math.ceil(max)}px`;
+  el.style.width = px;
+  el.style.minWidth = px;
+  el.style.maxWidth = 'none';
 }
 
 /**

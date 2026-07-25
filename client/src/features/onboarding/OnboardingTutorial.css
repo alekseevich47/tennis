@@ -14,10 +14,10 @@
 }
 
 .onboarding-overlay--main {
-  top: 56px;
+  top: 48px;
   left: 0;
   right: 0;
-  bottom: 60px;
+  bottom: 52px;
 }
 
 .onboarding-highlight {
@@ -79,7 +79,7 @@
 .onboarding-header-banner {
   position: fixed;
   z-index: 9002;
-  top: 56px;
+  top: 48px;
   left: 0;
   right: 0;
   background: #ffffff;
@@ -89,7 +89,7 @@
 }
 
 .onboarding-header-banner--inset {
-  top: calc(56px + 12px);
+  top: calc(48px + 12px);
   left: 16px;
   right: 16px;
   border-radius: 14px;
@@ -162,7 +162,7 @@
 .onboarding-nav {
   position: fixed;
   z-index: 9003;
-  bottom: calc(60px + 12px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(52px + 12px + env(safe-area-inset-bottom, 0px));
   left: 16px;
   right: 16px;
   display: flex;

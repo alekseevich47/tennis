@@ -181,6 +181,17 @@ function PostCard({
             <span className="post-date-line">
               <span className="post-date">{formatPostDate(post.created)}</span>
               {post.post_number ? <span className="post-number">#{post.post_number}</span> : null}
+              {post.is_pinned ? (
+                <svg
+                  className="post-pin-icon"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-label="Закреплено"
+                  role="img"
+                >
+                  <path d="M16 3H8v2h1v5.2L7 14v2h4.2V21h1.6v-5H17v-2l-2-3.8V5h1V3z" />
+                </svg>
+              ) : null}
             </span>
           </div>
         </div>

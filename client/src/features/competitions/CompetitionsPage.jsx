@@ -24,6 +24,10 @@ import ProfileViewModal from '../profile/ProfileViewModal';
 import { useTournamentPostUpload } from '../../components/TournamentPostUploadProvider';
 import { error } from '../../lib/log';
 import { parseDateQuery, isDateQueryParsed, matchesDateQuery } from '../../lib/dateSearch';
+import {
+  sortPinnedByCreated,
+  usePinnedBannerIndex
+} from '../feed/usePinnedBannerIndex';
 import '../feed/Feed.css';
 import './Competitions.css';
 
@@ -34,7 +38,6 @@ const TABS = [
 
 const SCROLL_TOP_THRESHOLD = 8;
 const SCROLL_DELTA_THRESHOLD = 4;
-const PINNED_BANNER_OFFSET_PX = 72;
 
 /**
  * @param {{
@@ -55,16 +58,16 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [fullscreenMedia, setFullscreenMedia] = useState(null);
   const [hiddenMediaKey, setHiddenMediaKey] = useState(null);
-  const [isButtonVisible, setIsButtonVisible] = useState(false);
+  const [isChromeVisible, setIsChromeVisible] = useState(true);
   const [viewingPlayer, setViewingPlayer] = useState(null);
   const [openedPost, setOpenedPost] = useState(null);
   const [editingPost, setEditingPost] = useState(null);
   const [deletedPostIds, setDeletedPostIds] = useState([]);
-  const [activePinnedIndex, setActivePinnedIndex] = useState(0);
   const [contextMenuState, setContextMenuState] = useState(
     /** @type {{ postId: string, anchorPoint: { x: number, y: number } } | null} */ (null)
   );
   const containerRef = useRef(null);
+  const ratingScrollRef = useRef(null);
   const lastScrollTopRef = useRef(0);
   const cardRefs = useRef(/** @type {Map<string, HTMLElement>} */ (new Map()));
   const { startUpload } = useTournamentPostUpload();
@@ -83,66 +86,24 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
 
   const pinnedPosts = useMemo(
     () =>
-      visiblePosts
-        .filter((p) => p.is_pinned && !p.is_deleted && !deletedPostIds.includes(p.id))
-        .sort((a, b) => {
-          const aTime = a.pinned_at ? Date.parse(a.pinned_at) : 0;
-          const bTime = b.pinned_at ? Date.parse(b.pinned_at) : 0;
-          return aTime - bTime;
-        }),
+      sortPinnedByCreated(
+        visiblePosts.filter(
+          (p) => p.is_pinned && !p.is_deleted && !deletedPostIds.includes(p.id)
+        )
+      ),
     [visiblePosts, deletedPostIds]
   );
 
-  const pinnedIdsKey = pinnedPosts.map((p) => p.id).join(',');
-
-  useEffect(() => {
-    setActivePinnedIndex((i) =>
-      pinnedPosts.length === 0 ? 0 : Math.min(i, pinnedPosts.length - 1)
-    );
-  }, [pinnedIdsKey, pinnedPosts.length]);
-
-  useEffect(() => {
-    if (activeTab !== 'feed') return undefined;
-
-    const container = containerRef.current;
-    if (!container || pinnedPosts.length < 2) return undefined;
-
-    const activePost = pinnedPosts[activePinnedIndex];
-    if (!activePost) return undefined;
-
-    const el = cardRefs.current.get(activePost.id);
-    if (!el) return undefined;
-
-    let wasIntersecting = /** @type {boolean | null} */ (null);
-    const band = PINNED_BANNER_OFFSET_PX;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (!entry) return;
-        if (wasIntersecting === null) {
-          wasIntersecting = entry.isIntersecting;
-          return;
-        }
-        const leftUpward =
-          wasIntersecting &&
-          !entry.isIntersecting &&
-          entry.rootBounds != null &&
-          entry.boundingClientRect.top < entry.rootBounds.top;
-        wasIntersecting = entry.isIntersecting;
-        if (leftUpward) {
-          setActivePinnedIndex((i) => (i + 1) % pinnedPosts.length);
-        }
-      },
-      {
-        root: container,
-        rootMargin: `-${band}px 0px ${-(container.clientHeight - band - 1)}px 0px`,
-        threshold: 0
-      }
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [activeTab, activePinnedIndex, pinnedIdsKey, pinnedPosts]);
+  const {
+    activeIndex: activePinnedIndex,
+    advance: handleAdvancePinned,
+    openPinned: handleOpenPinned
+  } = usePinnedBannerIndex({
+    pinnedPosts,
+    containerRef,
+    cardRefs,
+    enabled: activeTab === 'feed'
+  });
 
   const filteredPosts = useMemo(() => {
     if (!searchQuery.trim()) return visiblePosts;
@@ -172,6 +133,7 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
         setContextMenuState(null);
         flushPendingTournamentCommentDeletes();
       }
+      setIsChromeVisible(true);
       setActiveTab(tabId);
       onSubTabChange?.(tabId);
     },
@@ -179,16 +141,17 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
   );
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (!moderator || !container || activeTab !== 'feed') return undefined;
+    const container =
+      activeTab === 'feed' ? containerRef.current : ratingScrollRef.current;
+    if (!container) return undefined;
 
     const syncVisibility = (scrollTop, delta) => {
       if (scrollTop <= SCROLL_TOP_THRESHOLD) {
-        setIsButtonVisible(true);
+        setIsChromeVisible(true);
       } else if (delta < -SCROLL_DELTA_THRESHOLD) {
-        setIsButtonVisible(true);
+        setIsChromeVisible(true);
       } else if (delta > SCROLL_DELTA_THRESHOLD) {
-        setIsButtonVisible(false);
+        setIsChromeVisible(false);
       }
     };
 
@@ -204,7 +167,7 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
 
     container.addEventListener('scroll', handleScroll, { passive: true });
     return () => container.removeEventListener('scroll', handleScroll);
-  }, [moderator, activeTab]);
+  }, [activeTab]);
 
   useEffect(() => {
     if (!getCurrentUser()?.id) return undefined;
@@ -257,6 +220,11 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
           ),
         false
       );
+      setOpenedPost((current) =>
+        current?.id === post.id
+          ? { ...current, is_pinned: nextPinned, pinned_at: pinnedAt }
+          : current
+      );
       try {
         if (nextPinned) await pinTournamentPost(post.id);
         else await unpinTournamentPost(post.id);
@@ -280,17 +248,6 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
   const handleRegisterCardRef = useCallback((postId) => (el) => {
     if (el) cardRefs.current.set(postId, el);
     else cardRefs.current.delete(postId);
-  }, []);
-
-  const handleAdvancePinned = useCallback(() => {
-    setActivePinnedIndex((i) =>
-      pinnedPosts.length === 0 ? 0 : (i + 1) % pinnedPosts.length
-    );
-  }, [pinnedPosts.length]);
-
-  const handleOpenPinned = useCallback((post) => {
-    if (!post?.id) return;
-    cardRefs.current.get(post.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, []);
 
   const handleCloseEdit = useCallback(() => {
@@ -364,7 +321,11 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
 
   return (
     <section className="competitions" aria-label="Турнир">
-      <div className="competitions-tabs" role="tablist" aria-label="Разделы соревнований">
+      <div
+        className={clsx('competitions-tabs', !isChromeVisible && 'competitions-tabs--hidden')}
+        role="tablist"
+        aria-label="Разделы соревнований"
+      >
         {TABS.map((tab) => (
           <button
             key={tab.id}
@@ -385,7 +346,7 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
             <div className="floating-btn-wrapper">
               <button
                 type="button"
-                className={clsx('floating-add-btn', isButtonVisible ? 'visible' : 'hidden')}
+                className={clsx('floating-add-btn', isChromeVisible ? 'visible' : 'hidden')}
                 onClick={() => setShowCreatePost(true)}
               >
                 Добавить
@@ -393,17 +354,17 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
             </div>
           )}
 
-          <div className="competitions-feed-list">
-            {pinnedPosts.length > 0 && (
-              <PinnedBanner
-                pinnedPosts={pinnedPosts}
-                collection="tournament_posts"
-                activeIndex={activePinnedIndex}
-                onAdvance={handleAdvancePinned}
-                onOpen={handleOpenPinned}
-              />
-            )}
+          {pinnedPosts.length > 0 && (
+            <PinnedBanner
+              pinnedPosts={pinnedPosts}
+              collection="tournament_posts"
+              activeIndex={activePinnedIndex}
+              onAdvance={handleAdvancePinned}
+              onOpen={handleOpenPinned}
+            />
+          )}
 
+          <div className="competitions-feed-list">
             {postsLoading && <Spinner label="Загрузка ленты..." />}
 
             {!postsLoading && filteredPosts.length === 0 && (
@@ -445,7 +406,9 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
       )}
 
       {activeTab === 'rating' && (
-        <RatingPage user={user} onTabChange={onTabChange} />
+        <div className="competitions-rating-scroll" ref={ratingScrollRef}>
+          <RatingPage user={user} onTabChange={onTabChange} />
+        </div>
       )}
 
       <PostContextMenu
@@ -491,6 +454,15 @@ function CompetitionsPage({ user, onTabChange, onSubTabChange, onDeletedIdsChang
         userIsModerator={moderator}
         onClose={() => setOpenedPost(null)}
         onOpenProfile={setViewingPlayer}
+        onEdit={(post) => {
+          setOpenedPost(null);
+          handleOpenEdit(post);
+        }}
+        onDelete={(postId) => {
+          setOpenedPost(null);
+          handleDeletePost(postId);
+        }}
+        onTogglePin={handleTogglePin}
         hiddenMediaKey={hiddenMediaKey}
         onOpenFullscreen={handleOpenFullscreen}
         onCommentMutated={mutateTournamentPosts}

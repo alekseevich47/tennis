@@ -2,7 +2,8 @@
   height: 100%;
   overflow-y: auto;
   position: relative;
-  padding: 16px;
+  /* Верхний зазор до плашки/контента — как margin-bottom у .pinned-banner */
+  padding: 4px 16px 16px;
   background: #f8f9fa;
   box-sizing: border-box;
 }
@@ -77,6 +78,10 @@
   border: 1px solid #eaeaea;
   position: relative;
   scroll-margin-top: 72px;
+  /* Превью в ленте: без выделения текста (мешает long-press / открытию карточки) */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 /* Компактный якорь для IntersectionObserver (просмотры ленты/турнира) */
@@ -146,6 +151,16 @@
 
 .post-number::before {
   content: ' • ';
+}
+
+.post-pin-icon {
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  margin-left: 0.25em;
+  vertical-align: -0.05em;
+  color: #8e8e93;
+  flex-shrink: 0;
 }
 
 .post-card-actions {
@@ -614,12 +629,8 @@ button.post-card-like:hover:not(:disabled) {
   line-height: 1.4;
 }
 
-.post-rich-text--compact .post-format-toolbar--permanent .post-format-toolbar__btn {
-  width: 28px;
-  height: 28px;
-  min-width: 28px;
-  min-height: 28px;
-}
+/* Тулбар в комментариях — те же размеры/стиль, что в «Добавить публикацию»
+   (Ж/К/Ч); компактность только у редактора. Кнопка рамки скрыта через enableFrame. */
 
 .post-rich-text__toolbar-row {
   position: relative;
@@ -973,7 +984,6 @@ button.post-card-like:hover:not(:disabled) {
   color: #ffffff;
   font-weight: 700;
   line-height: 1.35;
-  max-width: 100%;
   overflow: hidden;
   height: 1.55em;
   box-sizing: border-box;
@@ -983,9 +993,6 @@ button.post-card-like:hover:not(:disabled) {
   display: inline-block;
   color: #ffffff;
   white-space: nowrap;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
   will-change: transform, opacity;
 }
 
@@ -1686,11 +1693,17 @@ button.post-card-like:hover:not(:disabled) {
   min-width: 0;
 }
 
-.modal-comment-form-footer button {
+.modal-comment-form-footer .comment-send-btn,
+.comment-send-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: #007aff;
   color: white;
   border: none;
-  padding: 0 16px;
+  padding: 0;
+  width: 44px;
+  min-width: 44px;
   border-radius: 20px;
   font-weight: 600;
   cursor: pointer;
@@ -1698,9 +1711,15 @@ button.post-card-like:hover:not(:disabled) {
   flex-shrink: 0;
 }
 
-.modal-comment-form-footer button:disabled {
+.modal-comment-form-footer .comment-send-btn:disabled,
+.comment-send-btn:disabled {
   cursor: not-allowed;
   opacity: 0.65;
+}
+
+.comment-send-btn__icon {
+  display: block;
+  flex-shrink: 0;
 }
 
 .comment-edit-inline-form {
@@ -1852,11 +1871,10 @@ button.post-card-like:hover:not(:disabled) {
   position: sticky;
   top: 0;
   z-index: 50;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: block;
   width: 100%;
-  margin: 0 0 12px;
+  /* Нижний зазор до первой публикации = верхний padding скролл-контейнера */
+  margin: 0 0 4px;
   padding: 10px 12px;
   border: 1px solid rgba(255, 255, 255, 0.7);
   border-radius: 14px;
@@ -1880,14 +1898,17 @@ button.post-card-like:hover:not(:disabled) {
 
 .pinned-banner__segments {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 2px;
-  width: 100%;
+  width: 3px;
+  align-self: stretch;
+  flex-shrink: 0;
 }
 
 .pinned-banner__segment {
   flex: 1;
-  height: 3px;
+  width: 3px;
+  min-height: 0;
   border-radius: 999px;
   background: rgba(0, 122, 255, 0.18);
   transition: background 0.2s ease;
@@ -1991,14 +2012,14 @@ button.post-card-like:hover:not(:disabled) {
 }
 
 .long-press-ring__track {
-  stroke: rgba(0, 0, 0, 0.12);
+  stroke: transparent;
 }
 
 .long-press-ring__progress {
-  stroke: #007aff;
+  stroke: #8e8e93;
 }
 
-/* Post context menu (long-press, moderator) */
+/* Post context menu (long-press / ⋯ в деталке, moderator) */
 .post-context-menu-backdrop {
   position: fixed;
   inset: 0;
@@ -2029,9 +2050,52 @@ button.post-card-like:hover:not(:disabled) {
   overflow: hidden;
 }
 
+.post-context-menu--from-end {
+  transform-origin: top right;
+  transform: translateY(-6px) scale(0.96);
+}
+
 .post-context-menu--visible {
   opacity: 1;
   transform: scale(1);
+}
+
+.post-context-menu--from-end.post-context-menu--visible {
+  transform: translateY(0) scale(1);
+}
+
+.post-detail-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.post-detail-card-header {
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+.post-detail-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.post-detail-actions .ui-modal-close {
+  position: static;
+}
+
+.post-detail-menu-btn {
+  color: #495057;
+}
+
+.post-detail-menu-btn svg {
+  width: 18px;
+  height: 18px;
+  display: block;
 }
 
 .post-context-menu__item {
