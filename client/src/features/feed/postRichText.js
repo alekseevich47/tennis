@@ -78,7 +78,7 @@ export function hasVisibleText(html) {
   if (!html) return false;
   if (!looksLikeRichHtml(html)) return html.trim().length > 0;
   const doc = new DOMParser().parseFromString(html, 'text/html');
-  return (doc.body.textContent || '').replace(/\u200B/g, '').trim().length > 0;
+  return (doc.body.textContent || '').replace(/[\u200B\u00A0]/g, '').trim().length > 0;
 }
 
 /**
@@ -87,7 +87,7 @@ export function hasVisibleText(html) {
  */
 export function isEditorEmpty(el) {
   if (!el) return true;
-  const text = (el.textContent || '').replace(/\u200B/g, '').trim();
+  const text = (el.textContent || '').replace(/[\u200B\u00A0]/g, '').trim();
   return text.length === 0;
 }
 
@@ -109,7 +109,7 @@ export function sanitizePostHtml(html) {
   const doc = new DOMParser().parseFromString(`<div id="__rtf_root">${html}</div>`, 'text/html');
   const root = doc.getElementById('__rtf_root');
   if (!root) return '';
-  return Array.from(root.childNodes).map(serializeSanitized).join('');
+  return serializeChildren(root);
 }
 
 /**
@@ -121,12 +121,34 @@ function isAnimFrame(el) {
 }
 
 /**
- * @param {Node} node
+ * @param {Element} parent
  * @returns {string}
  */
-function serializeSanitized(node) {
+function serializeChildren(parent) {
+  const children = Array.from(parent.childNodes);
+  return children
+    .map((child, i) => serializeSanitized(child, children[i - 1] || null))
+    .join('');
+}
+
+/**
+ * @param {Node} node
+ * @param {Node | null} [prevSibling]
+ * @returns {string}
+ */
+function serializeSanitized(node, prevSibling = null) {
   if (node.nodeType === Node.TEXT_NODE) {
-    return escapeHtml(node.textContent || '');
+    const text = node.textContent || '';
+    // Drop legacy spacers after anim frames (broke Enter / newlines).
+    if (
+      prevSibling &&
+      prevSibling.nodeType === Node.ELEMENT_NODE &&
+      isAnimFrame(/** @type {Element} */ (prevSibling)) &&
+      /^[\u00A0\u200B]*$/.test(text)
+    ) {
+      return '';
+    }
+    return escapeHtml(text);
   }
   if (node.nodeType !== Node.ELEMENT_NODE) return '';
 
@@ -136,7 +158,7 @@ function serializeSanitized(node) {
   if (tag === 'BR') return '<br>';
 
   if (!ALLOWED_TAGS.has(tag)) {
-    return Array.from(el.childNodes).map(serializeSanitized).join('');
+    return serializeChildren(el);
   }
 
   if (tag === 'SPAN' && isAnimFrame(el)) {
@@ -159,7 +181,7 @@ function serializeSanitized(node) {
   }
 
   if (tag === 'SPAN' || tag === 'DIV' || tag === 'P') {
-    const inner = Array.from(el.childNodes).map(serializeSanitized).join('');
+    const inner = serializeChildren(el);
     if (tag === 'P' || tag === 'DIV') return inner ? `${inner}<br>` : '';
     return inner;
   }
@@ -180,14 +202,14 @@ function serializeSanitized(node) {
       attrs += ` ${attr}="${escapeHtml(value)}"`;
     }
     if (tag === 'A' && !attrs.includes('href=')) {
-      return Array.from(el.childNodes).map(serializeSanitized).join('');
+      return serializeChildren(el);
     }
     if (tag === 'A' && !attrs.includes('target=')) {
       attrs += ' target="_blank" rel="noopener noreferrer';
     }
   }
 
-  const inner = Array.from(el.childNodes).map(serializeSanitized).join('');
+  const inner = serializeChildren(el);
   const lower = tag.toLowerCase();
   return `<${lower}${attrs}>${inner}</${lower}>`;
 }
@@ -295,26 +317,22 @@ export function applyAnimFrame(color, editor) {
 
   const span = document.createElement('span');
   span.className = FRAME_CLASS;
+  span.contentEditable = 'false';
   span.setAttribute('data-color', hex);
   span.setAttribute('data-variants', text);
   span.style.setProperty('--frame-color', hex);
 
   const label = document.createElement('span');
   label.className = 'post-anim-frame__text';
+  label.contentEditable = 'true';
   label.textContent = text;
   span.appendChild(label);
 
   range.deleteContents();
   range.insertNode(span);
 
-  const spacer = document.createTextNode('\u00A0');
-  if (span.nextSibling) {
-    span.parentNode?.insertBefore(spacer, span.nextSibling);
-  } else {
-    span.parentNode?.appendChild(spacer);
-  }
-
-  range.setStart(spacer, 1);
+  // Курсор сразу после рамки — без spacer-символа (nbsp/zwsp ломали Enter).
+  range.setStartAfter(span);
   range.collapse(true);
   selection.removeAllRanges();
   selection.addRange(range);
@@ -322,20 +340,26 @@ export function applyAnimFrame(color, editor) {
 }
 
 /**
- * Ensure each frame chip has a text node after it so the caret can sit outside.
+ * Готовит рамки в редакторе: contenteditable=false на чипе (клик после → текст вне рамки),
+ * убирает legacy spacer после рамки.
  * @param {HTMLElement | null} editor
  */
 export function ensureFrameCarets(editor) {
   if (!editor) return;
   editor.querySelectorAll(`.${FRAME_CLASS}`).forEach((node) => {
     const el = /** @type {HTMLElement} */ (node);
+    el.contentEditable = 'false';
+    const textEl = el.querySelector('.post-anim-frame__text');
+    if (textEl instanceof HTMLElement) {
+      textEl.contentEditable = 'true';
+    }
     const next = el.nextSibling;
-    const hasSpacer =
+    if (
       next &&
       next.nodeType === Node.TEXT_NODE &&
-      /[\u00A0\u200B\s]/.test(next.textContent || '');
-    if (!hasSpacer) {
-      el.after(document.createTextNode('\u00A0'));
+      /^[\u00A0\u200B]+$/.test(next.textContent || '')
+    ) {
+      next.remove();
     }
   });
 }

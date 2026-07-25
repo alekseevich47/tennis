@@ -1,8 +1,10 @@
-import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import clsx from 'clsx';
 import PostFormatToolbar from './PostFormatToolbar';
 import FrameColorPicker from './FrameColorPicker';
 import {
+  FRAME_CLASS,
   applyAnimFrame,
   applyFormatCommand,
   ensureFrameCarets,
@@ -13,7 +15,7 @@ import {
 } from './postRichText';
 
 /**
- * Rich-text поле: статичный тулбар + опциональная анимационная рамка.
+ * Rich-text поле: статичный тулбар + всплывающий при выделении + опциональная анимационная рамка.
  *
  * @param {{
  *   id?: string,
@@ -38,11 +40,15 @@ function PostRichTextField({
   const id = idProp || autoId;
   const rootRef = useRef(/** @type {HTMLDivElement | null} */ (null));
   const editorRef = useRef(/** @type {HTMLDivElement | null} */ (null));
+  const floatingRef = useRef(/** @type {HTMLDivElement | null} */ (null));
   const savedRangeRef = useRef(/** @type {Range | null} */ (null));
   const [active, setActive] = useState({ bold: false, italic: false, underline: false });
   const [empty, setEmpty] = useState(true);
   const [frameOpen, setFrameOpen] = useState(false);
   const [frameColor, setFrameColor] = useState('#FF4D6D');
+  const [selectionToolbar, setSelectionToolbar] = useState(
+    /** @type {{ top: number, left: number } | null} */ (null)
+  );
   const skipNextSync = useRef(false);
 
   const syncEmptyAndValue = useCallback(() => {
@@ -75,6 +81,47 @@ function PostRichTextField({
     selection.addRange(range);
   }, []);
 
+  const updateSelectionToolbar = useCallback(() => {
+    const el = editorRef.current;
+    const selection = window.getSelection();
+    if (!el || !selection || selection.rangeCount === 0 || selection.isCollapsed) {
+      setSelectionToolbar(null);
+      return;
+    }
+    const anchor = selection.anchorNode;
+    const focus = selection.focusNode;
+    if (!anchor || !focus || !el.contains(anchor) || !el.contains(focus)) {
+      setSelectionToolbar(null);
+      return;
+    }
+
+    const range = selection.getRangeAt(0);
+    const rects = range.getClientRects();
+    const rect = rects.length > 0 ? rects[rects.length - 1] : range.getBoundingClientRect();
+    if (!rect || (rect.width === 0 && rect.height === 0)) {
+      setSelectionToolbar(null);
+      return;
+    }
+
+    const toolbarWidth = floatingRef.current?.offsetWidth || 148;
+    const gap = 8;
+    const left = Math.min(
+      Math.max(8, rect.left + rect.width / 2 - toolbarWidth / 2),
+      window.innerWidth - toolbarWidth - 8
+    );
+    let top = rect.bottom + gap;
+    if (top + 44 > window.innerHeight - 8) {
+      top = Math.max(8, rect.top - 44 - gap);
+    }
+
+    setSelectionToolbar((prev) => {
+      if (prev && Math.abs(prev.top - top) < 0.5 && Math.abs(prev.left - left) < 0.5) {
+        return prev;
+      }
+      return { top, left };
+    });
+  }, []);
+
   useEffect(() => {
     const el = editorRef.current;
     if (!el || skipNextSync.current) {
@@ -94,22 +141,43 @@ function PostRichTextField({
       const el = editorRef.current;
       if (!el) return;
       const sel = document.getSelection();
-      if (!sel || sel.rangeCount === 0) return;
+      if (!sel || sel.rangeCount === 0) {
+        setSelectionToolbar(null);
+        return;
+      }
       const node = sel.anchorNode;
-      if (!node || !el.contains(node.nodeType === Node.TEXT_NODE ? node.parentNode : node)) return;
+      if (!node || !el.contains(node.nodeType === Node.TEXT_NODE ? node.parentNode : node)) {
+        setSelectionToolbar(null);
+        return;
+      }
       saveSelection();
       refreshActive();
+      updateSelectionToolbar();
     };
     document.addEventListener('selectionchange', onSelectionChange);
     return () => document.removeEventListener('selectionchange', onSelectionChange);
-  }, [refreshActive, saveSelection]);
+  }, [refreshActive, saveSelection, updateSelectionToolbar]);
+
+  const selectionToolbarVisible = Boolean(selectionToolbar);
+  useLayoutEffect(() => {
+    if (!selectionToolbarVisible) return undefined;
+    const onReposition = () => updateSelectionToolbar();
+    window.addEventListener('scroll', onReposition, true);
+    window.addEventListener('resize', onReposition);
+    return () => {
+      window.removeEventListener('scroll', onReposition, true);
+      window.removeEventListener('resize', onReposition);
+    };
+  }, [selectionToolbarVisible, updateSelectionToolbar]);
 
   useEffect(() => {
     if (!frameOpen) return undefined;
     const onPointerDown = (e) => {
       const root = rootRef.current;
-      if (!root) return;
-      if (e.target instanceof Node && root.contains(e.target)) return;
+      const floating = floatingRef.current;
+      if (e.target instanceof Node) {
+        if (root?.contains(e.target) || floating?.contains(e.target)) return;
+      }
       setFrameOpen(false);
     };
     document.addEventListener('pointerdown', onPointerDown);
@@ -135,6 +203,7 @@ function PostRichTextField({
     skipNextSync.current = true;
     syncEmptyAndValue();
     refreshActive();
+    requestAnimationFrame(updateSelectionToolbar);
   };
 
   const handleApplyFrame = (hex) => {
@@ -146,9 +215,82 @@ function PostRichTextField({
     ensureFrameCarets(el);
     setFrameColor(color);
     setFrameOpen(false);
+    setSelectionToolbar(null);
     skipNextSync.current = true;
     syncEmptyAndValue();
   };
+
+  /** Клик справа от рамки → каретка вне чипа (без spacer-символа). */
+  const handleEditorMouseDown = (event) => {
+    const el = editorRef.current;
+    if (!el || !(event.target instanceof Element)) return;
+
+    // Редактирование вариантов внутри рамки — не перехватываем.
+    if (event.target.closest(`.${FRAME_CLASS} .post-anim-frame__text`)) return;
+
+    const frames = Array.from(el.querySelectorAll(`.${FRAME_CLASS}`));
+    if (frames.length === 0) return;
+
+    /** @type {HTMLElement | null} */
+    let afterFrame = null;
+    const clickedFrame = event.target.closest(`.${FRAME_CLASS}`);
+
+    if (clickedFrame && el.contains(clickedFrame)) {
+      const rect = clickedFrame.getBoundingClientRect();
+      // Правая четверть чипа / клик правее — каретка после рамки.
+      if (event.clientX >= rect.left + rect.width * 0.65) {
+        afterFrame = /** @type {HTMLElement} */ (clickedFrame);
+      }
+    } else if (event.target === el) {
+      const last = /** @type {HTMLElement} */ (frames[frames.length - 1]);
+      const rect = last.getBoundingClientRect();
+      if (event.clientX >= rect.right - 4) {
+        afterFrame = last;
+      }
+    }
+
+    if (!afterFrame) return;
+
+    event.preventDefault();
+    el.focus();
+    const selection = window.getSelection();
+    if (!selection) return;
+    const range = document.createRange();
+    range.setStartAfter(afterFrame);
+    range.collapse(true);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    savedRangeRef.current = range.cloneRange();
+    setSelectionToolbar(null);
+  };
+
+  const floatingToolbar =
+    selectionToolbar && typeof document !== 'undefined'
+      ? createPortal(
+          <div
+            ref={floatingRef}
+            className="post-format-toolbar-floating"
+            style={{ top: selectionToolbar.top, left: selectionToolbar.left }}
+            onMouseDown={(e) => e.preventDefault()}
+          >
+            <PostFormatToolbar
+              active={active}
+              frameOpen={frameOpen}
+              enableFrame={enableFrame}
+              onCommand={handleCommand}
+            />
+            {enableFrame && frameOpen ? (
+              <FrameColorPicker
+                color={frameColor}
+                onChange={setFrameColor}
+                onApply={handleApplyFrame}
+                onClose={() => setFrameOpen(false)}
+              />
+            ) : null}
+          </div>,
+          document.body
+        )
+      : null;
 
   return (
     <div className={clsx('post-rich-text', compact && 'post-rich-text--compact')} ref={rootRef}>
@@ -159,7 +301,7 @@ function PostRichTextField({
           enableFrame={enableFrame}
           onCommand={handleCommand}
         />
-        {enableFrame && frameOpen ? (
+        {enableFrame && frameOpen && !selectionToolbar ? (
           <FrameColorPicker
             color={frameColor}
             onChange={setFrameColor}
@@ -182,23 +324,33 @@ function PostRichTextField({
           data-empty={empty ? 'true' : 'false'}
           suppressContentEditableWarning
           onFocus={refreshActive}
+          onMouseDown={handleEditorMouseDown}
           onBlur={() => {
             requestAnimationFrame(() => {
               const root = rootRef.current;
+              const floating = floatingRef.current;
               const activeEl = document.activeElement;
               if (root && activeEl && root.contains(activeEl)) return;
+              if (floating && activeEl && floating.contains(activeEl)) return;
               syncEmptyAndValue();
+              setSelectionToolbar(null);
             });
           }}
           onInput={() => {
             skipNextSync.current = true;
             syncEmptyAndValue();
             refreshActive();
+            updateSelectionToolbar();
           }}
           onKeyUp={refreshActive}
-          onMouseUp={refreshActive}
+          onMouseUp={() => {
+            refreshActive();
+            updateSelectionToolbar();
+          }}
         />
       </div>
+
+      {floatingToolbar}
     </div>
   );
 }

@@ -97,22 +97,17 @@ export default function PostContextMenu({
   useEffect(() => {
     if (!isOpen) return undefined;
 
-    const handlePointerDown = (event) => {
-      const target = event.target;
-      if (!(target instanceof Node)) return;
-      if (menuRef.current?.contains(target)) return;
+    const handleKeyDown = (event) => {
+      if (event.key !== 'Escape') return;
+      event.stopPropagation();
+      event.preventDefault();
       onClose();
     };
 
-    const handleKeyDown = (event) => {
-      if (event.key === 'Escape') onClose();
-    };
-
-    document.addEventListener('pointerdown', handlePointerDown);
-    document.addEventListener('keydown', handleKeyDown);
+    // capture: раньше ESC-хендлера Modal, чтобы закрыть меню, а не модалку
+    document.addEventListener('keydown', handleKeyDown, true);
     return () => {
-      document.removeEventListener('pointerdown', handlePointerDown);
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('keydown', handleKeyDown, true);
     };
   }, [isOpen, onClose]);
 
@@ -121,6 +116,17 @@ export default function PostContextMenu({
     onClose();
   }, [onClose]);
 
+  const handleBackdropPointer = useCallback((event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    onClose();
+  }, [onClose]);
+
+  const handleBackdropClick = useCallback((event) => {
+    event.preventDefault();
+    event.stopPropagation();
+  }, []);
+
   if (!mounted || typeof document === 'undefined') return null;
 
   return createPortal(
@@ -128,6 +134,8 @@ export default function PostContextMenu({
       <div
         className={clsx('post-context-menu-backdrop', isVisible && 'post-context-menu-backdrop--visible')}
         aria-hidden="true"
+        onPointerDown={handleBackdropPointer}
+        onClick={handleBackdropClick}
       />
       <div
         ref={menuRef}

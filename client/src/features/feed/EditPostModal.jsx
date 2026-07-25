@@ -1,8 +1,10 @@
 import React, { useEffect, useId, useMemo, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import { updatePost } from '../../services/posts';
+import FullscreenImageViewer from './FullscreenImageViewer';
 import MediaPreviewGrid from './MediaPreviewGrid';
 import PostRichTextField from './PostRichTextField';
+import { useLocalMediaFullscreen } from './useLocalMediaFullscreen';
 import {
   MAX_POST_MEDIA_FILES,
   getMediaUrl,
@@ -57,6 +59,13 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
     () => [...existingPreviewItems, ...newPreviewItems],
     [existingPreviewItems, newPreviewItems]
   );
+  const {
+    openItem: openPreviewMedia,
+    fullscreen: previewFullscreen,
+    close: closePreviewFullscreen,
+    hiddenMediaKey,
+    onCloseStart: handlePreviewCloseStart
+  } = useLocalMediaFullscreen(previewItems, 'edit-post');
   const remainingMediaSlots = Math.max(
     0,
     MAX_POST_MEDIA_FILES - keptExistingMediaNames.length - mediaFiles.length
@@ -135,11 +144,15 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
         <MediaPreviewGrid
           items={previewItems}
           className="edit-post-media-preview-grid"
+          originKeyPrefix="edit-post"
+          hiddenMediaKey={hiddenMediaKey}
+          onItemClick={openPreviewMedia}
           getAction={(item) => (
             <button
               type="button"
               className="media-remove-btn"
-              onClick={() => {
+              onClick={(event) => {
+                event.stopPropagation();
                 if (item.key.startsWith('existing-')) {
                   const filename = item.key.slice('existing-'.length);
                   setRemovedMediaNames((current) =>
@@ -210,6 +223,17 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
           </button>
         </div>
       </form>
+
+      {previewFullscreen ? (
+        <FullscreenImageViewer
+          items={previewFullscreen.items}
+          initialIndex={previewFullscreen.index}
+          originRect={previewFullscreen.originRect}
+          originKey={previewFullscreen.originKey}
+          onCloseStart={handlePreviewCloseStart}
+          onClose={closePreviewFullscreen}
+        />
+      ) : null}
     </Modal>
   );
 }

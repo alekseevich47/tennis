@@ -1,11 +1,8 @@
 {
   "0": "App Shell Navigation",
-  "1": "Feed and Profile Pages",
   "2": "Post Upload and UI Kit",
-  "3": "Modal and Alert Dialog",
   "4": "Gallery Upload Flow",
   "5": "Admin UI Controls",
-  "6": "Header and Membership",
   "7": "App.jsx",
   "8": "NPM Dependencies",
   "9": "Audit Logs Modal",
@@ -54,5 +51,7 @@
   "53": "Users Ban Auth Hook",
   "54": "Users Default Visible",
   "55": "Touch UI Performance",
-  "57": "log.js"
+  "57": "log.js",
+  "58": "PostDetailModal.jsx",
+  "66": "BottomNav.jsx"
 }
