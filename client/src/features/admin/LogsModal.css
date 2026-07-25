@@ -248,7 +248,7 @@
   cursor: pointer;
 }
 
-.logs-modal__load-more:disabled {
+.logs-modal__load-more[aria-busy='true'] {
   opacity: 0.6;
   cursor: default;
 }
