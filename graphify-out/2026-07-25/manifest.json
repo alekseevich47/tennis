@@ -200,8 +200,8 @@
     "semantic_hash": ""
   },
   "client/src/features/competitions/CompetitionsPage.jsx": {
-    "mtime": 1784997309.3795905,
-    "ast_hash": "91f673dd34c584de77a8cf70f7f1bec8",
+    "mtime": 1784998496.3854165,
+    "ast_hash": "2b939b0cbe879f8b9c167028f6d51fc7",
     "semantic_hash": ""
   },
   "client/src/features/competitions/CreateTournamentPostModal.jsx": {
@@ -1050,8 +1050,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostRichTextField.jsx": {
-    "mtime": 1784997036.6411388,
-    "ast_hash": "4a5ea77c5381ed63196f5dcf63881313",
+    "mtime": 1784998025.4201746,
+    "ast_hash": "57c924b429b126b7b8e70ef85967bd14",
     "semantic_hash": ""
   },
   "client/src/features/feed/postRichText.js": {
@@ -1060,8 +1060,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/FrameColorPicker.jsx": {
-    "mtime": 1784979394.7238092,
-    "ast_hash": "656fe88d5fed04903ddd1dff1e5fbed1",
+    "mtime": 1784998589.2480092,
+    "ast_hash": "9d40fd24d7b2c56aa1cc5087b1d59013",
     "semantic_hash": ""
   },
   "client/src/features/feed/PostContextMenu.jsx": {
@@ -1070,13 +1070,13 @@
     "semantic_hash": ""
   },
   "client/src/lib/longPress.js": {
-    "mtime": 1784993456.1982641,
-    "ast_hash": "93fd780c6a0f4e30bfe9f8e7b8481263",
+    "mtime": 1784998485.6269732,
+    "ast_hash": "1dc88a07aac0c50599d79e6ea9b28e8e",
     "semantic_hash": ""
   },
   "client/src/features/feed/PinnedBanner.jsx": {
-    "mtime": 1784997305.0380957,
-    "ast_hash": "21cafb7e4627b9819163a96764007572",
+    "mtime": 1784997607.2625408,
+    "ast_hash": "89845b6a4941bba7e668c6b563248ec1",
     "semantic_hash": ""
   },
   "client/src/features/feed/CommentSendButton.jsx": {
@@ -1092,6 +1092,11 @@
   "client/src/features/feed/useLocalMediaFullscreen.js": {
     "mtime": 1784996838.8524013,
     "ast_hash": "7cb2ee2dabe1fac0be21f1f6db40d146",
+    "semantic_hash": ""
+  },
+  "_tmp_patch_rules.py": {
+    "mtime": 1784998589.250519,
+    "ast_hash": "90049ea3b4db6d5a9b68c3fae01d1524",
     "semantic_hash": ""
   }
 }

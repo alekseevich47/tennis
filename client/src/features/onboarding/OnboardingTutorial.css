@@ -17,8 +17,8 @@
   top: 48px;
   left: 0;
   right: 0;
-  /* floating BottomNav: 56 + 12 inset + запас */
-  bottom: 80px;
+  /* floating BottomNav: 56 + 6 inset + запас */
+  bottom: 74px;
 }
 
 .onboarding-highlight {
@@ -163,7 +163,7 @@
 .onboarding-nav {
   position: fixed;
   z-index: 9003;
-  bottom: calc(52px + 12px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(52px + 6px + env(safe-area-inset-bottom, 0px));
   left: 16px;
   right: 16px;
   display: flex;
