@@ -3,8 +3,10 @@ import Modal from '../../components/ui/Modal';
 import Avatar from '../../components/ui/Avatar';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { useToast } from '../../components/ui/ToastContext';
+import FullscreenImageViewer from '../feed/FullscreenImageViewer';
 import MediaPreviewGrid from '../feed/MediaPreviewGrid';
 import PostRichTextField from '../feed/PostRichTextField';
+import { useLocalMediaFullscreen } from '../feed/useLocalMediaFullscreen';
 import { compressImage } from '../../lib/compress';
 import {
   MAX_POST_MEDIA_FILES,
@@ -29,6 +31,13 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
   const [pointsByUserId, setPointsByUserId] = useState(/** @type {Record<string, string>} */ ({}));
   const { confirm } = useAlertDialog();
   const { showToast } = useToast();
+  const {
+    openItem: openPreviewMedia,
+    fullscreen: previewFullscreen,
+    close: closePreviewFullscreen,
+    hiddenMediaKey,
+    onCloseStart: handlePreviewCloseStart
+  } = useLocalMediaFullscreen(previewItems, 'create-tournament-post');
 
   useEffect(() => {
     const items = files.map((file) => ({
@@ -152,15 +161,19 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
           items={previewItems}
           className="create-tournament-post-preview-grid"
           showCaption={false}
+          originKeyPrefix="create-tournament-post"
+          hiddenMediaKey={hiddenMediaKey}
+          onItemClick={openPreviewMedia}
           getAction={(item) => (
             <button
               type="button"
               className="media-remove-btn"
-              onClick={() =>
+              onClick={(event) => {
+                event.stopPropagation();
                 setFiles((current) =>
                   current.filter((file) => `${file.name}-${file.lastModified}` !== item.key)
-                )
-              }
+                );
+              }}
               aria-label={`Убрать файл ${item.name}`}
             >
               <span aria-hidden="true">×</span>
@@ -251,6 +264,17 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
           </button>
         </div>
       </form>
+
+      {previewFullscreen ? (
+        <FullscreenImageViewer
+          items={previewFullscreen.items}
+          initialIndex={previewFullscreen.index}
+          originRect={previewFullscreen.originRect}
+          originKey={previewFullscreen.originKey}
+          onCloseStart={handlePreviewCloseStart}
+          onClose={closePreviewFullscreen}
+        />
+      ) : null}
     </Modal>
   );
 }

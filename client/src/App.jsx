@@ -322,6 +322,7 @@ function AppMain({ user, setUser }) {
             user={user}
             onDeletedIdsChange={setPendingDeletePostIds}
             searchQuery={feedSearch.query}
+            searchOpen={feedSearch.open}
           />
         )}
         {activeTab === 1 && (
@@ -357,6 +358,7 @@ function AppMain({ user, setUser }) {
             onSubTabChange={handleCompetitionsSubTabChange}
             onDeletedIdsChange={setPendingDeleteTournamentPostIds}
             searchQuery={competitionsSearch.query}
+            searchOpen={competitionsSearch.open}
           />
         )}
         {activeTab === 4 && (

@@ -1,9 +1,9 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import './BottomNav.css';
 
 // Иконки hoisted в модульный const массив (фикс H5: больше не пересоздаются на каждом рендере).
-// Каждый элемент включает осмысленный `label` (фикс M4).
+// Каждый элемент включает осмысленный `label` (фикс M4) — только для aria-label, в UI не показываем.
 const NAV_ITEMS = [
   {
     label: 'Лента',
@@ -64,13 +64,80 @@ export const BOTTOM_NAV_ITEMS = NAV_ITEMS;
  * @param {{ activeTab: number, onTabChange: (idx: number) => void, showAdmin?: boolean }} props
  */
 function BottomNav({ activeTab, onTabChange, showAdmin = false }) {
+  const navRef = useRef(/** @type {HTMLElement | null} */ (null));
+  const itemRefs = useRef(/** @type {Map<number, HTMLButtonElement>} */ (new Map()));
+  const [indicator, setIndicator] = useState({ left: 0, width: 0, ready: false });
+
+  const setItemRef = (index, el) => {
+    if (el) itemRefs.current.set(index, el);
+    else itemRefs.current.delete(index);
+  };
+
+  useLayoutEffect(() => {
+    const nav = navRef.current;
+    const activeEl = itemRefs.current.get(activeTab);
+    if (!nav || !activeEl) {
+      setIndicator((prev) => (prev.ready ? { left: 0, width: 0, ready: false } : prev));
+      return undefined;
+    }
+
+    const update = () => {
+      const navRect = nav.getBoundingClientRect();
+      const btnRect = activeEl.getBoundingClientRect();
+      setIndicator({
+        left: btnRect.left - navRect.left,
+        width: btnRect.width,
+        ready: true
+      });
+    };
+
+    update();
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(update) : null;
+    ro?.observe(nav);
+    window.addEventListener('resize', update);
+    return () => {
+      ro?.disconnect();
+      window.removeEventListener('resize', update);
+    };
+  }, [activeTab, showAdmin]);
+
+  useEffect(() => {
+    // После появления админ-кнопки пересчитать индикатор в следующем кадре
+    if (!showAdmin) return undefined;
+    const id = window.requestAnimationFrame(() => {
+      const nav = navRef.current;
+      const activeEl = itemRefs.current.get(activeTab);
+      if (!nav || !activeEl) return;
+      const navRect = nav.getBoundingClientRect();
+      const btnRect = activeEl.getBoundingClientRect();
+      setIndicator({
+        left: btnRect.left - navRect.left,
+        width: btnRect.width,
+        ready: true
+      });
+    });
+    return () => window.cancelAnimationFrame(id);
+  }, [showAdmin, activeTab]);
+
   return (
-    <nav className="bottom-nav" aria-label="Основная навигация">
+    <nav ref={navRef} className="bottom-nav" aria-label="Основная навигация">
+      <span
+        className={clsx(
+          'bottom-nav__indicator',
+          indicator.ready && 'bottom-nav__indicator--ready'
+        )}
+        style={{
+          transform: `translateX(${indicator.left}px)`,
+          width: indicator.width
+        }}
+        aria-hidden="true"
+      />
       {NAV_ITEMS.map((item, index) => {
         const isActive = activeTab === index;
         return (
           <button
             key={item.label}
+            ref={(el) => setItemRef(index, el)}
             type="button"
             className={clsx('nav-item', isActive && 'active')}
             data-nav-index={index}
@@ -84,6 +151,7 @@ function BottomNav({ activeTab, onTabChange, showAdmin = false }) {
       })}
       {showAdmin && (
         <button
+          ref={(el) => setItemRef(ADMIN_TAB_INDEX, el)}
           type="button"
           className={clsx('nav-item', activeTab === ADMIN_TAB_INDEX && 'active')}
           onClick={() => onTabChange(ADMIN_TAB_INDEX)}

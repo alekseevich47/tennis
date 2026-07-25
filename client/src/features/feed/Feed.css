@@ -389,10 +389,34 @@
   pointer-events: none;
 }
 
+.telegram-media-item__open {
+  appearance: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  cursor: zoom-in;
+  color: inherit;
+}
+
+.telegram-media-item__open img,
+.telegram-media-item__open .telegram-video-preview {
+  width: 100%;
+  height: 100%;
+}
+
+.telegram-media-item.is-returning-origin {
+  opacity: 0;
+}
+
 .media-remove-btn {
   position: absolute;
   top: 8px;
   right: 8px;
+  z-index: 2;
   width: 32px;
   height: 32px;
   border: none;
@@ -671,9 +695,9 @@ button.post-card-like:hover:not(:disabled) {
   overflow: auto;
 }
 
+.post-rich-text__editor:focus,
 .post-rich-text__editor:focus-visible {
-  outline: 2px solid #007aff;
-  outline-offset: 2px;
+  outline: none;
 }
 
 .post-rich-text__editor[data-empty='true']::before {
@@ -701,6 +725,49 @@ button.post-card-like:hover:not(:disabled) {
   border-radius: 8px;
   padding: 0;
   gap: 0;
+}
+
+/* Всплывающий тулбар под выделением (portal → body) */
+.post-format-toolbar-floating {
+  position: fixed;
+  z-index: 2300;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #3a3a3c;
+  box-shadow:
+    0 4px 16px rgba(15, 23, 42, 0.14),
+    0 0 0 1px rgba(15, 23, 42, 0.06);
+  pointer-events: auto;
+}
+
+.post-format-toolbar-floating .post-format-toolbar {
+  color: #3a3a3c;
+}
+
+.post-format-toolbar-floating .post-format-toolbar__btn {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  min-height: 34px;
+  opacity: 0.85;
+}
+
+.post-format-toolbar-floating .post-format-toolbar__btn:hover,
+.post-format-toolbar-floating .post-format-toolbar__btn.is-active {
+  opacity: 1;
+  background: #f2f3f5;
+  color: #1a1a1a;
+}
+
+.post-format-toolbar-floating .frame-color-picker {
+  position: relative;
+  top: 0;
+  left: 0;
 }
 
 .post-format-toolbar__btn {
@@ -989,6 +1056,16 @@ button.post-card-like:hover:not(:disabled) {
   box-sizing: border-box;
 }
 
+/* В редакторе: чип atomic (contenteditable=false), текст вариантов редактируется внутри */
+.post-rich-text__editor .post-anim-frame {
+  cursor: default;
+}
+
+.post-rich-text__editor .post-anim-frame__text {
+  cursor: text;
+  outline: none;
+}
+
 .post-anim-frame__text {
   display: inline-block;
   color: #ffffff;
@@ -1149,8 +1226,7 @@ button.post-card-like:hover:not(:disabled) {
 }
 
 .edit-post-bubble:focus-within {
-  outline: 2px solid #007aff;
-  outline-offset: 2px;
+  outline: none;
 }
 
 .edit-post-bubble textarea {
@@ -2019,25 +2095,27 @@ button.post-card-like:hover:not(:disabled) {
   stroke: #8e8e93;
 }
 
-/* Post context menu (long-press / ⋯ в деталке, moderator) */
+/* Post context menu (long-press / ⋯ в деталке, moderator).
+   z-index выше `.ui-modal-overlay` (2000), чтобы «⋯» в деталке было видно.
+   pointer-events на backdrop всегда auto, пока mounted — иначе после закрытия
+   click пробивает на карточку и открывает пост. */
 .post-context-menu-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 1100;
+  z-index: 2100;
   background: rgba(0, 0, 0, 0.02);
   opacity: 0;
   transition: opacity 150ms ease;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 .post-context-menu-backdrop--visible {
   opacity: 1;
-  pointer-events: auto;
 }
 
 .post-context-menu {
   position: fixed;
-  z-index: 1101;
+  z-index: 2101;
   min-width: 200px;
   padding: 6px 0;
   background: #ffffff;
@@ -2048,6 +2126,9 @@ button.post-card-like:hover:not(:disabled) {
   transform-origin: top left;
   transition: opacity 180ms ease, transform 180ms ease;
   overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 .post-context-menu--from-end {

@@ -1,8 +1,10 @@
 import React, { useEffect, useId, useMemo, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import { updateTournamentPost } from '../../services/tournamentPosts';
+import FullscreenImageViewer from '../feed/FullscreenImageViewer';
 import MediaPreviewGrid from '../feed/MediaPreviewGrid';
 import PostRichTextField from '../feed/PostRichTextField';
+import { useLocalMediaFullscreen } from '../feed/useLocalMediaFullscreen';
 import {
   MAX_POST_MEDIA_FILES,
   getMediaUrl,
@@ -57,6 +59,13 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
     () => [...existingPreviewItems, ...newPreviewItems],
     [existingPreviewItems, newPreviewItems]
   );
+  const {
+    openItem: openPreviewMedia,
+    fullscreen: previewFullscreen,
+    close: closePreviewFullscreen,
+    hiddenMediaKey,
+    onCloseStart: handlePreviewCloseStart
+  } = useLocalMediaFullscreen(previewItems, 'edit-tournament-post');
   const remainingMediaSlots = Math.max(
     0,
     MAX_POST_MEDIA_FILES - keptExistingMediaNames.length - mediaFiles.length
@@ -135,11 +144,15 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
         <MediaPreviewGrid
           items={previewItems}
           className="edit-post-media-preview-grid"
+          originKeyPrefix="edit-tournament-post"
+          hiddenMediaKey={hiddenMediaKey}
+          onItemClick={openPreviewMedia}
           getAction={(item) => (
             <button
               type="button"
               className="media-remove-btn"
-              onClick={() => {
+              onClick={(event) => {
+                event.stopPropagation();
                 if (item.key.startsWith('existing-')) {
                   const filename = item.key.slice('existing-'.length);
                   setRemovedMediaNames((current) =>
@@ -210,6 +223,17 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
           </button>
         </div>
       </form>
+
+      {previewFullscreen ? (
+        <FullscreenImageViewer
+          items={previewFullscreen.items}
+          initialIndex={previewFullscreen.index}
+          originRect={previewFullscreen.originRect}
+          originKey={previewFullscreen.originKey}
+          onCloseStart={handlePreviewCloseStart}
+          onClose={closePreviewFullscreen}
+        />
+      ) : null}
     </Modal>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { getMediaThumbUrl, isVideoMediaName, mediaNames } from '../../lib/media';
 import PostContentHtml from './PostContentHtml';
@@ -23,13 +23,13 @@ export default function PinnedBanner({
   pinnedPosts = [],
   collection = 'posts',
   activeIndex = 0,
-  onAdvance,
   onOpen
 }) {
   const count = pinnedPosts.length;
   const safeIndex = count > 0 ? ((activeIndex % count) + count) % count : 0;
   const [shownIndex, setShownIndex] = useState(safeIndex);
   const [animClass, setAnimClass] = useState('is-enter');
+  const lastChangeAtRef = useRef(0);
 
   useEffect(() => {
     if (count === 0) return undefined;
@@ -38,7 +38,23 @@ export default function PinnedBanner({
       setAnimClass('is-enter');
       return undefined;
     }
-    if (safeIndex === shownIndex) return undefined;
+    // Быстрый скролл может отменить exit-таймер и вернуть индекс к shownIndex —
+    // без сброса is-exit текст остаётся opacity:0 (плашка «пустая»).
+    if (safeIndex === shownIndex) {
+      setAnimClass('is-enter');
+      return undefined;
+    }
+
+    const now = Date.now();
+    const rapid = now - lastChangeAtRef.current < CROSSFADE_MS + 40;
+    lastChangeAtRef.current = now;
+
+    // При частых сменах индекса пропускаем exit — иначе текст висит прозрачным.
+    if (rapid) {
+      setShownIndex(safeIndex);
+      setAnimClass('is-enter');
+      return undefined;
+    }
 
     setAnimClass('is-exit');
     const t = window.setTimeout(() => {
@@ -62,8 +78,9 @@ export default function PinnedBanner({
   const handleClick = () => {
     const current = pinnedPosts[safeIndex];
     if (!current) return;
+    // openPinned сам сдвигает индекс на следующий — без отдельного onAdvance,
+    // иначе возможен двойной шаг.
     onOpen?.(current);
-    onAdvance?.();
   };
 
   return (
