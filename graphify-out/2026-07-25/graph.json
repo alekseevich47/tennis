@@ -633,8 +633,8 @@
       "source_location": "L386",
       "_origin": "ast",
       "id": "client_src_app_app",
-      "community": 15,
-      "community_name": "Toast Notifications",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "app()"
     },
     {
@@ -963,8 +963,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_postuploadprovider",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "postuploadprovider.jsx"
     },
     {
@@ -974,8 +974,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_components_postuploadprovider_postuploadcontext",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "postuploadcontext"
     },
     {
@@ -985,8 +985,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_components_postuploadprovider_postuploadprovider",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "postuploadprovider()"
     },
     {
@@ -996,8 +996,8 @@
       "source_location": "L92",
       "_origin": "ast",
       "id": "client_src_components_postuploadprovider_usepostupload",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "usepostupload()"
     },
     {
@@ -1062,8 +1062,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_tournamentpostuploadprovider",
-      "community": 15,
-      "community_name": "Toast Notifications",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "tournamentpostuploadprovider.jsx"
     },
     {
@@ -1073,8 +1073,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_components_tournamentpostuploadprovider_tournamentpostuploadcontext",
-      "community": 15,
-      "community_name": "Toast Notifications",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "tournamentpostuploadcontext"
     },
     {
@@ -1084,8 +1084,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_components_tournamentpostuploadprovider_tournamentpostuploadprovider",
-      "community": 15,
-      "community_name": "Toast Notifications",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "tournamentpostuploadprovider()"
     },
     {
@@ -1095,8 +1095,8 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "client_src_components_tournamentpostuploadprovider_usetournamentpostupload",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "usetournamentpostupload()"
     },
     {
@@ -1139,8 +1139,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "client_src_components_ui_alertdialog_alertdialogprovider",
-      "community": 15,
-      "community_name": "Toast Notifications",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "alertdialogprovider()"
     },
     {
@@ -1183,8 +1183,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_emptystate",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "emptystate.jsx"
     },
     {
@@ -1194,8 +1194,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_components_ui_emptystate_emptystate",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "emptystate()"
     },
     {
@@ -1205,8 +1205,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_iconbutton",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "iconbutton.jsx"
     },
     {
@@ -1216,8 +1216,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_components_ui_iconbutton_iconbutton",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "iconbutton"
     },
     {
@@ -1249,8 +1249,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_modal",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 3,
+      "community_name": "Modal and Alert Dialog",
       "norm_label": "modal.jsx"
     },
     {
@@ -1260,19 +1260,19 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_components_ui_modal_focusable_selectors",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 3,
+      "community_name": "Modal and Alert Dialog",
       "norm_label": "focusable_selectors"
     },
     {
       "label": "Modal()",
       "file_type": "code",
       "source_file": "client/src/components/ui/Modal.jsx",
-      "source_location": "L34",
+      "source_location": "L33",
       "_origin": "ast",
       "id": "client_src_components_ui_modal_modal",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 3,
+      "community_name": "Modal and Alert Dialog",
       "norm_label": "modal()"
     },
     {
@@ -1282,8 +1282,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_spinner",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "spinner.jsx"
     },
     {
@@ -1293,8 +1293,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_components_ui_spinner_spinner",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "spinner()"
     },
     {
@@ -1469,8 +1469,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_adminpanelpage",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "adminpanelpage.jsx"
     },
     {
@@ -1480,8 +1480,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_features_admin_adminpanelpage_adminpanelpage",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "adminpanelpage()"
     },
     {
@@ -1491,8 +1491,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_broadcastmodal",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 3,
+      "community_name": "Modal and Alert Dialog",
       "norm_label": "broadcastmodal.jsx"
     },
     {
@@ -1535,8 +1535,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_logsmodal",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 9,
+      "community_name": "Audit Logs Modal",
       "norm_label": "logsmodal.jsx"
     },
     {
@@ -1546,8 +1546,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "client_src_features_admin_logsmodal_all_category_values",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 9,
+      "community_name": "Audit Logs Modal",
       "norm_label": "all_category_values"
     },
     {
@@ -1557,8 +1557,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "client_src_features_admin_logsmodal_todateinputvalue",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 9,
+      "community_name": "Audit Logs Modal",
       "norm_label": "todateinputvalue()"
     },
     {
@@ -1568,8 +1568,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "client_src_features_admin_logsmodal_getlogsdefaultdaterange",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 9,
+      "community_name": "Audit Logs Modal",
       "norm_label": "getlogsdefaultdaterange()"
     },
     {
@@ -1579,8 +1579,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "client_src_features_admin_logsmodal_formatdaterangelabel",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 9,
+      "community_name": "Audit Logs Modal",
       "norm_label": "formatdaterangelabel()"
     },
     {
@@ -1590,8 +1590,8 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "client_src_features_admin_logsmodal_calendaricon",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 9,
+      "community_name": "Audit Logs Modal",
       "norm_label": "calendaricon()"
     },
     {
@@ -1601,8 +1601,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "client_src_features_admin_logsmodal_auditdetailvalue",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 9,
+      "community_name": "Audit Logs Modal",
       "norm_label": "auditdetailvalue()"
     },
     {
@@ -1623,8 +1623,8 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "client_src_features_admin_logsmodal_logsmodal",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 9,
+      "community_name": "Audit Logs Modal",
       "norm_label": "logsmodal()"
     },
     {
@@ -1711,8 +1711,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_statisticshubmodal",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "statisticshubmodal.jsx"
     },
     {
@@ -1722,8 +1722,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_features_admin_statisticshubmodal_metrics",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "metrics"
     },
     {
@@ -1733,8 +1733,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "client_src_features_admin_statisticshubmodal_statisticshubmodal",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "statisticshubmodal()"
     },
     {
@@ -1744,8 +1744,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 1,
+      "community_name": "Feed and Profile Pages",
       "norm_label": "usermultiselect.jsx"
     },
     {
@@ -1755,8 +1755,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect_getcollapsedlabel",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 1,
+      "community_name": "Feed and Profile Pages",
       "norm_label": "getcollapsedlabel()"
     },
     {
@@ -1766,8 +1766,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect_isuserchecked",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 1,
+      "community_name": "Feed and Profile Pages",
       "norm_label": "isuserchecked()"
     },
     {
@@ -1777,8 +1777,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect_usermultiselect",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 1,
+      "community_name": "Feed and Profile Pages",
       "norm_label": "usermultiselect()"
     },
     {
@@ -1821,8 +1821,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsachievementsmodal",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "statsachievementsmodal.jsx"
     },
     {
@@ -1832,8 +1832,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsachievementsmodal_modes",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "modes"
     },
     {
@@ -1843,8 +1843,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsachievementsmodal_statsachievementsmodal",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "statsachievementsmodal()"
     },
     {
@@ -1854,8 +1854,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsbookingmodal",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "statsbookingmodal.jsx"
     },
     {
@@ -1865,8 +1865,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsbookingmodal_slices",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "slices"
     },
     {
@@ -1876,8 +1876,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsbookingmodal_hasanyactivity",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "hasanyactivity()"
     },
     {
@@ -1887,8 +1887,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsbookingmodal_statsbookingmodal",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "statsbookingmodal()"
     },
     {
@@ -1898,8 +1898,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsgrowthmodal",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "statsgrowthmodal.jsx"
     },
     {
@@ -1909,8 +1909,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsgrowthmodal_formatbirthdate",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "formatbirthdate()"
     },
     {
@@ -1920,8 +1920,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsgrowthmodal_formatdaytitle",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "formatdaytitle()"
     },
     {
@@ -1931,8 +1931,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsgrowthmodal_statsgrowthmodal",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "statsgrowthmodal()"
     },
     {
@@ -1942,8 +1942,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statslinechart",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "statslinechart.jsx"
     },
     {
@@ -1953,8 +1953,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statslinechart_formataxisdate",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "formataxisdate()"
     },
     {
@@ -1964,8 +1964,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statslinechart_formattooltipdate",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "formattooltipdate()"
     },
     {
@@ -1975,8 +1975,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statslinechart_statslinechart",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "statslinechart()"
     },
     {
@@ -1986,8 +1986,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsmetrictitle",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "statsmetrictitle.jsx"
     },
     {
@@ -1997,8 +1997,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsmetrictitle_statsmetrictitle",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "statsmetrictitle()"
     },
     {
@@ -2008,8 +2008,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsperiodtoolbar",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "statsperiodtoolbar.jsx"
     },
     {
@@ -2019,8 +2019,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsperiodtoolbar_getstatsdefaultdaterange",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "getstatsdefaultdaterange()"
     },
     {
@@ -2030,8 +2030,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsperiodtoolbar_formatdaterangelabel",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "formatdaterangelabel()"
     },
     {
@@ -2041,8 +2041,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsperiodtoolbar_calendaricon",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "calendaricon()"
     },
     {
@@ -2052,8 +2052,8 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsperiodtoolbar_statsperiodtoolbar",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "statsperiodtoolbar()"
     },
     {
@@ -2063,8 +2063,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsreachmodal",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "statsreachmodal.jsx"
     },
     {
@@ -2074,8 +2074,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsreachmodal_typelabel",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "typelabel()"
     },
     {
@@ -2085,8 +2085,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsreachmodal_enrichtoppostnumbers",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "enrichtoppostnumbers()"
     },
     {
@@ -2096,8 +2096,8 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsreachmodal_infocircleicon",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "infocircleicon()"
     },
     {
@@ -2107,8 +2107,8 @@
       "source_location": "L99",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsreachmodal_statsreachmodal",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "statsreachmodal()"
     },
     {
@@ -2118,8 +2118,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statstrainingscountmodal",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "statstrainingscountmodal.jsx"
     },
     {
@@ -2129,8 +2129,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statstrainingscountmodal_formataxisdate",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "formataxisdate()"
     },
     {
@@ -2140,8 +2140,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statstrainingscountmodal_formattooltipdate",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "formattooltipdate()"
     },
     {
@@ -2151,8 +2151,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statstrainingscountmodal_formatdaytitle",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "formatdaytitle()"
     },
     {
@@ -2162,8 +2162,8 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statstrainingscountmodal_statstrainingscountmodal",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "statstrainingscountmodal()"
     },
     {
@@ -2173,8 +2173,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_competitions_competitionspage",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "competitionspage.jsx"
     },
     {
@@ -2184,8 +2184,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "client_src_features_competitions_competitionspage_tabs",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "tabs"
     },
     {
@@ -2195,8 +2195,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "client_src_features_competitions_competitionspage_competitionspage",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "competitionspage()"
     },
     {
@@ -2423,7 +2423,7 @@
       "label": "CreatePostModal()",
       "file_type": "code",
       "source_file": "client/src/features/feed/CreatePostModal.jsx",
-      "source_location": "L22",
+      "source_location": "L20",
       "_origin": "ast",
       "id": "client_src_features_feed_createpostmodal_createpostmodal",
       "community": 3,
@@ -2459,8 +2459,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_feedpage",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "feedpage.jsx"
     },
     {
@@ -2470,8 +2470,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "client_src_features_feed_feedpage_feedpage",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "feedpage()"
     },
     {
@@ -2555,7 +2555,7 @@
       "label": "readComments()",
       "file_type": "code",
       "source_file": "client/src/features/feed/PostCard.jsx",
-      "source_location": "L16",
+      "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_features_feed_postcard_readcomments",
       "community": 2,
@@ -2566,7 +2566,7 @@
       "label": "PostCardLike()",
       "file_type": "code",
       "source_file": "client/src/features/feed/PostCard.jsx",
-      "source_location": "L23",
+      "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_features_feed_postcard_postcardlike",
       "community": 2,
@@ -2577,34 +2577,12 @@
       "label": "PostCard()",
       "file_type": "code",
       "source_file": "client/src/features/feed/PostCard.jsx",
-      "source_location": "L77",
+      "source_location": "L76",
       "_origin": "ast",
       "id": "client_src_features_feed_postcard_postcard",
       "community": 2,
       "community_name": "Post Upload and UI Kit",
       "norm_label": "postcard()"
-    },
-    {
-      "label": "PostContentHtml.jsx",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/PostContentHtml.jsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "client_src_features_feed_postcontenthtml",
-      "community": 7,
-      "community_name": "Admin Panel Stats",
-      "norm_label": "postcontenthtml.jsx"
-    },
-    {
-      "label": "PostContentHtml()",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/PostContentHtml.jsx",
-      "source_location": "L13",
-      "_origin": "ast",
-      "id": "client_src_features_feed_postcontenthtml_postcontenthtml",
-      "community": 7,
-      "community_name": "Admin Panel Stats",
-      "norm_label": "postcontenthtml()"
     },
     {
       "label": "PostDetailModal.jsx",
@@ -2613,42 +2591,20 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_postdetailmodal",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "postdetailmodal.jsx"
     },
     {
       "label": "PostDetailModal()",
       "file_type": "code",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L40",
+      "source_location": "L39",
       "_origin": "ast",
       "id": "client_src_features_feed_postdetailmodal_postdetailmodal",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "postdetailmodal()"
-    },
-    {
-      "label": "PostFormatToolbar.jsx",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/PostFormatToolbar.jsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "client_src_features_feed_postformattoolbar",
-      "community": 7,
-      "community_name": "Admin Panel Stats",
-      "norm_label": "postformattoolbar.jsx"
-    },
-    {
-      "label": "PostFormatToolbar()",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/PostFormatToolbar.jsx",
-      "source_location": "L11",
-      "_origin": "ast",
-      "id": "client_src_features_feed_postformattoolbar_postformattoolbar",
-      "community": 7,
-      "community_name": "Admin Panel Stats",
-      "norm_label": "postformattoolbar()"
     },
     {
       "label": "PostMedia.jsx",
@@ -2671,171 +2627,6 @@
       "community": 3,
       "community_name": "Modal and Alert Dialog",
       "norm_label": "postmedia()"
-    },
-    {
-      "label": "PostRichTextField.jsx",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/PostRichTextField.jsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "client_src_features_feed_postrichtextfield",
-      "community": 7,
-      "community_name": "Admin Panel Stats",
-      "norm_label": "postrichtextfield.jsx"
-    },
-    {
-      "label": "PostRichTextField()",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/PostRichTextField.jsx",
-      "source_location": "L21",
-      "_origin": "ast",
-      "id": "client_src_features_feed_postrichtextfield_postrichtextfield",
-      "community": 7,
-      "community_name": "Admin Panel Stats",
-      "norm_label": "postrichtextfield()"
-    },
-    {
-      "label": "postRichText.js",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "client_src_features_feed_postrichtext",
-      "community": 7,
-      "community_name": "Admin Panel Stats",
-      "norm_label": "postrichtext.js"
-    },
-    {
-      "label": "ALLOWED_TAGS",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "client_src_features_feed_postrichtext_allowed_tags",
-      "community": 7,
-      "community_name": "Admin Panel Stats",
-      "norm_label": "allowed_tags"
-    },
-    {
-      "label": "ALLOWED_ATTRS",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L2",
-      "_origin": "ast",
-      "id": "client_src_features_feed_postrichtext_allowed_attrs",
-      "community": 7,
-      "community_name": "Admin Panel Stats",
-      "norm_label": "allowed_attrs"
-    },
-    {
-      "label": "escapeHtml()",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L10",
-      "_origin": "ast",
-      "id": "client_src_features_feed_postrichtext_escapehtml",
-      "community": 7,
-      "community_name": "Admin Panel Stats",
-      "norm_label": "escapehtml()"
-    },
-    {
-      "label": "looksLikeRichHtml()",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L22",
-      "_origin": "ast",
-      "id": "client_src_features_feed_postrichtext_lookslikerichhtml",
-      "community": 7,
-      "community_name": "Admin Panel Stats",
-      "norm_label": "lookslikerichhtml()"
-    },
-    {
-      "label": "hasVisibleText()",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L30",
-      "_origin": "ast",
-      "id": "client_src_features_feed_postrichtext_hasvisibletext",
-      "community": 7,
-      "community_name": "Admin Panel Stats",
-      "norm_label": "hasvisibletext()"
-    },
-    {
-      "label": "isEditorEmpty()",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L41",
-      "_origin": "ast",
-      "id": "client_src_features_feed_postrichtext_iseditorempty",
-      "community": 7,
-      "community_name": "Admin Panel Stats",
-      "norm_label": "iseditorempty()"
-    },
-    {
-      "label": "getEditorHtml()",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L51",
-      "_origin": "ast",
-      "id": "client_src_features_feed_postrichtext_geteditorhtml",
-      "community": 7,
-      "community_name": "Admin Panel Stats",
-      "norm_label": "geteditorhtml()"
-    },
-    {
-      "label": "sanitizePostHtml()",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L61",
-      "_origin": "ast",
-      "id": "client_src_features_feed_postrichtext_sanitizeposthtml",
-      "community": 7,
-      "community_name": "Admin Panel Stats",
-      "norm_label": "sanitizeposthtml()"
-    },
-    {
-      "label": "serializeSanitized()",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L73",
-      "_origin": "ast",
-      "id": "client_src_features_feed_postrichtext_serializesanitized",
-      "community": 7,
-      "community_name": "Admin Panel Stats",
-      "norm_label": "serializesanitized()"
-    },
-    {
-      "label": "toDisplayHtml()",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L127",
-      "_origin": "ast",
-      "id": "client_src_features_feed_postrichtext_todisplayhtml",
-      "community": 7,
-      "community_name": "Admin Panel Stats",
-      "norm_label": "todisplayhtml()"
-    },
-    {
-      "label": "applyFormatCommand()",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L137",
-      "_origin": "ast",
-      "id": "client_src_features_feed_postrichtext_applyformatcommand",
-      "community": 7,
-      "community_name": "Admin Panel Stats",
-      "norm_label": "applyformatcommand()"
-    },
-    {
-      "label": "readActiveFormats()",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L155",
-      "_origin": "ast",
-      "id": "client_src_features_feed_postrichtext_readactiveformats",
-      "community": 7,
-      "community_name": "Admin Panel Stats",
-      "norm_label": "readactiveformats()"
     },
     {
       "label": "AddImageModal.jsx",
@@ -4120,8 +3911,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_calendarstrip",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "calendarstrip.jsx"
     },
     {
@@ -4131,8 +3922,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_features_trainings_calendarstrip_calendarstrip",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "calendarstrip()"
     },
     {
@@ -4142,8 +3933,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_createtrainingmodal",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 3,
+      "community_name": "Modal and Alert Dialog",
       "norm_label": "createtrainingmodal.jsx"
     },
     {
@@ -4153,8 +3944,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_features_trainings_createtrainingmodal_initial_form",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 3,
+      "community_name": "Modal and Alert Dialog",
       "norm_label": "initial_form"
     },
     {
@@ -4164,8 +3955,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "client_src_features_trainings_createtrainingmodal_createtrainingmodal",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 3,
+      "community_name": "Modal and Alert Dialog",
       "norm_label": "createtrainingmodal()"
     },
     {
@@ -4175,8 +3966,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_trainingcard",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "trainingcard.jsx"
     },
     {
@@ -4186,8 +3977,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_features_trainings_trainingcard_trainingcard",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 1,
+      "community_name": "Feed and Profile Pages",
       "norm_label": "trainingcard()"
     },
     {
@@ -4307,8 +4098,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_daterangemodal",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 6,
+      "community_name": "Header and Membership",
       "norm_label": "daterangemodal.jsx"
     },
     {
@@ -4318,8 +4109,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_daterangemodal_getdefaultdaterange",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 6,
+      "community_name": "Header and Membership",
       "norm_label": "getdefaultdaterange()"
     },
     {
@@ -4340,8 +4131,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_daterangemodal_formatrangehint",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 6,
+      "community_name": "Header and Membership",
       "norm_label": "formatrangehint()"
     },
     {
@@ -4351,8 +4142,8 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_daterangemodal_daterangemodal",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 6,
+      "community_name": "Header and Membership",
       "norm_label": "daterangemodal()"
     },
     {
@@ -4549,8 +4340,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_userpickermodal",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "userpickermodal.jsx"
     },
     {
@@ -4560,8 +4351,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_userpickermodal_isuserbookingdisabled",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "isuserbookingdisabled()"
     },
     {
@@ -4571,8 +4362,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_userpickermodal_userpickermodal",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "userpickermodal()"
     },
     {
@@ -4637,8 +4428,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usecommentlikes",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "usecommentlikes.js"
     },
     {
@@ -4648,8 +4439,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "client_src_hooks_usecommentlikes_usecommentlikes",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "usecommentlikes()"
     },
     {
@@ -4659,8 +4450,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usecomments",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "usecomments.js"
     },
     {
@@ -4670,8 +4461,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_hooks_usecomments_usecomments",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "usecomments()"
     },
     {
@@ -4857,8 +4648,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usepostlikes",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "usepostlikes.js"
     },
     {
@@ -4868,8 +4659,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "client_src_hooks_usepostlikes_usepostlikes",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "usepostlikes()"
     },
     {
@@ -4901,8 +4692,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_useposts",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "useposts.js"
     },
     {
@@ -4912,8 +4703,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_hooks_useposts_useposts",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "useposts()"
     },
     {
@@ -5011,8 +4802,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usetournamentposts",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "usetournamentposts.js"
     },
     {
@@ -5022,8 +4813,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_hooks_usetournamentposts_usetournamentposts",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "usetournamentposts()"
     },
     {
@@ -5044,8 +4835,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_hooks_usetrainings_usetrainings",
-      "community": 16,
-      "community_name": "Training Notification Badges",
+      "community": 1,
+      "community_name": "Feed and Profile Pages",
       "norm_label": "usetrainings()"
     },
     {
@@ -5330,8 +5121,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_datepickerutils_todateinputvalue",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 6,
+      "community_name": "Header and Membership",
       "norm_label": "todateinputvalue()"
     },
     {
@@ -5352,8 +5143,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_lib_datepickerutils_toselectedrange",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 6,
+      "community_name": "Header and Membership",
       "norm_label": "toselectedrange()"
     },
     {
@@ -5561,8 +5352,8 @@
       "source_location": "L125",
       "_origin": "ast",
       "id": "client_src_lib_datesearch_isdatequeryparsed",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "isdatequeryparsed()"
     },
     {
@@ -5572,8 +5363,8 @@
       "source_location": "L134",
       "_origin": "ast",
       "id": "client_src_lib_datesearch_matchesdatequery",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "matchesdatequery()"
     },
     {
@@ -5583,8 +5374,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_format",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "format.js"
     },
     {
@@ -5594,8 +5385,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_lib_format_days_short",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "days_short"
     },
     {
@@ -5605,8 +5396,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_lib_format_days_full",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "days_full"
     },
     {
@@ -5616,8 +5407,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_lib_format_months_genitive",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "months_genitive"
     },
     {
@@ -5627,8 +5418,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_lib_format_pad2",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "pad2()"
     },
     {
@@ -5671,8 +5462,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "client_src_lib_format_formattimerange",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 1,
+      "community_name": "Feed and Profile Pages",
       "norm_label": "formattimerange()"
     },
     {
@@ -5682,8 +5473,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "client_src_lib_format_hastimerangeended",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 1,
+      "community_name": "Feed and Profile Pages",
       "norm_label": "hastimerangeended()"
     },
     {
@@ -5704,8 +5495,8 @@
       "source_location": "L87",
       "_origin": "ast",
       "id": "client_src_lib_format_formatdatetimeshort",
-      "community": 9,
-      "community_name": "Audit Logs Modal",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "formatdatetimeshort()"
     },
     {
@@ -5715,8 +5506,8 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "client_src_lib_format_daykey",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "daykey()"
     },
     {
@@ -5726,8 +5517,8 @@
       "source_location": "L105",
       "_origin": "ast",
       "id": "client_src_lib_format_issameday",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "issameday()"
     },
     {
@@ -5825,8 +5616,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_log",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "log.js"
     },
     {
@@ -5836,8 +5627,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_lib_log_noop",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "noop()"
     },
     {
@@ -5847,8 +5638,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_lib_log_error",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "error"
     },
     {
@@ -6012,8 +5803,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_main",
-      "community": 15,
-      "community_name": "Toast Notifications",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "main.jsx"
     },
     {
@@ -6023,8 +5814,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_main_globalerrorfallback",
-      "community": 15,
-      "community_name": "Toast Notifications",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "globalerrorfallback()"
     },
     {
@@ -6562,8 +6353,8 @@
       "source_location": "L180",
       "_origin": "ast",
       "id": "client_src_services_auth_ismoderator",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "ismoderator()"
     },
     {
@@ -6826,8 +6617,8 @@
       "source_location": "L333",
       "_origin": "ast",
       "id": "client_src_services_catalog_createplayer",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 1,
+      "community_name": "Feed and Profile Pages",
       "norm_label": "createplayer()"
     },
     {
@@ -7112,8 +6903,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_pocketbase",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "pocketbase.js"
     },
     {
@@ -7123,8 +6914,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_posts",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "posts.js"
     },
     {
@@ -7134,8 +6925,8 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "client_src_services_posts_getisdeletedpatchvalue",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "getisdeletedpatchvalue()"
     },
     {
@@ -7145,8 +6936,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "client_src_services_posts_listposts",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "listposts()"
     },
     {
@@ -7156,8 +6947,8 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "client_src_services_posts_listcommentsforpost",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "listcommentsforpost()"
     },
     {
@@ -7167,8 +6958,8 @@
       "source_location": "L103",
       "_origin": "ast",
       "id": "client_src_services_posts_listpostlikes",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "listpostlikes()"
     },
     {
@@ -7178,8 +6969,8 @@
       "source_location": "L125",
       "_origin": "ast",
       "id": "client_src_services_posts_togglepostlike",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "togglepostlike()"
     },
     {
@@ -7189,8 +6980,8 @@
       "source_location": "L148",
       "_origin": "ast",
       "id": "client_src_services_posts_createpost",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "createpost()"
     },
     {
@@ -7200,8 +6991,8 @@
       "source_location": "L162",
       "_origin": "ast",
       "id": "client_src_services_posts_createpostwithprogress",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "createpostwithprogress()"
     },
     {
@@ -7211,8 +7002,8 @@
       "source_location": "L230",
       "_origin": "ast",
       "id": "client_src_services_posts_updatepost",
-      "community": 3,
-      "community_name": "Modal and Alert Dialog",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "updatepost()"
     },
     {
@@ -7233,8 +7024,8 @@
       "source_location": "L246",
       "_origin": "ast",
       "id": "client_src_services_posts_createcomment",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "createcomment()"
     },
     {
@@ -7244,8 +7035,8 @@
       "source_location": "L259",
       "_origin": "ast",
       "id": "client_src_services_posts_updatecomment",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "updatecomment()"
     },
     {
@@ -7255,8 +7046,8 @@
       "source_location": "L269",
       "_origin": "ast",
       "id": "client_src_services_posts_harddeletecomment",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "harddeletecomment()"
     },
     {
@@ -7266,8 +7057,8 @@
       "source_location": "L288",
       "_origin": "ast",
       "id": "client_src_services_posts_listcommentlikes",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "listcommentlikes()"
     },
     {
@@ -7288,8 +7079,8 @@
       "source_location": "L341",
       "_origin": "ast",
       "id": "client_src_services_posts_purgeabandonedcomments",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "purgeabandonedcomments()"
     },
     {
@@ -7299,8 +7090,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_stats",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "stats.js"
     },
     {
@@ -7310,8 +7101,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "client_src_services_stats_periodquery",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "periodquery()"
     },
     {
@@ -7321,8 +7112,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "client_src_services_stats_fetchstatsgrowth",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "fetchstatsgrowth()"
     },
     {
@@ -7332,8 +7123,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "client_src_services_stats_fetchstatsreach",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "fetchstatsreach()"
     },
     {
@@ -7343,8 +7134,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "client_src_services_stats_fetchstatsbooking",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "fetchstatsbooking()"
     },
     {
@@ -7354,8 +7145,8 @@
       "source_location": "L85",
       "_origin": "ast",
       "id": "client_src_services_stats_fetchstatstrainingscount",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "fetchstatstrainingscount()"
     },
     {
@@ -7365,8 +7156,8 @@
       "source_location": "L105",
       "_origin": "ast",
       "id": "client_src_services_stats_fetchstatsgrowthday",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "fetchstatsgrowthday()"
     },
     {
@@ -7376,8 +7167,8 @@
       "source_location": "L126",
       "_origin": "ast",
       "id": "client_src_services_stats_fetchstatstrainingsday",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "fetchstatstrainingsday()"
     },
     {
@@ -7387,8 +7178,8 @@
       "source_location": "L150",
       "_origin": "ast",
       "id": "client_src_services_stats_fetchstatsachievements",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "fetchstatsachievements()"
     },
     {
@@ -7398,8 +7189,8 @@
       "source_location": "L171",
       "_origin": "ast",
       "id": "client_src_services_stats_fetchstatsachievementgrants",
-      "community": 14,
-      "community_name": "Tournament Upload Providers",
+      "community": 7,
+      "community_name": "Admin Panel Stats",
       "norm_label": "fetchstatsachievementgrants()"
     },
     {
@@ -7519,8 +7310,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_listtournamentposts",
-      "community": 1,
-      "community_name": "Feed and Profile Pages",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "listtournamentposts()"
     },
     {
@@ -7530,8 +7321,8 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_updatetournamentpost",
-      "community": 3,
-      "community_name": "Modal and Alert Dialog",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "updatetournamentpost()"
     },
     {
@@ -7541,8 +7332,8 @@
       "source_location": "L89",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_softdeletetournamentpost",
-      "community": 3,
-      "community_name": "Modal and Alert Dialog",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "softdeletetournamentpost()"
     },
     {
@@ -7805,8 +7596,8 @@
       "source_location": "L335",
       "_origin": "ast",
       "id": "client_src_services_trainings_listtrainings",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 1,
+      "community_name": "Feed and Profile Pages",
       "norm_label": "listtrainings()"
     },
     {
@@ -7827,8 +7618,8 @@
       "source_location": "L377",
       "_origin": "ast",
       "id": "client_src_services_trainings_createtraining",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 3,
+      "community_name": "Modal and Alert Dialog",
       "norm_label": "createtraining()"
     },
     {
@@ -7849,8 +7640,8 @@
       "source_location": "L427",
       "_origin": "ast",
       "id": "client_src_services_trainings_finalizecancelledtraining",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "finalizecancelledtraining()"
     },
     {
@@ -8069,8 +7860,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_users",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "users.js"
     },
     {
@@ -8080,8 +7871,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_services_users_listusers",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "Tournament Upload Providers",
       "norm_label": "listusers()"
     },
     {
@@ -13724,7 +13515,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/CreatePostModal.jsx",
-      "source_location": "L26",
+      "source_location": "L24",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_createpostmodal_createpostmodal",
@@ -15135,7 +14926,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/components/ui/Modal.jsx",
-      "source_location": "L34",
+      "source_location": "L33",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_components_ui_modal",
@@ -21858,7 +21649,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostCard.jsx",
-      "source_location": "L6",
+      "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postcard",
@@ -21869,7 +21660,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/CreatePostModal.jsx",
-      "source_location": "L22",
+      "source_location": "L20",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_createpostmodal",
@@ -21893,55 +21684,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/CreatePostModal.jsx",
-      "source_location": "L12",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_createpostmodal",
-      "target": "client_src_features_feed_postrichtext",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CreatePostModal.jsx",
-      "source_location": "L12",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_createpostmodal",
-      "target": "client_src_features_feed_postrichtext_hasvisibletext",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CreatePostModal.jsx",
       "source_location": "L5",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_createpostmodal",
-      "target": "client_src_features_feed_postrichtextfield",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CreatePostModal.jsx",
-      "source_location": "L5",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_createpostmodal",
-      "target": "client_src_features_feed_postrichtextfield_postrichtextfield",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CreatePostModal.jsx",
-      "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_createpostmodal",
@@ -21953,7 +21696,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/CreatePostModal.jsx",
-      "source_location": "L6",
+      "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_createpostmodal",
@@ -21965,7 +21708,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/CreatePostModal.jsx",
-      "source_location": "L7",
+      "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_createpostmodal",
@@ -21977,7 +21720,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/CreatePostModal.jsx",
-      "source_location": "L7",
+      "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_createpostmodal",
@@ -21989,7 +21732,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/CreatePostModal.jsx",
-      "source_location": "L7",
+      "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_createpostmodal",
@@ -22013,19 +21756,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/CreatePostModal.jsx",
-      "source_location": "L39",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_createpostmodal_createpostmodal",
-      "target": "client_src_features_feed_postrichtext_hasvisibletext",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CreatePostModal.jsx",
-      "source_location": "L67",
+      "source_location": "L63",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_createpostmodal_createpostmodal",
@@ -22037,7 +21768,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/CreatePostModal.jsx",
-      "source_location": "L33",
+      "source_location": "L31",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_createpostmodal_createpostmodal",
@@ -22049,7 +21780,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/CreatePostModal.jsx",
-      "source_location": "L105",
+      "source_location": "L97",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_createpostmodal_createpostmodal",
@@ -22883,7 +22614,7 @@
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "client/src/features/feed/PostCard.jsx",
-      "source_location": "L249",
+      "source_location": "L248",
       "weight": 1.0,
       "_origin": "ast",
       "context": "argument",
@@ -22895,7 +22626,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostCard.jsx",
-      "source_location": "L23",
+      "source_location": "L22",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postcard",
@@ -22906,35 +22637,11 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostCard.jsx",
-      "source_location": "L16",
+      "source_location": "L15",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postcard",
       "target": "client_src_features_feed_postcard_readcomments",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostCard.jsx",
-      "source_location": "L5",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postcard",
-      "target": "client_src_features_feed_postcontenthtml",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostCard.jsx",
-      "source_location": "L5",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postcard",
-      "target": "client_src_features_feed_postcontenthtml_postcontenthtml",
       "confidence_score": 1.0
     },
     {
@@ -22954,7 +22661,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostCard.jsx",
-      "source_location": "L8",
+      "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postcard",
@@ -22966,7 +22673,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostCard.jsx",
-      "source_location": "L8",
+      "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postcard",
@@ -22978,7 +22685,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostCard.jsx",
-      "source_location": "L9",
+      "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postcard",
@@ -22990,7 +22697,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostCard.jsx",
-      "source_location": "L9",
+      "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postcard",
@@ -23002,7 +22709,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostCard.jsx",
-      "source_location": "L10",
+      "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postcard",
@@ -23014,7 +22721,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostCard.jsx",
-      "source_location": "L10",
+      "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postcard",
@@ -23026,7 +22733,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostCard.jsx",
-      "source_location": "L91",
+      "source_location": "L90",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postcard_postcard",
@@ -23038,7 +22745,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostCard.jsx",
-      "source_location": "L24",
+      "source_location": "L23",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postcard_postcardlike",
@@ -23050,7 +22757,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostCard.jsx",
-      "source_location": "L97",
+      "source_location": "L96",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postcard_postcard",
@@ -23062,7 +22769,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostCard.jsx",
-      "source_location": "L166",
+      "source_location": "L165",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postcard_postcard",
@@ -23072,79 +22779,8 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostContentHtml.jsx",
-      "source_location": "L13",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postcontenthtml",
-      "target": "client_src_features_feed_postcontenthtml_postcontenthtml",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostContentHtml.jsx",
-      "source_location": "L2",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postcontenthtml",
-      "target": "client_src_features_feed_postrichtext",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostContentHtml.jsx",
-      "source_location": "L2",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postcontenthtml",
-      "target": "client_src_features_feed_postrichtext_todisplayhtml",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L6",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postdetailmodal",
-      "target": "client_src_features_feed_postcontenthtml",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostContentHtml.jsx",
-      "source_location": "L14",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postcontenthtml_postcontenthtml",
-      "target": "client_src_features_feed_postrichtext_todisplayhtml",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L6",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postdetailmodal",
-      "target": "client_src_features_feed_postcontenthtml_postcontenthtml",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L40",
+      "source_location": "L39",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -23168,7 +22804,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L9",
+      "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -23180,7 +22816,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L9",
+      "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -23192,7 +22828,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L8",
+      "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -23204,7 +22840,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L8",
+      "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -23216,7 +22852,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L10",
+      "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -23228,7 +22864,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L10",
+      "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -23240,7 +22876,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L18",
+      "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -23252,7 +22888,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L18",
+      "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -23264,7 +22900,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L11",
+      "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -23276,7 +22912,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L11",
+      "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -23288,7 +22924,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L11",
+      "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -23300,7 +22936,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L11",
+      "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -23312,7 +22948,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L11",
+      "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -23324,7 +22960,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L17",
+      "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -23336,7 +22972,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L17",
+      "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -23348,7 +22984,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L79",
+      "source_location": "L78",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -23360,7 +22996,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L56",
+      "source_location": "L55",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -23372,7 +23008,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L283",
+      "source_location": "L282",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -23384,7 +23020,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L144",
+      "source_location": "L143",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -23396,7 +23032,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L150",
+      "source_location": "L149",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -23408,7 +23044,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L227",
+      "source_location": "L226",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -23420,7 +23056,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L210",
+      "source_location": "L209",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -23432,7 +23068,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L168",
+      "source_location": "L167",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -23444,46 +23080,11 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L101",
+      "source_location": "L100",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
       "target": "client_src_services_stats_recordcontentview",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostFormatToolbar.jsx",
-      "source_location": "L11",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postformattoolbar",
-      "target": "client_src_features_feed_postformattoolbar_postformattoolbar",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostRichTextField.jsx",
-      "source_location": "L2",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtextfield",
-      "target": "client_src_features_feed_postformattoolbar",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostRichTextField.jsx",
-      "source_location": "L2",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtextfield",
-      "target": "client_src_features_feed_postformattoolbar_postformattoolbar",
       "confidence_score": 1.0
     },
     {
@@ -23628,365 +23229,6 @@
       "_origin": "ast",
       "source": "client_src_features_feed_postmedia_postmedia",
       "target": "client_src_lib_media_videopreviewurl",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostRichTextField.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtextfield",
-      "target": "client_src_features_feed_postrichtext",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostRichTextField.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtextfield",
-      "target": "client_src_features_feed_postrichtext_applyformatcommand",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostRichTextField.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtextfield",
-      "target": "client_src_features_feed_postrichtext_geteditorhtml",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostRichTextField.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtextfield",
-      "target": "client_src_features_feed_postrichtext_iseditorempty",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostRichTextField.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtextfield",
-      "target": "client_src_features_feed_postrichtext_readactiveformats",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostRichTextField.jsx",
-      "source_location": "L21",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtextfield",
-      "target": "client_src_features_feed_postrichtextfield_postrichtextfield",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostRichTextField.jsx",
-      "source_location": "L84",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtextfield_postrichtextfield",
-      "target": "client_src_features_feed_postrichtext_applyformatcommand",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostRichTextField.jsx",
-      "source_location": "L41",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtextfield_postrichtextfield",
-      "target": "client_src_features_feed_postrichtext_geteditorhtml",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostRichTextField.jsx",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtextfield_postrichtextfield",
-      "target": "client_src_features_feed_postrichtext_iseditorempty",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostRichTextField.jsx",
-      "source_location": "L45",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtextfield_postrichtextfield",
-      "target": "client_src_features_feed_postrichtext_readactiveformats",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L2",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtext",
-      "target": "client_src_features_feed_postrichtext_allowed_attrs",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L1",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtext",
-      "target": "client_src_features_feed_postrichtext_allowed_tags",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L137",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtext",
-      "target": "client_src_features_feed_postrichtext_applyformatcommand",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L10",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtext",
-      "target": "client_src_features_feed_postrichtext_escapehtml",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L51",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtext",
-      "target": "client_src_features_feed_postrichtext_geteditorhtml",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L30",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtext",
-      "target": "client_src_features_feed_postrichtext_hasvisibletext",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L41",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtext",
-      "target": "client_src_features_feed_postrichtext_iseditorempty",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L22",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtext",
-      "target": "client_src_features_feed_postrichtext_lookslikerichhtml",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L155",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtext",
-      "target": "client_src_features_feed_postrichtext_readactiveformats",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L61",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtext",
-      "target": "client_src_features_feed_postrichtext_sanitizeposthtml",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L73",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtext",
-      "target": "client_src_features_feed_postrichtext_serializesanitized",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L127",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtext",
-      "target": "client_src_features_feed_postrichtext_todisplayhtml",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L84",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtext_serializesanitized",
-      "target": "client_src_features_feed_postrichtext_allowed_tags"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L75",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtext_serializesanitized",
-      "target": "client_src_features_feed_postrichtext_escapehtml",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L130",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtext_todisplayhtml",
-      "target": "client_src_features_feed_postrichtext_escapehtml",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L32",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtext_hasvisibletext",
-      "target": "client_src_features_feed_postrichtext_lookslikerichhtml",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L129",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtext_todisplayhtml",
-      "target": "client_src_features_feed_postrichtext_lookslikerichhtml",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L52",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtext_geteditorhtml",
-      "target": "client_src_features_feed_postrichtext_iseditorempty",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L53",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtext_geteditorhtml",
-      "target": "client_src_features_feed_postrichtext_sanitizeposthtml",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "indirect_call",
-      "context": "argument",
-      "confidence": "INFERRED",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L66",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtext_sanitizeposthtml",
-      "target": "client_src_features_feed_postrichtext_serializesanitized",
-      "confidence_score": 0.5
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/postRichText.js",
-      "source_location": "L129",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postrichtext_todisplayhtml",
-      "target": "client_src_features_feed_postrichtext_sanitizeposthtml",
       "confidence_score": 1.0
     },
     {
@@ -43301,5 +42543,5 @@
       "source_file": "client/src/assets/ach/1_1.png"
     }
   ],
-  "built_at_commit": "a30756e7439ed63559b4b027e9a59faf4687f371"
+  "built_at_commit": "aeca27a9d1929ae21e945044c682333524f05228"
 }

@@ -3,6 +3,7 @@ import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
 import Avatar from '../../components/ui/Avatar';
 import PostMedia from './PostMedia';
+import PostContentHtml from './PostContentHtml';
 import sectionAvatarUrl from '../../assets/sm-avatar.png';
 import { useComments } from '../../hooks/useComments';
 import { useCommentLikes } from '../../hooks/useCommentLikes';
@@ -320,7 +321,11 @@ function PostDetailModal({
         )}
       </div>
 
-      <p className="post-text-detail">{post.content || post.text}</p>
+      <PostContentHtml
+        as="p"
+        className="post-text-detail"
+        content={post.content || post.text}
+      />
       <PostMedia
         post={post}
         variant="detail"

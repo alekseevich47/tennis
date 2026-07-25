@@ -9,6 +9,7 @@ const FOCUSABLE_SELECTORS = [
   'input:not([disabled])',
   'select:not([disabled])',
   'textarea:not([disabled])',
+  '[contenteditable="true"]',
   '[tabindex]:not([tabindex="-1"])'
 ].join(',');
 

@@ -558,6 +558,224 @@ button.post-card-like:hover:not(:disabled) {
   outline-offset: 2px;
 }
 
+/* --- Create post: near-fullscreen + rich-text test --- */
+.create-post-modal-overlay {
+  padding: 14px 8px;
+  align-items: stretch;
+}
+
+.create-post-modal {
+  max-width: 100%;
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  border-radius: 18px;
+  padding: 20px 16px 16px;
+}
+
+.create-post-modal .ui-modal-body {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.create-post-form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+}
+
+.create-post-form__actions {
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.post-rich-text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  gap: 8px;
+}
+
+.post-rich-text__editor-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+}
+
+.post-rich-text__editor-wrap.is-focused {
+  padding-top: 48px;
+}
+
+.post-rich-text__floating-slot {
+  position: absolute;
+  left: 50%;
+  top: 40px;
+  transform: translate(-50%, -100%);
+  z-index: 5;
+  pointer-events: auto;
+}
+
+.post-rich-text__editor {
+  flex: 1;
+  min-height: 180px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 12px;
+  box-sizing: border-box;
+  outline: none;
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.45;
+  color: #1a1a1a;
+  overflow-y: auto;
+  background: #fff;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.post-rich-text__editor:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: 2px;
+}
+
+.post-rich-text__editor[data-empty='true']::before {
+  content: attr(data-placeholder);
+  color: #9aa0a6;
+  pointer-events: none;
+}
+
+.post-rich-text__editor a {
+  color: #007aff;
+  text-decoration: underline;
+}
+
+.post-format-toolbar {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  user-select: none;
+}
+
+.post-format-toolbar--floating {
+  background: #2c2c2e;
+  color: #f2f2f7;
+  border-radius: 12px;
+  padding: 4px 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+
+.post-format-toolbar--permanent {
+  align-self: flex-start;
+  background: transparent;
+  color: #8e8e93;
+  border-radius: 8px;
+  padding: 0;
+  gap: 0;
+}
+
+.post-format-toolbar__btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: inherit;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  touch-action: manipulation;
+}
+
+.post-format-toolbar--permanent .post-format-toolbar__btn {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  opacity: 0.72;
+}
+
+.post-format-toolbar--permanent .post-format-toolbar__btn:hover,
+.post-format-toolbar--permanent .post-format-toolbar__btn.is-active {
+  opacity: 1;
+  background: #f2f3f5;
+  color: #3a3a3c;
+}
+
+.post-format-toolbar--floating .post-format-toolbar__btn:hover,
+.post-format-toolbar--floating .post-format-toolbar__btn.is-active {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.post-format-toolbar__glyph {
+  font-size: 15px;
+  line-height: 1;
+  font-weight: 500;
+}
+
+.post-format-toolbar__glyph--bold {
+  font-weight: 800;
+}
+
+.post-format-toolbar__glyph--italic {
+  font-style: italic;
+}
+
+.post-format-toolbar__glyph--underline {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.post-format-toolbar__sep {
+  width: 1px;
+  height: 16px;
+  margin: 0 4px;
+  background: currentColor;
+  opacity: 0.28;
+  flex-shrink: 0;
+}
+
+.post-format-toolbar__icon {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.post-text a,
+.post-text-detail a {
+  color: #007aff;
+  text-decoration: underline;
+}
+
+.post-text b,
+.post-text strong,
+.post-text-detail b,
+.post-text-detail strong {
+  font-weight: 700;
+}
+
+.post-text i,
+.post-text em,
+.post-text-detail i,
+.post-text-detail em {
+  font-style: italic;
+}
+
+.post-text u,
+.post-text-detail u {
+  text-decoration: underline;
+}
+
 .modal-actions {
   display: flex;
   justify-content: flex-end;
