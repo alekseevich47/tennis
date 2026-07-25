@@ -163,7 +163,7 @@
 .onboarding-nav {
   position: fixed;
   z-index: 9003;
-  bottom: calc(52px + 6px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(52px + 6px);
   left: 16px;
   right: 16px;
   display: flex;
