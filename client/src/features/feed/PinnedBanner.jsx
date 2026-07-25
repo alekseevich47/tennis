@@ -9,6 +9,7 @@ const CROSSFADE_MS = 200;
 
 /**
  * Sticky-плашка закреплённых публикаций (Лента / Турнир-Лента).
+ * Показывает «следующий» закреп (куда ведёт клик); клик — фокус на него + сдвиг на следующий по кругу.
  *
  * @param {{
  *   pinnedPosts: Array<{ id: string, content?: string, text?: string, media?: string | string[] }>,
@@ -72,19 +73,19 @@ export default function PinnedBanner({
       onClick={handleClick}
       aria-label="Закреплённое сообщение"
     >
-      <div className="pinned-banner__segments" aria-hidden="true">
-        {pinnedPosts.map((item, index) => (
-          <span
-            key={item.id || index}
-            className={clsx(
-              'pinned-banner__segment',
-              index === safeIndex && 'pinned-banner__segment--active'
-            )}
-          />
-        ))}
-      </div>
-
       <div className="pinned-banner__body">
+        <div className="pinned-banner__segments" aria-hidden="true">
+          {pinnedPosts.map((item, index) => (
+            <span
+              key={item.id || index}
+              className={clsx(
+                'pinned-banner__segment',
+                index === safeIndex && 'pinned-banner__segment--active'
+              )}
+            />
+          ))}
+        </div>
+
         {thumbUrl ? (
           <img src={thumbUrl} alt="" className="pinned-banner__thumb" />
         ) : null}

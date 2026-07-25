@@ -3,6 +3,7 @@ import Modal from '../../components/ui/Modal';
 import Avatar from '../../components/ui/Avatar';
 import PostContentHtml from '../feed/PostContentHtml';
 import PostRichTextField from '../feed/PostRichTextField';
+import CommentSendButton from '../feed/CommentSendButton';
 import { hasVisibleText, toDisplayHtml } from '../feed/postRichText';
 import { useGalleryComments } from '../../hooks/useGalleryComments';
 import { useCommentLikes } from '../../hooks/useCommentLikes';
@@ -158,9 +159,10 @@ function GalleryCommentModal({ isOpen, mediaItem, user, userIsModerator, onClose
               placeholder="Написать комментарий..."
               aria-label="Написать комментарий"
             />
-            <button type="submit" disabled={isAddingComment || !hasVisibleText(commentText)}>
-              {isAddingComment ? 'Отправляем...' : 'Отправить'}
-            </button>
+            <CommentSendButton
+              disabled={isAddingComment || !hasVisibleText(commentText)}
+              busy={isAddingComment}
+            />
           </form>
         )
       ) : null}

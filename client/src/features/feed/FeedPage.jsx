@@ -16,12 +16,11 @@ import FullscreenImageViewer from './FullscreenImageViewer';
 import ProfileViewModal from '../profile/ProfileViewModal';
 import { error } from '../../lib/log';
 import { parseDateQuery, isDateQueryParsed, matchesDateQuery } from '../../lib/dateSearch';
+import { sortPinnedByCreated, usePinnedBannerIndex } from './usePinnedBannerIndex';
 import './Feed.css';
 
 const SCROLL_TOP_THRESHOLD = 8;
 const SCROLL_DELTA_THRESHOLD = 4;
-/** Высота sticky-плашки — зона «прохождения через верх» для IO и scroll-margin. */
-const PINNED_BANNER_OFFSET_PX = 72;
 
 /**
  * @param {{
@@ -43,7 +42,6 @@ function FeedPage({ user, onDeletedIdsChange, searchQuery = '' }) {
   const [deletedPostIds, setDeletedPostIds] = useState([]);
   const [viewingPlayer, setViewingPlayer] = useState(null);
   const [isButtonVisible, setIsButtonVisible] = useState(true);
-  const [activePinnedIndex, setActivePinnedIndex] = useState(0);
   const [contextMenuState, setContextMenuState] = useState(
     /** @type {{ postId: string, anchorPoint: { x: number, y: number } } | null} */ (null)
   );
@@ -95,64 +93,23 @@ function FeedPage({ user, onDeletedIdsChange, searchQuery = '' }) {
 
   const pinnedPosts = useMemo(
     () =>
-      visiblePosts
-        .filter((p) => p.is_pinned && !p.is_deleted && !deletedPostIds.includes(p.id))
-        .sort((a, b) => {
-          const aTime = a.pinned_at ? Date.parse(a.pinned_at) : 0;
-          const bTime = b.pinned_at ? Date.parse(b.pinned_at) : 0;
-          return aTime - bTime;
-        }),
+      sortPinnedByCreated(
+        visiblePosts.filter(
+          (p) => p.is_pinned && !p.is_deleted && !deletedPostIds.includes(p.id)
+        )
+      ),
     [visiblePosts, deletedPostIds]
   );
 
-  const pinnedIdsKey = pinnedPosts.map((p) => p.id).join(',');
-
-  useEffect(() => {
-    setActivePinnedIndex((i) =>
-      pinnedPosts.length === 0 ? 0 : Math.min(i, pinnedPosts.length - 1)
-    );
-  }, [pinnedIdsKey, pinnedPosts.length]);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container || pinnedPosts.length < 2) return undefined;
-
-    const activePost = pinnedPosts[activePinnedIndex];
-    if (!activePost) return undefined;
-
-    const el = cardRefs.current.get(activePost.id);
-    if (!el) return undefined;
-
-    let wasIntersecting = /** @type {boolean | null} */ (null);
-    const band = PINNED_BANNER_OFFSET_PX;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (!entry) return;
-        if (wasIntersecting === null) {
-          wasIntersecting = entry.isIntersecting;
-          return;
-        }
-        const leftUpward =
-          wasIntersecting &&
-          !entry.isIntersecting &&
-          entry.rootBounds != null &&
-          entry.boundingClientRect.top < entry.rootBounds.top;
-        wasIntersecting = entry.isIntersecting;
-        if (leftUpward) {
-          setActivePinnedIndex((i) => (i + 1) % pinnedPosts.length);
-        }
-      },
-      {
-        root: container,
-        rootMargin: `-${band}px 0px ${-(container.clientHeight - band - 1)}px 0px`,
-        threshold: 0
-      }
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [activePinnedIndex, pinnedIdsKey, pinnedPosts]);
+  const {
+    activeIndex: activePinnedIndex,
+    advance: handleAdvancePinned,
+    openPinned: handleOpenPinned
+  } = usePinnedBannerIndex({
+    pinnedPosts,
+    containerRef,
+    cardRefs
+  });
 
   const filteredPosts = useMemo(() => {
     if (!searchQuery.trim()) return visiblePosts;
@@ -233,6 +190,11 @@ function FeedPage({ user, onDeletedIdsChange, searchQuery = '' }) {
           ),
         false
       );
+      setSelectedPost((current) =>
+        current?.id === post.id
+          ? { ...current, is_pinned: nextPinned, pinned_at: pinnedAt }
+          : current
+      );
       try {
         if (nextPinned) await pinPost(post.id);
         else await unpinPost(post.id);
@@ -256,17 +218,6 @@ function FeedPage({ user, onDeletedIdsChange, searchQuery = '' }) {
   const handleRegisterCardRef = useCallback((postId) => (el) => {
     if (el) cardRefs.current.set(postId, el);
     else cardRefs.current.delete(postId);
-  }, []);
-
-  const handleAdvancePinned = useCallback(() => {
-    setActivePinnedIndex((i) =>
-      pinnedPosts.length === 0 ? 0 : (i + 1) % pinnedPosts.length
-    );
-  }, [pinnedPosts.length]);
-
-  const handleOpenPinned = useCallback((post) => {
-    if (!post?.id) return;
-    cardRefs.current.get(post.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, []);
 
   const handleCloseEdit = useCallback(() => {
@@ -336,17 +287,17 @@ function FeedPage({ user, onDeletedIdsChange, searchQuery = '' }) {
         </div>
       )}
 
-      <div className="feed-list">
-        {pinnedPosts.length > 0 && (
-          <PinnedBanner
-            pinnedPosts={pinnedPosts}
-            collection="posts"
-            activeIndex={activePinnedIndex}
-            onAdvance={handleAdvancePinned}
-            onOpen={handleOpenPinned}
-          />
-        )}
+      {pinnedPosts.length > 0 && (
+        <PinnedBanner
+          pinnedPosts={pinnedPosts}
+          collection="posts"
+          activeIndex={activePinnedIndex}
+          onAdvance={handleAdvancePinned}
+          onOpen={handleOpenPinned}
+        />
+      )}
 
+      <div className="feed-list">
         {isLoading && <Spinner label="Загрузка ленты…" />}
 
         {!isLoading && filteredPosts.length === 0 && (
@@ -403,6 +354,15 @@ function FeedPage({ user, onDeletedIdsChange, searchQuery = '' }) {
         onClose={handleCloseDetail}
         onAfterClose={() => mutate()}
         onOpenProfile={setViewingPlayer}
+        onEdit={(post) => {
+          handleCloseDetail();
+          handleOpenEdit(post);
+        }}
+        onDelete={(postId) => {
+          handleCloseDetail();
+          handleDeletePost(postId);
+        }}
+        onTogglePin={handleTogglePin}
       />
 
       <EditPostModal

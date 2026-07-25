@@ -8,12 +8,13 @@ const MENU_VIEWPORT_PAD = 8;
 const MENU_WIDTH = 200;
 
 /**
- * Контекстное меню действий поста (long-press, только модератор).
+ * Контекстное меню действий поста (long-press / кнопка «⋯», только модератор).
  *
  * @param {{
  *   isOpen: boolean,
  *   anchorPoint?: { x: number, y: number } | null,
  *   anchorRect?: { left: number, top: number, right?: number, bottom?: number, width?: number, height?: number } | null,
+ *   origin?: 'start' | 'end',
  *   isPinned?: boolean,
  *   onTogglePin?: () => void,
  *   onEdit?: () => void,
@@ -25,6 +26,7 @@ export default function PostContextMenu({
   isOpen,
   anchorPoint = null,
   anchorRect = null,
+  origin = 'start',
   isPinned = false,
   onTogglePin,
   onEdit,
@@ -69,7 +71,8 @@ export default function PostContextMenu({
       rawLeft = anchorPoint.x;
       rawTop = anchorPoint.y;
     } else if (anchorRect) {
-      rawLeft = anchorRect.left;
+      const right = anchorRect.right ?? (anchorRect.left + (anchorRect.width || 0));
+      rawLeft = origin === 'end' ? right - menuWidth : anchorRect.left;
       rawTop = (anchorRect.bottom ?? (anchorRect.top + (anchorRect.height || 0))) + 4;
     } else {
       rawLeft = MENU_VIEWPORT_PAD;
@@ -89,7 +92,7 @@ export default function PostContextMenu({
 
     menu.style.left = `${left}px`;
     menu.style.top = `${top}px`;
-  }, [isOpen, mounted, anchorPoint, anchorRect]);
+  }, [isOpen, mounted, anchorPoint, anchorRect, origin]);
 
   useEffect(() => {
     if (!isOpen) return undefined;
@@ -128,7 +131,11 @@ export default function PostContextMenu({
       />
       <div
         ref={menuRef}
-        className={clsx('post-context-menu', isVisible && 'post-context-menu--visible')}
+        className={clsx(
+          'post-context-menu',
+          origin === 'end' && 'post-context-menu--from-end',
+          isVisible && 'post-context-menu--visible'
+        )}
         role="menu"
         aria-label="Действия с публикацией"
         aria-hidden={!isOpen}

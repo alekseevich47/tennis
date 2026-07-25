@@ -1,6 +1,6 @@
 .product-upload-progress {
   position: fixed;
-  top: calc(56px + 10px);
+  top: calc(48px + 10px);
   left: 12px;
   right: 12px;
   z-index: 100;

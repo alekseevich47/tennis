@@ -8,9 +8,10 @@
   align-items: center;
   background: #ffffff;
   border-top: 1px solid #e0e0e0;
-  padding: 8px 0;
+  padding: 4px 0;
   z-index: 1000;
-  height: 60px;
+  height: 52px;
+  box-sizing: border-box;
 }
 
 .nav-item {
@@ -22,7 +23,7 @@
   border: none;
   color: #999;
   cursor: pointer;
-  padding: 8px 12px;
+  padding: 4px 10px;
   min-width: 44px;
   min-height: 44px;
   transition: color 0.2s;
