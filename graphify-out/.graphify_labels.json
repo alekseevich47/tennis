@@ -1,8 +1,6 @@
 {
   "0": "App Shell Navigation",
-  "1": "FeedPage.jsx",
   "2": "Post Upload and UI Kit",
-  "3": "FeedPage.jsx",
   "4": "Gallery Upload Flow",
   "5": "Admin UI Controls",
   "6": "auditEventFormat.js",
@@ -57,11 +55,6 @@
   "55": "Touch UI Performance",
   "56": "PostDetailModal.jsx",
   "57": "log.js",
-  "58": "PostDetailModal.jsx",
-  "59": "TournamentPostDetailModal.jsx",
-  "60": "AvatarCropModal.jsx",
   "61": "Modal.jsx",
-  "62": "TournamentCommentsSection.jsx",
-  "63": "StatsReachModal.jsx",
-  "64": "Avatar.jsx"
+  "63": "StatsReachModal.jsx"
 }

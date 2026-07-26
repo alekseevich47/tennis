@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import UserMultiSelect from './UserMultiSelect';
+import PostRichTextField from '../feed/PostRichTextField';
+import PostContentHtml from '../feed/PostContentHtml';
 import pb from '../../services/pb';
 import {
   listScheduledNotifications,
@@ -11,9 +13,11 @@ import {
 } from '../../services/admin';
 import { formatPostDate } from '../../lib/format';
 import { error } from '../../lib/log';
+import { hasVisibleText } from '../feed/postRichText';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { buildSendResultAlert, formatAdminSaveError } from './adminResultAlert';
 import './NotificationSendModal.css';
+import '../feed/Feed.css';
 
 function defaultDatetimeLocal() {
   const date = new Date();
@@ -147,13 +151,11 @@ export default function NotificationSendModal({ isOpen, onClose }) {
     event.preventDefault();
     if (submitting) return;
 
-    const trimmedTitle = title.trim();
-    const trimmedBody = body.trim();
-    if (!trimmedTitle) {
+    if (!hasVisibleText(title)) {
       setFormError('Введите заголовок');
       return;
     }
-    if (!trimmedBody) {
+    if (!hasVisibleText(body)) {
       setFormError('Введите текст уведомления');
       return;
     }
@@ -170,8 +172,8 @@ export default function NotificationSendModal({ isOpen, onClose }) {
     setFormError('');
 
     const payload = {
-      title: trimmedTitle,
-      body: trimmedBody,
+      title,
+      body,
       audience,
       recipients,
       sendNow,
@@ -241,13 +243,16 @@ export default function NotificationSendModal({ isOpen, onClose }) {
           <label className="admin-modal__label" htmlFor="notification-title">
             Заголовок
           </label>
-          <input
+          <PostRichTextField
             id="notification-title"
-            type="text"
-            className="admin-modal__input"
             value={title}
-            onChange={(event) => setTitle(event.target.value)}
+            onChange={setTitle}
             placeholder="Заголовок уведомления"
+            aria-label="Заголовок уведомления"
+            enableFrame
+            compact
+            singleLine
+            revealToolbarOnFocus
           />
         </div>
 
@@ -255,13 +260,15 @@ export default function NotificationSendModal({ isOpen, onClose }) {
           <label className="admin-modal__label" htmlFor="notification-body">
             Текст
           </label>
-          <textarea
+          <PostRichTextField
             id="notification-body"
-            className="admin-modal__textarea"
-            rows={4}
             value={body}
-            onChange={(event) => setBody(event.target.value)}
+            onChange={setBody}
             placeholder="Текст уведомления в приложении..."
+            aria-label="Текст уведомления"
+            enableFrame
+            compact
+            revealToolbarOnFocus
           />
         </div>
 
@@ -305,9 +312,16 @@ export default function NotificationSendModal({ isOpen, onClose }) {
             {pending.map((item) => (
               <li key={item.id} className="admin-modal__pending-item">
                 <div className="admin-modal__pending-text">
-                  <strong>{item.title}</strong>
-                  <br />
-                  {item.body}
+                  <PostContentHtml
+                    as="div"
+                    className="admin-modal__pending-title-html"
+                    content={item.title || ''}
+                  />
+                  <PostContentHtml
+                    as="div"
+                    className="admin-modal__pending-body-html"
+                    content={item.body || ''}
+                  />
                   <span className="admin-modal__pending-meta">
                     {formatPostDate(item.scheduled_at)} · {getAudienceLabel(item.audience)}
                   </span>
