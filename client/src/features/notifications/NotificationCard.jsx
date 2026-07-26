@@ -53,7 +53,9 @@ export default function NotificationCard({
   const clickAction = notification.click_action;
   const badgeDynamicType = notification.badge_dynamic_type;
   const meta = /** @type {Record<string, unknown> | undefined} */ (notification.meta);
-  const isCommentReply = clickAction === 'open_comment';
+  const isCommentReply =
+    clickAction === 'open_comment' ||
+    (meta && typeof meta === 'object' && meta.kind === 'comment_reply');
 
   useEffect(() => {
     if (badgeDynamicType !== 'training_countdown') return undefined;
@@ -144,7 +146,7 @@ export default function NotificationCard({
       onOpenBooking?.();
       return;
     }
-    if (clickAction === 'open_comment' && meta) {
+    if ((clickAction === 'open_comment' || (meta && meta.kind === 'comment_reply')) && meta) {
       onOpenComment?.(meta);
     }
   }, [clickAction, meta, onOpenBooking, onOpenComment, onOpenMembership, onOpenTraining]);

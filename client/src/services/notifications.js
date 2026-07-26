@@ -132,3 +132,21 @@ export async function maybeNotifySessionsLeft(
     error('maybeNotifySessionsLeft:', err);
   }
 }
+
+/**
+ * Запрос серверу создать in-app уведомление об ответе на комментарий.
+ * Идемпотентно (сервер дедупит по meta.commentId). Не бросает наружу.
+ * @param {'comments' | 'tournament_comments' | 'gallery_comments'} collection
+ * @param {string} commentId
+ */
+export async function requestCommentReplyNotification(collection, commentId) {
+  if (!collection || !commentId) return;
+  try {
+    await pb.send('/api/notify-comment-reply', {
+      method: 'POST',
+      body: { collection, commentId }
+    });
+  } catch (err) {
+    error('requestCommentReplyNotification:', err);
+  }
+}
