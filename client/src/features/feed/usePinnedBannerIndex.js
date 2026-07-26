@@ -3,6 +3,29 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 /** Высота sticky-плашки — линия «прохождения» и scroll-margin. */
 export const PINNED_BANNER_OFFSET_PX = 72;
 
+/** Подсветка карточки после клика по плашке закрепа. */
+export const PIN_FOCUS_HIGHLIGHT_MS = 1500;
+export const PIN_FOCUS_HIGHLIGHT_CLASS = 'feed-card--pin-focus';
+
+/** @type {WeakMap<HTMLElement, number>} */
+const pinHighlightTimers = new WeakMap();
+
+/**
+ * Светло-синяя подсветка карточки на PIN_FOCUS_HIGHLIGHT_MS после фокуса.
+ * @param {HTMLElement} el
+ */
+export function applyPinFocusHighlight(el) {
+  if (!el) return;
+  const prev = pinHighlightTimers.get(el);
+  if (prev) window.clearTimeout(prev);
+  el.classList.add(PIN_FOCUS_HIGHLIGHT_CLASS);
+  const t = window.setTimeout(() => {
+    el.classList.remove(PIN_FOCUS_HIGHLIGHT_CLASS);
+    pinHighlightTimers.delete(el);
+  }, PIN_FOCUS_HIGHLIGHT_MS);
+  pinHighlightTimers.set(el, t);
+}
+
 /**
  * Порядок закрепов в плашке = порядок в ленте сверху вниз (`-created`).
  * @param {Array<{ id: string, created?: string }>} posts
@@ -171,6 +194,8 @@ export function usePinnedBannerIndex({
           setActiveIndex(keep);
         }
         container?.removeEventListener('scrollend', clearLock);
+        // Подсветка после фокуса (конец программного скролла / fallback 900ms).
+        applyPinFocusHighlight(el);
       };
 
       container?.addEventListener('scrollend', clearLock);
