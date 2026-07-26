@@ -24,7 +24,9 @@ import {
  *   placeholder?: string,
  *   'aria-label'?: string,
  *   enableFrame?: boolean,
- *   compact?: boolean
+ *   compact?: boolean,
+ *   revealToolbarOnFocus?: boolean,
+ *   singleLine?: boolean
  * }} props
  */
 function PostRichTextField({
@@ -34,7 +36,9 @@ function PostRichTextField({
   placeholder = 'Что нового в секции?…',
   'aria-label': ariaLabel = 'Текст публикации',
   enableFrame = true,
-  compact = false
+  compact = false,
+  revealToolbarOnFocus = false,
+  singleLine = false
 }) {
   const autoId = useId();
   const id = idProp || autoId;
@@ -44,12 +48,14 @@ function PostRichTextField({
   const savedRangeRef = useRef(/** @type {Range | null} */ (null));
   const [active, setActive] = useState({ bold: false, italic: false, underline: false });
   const [empty, setEmpty] = useState(true);
+  const [focused, setFocused] = useState(false);
   const [frameOpen, setFrameOpen] = useState(false);
   const [frameColor, setFrameColor] = useState('#FF4D6D');
   const [selectionToolbar, setSelectionToolbar] = useState(
     /** @type {{ top: number, left: number } | null} */ (null)
   );
   const skipNextSync = useRef(false);
+  const showTopToolbar = !revealToolbarOnFocus || focused || frameOpen;
 
   const syncEmptyAndValue = useCallback(() => {
     const el = editorRef.current;
@@ -293,8 +299,23 @@ function PostRichTextField({
       : null;
 
   return (
-    <div className={clsx('post-rich-text', compact && 'post-rich-text--compact')} ref={rootRef}>
-      <div className="post-rich-text__toolbar-row">
+    <div
+      className={clsx(
+        'post-rich-text',
+        compact && 'post-rich-text--compact',
+        singleLine && 'post-rich-text--single-line',
+        revealToolbarOnFocus && 'post-rich-text--reveal-toolbar'
+      )}
+      ref={rootRef}
+    >
+      <div
+        className={clsx(
+          'post-rich-text__toolbar-row',
+          revealToolbarOnFocus && 'post-rich-text__toolbar-row--reveal',
+          showTopToolbar && 'is-visible'
+        )}
+        aria-hidden={revealToolbarOnFocus && !showTopToolbar ? true : undefined}
+      >
         <PostFormatToolbar
           active={active}
           frameOpen={frameOpen}
@@ -318,13 +339,21 @@ function PostRichTextField({
           className="post-rich-text__editor"
           contentEditable
           role="textbox"
-          aria-multiline="true"
+          aria-multiline={!singleLine}
           aria-label={ariaLabel}
           data-placeholder={placeholder}
           data-empty={empty ? 'true' : 'false'}
           suppressContentEditableWarning
-          onFocus={refreshActive}
+          onFocus={() => {
+            setFocused(true);
+            refreshActive();
+          }}
           onMouseDown={handleEditorMouseDown}
+          onKeyDown={(event) => {
+            if (singleLine && event.key === 'Enter') {
+              event.preventDefault();
+            }
+          }}
           onBlur={() => {
             requestAnimationFrame(() => {
               const root = rootRef.current;
@@ -334,6 +363,8 @@ function PostRichTextField({
               if (floating && activeEl && floating.contains(activeEl)) return;
               syncEmptyAndValue();
               setSelectionToolbar(null);
+              setFrameOpen(false);
+              setFocused(false);
             });
           }}
           onInput={() => {

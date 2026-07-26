@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import UserMultiSelect from './UserMultiSelect';
 import MediaPreviewGrid from '../feed/MediaPreviewGrid';
+import PostRichTextField from '../feed/PostRichTextField';
+import PostContentHtml from '../feed/PostContentHtml';
 import pb from '../../services/pb';
 import {
   listScheduledBroadcasts,
@@ -15,6 +17,7 @@ import { error } from '../../lib/log';
 import { compressImage } from '../../lib/compress';
 import { MEDIA_BASE_URL } from '../../config';
 import { mediaNames, readSelectedFiles } from '../../lib/media';
+import { hasVisibleText } from '../feed/postRichText';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { buildSendResultAlert, formatAdminSaveError } from './adminResultAlert';
 import './BroadcastModal.css';
@@ -199,8 +202,7 @@ export default function BroadcastModal({ isOpen, onClose }) {
     event.preventDefault();
     if (submitting) return;
 
-    const trimmed = text.trim();
-    if (!trimmed) {
+    if (!hasVisibleText(text)) {
       setFormError('Введите текст рассылки');
       return;
     }
@@ -217,7 +219,7 @@ export default function BroadcastModal({ isOpen, onClose }) {
     setFormError('');
 
     const payload = {
-      text: trimmed,
+      text,
       audience,
       recipients,
       sendNow,
@@ -289,13 +291,15 @@ export default function BroadcastModal({ isOpen, onClose }) {
           <label className="admin-modal__label" htmlFor="broadcast-text">
             Текст рассылки
           </label>
-          <textarea
+          <PostRichTextField
             id="broadcast-text"
-            className="admin-modal__textarea"
-            rows={4}
             value={text}
-            onChange={(event) => setText(event.target.value)}
+            onChange={setText}
             placeholder="Текст сообщения в MAX..."
+            aria-label="Текст рассылки"
+            enableFrame={false}
+            compact
+            revealToolbarOnFocus
           />
         </div>
 
@@ -387,7 +391,11 @@ export default function BroadcastModal({ isOpen, onClose }) {
             {pending.map((item) => (
               <li key={item.id} className="admin-modal__pending-item">
                 <div className="admin-modal__pending-text">
-                  {item.text}
+                  <PostContentHtml
+                    as="div"
+                    className="admin-modal__pending-body-html"
+                    content={item.text || ''}
+                  />
                   <span className="admin-modal__pending-meta">
                     {formatPostDate(item.scheduled_at)} · {getAudienceLabel(item.audience)}
                   </span>

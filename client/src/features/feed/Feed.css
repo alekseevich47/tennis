@@ -675,6 +675,33 @@ button.post-card-like:hover:not(:disabled) {
   z-index: 6;
 }
 
+/* Тулбар сверху: плавно проявляется при фокусе (админ: уведомления / рассылка). */
+.post-rich-text__toolbar-row--reveal {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition:
+    max-height 0.22s ease,
+    opacity 0.2s ease,
+    transform 0.22s ease;
+}
+
+.post-rich-text__toolbar-row--reveal.is-visible {
+  max-height: 52px;
+  opacity: 1;
+  overflow: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.post-rich-text--single-line .post-rich-text__editor {
+  min-height: 44px;
+  max-height: 72px;
+  padding: 10px 12px;
+}
+
 .post-rich-text__editor-wrap {
   position: relative;
   display: flex;

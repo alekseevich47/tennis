@@ -32,7 +32,7 @@ function dispatchScheduledBroadcast(record) {
 
   try {
     const bot = require(__hooks + '/botlib.js');
-    const text = record.getString('text');
+    const text = bot.htmlToMaxMarkdown(record.getString('text'));
     const userIds = resolveAudienceUserIds(record, { forBroadcast: true });
     const mediaField = record.get('media');
     const mediaFilenames = mediaField
