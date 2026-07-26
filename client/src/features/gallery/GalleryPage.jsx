@@ -109,7 +109,12 @@ function GalleryItemLike({ itemId, user }) {
   );
 }
 
-function GalleryPage({ user, searchQuery = '' }) {
+function GalleryPage({
+  user,
+  searchQuery = '',
+  commentTargetToOpen = null,
+  onCommentTargetOpened
+}) {
   const moderator = isModerator();
   const { data: images, isLoading, mutate } = useGallery();
   const { startUpload } = useGalleryUpload();
@@ -129,6 +134,8 @@ function GalleryPage({ user, searchQuery = '' }) {
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [isButtonVisible, setIsButtonVisible] = useState(true);
   const [commentModalOpen, setCommentModalOpen] = useState(false);
+  const [commentOnlyMedia, setCommentOnlyMedia] = useState(null);
+  const [highlightCommentId, setHighlightCommentId] = useState(/** @type {string | null} */ (null));
   const [viewingPlayer, setViewingPlayer] = useState(null);
   const [selectedIds, setSelectedIds] = useState(() => new Set());
   const [isSelectMode, setIsSelectMode] = useState(false);
@@ -440,6 +447,17 @@ function GalleryPage({ user, searchQuery = '' }) {
   const activeGalleryRecord = activeGalleryItem
     ? images?.find((img) => img.id === activeGalleryItem.originKey) ?? null
     : null;
+  const commentModalMedia = commentOnlyMedia || activeGalleryRecord;
+
+  useEffect(() => {
+    if (!commentTargetToOpen?.mediaId || !images?.length) return;
+    const media = images.find((item) => item.id === commentTargetToOpen.mediaId);
+    if (!media) return;
+    setCommentOnlyMedia(media);
+    setHighlightCommentId(commentTargetToOpen.commentId || null);
+    setCommentModalOpen(true);
+    onCommentTargetOpened?.();
+  }, [commentTargetToOpen, images, onCommentTargetOpened]);
 
   const handleDeleteFullscreen = useCallback(async () => {
     if (!moderator || isDeletingFullscreen || !activeGalleryRecord?.id) return;
@@ -607,10 +625,15 @@ function GalleryPage({ user, searchQuery = '' }) {
 
       <GalleryCommentModal
         isOpen={commentModalOpen}
-        mediaItem={activeGalleryRecord}
+        mediaItem={commentModalMedia}
         user={user}
         userIsModerator={moderator}
-        onClose={() => setCommentModalOpen(false)}
+        highlightCommentId={highlightCommentId}
+        onClose={() => {
+          setCommentModalOpen(false);
+          setCommentOnlyMedia(null);
+          setHighlightCommentId(null);
+        }}
         onOpenProfile={setViewingPlayer}
       />
 

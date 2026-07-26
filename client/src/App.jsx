@@ -88,6 +88,9 @@ function AppMain({ user, setUser }) {
   const [favoriteProductToOpen, setFavoriteProductToOpen] = useState(null);
   const [notificationTrainingId, setNotificationTrainingId] = useState(null);
   const [notificationMembershipOpen, setNotificationMembershipOpen] = useState(false);
+  const [notificationCommentTarget, setNotificationCommentTarget] = useState(
+    /** @type {{ collection: string, postId?: string, mediaId?: string, commentId?: string } | null} */ (null)
+  );
   const [feedSearch, setFeedSearch] = useState({ open: false, query: '' });
   const [competitionsSearch, setCompetitionsSearch] = useState({ open: false, query: '' });
   const [gallerySearch, setGallerySearch] = useState({ open: false, query: '' });
@@ -313,6 +316,37 @@ function AppMain({ user, setUser }) {
           setNotificationMembershipOpen(true);
         }}
         onOpenBookingFromNotification={() => setActiveTab(1)}
+        onOpenCommentFromNotification={(meta) => {
+          const collection = String(meta?.collection || '');
+          const commentId = meta?.commentId ? String(meta.commentId) : undefined;
+          if (collection === 'comments' && meta?.postId) {
+            setActiveTab(0);
+            setNotificationCommentTarget({
+              collection,
+              postId: String(meta.postId),
+              commentId
+            });
+            return;
+          }
+          if (collection === 'tournament_comments' && meta?.postId) {
+            setCompetitionsSubTab('feed');
+            setActiveTab(3);
+            setNotificationCommentTarget({
+              collection,
+              postId: String(meta.postId),
+              commentId
+            });
+            return;
+          }
+          if (collection === 'gallery_comments' && meta?.mediaId) {
+            setActiveTab(4);
+            setNotificationCommentTarget({
+              collection,
+              mediaId: String(meta.mediaId),
+              commentId
+            });
+          }
+        }}
         searchConfig={searchConfig}
       />
 
@@ -323,6 +357,12 @@ function AppMain({ user, setUser }) {
             onDeletedIdsChange={setPendingDeletePostIds}
             searchQuery={feedSearch.query}
             searchOpen={feedSearch.open}
+            commentTargetToOpen={
+              notificationCommentTarget?.collection === 'comments'
+                ? notificationCommentTarget
+                : null
+            }
+            onCommentTargetOpened={() => setNotificationCommentTarget(null)}
           />
         )}
         {activeTab === 1 && (
@@ -359,10 +399,25 @@ function AppMain({ user, setUser }) {
             onDeletedIdsChange={setPendingDeleteTournamentPostIds}
             searchQuery={competitionsSearch.query}
             searchOpen={competitionsSearch.open}
+            commentTargetToOpen={
+              notificationCommentTarget?.collection === 'tournament_comments'
+                ? notificationCommentTarget
+                : null
+            }
+            onCommentTargetOpened={() => setNotificationCommentTarget(null)}
           />
         )}
         {activeTab === 4 && (
-          <GalleryPage user={user} searchQuery={gallerySearch.query} />
+          <GalleryPage
+            user={user}
+            searchQuery={gallerySearch.query}
+            commentTargetToOpen={
+              notificationCommentTarget?.collection === 'gallery_comments'
+                ? notificationCommentTarget
+                : null
+            }
+            onCommentTargetOpened={() => setNotificationCommentTarget(null)}
+          />
         )}
         {activeTab === PROFILE_TAB_INDEX && (
           <ProfilePage

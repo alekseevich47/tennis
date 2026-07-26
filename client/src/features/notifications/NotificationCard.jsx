@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
-import { formatPostDate } from '../../lib/format';
+import { formatPostDate, formatRelativeTime } from '../../lib/format';
 import { markNotificationRead, isDeletableNotification } from '../../services/notifications';
 import PostContentHtml from '../feed/PostContentHtml';
+import Avatar from '../../components/ui/Avatar';
 import { formatTrainingCountdownBadge } from './notificationBadges';
 import '../feed/Feed.css';
 import './NotificationCard.css';
@@ -24,7 +25,8 @@ const READ_VISIBLE_DELAY_MS = 1200;
  *   onDelete: (id: string) => void,
  *   onOpenTraining?: (trainingId: string) => void,
  *   onOpenMembership?: () => void,
- *   onOpenBooking?: () => void
+ *   onOpenBooking?: () => void,
+ *   onOpenComment?: (meta: Record<string, unknown>) => void
  * }} props
  */
 export default function NotificationCard({
@@ -36,7 +38,8 @@ export default function NotificationCard({
   onDelete,
   onOpenTraining,
   onOpenMembership,
-  onOpenBooking
+  onOpenBooking,
+  onOpenComment
 }) {
   const cardRef = useRef(null);
   const markedRef = useRef(false);
@@ -49,13 +52,22 @@ export default function NotificationCard({
   const showUnreadDot = !isRead && !readLocally;
   const clickAction = notification.click_action;
   const badgeDynamicType = notification.badge_dynamic_type;
-  const meta = /** @type {{ trainingId?: string } | undefined} */ (notification.meta);
+  const meta = /** @type {Record<string, unknown> | undefined} */ (notification.meta);
+  const isCommentReply = clickAction === 'open_comment';
 
   useEffect(() => {
     if (badgeDynamicType !== 'training_countdown') return undefined;
     const timer = window.setInterval(() => setNow(new Date()), 60_000);
     return () => window.clearInterval(timer);
   }, [badgeDynamicType]);
+
+  useEffect(() => {
+    if (isCommentReply) {
+      const timer = window.setInterval(() => setNow(new Date()), 60_000);
+      return () => window.clearInterval(timer);
+    }
+    return undefined;
+  }, [isCommentReply]);
 
   useEffect(() => {
     if (isRead || markedRef.current) return undefined;
@@ -115,13 +127,13 @@ export default function NotificationCard({
       if (trainingState === 'completed') return 'Записаться ещё';
       return null;
     }
-    return clickAction ? CLICK_ACTION_LABELS[clickAction] : null;
+    return clickAction && CLICK_ACTION_LABELS[clickAction] ? CLICK_ACTION_LABELS[clickAction] : null;
   })();
   const canDelete = isDeletableNotification(notification);
 
   const handleActionClick = useCallback(() => {
     if (clickAction === 'open_training' && meta?.trainingId) {
-      onOpenTraining?.(meta.trainingId);
+      onOpenTraining?.(String(meta.trainingId));
       return;
     }
     if (clickAction === 'open_membership') {
@@ -130,8 +142,12 @@ export default function NotificationCard({
     }
     if (clickAction === 'open_booking') {
       onOpenBooking?.();
+      return;
     }
-  }, [clickAction, meta?.trainingId, onOpenBooking, onOpenMembership, onOpenTraining]);
+    if (clickAction === 'open_comment' && meta) {
+      onOpenComment?.(meta);
+    }
+  }, [clickAction, meta, onOpenBooking, onOpenComment, onOpenMembership, onOpenTraining]);
 
   const handleDelete = useCallback(
     (event) => {
@@ -140,6 +156,79 @@ export default function NotificationCard({
     },
     [id, onDelete]
   );
+
+  const handleCardClick = useCallback(() => {
+    if (isCommentReply) handleActionClick();
+  }, [handleActionClick, isCommentReply]);
+
+  if (isCommentReply) {
+    const actor = /** @type {import('../../lib/avatar').UserAvatarLike | undefined} */ (
+      meta && typeof meta === 'object' ? meta.actor : undefined
+    );
+    const actorName = String(notification.title || actor?.full_name || 'Игрок секции');
+
+    return (
+      <article
+        ref={cardRef}
+        className={clsx(
+          'notification-card',
+          'notification-card--comment-reply',
+          showUnreadDot && 'notification-card--unread'
+        )}
+        onClick={handleCardClick}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            handleCardClick();
+          }
+        }}
+        role="button"
+        tabIndex={0}
+      >
+        {showUnreadDot ? (
+          <span className="notification-card__unread-dot" aria-hidden="true" />
+        ) : null}
+
+        <div className="notification-card__reply-layout">
+          <Avatar user={actor || { full_name: actorName }} size="sm" className="notification-card__reply-avatar" />
+          <div className="notification-card__reply-content">
+            <div className="notification-card__reply-header">
+              <span className="notification-card__reply-name">{actorName}</span>
+              <time
+                className="notification-card__time notification-card__time--reply"
+                dateTime={String(notification.created || '')}
+              >
+                {notification.created ? formatRelativeTime(notification.created, now) : ''}
+              </time>
+            </div>
+            {notification.body ? (
+              <PostContentHtml
+                as="div"
+                className="notification-card__body notification-card__body--reply"
+                content={String(notification.body)}
+              />
+            ) : null}
+            {badgeText ? (
+              <span className="notification-card__badge notification-card__badge--reply">{badgeText}</span>
+            ) : null}
+          </div>
+        </div>
+
+        {canDelete ? (
+          <button
+            type="button"
+            className="notification-card__delete"
+            aria-label="Удалить уведомление"
+            onClick={handleDelete}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+        ) : null}
+      </article>
+    );
+  }
 
   return (
     <article

@@ -16,7 +16,8 @@ import './NotificationsDropdown.css';
  *   notificationsAnchorRef: React.RefObject<HTMLElement | null>,
  *   onOpenTraining?: (trainingId: string) => void,
  *   onOpenMembership?: () => void,
- *   onOpenBooking?: () => void
+ *   onOpenBooking?: () => void,
+ *   onOpenComment?: (meta: Record<string, unknown>) => void
  * }} props
  */
 export default function NotificationsDropdown({
@@ -28,7 +29,8 @@ export default function NotificationsDropdown({
   notificationsAnchorRef,
   onOpenTraining,
   onOpenMembership,
-  onOpenBooking
+  onOpenBooking,
+  onOpenComment
 }) {
   const dropdownRef = useRef(null);
   const listRef = useRef(null);
@@ -139,6 +141,14 @@ export default function NotificationsDropdown({
     onClose();
   }, [onClose, onOpenBooking]);
 
+  const handleOpenComment = useCallback(
+    (meta) => {
+      onOpenComment?.(meta);
+      onClose();
+    },
+    [onClose, onOpenComment]
+  );
+
   if (!mounted) return null;
 
   return (
@@ -169,6 +179,7 @@ export default function NotificationsDropdown({
                 onOpenTraining={handleOpenTraining}
                 onOpenMembership={handleOpenMembership}
                 onOpenBooking={handleOpenBooking}
+                onOpenComment={handleOpenComment}
               />
             );
           })}

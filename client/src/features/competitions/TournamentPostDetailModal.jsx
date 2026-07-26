@@ -27,7 +27,8 @@ import { recordContentView } from '../../services/stats';
  *   hiddenMediaKey?: string | null,
  *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, thumbUrl: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void,
  *   onCommentMutated?: () => void,
- *   trackView?: boolean
+ *   trackView?: boolean,
+ *   highlightCommentId?: string | null
  * }} props
  */
 function TournamentPostDetailModal({
@@ -44,7 +45,8 @@ function TournamentPostDetailModal({
   hiddenMediaKey = null,
   onOpenFullscreen,
   onCommentMutated,
-  trackView = true
+  trackView = true,
+  highlightCommentId = null
 }) {
   const participants = Array.isArray(post?.participants) ? post.participants : [];
   const postId = post?.id || null;
@@ -230,6 +232,7 @@ function TournamentPostDetailModal({
           userIsModerator={userIsModerator}
           onOpenProfile={onOpenProfile}
           onCommentMutated={onCommentMutated}
+          highlightCommentId={highlightCommentId}
         />
       </Modal>
 

@@ -1791,6 +1791,160 @@ button.post-card-like:hover:not(:disabled) {
   color: #444;
 }
 
+.comment-body-indent {
+  margin-left: 36px;
+}
+
+.comment-reply-quote {
+  display: flex;
+  gap: 8px;
+  margin: 4px 0 8px;
+  min-width: 0;
+}
+
+.comment-reply-quote--compact {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.comment-reply-quote__accent {
+  width: 3px;
+  flex-shrink: 0;
+  border-radius: 2px;
+  background: #007aff;
+  align-self: stretch;
+}
+
+.comment-reply-quote__body {
+  min-width: 0;
+  flex: 1;
+}
+
+.comment-reply-quote__author {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  max-width: 100%;
+}
+
+.comment-reply-quote__avatar.ui-avatar--sm {
+  width: 18px;
+  height: 18px;
+}
+
+.comment-reply-quote__avatar .ui-avatar-fallback {
+  font-size: 10px;
+}
+
+.comment-reply-quote__name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #007aff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.comment-reply-quote__text {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: #333;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.comment-reply-compose {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px 8px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  background: #fff;
+}
+
+.comment-reply-compose__cancel {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-top: 2px;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #8b98a5;
+  cursor: pointer;
+}
+
+.comment-reply-compose__cancel svg {
+  width: 14px;
+  height: 14px;
+}
+
+.comment-reply-compose__cancel:hover {
+  color: #6b7280;
+  background: #f0f2f5;
+}
+
+.modal-comment-footer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: #fff;
+}
+
+.modal-comment-footer .modal-comment-form-footer,
+.modal-comment-footer .gallery-comment-form {
+  padding-top: 8px;
+}
+
+.comment-footer-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+
+.comment-reply-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 2px 4px;
+  cursor: pointer;
+  color: #8b98a5;
+  min-height: 28px;
+  min-width: 28px;
+}
+
+.comment-reply-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.comment-reply-btn:hover:not(:disabled) {
+  color: #007aff;
+}
+
+.comment-reply-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.modal-comment-item--highlight {
+  outline: 2px solid rgba(0, 122, 255, 0.45);
+  outline-offset: 1px;
+}
+
 .modal-comment-form-footer {
   display: flex;
   padding: 0;

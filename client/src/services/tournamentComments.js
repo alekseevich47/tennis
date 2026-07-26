@@ -8,6 +8,7 @@ import { error } from '../lib/log';
  * @property {string} post
  * @property {string} author
  * @property {string} text
+ * @property {string} [reply_to]
  * @property {boolean} [is_deleted]
  * @property {string} created
  * @property {Record<string, unknown>} [expand]
@@ -23,7 +24,7 @@ export async function listCommentsForTournamentPost(postId, { signal } = {}) {
     return /** @type {TournamentCommentRecord[]} */ (await pb.collection('tournament_comments').getFullList({
       filter: pb.filter('post = {:postId}', { postId }),
       sort: 'created',
-      expand: 'author',
+      expand: 'author,reply_to,reply_to.author',
       requestKey: null,
       signal
     }));
@@ -38,14 +39,20 @@ export async function listCommentsForTournamentPost(postId, { signal } = {}) {
  * @param {string} postId
  * @param {string} text
  * @param {string} userId
+ * @param {string | null} [replyToId]
  */
-export async function createTournamentComment(postId, text, userId) {
+export async function createTournamentComment(postId, text, userId, replyToId = null) {
   if (!userId) throw new Error('Не авторизован: нельзя создать комментарий без author.id');
-  return /** @type {TournamentCommentRecord} */ (await pb.collection('tournament_comments').create({
+  /** @type {Record<string, unknown>} */
+  const payload = {
     post: postId,
     author: userId,
     text
-  }, { expand: 'author' }));
+  };
+  if (replyToId) payload.reply_to = replyToId;
+  return /** @type {TournamentCommentRecord} */ (await pb.collection('tournament_comments').create(payload, {
+    expand: 'author,reply_to,reply_to.author'
+  }));
 }
 
 /**

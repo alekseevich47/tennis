@@ -1182,6 +1182,19 @@
         "type": "bool"
       },
       {
+        "cascadeDelete": false,
+        "collectionId": "pbc_533777971",
+        "hidden": false,
+        "id": "relation_reply_to_comments",
+        "maxSelect": 1,
+        "minSelect": 0,
+        "name": "reply_to",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "relation"
+      },
+      {
         "hidden": false,
         "id": "autodate2990389176",
         "name": "created",
@@ -1501,6 +1514,19 @@
         "required": false,
         "system": false,
         "type": "bool"
+      },
+      {
+        "cascadeDelete": false,
+        "collectionId": "pbc_1954347540",
+        "hidden": false,
+        "id": "relation_reply_to_gallery_comments",
+        "maxSelect": 1,
+        "minSelect": 0,
+        "name": "reply_to",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "relation"
       },
       {
         "hidden": false,
@@ -1826,7 +1852,8 @@
         "values": [
           "open_training",
           "open_membership",
-          "open_booking"
+          "open_booking",
+          "open_comment"
         ]
       },
       {
@@ -2709,6 +2736,19 @@
         "required": false,
         "system": false,
         "type": "bool"
+      },
+      {
+        "cascadeDelete": false,
+        "collectionId": "pbc_4287977029",
+        "hidden": false,
+        "id": "relation_reply_to_tournament_comments",
+        "maxSelect": 1,
+        "minSelect": 0,
+        "name": "reply_to",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "relation"
       },
       {
         "hidden": false,
