@@ -548,7 +548,7 @@ export async function listGalleryComments(mediaId, { signal } = {}) {
     return /** @type {GalleryCommentRecord[]} */ (await pb.collection('gallery_comments').getFullList({
       filter: pb.filter('media_id = {:mediaId} && is_deleted = false', { mediaId }),
       sort: 'created',
-      expand: 'author',
+      expand: 'author,reply_to,reply_to.author',
       requestKey: null,
       signal
     }));
@@ -560,16 +560,22 @@ export async function listGalleryComments(mediaId, { signal } = {}) {
 }
 
 /**
- * @param {{ mediaId: string, authorId: string, text: string }} params
+ * @param {{ mediaId: string, authorId: string, text: string, replyToId?: string | null }} params
  */
-export async function createGalleryComment({ mediaId, authorId, text }) {
+export async function createGalleryComment({ mediaId, authorId, text, replyToId }) {
   if (!authorId) throw new Error('Не авторизован: нельзя создать комментарий без author.id');
 
-  return /** @type {GalleryCommentRecord} */ (await pb.collection('gallery_comments').create({
+  /** @type {Record<string, unknown>} */
+  const payload = {
     media_id: mediaId,
     author: authorId,
     text
-  }, { expand: 'author' }));
+  };
+  if (replyToId) payload.reply_to = replyToId;
+
+  return /** @type {GalleryCommentRecord} */ (await pb.collection('gallery_comments').create(payload, {
+    expand: 'author,reply_to,reply_to.author'
+  }));
 }
 
 /**

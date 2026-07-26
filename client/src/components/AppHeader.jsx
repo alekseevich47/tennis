@@ -32,6 +32,7 @@ import './AppHeader.css';
  *   onOpenTrainingFromNotification?: (trainingId: string) => void,
  *   onOpenMembershipFromNotification?: () => void,
  *   onOpenBookingFromNotification?: () => void,
+ *   onOpenCommentFromNotification?: (meta: Record<string, unknown>) => void,
  *   searchConfig?: {
  *     open: boolean,
  *     query: string,
@@ -63,6 +64,7 @@ function AppHeader({
   onOpenTrainingFromNotification,
   onOpenMembershipFromNotification,
   onOpenBookingFromNotification,
+  onOpenCommentFromNotification,
   searchConfig
 }) {
   const favoritesAnchorRef = useRef(null);
@@ -204,6 +206,7 @@ function AppHeader({
                 onOpenTraining={onOpenTrainingFromNotification}
                 onOpenMembership={onOpenMembershipFromNotification}
                 onOpenBooking={onOpenBookingFromNotification}
+                onOpenComment={onOpenCommentFromNotification}
               />
             ) : null}
           </div>

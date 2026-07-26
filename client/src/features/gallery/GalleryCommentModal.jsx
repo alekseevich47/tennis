@@ -1,9 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import Avatar from '../../components/ui/Avatar';
 import PostContentHtml from '../feed/PostContentHtml';
 import PostRichTextField from '../feed/PostRichTextField';
 import CommentSendButton from '../feed/CommentSendButton';
+import CommentReplyButton from '../feed/CommentReplyButton';
+import CommentReplyComposeBar from '../feed/CommentReplyComposeBar';
+import CommentReplyQuote from '../feed/CommentReplyQuote';
 import { hasVisibleText, toDisplayHtml } from '../feed/postRichText';
 import { useGalleryComments } from '../../hooks/useGalleryComments';
 import { useCommentLikes } from '../../hooks/useCommentLikes';
@@ -19,6 +22,7 @@ import { error } from '../../lib/log';
 import '../feed/Feed.css';
 
 const COMMENT_COLLECTION = 'gallery_comments';
+const SCROLL_INTO_VIEW_DELAY_MS = 200;
 
 /**
  * @param {{
@@ -27,10 +31,19 @@ const COMMENT_COLLECTION = 'gallery_comments';
  *   user: any,
  *   userIsModerator: boolean,
  *   onClose: () => void,
- *   onOpenProfile?: (user: any) => void
+ *   onOpenProfile?: (user: any) => void,
+ *   highlightCommentId?: string | null
  * }} props
  */
-function GalleryCommentModal({ isOpen, mediaItem, user, userIsModerator, onClose, onOpenProfile }) {
+function GalleryCommentModal({
+  isOpen,
+  mediaItem,
+  user,
+  userIsModerator,
+  onClose,
+  onOpenProfile,
+  highlightCommentId = null
+}) {
   const mediaId = mediaItem?.id || null;
   const { comments, mutate, isLoading } = useGalleryComments(isOpen ? mediaId : null);
   const [commentText, setCommentText] = useState('');
@@ -38,7 +51,11 @@ function GalleryCommentModal({ isOpen, mediaItem, user, userIsModerator, onClose
   const [deletingId, setDeletingId] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState('');
+  const [replyTo, setReplyTo] = useState(/** @type {any | null} */ (null));
   const [togglingLikeId, setTogglingLikeId] = useState(null);
+  const [highlightedId, setHighlightedId] = useState(/** @type {string | null} */ (null));
+
+  const commentItemRefs = useRef(/** @type {Map<string, HTMLElement>} */ (new Map()));
 
   const commentIds = useMemo(() => comments.map((c) => c.id), [comments]);
 
@@ -55,8 +72,26 @@ function GalleryCommentModal({ isOpen, mediaItem, user, userIsModerator, onClose
       setDeletingId(null);
       setEditingId(null);
       setEditText('');
+      setReplyTo(null);
+      setHighlightedId(null);
     }
   }, [isOpen, mediaId]);
+
+  useEffect(() => {
+    if (!isOpen || !highlightCommentId) return undefined;
+    setHighlightedId(highlightCommentId);
+    const timer = window.setTimeout(() => {
+      commentItemRefs.current.get(highlightCommentId)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }, SCROLL_INTO_VIEW_DELAY_MS);
+    const clearHighlight = window.setTimeout(() => setHighlightedId(null), 2500);
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(clearHighlight);
+    };
+  }, [isOpen, highlightCommentId, comments.length]);
 
   if (!mediaItem) return null;
 
@@ -64,14 +99,25 @@ function GalleryCommentModal({ isOpen, mediaItem, user, userIsModerator, onClose
   const mediaFile = isVideo ? mediaItem.video : mediaItem.image;
   const mediaUrl = getMediaUrl(mediaItem, 'gallery', mediaFile);
 
+  const handleReply = (comment) => {
+    setReplyTo(comment);
+    setEditingId(null);
+  };
+
   const handleAdd = async (event) => {
     event.preventDefault();
     if (!hasVisibleText(commentText) || !mediaId || !user?.id || isAddingComment) return;
 
     setIsAddingComment(true);
     try {
-      await createGalleryComment({ mediaId, authorId: user.id, text: commentText });
+      await createGalleryComment({
+        mediaId,
+        authorId: user.id,
+        text: commentText,
+        replyToId: replyTo?.id || null
+      });
       setCommentText('');
+      setReplyTo(null);
       await mutate();
     } catch (err) {
       error('add gallery comment:', err);
@@ -146,24 +192,27 @@ function GalleryCommentModal({ isOpen, mediaItem, user, userIsModerator, onClose
             {user.comment_restriction_reason || 'не указана'}. Свяжитесь с администратором.
           </div>
         ) : (
-          <form className="gallery-comment-form" onSubmit={handleAdd}>
-            <label htmlFor="gallery-comment-input" className="visually-hidden">
-              Написать комментарий
-            </label>
-            <PostRichTextField
-              id="gallery-comment-input"
-              value={commentText}
-              onChange={setCommentText}
-              enableFrame={false}
-              compact
-              placeholder="Написать комментарий..."
-              aria-label="Написать комментарий"
-            />
-            <CommentSendButton
-              disabled={isAddingComment || !hasVisibleText(commentText)}
-              busy={isAddingComment}
-            />
-          </form>
+          <div className="modal-comment-footer">
+            <CommentReplyComposeBar comment={replyTo} onCancel={() => setReplyTo(null)} />
+            <form className="gallery-comment-form" onSubmit={handleAdd}>
+              <label htmlFor="gallery-comment-input" className="visually-hidden">
+                Написать комментарий
+              </label>
+              <PostRichTextField
+                id="gallery-comment-input"
+                value={commentText}
+                onChange={setCommentText}
+                enableFrame={false}
+                compact
+                placeholder="Написать комментарий..."
+                aria-label="Написать комментарий"
+              />
+              <CommentSendButton
+                disabled={isAddingComment || !hasVisibleText(commentText)}
+                busy={isAddingComment}
+              />
+            </form>
+          </div>
         )
       ) : null}
     >
@@ -189,9 +238,17 @@ function GalleryCommentModal({ isOpen, mediaItem, user, userIsModerator, onClose
               const canEdit = isAuthor || userIsModerator;
               const likeCount = countsByComment[comment.id] || 0;
               const isLiked = userLikedSet.has(comment.id);
+              const parentComment = comment.expand?.reply_to;
 
               return (
-                <div key={comment.id} className="gallery-comment-item">
+                <div
+                  key={comment.id}
+                  className={`gallery-comment-item${highlightedId === comment.id ? ' modal-comment-item--highlight' : ''}`}
+                  ref={(node) => {
+                    if (node) commentItemRefs.current.set(comment.id, node);
+                    else commentItemRefs.current.delete(comment.id);
+                  }}
+                >
                   {canEdit && (
                     <div
                       className="gallery-comment-item__actions"
@@ -280,29 +337,43 @@ function GalleryCommentModal({ isOpen, mediaItem, user, userIsModerator, onClose
                       </div>
                     </form>
                   ) : (
-                    <PostContentHtml
-                      as="p"
-                      className="gallery-comment-item__text"
-                      content={comment.text}
-                    />
+                    <div className="comment-body-indent">
+                      {parentComment ? (
+                        <CommentReplyQuote
+                          author={parentComment.expand?.author || null}
+                          text={parentComment.text}
+                          onOpenProfile={onOpenProfile}
+                        />
+                      ) : null}
+                      <PostContentHtml
+                        as="p"
+                        className="gallery-comment-item__text"
+                        content={comment.text}
+                      />
+                    </div>
                   )}
 
                   {editingId !== comment.id && (
                     <div className="comment-footer-row gallery-comment-item__footer">
-                      <button
-                        type="button"
-                        className={`comment-like-btn${isLiked ? ' comment-like-btn--active' : ''}`}
-                        onClick={() => handleToggleLike(comment.id)}
-                        disabled={!user?.id || togglingLikeId === comment.id}
-                        aria-label={isLiked ? 'Убрать лайк' : 'Поставить лайк'}
-                      >
-                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                        </svg>
-                        {likeCount > 0 && (
-                          <span className="comment-like-count">{likeCount}</span>
-                        )}
-                      </button>
+                      <div className="comment-footer-actions">
+                        <button
+                          type="button"
+                          className={`comment-like-btn${isLiked ? ' comment-like-btn--active' : ''}`}
+                          onClick={() => handleToggleLike(comment.id)}
+                          disabled={!user?.id || togglingLikeId === comment.id}
+                          aria-label={isLiked ? 'Убрать лайк' : 'Поставить лайк'}
+                        >
+                          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                          </svg>
+                          {likeCount > 0 && (
+                            <span className="comment-like-count">{likeCount}</span>
+                          )}
+                        </button>
+                        {user?.can_comment !== false ? (
+                          <CommentReplyButton onClick={() => handleReply(comment)} />
+                        ) : null}
+                      </div>
                       <span className="comment-timestamp-text gallery-comment-item__date">
                         {formatPostDate(comment.created)}
                       </span>

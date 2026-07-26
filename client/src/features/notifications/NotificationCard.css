@@ -132,3 +132,69 @@
   outline: 2px solid #007aff;
   outline-offset: 2px;
 }
+
+.notification-card--comment-reply {
+  padding: 12px 36px 12px 20px;
+  cursor: pointer;
+}
+
+.notification-card--comment-reply:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: -2px;
+}
+
+.notification-card__reply-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+}
+
+.notification-card__reply-avatar {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.notification-card__reply-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-card__reply-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.notification-card__reply-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a1a1a;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.notification-card__time--reply {
+  padding-right: 4px;
+  margin-top: 1px;
+}
+
+.notification-card__body--reply {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #4b5563;
+}
+
+.notification-card__badge--reply {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #eef1f4;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a1a1a;
+  max-width: 100%;
+  word-break: break-word;
+}

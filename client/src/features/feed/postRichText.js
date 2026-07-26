@@ -82,6 +82,18 @@ export function hasVisibleText(html) {
 }
 
 /**
+ * Plain-text из HTML комментария (для уведомлений / цитат в тексте).
+ * @param {string} html
+ * @returns {string}
+ */
+export function toPlainText(html) {
+  if (!html) return '';
+  if (!looksLikeRichHtml(html)) return String(html).replace(/[\u200B\u00A0]/g, '').trim();
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  return (doc.body.textContent || '').replace(/[\u200B\u00A0]/g, '').replace(/\s+/g, ' ').trim();
+}
+
+/**
  * @param {HTMLElement | null} el
  * @returns {boolean}
  */

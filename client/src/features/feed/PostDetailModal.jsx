@@ -6,6 +6,9 @@ import PostMedia from './PostMedia';
 import PostContentHtml from './PostContentHtml';
 import PostRichTextField from './PostRichTextField';
 import CommentSendButton from './CommentSendButton';
+import CommentReplyButton from './CommentReplyButton';
+import CommentReplyComposeBar from './CommentReplyComposeBar';
+import CommentReplyQuote from './CommentReplyQuote';
 import PostContextMenu from './PostContextMenu';
 import { hasVisibleText, toDisplayHtml } from './postRichText';
 import sectionAvatarUrl from '../../assets/sm-avatar.png';
@@ -29,6 +32,7 @@ const COMMENT_COLLECTION = 'comments';
  *   isOpen: boolean,
  *   post: any | null,
  *   focusComment?: boolean,
+ *   highlightCommentId?: string | null,
  *   user: any,
  *   userIsModerator: boolean,
  *   hiddenMediaKey?: string | null,
@@ -46,6 +50,7 @@ function PostDetailModal({
   isOpen,
   post,
   focusComment = false,
+  highlightCommentId = null,
   user,
   userIsModerator,
   hiddenMediaKey,
@@ -66,6 +71,7 @@ function PostDetailModal({
   const [isAddingComment, setIsAddingComment] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editingText, setEditingText] = useState('');
+  const [replyTo, setReplyTo] = useState(/** @type {any | null} */ (null));
   // Soft-удалённые в рамках текущей сессии модалки. Стираются в БД при закрытии.
   const [softDeletedIds, setSoftDeletedIds] = useState([]);
   const [togglingLikeId, setTogglingLikeId] = useState(null);
@@ -73,8 +79,10 @@ function PostDetailModal({
   const [menuAnchorRect, setMenuAnchorRect] = useState(
     /** @type {{ left: number, top: number, right: number, bottom: number, width: number, height: number } | null} */ (null)
   );
+  const [highlightedId, setHighlightedId] = useState(/** @type {string | null} */ (null));
 
   const commentsBottomRef = useRef(null);
+  const commentItemRefs = useRef(/** @type {Map<string, HTMLElement>} */ (new Map()));
   const isAddingCommentRef = useRef(false);
   const scrollTimerRef = useRef(null);
   const menuBtnRef = useRef(/** @type {HTMLButtonElement | null} */ (null));
@@ -101,14 +109,16 @@ function PostDetailModal({
     setIsAddingComment(false);
     isAddingCommentRef.current = false;
     setSoftDeletedIds([]);
+    setReplyTo(null);
+    setCommentText('');
     setMenuOpen(false);
     setMenuAnchorRect(null);
+    setHighlightedId(null);
   }, [isOpen, postId]);
 
   useEffect(() => {
     if (!trackView || !isOpen || !postId || !user?.id) return undefined;
     let cancelled = false;
-    // Небольшая отсрочка: модалка успевает смонтироваться; повтор при смене postId.
     const timer = window.setTimeout(() => {
       if (cancelled) return;
       void recordContentView({
@@ -124,16 +134,32 @@ function PostDetailModal({
   }, [trackView, isOpen, postId, user?.id]);
 
   useEffect(() => {
-    if (!isOpen || !focusComment) return undefined;
+    if (!isOpen || !highlightCommentId) return undefined;
+    setShowAll(true);
+    setHighlightedId(highlightCommentId);
+    const timer = window.setTimeout(() => {
+      commentItemRefs.current.get(highlightCommentId)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }, SCROLL_INTO_VIEW_DELAY_MS);
+    const clearHighlight = window.setTimeout(() => setHighlightedId(null), 2500);
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(clearHighlight);
+    };
+  }, [isOpen, highlightCommentId, comments.length]);
+
+  useEffect(() => {
+    if (!isOpen || !focusComment || highlightCommentId) return undefined;
     const timer = window.setTimeout(() => {
       commentsBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, SCROLL_INTO_VIEW_DELAY_MS);
     return () => clearTimeout(timer);
-  }, [isOpen, focusComment, postId]);
+  }, [isOpen, focusComment, highlightCommentId, postId]);
 
-  // Cleanup таймера scrollIntoView при закрытии (фикс C7).
   useEffect(() => {
-    if (!isOpen || comments.length === 0) return undefined;
+    if (!isOpen || comments.length === 0 || highlightCommentId) return undefined;
     scrollTimerRef.current = window.setTimeout(() => {
       commentsBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, SCROLL_INTO_VIEW_DELAY_MS);
@@ -143,7 +169,7 @@ function PostDetailModal({
         scrollTimerRef.current = null;
       }
     };
-  }, [isOpen, comments.length]);
+  }, [isOpen, comments.length, highlightCommentId]);
 
   const persistPendingDeletes = (idsList) => {
     sessionStorage.setItem('pending_delete_comments', JSON.stringify(idsList));
@@ -164,6 +190,11 @@ function PostDetailModal({
     setMenuOpen((open) => !open);
   };
 
+  const handleReply = (comment) => {
+    setReplyTo(comment);
+    setEditingId(null);
+  };
+
   const handleAdd = async (e) => {
     e.preventDefault();
     if (!hasVisibleText(commentText) || !postId || isAddingCommentRef.current) return;
@@ -174,8 +205,14 @@ function PostDetailModal({
     isAddingCommentRef.current = true;
     setIsAddingComment(true);
     try {
-      await createComment({ postId, authorId: user.id, text: commentText });
+      await createComment({
+        postId,
+        authorId: user.id,
+        text: commentText,
+        replyToId: replyTo?.id || null
+      });
       setCommentText('');
+      setReplyTo(null);
       await mutateComments();
     } catch (err) {
       error('Ошибка добавления комментария:', err);
@@ -216,6 +253,7 @@ function PostDetailModal({
   const handleStartEdit = (comment) => {
     setEditingId(comment.id);
     setEditingText(toDisplayHtml(comment.text || ''));
+    setReplyTo(null);
   };
 
   const handleSaveEdit = async (commentId, e) => {
@@ -246,7 +284,6 @@ function PostDetailModal({
   const handleClose = async () => {
     setMenuOpen(false);
     onClose();
-    // Окончательное удаление soft-deleted комментов после закрытия.
     const ids = softDeletedIds;
     if (ids.length > 0) {
       try {
@@ -264,7 +301,7 @@ function PostDetailModal({
 
   if (!post) return null;
 
-  const displayed = showAll ? comments : comments.slice(-2);
+  const displayed = showAll || highlightCommentId ? comments : comments.slice(-2);
 
   return (
     <>
@@ -281,24 +318,27 @@ function PostDetailModal({
               {user.comment_restriction_reason || 'не указана'}. Свяжитесь с администратором.
             </div>
           ) : (
-            <form onSubmit={handleAdd} className="modal-comment-form-footer">
-              <label htmlFor="post-detail-comment-input" className="visually-hidden">
-                Написать комментарий
-              </label>
-              <PostRichTextField
-                id="post-detail-comment-input"
-                value={commentText}
-                onChange={setCommentText}
-                enableFrame={false}
-                compact
-                placeholder="Написать комментарий…"
-                aria-label="Написать комментарий"
-              />
-              <CommentSendButton
-                disabled={isAddingComment || !hasVisibleText(commentText)}
-                busy={isAddingComment}
-              />
-            </form>
+            <div className="modal-comment-footer">
+              <CommentReplyComposeBar comment={replyTo} onCancel={() => setReplyTo(null)} />
+              <form onSubmit={handleAdd} className="modal-comment-form-footer">
+                <label htmlFor="post-detail-comment-input" className="visually-hidden">
+                  Написать комментарий
+                </label>
+                <PostRichTextField
+                  id="post-detail-comment-input"
+                  value={commentText}
+                  onChange={setCommentText}
+                  enableFrame={false}
+                  compact
+                  placeholder="Написать комментарий…"
+                  aria-label="Написать комментарий"
+                />
+                <CommentSendButton
+                  disabled={isAddingComment || !hasVisibleText(commentText)}
+                  busy={isAddingComment}
+                />
+              </form>
+            </div>
           )
         }
       >
@@ -357,7 +397,7 @@ function PostDetailModal({
         <div className="modal-comments-section">
           <h3>Комментарии ({comments.length})</h3>
 
-          {comments.length > 2 && !showAll && (
+          {comments.length > 2 && !showAll && !highlightCommentId && (
             <button
               type="button"
               className="show-more-comments-btn"
@@ -393,9 +433,17 @@ function PostDetailModal({
               const canDelete = isOwner || userIsModerator;
               const likeCount = countsByComment[c.id] || 0;
               const isLiked = userLikedSet.has(c.id);
+              const parentComment = c.expand?.reply_to;
 
               return (
-                <div key={c.id} className="modal-comment-item">
+                <div
+                  key={c.id}
+                  className={`modal-comment-item${highlightedId === c.id ? ' modal-comment-item--highlight' : ''}`}
+                  ref={(node) => {
+                    if (node) commentItemRefs.current.set(c.id, node);
+                    else commentItemRefs.current.delete(c.id);
+                  }}
+                >
                   <div className="comment-header-row">
                     <button
                       type="button"
@@ -492,22 +540,36 @@ function PostDetailModal({
                     </form>
                   ) : (
                     <>
-                      <PostContentHtml as="p" className="comment-content-text" content={c.text} />
+                      <div className="comment-body-indent">
+                        {parentComment ? (
+                          <CommentReplyQuote
+                            author={parentComment.expand?.author || null}
+                            text={parentComment.text}
+                            onOpenProfile={onOpenProfile}
+                          />
+                        ) : null}
+                        <PostContentHtml as="p" className="comment-content-text" content={c.text} />
+                      </div>
                       <div className="comment-footer-row">
-                        <button
-                          type="button"
-                          className={`comment-like-btn${isLiked ? ' comment-like-btn--active' : ''}`}
-                          onClick={() => handleToggleLike(c.id)}
-                          disabled={!user?.id || togglingLikeId === c.id}
-                          aria-label={isLiked ? 'Убрать лайк' : 'Поставить лайк'}
-                        >
-                          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                          </svg>
-                          {likeCount > 0 && (
-                            <span className="comment-like-count">{likeCount}</span>
-                          )}
-                        </button>
+                        <div className="comment-footer-actions">
+                          <button
+                            type="button"
+                            className={`comment-like-btn${isLiked ? ' comment-like-btn--active' : ''}`}
+                            onClick={() => handleToggleLike(c.id)}
+                            disabled={!user?.id || togglingLikeId === c.id}
+                            aria-label={isLiked ? 'Убрать лайк' : 'Поставить лайк'}
+                          >
+                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                            </svg>
+                            {likeCount > 0 && (
+                              <span className="comment-like-count">{likeCount}</span>
+                            )}
+                          </button>
+                          {user?.can_comment !== false ? (
+                            <CommentReplyButton onClick={() => handleReply(c)} />
+                          ) : null}
+                        </div>
                         <span className="comment-timestamp-text">{formatPostDate(c.created)}</span>
                       </div>
                     </>
