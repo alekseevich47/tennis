@@ -2215,7 +2215,9 @@ button.post-card-like:hover:not(:disabled) {
 }
 
 .post-context-menu__item {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   width: 100%;
   padding: 12px 16px;
   border: none;
@@ -2239,4 +2241,23 @@ button.post-card-like:hover:not(:disabled) {
 
 .post-context-menu__item--danger {
   color: #ff3b30;
+}
+
+.post-context-menu__icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  display: block;
+}
+
+.post-context-menu__icon--fill {
+  fill: currentColor;
+}
+
+.post-context-menu__icon--outline {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }

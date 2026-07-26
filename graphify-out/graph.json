@@ -578,8 +578,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_app",
-      "community": 9,
-      "community_name": "Audit Logs Modal",
+      "community": 10,
+      "community_name": "LogsModal.jsx",
       "norm_label": "app.jsx"
     },
     {
@@ -589,8 +589,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "client_src_app_tab_titles",
-      "community": 9,
-      "community_name": "Audit Logs Modal",
+      "community": 10,
+      "community_name": "LogsModal.jsx",
       "norm_label": "tab_titles"
     },
     {
@@ -600,8 +600,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "client_src_app_getinitialfavoriteproductids",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 10,
+      "community_name": "LogsModal.jsx",
       "norm_label": "getinitialfavoriteproductids()"
     },
     {
@@ -611,8 +611,8 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "client_src_app_appinner",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 10,
+      "community_name": "LogsModal.jsx",
       "norm_label": "appinner()"
     },
     {
@@ -622,8 +622,8 @@
       "source_location": "L83",
       "_origin": "ast",
       "id": "client_src_app_appmain",
-      "community": 9,
-      "community_name": "Audit Logs Modal",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "appmain()"
     },
     {
@@ -633,8 +633,8 @@
       "source_location": "L388",
       "_origin": "ast",
       "id": "client_src_app_app",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 15,
+      "community_name": "FullscreenImageViewer.jsx",
       "norm_label": "app()"
     },
     {
@@ -754,8 +754,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_avatarcropmodal",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "avatarcropmodal.jsx"
     },
     {
@@ -765,8 +765,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_components_avatarcropmodal_getcropcircle",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "getcropcircle()"
     },
     {
@@ -776,8 +776,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "client_src_components_avatarcropmodal_getimageplacement",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "getimageplacement()"
     },
     {
@@ -787,8 +787,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "client_src_components_avatarcropmodal_avatarcropmodal",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "avatarcropmodal()"
     },
     {
@@ -798,8 +798,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_bottomnav",
-      "community": 9,
-      "community_name": "Audit Logs Modal",
+      "community": 10,
+      "community_name": "LogsModal.jsx",
       "norm_label": "bottomnav.jsx"
     },
     {
@@ -809,8 +809,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_components_bottomnav_nav_items",
-      "community": 9,
-      "community_name": "Audit Logs Modal",
+      "community": 10,
+      "community_name": "LogsModal.jsx",
       "norm_label": "nav_items"
     },
     {
@@ -820,8 +820,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "client_src_components_bottomnav_admin_nav_item",
-      "community": 9,
-      "community_name": "Audit Logs Modal",
+      "community": 10,
+      "community_name": "LogsModal.jsx",
       "norm_label": "admin_nav_item"
     },
     {
@@ -831,8 +831,8 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "client_src_components_bottomnav_bottomnav",
-      "community": 9,
-      "community_name": "Audit Logs Modal",
+      "community": 10,
+      "community_name": "LogsModal.jsx",
       "norm_label": "bottomnav()"
     },
     {
@@ -963,8 +963,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_postuploadprovider",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 15,
+      "community_name": "FullscreenImageViewer.jsx",
       "norm_label": "postuploadprovider.jsx"
     },
     {
@@ -974,8 +974,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_components_postuploadprovider_postuploadcontext",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 15,
+      "community_name": "FullscreenImageViewer.jsx",
       "norm_label": "postuploadcontext"
     },
     {
@@ -985,8 +985,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_components_postuploadprovider_postuploadprovider",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 15,
+      "community_name": "FullscreenImageViewer.jsx",
       "norm_label": "postuploadprovider()"
     },
     {
@@ -1106,8 +1106,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_alertdialog",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "alertdialog.jsx"
     },
     {
@@ -1117,8 +1117,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "client_src_components_ui_alertdialog_alertdialogcontext",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "alertdialogcontext"
     },
     {
@@ -1128,8 +1128,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_components_ui_alertdialog_initial_state",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "initial_state"
     },
     {
@@ -1139,8 +1139,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "client_src_components_ui_alertdialog_alertdialogprovider",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 15,
+      "community_name": "FullscreenImageViewer.jsx",
       "norm_label": "alertdialogprovider()"
     },
     {
@@ -1150,8 +1150,8 @@
       "source_location": "L133",
       "_origin": "ast",
       "id": "client_src_components_ui_alertdialog_usealertdialog",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "usealertdialog()"
     },
     {
@@ -1205,8 +1205,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_iconbutton",
-      "community": 9,
-      "community_name": "Audit Logs Modal",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "iconbutton.jsx"
     },
     {
@@ -1216,8 +1216,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_components_ui_iconbutton_iconbutton",
-      "community": 9,
-      "community_name": "Audit Logs Modal",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "iconbutton"
     },
     {
@@ -1227,8 +1227,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_infotooltip",
-      "community": 63,
-      "community_name": "StatsReachModal.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "infotooltip.jsx"
     },
     {
@@ -1238,8 +1238,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_components_ui_infotooltip_infotooltip",
-      "community": 63,
-      "community_name": "StatsReachModal.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "infotooltip()"
     },
     {
@@ -1249,8 +1249,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_modal",
-      "community": 61,
-      "community_name": "Modal.jsx",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "modal.jsx"
     },
     {
@@ -1260,8 +1260,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_components_ui_modal_focusable_selectors",
-      "community": 61,
-      "community_name": "Modal.jsx",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "focusable_selectors"
     },
     {
@@ -1271,8 +1271,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "client_src_components_ui_modal_modal",
-      "community": 61,
-      "community_name": "Modal.jsx",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "modal()"
     },
     {
@@ -1370,8 +1370,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_toggle",
-      "community": 61,
-      "community_name": "Modal.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "toggle.jsx"
     },
     {
@@ -1381,8 +1381,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_components_ui_toggle_toggle",
-      "community": 61,
-      "community_name": "Modal.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "toggle()"
     },
     {
@@ -1392,8 +1392,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_config",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "config.js"
     },
     {
@@ -1403,8 +1403,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext",
-      "community": 13,
-      "community_name": "Achievements UI Block",
+      "community": 60,
+      "community_name": "pb.js",
       "norm_label": "favoritescontext.jsx"
     },
     {
@@ -1414,8 +1414,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_favoritescontext",
-      "community": 13,
-      "community_name": "Achievements UI Block",
+      "community": 60,
+      "community_name": "pb.js",
       "norm_label": "favoritescontext"
     },
     {
@@ -1425,8 +1425,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_patchproductsfavoritescount",
-      "community": 13,
-      "community_name": "Achievements UI Block",
+      "community": 60,
+      "community_name": "pb.js",
       "norm_label": "patchproductsfavoritescount()"
     },
     {
@@ -1436,8 +1436,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_loadfavoriteproducts",
-      "community": 13,
-      "community_name": "Achievements UI Block",
+      "community": 60,
+      "community_name": "pb.js",
       "norm_label": "loadfavoriteproducts()"
     },
     {
@@ -1447,8 +1447,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_favoritesprovider",
-      "community": 13,
-      "community_name": "Achievements UI Block",
+      "community": 60,
+      "community_name": "pb.js",
       "norm_label": "favoritesprovider()"
     },
     {
@@ -1469,8 +1469,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_adminpanelpage",
-      "community": 61,
-      "community_name": "Modal.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "adminpanelpage.jsx"
     },
     {
@@ -1480,8 +1480,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_features_admin_adminpanelpage_adminpanelpage",
-      "community": 9,
-      "community_name": "Audit Logs Modal",
+      "community": 10,
+      "community_name": "LogsModal.jsx",
       "norm_label": "adminpanelpage()"
     },
     {
@@ -1535,8 +1535,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_logsmodal",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 6,
+      "community_name": "auditEventFormat.js",
       "norm_label": "logsmodal.jsx"
     },
     {
@@ -1546,8 +1546,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "client_src_features_admin_logsmodal_all_category_values",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 6,
+      "community_name": "auditEventFormat.js",
       "norm_label": "all_category_values"
     },
     {
@@ -1557,8 +1557,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "client_src_features_admin_logsmodal_todateinputvalue",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 6,
+      "community_name": "auditEventFormat.js",
       "norm_label": "todateinputvalue()"
     },
     {
@@ -1568,8 +1568,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "client_src_features_admin_logsmodal_getlogsdefaultdaterange",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 6,
+      "community_name": "auditEventFormat.js",
       "norm_label": "getlogsdefaultdaterange()"
     },
     {
@@ -1579,8 +1579,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "client_src_features_admin_logsmodal_formatdaterangelabel",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 6,
+      "community_name": "auditEventFormat.js",
       "norm_label": "formatdaterangelabel()"
     },
     {
@@ -1590,8 +1590,8 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "client_src_features_admin_logsmodal_calendaricon",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 6,
+      "community_name": "auditEventFormat.js",
       "norm_label": "calendaricon()"
     },
     {
@@ -1601,8 +1601,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "client_src_features_admin_logsmodal_auditdetailvalue",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 6,
+      "community_name": "auditEventFormat.js",
       "norm_label": "auditdetailvalue()"
     },
     {
@@ -1623,8 +1623,8 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "client_src_features_admin_logsmodal_logsmodal",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 6,
+      "community_name": "auditEventFormat.js",
       "norm_label": "logsmodal()"
     },
     {
@@ -1678,8 +1678,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_notificationsettingsmodal",
-      "community": 61,
-      "community_name": "Modal.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "notificationsettingsmodal.jsx"
     },
     {
@@ -1689,8 +1689,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_features_admin_notificationsettingsmodal_settings_rows",
-      "community": 61,
-      "community_name": "Modal.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "settings_rows"
     },
     {
@@ -1700,8 +1700,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "client_src_features_admin_notificationsettingsmodal_notificationsettingsmodal",
-      "community": 61,
-      "community_name": "Modal.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "notificationsettingsmodal()"
     },
     {
@@ -1711,8 +1711,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_statisticshubmodal",
-      "community": 61,
-      "community_name": "Modal.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "statisticshubmodal.jsx"
     },
     {
@@ -1722,8 +1722,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_features_admin_statisticshubmodal_metrics",
-      "community": 61,
-      "community_name": "Modal.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "metrics"
     },
     {
@@ -1733,8 +1733,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "client_src_features_admin_statisticshubmodal_statisticshubmodal",
-      "community": 61,
-      "community_name": "Modal.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "statisticshubmodal()"
     },
     {
@@ -1744,8 +1744,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 59,
+      "community_name": "MembershipOverviewModal.jsx",
       "norm_label": "usermultiselect.jsx"
     },
     {
@@ -1755,8 +1755,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect_getcollapsedlabel",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 59,
+      "community_name": "MembershipOverviewModal.jsx",
       "norm_label": "getcollapsedlabel()"
     },
     {
@@ -1766,8 +1766,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect_isuserchecked",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 59,
+      "community_name": "MembershipOverviewModal.jsx",
       "norm_label": "isuserchecked()"
     },
     {
@@ -1777,8 +1777,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect_usermultiselect",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 59,
+      "community_name": "MembershipOverviewModal.jsx",
       "norm_label": "usermultiselect()"
     },
     {
@@ -1898,8 +1898,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsgrowthmodal",
-      "community": 16,
-      "community_name": "StatsGrowthModal.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "statsgrowthmodal.jsx"
     },
     {
@@ -1909,8 +1909,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsgrowthmodal_formatbirthdate",
-      "community": 16,
-      "community_name": "StatsGrowthModal.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "formatbirthdate()"
     },
     {
@@ -1920,8 +1920,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsgrowthmodal_formatdaytitle",
-      "community": 16,
-      "community_name": "StatsGrowthModal.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "formatdaytitle()"
     },
     {
@@ -1931,8 +1931,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsgrowthmodal_statsgrowthmodal",
-      "community": 16,
-      "community_name": "StatsGrowthModal.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "statsgrowthmodal()"
     },
     {
@@ -1942,8 +1942,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statslinechart",
-      "community": 16,
-      "community_name": "StatsGrowthModal.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "statslinechart.jsx"
     },
     {
@@ -1953,8 +1953,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statslinechart_formataxisdate",
-      "community": 16,
-      "community_name": "StatsGrowthModal.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "formataxisdate()"
     },
     {
@@ -1964,8 +1964,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statslinechart_formattooltipdate",
-      "community": 16,
-      "community_name": "StatsGrowthModal.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "formattooltipdate()"
     },
     {
@@ -1975,8 +1975,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statslinechart_statslinechart",
-      "community": 16,
-      "community_name": "StatsGrowthModal.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "statslinechart()"
     },
     {
@@ -2063,8 +2063,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsreachmodal",
-      "community": 63,
-      "community_name": "StatsReachModal.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "statsreachmodal.jsx"
     },
     {
@@ -2074,8 +2074,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsreachmodal_typelabel",
-      "community": 63,
-      "community_name": "StatsReachModal.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "typelabel()"
     },
     {
@@ -2085,8 +2085,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsreachmodal_enrichtoppostnumbers",
-      "community": 63,
-      "community_name": "StatsReachModal.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "enrichtoppostnumbers()"
     },
     {
@@ -2096,8 +2096,8 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsreachmodal_infocircleicon",
-      "community": 63,
-      "community_name": "StatsReachModal.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "infocircleicon()"
     },
     {
@@ -2107,8 +2107,8 @@
       "source_location": "L99",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsreachmodal_statsreachmodal",
-      "community": 63,
-      "community_name": "StatsReachModal.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "statsreachmodal()"
     },
     {
@@ -2338,8 +2338,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentpostdetailmodal",
-      "community": 9,
-      "community_name": "Audit Logs Modal",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "tournamentpostdetailmodal.jsx"
     },
     {
@@ -2349,8 +2349,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentpostdetailmodal_tournamentpostdetailmodal",
-      "community": 9,
-      "community_name": "Audit Logs Modal",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "tournamentpostdetailmodal()"
     },
     {
@@ -2503,8 +2503,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_framecolorpicker",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "framecolorpicker.jsx"
     },
     {
@@ -2514,8 +2514,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_features_feed_framecolorpicker_hsvtohex",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "hsvtohex()"
     },
     {
@@ -2525,8 +2525,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "client_src_features_feed_framecolorpicker_hextohsv",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "hextohsv()"
     },
     {
@@ -2536,8 +2536,8 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "client_src_features_feed_framecolorpicker_framecolorpicker",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "framecolorpicker()"
     },
     {
@@ -2701,19 +2701,52 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_postcontextmenu",
-      "community": 9,
-      "community_name": "Audit Logs Modal",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "postcontextmenu.jsx"
+    },
+    {
+      "label": "PinIcon()",
+      "file_type": "code",
+      "source_file": "client/src/features/feed/PostContextMenu.jsx",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "client_src_features_feed_postcontextmenu_pinicon",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
+      "norm_label": "pinicon()"
+    },
+    {
+      "label": "EditIcon()",
+      "file_type": "code",
+      "source_file": "client/src/features/feed/PostContextMenu.jsx",
+      "source_location": "L24",
+      "_origin": "ast",
+      "id": "client_src_features_feed_postcontextmenu_editicon",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
+      "norm_label": "editicon()"
+    },
+    {
+      "label": "DeleteIcon()",
+      "file_type": "code",
+      "source_file": "client/src/features/feed/PostContextMenu.jsx",
+      "source_location": "L38",
+      "_origin": "ast",
+      "id": "client_src_features_feed_postcontextmenu_deleteicon",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
+      "norm_label": "deleteicon()"
     },
     {
       "label": "PostContextMenu()",
       "file_type": "code",
       "source_file": "client/src/features/feed/PostContextMenu.jsx",
-      "source_location": "L25",
+      "source_location": "L75",
       "_origin": "ast",
       "id": "client_src_features_feed_postcontextmenu_postcontextmenu",
-      "community": 9,
-      "community_name": "Audit Logs Modal",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "postcontextmenu()"
     },
     {
@@ -2745,8 +2778,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_postformattoolbar",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "postformattoolbar.jsx"
     },
     {
@@ -2756,8 +2789,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_features_feed_postformattoolbar_postformattoolbar",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "postformattoolbar()"
     },
     {
@@ -2789,8 +2822,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtextfield",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "postrichtextfield.jsx"
     },
     {
@@ -2800,8 +2833,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtextfield_postrichtextfield",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "postrichtextfield()"
     },
     {
@@ -2811,8 +2844,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "postrichtext.js"
     },
     {
@@ -2822,8 +2855,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_default_presets",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "default_presets"
     },
     {
@@ -2833,8 +2866,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_allowed_tags",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "allowed_tags"
     },
     {
@@ -2844,8 +2877,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_allowed_attrs",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "allowed_attrs"
     },
     {
@@ -2855,8 +2888,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_escapehtml",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "escapehtml()"
     },
     {
@@ -2866,8 +2899,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_normalizehexcolor",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "normalizehexcolor()"
     },
     {
@@ -2877,8 +2910,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_loadframepresets",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "loadframepresets()"
     },
     {
@@ -2888,8 +2921,8 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_saveframepresets",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "saveframepresets()"
     },
     {
@@ -2899,8 +2932,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_lookslikerichhtml",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "lookslikerichhtml()"
     },
     {
@@ -2921,8 +2954,8 @@
       "source_location": "L88",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_iseditorempty",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "iseditorempty()"
     },
     {
@@ -2932,8 +2965,8 @@
       "source_location": "L98",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_geteditorhtml",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "geteditorhtml()"
     },
     {
@@ -2943,8 +2976,8 @@
       "source_location": "L107",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_sanitizeposthtml",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "sanitizeposthtml()"
     },
     {
@@ -2954,8 +2987,8 @@
       "source_location": "L119",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_isanimframe",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "isanimframe()"
     },
     {
@@ -2965,8 +2998,8 @@
       "source_location": "L129",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_isblockboundarynode",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "isblockboundarynode()"
     },
     {
@@ -2976,8 +3009,8 @@
       "source_location": "L139",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_serializechildren",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "serializechildren()"
     },
     {
@@ -2987,8 +3020,8 @@
       "source_location": "L151",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_serializesanitized",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "serializesanitized()"
     },
     {
@@ -2998,8 +3031,8 @@
       "source_location": "L240",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_todisplayhtml",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "todisplayhtml()"
     },
     {
@@ -3009,8 +3042,8 @@
       "source_location": "L253",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_getfirstline",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "getfirstline()"
     },
     {
@@ -3020,8 +3053,8 @@
       "source_location": "L306",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_applyformatcommand",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "applyformatcommand()"
     },
     {
@@ -3031,8 +3064,8 @@
       "source_location": "L318",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_applyanimframe",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "applyanimframe()"
     },
     {
@@ -3042,8 +3075,8 @@
       "source_location": "L366",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_ensureframecarets",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "ensureframecarets()"
     },
     {
@@ -3053,8 +3086,8 @@
       "source_location": "L389",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_readactiveformats",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "readactiveformats()"
     },
     {
@@ -3174,8 +3207,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_gallery_addimagemodal",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "addimagemodal.jsx"
     },
     {
@@ -3185,8 +3218,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_features_gallery_addimagemodal_addimagemodal",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "addimagemodal()"
     },
     {
@@ -3196,8 +3229,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_gallery_gallerycommentmodal",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "gallerycommentmodal.jsx"
     },
     {
@@ -3207,8 +3240,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "client_src_features_gallery_gallerycommentmodal_gallerycommentmodal",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "gallerycommentmodal()"
     },
     {
@@ -3317,8 +3350,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationcard",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "notificationcard.jsx"
     },
     {
@@ -3328,8 +3361,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationcard_click_action_labels",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "click_action_labels"
     },
     {
@@ -3339,8 +3372,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationcard_notificationcard",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "notificationcard()"
     },
     {
@@ -3350,8 +3383,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationsdropdown",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "notificationsdropdown.jsx"
     },
     {
@@ -3361,8 +3394,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationsdropdown_notificationsdropdown",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "notificationsdropdown()"
     },
     {
@@ -3372,8 +3405,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationbadges",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "notificationbadges.js"
     },
     {
@@ -3383,8 +3416,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationbadges_formatcountdownpart",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "formatcountdownpart()"
     },
     {
@@ -3394,8 +3427,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationbadges_isuserbooked",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "isuserbooked()"
     },
     {
@@ -3405,8 +3438,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationbadges_formattrainingcountdownbadge",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "formattrainingcountdownbadge()"
     },
     {
@@ -3416,8 +3449,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 16,
+      "community_name": "StatsGrowthModal.jsx",
       "norm_label": "onboardingtutorial.jsx"
     },
     {
@@ -3427,8 +3460,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_tour_steps",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 16,
+      "community_name": "StatsGrowthModal.jsx",
       "norm_label": "tour_steps"
     },
     {
@@ -3438,8 +3471,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_card_steps",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 16,
+      "community_name": "StatsGrowthModal.jsx",
       "norm_label": "card_steps"
     },
     {
@@ -3449,8 +3482,8 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_nav_steps",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 16,
+      "community_name": "StatsGrowthModal.jsx",
       "norm_label": "nav_steps"
     },
     {
@@ -3460,8 +3493,8 @@
       "source_location": "L67",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_normalizedateinput",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 16,
+      "community_name": "StatsGrowthModal.jsx",
       "norm_label": "normalizedateinput()"
     },
     {
@@ -3471,8 +3504,8 @@
       "source_location": "L72",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_scrolltargetintoview",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 16,
+      "community_name": "StatsGrowthModal.jsx",
       "norm_label": "scrolltargetintoview()"
     },
     {
@@ -3482,8 +3515,8 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_padhighlightrect",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 16,
+      "community_name": "StatsGrowthModal.jsx",
       "norm_label": "padhighlightrect()"
     },
     {
@@ -3493,8 +3526,8 @@
       "source_location": "L110",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_gettooltipstyle",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 16,
+      "community_name": "StatsGrowthModal.jsx",
       "norm_label": "gettooltipstyle()"
     },
     {
@@ -3504,8 +3537,8 @@
       "source_location": "L129",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_getstepselectors",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 16,
+      "community_name": "StatsGrowthModal.jsx",
       "norm_label": "getstepselectors()"
     },
     {
@@ -3515,8 +3548,8 @@
       "source_location": "L139",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_onboardingtutorial",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 16,
+      "community_name": "StatsGrowthModal.jsx",
       "norm_label": "onboardingtutorial()"
     },
     {
@@ -3526,8 +3559,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_profile_blockedpage",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 10,
+      "community_name": "LogsModal.jsx",
       "norm_label": "blockedpage.jsx"
     },
     {
@@ -3537,8 +3570,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_features_profile_blockedpage_blockedpage",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 10,
+      "community_name": "LogsModal.jsx",
       "norm_label": "blockedpage()"
     },
     {
@@ -3746,8 +3779,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_profile_profilepage",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 62,
+      "community_name": "ProfilePage.jsx",
       "norm_label": "profilepage.jsx"
     },
     {
@@ -3757,8 +3790,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "client_src_features_profile_profilepage_formatdate",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 62,
+      "community_name": "ProfilePage.jsx",
       "norm_label": "formatdate()"
     },
     {
@@ -3768,8 +3801,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "client_src_features_profile_profilepage_normalizedateinput",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 62,
+      "community_name": "ProfilePage.jsx",
       "norm_label": "normalizedateinput()"
     },
     {
@@ -3779,8 +3812,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "client_src_features_profile_profilepage_gettrainingtitle",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 62,
+      "community_name": "ProfilePage.jsx",
       "norm_label": "gettrainingtitle()"
     },
     {
@@ -3790,8 +3823,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "client_src_features_profile_profilepage_gettrainingstatusforuser",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 62,
+      "community_name": "ProfilePage.jsx",
       "norm_label": "gettrainingstatusforuser()"
     },
     {
@@ -3801,8 +3834,8 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "client_src_features_profile_profilepage_getuserpasttrainings",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 62,
+      "community_name": "ProfilePage.jsx",
       "norm_label": "getuserpasttrainings()"
     },
     {
@@ -3812,8 +3845,8 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "client_src_features_profile_profilepage_training_badge",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 62,
+      "community_name": "ProfilePage.jsx",
       "norm_label": "training_badge"
     },
     {
@@ -3823,8 +3856,8 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "client_src_features_profile_profilepage_profilepage",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 62,
+      "community_name": "ProfilePage.jsx",
       "norm_label": "profilepage()"
     },
     {
@@ -4043,8 +4076,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_rating_playerrow",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 61,
+      "community_name": "Modal.jsx",
       "norm_label": "playerrow.jsx"
     },
     {
@@ -4054,8 +4087,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_features_rating_playerrow_stopsignicon",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 61,
+      "community_name": "Modal.jsx",
       "norm_label": "stopsignicon()"
     },
     {
@@ -4065,8 +4098,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "client_src_features_rating_playerrow_playerrow",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 61,
+      "community_name": "Modal.jsx",
       "norm_label": "playerrow()"
     },
     {
@@ -4076,8 +4109,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_rating_ratingpage",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 61,
+      "community_name": "Modal.jsx",
       "norm_label": "ratingpage.jsx"
     },
     {
@@ -4087,8 +4120,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_features_rating_ratingpage_ratingpage",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 61,
+      "community_name": "Modal.jsx",
       "norm_label": "ratingpage()"
     },
     {
@@ -4472,8 +4505,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_createtrainingmodal",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "createtrainingmodal.jsx"
     },
     {
@@ -4483,8 +4516,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_features_trainings_createtrainingmodal_initial_form",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "initial_form"
     },
     {
@@ -4824,8 +4857,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_membershipoverviewmodal",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 59,
+      "community_name": "MembershipOverviewModal.jsx",
       "norm_label": "membershipoverviewmodal.jsx"
     },
     {
@@ -4835,8 +4868,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_membershipoverviewmodal_trainingcountsasusedsession",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 59,
+      "community_name": "MembershipOverviewModal.jsx",
       "norm_label": "trainingcountsasusedsession()"
     },
     {
@@ -4846,8 +4879,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_membershipoverviewmodal_formatdaterangelabel",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 59,
+      "community_name": "MembershipOverviewModal.jsx",
       "norm_label": "formatdaterangelabel()"
     },
     {
@@ -4857,8 +4890,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_membershipoverviewmodal_calendaricon",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 59,
+      "community_name": "MembershipOverviewModal.jsx",
       "norm_label": "calendaricon()"
     },
     {
@@ -4868,8 +4901,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_membershipoverviewmodal_membershipoverviewmodal",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 59,
+      "community_name": "MembershipOverviewModal.jsx",
       "norm_label": "membershipoverviewmodal()"
     },
     {
@@ -4945,8 +4978,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_useauditevents",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 6,
+      "community_name": "auditEventFormat.js",
       "norm_label": "useauditevents.js"
     },
     {
@@ -4956,8 +4989,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "client_src_hooks_useauditevents_useauditevents",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 6,
+      "community_name": "auditEventFormat.js",
       "norm_label": "useauditevents()"
     },
     {
@@ -5077,8 +5110,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usemaxauth",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 58,
+      "community_name": "auth.js",
       "norm_label": "usemaxauth.js"
     },
     {
@@ -5088,8 +5121,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_hooks_usemaxauth_getinitialuser",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 58,
+      "community_name": "auth.js",
       "norm_label": "getinitialuser()"
     },
     {
@@ -5099,8 +5132,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "client_src_hooks_usemaxauth_usemaxauth",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 58,
+      "community_name": "auth.js",
       "norm_label": "usemaxauth()"
     },
     {
@@ -5110,8 +5143,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_useonboarding",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 16,
+      "community_name": "StatsGrowthModal.jsx",
       "norm_label": "useonboarding.js"
     },
     {
@@ -5121,8 +5154,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_hooks_useonboarding_useonboarding",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 16,
+      "community_name": "StatsGrowthModal.jsx",
       "norm_label": "useonboarding()"
     },
     {
@@ -5132,8 +5165,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usepinchzoom",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "usepinchzoom.js"
     },
     {
@@ -5143,8 +5176,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "client_src_hooks_usepinchzoom_resolvepanlimits",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "resolvepanlimits()"
     },
     {
@@ -5154,8 +5187,8 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "client_src_hooks_usepinchzoom_usepinchzoom",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "usepinchzoom()"
     },
     {
@@ -5165,8 +5198,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_useplayers",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 59,
+      "community_name": "MembershipOverviewModal.jsx",
       "norm_label": "useplayers.js"
     },
     {
@@ -5176,8 +5209,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "client_src_hooks_useplayers_useplayers",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 59,
+      "community_name": "MembershipOverviewModal.jsx",
       "norm_label": "useplayers()"
     },
     {
@@ -5297,8 +5330,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usesessionresetkey",
-      "community": 9,
-      "community_name": "Audit Logs Modal",
+      "community": 10,
+      "community_name": "LogsModal.jsx",
       "norm_label": "usesessionresetkey.js"
     },
     {
@@ -5308,8 +5341,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_hooks_usesessionresetkey_usesessionresetkey",
-      "community": 9,
-      "community_name": "Audit Logs Modal",
+      "community": 10,
+      "community_name": "LogsModal.jsx",
       "norm_label": "usesessionresetkey()"
     },
     {
@@ -5363,8 +5396,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usetrainings",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 60,
+      "community_name": "pb.js",
       "norm_label": "usetrainings.js"
     },
     {
@@ -5374,8 +5407,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_hooks_usetrainings_usetrainings",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 59,
+      "community_name": "MembershipOverviewModal.jsx",
       "norm_label": "usetrainings()"
     },
     {
@@ -6034,8 +6067,8 @@
       "source_location": "L87",
       "_origin": "ast",
       "id": "client_src_lib_format_formatdatetimeshort",
-      "community": 6,
-      "community_name": "auditEventFormat.js",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "formatdatetimeshort()"
     },
     {
@@ -6078,8 +6111,8 @@
       "source_location": "L130",
       "_origin": "ast",
       "id": "client_src_lib_format_pluralize",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "pluralize()"
     },
     {
@@ -6089,8 +6122,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_gestures",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "gestures.js"
     },
     {
@@ -6100,8 +6133,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_lib_gestures_gettouchdistance",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "gettouchdistance()"
     },
     {
@@ -6111,8 +6144,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "client_src_lib_gestures_clamp",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "clamp()"
     },
     {
@@ -6122,8 +6155,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "client_src_lib_gestures_maxpanlimits",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "maxpanlimits()"
     },
     {
@@ -6133,8 +6166,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "client_src_lib_gestures_maxpan",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "maxpan()"
     },
     {
@@ -6144,8 +6177,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "client_src_lib_gestures_backdropopacityfordrag",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "backdropopacityfordrag()"
     },
     {
@@ -6155,8 +6188,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_log",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "log.js"
     },
     {
@@ -6166,8 +6199,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_lib_log_noop",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "noop()"
     },
     {
@@ -6331,8 +6364,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_rating",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 61,
+      "community_name": "Modal.jsx",
       "norm_label": "rating.js"
     },
     {
@@ -6342,8 +6375,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_lib_rating_getratingpoints",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 61,
+      "community_name": "Modal.jsx",
       "norm_label": "getratingpoints()"
     },
     {
@@ -6353,8 +6386,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_lib_rating_isratingvisible",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 61,
+      "community_name": "Modal.jsx",
       "norm_label": "isratingvisible()"
     },
     {
@@ -6364,8 +6397,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_lib_rating_buildplayerranks",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 61,
+      "community_name": "Modal.jsx",
       "norm_label": "buildplayerranks()"
     },
     {
@@ -6375,8 +6408,8 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "client_src_lib_rating_getplayerratingrank",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 61,
+      "community_name": "Modal.jsx",
       "norm_label": "getplayerratingrank()"
     },
     {
@@ -6386,8 +6419,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_main",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 15,
+      "community_name": "FullscreenImageViewer.jsx",
       "norm_label": "main.jsx"
     },
     {
@@ -6397,8 +6430,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_main_globalerrorfallback",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 15,
+      "community_name": "FullscreenImageViewer.jsx",
       "norm_label": "globalerrorfallback()"
     },
     {
@@ -6683,8 +6716,8 @@
       "source_location": "L299",
       "_origin": "ast",
       "id": "client_src_services_admin_getnotificationsettings",
-      "community": 61,
-      "community_name": "Modal.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "getnotificationsettings()"
     },
     {
@@ -6694,8 +6727,8 @@
       "source_location": "L308",
       "_origin": "ast",
       "id": "client_src_services_admin_updatenotificationsettings",
-      "community": 61,
-      "community_name": "Modal.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "updatenotificationsettings()"
     },
     {
@@ -6705,8 +6738,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_auditlog",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 6,
+      "community_name": "auditEventFormat.js",
       "norm_label": "auditlog.js"
     },
     {
@@ -6738,8 +6771,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_services_auditlog_csv_columns",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 6,
+      "community_name": "auditEventFormat.js",
       "norm_label": "csv_columns"
     },
     {
@@ -6749,8 +6782,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "client_src_services_auditlog_adddaystodateinput",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 6,
+      "community_name": "auditEventFormat.js",
       "norm_label": "adddaystodateinput()"
     },
     {
@@ -6760,8 +6793,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "client_src_services_auditlog_buildauditeventsfilter",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 6,
+      "community_name": "auditEventFormat.js",
       "norm_label": "buildauditeventsfilter()"
     },
     {
@@ -6771,8 +6804,8 @@
       "source_location": "L120",
       "_origin": "ast",
       "id": "client_src_services_auditlog_listauditevents",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 6,
+      "community_name": "auditEventFormat.js",
       "norm_label": "listauditevents()"
     },
     {
@@ -6782,8 +6815,8 @@
       "source_location": "L157",
       "_origin": "ast",
       "id": "client_src_services_auditlog_escapecsvcell",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 6,
+      "community_name": "auditEventFormat.js",
       "norm_label": "escapecsvcell()"
     },
     {
@@ -6793,8 +6826,8 @@
       "source_location": "L168",
       "_origin": "ast",
       "id": "client_src_services_auditlog_auditeventtocsvrow",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 6,
+      "community_name": "auditEventFormat.js",
       "norm_label": "auditeventtocsvrow()"
     },
     {
@@ -6804,8 +6837,8 @@
       "source_location": "L175",
       "_origin": "ast",
       "id": "client_src_services_auditlog_exportauditevents",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 6,
+      "community_name": "auditEventFormat.js",
       "norm_label": "exportauditevents()"
     },
     {
@@ -6815,8 +6848,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_auth",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 58,
+      "community_name": "auth.js",
       "norm_label": "auth.js"
     },
     {
@@ -6826,8 +6859,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "client_src_services_auth_buildbanneduser",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 58,
+      "community_name": "auth.js",
       "norm_label": "buildbanneduser()"
     },
     {
@@ -6837,8 +6870,8 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "client_src_services_auth_savebaninfo",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 58,
+      "community_name": "auth.js",
       "norm_label": "savebaninfo()"
     },
     {
@@ -6848,8 +6881,8 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "client_src_services_auth_clearbaninfo",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 58,
+      "community_name": "auth.js",
       "norm_label": "clearbaninfo()"
     },
     {
@@ -6859,8 +6892,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "client_src_services_auth_loadbaninfo",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 58,
+      "community_name": "auth.js",
       "norm_label": "loadbaninfo()"
     },
     {
@@ -6870,8 +6903,8 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "client_src_services_auth_isuserbanned",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 58,
+      "community_name": "auth.js",
       "norm_label": "isuserbanned()"
     },
     {
@@ -6881,8 +6914,8 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "client_src_services_auth_isuserbotblocked",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 10,
+      "community_name": "LogsModal.jsx",
       "norm_label": "isuserbotblocked()"
     },
     {
@@ -6892,8 +6925,8 @@
       "source_location": "L92",
       "_origin": "ast",
       "id": "client_src_services_auth_finalizebanneduser",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 58,
+      "community_name": "auth.js",
       "norm_label": "finalizebanneduser()"
     },
     {
@@ -6903,8 +6936,8 @@
       "source_location": "L104",
       "_origin": "ast",
       "id": "client_src_services_auth_refreshauthuser",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 58,
+      "community_name": "auth.js",
       "norm_label": "refreshauthuser()"
     },
     {
@@ -6914,8 +6947,8 @@
       "source_location": "L120",
       "_origin": "ast",
       "id": "client_src_services_auth_initmaxauth",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 58,
+      "community_name": "auth.js",
       "norm_label": "initmaxauth()"
     },
     {
@@ -6925,8 +6958,8 @@
       "source_location": "L172",
       "_origin": "ast",
       "id": "client_src_services_auth_getcurrentuser",
-      "community": 63,
-      "community_name": "StatsReachModal.jsx",
+      "community": 9,
+      "community_name": "Audit Logs Modal",
       "norm_label": "getcurrentuser()"
     },
     {
@@ -6947,8 +6980,8 @@
       "source_location": "L190",
       "_origin": "ast",
       "id": "client_src_services_auth_hasavatarpatch",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 58,
+      "community_name": "auth.js",
       "norm_label": "hasavatarpatch()"
     },
     {
@@ -7024,8 +7057,8 @@
       "source_location": "L279",
       "_origin": "ast",
       "id": "client_src_services_auth_completeonboarding",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 16,
+      "community_name": "StatsGrowthModal.jsx",
       "norm_label": "completeonboarding()"
     },
     {
@@ -7035,8 +7068,8 @@
       "source_location": "L289",
       "_origin": "ast",
       "id": "client_src_services_auth_updateuserprofile",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 16,
+      "community_name": "StatsGrowthModal.jsx",
       "norm_label": "updateuserprofile()"
     },
     {
@@ -7090,8 +7123,8 @@
       "source_location": "L135",
       "_origin": "ast",
       "id": "client_src_services_catalog_adjustproductfavoritescount",
-      "community": 13,
-      "community_name": "Achievements UI Block",
+      "community": 60,
+      "community_name": "pb.js",
       "norm_label": "adjustproductfavoritescount()"
     },
     {
@@ -7156,8 +7189,8 @@
       "source_location": "L246",
       "_origin": "ast",
       "id": "client_src_services_catalog_deleteproduct",
-      "community": 9,
-      "community_name": "Audit Logs Modal",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "deleteproduct()"
     },
     {
@@ -7167,8 +7200,8 @@
       "source_location": "L253",
       "_origin": "ast",
       "id": "client_src_services_catalog_listplayers",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 59,
+      "community_name": "MembershipOverviewModal.jsx",
       "norm_label": "listplayers()"
     },
     {
@@ -7200,8 +7233,8 @@
       "source_location": "L333",
       "_origin": "ast",
       "id": "client_src_services_catalog_createplayer",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 61,
+      "community_name": "Modal.jsx",
       "norm_label": "createplayer()"
     },
     {
@@ -7332,8 +7365,8 @@
       "source_location": "L565",
       "_origin": "ast",
       "id": "client_src_services_catalog_creategallerycomment",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "creategallerycomment()"
     },
     {
@@ -7343,8 +7376,8 @@
       "source_location": "L579",
       "_origin": "ast",
       "id": "client_src_services_catalog_deletegallerycomment",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "deletegallerycomment()"
     },
     {
@@ -7354,8 +7387,8 @@
       "source_location": "L588",
       "_origin": "ast",
       "id": "client_src_services_catalog_updategallerycomment",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "updategallerycomment()"
     },
     {
@@ -7365,8 +7398,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_notifications",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "notifications.js"
     },
     {
@@ -7376,8 +7409,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_services_notifications_sessions_left_copy",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "sessions_left_copy"
     },
     {
@@ -7387,8 +7420,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "client_src_services_notifications_listnotifications",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "listnotifications()"
     },
     {
@@ -7398,8 +7431,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_services_notifications_usenotifications",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "usenotifications()"
     },
     {
@@ -7409,8 +7442,8 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "client_src_services_notifications_isdeletablenotification",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "isdeletablenotification()"
     },
     {
@@ -7420,8 +7453,8 @@
       "source_location": "L83",
       "_origin": "ast",
       "id": "client_src_services_notifications_marknotificationread",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "marknotificationread()"
     },
     {
@@ -7431,8 +7464,8 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "client_src_services_notifications_deletenotification",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "deletenotification()"
     },
     {
@@ -7442,8 +7475,8 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "client_src_services_notifications_clearallnotifications",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "clearallnotifications()"
     },
     {
@@ -7464,8 +7497,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_pb",
-      "community": 13,
-      "community_name": "Achievements UI Block",
+      "community": 60,
+      "community_name": "pb.js",
       "norm_label": "pb.js"
     },
     {
@@ -7475,8 +7508,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_services_pb_pb",
-      "community": 13,
-      "community_name": "Achievements UI Block",
+      "community": 60,
+      "community_name": "pb.js",
       "norm_label": "pb"
     },
     {
@@ -7574,8 +7607,8 @@
       "source_location": "L164",
       "_origin": "ast",
       "id": "client_src_services_posts_createpostwithprogress",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 15,
+      "community_name": "FullscreenImageViewer.jsx",
       "norm_label": "createpostwithprogress()"
     },
     {
@@ -7618,8 +7651,8 @@
       "source_location": "L257",
       "_origin": "ast",
       "id": "client_src_services_posts_harddeletepost",
-      "community": 9,
-      "community_name": "Audit Logs Modal",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "harddeletepost()"
     },
     {
@@ -7684,8 +7717,8 @@
       "source_location": "L359",
       "_origin": "ast",
       "id": "client_src_services_posts_purgeabandonedcomments",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 58,
+      "community_name": "auth.js",
       "norm_label": "purgeabandonedcomments()"
     },
     {
@@ -7695,8 +7728,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_stats",
-      "community": 16,
-      "community_name": "StatsGrowthModal.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "stats.js"
     },
     {
@@ -7706,8 +7739,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "client_src_services_stats_periodquery",
-      "community": 16,
-      "community_name": "StatsGrowthModal.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "periodquery()"
     },
     {
@@ -7717,8 +7750,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "client_src_services_stats_fetchstatsgrowth",
-      "community": 16,
-      "community_name": "StatsGrowthModal.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "fetchstatsgrowth()"
     },
     {
@@ -7728,8 +7761,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "client_src_services_stats_fetchstatsreach",
-      "community": 16,
-      "community_name": "StatsGrowthModal.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "fetchstatsreach()"
     },
     {
@@ -7739,8 +7772,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "client_src_services_stats_fetchstatsbooking",
-      "community": 16,
-      "community_name": "StatsGrowthModal.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "fetchstatsbooking()"
     },
     {
@@ -7750,8 +7783,8 @@
       "source_location": "L85",
       "_origin": "ast",
       "id": "client_src_services_stats_fetchstatstrainingscount",
-      "community": 16,
-      "community_name": "StatsGrowthModal.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "fetchstatstrainingscount()"
     },
     {
@@ -7761,8 +7794,8 @@
       "source_location": "L105",
       "_origin": "ast",
       "id": "client_src_services_stats_fetchstatsgrowthday",
-      "community": 16,
-      "community_name": "StatsGrowthModal.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "fetchstatsgrowthday()"
     },
     {
@@ -7816,8 +7849,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_tournamentcomments",
-      "community": 9,
-      "community_name": "Audit Logs Modal",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "tournamentcomments.js"
     },
     {
@@ -7860,8 +7893,8 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "client_src_services_tournamentcomments_harddeletetournamentcomment",
-      "community": 9,
-      "community_name": "Audit Logs Modal",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "harddeletetournamentcomment()"
     },
     {
@@ -7871,8 +7904,8 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "client_src_services_tournamentcomments_flushpendingtournamentcommentdeletes",
-      "community": 9,
-      "community_name": "Audit Logs Modal",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "flushpendingtournamentcommentdeletes()"
     },
     {
@@ -8234,8 +8267,8 @@
       "source_location": "L357",
       "_origin": "ast",
       "id": "client_src_services_trainings_listcancelledtrainingsforuser",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 62,
+      "community_name": "ProfilePage.jsx",
       "norm_label": "listcancelledtrainingsforuser()"
     },
     {
@@ -8487,8 +8520,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_users",
-      "community": 13,
-      "community_name": "Achievements UI Block",
+      "community": 60,
+      "community_name": "pb.js",
       "norm_label": "users.js"
     },
     {
@@ -8498,8 +8531,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_services_users_listusers",
-      "community": 13,
-      "community_name": "Achievements UI Block",
+      "community": 60,
+      "community_name": "pb.js",
       "norm_label": "listusers()"
     },
     {
@@ -25224,7 +25257,40 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostContextMenu.jsx",
-      "source_location": "L25",
+      "source_location": "L38",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postcontextmenu",
+      "target": "client_src_features_feed_postcontextmenu_deleteicon",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/PostContextMenu.jsx",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postcontextmenu",
+      "target": "client_src_features_feed_postcontextmenu_editicon",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/PostContextMenu.jsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postcontextmenu",
+      "target": "client_src_features_feed_postcontextmenu_pinicon",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/PostContextMenu.jsx",
+      "source_location": "L75",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postcontextmenu",
@@ -25273,7 +25339,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/features/feed/PostContextMenu.jsx",
-      "source_location": "L82",
+      "source_location": "L132",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postcontextmenu_postcontextmenu",
@@ -46207,5 +46273,5 @@
       "source_file": "client/src/assets/ach/1_1.png"
     }
   ],
-  "built_at_commit": "a464a5887a946a2849cf6a8d18a0fbaa5b7e40cc"
+  "built_at_commit": "08fe0589da02d36a74a4d3c302e13a947cef9119"
 }

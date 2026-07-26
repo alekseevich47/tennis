@@ -1,6 +1,8 @@
 {
   "0": "App Shell Navigation",
+  "1": "AvatarCropModal.jsx",
   "2": "Post Upload and UI Kit",
+  "3": "notifications.js",
   "4": "Gallery Upload Flow",
   "5": "Admin UI Controls",
   "6": "auditEventFormat.js",
@@ -55,6 +57,9 @@
   "55": "Touch UI Performance",
   "56": "PostDetailModal.jsx",
   "57": "log.js",
+  "58": "auth.js",
+  "59": "MembershipOverviewModal.jsx",
+  "60": "pb.js",
   "61": "Modal.jsx",
-  "63": "StatsReachModal.jsx"
+  "62": "ProfilePage.jsx"
 }
