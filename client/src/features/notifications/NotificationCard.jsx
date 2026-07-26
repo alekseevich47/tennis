@@ -2,7 +2,9 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { formatPostDate } from '../../lib/format';
 import { markNotificationRead, isDeletableNotification } from '../../services/notifications';
+import PostContentHtml from '../feed/PostContentHtml';
 import { formatTrainingCountdownBadge } from './notificationBadges';
+import '../feed/Feed.css';
 import './NotificationCard.css';
 
 const CLICK_ACTION_LABELS = {
@@ -148,13 +150,23 @@ export default function NotificationCard({
         <span className="notification-card__unread-dot" aria-hidden="true" />
       ) : null}
       <div className="notification-card__header">
-        <h3 className="notification-card__title">{notification.title || 'Уведомление'}</h3>
+        <PostContentHtml
+          as="h3"
+          className="notification-card__title"
+          content={String(notification.title || 'Уведомление')}
+        />
         <time className="notification-card__time" dateTime={String(notification.created || '')}>
           {notification.created ? formatPostDate(notification.created) : ''}
         </time>
       </div>
 
-      {notification.body ? <p className="notification-card__body">{notification.body}</p> : null}
+      {notification.body ? (
+        <PostContentHtml
+          as="div"
+          className="notification-card__body"
+          content={String(notification.body)}
+        />
+      ) : null}
 
       {badgeText || clickLabel ? (
         <div className="notification-card__meta">

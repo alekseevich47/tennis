@@ -114,6 +114,30 @@
   word-break: break-word;
 }
 
+.admin-modal__pending-title-html {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.admin-modal__pending-body-html {
+  color: #4b5563;
+}
+
+.admin-modal__pending-title-html .post-anim-frame,
+.admin-modal__pending-body-html .post-anim-frame {
+  font-size: 12px;
+  padding: 1px 8px;
+}
+
+.admin-modal__field .post-rich-text {
+  width: 100%;
+}
+
+.admin-modal__field .post-rich-text__editor {
+  border-color: #dce6f2;
+  border-radius: 6px;
+}
+
 .admin-modal__pending-meta {
   display: block;
   margin-top: 4px;

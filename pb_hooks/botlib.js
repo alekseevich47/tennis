@@ -3,6 +3,53 @@
 
 const PB_PUBLIC_BASE = $os.getenv('PB_PUBLIC_URL') || 'https://urban42.online/tt';
 
+/**
+ * HTML из PostRichTextField → markdown MAX Bot API (*bold*, _italic_).
+ * Plain-text без тегов возвращается как есть (обратная совместимость).
+ */
+function htmlToMaxMarkdown(html) {
+  if (!html) return '';
+  var s = String(html);
+  if (s.indexOf('<') === -1) return s;
+
+  function decodeEntities(value) {
+    return String(value)
+      .replace(/&nbsp;/gi, ' ')
+      .replace(/&amp;/gi, '&')
+      .replace(/&lt;/gi, '<')
+      .replace(/&gt;/gi, '>')
+      .replace(/&quot;/gi, '"')
+      .replace(/&#39;/gi, "'");
+  }
+
+  function stripTags(value) {
+    return decodeEntities(String(value).replace(/<[^>]+>/g, ''));
+  }
+
+  s = s.replace(/<br\s*\/?>/gi, '\n');
+  s = s.replace(/<\/(div|p)>/gi, '\n');
+  s = s.replace(/<(div|p)(?:\s[^>]*)?>/gi, '');
+
+  // Несколько проходов — на случай вложенных b/i.
+  for (var pass = 0; pass < 3; pass++) {
+    s = s.replace(/<(strong|b)(?:\s[^>]*)?>([\s\S]*?)<\/\1>/gi, function (_m, _tag, inner) {
+      var t = stripTags(inner).trim();
+      return t ? '*' + t + '*' : '';
+    });
+    s = s.replace(/<(em|i)(?:\s[^>]*)?>([\s\S]*?)<\/\1>/gi, function (_m, _tag, inner) {
+      var t = stripTags(inner).trim();
+      return t ? '_' + t + '_' : '';
+    });
+  }
+
+  s = s.replace(/<u(?:\s[^>]*)?>([\s\S]*?)<\/u>/gi, function (_m, inner) {
+    return stripTags(inner);
+  });
+  s = s.replace(/<[^>]+>/g, '');
+  s = decodeEntities(s);
+  return s.replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+}
+
 function sendBotMessage(maxId, text, attachments) {
   if (!maxId) return;
   const token = $os.getenv('MAX_BOT_TOKEN');
@@ -198,5 +245,6 @@ module.exports = {
   broadcastToUserIds: broadcastToUserIds,
   broadcastNewPublication: broadcastNewPublication,
   buildPublicFileAttachments: buildPublicFileAttachments,
+  htmlToMaxMarkdown: htmlToMaxMarkdown,
   PB_PUBLIC_BASE: PB_PUBLIC_BASE
 };

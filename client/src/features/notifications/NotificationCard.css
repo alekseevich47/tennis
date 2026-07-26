@@ -38,6 +38,13 @@
   font-size: 14px;
   font-weight: 600;
   color: #1a1a1a;
+  word-break: break-word;
+}
+
+.notification-card__title .post-anim-frame,
+.notification-card__body .post-anim-frame {
+  font-size: 12px;
+  padding: 1px 8px;
 }
 
 .notification-card__time {
@@ -52,6 +59,7 @@
   font-size: 13px;
   line-height: 1.45;
   color: #4b5563;
+  word-break: break-word;
 }
 
 .notification-card__meta {
