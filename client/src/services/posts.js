@@ -2,6 +2,7 @@
 import pb from './pb';
 import { error } from '../lib/log';
 import { PB_URL } from '../config';
+import { requestCommentReplyNotification } from './notifications';
 
 /**
  * @typedef {Object} PostRecord
@@ -271,9 +272,13 @@ export async function createComment({ postId, authorId, text, replyToId }) {
     text
   };
   if (replyToId) payload.reply_to = replyToId;
-  return /** @type {CommentRecord} */ (await pb.collection('comments').create(payload, {
+  const record = /** @type {CommentRecord} */ (await pb.collection('comments').create(payload, {
     expand: 'author,reply_to,reply_to.author'
   }));
+  if (replyToId && record?.id) {
+    void requestCommentReplyNotification('comments', record.id);
+  }
+  return record;
 }
 
 /**

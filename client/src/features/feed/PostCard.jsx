@@ -46,8 +46,11 @@ function PostCardLike({ postId, user }) {
     <button
       type="button"
       className={clsx('post-card-like', liked && 'post-card-like--liked')}
+      onPointerDown={(event) => event.stopPropagation()}
+      onPointerUp={(event) => event.stopPropagation()}
       onClick={(event) => {
         event.stopPropagation();
+        event.preventDefault();
         toggle(postId, userId);
       }}
       disabled={isLoading}
@@ -118,6 +121,16 @@ function PostCard({
   };
 
   const handleCardClick = (event) => {
+    // Лайк/комменты/интерактив внутри карточки — не открывать деталку
+    // (иначе setPointerCapture long-press на article перехватывает click).
+    if (
+      event.target instanceof Element &&
+      event.target.closest(
+        'button, a, input, textarea, [role="button"], .post-card-like, .post-card-comment-btn, .comments-preview-trigger'
+      )
+    ) {
+      return;
+    }
     longPressHandlers.onClick(event);
     if (event.defaultPrevented) return;
     handleOpenDetail();
@@ -211,11 +224,16 @@ function PostCard({
           />
         </div>
 
-        <div className="feed-card-footer feed-card-bottom-bar">
+        <div
+          className="feed-card-footer feed-card-bottom-bar"
+          onClick={(event) => event.stopPropagation()}
+          onPointerDown={(event) => event.stopPropagation()}
+        >
           <PostCardLike postId={post.id} user={user} />
           <button
             type="button"
             className="post-card-comment-btn"
+            onPointerDown={(event) => event.stopPropagation()}
             onClick={handleOpenComments}
             aria-label={`Открыть комментарии к публикации. Комментариев: ${commentCount}`}
           >
