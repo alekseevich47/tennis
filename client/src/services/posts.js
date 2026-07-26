@@ -28,6 +28,7 @@ import { PB_URL } from '../config';
  * @property {string} post
  * @property {string} author
  * @property {string} text
+ * @property {string} [reply_to]
  * @property {boolean} [is_deleted]
  * @property {string} created
  * @property {Record<string, unknown>} [expand]
@@ -86,7 +87,7 @@ export async function listCommentsForPost(postId, { signal } = {}) {
     return /** @type {CommentRecord[]} */ (await pb.collection('comments').getFullList({
       filter: pb.filter('post = {:postId}', { postId }),
       sort: 'created',
-      expand: 'author',
+      expand: 'author,reply_to,reply_to.author',
       requestKey: null,
       signal
     }));
@@ -259,15 +260,20 @@ export async function hardDeletePost(postId) {
 }
 
 /**
- * @param {{ postId: string, authorId: string, text: string }} params
+ * @param {{ postId: string, authorId: string, text: string, replyToId?: string | null }} params
  */
-export async function createComment({ postId, authorId, text }) {
+export async function createComment({ postId, authorId, text, replyToId }) {
   if (!authorId) throw new Error('Не авторизован: нельзя создать комментарий без author.id');
-  return /** @type {CommentRecord} */ (await pb.collection('comments').create({
+  /** @type {Record<string, unknown>} */
+  const payload = {
     post: postId,
     author: authorId,
     text
-  }, { expand: 'author' }));
+  };
+  if (replyToId) payload.reply_to = replyToId;
+  return /** @type {CommentRecord} */ (await pb.collection('comments').create(payload, {
+    expand: 'author,reply_to,reply_to.author'
+  }));
 }
 
 /**

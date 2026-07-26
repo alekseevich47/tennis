@@ -86,9 +86,12 @@ export default function PostContextMenu({
   const menuRef = useRef(/** @type {HTMLDivElement | null} */ (null));
   const [mounted, setMounted] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  // Снимок на время open→exit: при закрытии parent обнуляет post → isPinned=false, иначе текст мигает.
+  const [displayPinned, setDisplayPinned] = useState(isPinned);
 
   useEffect(() => {
     if (isOpen) {
+      setDisplayPinned(isPinned);
       setMounted(true);
       const frame = requestAnimationFrame(() => setIsVisible(true));
       return () => cancelAnimationFrame(frame);
@@ -96,7 +99,7 @@ export default function PostContextMenu({
 
     setIsVisible(false);
     return undefined;
-  }, [isOpen]);
+  }, [isOpen, isPinned]);
 
   const handleTransitionEnd = useCallback((event) => {
     if (event.target !== menuRef.current) return;
@@ -206,7 +209,7 @@ export default function PostContextMenu({
           onClick={() => runAndClose(onTogglePin)}
         >
           <PinIcon />
-          {isPinned ? 'Открепить' : 'Закрепить'}
+          {displayPinned ? 'Открепить' : 'Закрепить'}
         </button>
         <button
           type="button"

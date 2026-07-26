@@ -27,16 +27,26 @@ const SCROLL_DELTA_THRESHOLD = 4;
  *   user: any,
  *   onDeletedIdsChange?: (ids: string[]) => void,
  *   searchQuery?: string,
- *   searchOpen?: boolean
+ *   searchOpen?: boolean,
+ *   commentTargetToOpen?: { postId?: string, commentId?: string } | null,
+ *   onCommentTargetOpened?: () => void
  * }} props
  */
-function FeedPage({ user, onDeletedIdsChange, searchQuery = '', searchOpen = false }) {
+function FeedPage({
+  user,
+  onDeletedIdsChange,
+  searchQuery = '',
+  searchOpen = false,
+  commentTargetToOpen = null,
+  onCommentTargetOpened
+}) {
   const userIsModerator = isModerator();
   const { data: posts, isLoading, mutate } = usePosts({ includeDeleted: userIsModerator });
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const [focusComment, setFocusComment] = useState(false);
+  const [highlightCommentId, setHighlightCommentId] = useState(/** @type {string | null} */ (null));
   const [editingPost, setEditingPost] = useState(null);
   const [fullscreenMedia, setFullscreenMedia] = useState(null);
   const [hiddenMediaKey, setHiddenMediaKey] = useState(null);
@@ -172,7 +182,18 @@ function FeedPage({ user, onDeletedIdsChange, searchQuery = '', searchOpen = fal
   const handleOpenDetail = useCallback((post, shouldFocusComment = false) => {
     setSelectedPost(post);
     setFocusComment(shouldFocusComment);
+    setHighlightCommentId(null);
   }, []);
+
+  useEffect(() => {
+    if (!commentTargetToOpen?.postId || !posts?.length) return;
+    const post = posts.find((item) => item.id === commentTargetToOpen.postId);
+    if (!post) return;
+    setSelectedPost(post);
+    setFocusComment(true);
+    setHighlightCommentId(commentTargetToOpen.commentId || null);
+    onCommentTargetOpened?.();
+  }, [commentTargetToOpen, posts, onCommentTargetOpened]);
 
   const handleOpenEdit = useCallback((post) => {
     if (!userIsModerator) return;
@@ -245,6 +266,7 @@ function FeedPage({ user, onDeletedIdsChange, searchQuery = '', searchOpen = fal
   const handleCloseDetail = useCallback(() => {
     setSelectedPost(null);
     setFocusComment(false);
+    setHighlightCommentId(null);
   }, []);
 
   const handleOpenFullscreen = useCallback((items, index = 0, originRect = null, originKey = null) => {
@@ -347,6 +369,7 @@ function FeedPage({ user, onDeletedIdsChange, searchQuery = '', searchOpen = fal
         isOpen={Boolean(selectedPost)}
         post={selectedPost}
         focusComment={focusComment}
+        highlightCommentId={highlightCommentId}
         user={user}
         userIsModerator={userIsModerator}
         hiddenMediaKey={hiddenMediaKey}

@@ -51,7 +51,9 @@ const SCROLL_CHROME_LOCK_MS = 280;
  *   onSubTabChange?: (subTab: string) => void,
  *   onDeletedIdsChange?: (ids: string[]) => void,
  *   searchQuery?: string,
- *   searchOpen?: boolean
+ *   searchOpen?: boolean,
+ *   commentTargetToOpen?: { postId?: string, commentId?: string } | null,
+ *   onCommentTargetOpened?: () => void
  * }} props
  */
 function CompetitionsPage({
@@ -60,7 +62,9 @@ function CompetitionsPage({
   onSubTabChange,
   onDeletedIdsChange,
   searchQuery = '',
-  searchOpen = false
+  searchOpen = false,
+  commentTargetToOpen = null,
+  onCommentTargetOpened
 }) {
   const moderator = isModerator();
   const { data: players } = usePlayers();
@@ -74,6 +78,7 @@ function CompetitionsPage({
   const [isChromeVisible, setIsChromeVisible] = useState(true);
   const [viewingPlayer, setViewingPlayer] = useState(null);
   const [openedPost, setOpenedPost] = useState(null);
+  const [highlightCommentId, setHighlightCommentId] = useState(/** @type {string | null} */ (null));
   const [editingPost, setEditingPost] = useState(null);
   const [deletedPostIds, setDeletedPostIds] = useState([]);
   const [contextMenuState, setContextMenuState] = useState(
@@ -247,7 +252,19 @@ function CompetitionsPage({
 
   const handleOpenDetail = useCallback((post) => {
     setOpenedPost(post);
+    setHighlightCommentId(null);
   }, []);
+
+  useEffect(() => {
+    if (!commentTargetToOpen?.postId || !posts?.length) return;
+    const post = posts.find((item) => item.id === commentTargetToOpen.postId);
+    if (!post) return;
+    setActiveTab('feed');
+    onSubTabChange?.('feed');
+    setOpenedPost(post);
+    setHighlightCommentId(commentTargetToOpen.commentId || null);
+    onCommentTargetOpened?.();
+  }, [commentTargetToOpen, posts, onCommentTargetOpened, onSubTabChange]);
 
   const handleOpenEdit = useCallback((post) => {
     if (!moderator) return;
@@ -497,7 +514,11 @@ function CompetitionsPage({
         players={players || []}
         user={user}
         userIsModerator={moderator}
-        onClose={() => setOpenedPost(null)}
+        highlightCommentId={highlightCommentId}
+        onClose={() => {
+          setOpenedPost(null);
+          setHighlightCommentId(null);
+        }}
         onOpenProfile={setViewingPlayer}
         onEdit={(post) => {
           setOpenedPost(null);
