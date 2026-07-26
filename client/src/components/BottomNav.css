@@ -3,18 +3,16 @@
   --bottom-nav-bottom: 10px;
   --bottom-nav-height: 56px;
 
-  /* Полоса на весь низ экрана (без safe-area) — пилюля внутри с отступами
-     от краёв, чтобы визуально «отлипала» от границ экрана. */
+  /* Только пилюля: inset left/right/bottom, без полноширинной полосы
+     left:0…right:0 (она читалась как светло-серый прямоугольник под меню). */
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  left: max(var(--bottom-nav-side), env(safe-area-inset-left, 0px));
+  right: max(var(--bottom-nav-side), env(safe-area-inset-right, 0px));
+  bottom: var(--bottom-nav-bottom);
   z-index: 1000;
   display: flex;
   justify-content: center;
-  padding: 0 max(var(--bottom-nav-side), env(safe-area-inset-left, 0px))
-    var(--bottom-nav-bottom)
-    max(var(--bottom-nav-side), env(safe-area-inset-right, 0px));
+  padding: 0;
   box-sizing: border-box;
   pointer-events: none;
   background: transparent;
