@@ -548,12 +548,27 @@
   text-align: left;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  font: inherit;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: inherit;
   color: inherit;
 }
 
 .stats-reach__type-row--btn:active strong {
   color: #0d6efd;
+}
+
+.stats-reach__user-row {
+  align-items: center;
+}
+
+.stats-reach__user-views {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #1f2937;
 }
 
 .stats-reach__top-title {
