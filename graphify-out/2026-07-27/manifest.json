@@ -215,8 +215,8 @@
     "semantic_hash": ""
   },
   "client/src/features/competitions/TournamentCommentsSection.jsx": {
-    "mtime": 1785042430.647722,
-    "ast_hash": "3fe716111c2d20a34d930fcb92a6ebb8",
+    "mtime": 1785165706.5876927,
+    "ast_hash": "395b6a0b1b7f294c33be0be9845780c6",
     "semantic_hash": ""
   },
   "client/src/features/competitions/TournamentPodium.jsx": {
@@ -275,8 +275,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostDetailModal.jsx": {
-    "mtime": 1785149368.9349093,
-    "ast_hash": "950263c6aa855204584b1d29bdeaad32",
+    "mtime": 1785165701.4606783,
+    "ast_hash": "2b05b21f7ac06b65610ecf92dedc8ac1",
     "semantic_hash": ""
   },
   "client/src/features/feed/PostMedia.jsx": {
@@ -290,8 +290,8 @@
     "semantic_hash": "06d70b8a0c04a44b3f6903e1312b89d2"
   },
   "client/src/features/gallery/GalleryCommentModal.jsx": {
-    "mtime": 1785042449.665903,
-    "ast_hash": "5f3318bd7ff96906ed6648efaf585fe0",
+    "mtime": 1785165706.5876927,
+    "ast_hash": "07e573c229bbd4a671bf0cdfc9dc4018",
     "semantic_hash": ""
   },
   "client/src/features/gallery/GalleryMediaOverlay.jsx": {
@@ -305,8 +305,8 @@
     "semantic_hash": ""
   },
   "client/src/features/notifications/NotificationCard.jsx": {
-    "mtime": 1785152568.0838177,
-    "ast_hash": "227c3ab058f58998c1b0491fbf2ec8c0",
+    "mtime": 1785165742.633258,
+    "ast_hash": "98decbd2590a4d612e8f19715f43dcae",
     "semantic_hash": ""
   },
   "client/src/features/notifications/NotificationsDropdown.jsx": {
@@ -1050,8 +1050,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostRichTextField.jsx": {
-    "mtime": 1785026049.8113933,
-    "ast_hash": "e22eff4316078f8804418bf8ffa111c9",
+    "mtime": 1785165697.0973232,
+    "ast_hash": "aab6471f221b4eed4b8bad3f07740fff",
     "semantic_hash": ""
   },
   "client/src/features/feed/postRichText.js": {
