@@ -131,9 +131,56 @@ function isReadyToFinalizePendingDelete(training, graceMs) {
   return refDate <= cutoff;
 }
 
+var BOT_BLOCKED_BOOKING_MESSAGE =
+  'Невозможно записать: пользователь заблокировал бота в MAX, уведомления о тренировках недоступны.';
+
+/**
+ * Серверная валидация новых записей на тренировку (до сохранения).
+ * @param {core.Record} original
+ * @param {core.Record} record
+ */
+function validateBookingAdditions(original, record) {
+  var audit = require(__hooks + '/auditlib.js');
+  var added = audit.newlyAdded(original.get('booked_users'), record.get('booked_users'));
+  if (!added.length) return;
+
+  var maxSlots = record.getFloat('max_slots') || 0;
+  var bookedCount = audit.newlyAdded([], record.get('booked_users')).length;
+  if (maxSlots > 0 && bookedCount > maxSlots) {
+    throw new BadRequestError('Нет свободных мест');
+  }
+
+  var i;
+  for (i = 0; i < added.length; i++) {
+    var userId = added[i];
+    var user;
+    try {
+      user = $app.findRecordById('users', userId);
+    } catch (_) {
+      throw new BadRequestError('Пользователь не найден');
+    }
+
+    if (user.getBool('bot_blocked')) {
+      throw new BadRequestError(BOT_BLOCKED_BOOKING_MESSAGE);
+    }
+    if (user.getBool('membership_frozen')) {
+      throw new BadRequestError('Абонемент пользователя заморожен. Запись невозможна.');
+    }
+
+    var membershipType = user.getString('membership_type') || 'regular';
+    if (!isUnlimitedMembership(membershipType)) {
+      var available = user.getFloat('available_sessions') || 0;
+      if (available <= 0) {
+        throw new BadRequestError('Нет доступных посещений');
+      }
+    }
+  }
+}
+
 module.exports = {
   FINALIZE_GRACE_MS: FINALIZE_GRACE_MS,
   finalizeCancelledTrainingRecord: finalizeCancelledTrainingRecord,
   isReadyToFinalizePendingDelete: isReadyToFinalizePendingDelete,
-  hasTimeRangeEnded: hasTimeRangeEnded
+  hasTimeRangeEnded: hasTimeRangeEnded,
+  validateBookingAdditions: validateBookingAdditions
 };

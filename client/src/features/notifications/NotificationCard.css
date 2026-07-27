@@ -186,9 +186,35 @@
   color: #4b5563;
 }
 
+.notification-card__reply-action {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #4b5563;
+}
+
+.notification-card__reply-action-label {
+  flex-shrink: 0;
+}
+
+.notification-card__reply-parent {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #4b5563;
+  word-break: break-word;
+}
+
+.notification-card__reply-parent-text {
+  color: #1a1a1a;
+}
+
 .notification-card__badge--reply {
   display: inline-block;
-  margin-top: 8px;
+  margin-top: 0;
   padding: 6px 12px;
   border-radius: 999px;
   background: #eef1f4;
