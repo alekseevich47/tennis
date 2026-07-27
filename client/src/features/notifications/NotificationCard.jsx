@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
-import { formatPostDate, formatRelativeTime } from '../../lib/format';
+import { formatRelativeTime } from '../../lib/format';
 import { markNotificationRead, isDeletableNotification } from '../../services/notifications';
 import PostContentHtml from '../feed/PostContentHtml';
 import Avatar from '../../components/ui/Avatar';
@@ -14,6 +14,14 @@ const CLICK_ACTION_LABELS = {
 };
 
 const READ_VISIBLE_DELAY_MS = 1200;
+
+/** @param {string} body */
+function parseCommentReplyParentText(body) {
+  const text = String(body || '').trim();
+  const legacyMatch = text.match(/^ответил(?:\(а\))? на ваш комментарий [«"](.+)[»"]$/i);
+  if (legacyMatch) return legacyMatch[1];
+  return text;
+}
 
 /**
  * @param {{
@@ -58,18 +66,9 @@ export default function NotificationCard({
     (meta && typeof meta === 'object' && meta.kind === 'comment_reply');
 
   useEffect(() => {
-    if (badgeDynamicType !== 'training_countdown') return undefined;
     const timer = window.setInterval(() => setNow(new Date()), 60_000);
     return () => window.clearInterval(timer);
-  }, [badgeDynamicType]);
-
-  useEffect(() => {
-    if (isCommentReply) {
-      const timer = window.setInterval(() => setNow(new Date()), 60_000);
-      return () => window.clearInterval(timer);
-    }
-    return undefined;
-  }, [isCommentReply]);
+  }, []);
 
   useEffect(() => {
     if (isRead || markedRef.current) return undefined;
@@ -168,6 +167,7 @@ export default function NotificationCard({
       meta && typeof meta === 'object' ? meta.actor : undefined
     );
     const actorName = String(notification.title || actor?.full_name || 'Игрок секции');
+    const parentCommentText = parseCommentReplyParentText(String(notification.body || ''));
 
     return (
       <article
@@ -203,15 +203,17 @@ export default function NotificationCard({
                 {notification.created ? formatRelativeTime(notification.created, now) : ''}
               </time>
             </div>
-            {notification.body ? (
-              <PostContentHtml
-                as="div"
-                className="notification-card__body notification-card__body--reply"
-                content={String(notification.body)}
-              />
-            ) : null}
-            {badgeText ? (
-              <span className="notification-card__badge notification-card__badge--reply">{badgeText}</span>
+            <p className="notification-card__reply-action">
+              <span className="notification-card__reply-action-label">ответил(а):</span>
+              {badgeText ? (
+                <span className="notification-card__badge notification-card__badge--reply">{badgeText}</span>
+              ) : null}
+            </p>
+            {parentCommentText ? (
+              <p className="notification-card__reply-parent">
+                на Ваш комментарий:{' '}
+                <span className="notification-card__reply-parent-text">{parentCommentText}</span>
+              </p>
             ) : null}
           </div>
         </div>
@@ -247,7 +249,7 @@ export default function NotificationCard({
           content={String(notification.title || 'Уведомление')}
         />
         <time className="notification-card__time" dateTime={String(notification.created || '')}>
-          {notification.created ? formatPostDate(notification.created) : ''}
+          {notification.created ? formatRelativeTime(notification.created, now) : ''}
         </time>
       </div>
 

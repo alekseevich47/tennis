@@ -12,7 +12,6 @@
   "10": "LogsModal.jsx",
   "11": "Stats Library Helpers",
   "12": "Achievement Badge Assets",
-  "13": "Achievements UI Block",
   "14": "datePickerUtils.js",
   "15": "FullscreenImageViewer.jsx",
   "16": "StatsGrowthModal.jsx",
@@ -56,5 +55,8 @@
   "54": "Users Default Visible",
   "55": "Touch UI Performance",
   "56": "PostDetailModal.jsx",
-  "57": "log.js"
+  "57": "log.js",
+  "58": "postRichText.js",
+  "60": "notifications.js",
+  "64": "trainings_booking_validate.pb.js"
 }

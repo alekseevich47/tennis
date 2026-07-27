@@ -487,6 +487,20 @@
   margin: 0 0 16px;
 }
 
+.stats-reach__stat-btn {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.stats-reach__stat-btn:active .stats-trainings__stat-value {
+  color: #0d6efd;
+}
+
 .stats-reach__by-type {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -523,6 +537,23 @@
 .stats-reach__type-row strong {
   font-variant-numeric: tabular-nums;
   font-weight: 600;
+}
+
+.stats-reach__type-row--btn {
+  width: 100%;
+  margin: 0;
+  padding: 2px 0;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  font: inherit;
+  color: inherit;
+}
+
+.stats-reach__type-row--btn:active strong {
+  color: #0d6efd;
 }
 
 .stats-reach__top-title {

@@ -325,6 +325,9 @@ function getReach(period) {
     };
   }
 
+  var postActive = Object.keys(byType.post.activeSet).length;
+  var tournamentActive = Object.keys(byType.tournament_post.activeSet).length;
+
   return {
     viewsTotal: viewsTotal,
     activeCount: activeCount,
@@ -333,14 +336,76 @@ function getReach(period) {
     byType: {
       post: {
         viewsTotal: byType.post.viewsTotal,
-        activeCount: Object.keys(byType.post.activeSet).length
+        activeCount: postActive,
+        passiveCount: Math.max(0, totalUsers - postActive)
       },
       tournament_post: {
         viewsTotal: byType.tournament_post.viewsTotal,
-        activeCount: Object.keys(byType.tournament_post.activeSet).length
+        activeCount: tournamentActive,
+        passiveCount: Math.max(0, totalUsers - tournamentActive)
       }
     },
     topPosts: topPosts
+  };
+}
+
+/**
+ * Список активных/пассивных пользователей по охвату.
+ * @param {{ start: string, end: string, startUtc: Date, endExclusiveUtc: Date }} period
+ * @param {'active'|'passive'} kind
+ * @param {''|'all'|'post'|'tournament_post'} scope
+ */
+function getReachUsers(period, kind, scope) {
+  var k = kind === 'passive' ? 'passive' : 'active';
+  var sc = scope === 'post' || scope === 'tournament_post' ? scope : 'all';
+
+  var filter =
+    'created >= "' +
+    pbTimestamp(period.startUtc) +
+    '" && created < "' +
+    pbTimestamp(period.endExclusiveUtc) +
+    '"';
+  var views = $app.findRecordsByFilter('content_views', filter, '-created', 0, 0);
+  var activeSet = {};
+  var i;
+  for (i = 0; i < views.length; i++) {
+    var view = views[i];
+    var userId = view.getString('user') || '';
+    if (!userId) continue;
+    if (sc === 'all') {
+      activeSet[userId] = true;
+      continue;
+    }
+    if (view.getString('object_type') === sc) activeSet[userId] = true;
+  }
+
+  var allUsers = $app.findRecordsByFilter('users', '', 'full_name', 0, 0);
+  var list = [];
+  for (i = 0; i < allUsers.length; i++) {
+    var user = allUsers[i];
+    var isActive = Boolean(activeSet[user.id]);
+    if (k === 'active' && !isActive) continue;
+    if (k === 'passive' && isActive) continue;
+
+    var collection = user.collection();
+    var avatar = user.get('avatar');
+    list.push({
+      id: user.id,
+      collectionId: collection ? collection.id : '',
+      collectionName: collection ? collection.name : 'users',
+      full_name: user.getString('full_name') || '',
+      birth_date: user.getString('birth_date') || '',
+      avatar: avatar || '',
+      avatar_url: user.getString('avatar_url') || '',
+      created: String(user.get('created') || '')
+    });
+  }
+
+  return {
+    kind: k,
+    scope: sc,
+    count: list.length,
+    users: list
   };
 }
 
@@ -827,6 +892,7 @@ module.exports = {
   getGrowth: getGrowth,
   getGrowthUsersForDay: getGrowthUsersForDay,
   getReach: getReach,
+  getReachUsers: getReachUsers,
   getBooking: getBooking,
   getTrainingsCount: getTrainingsCount,
   getTrainingsForDay: getTrainingsForDay,

@@ -145,6 +145,11 @@
   color: #999;
 }
 
+.post-detail-header .post-date-line,
+.tournament-post-detail-header .post-date-line {
+  font-size: 11px;
+}
+
 .post-date {
   font-size: inherit;
   color: inherit;
