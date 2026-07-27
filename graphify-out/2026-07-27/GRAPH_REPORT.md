@@ -1,7 +1,7 @@
 # Graph Report - tennis  (2026-07-27)
 
 ## Corpus Check
-- 192 files · ~185,983 words
+- 192 files · ~186,001 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
