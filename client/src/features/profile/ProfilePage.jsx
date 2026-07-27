@@ -17,6 +17,7 @@ import { error } from '../../lib/log';
 import { getPlayerRatingRank } from '../../lib/rating';
 import { compressImage } from '../../lib/compress';
 import { formatCardDateWithYear, formatTimeRange, hasTimeRangeEnded } from '../../lib/format';
+import AboutAppModal from './AboutAppModal';
 import MembershipModal from './MembershipModal';
 import ProfileSingleDateField from './ProfileSingleDateField';
 import ProfileTrainingsSearch, { filterProfileTrainings } from './ProfileTrainingsSearch';
@@ -106,6 +107,7 @@ function ProfilePage({
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [membershipOpen, setMembershipOpen] = useState(false);
+  const [aboutAppOpen, setAboutAppOpen] = useState(false);
   const [trainingsExpanded, setTrainingsExpanded] = useState(false);
   const [searchDate, setSearchDate] = useState('');
   const [trainingsDateRange, setTrainingsDateRange] = useState(null);
@@ -512,6 +514,15 @@ function ProfilePage({
               )
             )}
           </div>
+
+          <button
+            type="button"
+            className="about-app-entry"
+            onClick={() => setAboutAppOpen(true)}
+          >
+            <span className="about-app-entry__title">О приложении</span>
+            <span className="about-app-entry__hint" aria-hidden="true">›</span>
+          </button>
         </div>
       )}
 
@@ -520,6 +531,11 @@ function ProfilePage({
         onClose={() => setMembershipOpen(false)}
         user={user}
         onMutated={handleMembershipMutated}
+      />
+
+      <AboutAppModal
+        isOpen={aboutAppOpen}
+        onClose={() => setAboutAppOpen(false)}
       />
 
       <AvatarCropModal
