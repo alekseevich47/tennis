@@ -350,9 +350,9 @@
     "semantic_hash": "84da5a05702df43b0f2b6453f5a0dc84"
   },
   "client/src/features/profile/ProfilePage.jsx": {
-    "mtime": 1785130334.6340332,
-    "ast_hash": "4f084967004a208a529724db5bbb4673",
-    "semantic_hash": "4f084967004a208a529724db5bbb4673"
+    "mtime": 1785168636.569903,
+    "ast_hash": "ace1301e45fd04fe5fb0046308f5a40b",
+    "semantic_hash": ""
   },
   "client/src/features/profile/ProfileSingleDateField.jsx": {
     "mtime": 1783683823.0107417,
@@ -1122,6 +1122,11 @@
   "pb_hooks/trainings_booking_validate.pb.js": {
     "mtime": 1785149381.2012289,
     "ast_hash": "05cd5441145ddff35e797c0e1f5fb3da",
+    "semantic_hash": ""
+  },
+  "client/src/features/profile/AboutAppModal.jsx": {
+    "mtime": 1785168613.5806558,
+    "ast_hash": "c740758162a369770b3608d46299d821",
     "semantic_hash": ""
   }
 }
