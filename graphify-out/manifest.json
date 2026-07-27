@@ -1110,8 +1110,13 @@
     "semantic_hash": ""
   },
   "pb_hooks/comment_replies.pb.js": {
-    "mtime": 1785047991.5836523,
-    "ast_hash": "e1c3ac91848435d5e4d668652905ae45",
+    "mtime": 1785074836.0754888,
+    "ast_hash": "65383696007938c30ea167ed6a1e0659",
+    "semantic_hash": ""
+  },
+  "pb_hooks/comment_replies_lib.js": {
+    "mtime": 1785074829.2259688,
+    "ast_hash": "ea3bc1807eeb33930053f5128ca61e82",
     "semantic_hash": ""
   }
 }
