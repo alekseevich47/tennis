@@ -193,31 +193,37 @@ export default function NotificationCard({
 
         <div className="notification-card__reply-layout">
           <Avatar user={actor || { full_name: actorName }} size="sm" className="notification-card__reply-avatar" />
-          <div className="notification-card__reply-line">
-            <p className="notification-card__reply-line-text">
-              <span className="notification-card__reply-name">{actorName}</span>
-              {' '}
-              ответил(а):
-              {badgeText ? (
-                <>
-                  {' '}
-                  <span className="notification-card__badge notification-card__badge--reply">{badgeText}</span>
-                </>
-              ) : null}
-              {parentCommentText ? (
-                <>
-                  {' '}
-                  на Ваш комментарий:{' '}
-                  <span className="notification-card__reply-parent-text">{parentCommentText}</span>
-                </>
-              ) : null}
-            </p>
-            <time
-              className="notification-card__time notification-card__time--reply"
-              dateTime={String(notification.created || '')}
-            >
-              {notification.created ? formatRelativeTime(notification.created, now) : ''}
-            </time>
+          <div className="notification-card__reply-content">
+            <div className="notification-card__reply-header">
+              <p className="notification-card__reply-sentence">
+                <span className="notification-card__reply-name">{actorName}</span>
+                {' '}
+                ответил(а):
+                {badgeText ? (
+                  <>
+                    {' '}
+                    <span className="notification-card__badge notification-card__badge--reply">
+                      {badgeText}
+                    </span>
+                  </>
+                ) : null}
+                {parentCommentText ? (
+                  <>
+                    {' '}
+                    на Ваш комментарий:{' '}
+                    <span className="notification-card__reply-parent-text">
+                      «{parentCommentText}»
+                    </span>
+                  </>
+                ) : null}
+              </p>
+              <time
+                className="notification-card__time notification-card__time--reply"
+                dateTime={String(notification.created || '')}
+              >
+                {notification.created ? formatRelativeTime(notification.created, now) : ''}
+              </time>
+            </div>
           </div>
         </div>
 
