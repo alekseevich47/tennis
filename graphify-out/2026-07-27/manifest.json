@@ -305,8 +305,8 @@
     "semantic_hash": ""
   },
   "client/src/features/notifications/NotificationCard.jsx": {
-    "mtime": 1785149924.6300023,
-    "ast_hash": "387dad1d57ad07b6aeebf8696fed41e6",
+    "mtime": 1785152568.0838177,
+    "ast_hash": "227c3ab058f58998c1b0491fbf2ec8c0",
     "semantic_hash": ""
   },
   "client/src/features/notifications/NotificationsDropdown.jsx": {

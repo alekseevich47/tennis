@@ -115,16 +115,19 @@ function TournamentCommentsSection({
       error('Нельзя создавать комментарий без авторизации.');
       return;
     }
+    const text = commentText;
+    const replyToId = replyTo?.id || null;
     isAddingCommentRef.current = true;
     setIsAddingComment(true);
+    setCommentText('');
+    setReplyTo(null);
     try {
-      await createTournamentComment(postId, commentText, user.id, replyTo?.id || null);
-      setCommentText('');
-      setReplyTo(null);
+      await createTournamentComment(postId, text, user.id, replyToId);
       await mutateComments();
       onCommentMutated?.();
     } catch (err) {
       error('Ошибка добавления комментария:', err);
+      setCommentText(text);
     } finally {
       isAddingCommentRef.current = false;
       setIsAddingComment(false);

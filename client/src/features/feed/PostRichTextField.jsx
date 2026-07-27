@@ -130,11 +130,15 @@ function PostRichTextField({
 
   useEffect(() => {
     const el = editorRef.current;
-    if (!el || skipNextSync.current) {
-      skipNextSync.current = false;
-      return;
-    }
+    if (!el) return;
     const next = value || '';
+    // skipNextSync — не перетирать DOM сразу после onInput/команды форматирования.
+    // Но если value пришёл снаружи (очистка после отправки комментария) и DOM не совпадает —
+    // всё равно синхронизировать: иначе на мобильных текст остаётся в поле при value=''.
+    if (skipNextSync.current) {
+      skipNextSync.current = false;
+      if (getEditorHtml(el) === next || el.innerHTML === next) return;
+    }
     if (el.innerHTML !== next) {
       el.innerHTML = next;
       ensureFrameCarets(el);

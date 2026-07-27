@@ -24,17 +24,15 @@
   background: #f8fbff;
 }
 
-.notification-card__header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 8px;
+.notification-card__header::after,
+.notification-card__reply-header::after {
+  content: '';
+  display: table;
+  clear: both;
 }
 
 .notification-card__title {
   margin: 0;
-  flex: 1;
-  min-width: 0;
   font-size: 14px;
   font-weight: 600;
   color: #1a1a1a;
@@ -48,7 +46,8 @@
 }
 
 .notification-card__time {
-  flex-shrink: 0;
+  float: right;
+  margin: 1px 0 0 8px;
   font-size: 11px;
   color: #8b98a5;
   white-space: nowrap;
@@ -160,16 +159,7 @@
   min-width: 0;
 }
 
-.notification-card__reply-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 8px;
-}
-
 .notification-card__reply-sentence {
-  flex: 1;
-  min-width: 0;
   margin: 0;
   font-size: 13px;
   line-height: 1.45;
@@ -184,23 +174,12 @@
 }
 
 .notification-card__time--reply {
-  flex-shrink: 0;
-  padding-right: 4px;
   margin-top: 1px;
+  padding-right: 4px;
 }
 
+.notification-card__reply-text,
 .notification-card__reply-parent-text {
   color: #1a1a1a;
-}
-
-.notification-card__badge--reply {
-  display: inline;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: #eef1f4;
-  font-size: 13px;
-  font-weight: 700;
-  color: #1a1a1a;
-  vertical-align: baseline;
-  white-space: normal;
+  font-weight: 400;
 }

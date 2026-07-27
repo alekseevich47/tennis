@@ -108,19 +108,22 @@ function GalleryCommentModal({
     event.preventDefault();
     if (!hasVisibleText(commentText) || !mediaId || !user?.id || isAddingComment) return;
 
+    const text = commentText;
+    const replyToId = replyTo?.id || null;
     setIsAddingComment(true);
+    setCommentText('');
+    setReplyTo(null);
     try {
       await createGalleryComment({
         mediaId,
         authorId: user.id,
-        text: commentText,
-        replyToId: replyTo?.id || null
+        text,
+        replyToId
       });
-      setCommentText('');
-      setReplyTo(null);
       await mutate();
     } catch (err) {
       error('add gallery comment:', err);
+      setCommentText(text);
     } finally {
       setIsAddingComment(false);
     }
