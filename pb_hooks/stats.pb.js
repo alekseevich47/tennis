@@ -54,6 +54,32 @@ routerAdd('GET', '/api/stats/reach', (c) => {
   }
 });
 
+routerAdd('GET', '/api/stats/reach/users', (c) => {
+  try {
+    var stats = require(__hooks + '/statslib.js');
+    var gate = stats.requireModerator(c);
+    if (gate.error) {
+      return c.json(gate.errorStatus, { error: gate.error });
+    }
+    var period = stats.periodFromRequest(c);
+    if (period.error) return c.json(400, { error: period.error });
+    var info = c.requestInfo();
+    var query = info.query || {};
+    var kind = query.kind || 'active';
+    var scope = query.scope || 'all';
+    if (kind !== 'active' && kind !== 'passive') {
+      return c.json(400, { error: 'kind must be active or passive' });
+    }
+    if (scope !== 'all' && scope !== 'post' && scope !== 'tournament_post') {
+      return c.json(400, { error: 'scope must be all, post or tournament_post' });
+    }
+    return c.json(200, stats.getReachUsers(period, kind, scope));
+  } catch (err) {
+    console.log('[stats] reach/users: ' + (err && err.stack ? err.stack : err));
+    return c.json(500, { error: 'Internal error' });
+  }
+});
+
 routerAdd('GET', '/api/stats/booking', (c) => {
   try {
     var stats = require(__hooks + '/statslib.js');

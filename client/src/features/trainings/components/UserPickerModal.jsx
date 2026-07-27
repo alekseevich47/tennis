@@ -67,6 +67,40 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    if (!isOpen) return undefined;
+
+    const unsubscribe = pb.collection('users').subscribe('*', (event) => {
+      if (event.action !== 'update' || !event.record) return;
+      const record = event.record;
+      setUsers((prev) =>
+        prev.map((user) =>
+          user.id === record.id
+            ? {
+                ...user,
+                bot_blocked: record.bot_blocked,
+                membership_frozen: record.membership_frozen,
+                available_sessions: record.available_sessions,
+                membership_type: record.membership_type
+              }
+            : user
+        )
+      );
+      if (record.bot_blocked === true || record.membership_frozen === true) {
+        setSelectedIds((prev) => {
+          if (!prev.has(record.id)) return prev;
+          const next = new Set(prev);
+          next.delete(record.id);
+          return next;
+        });
+      }
+    });
+
+    return () => {
+      void unsubscribe;
+    };
+  }, [isOpen]);
+
   const excludedUserIds = useMemo(() => new Set(excludeIds), [excludeIds]);
   const filteredUsers = useMemo(() => {
     const query = search.trim().toLowerCase();

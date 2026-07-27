@@ -49,8 +49,8 @@ export async function fetchStatsGrowth(range) {
  *   passiveCount: number,
  *   totalUsers: number,
  *   byType: {
- *     post: { viewsTotal: number, activeCount: number },
- *     tournament_post: { viewsTotal: number, activeCount: number }
+ *     post: { viewsTotal: number, activeCount: number, passiveCount: number },
+ *     tournament_post: { viewsTotal: number, activeCount: number, passiveCount: number }
  *   },
  *   topPosts: Array<{ object_type: string, object_id: string, views: number, post_number?: number | null }>
  * }>}
@@ -59,6 +59,36 @@ export async function fetchStatsReach(range) {
   return pb.send('/api/stats/reach', {
     method: 'GET',
     query: periodQuery(range)
+  });
+}
+
+/**
+ * Drill-down: активные / пассивные пользователи охвата.
+ * @param {StatsDateRange} range
+ * @param {{
+ *   kind: 'active' | 'passive',
+ *   scope?: 'all' | 'post' | 'tournament_post'
+ * }} params
+ * @returns {Promise<{
+ *   kind: 'active' | 'passive',
+ *   scope: 'all' | 'post' | 'tournament_post',
+ *   count: number,
+ *   users: Array<{
+ *     id: string,
+ *     collectionId?: string,
+ *     collectionName?: string,
+ *     full_name: string,
+ *     birth_date?: string,
+ *     avatar?: string,
+ *     avatar_url?: string,
+ *     created?: string
+ *   }>
+ * }>}
+ */
+export async function fetchStatsReachUsers(range, { kind, scope = 'all' }) {
+  return pb.send('/api/stats/reach/users', {
+    method: 'GET',
+    query: { ...periodQuery(range), kind, scope }
   });
 }
 

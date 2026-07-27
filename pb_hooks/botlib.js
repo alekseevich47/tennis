@@ -145,7 +145,7 @@ function getCommentPostInfo(collection, comment) {
 
 function buildCommentBotMessage(comment, collection, actionVerb) {
   const authorId = comment.getString('author');
-  const text = comment.getString('text');
+  const text = htmlToMaxMarkdown(comment.getString('text'));
   const info = getCommentPostInfo(collection, comment);
 
   let authorName = 'Игрок';

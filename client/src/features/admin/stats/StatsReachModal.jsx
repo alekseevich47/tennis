@@ -2,12 +2,15 @@ import React, { useCallback, useEffect, useState } from 'react';
 import Modal from '../../../components/ui/Modal';
 import Spinner from '../../../components/ui/Spinner';
 import EmptyState from '../../../components/ui/EmptyState';
+import Avatar from '../../../components/ui/Avatar';
 import InfoTooltip from '../../../components/ui/InfoTooltip';
 import PostDetailModal from '../../feed/PostDetailModal';
 import TournamentPostDetailModal from '../../competitions/TournamentPostDetailModal';
+import ProfileViewModal from '../../profile/ProfileViewModal';
 import { getCurrentUser, isModerator } from '../../../services/auth';
 import pb from '../../../services/pb';
-import { fetchStatsReach } from '../../../services/stats';
+import { fetchStatsReach, fetchStatsReachUsers } from '../../../services/stats';
+import { formatPostDate } from '../../../lib/format';
 import StatsPeriodToolbar, { getStatsDefaultDateRange } from './StatsPeriodToolbar';
 import StatsMetricTitle from './StatsMetricTitle';
 import '../Statistics.css';
@@ -21,8 +24,8 @@ const REACH_HINT =
  *   passiveCount: number,
  *   totalUsers: number,
  *   byType: {
- *     post: { viewsTotal: number, activeCount: number },
- *     tournament_post: { viewsTotal: number, activeCount: number }
+ *     post: { viewsTotal: number, activeCount: number, passiveCount: number },
+ *     tournament_post: { viewsTotal: number, activeCount: number, passiveCount: number }
  *   },
  *   topPosts: Array<{
  *     object_type: string,
@@ -32,6 +35,11 @@ const REACH_HINT =
  *   }>
  * }} StatsReachData */
 
+/** @typedef {{
+ *   kind: 'active' | 'passive',
+ *   scope: 'all' | 'post' | 'tournament_post'
+ * }} ReachUsersQuery */
+
 /**
  * @param {string} objectType
  */
@@ -39,6 +47,16 @@ function typeLabel(objectType) {
   if (objectType === 'post') return 'Лента';
   if (objectType === 'tournament_post') return 'Турнир';
   return objectType || '—';
+}
+
+/**
+ * @param {ReachUsersQuery} query
+ */
+function reachUsersTitle(query) {
+  const kindLabel = query.kind === 'passive' ? 'Пассивные' : 'Активные';
+  if (query.scope === 'post') return `Лента — ${kindLabel.toLowerCase()}`;
+  if (query.scope === 'tournament_post') return `Турнир — ${kindLabel.toLowerCase()}`;
+  return kindLabel;
 }
 
 /**
@@ -68,6 +86,16 @@ async function enrichTopPostNumbers(topPosts) {
     })
   );
   return list;
+}
+
+/**
+ * @param {string} value
+ */
+function formatBirthDate(value) {
+  if (!value) return '—';
+  const date = new Date(String(value).slice(0, 10));
+  if (Number.isNaN(date.getTime())) return '—';
+  return date.toLocaleDateString('ru-RU');
 }
 
 function InfoCircleIcon() {
@@ -106,6 +134,12 @@ export default function StatsReachModal({ isOpen, onClose, onBack }) {
   );
   const [openingId, setOpeningId] = useState(/** @type {string | null} */ (null));
 
+  const [usersQuery, setUsersQuery] = useState(/** @type {ReachUsersQuery | null} */ (null));
+  const [users, setUsers] = useState(/** @type {any[]} */ ([]));
+  const [usersLoading, setUsersLoading] = useState(false);
+  const [usersError, setUsersError] = useState(/** @type {string | null} */ (null));
+  const [viewingPlayer, setViewingPlayer] = useState(/** @type {any | null} */ (null));
+
   const user = getCurrentUser();
   const userIsModerator = isModerator();
 
@@ -130,13 +164,52 @@ export default function StatsReachModal({ isOpen, onClose, onBack }) {
   useEffect(() => {
     if (!isOpen) {
       setPreview(null);
+      setUsersQuery(null);
+      setUsers([]);
+      setUsersError(null);
+      setViewingPlayer(null);
       return;
     }
     void load(range);
   }, [isOpen, range, load]);
 
+  useEffect(() => {
+    if (!usersQuery) {
+      setUsers([]);
+      setUsersError(null);
+      setUsersLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setUsersLoading(true);
+    setUsersError(null);
+    void fetchStatsReachUsers(range, usersQuery)
+      .then((result) => {
+        if (cancelled) return;
+        setUsers(Array.isArray(result?.users) ? result.users : []);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        console.error('[stats] reach/users', err);
+        setUsers([]);
+        setUsersError(err?.message || 'Не удалось загрузить пользователей');
+      })
+      .finally(() => {
+        if (!cancelled) setUsersLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [usersQuery, range]);
+
   const handleRangeChange = useCallback((next) => {
     setRange(next);
+    setUsersQuery(null);
+  }, []);
+
+  const openUsers = useCallback((kind, scope = /** @type {'all'} */ ('all')) => {
+    setViewingPlayer(null);
+    setUsersQuery({ kind, scope });
   }, []);
 
   const handleOpenPost = useCallback(async (item) => {
@@ -161,6 +234,7 @@ export default function StatsReachModal({ isOpen, onClose, onBack }) {
   const topPosts = data?.topPosts ?? [];
   const byPost = data?.byType?.post;
   const byTournament = data?.byType?.tournament_post;
+  const usersOpen = Boolean(usersQuery);
 
   return (
     <>
@@ -200,14 +274,22 @@ export default function StatsReachModal({ isOpen, onClose, onBack }) {
                 <span className="stats-trainings__stat-label">Просмотров</span>
                 <span className="stats-trainings__stat-value">{viewsTotal}</span>
               </div>
-              <div className="stats-trainings__stat">
+              <button
+                type="button"
+                className="stats-trainings__stat stats-reach__stat-btn"
+                onClick={() => openUsers('active', 'all')}
+              >
                 <span className="stats-trainings__stat-label">Активные</span>
                 <span className="stats-trainings__stat-value">{data?.activeCount ?? 0}</span>
-              </div>
-              <div className="stats-trainings__stat">
+              </button>
+              <button
+                type="button"
+                className="stats-trainings__stat stats-reach__stat-btn"
+                onClick={() => openUsers('passive', 'all')}
+              >
                 <span className="stats-trainings__stat-label">Пассивные</span>
                 <span className="stats-trainings__stat-value">{data?.passiveCount ?? 0}</span>
-              </div>
+              </button>
               <div className="stats-trainings__stat">
                 <span className="stats-trainings__stat-label">Всего users</span>
                 <span className="stats-trainings__stat-value">{data?.totalUsers ?? 0}</span>
@@ -221,10 +303,22 @@ export default function StatsReachModal({ isOpen, onClose, onBack }) {
                   <span>Просмотры</span>
                   <strong>{byPost?.viewsTotal ?? 0}</strong>
                 </div>
-                <div className="stats-reach__type-row">
+                <button
+                  type="button"
+                  className="stats-reach__type-row stats-reach__type-row--btn"
+                  onClick={() => openUsers('active', 'post')}
+                >
                   <span>Активные</span>
                   <strong>{byPost?.activeCount ?? 0}</strong>
-                </div>
+                </button>
+                <button
+                  type="button"
+                  className="stats-reach__type-row stats-reach__type-row--btn"
+                  onClick={() => openUsers('passive', 'post')}
+                >
+                  <span>Пассивные</span>
+                  <strong>{byPost?.passiveCount ?? 0}</strong>
+                </button>
               </div>
               <div className="stats-reach__type-card">
                 <div className="stats-reach__type-title">Турнир</div>
@@ -232,10 +326,22 @@ export default function StatsReachModal({ isOpen, onClose, onBack }) {
                   <span>Просмотры</span>
                   <strong>{byTournament?.viewsTotal ?? 0}</strong>
                 </div>
-                <div className="stats-reach__type-row">
+                <button
+                  type="button"
+                  className="stats-reach__type-row stats-reach__type-row--btn"
+                  onClick={() => openUsers('active', 'tournament_post')}
+                >
                   <span>Активные</span>
                   <strong>{byTournament?.activeCount ?? 0}</strong>
-                </div>
+                </button>
+                <button
+                  type="button"
+                  className="stats-reach__type-row stats-reach__type-row--btn"
+                  onClick={() => openUsers('passive', 'tournament_post')}
+                >
+                  <span>Пассивные</span>
+                  <strong>{byTournament?.passiveCount ?? 0}</strong>
+                </button>
               </div>
             </div>
 
@@ -279,6 +385,64 @@ export default function StatsReachModal({ isOpen, onClose, onBack }) {
           </>
         )}
       </Modal>
+
+      <Modal
+        isOpen={usersOpen}
+        onClose={() => {
+          setUsersQuery(null);
+          setViewingPlayer(null);
+        }}
+        title={usersQuery ? reachUsersTitle(usersQuery) : 'Пользователи'}
+        className="stats-metric-modal"
+        size="large"
+      >
+        {usersLoading ? (
+          <Spinner label="Загрузка…" />
+        ) : usersError ? (
+          <EmptyState title="Ошибка загрузки" description={usersError} />
+        ) : users.length === 0 ? (
+          <EmptyState
+            title="Пусто"
+            description={
+              usersQuery?.kind === 'passive'
+                ? 'Нет пассивных пользователей за выбранный период.'
+                : 'Нет активных пользователей за выбранный период.'
+            }
+          />
+        ) : (
+          <ul className="stats-user-preview-list">
+            {users.map((u) => (
+              <li key={u.id}>
+                <button
+                  type="button"
+                  className="stats-user-preview"
+                  onClick={() => setViewingPlayer(u)}
+                >
+                  <Avatar user={u} size="md" />
+                  <span className="stats-user-preview__meta">
+                    <span className="stats-user-preview__name">
+                      {u.full_name || 'Без имени'}
+                    </span>
+                    <span className="stats-user-preview__line">
+                      В приложении: {formatPostDate(u.created) || '—'}
+                    </span>
+                    <span className="stats-user-preview__line">
+                      Дата рождения: {formatBirthDate(u.birth_date)}
+                    </span>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Modal>
+
+      <ProfileViewModal
+        isOpen={Boolean(viewingPlayer)}
+        onClose={() => setViewingPlayer(null)}
+        targetUser={viewingPlayer}
+        currentUser={user}
+      />
 
       <PostDetailModal
         isOpen={Boolean(preview?.objectType === 'post' && preview.post)}

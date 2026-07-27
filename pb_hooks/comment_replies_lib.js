@@ -130,7 +130,7 @@ function notifyCommentReply(collectionName, reply) {
 
   var actorName = actor.getString('full_name') || 'Игрок секции';
   var parentPlain = truncatePlain(stripHtmlToPlain(parent.getString('text')), 100);
-  var replyPlain = truncatePlain(stripHtmlToPlain(reply.getString('text')), 160);
+  var replyPlain = truncatePlain(stripHtmlToPlain(reply.getString('text')), 80);
 
   var actorAvatar = '';
   try {
@@ -166,7 +166,7 @@ function notifyCommentReply(collectionName, reply) {
   var notification = new Record(notificationsCollection);
   notification.set('recipient', parentAuthorId);
   notification.set('title', actorName);
-  notification.set('body', 'ответил на ваш комментарий «' + parentPlain + '»');
+  notification.set('body', parentPlain);
   notification.set('badge_text', replyPlain);
   notification.set('meta', meta);
   notification.set('is_read', false);
