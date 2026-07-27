@@ -8,6 +8,7 @@ import {
   openSellerChat
 } from '../shop/buyMessage';
 
+const DEVELOPER_SITE = 'https://loomixx.ru';
 const DEVELOPER_EMAIL = 'loomixx.dev@ya.ru';
 const TELEGRAM_URL = 'https://t.me/alekseevich47';
 const VK_CHAT_URL = 'https://vk.me/alekseevich';
@@ -72,6 +73,16 @@ export default function AboutAppModal({ isOpen, onClose }) {
           <h3 className="about-app-label">Разработка приложения</h3>
           <p className="about-app-developer">loomixx</p>
           <div className="about-app-dev-links">
+            <a
+              className="about-app-chip about-app-chip--action"
+              href={DEVELOPER_SITE}
+              onClick={(e) => {
+                e.preventDefault();
+                openExternalUrl(DEVELOPER_SITE);
+              }}
+            >
+              Сайт: loomixx.ru
+            </a>
             <a
               className="about-app-chip about-app-chip--action"
               href={`mailto:${DEVELOPER_EMAIL}`}
