@@ -350,8 +350,8 @@
     "semantic_hash": "84da5a05702df43b0f2b6453f5a0dc84"
   },
   "client/src/features/profile/ProfilePage.jsx": {
-    "mtime": 1785168636.569903,
-    "ast_hash": "ace1301e45fd04fe5fb0046308f5a40b",
+    "mtime": 1785169421.7185595,
+    "ast_hash": "ac4020dd120ed32694edd620796d104d",
     "semantic_hash": ""
   },
   "client/src/features/profile/ProfileSingleDateField.jsx": {
@@ -1125,8 +1125,8 @@
     "semantic_hash": ""
   },
   "client/src/features/profile/AboutAppModal.jsx": {
-    "mtime": 1785168613.5806558,
-    "ast_hash": "c740758162a369770b3608d46299d821",
+    "mtime": 1785169410.5732586,
+    "ast_hash": "5fb685ad2e847871704c7230afc421b7",
     "semantic_hash": ""
   }
 }

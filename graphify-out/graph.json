@@ -2445,7 +2445,7 @@
       "label": "CommentReplyComposeBar()",
       "file_type": "code",
       "source_file": "client/src/features/feed/CommentReplyComposeBar.jsx",
-      "source_location": "L11",
+      "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_features_feed_commentreplycomposebar_commentreplycomposebar",
       "community": 56,
@@ -23718,7 +23718,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/CommentReplyComposeBar.jsx",
-      "source_location": "L11",
+      "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_commentreplycomposebar",
@@ -23747,6 +23747,18 @@
       "_origin": "ast",
       "source": "client_src_features_feed_commentreplycomposebar",
       "target": "client_src_features_feed_commentreplyquote_commentreplyquote",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/CommentReplyComposeBar.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_commentreplycomposebar",
+      "target": "client_src_lib_gestures",
       "confidence_score": 1.0
     },
     {
@@ -29350,7 +29362,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/profile/AboutAppModal.jsx",
-      "source_location": "L81",
+      "source_location": "L79",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_profile_aboutappmodal_aboutappmodal",
@@ -47504,5 +47516,5 @@
       "source_file": "client/src/assets/ach/1_1.png"
     }
   ],
-  "built_at_commit": "1041d68673697cefe1e786568814cf04da960422"
+  "built_at_commit": "506c3858f22699de1fd5b55dd32051c14ccc72ed"
 }
