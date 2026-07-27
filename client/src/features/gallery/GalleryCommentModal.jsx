@@ -56,6 +56,8 @@ function GalleryCommentModal({
   const [highlightedId, setHighlightedId] = useState(/** @type {string | null} */ (null));
 
   const commentItemRefs = useRef(/** @type {Map<string, HTMLElement>} */ (new Map()));
+  const commentFieldRef = useRef(/** @type {{ focus: () => void, clear: () => void } | null} */ (null));
+  const isAddingCommentRef = useRef(false);
 
   const commentIds = useMemo(() => comments.map((c) => c.id), [comments]);
 
@@ -102,17 +104,20 @@ function GalleryCommentModal({
   const handleReply = (comment) => {
     setReplyTo(comment);
     setEditingId(null);
+    commentFieldRef.current?.focus();
   };
 
   const handleAdd = async (event) => {
     event.preventDefault();
-    if (!hasVisibleText(commentText) || !mediaId || !user?.id || isAddingComment) return;
+    if (!hasVisibleText(commentText) || !mediaId || !user?.id || isAddingCommentRef.current) return;
 
     const text = commentText;
     const replyToId = replyTo?.id || null;
+    isAddingCommentRef.current = true;
     setIsAddingComment(true);
     setCommentText('');
     setReplyTo(null);
+    commentFieldRef.current?.clear();
     try {
       await createGalleryComment({
         mediaId,
@@ -125,6 +130,7 @@ function GalleryCommentModal({
       error('add gallery comment:', err);
       setCommentText(text);
     } finally {
+      isAddingCommentRef.current = false;
       setIsAddingComment(false);
     }
   };
@@ -202,6 +208,7 @@ function GalleryCommentModal({
                 Написать комментарий
               </label>
               <PostRichTextField
+                ref={commentFieldRef}
                 id="gallery-comment-input"
                 value={commentText}
                 onChange={setCommentText}

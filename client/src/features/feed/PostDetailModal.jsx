@@ -83,6 +83,7 @@ function PostDetailModal({
 
   const commentsBottomRef = useRef(null);
   const commentItemRefs = useRef(/** @type {Map<string, HTMLElement>} */ (new Map()));
+  const commentFieldRef = useRef(/** @type {{ focus: () => void, clear: () => void } | null} */ (null));
   const isAddingCommentRef = useRef(false);
   const scrollTimerRef = useRef(null);
   const menuBtnRef = useRef(/** @type {HTMLButtonElement | null} */ (null));
@@ -193,6 +194,7 @@ function PostDetailModal({
   const handleReply = (comment) => {
     setReplyTo(comment);
     setEditingId(null);
+    commentFieldRef.current?.focus();
   };
 
   const handleAdd = async (e) => {
@@ -206,10 +208,9 @@ function PostDetailModal({
     const replyToId = replyTo?.id || null;
     isAddingCommentRef.current = true;
     setIsAddingComment(true);
-    // Сразу очищаем поле — иначе при частой отправке с мобильного
-    // blur/onInput + skipNextSync оставляют отправленный текст в редакторе.
     setCommentText('');
     setReplyTo(null);
+    commentFieldRef.current?.clear();
     try {
       await createComment({
         postId,
@@ -330,6 +331,7 @@ function PostDetailModal({
                   Написать комментарий
                 </label>
                 <PostRichTextField
+                  ref={commentFieldRef}
                   id="post-detail-comment-input"
                   value={commentText}
                   onChange={setCommentText}

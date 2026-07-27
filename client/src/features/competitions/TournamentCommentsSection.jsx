@@ -51,6 +51,7 @@ function TournamentCommentsSection({
   const [highlightedId, setHighlightedId] = useState(/** @type {string | null} */ (null));
 
   const isAddingCommentRef = useRef(false);
+  const commentFieldRef = useRef(/** @type {{ focus: () => void, clear: () => void } | null} */ (null));
   const commentItemRefs = useRef(/** @type {Map<string, HTMLElement>} */ (new Map()));
 
   const { data: comments = [], mutate: mutateComments } = useTournamentComments(postId);
@@ -106,6 +107,7 @@ function TournamentCommentsSection({
   const handleReply = (comment) => {
     setReplyTo(comment);
     setEditingId(null);
+    commentFieldRef.current?.focus();
   };
 
   const handleAdd = async (e) => {
@@ -121,6 +123,7 @@ function TournamentCommentsSection({
     setIsAddingComment(true);
     setCommentText('');
     setReplyTo(null);
+    commentFieldRef.current?.clear();
     try {
       await createTournamentComment(postId, text, user.id, replyToId);
       await mutateComments();
@@ -381,6 +384,7 @@ function TournamentCommentsSection({
               Написать комментарий
             </label>
             <PostRichTextField
+              ref={commentFieldRef}
               id={`tournament-comment-input-${postId}`}
               value={commentText}
               onChange={setCommentText}
