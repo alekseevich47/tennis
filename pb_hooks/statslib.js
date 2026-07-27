@@ -367,16 +367,15 @@ function getReachUsers(period, kind, scope) {
     '"';
   var views = $app.findRecordsByFilter('content_views', filter, '-created', 0, 0);
   var activeSet = {};
+  var viewsByUser = {};
   var i;
   for (i = 0; i < views.length; i++) {
     var view = views[i];
     var userId = view.getString('user') || '';
     if (!userId) continue;
-    if (sc === 'all') {
-      activeSet[userId] = true;
-      continue;
-    }
-    if (view.getString('object_type') === sc) activeSet[userId] = true;
+    if (sc !== 'all' && view.getString('object_type') !== sc) continue;
+    activeSet[userId] = true;
+    viewsByUser[userId] = (viewsByUser[userId] || 0) + 1;
   }
 
   var allUsers = $app.findRecordsByFilter('users', '', 'full_name', 0, 0);
@@ -397,7 +396,8 @@ function getReachUsers(period, kind, scope) {
       birth_date: user.getString('birth_date') || '',
       avatar: avatar || '',
       avatar_url: user.getString('avatar_url') || '',
-      created: String(user.get('created') || '')
+      created: String(user.get('created') || ''),
+      views: viewsByUser[user.id] || 0
     });
   }
 

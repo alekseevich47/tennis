@@ -190,8 +190,8 @@
     "semantic_hash": "63c75a043daf045b42e4fbd819a91b5d"
   },
   "client/src/features/admin/stats/StatsReachModal.jsx": {
-    "mtime": 1784991993.3948064,
-    "ast_hash": "332f73b2e0a9d6b5dcddf03051f4d6f9",
+    "mtime": 1785149518.9028718,
+    "ast_hash": "57d961f99bdaf2b93950a7dda1563112",
     "semantic_hash": ""
   },
   "client/src/features/admin/stats/StatsTrainingsCountModal.jsx": {
@@ -305,8 +305,8 @@
     "semantic_hash": ""
   },
   "client/src/features/notifications/NotificationCard.jsx": {
-    "mtime": 1785149361.7359905,
-    "ast_hash": "f48ffe0d6cf83bf54814ae3dab852928",
+    "mtime": 1785149924.6300023,
+    "ast_hash": "387dad1d57ad07b6aeebf8696fed41e6",
     "semantic_hash": ""
   },
   "client/src/features/notifications/NotificationsDropdown.jsx": {
@@ -695,8 +695,8 @@
     "semantic_hash": ""
   },
   "client/src/services/stats.js": {
-    "mtime": 1784909843.401838,
-    "ast_hash": "26a4e3a79d174535745a56ea73635fa7",
+    "mtime": 1785149471.0448647,
+    "ast_hash": "fedd6fa09c5a35f9ef3cd89e4c0fd811",
     "semantic_hash": ""
   },
   "client/src/services/tournamentComments.js": {
@@ -795,13 +795,13 @@
     "semantic_hash": "0360130ced8fd94831894afef8fd92d2"
   },
   "pb_hooks/stats.pb.js": {
-    "mtime": 1784909760.9400616,
-    "ast_hash": "0dbb1d4f870167f8d5867865da26cdaf",
+    "mtime": 1785149470.9998453,
+    "ast_hash": "01355169a6453418eb36cb7c4466c5dd",
     "semantic_hash": ""
   },
   "pb_hooks/statslib.js": {
-    "mtime": 1785149457.0804482,
-    "ast_hash": "47ba919b47cbdc5634ed766eb12b03ab",
+    "mtime": 1785149463.7096293,
+    "ast_hash": "2b6da24ee2aba59bb88b4581618b2bb2",
     "semantic_hash": ""
   },
   "pb_hooks/tournament_audit.pb.js": {
