@@ -195,6 +195,12 @@ export default function NotificationCard({
           <Avatar user={actor || { full_name: actorName }} size="sm" className="notification-card__reply-avatar" />
           <div className="notification-card__reply-content">
             <div className="notification-card__reply-header">
+              <time
+                className="notification-card__time notification-card__time--reply"
+                dateTime={String(notification.created || '')}
+              >
+                {notification.created ? formatRelativeTime(notification.created, now) : ''}
+              </time>
               <p className="notification-card__reply-sentence">
                 <span className="notification-card__reply-name">{actorName}</span>
                 {' '}
@@ -202,9 +208,7 @@ export default function NotificationCard({
                 {badgeText ? (
                   <>
                     {' '}
-                    <span className="notification-card__badge notification-card__badge--reply">
-                      {badgeText}
-                    </span>
+                    <span className="notification-card__reply-text">«{badgeText}»</span>
                   </>
                 ) : null}
                 {parentCommentText ? (
@@ -217,12 +221,6 @@ export default function NotificationCard({
                   </>
                 ) : null}
               </p>
-              <time
-                className="notification-card__time notification-card__time--reply"
-                dateTime={String(notification.created || '')}
-              >
-                {notification.created ? formatRelativeTime(notification.created, now) : ''}
-              </time>
             </div>
           </div>
         </div>
@@ -252,14 +250,14 @@ export default function NotificationCard({
         <span className="notification-card__unread-dot" aria-hidden="true" />
       ) : null}
       <div className="notification-card__header">
+        <time className="notification-card__time" dateTime={String(notification.created || '')}>
+          {notification.created ? formatRelativeTime(notification.created, now) : ''}
+        </time>
         <PostContentHtml
           as="h3"
           className="notification-card__title"
           content={String(notification.title || 'Уведомление')}
         />
-        <time className="notification-card__time" dateTime={String(notification.created || '')}>
-          {notification.created ? formatRelativeTime(notification.created, now) : ''}
-        </time>
       </div>
 
       {notification.body ? (
