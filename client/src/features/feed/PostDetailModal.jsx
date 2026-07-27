@@ -202,20 +202,25 @@ function PostDetailModal({
       error('Нельзя создавать комментарий без авторизации.');
       return;
     }
+    const text = commentText;
+    const replyToId = replyTo?.id || null;
     isAddingCommentRef.current = true;
     setIsAddingComment(true);
+    // Сразу очищаем поле — иначе при частой отправке с мобильного
+    // blur/onInput + skipNextSync оставляют отправленный текст в редакторе.
+    setCommentText('');
+    setReplyTo(null);
     try {
       await createComment({
         postId,
         authorId: user.id,
-        text: commentText,
-        replyToId: replyTo?.id || null
+        text,
+        replyToId
       });
-      setCommentText('');
-      setReplyTo(null);
       await mutateComments();
     } catch (err) {
       error('Ошибка добавления комментария:', err);
+      setCommentText(text);
     } finally {
       isAddingCommentRef.current = false;
       setIsAddingComment(false);
