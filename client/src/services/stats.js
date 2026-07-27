@@ -81,7 +81,8 @@ export async function fetchStatsReach(range) {
  *     birth_date?: string,
  *     avatar?: string,
  *     avatar_url?: string,
- *     created?: string
+ *     created?: string,
+ *     views: number
  *   }>
  * }>}
  */

@@ -415,7 +415,7 @@ export default function StatsReachModal({ isOpen, onClose, onBack }) {
               <li key={u.id}>
                 <button
                   type="button"
-                  className="stats-user-preview"
+                  className="stats-user-preview stats-reach__user-row"
                   onClick={() => setViewingPlayer(u)}
                 >
                   <Avatar user={u} size="md" />
@@ -430,6 +430,7 @@ export default function StatsReachModal({ isOpen, onClose, onBack }) {
                       Дата рождения: {formatBirthDate(u.birth_date)}
                     </span>
                   </span>
+                  <span className="stats-reach__user-views">{u.views ?? 0}</span>
                 </button>
               </li>
             ))}
