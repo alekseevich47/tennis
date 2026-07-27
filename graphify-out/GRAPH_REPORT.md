@@ -1,16 +1,16 @@
 # Graph Report - tennis  (2026-07-26)
 
 ## Corpus Check
-- 190 files · ~184,560 words
+- 191 files · ~184,737 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 970 nodes · 3069 edges · 62 communities (56 shown, 6 thin omitted)
-- Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 110 edges (avg confidence: 0.61)
+- 970 nodes · 3067 edges · 58 communities (52 shown, 6 thin omitted)
+- Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 111 edges (avg confidence: 0.61)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `7ca2657c`
+- Built from commit: `f35882c8`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -31,7 +31,6 @@
 - Achievements UI Block
 - datePickerUtils.js
 - FullscreenImageViewer.jsx
-- StatsGrowthModal.jsx
 - Audit Diff Library
 - Bot Broadcast Library
 - Notifications State Lib
@@ -50,10 +49,6 @@
 - Touch UI Performance
 - PostDetailModal.jsx
 - log.js
-- DateRangeModal.jsx
-- ProfilePage.jsx
-- Modal.jsx
-- RatingPage.jsx
 
 ## God Nodes (most connected - your core abstractions)
 1. `error` - 118 edges
@@ -87,51 +82,51 @@
 - **PocketBase collections** — readme_schema_users, readme_schema_posts, readme_schema_comments, readme_schema_trainings, readme_schema_products, readme_schema_championships, readme_schema_matches, readme_schema_gallery [EXTRACTED 1.00]
 - **Achievement badge asset set** — client_src_assets_ach_1_1_png_badge, client_src_assets_ach_1_2_png_badge, client_src_assets_ach_1_3_png_badge, client_src_assets_ach_1_4_png_badge, client_src_assets_ach_1_5_png_badge, client_src_assets_ach_2_1_png_badge, client_src_assets_ach_2_2_png_badge, client_src_assets_ach_2_3_png_badge, client_src_assets_ach_2_4_png_badge, client_src_assets_ach_2_5_png_badge, client_src_assets_ach_3_1_png_badge, client_src_assets_ach_3_2_png_badge, client_src_assets_ach_3_3_png_badge, client_src_assets_ach_3_4_png_badge, client_src_assets_ach_3_5_png_badge, client_src_assets_ach_4_1_png_badge, client_src_assets_ach_4_2_png_badge, client_src_assets_ach_4_3_png_badge, client_src_assets_ach_4_4_png_badge, client_src_assets_ach_4_5_png_badge, client_src_assets_ach_5_1_png_badge, client_src_assets_ach_5_2_png_badge, client_src_assets_ach_5_3_png_badge, client_src_assets_ach_5_4_png_badge, client_src_assets_ach_5_5_png_badge [INFERRED 0.85]
 
-## Communities (62 total, 6 thin omitted)
+## Communities (58 total, 6 thin omitted)
 
 ### Community 0 - "App Shell Navigation"
 Cohesion: 0.08
-Nodes (62): formatCountdownPart(), formatTrainingCountdownBadge(), isUserBooked(), CalendarStrip(), buildTrainingPatch(), EditTrainingModal(), getFormFromTraining(), getPatchFromForm() (+54 more)
+Nodes (61): CalendarStrip(), buildTrainingPatch(), EditTrainingModal(), getFormFromTraining(), getPatchFromForm(), getPatchFromTraining(), INITIAL_FORM, toDateTimeLocalValue() (+53 more)
 
 ### Community 1 - "AvatarCropModal.jsx"
-Cohesion: 0.11
-Nodes (24): react, AvatarCropModal(), getCropCircle(), getImagePlacement(), getParticipantDisplayName(), getParticipantPlayer(), PODIUM_ORDER, TournamentPodium() (+16 more)
+Cohesion: 0.06
+Nodes (59): react, usePostUpload(), TournamentPostUploadContext, TournamentPostUploadProvider(), useTournamentPostUpload(), CompetitionsPage(), TABS, getParticipantDisplayName() (+51 more)
 
 ### Community 2 - "Post Upload and UI Kit"
-Cohesion: 0.17
-Nodes (25): buildSendResultAlert(), formatAdminSaveError(), BroadcastModal(), defaultDatetimeLocal(), getAudienceLabel(), defaultDatetimeLocal(), getAudienceLabel(), NotificationSendModal() (+17 more)
+Cohesion: 0.14
+Nodes (30): InfoTooltip(), Toggle(), buildSendResultAlert(), formatAdminSaveError(), BroadcastModal(), defaultDatetimeLocal(), getAudienceLabel(), defaultDatetimeLocal() (+22 more)
 
 ### Community 3 - "notifications.js"
-Cohesion: 0.21
-Nodes (13): AlertDialogContext, INITIAL_STATE, useAlertDialog(), AddImageModal(), computeAnnualEndDate(), getCurrentSessions(), getModeCopy(), MembershipEditModal() (+5 more)
+Cohesion: 0.36
+Nodes (9): AvatarCropModal(), getCropCircle(), getImagePlacement(), resolvePanLimits(), usePinchZoom(), backdropOpacityForDrag(), clamp(), getTouchDistance() (+1 more)
 
 ### Community 4 - "Gallery Upload Flow"
-Cohesion: 0.09
-Nodes (39): createGalleryPayload(), GalleryUploadContext, GalleryUploadProvider(), isGalleryKey(), useGalleryUpload(), isProductsKey(), ProductUploadContext, ProductUploadProvider() (+31 more)
+Cohesion: 0.08
+Nodes (44): useGalleryUpload(), isProductsKey(), ProductUploadContext, ProductUploadProvider(), useProductUpload(), FavoritesContext, FavoritesProvider(), loadFavoriteProducts() (+36 more)
 
 ### Community 5 - "Admin UI Controls"
-Cohesion: 0.09
-Nodes (38): EmptyState(), InfoTooltip(), Spinner(), Toggle(), AdminPanelPage(), NotificationSettingsModal(), SETTINGS_ROWS, METRICS (+30 more)
+Cohesion: 0.11
+Nodes (32): EmptyState(), Spinner(), AdminPanelPage(), METRICS, StatisticsHubModal(), MODES, StatsAchievementsModal(), hasAnyActivity() (+24 more)
 
 ### Community 6 - "auditEventFormat.js"
 Cohesion: 0.10
-Nodes (33): ALL_CATEGORY_VALUES, AuditEventRow(), formatDateRangeLabel(), getLogsDefaultDateRange(), LogsModal(), toDateInputValue(), useAuditEvents(), CATEGORY_STYLES (+25 more)
+Nodes (32): ALL_CATEGORY_VALUES, AuditEventRow(), formatDateRangeLabel(), getLogsDefaultDateRange(), LogsModal(), toDateInputValue(), useAuditEvents(), CATEGORY_STYLES (+24 more)
 
 ### Community 7 - "App.jsx"
-Cohesion: 0.25
-Nodes (14): formatDate(), getTrainingStatusForUser(), getTrainingTitle(), getUserPastTrainings(), isModerator(), normalizeDateInput(), ProfileViewModal(), TRAINING_BADGE (+6 more)
+Cohesion: 0.09
+Nodes (40): Avatar(), formatDate(), getTrainingStatusForUser(), getTrainingTitle(), getUserPastTrainings(), normalizeDateInput(), ProfilePage(), TRAINING_BADGE (+32 more)
 
 ### Community 8 - "NPM Dependencies"
 Cohesion: 0.05
 Nodes (40): dependencies, clsx, date-fns, @daypicker/react, gsap, pocketbase, react-dom, react-error-boundary (+32 more)
 
 ### Community 9 - "Audit Logs Modal"
-Cohesion: 0.25
-Nodes (12): formatDateRangeLabel(), ProfileTrainingsSearch(), ArchiveModal(), formatDateRangeLabel(), getArchiveDefaultDateRange(), findRussianMonth(), isDateQueryParsed(), matchesDateQuery() (+4 more)
+Cohesion: 0.60
+Nodes (5): getRelationId(), notifyCommentReply(), relationId(), stripHtmlToPlain(), truncatePlain()
 
 ### Community 10 - "LogsModal.jsx"
-Cohesion: 0.06
-Nodes (65): App(), AppInner(), AppMain(), getInitialFavoriteProductIds(), TAB_TITLES, ADMIN_NAV_ITEM, NAV_ITEMS, TournamentPostUploadContext (+57 more)
+Cohesion: 0.10
+Nodes (37): AppInner(), AppMain(), getInitialFavoriteProductIds(), TAB_TITLES, ADMIN_NAV_ITEM, NAV_ITEMS, CARD_STEPS, getStepSelectors() (+29 more)
 
 ### Community 11 - "Stats Library Helpers"
 Cohesion: 0.15
@@ -146,16 +141,12 @@ Cohesion: 0.15
 Nodes (24): AchievementRow(), AchievementsBlock(), clampProgress(), getCurrentLevelTitle(), getProgressBarColorClass(), getTooltipKey(), getTooltipText(), clampPercent() (+16 more)
 
 ### Community 14 - "datePickerUtils.js"
-Cohesion: 0.20
-Nodes (15): AppHeader(), MembershipPeriodRangeField(), MembershipStartDateField(), consumeDay(), consumeMonth(), consumeYear(), formatDateDisplay(), formatDateForSearch() (+7 more)
+Cohesion: 0.08
+Nodes (44): AppHeader(), AlertDialogContext, INITIAL_STATE, useAlertDialog(), IconButton, FOCUSABLE_SELECTORS, Modal(), AddImageModal() (+36 more)
 
 ### Community 15 - "FullscreenImageViewer.jsx"
-Cohesion: 0.20
-Nodes (16): Toast(), ToastContext, useToast(), formatFreezeLogEntry(), formatMembershipDate(), getMembershipTypeLabel(), MembershipModal(), parseFreezeLog() (+8 more)
-
-### Community 16 - "StatsGrowthModal.jsx"
-Cohesion: 0.52
-Nodes (6): getRelationId(), handleReplyCreate(), notifyCommentReply(), relationId(), stripHtmlToPlain(), truncatePlain()
+Cohesion: 0.07
+Nodes (42): App(), createGalleryPayload(), GalleryUploadContext, GalleryUploadProvider(), isGalleryKey(), PostUploadContext, PostUploadProvider(), AlertDialogProvider() (+34 more)
 
 ### Community 17 - "Audit Diff Library"
 Cohesion: 0.18
@@ -199,27 +190,11 @@ Nodes (4): PB collection products, Магазин, Shopping cart animation snipp
 
 ### Community 56 - "PostDetailModal.jsx"
 Cohesion: 0.07
-Nodes (62): PostUploadContext, PostUploadProvider(), usePostUpload(), TournamentCommentsSection(), CommentReplyButton(), CommentReplyComposeBar(), CommentReplyQuote(), CommentSendButton() (+54 more)
+Nodes (62): TournamentCommentsSection(), CommentReplyButton(), CommentReplyComposeBar(), CommentReplyQuote(), CommentSendButton(), FrameColorPicker(), hexToHsv(), hsvToHex() (+54 more)
 
 ### Community 57 - "log.js"
-Cohesion: 0.07
-Nodes (70): Avatar(), FavoritesContext, FavoritesProvider(), loadFavoriteProducts(), patchProductsFavoritesCount(), useFavorites(), CreateTournamentPostModal(), EditTournamentPostModal() (+62 more)
-
-### Community 58 - "DateRangeModal.jsx"
-Cohesion: 0.25
-Nodes (11): ProfileSingleDateField(), DatePickerModal(), DateRangeModal(), formatRangeHint(), getDefaultDateRange(), DateRangePicker(), MONTH_LABELS, startOfDecadePage() (+3 more)
-
-### Community 59 - "ProfilePage.jsx"
-Cohesion: 0.23
-Nodes (13): formatDate(), getTrainingStatusForUser(), getTrainingTitle(), getUserPastTrainings(), normalizeDateInput(), ProfilePage(), TRAINING_BADGE, filterProfileTrainings() (+5 more)
-
-### Community 60 - "Modal.jsx"
-Cohesion: 0.28
-Nodes (8): IconButton, FOCUSABLE_SELECTORS, Modal(), formatDateRangeLabel(), MembershipOverviewModal(), trainingCountsAsUsedSession(), isUserBookingDisabled(), UserPickerModal()
-
-### Community 61 - "RatingPage.jsx"
-Cohesion: 0.27
-Nodes (8): INITIAL, PlayerForm(), RatingPage(), buildPlayerRanks(), getPlayerRatingRank(), getRatingPoints(), isRatingVisible(), createPlayer()
+Cohesion: 0.13
+Nodes (36): useFavorites(), CreateTournamentPostModal(), EditTournamentPostModal(), CreatePostModal(), EditPostModal(), FullscreenImageViewer(), getOriginRect(), getWindowWidth() (+28 more)
 
 ## Knowledge Gaps
 - **108 isolated node(s):** `name`, `version`, `description`, `private`, `dev` (+103 more)
@@ -229,7 +204,7 @@ Nodes (8): INITIAL, PlayerForm(), RatingPage(), buildPlayerRanks(), getPlayerRat
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `error` connect `PostDetailModal.jsx` to `App Shell Navigation`, `Post Upload and UI Kit`, `notifications.js`, `Gallery Upload Flow`, `Admin UI Controls`, `App.jsx`, `LogsModal.jsx`, `Achievements UI Block`, `FullscreenImageViewer.jsx`, `log.js`, `ProfilePage.jsx`, `Modal.jsx`, `RatingPage.jsx`?**
+- **Why does `error` connect `Post Upload and UI Kit` to `App Shell Navigation`, `AvatarCropModal.jsx`, `Gallery Upload Flow`, `App.jsx`, `LogsModal.jsx`, `Achievements UI Block`, `datePickerUtils.js`, `FullscreenImageViewer.jsx`, `PostDetailModal.jsx`, `log.js`?**
   _High betweenness centrality (0.111) - this node is a cross-community bridge._
 - **Why does `LongPressRing()` connect `AvatarCropModal.jsx` to `PostDetailModal.jsx`?**
   _High betweenness centrality (0.067) - this node is a cross-community bridge._
@@ -238,8 +213,8 @@ _Questions this graph is uniquely positioned to answer:_
 - **What connects `name`, `version`, `description` to the rest of the system?**
   _108 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `App Shell Navigation` be split into smaller, more focused modules?**
-  _Cohesion score 0.08184143222506395 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.0845771144278607 - nodes in this community are weakly interconnected._
 - **Should `AvatarCropModal.jsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.11379800853485064 - nodes in this community are weakly interconnected._
-- **Should `Gallery Upload Flow` be split into smaller, more focused modules?**
-  _Cohesion score 0.0851063829787234 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05871725383920506 - nodes in this community are weakly interconnected._
+- **Should `Post Upload and UI Kit` be split into smaller, more focused modules?**
+  _Cohesion score 0.14366998577524892 - nodes in this community are weakly interconnected._
