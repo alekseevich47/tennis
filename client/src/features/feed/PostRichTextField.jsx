@@ -1,4 +1,13 @@
-import React, { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useId,
+  useImperativeHandle,
+  useLayoutEffect,
+  useRef,
+  useState
+} from 'react';
 import { createPortal } from 'react-dom';
 import clsx from 'clsx';
 import PostFormatToolbar from './PostFormatToolbar';
@@ -17,6 +26,8 @@ import {
 /**
  * Rich-text поле: статичный тулбар + всплывающий при выделении + опциональная анимационная рамка.
  *
+ * Imperative handle: `{ focus(), clear() }`.
+ *
  * @param {{
  *   id?: string,
  *   value: string,
@@ -29,23 +40,28 @@ import {
  *   singleLine?: boolean
  * }} props
  */
-function PostRichTextField({
-  id: idProp,
-  value,
-  onChange,
-  placeholder = 'Что нового в секции?…',
-  'aria-label': ariaLabel = 'Текст публикации',
-  enableFrame = true,
-  compact = false,
-  revealToolbarOnFocus = false,
-  singleLine = false
-}) {
+const PostRichTextField = forwardRef(function PostRichTextField(
+  {
+    id: idProp,
+    value,
+    onChange,
+    placeholder = 'Что нового в секции?…',
+    'aria-label': ariaLabel = 'Текст публикации',
+    enableFrame = true,
+    compact = false,
+    revealToolbarOnFocus = false,
+    singleLine = false
+  },
+  ref
+) {
   const autoId = useId();
   const id = idProp || autoId;
   const rootRef = useRef(/** @type {HTMLDivElement | null} */ (null));
   const editorRef = useRef(/** @type {HTMLDivElement | null} */ (null));
   const floatingRef = useRef(/** @type {HTMLDivElement | null} */ (null));
   const savedRangeRef = useRef(/** @type {Range | null} */ (null));
+  const valueRef = useRef(value);
+  valueRef.current = value;
   const [active, setActive] = useState({ bold: false, italic: false, underline: false });
   const [empty, setEmpty] = useState(true);
   const [focused, setFocused] = useState(false);
@@ -55,7 +71,42 @@ function PostRichTextField({
     /** @type {{ top: number, left: number } | null} */ (null)
   );
   const skipNextSync = useRef(false);
+  const lastClearedHtmlRef = useRef(/** @type {string | null} */ (null));
   const showTopToolbar = !revealToolbarOnFocus || focused || frameOpen;
+
+  const clearEditorDom = useCallback(() => {
+    const el = editorRef.current;
+    if (!el) return;
+    el.innerHTML = '';
+    setEmpty(true);
+    skipNextSync.current = true;
+  }, []);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      focus: () => {
+        const el = editorRef.current;
+        if (!el) return;
+        el.focus();
+        const selection = window.getSelection();
+        if (!selection) return;
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        range.collapse(false);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      },
+      clear: () => {
+        const el = editorRef.current;
+        // Запоминаем HTML до очистки — IME/webview иногда вставляет его обратно одним input.
+        lastClearedHtmlRef.current = el ? getEditorHtml(el) : '';
+        valueRef.current = '';
+        clearEditorDom();
+      }
+    }),
+    [clearEditorDom]
+  );
 
   const syncEmptyAndValue = useCallback(() => {
     const el = editorRef.current;
@@ -360,11 +411,22 @@ function PostRichTextField({
           }}
           onBlur={() => {
             requestAnimationFrame(() => {
+              const el = editorRef.current;
+              if (!el) return;
               const root = rootRef.current;
               const floating = floatingRef.current;
               const activeEl = document.activeElement;
               if (root && activeEl && root.contains(activeEl)) return;
               if (floating && activeEl && floating.contains(activeEl)) return;
+              // После внешней очистки (отправка комментария) blur не должен
+              // вернуть старый HTML из DOM через onChange — иначе текст «залипает».
+              if (!(valueRef.current || '')) {
+                if (!isEditorEmpty(el)) clearEditorDom();
+                setSelectionToolbar(null);
+                setFrameOpen(false);
+                setFocused(false);
+                return;
+              }
               syncEmptyAndValue();
               setSelectionToolbar(null);
               setFrameOpen(false);
@@ -372,6 +434,15 @@ function PostRichTextField({
             });
           }}
           onInput={() => {
+            const el = editorRef.current;
+            if (el && !(valueRef.current || '') && lastClearedHtmlRef.current) {
+              const html = getEditorHtml(el);
+              if (html === lastClearedHtmlRef.current) {
+                clearEditorDom();
+                return;
+              }
+            }
+            lastClearedHtmlRef.current = null;
             skipNextSync.current = true;
             syncEmptyAndValue();
             refreshActive();
@@ -388,6 +459,6 @@ function PostRichTextField({
       {floatingToolbar}
     </div>
   );
-}
+});
 
 export default PostRichTextField;

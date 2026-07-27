@@ -1864,6 +1864,13 @@ button.post-card-like:hover:not(:disabled) {
   word-break: break-word;
 }
 
+.comment-reply-quote--compact .comment-reply-quote__text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
 .comment-reply-compose {
   display: flex;
   align-items: flex-start;
