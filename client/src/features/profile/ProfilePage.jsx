@@ -520,8 +520,10 @@ function ProfilePage({
             className="about-app-entry"
             onClick={() => setAboutAppOpen(true)}
           >
-            <span className="about-app-entry__title">О приложении</span>
-            <span className="about-app-entry__hint" aria-hidden="true">›</span>
+            <h3>О приложении</h3>
+            <span className="about-app-entry-arrow" aria-hidden="true">
+              ›
+            </span>
           </button>
         </div>
       )}
