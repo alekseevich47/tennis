@@ -375,6 +375,7 @@ button.gallery-item-like:hover:not(:disabled) {
   border-radius: 14px;
   padding: 12px;
   background: #ffffff;
+  transition: background-color 0.4s ease;
 }
 
 .gallery-comment-item__header {
