@@ -1702,6 +1702,7 @@ button.post-card-like:hover:not(:disabled) {
   padding: 10px 12px;
   border-radius: 12px;
   position: relative;
+  transition: background-color 0.4s ease;
 }
 
 .comment-swipe.modal-comment-item,
@@ -1718,6 +1719,7 @@ button.post-card-like:hover:not(:disabled) {
   background: inherit;
   border-radius: inherit;
   will-change: transform;
+  transition: background-color 0.4s ease;
 }
 
 .comment-swipe.gallery-comment-item .comment-swipe__content {

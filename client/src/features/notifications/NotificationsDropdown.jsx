@@ -135,11 +135,8 @@ export default function NotificationsDropdown({
   const applyBrowPull = useCallback((offsetY, withTransition) => {
     const el = dropdownRef.current;
     if (!el) return;
-    el.style.transition = withTransition
-      ? `transform ${BROW_CLOSE_MS}ms ease, opacity ${BROW_CLOSE_MS}ms ease`
-      : 'none';
+    el.style.transition = withTransition ? `transform ${BROW_CLOSE_MS}ms ease` : 'none';
     el.style.transform = `translateY(${-offsetY}px)`;
-    el.style.opacity = String(Math.max(0.35, 1 - offsetY / 180));
   }, []);
 
   const resetBrowPull = useCallback(
@@ -169,11 +166,9 @@ export default function NotificationsDropdown({
     if (el) {
       el.style.transition = 'none';
       el.style.transform = `translateY(${-y}px)`;
-      el.style.opacity = String(Math.max(0.35, 1 - y / 180));
       void el.offsetHeight;
-      el.style.transition = `transform ${BROW_CLOSE_MS}ms ease, opacity ${BROW_CLOSE_MS}ms ease`;
+      el.style.transition = `transform ${BROW_CLOSE_MS}ms ease`;
       el.style.transform = `translateY(${-(y + 48)}px)`;
-      el.style.opacity = '0';
     }
 
     window.setTimeout(() => {
