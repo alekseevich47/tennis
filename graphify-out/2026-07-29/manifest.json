@@ -310,8 +310,8 @@
     "semantic_hash": ""
   },
   "client/src/features/notifications/NotificationsDropdown.jsx": {
-    "mtime": 1785337360.5254135,
-    "ast_hash": "c67467c6c3f6235f226857eb95ba89f8",
+    "mtime": 1785339838.4821968,
+    "ast_hash": "2227abe7d0e0896c80c09b18812b255c",
     "semantic_hash": ""
   },
   "client/src/features/notifications/notificationBadges.js": {
