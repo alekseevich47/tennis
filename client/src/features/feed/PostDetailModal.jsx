@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
 import Avatar from '../../components/ui/Avatar';
@@ -9,6 +9,7 @@ import CommentSendButton from './CommentSendButton';
 import CommentReplyButton from './CommentReplyButton';
 import CommentReplyComposeBar from './CommentReplyComposeBar';
 import CommentReplyQuote from './CommentReplyQuote';
+import CommentSwipeReply from './CommentSwipeReply';
 import PostContextMenu from './PostContextMenu';
 import { hasVisibleText, toDisplayHtml } from './postRichText';
 import sectionAvatarUrl from '../../assets/sm-avatar.png';
@@ -25,6 +26,7 @@ import { recordContentView } from '../../services/stats';
 import { error } from '../../lib/log';
 
 const SCROLL_INTO_VIEW_DELAY_MS = 200;
+const HIGHLIGHT_MS = 2500;
 const COMMENT_COLLECTION = 'comments';
 
 /**
@@ -86,6 +88,10 @@ function PostDetailModal({
   const commentFieldRef = useRef(/** @type {{ focus: () => void, clear: () => void } | null} */ (null));
   const isAddingCommentRef = useRef(false);
   const scrollTimerRef = useRef(null);
+  const highlightClearRef = useRef(/** @type {ReturnType<typeof setTimeout> | null} */ (null));
+  const expandAnchorRef = useRef(
+    /** @type {{ id: string, offsetTop: number, scrollTop: number, scrollParent: HTMLElement } | null} */ (null)
+  );
   const menuBtnRef = useRef(/** @type {HTMLButtonElement | null} */ (null));
 
   const activeCommentIds = useMemo(
@@ -115,6 +121,7 @@ function PostDetailModal({
     setMenuOpen(false);
     setMenuAnchorRect(null);
     setHighlightedId(null);
+    expandAnchorRef.current = null;
   }, [isOpen, postId]);
 
   useEffect(() => {
@@ -134,21 +141,27 @@ function PostDetailModal({
     };
   }, [trackView, isOpen, postId, user?.id]);
 
-  useEffect(() => {
-    if (!isOpen || !highlightCommentId) return undefined;
+  const focusCommentInList = (commentId) => {
+    if (!commentId) return;
     setShowAll(true);
-    setHighlightedId(highlightCommentId);
-    const timer = window.setTimeout(() => {
-      commentItemRefs.current.get(highlightCommentId)?.scrollIntoView({
+    setHighlightedId(commentId);
+    if (highlightClearRef.current) clearTimeout(highlightClearRef.current);
+    window.setTimeout(() => {
+      commentItemRefs.current.get(commentId)?.scrollIntoView({
         behavior: 'smooth',
         block: 'center'
       });
     }, SCROLL_INTO_VIEW_DELAY_MS);
-    const clearHighlight = window.setTimeout(() => setHighlightedId(null), 2500);
+    highlightClearRef.current = window.setTimeout(() => setHighlightedId(null), HIGHLIGHT_MS);
+  };
+
+  useEffect(() => {
+    if (!isOpen || !highlightCommentId) return undefined;
+    focusCommentInList(highlightCommentId);
     return () => {
-      clearTimeout(timer);
-      clearTimeout(clearHighlight);
+      if (highlightClearRef.current) clearTimeout(highlightClearRef.current);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- только внешний highlight
   }, [isOpen, highlightCommentId, comments.length]);
 
   useEffect(() => {
@@ -172,8 +185,48 @@ function PostDetailModal({
     };
   }, [isOpen, comments.length, highlightCommentId]);
 
+  useLayoutEffect(() => {
+    const anchor = expandAnchorRef.current;
+    if (!showAll || !anchor) return;
+    expandAnchorRef.current = null;
+    const el = commentItemRefs.current.get(anchor.id);
+    if (!el || !anchor.scrollParent) return;
+    const delta = el.offsetTop - anchor.offsetTop;
+    anchor.scrollParent.scrollTop = anchor.scrollTop + delta;
+  }, [showAll, comments]);
+
   const persistPendingDeletes = (idsList) => {
     sessionStorage.setItem('pending_delete_comments', JSON.stringify(idsList));
+  };
+
+  const findScrollParent = (node) => {
+    let el = node?.parentElement || null;
+    while (el) {
+      const style = window.getComputedStyle(el);
+      const overflowY = style.overflowY;
+      if (overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'overlay') {
+        return el;
+      }
+      el = el.parentElement;
+    }
+    return null;
+  };
+
+  const handleShowMore = () => {
+    const firstVisible = (showAll || highlightCommentId ? comments : comments.slice(-2))[0];
+    if (firstVisible) {
+      const el = commentItemRefs.current.get(firstVisible.id);
+      const scrollParent = findScrollParent(el);
+      if (el && scrollParent) {
+        expandAnchorRef.current = {
+          id: firstVisible.id,
+          offsetTop: el.offsetTop,
+          scrollTop: scrollParent.scrollTop,
+          scrollParent
+        };
+      }
+    }
+    setShowAll(true);
   };
 
   const handleToggleMenu = () => {
@@ -308,6 +361,7 @@ function PostDetailModal({
   if (!post) return null;
 
   const displayed = showAll || highlightCommentId ? comments : comments.slice(-2);
+  const canReply = user?.can_comment !== false;
 
   return (
     <>
@@ -424,7 +478,7 @@ function PostDetailModal({
             <button
               type="button"
               className="show-more-comments-btn"
-              onClick={() => setShowAll(true)}
+              onClick={handleShowMore}
             >
               Показать ещё ({comments.length - 2})
             </button>
@@ -457,12 +511,15 @@ function PostDetailModal({
               const likeCount = countsByComment[c.id] || 0;
               const isLiked = userLikedSet.has(c.id);
               const parentComment = c.expand?.reply_to;
+              const swipeEnabled = canReply && editingId !== c.id;
 
               return (
-                <div
+                <CommentSwipeReply
                   key={c.id}
                   className={`modal-comment-item${highlightedId === c.id ? ' modal-comment-item--highlight' : ''}`}
-                  ref={(node) => {
+                  enabled={swipeEnabled}
+                  onReply={() => handleReply(c)}
+                  innerRef={(node) => {
                     if (node) commentItemRefs.current.set(c.id, node);
                     else commentItemRefs.current.delete(c.id);
                   }}
@@ -569,6 +626,7 @@ function PostDetailModal({
                             author={parentComment.expand?.author || null}
                             text={parentComment.text}
                             onOpenProfile={onOpenProfile}
+                            onActivate={() => focusCommentInList(parentComment.id)}
                           />
                         ) : null}
                         <PostContentHtml as="p" className="comment-content-text" content={c.text} />
@@ -589,7 +647,7 @@ function PostDetailModal({
                               <span className="comment-like-count">{likeCount}</span>
                             )}
                           </button>
-                          {user?.can_comment !== false ? (
+                          {canReply ? (
                             <CommentReplyButton onClick={() => handleReply(c)} />
                           ) : null}
                         </div>
@@ -597,7 +655,7 @@ function PostDetailModal({
                       </div>
                     </>
                   )}
-                </div>
+                </CommentSwipeReply>
               );
             })}
           </div>

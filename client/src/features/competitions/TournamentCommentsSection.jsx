@@ -7,6 +7,7 @@ import CommentSendButton from '../feed/CommentSendButton';
 import CommentReplyButton from '../feed/CommentReplyButton';
 import CommentReplyComposeBar from '../feed/CommentReplyComposeBar';
 import CommentReplyQuote from '../feed/CommentReplyQuote';
+import CommentSwipeReply from '../feed/CommentSwipeReply';
 import { hasVisibleText, toDisplayHtml } from '../feed/postRichText';
 import '../feed/Feed.css';
 import { useTournamentComments } from '../../hooks/useTournamentComments';
@@ -22,6 +23,7 @@ import { error } from '../../lib/log';
 
 const COMMENT_COLLECTION = 'tournament_comments';
 const SCROLL_INTO_VIEW_DELAY_MS = 200;
+const HIGHLIGHT_MS = 2500;
 
 /**
  * @param {{
@@ -53,6 +55,7 @@ function TournamentCommentsSection({
   const isAddingCommentRef = useRef(false);
   const commentFieldRef = useRef(/** @type {{ focus: () => void, clear: () => void } | null} */ (null));
   const commentItemRefs = useRef(/** @type {Map<string, HTMLElement>} */ (new Map()));
+  const highlightClearRef = useRef(/** @type {ReturnType<typeof setTimeout> | null} */ (null));
 
   const { data: comments = [], mutate: mutateComments } = useTournamentComments(postId);
 
@@ -80,20 +83,26 @@ function TournamentCommentsSection({
     setHighlightedId(null);
   }, [postId]);
 
-  useEffect(() => {
-    if (!highlightCommentId || !postId) return undefined;
-    setHighlightedId(highlightCommentId);
-    const timer = window.setTimeout(() => {
-      commentItemRefs.current.get(highlightCommentId)?.scrollIntoView({
+  const focusCommentInList = (commentId) => {
+    if (!commentId) return;
+    setHighlightedId(commentId);
+    if (highlightClearRef.current) clearTimeout(highlightClearRef.current);
+    window.setTimeout(() => {
+      commentItemRefs.current.get(commentId)?.scrollIntoView({
         behavior: 'smooth',
         block: 'center'
       });
     }, SCROLL_INTO_VIEW_DELAY_MS);
-    const clearHighlight = window.setTimeout(() => setHighlightedId(null), 2500);
+    highlightClearRef.current = window.setTimeout(() => setHighlightedId(null), HIGHLIGHT_MS);
+  };
+
+  useEffect(() => {
+    if (!highlightCommentId || !postId) return undefined;
+    focusCommentInList(highlightCommentId);
     return () => {
-      clearTimeout(timer);
-      clearTimeout(clearHighlight);
+      if (highlightClearRef.current) clearTimeout(highlightClearRef.current);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- только внешний highlight
   }, [highlightCommentId, postId, comments.length]);
 
   const persistPendingDeletes = (idsList) => {
@@ -228,12 +237,16 @@ function TournamentCommentsSection({
                 const likeCount = countsByComment[c.id] || 0;
                 const isLiked = userLikedSet.has(c.id);
                 const parentComment = c.expand?.reply_to;
+                const canReply = user?.can_comment !== false;
+                const swipeEnabled = canReply && editingId !== c.id;
 
                 return (
-                  <div
+                  <CommentSwipeReply
                     key={c.id}
                     className={`modal-comment-item${highlightedId === c.id ? ' modal-comment-item--highlight' : ''}`}
-                    ref={(node) => {
+                    enabled={swipeEnabled}
+                    onReply={() => handleReply(c)}
+                    innerRef={(node) => {
                       if (node) commentItemRefs.current.set(c.id, node);
                       else commentItemRefs.current.delete(c.id);
                     }}
@@ -337,6 +350,7 @@ function TournamentCommentsSection({
                               author={parentComment.expand?.author || null}
                               text={parentComment.text}
                               onOpenProfile={onOpenProfile}
+                              onActivate={() => focusCommentInList(parentComment.id)}
                             />
                           ) : null}
                           <PostContentHtml as="p" className="comment-content-text" content={c.text} />
@@ -357,7 +371,7 @@ function TournamentCommentsSection({
                                 <span className="comment-like-count">{likeCount}</span>
                               )}
                             </button>
-                            {user?.can_comment !== false ? (
+                            {canReply ? (
                               <CommentReplyButton onClick={() => handleReply(c)} />
                             ) : null}
                           </div>
@@ -365,7 +379,7 @@ function TournamentCommentsSection({
                         </div>
                       </>
                     )}
-                  </div>
+                  </CommentSwipeReply>
                 );
               })
             )}

@@ -7,6 +7,7 @@ import CommentSendButton from '../feed/CommentSendButton';
 import CommentReplyButton from '../feed/CommentReplyButton';
 import CommentReplyComposeBar from '../feed/CommentReplyComposeBar';
 import CommentReplyQuote from '../feed/CommentReplyQuote';
+import CommentSwipeReply from '../feed/CommentSwipeReply';
 import { hasVisibleText, toDisplayHtml } from '../feed/postRichText';
 import { useGalleryComments } from '../../hooks/useGalleryComments';
 import { useCommentLikes } from '../../hooks/useCommentLikes';
@@ -23,6 +24,7 @@ import '../feed/Feed.css';
 
 const COMMENT_COLLECTION = 'gallery_comments';
 const SCROLL_INTO_VIEW_DELAY_MS = 200;
+const HIGHLIGHT_MS = 2500;
 
 /**
  * @param {{
@@ -58,6 +60,7 @@ function GalleryCommentModal({
   const commentItemRefs = useRef(/** @type {Map<string, HTMLElement>} */ (new Map()));
   const commentFieldRef = useRef(/** @type {{ focus: () => void, clear: () => void } | null} */ (null));
   const isAddingCommentRef = useRef(false);
+  const highlightClearRef = useRef(/** @type {ReturnType<typeof setTimeout> | null} */ (null));
 
   const commentIds = useMemo(() => comments.map((c) => c.id), [comments]);
 
@@ -79,20 +82,26 @@ function GalleryCommentModal({
     }
   }, [isOpen, mediaId]);
 
-  useEffect(() => {
-    if (!isOpen || !highlightCommentId) return undefined;
-    setHighlightedId(highlightCommentId);
-    const timer = window.setTimeout(() => {
-      commentItemRefs.current.get(highlightCommentId)?.scrollIntoView({
+  const focusCommentInList = (commentId) => {
+    if (!commentId) return;
+    setHighlightedId(commentId);
+    if (highlightClearRef.current) clearTimeout(highlightClearRef.current);
+    window.setTimeout(() => {
+      commentItemRefs.current.get(commentId)?.scrollIntoView({
         behavior: 'smooth',
         block: 'center'
       });
     }, SCROLL_INTO_VIEW_DELAY_MS);
-    const clearHighlight = window.setTimeout(() => setHighlightedId(null), 2500);
+    highlightClearRef.current = window.setTimeout(() => setHighlightedId(null), HIGHLIGHT_MS);
+  };
+
+  useEffect(() => {
+    if (!isOpen || !highlightCommentId) return undefined;
+    focusCommentInList(highlightCommentId);
     return () => {
-      clearTimeout(timer);
-      clearTimeout(clearHighlight);
+      if (highlightClearRef.current) clearTimeout(highlightClearRef.current);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- только внешний highlight
   }, [isOpen, highlightCommentId, comments.length]);
 
   if (!mediaItem) return null;
@@ -249,12 +258,16 @@ function GalleryCommentModal({
               const likeCount = countsByComment[comment.id] || 0;
               const isLiked = userLikedSet.has(comment.id);
               const parentComment = comment.expand?.reply_to;
+              const canReply = user?.can_comment !== false;
+              const swipeEnabled = canReply && editingId !== comment.id;
 
               return (
-                <div
+                <CommentSwipeReply
                   key={comment.id}
                   className={`gallery-comment-item${highlightedId === comment.id ? ' modal-comment-item--highlight' : ''}`}
-                  ref={(node) => {
+                  enabled={swipeEnabled}
+                  onReply={() => handleReply(comment)}
+                  innerRef={(node) => {
                     if (node) commentItemRefs.current.set(comment.id, node);
                     else commentItemRefs.current.delete(comment.id);
                   }}
@@ -353,6 +366,7 @@ function GalleryCommentModal({
                           author={parentComment.expand?.author || null}
                           text={parentComment.text}
                           onOpenProfile={onOpenProfile}
+                          onActivate={() => focusCommentInList(parentComment.id)}
                         />
                       ) : null}
                       <PostContentHtml
@@ -380,7 +394,7 @@ function GalleryCommentModal({
                             <span className="comment-like-count">{likeCount}</span>
                           )}
                         </button>
-                        {user?.can_comment !== false ? (
+                        {canReply ? (
                           <CommentReplyButton onClick={() => handleReply(comment)} />
                         ) : null}
                       </div>
@@ -389,7 +403,7 @@ function GalleryCommentModal({
                       </span>
                     </div>
                   )}
-                </div>
+                </CommentSwipeReply>
               );
             })}
           </div>

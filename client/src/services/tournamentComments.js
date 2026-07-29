@@ -1,8 +1,6 @@
 // @ts-check
 import pb from './pb';
 import { error } from '../lib/log';
-import { requestCommentReplyNotification } from './notifications';
-
 /**
  * @typedef {Object} TournamentCommentRecord
  * @property {string} id
@@ -51,15 +49,11 @@ export async function createTournamentComment(postId, text, userId, replyToId = 
     text
   };
   if (replyToId) payload.reply_to = replyToId;
-  const record = /** @type {TournamentCommentRecord} */ (
+  return /** @type {TournamentCommentRecord} */ (
     await pb.collection('tournament_comments').create(payload, {
       expand: 'author,reply_to,reply_to.author'
     })
   );
-  if (replyToId && record?.id) {
-    void requestCommentReplyNotification('tournament_comments', record.id);
-  }
-  return record;
 }
 
 /**
