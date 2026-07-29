@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import CommentReplyQuote from './CommentReplyQuote';
 import { SWIPE_CLOSE_THRESHOLD } from '../../lib/gestures';
 
@@ -9,7 +9,7 @@ const DRAG_DEADZONE = 8;
  * Превью «отвечаем на…» над тулбаром форматирования.
  * Свайп влево/вправо — плавное смахивание и отмена ответа.
  * @param {{
- *   comment: { expand?: { author?: any }, text?: string } | null,
+ *   comment: { id?: string, expand?: { author?: any }, text?: string } | null,
  *   onCancel: () => void
  * }} props
  */
@@ -25,6 +25,7 @@ function CommentReplyComposeBar({ comment, onCancel }) {
   const dismissedRef = useRef(false);
   const [dragging, setDragging] = useState(false);
   const [exiting, setExiting] = useState(false);
+  const commentId = comment?.id || null;
 
   const applyTransform = useCallback((x, opacity, withTransition) => {
     const el = rootRef.current;
@@ -36,6 +37,15 @@ function CommentReplyComposeBar({ comment, onCancel }) {
     el.style.opacity = String(opacity);
   }, []);
 
+  // Сброс жеста при новом выбранном комментарии (компонент не размонтируется при replyTo=null).
+  useEffect(() => {
+    dismissedRef.current = false;
+    setExiting(false);
+    setDragging(false);
+    gestureRef.current = null;
+    applyTransform(0, 1, false);
+  }, [commentId, applyTransform]);
+
   const finishCancel = useCallback(() => {
     if (dismissedRef.current) return;
     dismissedRef.current = true;
@@ -44,14 +54,14 @@ function CommentReplyComposeBar({ comment, onCancel }) {
 
   const dismissWithSwipe = useCallback(
     (direction) => {
-      if (dismissedRef.current) return;
+      if (dismissedRef.current || exiting) return;
       setExiting(true);
       setDragging(false);
       const width = rootRef.current?.offsetWidth || window.innerWidth;
       applyTransform(direction * (width + 32), 0, true);
       window.setTimeout(finishCancel, EXIT_MS);
     },
-    [applyTransform, finishCancel]
+    [applyTransform, exiting, finishCancel]
   );
 
   const handleCancelClick = () => {
@@ -60,7 +70,7 @@ function CommentReplyComposeBar({ comment, onCancel }) {
   };
 
   const handleTouchStart = (event) => {
-    if (exiting) return;
+    if (exiting || dismissedRef.current) return;
     const touch = event.touches[0];
     if (!touch) return;
     gestureRef.current = {
@@ -75,7 +85,7 @@ function CommentReplyComposeBar({ comment, onCancel }) {
   const handleTouchMove = (event) => {
     const gesture = gestureRef.current;
     const touch = event.touches[0];
-    if (!gesture || !touch || exiting) return;
+    if (!gesture || !touch || exiting || dismissedRef.current) return;
 
     const deltaX = touch.clientX - gesture.startX;
     const deltaY = touch.clientY - gesture.startY;
@@ -100,7 +110,7 @@ function CommentReplyComposeBar({ comment, onCancel }) {
   const handleTouchEnd = () => {
     const gesture = gestureRef.current;
     gestureRef.current = null;
-    if (!gesture || exiting) return;
+    if (!gesture || exiting || dismissedRef.current) return;
 
     if (gesture.isVertical || !gesture.active) {
       setDragging(false);

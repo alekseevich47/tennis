@@ -2,7 +2,6 @@
 import pb from './pb';
 import { error } from '../lib/log';
 import { PB_URL } from '../config';
-import { requestCommentReplyNotification } from './notifications';
 
 /**
  * @typedef {Object} ProductRecord
@@ -574,15 +573,11 @@ export async function createGalleryComment({ mediaId, authorId, text, replyToId 
   };
   if (replyToId) payload.reply_to = replyToId;
 
-  const record = /** @type {GalleryCommentRecord} */ (
+  return /** @type {GalleryCommentRecord} */ (
     await pb.collection('gallery_comments').create(payload, {
       expand: 'author,reply_to,reply_to.author'
     })
   );
-  if (replyToId && record?.id) {
-    void requestCommentReplyNotification('gallery_comments', record.id);
-  }
-  return record;
 }
 
 /**

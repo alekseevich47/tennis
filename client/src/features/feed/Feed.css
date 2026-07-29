@@ -1704,6 +1704,69 @@ button.post-card-like:hover:not(:disabled) {
   position: relative;
 }
 
+.comment-swipe.modal-comment-item,
+.comment-swipe.gallery-comment-item {
+  padding: 0;
+  overflow: hidden;
+  touch-action: pan-y;
+}
+
+.comment-swipe__content {
+  position: relative;
+  z-index: 1;
+  padding: 10px 12px;
+  background: inherit;
+  border-radius: inherit;
+  will-change: transform;
+}
+
+.comment-swipe.gallery-comment-item .comment-swipe__content {
+  padding: 12px;
+  background: #fff;
+  border-radius: inherit;
+  display: flex;
+  flex-direction: column;
+}
+
+.comment-swipe__action {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 20%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.comment-swipe__action-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #fff;
+  color: rgba(0, 122, 255, 0.55);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.comment-swipe__action-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.comment-swipe--dragging {
+  user-select: none;
+}
+
+.comment-swipe--disabled {
+  touch-action: auto;
+}
+
 .comment-header-row {
   display: flex;
   justify-content: space-between;
@@ -1862,13 +1925,19 @@ button.post-card-like:hover:not(:disabled) {
   color: #333;
   line-height: 1.35;
   word-break: break-word;
-}
-
-.comment-reply-quote--compact .comment-reply-quote__text {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   overflow: hidden;
+}
+
+.comment-reply-quote--interactive {
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.comment-reply-quote--interactive:hover {
+  background: rgba(0, 122, 255, 0.06);
 }
 
 .comment-reply-compose {
@@ -1962,9 +2031,12 @@ button.post-card-like:hover:not(:disabled) {
   opacity: 0.5;
 }
 
-.modal-comment-item--highlight {
-  outline: 2px solid rgba(0, 122, 255, 0.45);
-  outline-offset: 1px;
+.modal-comment-item--highlight,
+.modal-comment-item--highlight .comment-swipe__content,
+.gallery-comment-item.modal-comment-item--highlight,
+.gallery-comment-item.modal-comment-item--highlight .comment-swipe__content {
+  background: rgba(0, 122, 255, 0.16);
+  outline: none;
 }
 
 .modal-comment-form-footer {
