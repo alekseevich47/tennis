@@ -5,7 +5,7 @@ const DRAG_DEADZONE = 8;
 
 /**
  * Свайп справа налево → выбор комментария для ответа.
- * Макс. сдвиг = 1/5 ширины; фиксация при ≥ 1/2 от этого сдвига.
+ * Макс. сдвиг = 1/3 ширины; фиксация при отпускании с |offset| ≥ 1/2 от макс. сдвига (только влево).
  * @param {{
  *   enabled?: boolean,
  *   onReply: () => void,
@@ -21,7 +21,7 @@ function CommentSwipeReply({ enabled = true, onReply, className = '', children, 
   const gestureRef = useRef(/** @type {null | {
     startX: number,
     startY: number,
-    deltaX: number,
+    offsetX: number,
     isVertical: boolean,
     active: boolean,
     maxSlide: number
@@ -83,10 +83,10 @@ function CommentSwipeReply({ enabled = true, onReply, className = '', children, 
     gestureRef.current = {
       startX: touch.clientX,
       startY: touch.clientY,
-      deltaX: 0,
+      offsetX: 0,
       isVertical: false,
       active: false,
-      maxSlide: Math.max(40, width / 5)
+      maxSlide: Math.max(48, width / 3)
     };
   };
 
@@ -97,7 +97,6 @@ function CommentSwipeReply({ enabled = true, onReply, className = '', children, 
 
     const deltaX = touch.clientX - gesture.startX;
     const deltaY = touch.clientY - gesture.startY;
-    gesture.deltaX = deltaX;
 
     if (!gesture.active) {
       if (Math.abs(deltaY) > Math.abs(deltaX) * 1.5) {
@@ -116,12 +115,14 @@ function CommentSwipeReply({ enabled = true, onReply, className = '', children, 
 
     if (gesture.isVertical) return;
 
+    // Только позиция при отпускании важна — храним текущий clamp влево (0 … -maxSlide)
     const clamped = Math.max(-gesture.maxSlide, Math.min(0, deltaX));
+    gesture.offsetX = clamped;
     const progress = Math.min(1, Math.abs(clamped) / gesture.maxSlide);
     applySlide(clamped, progress, false);
   };
 
-  const handleTouchEnd = () => {
+  const handleTouchEnd = (event) => {
     const gesture = gestureRef.current;
     gestureRef.current = null;
     if (!gesture || settlingRef.current) return;
@@ -131,8 +132,16 @@ function CommentSwipeReply({ enabled = true, onReply, className = '', children, 
       return;
     }
 
+    // Финальная точка пальца (не пик свайпа)
+    const touch = event.changedTouches?.[0];
+    let offsetX = gesture.offsetX;
+    if (touch) {
+      offsetX = Math.max(-gesture.maxSlide, Math.min(0, touch.clientX - gesture.startX));
+    }
+
     const threshold = gesture.maxSlide / 2;
-    if (Math.abs(gesture.deltaX) >= threshold) {
+    // Срабатывает только если отпустили, удерживая сдвиг влево ≥ порога
+    if (offsetX <= -threshold) {
       commitReply(gesture.maxSlide);
       return;
     }

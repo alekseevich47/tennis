@@ -83,14 +83,14 @@ function TournamentCommentsSection({
     setHighlightedId(null);
   }, [postId]);
 
-  const focusCommentInList = (commentId) => {
+  const focusCommentInList = (commentId, align = 'start') => {
     if (!commentId) return;
     setHighlightedId(commentId);
     if (highlightClearRef.current) clearTimeout(highlightClearRef.current);
     window.setTimeout(() => {
       commentItemRefs.current.get(commentId)?.scrollIntoView({
         behavior: 'smooth',
-        block: 'center'
+        block: align
       });
     }, SCROLL_INTO_VIEW_DELAY_MS);
     highlightClearRef.current = window.setTimeout(() => setHighlightedId(null), HIGHLIGHT_MS);
@@ -98,7 +98,7 @@ function TournamentCommentsSection({
 
   useEffect(() => {
     if (!highlightCommentId || !postId) return undefined;
-    focusCommentInList(highlightCommentId);
+    focusCommentInList(highlightCommentId, 'center');
     return () => {
       if (highlightClearRef.current) clearTimeout(highlightClearRef.current);
     };
@@ -350,7 +350,7 @@ function TournamentCommentsSection({
                               author={parentComment.expand?.author || null}
                               text={parentComment.text}
                               onOpenProfile={onOpenProfile}
-                              onActivate={() => focusCommentInList(parentComment.id)}
+                              onActivate={() => focusCommentInList(parentComment.id, 'start')}
                             />
                           ) : null}
                           <PostContentHtml as="p" className="comment-content-text" content={c.text} />

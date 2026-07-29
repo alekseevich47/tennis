@@ -215,8 +215,8 @@
     "semantic_hash": ""
   },
   "client/src/features/competitions/TournamentCommentsSection.jsx": {
-    "mtime": 1785338612.1471703,
-    "ast_hash": "3d610e8a7dd35a0ad2b39a0ce310dae1",
+    "mtime": 1785339492.2474234,
+    "ast_hash": "2523c030cc9577c21ab17c57d89ccbcf",
     "semantic_hash": ""
   },
   "client/src/features/competitions/TournamentPodium.jsx": {
@@ -275,8 +275,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostDetailModal.jsx": {
-    "mtime": 1785338584.2669516,
-    "ast_hash": "75ce2e1ed187db0e18cfe5d17435aca1",
+    "mtime": 1785339485.327973,
+    "ast_hash": "5e4aab71d05b5612008b356694180422",
     "semantic_hash": ""
   },
   "client/src/features/feed/PostMedia.jsx": {
@@ -290,8 +290,8 @@
     "semantic_hash": "06d70b8a0c04a44b3f6903e1312b89d2"
   },
   "client/src/features/gallery/GalleryCommentModal.jsx": {
-    "mtime": 1785338634.6189115,
-    "ast_hash": "83d14fd61839ebc800cdfe3e22f0cb21",
+    "mtime": 1785339494.551474,
+    "ast_hash": "353024e6da51eb09a06db44eccc9afa9",
     "semantic_hash": ""
   },
   "client/src/features/gallery/GalleryMediaOverlay.jsx": {
@@ -305,13 +305,13 @@
     "semantic_hash": ""
   },
   "client/src/features/notifications/NotificationCard.jsx": {
-    "mtime": 1785337360.5265274,
-    "ast_hash": "98decbd2590a4d612e8f19715f43dcae",
+    "mtime": 1785339579.1792178,
+    "ast_hash": "8b8687bfbbeacb424c3cf4b901cfbe88",
     "semantic_hash": ""
   },
   "client/src/features/notifications/NotificationsDropdown.jsx": {
-    "mtime": 1785337360.5254135,
-    "ast_hash": "c67467c6c3f6235f226857eb95ba89f8",
+    "mtime": 1785339838.4821968,
+    "ast_hash": "2227abe7d0e0896c80c09b18812b255c",
     "semantic_hash": ""
   },
   "client/src/features/notifications/notificationBadges.js": {
@@ -1130,8 +1130,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/CommentSwipeReply.jsx": {
-    "mtime": 1785338401.5694046,
-    "ast_hash": "b323f8347a10e17429f83f1c2de403f4",
+    "mtime": 1785339470.4406464,
+    "ast_hash": "52ba51d7e3b844fcc35bbadec960cba2",
     "semantic_hash": ""
   }
 }

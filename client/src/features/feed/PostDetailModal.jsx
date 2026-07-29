@@ -141,7 +141,7 @@ function PostDetailModal({
     };
   }, [trackView, isOpen, postId, user?.id]);
 
-  const focusCommentInList = (commentId) => {
+  const focusCommentInList = (commentId, align = 'start') => {
     if (!commentId) return;
     setShowAll(true);
     setHighlightedId(commentId);
@@ -149,7 +149,7 @@ function PostDetailModal({
     window.setTimeout(() => {
       commentItemRefs.current.get(commentId)?.scrollIntoView({
         behavior: 'smooth',
-        block: 'center'
+        block: align
       });
     }, SCROLL_INTO_VIEW_DELAY_MS);
     highlightClearRef.current = window.setTimeout(() => setHighlightedId(null), HIGHLIGHT_MS);
@@ -157,7 +157,7 @@ function PostDetailModal({
 
   useEffect(() => {
     if (!isOpen || !highlightCommentId) return undefined;
-    focusCommentInList(highlightCommentId);
+    focusCommentInList(highlightCommentId, 'center');
     return () => {
       if (highlightClearRef.current) clearTimeout(highlightClearRef.current);
     };
@@ -626,7 +626,7 @@ function PostDetailModal({
                             author={parentComment.expand?.author || null}
                             text={parentComment.text}
                             onOpenProfile={onOpenProfile}
-                            onActivate={() => focusCommentInList(parentComment.id)}
+                            onActivate={() => focusCommentInList(parentComment.id, 'start')}
                           />
                         ) : null}
                         <PostContentHtml as="p" className="comment-content-text" content={c.text} />
