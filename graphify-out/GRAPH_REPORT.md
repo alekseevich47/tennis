@@ -1,16 +1,16 @@
 # Graph Report - tennis  (2026-07-29)
 
 ## Corpus Check
-- 194 files · ~187,879 words
+- 194 files · ~188,736 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 982 nodes · 3094 edges · 59 communities (53 shown, 6 thin omitted)
+- 982 nodes · 3095 edges · 59 communities (53 shown, 6 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 113 edges (avg confidence: 0.61)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a06c6219`
+- Built from commit: `931b2ef1`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -86,11 +86,11 @@
 
 ### Community 0 - "App Shell Navigation"
 Cohesion: 0.07
-Nodes (78): EmptyState(), IconButton, Spinner(), formatDayTitle(), StatsTrainingsCountModal(), formatDate(), getTrainingStatusForUser(), getTrainingTitle() (+70 more)
+Nodes (79): EmptyState(), IconButton, Spinner(), formatDayTitle(), StatsTrainingsCountModal(), formatDate(), getTrainingStatusForUser(), getTrainingTitle() (+71 more)
 
 ### Community 1 - "AvatarCropModal.jsx"
-Cohesion: 0.09
-Nodes (40): usePostUpload(), TournamentPostUploadContext, TournamentPostUploadProvider(), useTournamentPostUpload(), CompetitionsPage(), FeedPage(), applyPinFocusHighlight(), computePinnedBannerIndex() (+32 more)
+Cohesion: 0.07
+Nodes (48): App(), PostUploadContext, PostUploadProvider(), usePostUpload(), TournamentPostUploadContext, TournamentPostUploadProvider(), useTournamentPostUpload(), AlertDialogProvider() (+40 more)
 
 ### Community 2 - "Post Upload and UI Kit"
 Cohesion: 0.10
@@ -101,8 +101,8 @@ Cohesion: 0.23
 Nodes (10): AvatarCropModal(), getCropCircle(), getImagePlacement(), PostContextMenu(), resolvePanLimits(), usePinchZoom(), backdropOpacityForDrag(), clamp() (+2 more)
 
 ### Community 4 - "Gallery Upload Flow"
-Cohesion: 0.07
-Nodes (50): AppMain(), TAB_TITLES, ADMIN_NAV_ITEM, NAV_ITEMS, useGalleryUpload(), isProductsKey(), ProductUploadContext, ProductUploadProvider() (+42 more)
+Cohesion: 0.08
+Nodes (41): createGalleryPayload(), GalleryUploadContext, GalleryUploadProvider(), isGalleryKey(), useGalleryUpload(), isProductsKey(), ProductUploadContext, ProductUploadProvider() (+33 more)
 
 ### Community 5 - "Admin UI Controls"
 Cohesion: 0.11
@@ -113,8 +113,8 @@ Cohesion: 0.10
 Nodes (33): ALL_CATEGORY_VALUES, AuditEventRow(), formatDateRangeLabel(), getLogsDefaultDateRange(), LogsModal(), toDateInputValue(), useAuditEvents(), CATEGORY_STYLES (+25 more)
 
 ### Community 7 - "App.jsx"
-Cohesion: 0.07
-Nodes (51): AppInner(), getInitialFavoriteProductIds(), CARD_STEPS, getStepSelectors(), getTooltipStyle(), NAV_STEPS, normalizeDateInput(), OnboardingTutorial() (+43 more)
+Cohesion: 0.06
+Nodes (55): AppInner(), AppMain(), getInitialFavoriteProductIds(), TAB_TITLES, ADMIN_NAV_ITEM, NAV_ITEMS, CARD_STEPS, getStepSelectors() (+47 more)
 
 ### Community 8 - "NPM Dependencies"
 Cohesion: 0.05
@@ -141,8 +141,8 @@ Cohesion: 0.11
 Nodes (33): AppHeader(), useAlertDialog(), computeAnnualEndDate(), getCurrentSessions(), getModeCopy(), MembershipEditModal(), normalizeDateInput(), MembershipPeriodRangeField() (+25 more)
 
 ### Community 15 - "FullscreenImageViewer.jsx"
-Cohesion: 0.07
-Nodes (47): App(), createGalleryPayload(), GalleryUploadContext, GalleryUploadProvider(), isGalleryKey(), PostUploadContext, PostUploadProvider(), AlertDialogProvider() (+39 more)
+Cohesion: 0.08
+Nodes (43): useToast(), FavoritesContext, FavoritesProvider(), loadFavoriteProducts(), patchProductsFavoritesCount(), formatCountdownPart(), formatTrainingCountdownBadge(), isUserBooked() (+35 more)
 
 ### Community 17 - "Audit Diff Library"
 Cohesion: 0.18
@@ -213,8 +213,8 @@ _Questions this graph is uniquely positioned to answer:_
 - **What connects `name`, `version`, `description` to the rest of the system?**
   _108 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `App Shell Navigation` be split into smaller, more focused modules?**
-  _Cohesion score 0.06774668630338733 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.0665842094413523 - nodes in this community are weakly interconnected._
 - **Should `AvatarCropModal.jsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.08843537414965986 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06557377049180328 - nodes in this community are weakly interconnected._
 - **Should `Post Upload and UI Kit` be split into smaller, more focused modules?**
   _Cohesion score 0.09803921568627451 - nodes in this community are weakly interconnected._

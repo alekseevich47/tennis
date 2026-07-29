@@ -6,6 +6,10 @@ import { error } from '../../lib/log';
 import NotificationCard from './NotificationCard';
 import './NotificationsDropdown.css';
 
+const BROW_CLOSE_THRESHOLD = 56;
+const BROW_DRAG_DEADZONE = 6;
+const BROW_CLOSE_MS = 200;
+
 /**
  * @param {{
  *   open: boolean,
@@ -34,9 +38,19 @@ export default function NotificationsDropdown({
 }) {
   const dropdownRef = useRef(null);
   const listRef = useRef(null);
+  const browGestureRef = useRef(/** @type {null | {
+    startY: number,
+    startX: number,
+    offsetY: number,
+    active: boolean,
+    isHorizontal: boolean
+  }} */ (null));
+  const pullYRef = useRef(0);
+  const browClosingRef = useRef(false);
   const [mounted, setMounted] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [clearing, setClearing] = useState(false);
+  const [browDragging, setBrowDragging] = useState(false);
   const { data: trainings } = useTrainings();
 
   const trainingsById = useMemo(() => {
@@ -52,16 +66,36 @@ export default function NotificationsDropdown({
     [notifications]
   );
 
+  const clearDropdownInlineStyles = useCallback(() => {
+    const el = dropdownRef.current;
+    if (!el) return;
+    el.style.transition = '';
+    el.style.transform = '';
+    el.style.opacity = '';
+  }, []);
+
   useEffect(() => {
     if (open) {
+      browClosingRef.current = false;
+      pullYRef.current = 0;
+      setBrowDragging(false);
       setMounted(true);
       const frame = requestAnimationFrame(() => setIsVisible(true));
       return () => cancelAnimationFrame(frame);
     }
 
     setIsVisible(false);
+    setBrowDragging(false);
+
+    if (browClosingRef.current) {
+      browClosingRef.current = false;
+      clearDropdownInlineStyles();
+      pullYRef.current = 0;
+      setMounted(false);
+    }
+
     return undefined;
-  }, [open]);
+  }, [open, clearDropdownInlineStyles]);
 
   const handleDropdownTransitionEnd = useCallback((event) => {
     if (event.target !== dropdownRef.current) return;
@@ -97,6 +131,120 @@ export default function NotificationsDropdown({
     document.addEventListener('pointerdown', handlePointerDown);
     return () => document.removeEventListener('pointerdown', handlePointerDown);
   }, [open, onClose, notificationsAnchorRef]);
+
+  const applyBrowPull = useCallback((offsetY, withTransition) => {
+    const el = dropdownRef.current;
+    if (!el) return;
+    el.style.transition = withTransition
+      ? `transform ${BROW_CLOSE_MS}ms ease, opacity ${BROW_CLOSE_MS}ms ease`
+      : 'none';
+    el.style.transform = `translateY(${-offsetY}px)`;
+    el.style.opacity = String(Math.max(0.35, 1 - offsetY / 180));
+  }, []);
+
+  const resetBrowPull = useCallback(
+    (withTransition) => {
+      applyBrowPull(0, withTransition);
+      if (withTransition) {
+        window.setTimeout(() => {
+          if (browClosingRef.current) return;
+          clearDropdownInlineStyles();
+        }, BROW_CLOSE_MS);
+      } else {
+        clearDropdownInlineStyles();
+      }
+      pullYRef.current = 0;
+      setBrowDragging(false);
+    },
+    [applyBrowPull, clearDropdownInlineStyles]
+  );
+
+  const commitCloseFromBrow = useCallback(() => {
+    if (browClosingRef.current) return;
+    browClosingRef.current = true;
+    setBrowDragging(false);
+
+    const el = dropdownRef.current;
+    const y = Math.max(pullYRef.current, BROW_CLOSE_THRESHOLD);
+    if (el) {
+      el.style.transition = 'none';
+      el.style.transform = `translateY(${-y}px)`;
+      el.style.opacity = String(Math.max(0.35, 1 - y / 180));
+      void el.offsetHeight;
+      el.style.transition = `transform ${BROW_CLOSE_MS}ms ease, opacity ${BROW_CLOSE_MS}ms ease`;
+      el.style.transform = `translateY(${-(y + 48)}px)`;
+      el.style.opacity = '0';
+    }
+
+    window.setTimeout(() => {
+      onClose();
+    }, BROW_CLOSE_MS);
+  }, [onClose]);
+
+  const handleBrowTouchStart = useCallback((event) => {
+    if (browClosingRef.current) return;
+    const touch = event.touches[0];
+    if (!touch) return;
+    browGestureRef.current = {
+      startY: touch.clientY,
+      startX: touch.clientX,
+      offsetY: 0,
+      active: false,
+      isHorizontal: false
+    };
+  }, []);
+
+  const handleBrowTouchMove = useCallback(
+    (event) => {
+      const gesture = browGestureRef.current;
+      const touch = event.touches[0];
+      if (!gesture || !touch || browClosingRef.current) return;
+
+      const deltaX = touch.clientX - gesture.startX;
+      const deltaY = touch.clientY - gesture.startY;
+
+      if (!gesture.active) {
+        if (Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+          gesture.isHorizontal = true;
+          return;
+        }
+        if (Math.abs(deltaY) < BROW_DRAG_DEADZONE) return;
+        // Только тяга вверх
+        if (deltaY > 0) {
+          gesture.isHorizontal = true;
+          return;
+        }
+        gesture.active = true;
+        setBrowDragging(true);
+      }
+
+      if (gesture.isHorizontal) return;
+
+      const offsetY = Math.max(0, -deltaY);
+      gesture.offsetY = offsetY;
+      pullYRef.current = offsetY;
+      applyBrowPull(offsetY, false);
+    },
+    [applyBrowPull]
+  );
+
+  const handleBrowTouchEnd = useCallback(() => {
+    const gesture = browGestureRef.current;
+    browGestureRef.current = null;
+    if (!gesture || browClosingRef.current) return;
+
+    if (gesture.isHorizontal || !gesture.active) {
+      setBrowDragging(false);
+      return;
+    }
+
+    if (gesture.offsetY >= BROW_CLOSE_THRESHOLD) {
+      commitCloseFromBrow();
+      return;
+    }
+
+    resetBrowPull(true);
+  }, [commitCloseFromBrow, resetBrowPull]);
 
   const handleDelete = useCallback(
     async (id) => {
@@ -154,7 +302,11 @@ export default function NotificationsDropdown({
   return (
     <div
       ref={dropdownRef}
-      className={clsx('notifications-dropdown', isVisible && 'notifications-dropdown--visible')}
+      className={clsx(
+        'notifications-dropdown',
+        isVisible && 'notifications-dropdown--visible',
+        browDragging && 'notifications-dropdown--brow-dragging'
+      )}
       role="dialog"
       aria-label="Уведомления"
       aria-hidden={!open}
@@ -198,6 +350,25 @@ export default function NotificationsDropdown({
           <path d="M10 11v6M14 11v6" />
         </svg>
       </button>
+
+      <div
+        className="notifications-dropdown__brow"
+        role="button"
+        tabIndex={0}
+        aria-label="Закрыть уведомления"
+        onTouchStart={handleBrowTouchStart}
+        onTouchMove={handleBrowTouchMove}
+        onTouchEnd={handleBrowTouchEnd}
+        onTouchCancel={handleBrowTouchEnd}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            onClose();
+          }
+        }}
+      >
+        <span className="notifications-dropdown__brow-bar" aria-hidden="true" />
+      </div>
     </div>
   );
 }

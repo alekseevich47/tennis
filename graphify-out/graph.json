@@ -578,8 +578,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_app",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "app.jsx"
     },
     {
@@ -589,8 +589,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "client_src_app_tab_titles",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "tab_titles"
     },
     {
@@ -622,8 +622,8 @@
       "source_location": "L83",
       "_origin": "ast",
       "id": "client_src_app_appmain",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "appmain()"
     },
     {
@@ -633,8 +633,8 @@
       "source_location": "L443",
       "_origin": "ast",
       "id": "client_src_app_app",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "app()"
     },
     {
@@ -798,8 +798,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_bottomnav",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "bottomnav.jsx"
     },
     {
@@ -809,8 +809,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_components_bottomnav_nav_items",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "nav_items"
     },
     {
@@ -820,8 +820,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "client_src_components_bottomnav_admin_nav_item",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "admin_nav_item"
     },
     {
@@ -831,8 +831,8 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "client_src_components_bottomnav_bottomnav",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "bottomnav()"
     },
     {
@@ -897,8 +897,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "galleryuploadprovider.jsx"
     },
     {
@@ -908,8 +908,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_galleryuploadcontext",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "galleryuploadcontext"
     },
     {
@@ -919,8 +919,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_isgallerykey",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "isgallerykey()"
     },
     {
@@ -930,8 +930,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_creategallerypayload",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "creategallerypayload()"
     },
     {
@@ -941,8 +941,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_galleryuploadprovider",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "galleryuploadprovider()"
     },
     {
@@ -963,8 +963,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_postuploadprovider",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "postuploadprovider.jsx"
     },
     {
@@ -974,8 +974,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_components_postuploadprovider_postuploadcontext",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "postuploadcontext"
     },
     {
@@ -985,8 +985,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_components_postuploadprovider_postuploadprovider",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "postuploadprovider()"
     },
     {
@@ -1139,8 +1139,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "client_src_components_ui_alertdialog_alertdialogprovider",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "alertdialogprovider()"
     },
     {
@@ -1304,8 +1304,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_toast",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "toast.jsx"
     },
     {
@@ -1315,8 +1315,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "client_src_components_ui_toast_toast",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "toast()"
     },
     {
@@ -1326,8 +1326,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_toastcontext",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "toastcontext.jsx"
     },
     {
@@ -1337,8 +1337,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_components_ui_toastcontext_toastcontext",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "toastcontext"
     },
     {
@@ -1348,8 +1348,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_components_ui_toastcontext_toastprovider",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "toastprovider()"
     },
     {
@@ -1403,8 +1403,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 15,
+      "community_name": "FullscreenImageViewer.jsx",
       "norm_label": "favoritescontext.jsx"
     },
     {
@@ -1414,8 +1414,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_favoritescontext",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 15,
+      "community_name": "FullscreenImageViewer.jsx",
       "norm_label": "favoritescontext"
     },
     {
@@ -1425,8 +1425,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_patchproductsfavoritescount",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 15,
+      "community_name": "FullscreenImageViewer.jsx",
       "norm_label": "patchproductsfavoritescount()"
     },
     {
@@ -1436,8 +1436,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_loadfavoriteproducts",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 15,
+      "community_name": "FullscreenImageViewer.jsx",
       "norm_label": "loadfavoriteproducts()"
     },
     {
@@ -1447,8 +1447,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_favoritesprovider",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 15,
+      "community_name": "FullscreenImageViewer.jsx",
       "norm_label": "favoritesprovider()"
     },
     {
@@ -3479,7 +3479,7 @@
       "label": "CLICK_ACTION_LABELS",
       "file_type": "code",
       "source_file": "client/src/features/notifications/NotificationCard.jsx",
-      "source_location": "L11",
+      "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationcard_click_action_labels",
       "community": 15,
@@ -3490,7 +3490,7 @@
       "label": "parseCommentReplyParentText()",
       "file_type": "code",
       "source_file": "client/src/features/notifications/NotificationCard.jsx",
-      "source_location": "L19",
+      "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationcard_parsecommentreplyparenttext",
       "community": 15,
@@ -3501,7 +3501,7 @@
       "label": "NotificationCard()",
       "file_type": "code",
       "source_file": "client/src/features/notifications/NotificationCard.jsx",
-      "source_location": "L40",
+      "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationcard_notificationcard",
       "community": 15,
@@ -3523,7 +3523,7 @@
       "label": "NotificationsDropdown()",
       "file_type": "code",
       "source_file": "client/src/features/notifications/NotificationsDropdown.jsx",
-      "source_location": "L23",
+      "source_location": "L27",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationsdropdown_notificationsdropdown",
       "community": 15,
@@ -5022,8 +5022,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_membershipoverviewmodal",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "membershipoverviewmodal.jsx"
     },
     {
@@ -5033,8 +5033,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_membershipoverviewmodal_trainingcountsasusedsession",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "trainingcountsasusedsession()"
     },
     {
@@ -5044,8 +5044,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_membershipoverviewmodal_formatdaterangelabel",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "formatdaterangelabel()"
     },
     {
@@ -5055,8 +5055,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_membershipoverviewmodal_calendaricon",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "calendaricon()"
     },
     {
@@ -5066,8 +5066,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_membershipoverviewmodal_membershipoverviewmodal",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "membershipoverviewmodal()"
     },
     {
@@ -5077,8 +5077,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_userpickermodal",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 15,
+      "community_name": "FullscreenImageViewer.jsx",
       "norm_label": "userpickermodal.jsx"
     },
     {
@@ -5088,8 +5088,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_userpickermodal_isuserbookingdisabled",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 15,
+      "community_name": "FullscreenImageViewer.jsx",
       "norm_label": "isuserbookingdisabled()"
     },
     {
@@ -5099,8 +5099,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_userpickermodal_userpickermodal",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 15,
+      "community_name": "FullscreenImageViewer.jsx",
       "norm_label": "userpickermodal()"
     },
     {
@@ -5363,8 +5363,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_useplayers",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "useplayers.js"
     },
     {
@@ -5374,8 +5374,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "client_src_hooks_useplayers_useplayers",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "useplayers()"
     },
     {
@@ -5495,8 +5495,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usesessionresetkey",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "usesessionresetkey.js"
     },
     {
@@ -5506,8 +5506,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_hooks_usesessionresetkey_usesessionresetkey",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "usesessionresetkey()"
     },
     {
@@ -6595,8 +6595,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_main",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "main.jsx"
     },
     {
@@ -6606,8 +6606,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_main_globalerrorfallback",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "globalerrorfallback()"
     },
     {
@@ -7299,8 +7299,8 @@
       "source_location": "L135",
       "_origin": "ast",
       "id": "client_src_services_catalog_adjustproductfavoritescount",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 15,
+      "community_name": "FullscreenImageViewer.jsx",
       "norm_label": "adjustproductfavoritescount()"
     },
     {
@@ -7365,8 +7365,8 @@
       "source_location": "L246",
       "_origin": "ast",
       "id": "client_src_services_catalog_deleteproduct",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "deleteproduct()"
     },
     {
@@ -7376,8 +7376,8 @@
       "source_location": "L253",
       "_origin": "ast",
       "id": "client_src_services_catalog_listplayers",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "listplayers()"
     },
     {
@@ -7453,8 +7453,8 @@
       "source_location": "L386",
       "_origin": "ast",
       "id": "client_src_services_catalog_creategalleryitemwithprogress",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "creategalleryitemwithprogress()"
     },
     {
@@ -7607,8 +7607,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_services_notifications_usenotifications",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "usenotifications()"
     },
     {
@@ -7684,8 +7684,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_pb",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 15,
+      "community_name": "FullscreenImageViewer.jsx",
       "norm_label": "pb.js"
     },
     {
@@ -7695,8 +7695,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_services_pb_pb",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 15,
+      "community_name": "FullscreenImageViewer.jsx",
       "norm_label": "pb"
     },
     {
@@ -7794,8 +7794,8 @@
       "source_location": "L165",
       "_origin": "ast",
       "id": "client_src_services_posts_createpostwithprogress",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "createpostwithprogress()"
     },
     {
@@ -7838,8 +7838,8 @@
       "source_location": "L258",
       "_origin": "ast",
       "id": "client_src_services_posts_harddeletepost",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "harddeletepost()"
     },
     {
@@ -8520,8 +8520,8 @@
       "source_location": "L492",
       "_origin": "ast",
       "id": "client_src_services_trainings_writependingdeletetrainingids",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "writependingdeletetrainingids()"
     },
     {
@@ -8718,8 +8718,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_users",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 15,
+      "community_name": "FullscreenImageViewer.jsx",
       "norm_label": "users.js"
     },
     {
@@ -8729,8 +8729,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_services_users_listusers",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 15,
+      "community_name": "FullscreenImageViewer.jsx",
       "norm_label": "listusers()"
     },
     {
@@ -14962,7 +14962,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/notifications/NotificationCard.jsx",
-      "source_location": "L6",
+      "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_notifications_notificationcard",
@@ -26124,7 +26124,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/notifications/NotificationCard.jsx",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_notifications_notificationcard",
@@ -26184,7 +26184,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/notifications/NotificationCard.jsx",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_notifications_notificationcard",
@@ -28573,7 +28573,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/notifications/NotificationCard.jsx",
-      "source_location": "L7",
+      "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_notifications_notificationcard",
@@ -28585,7 +28585,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/notifications/NotificationCard.jsx",
-      "source_location": "L7",
+      "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_notifications_notificationcard",
@@ -28596,7 +28596,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/notifications/NotificationCard.jsx",
-      "source_location": "L11",
+      "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_notifications_notificationcard",
@@ -28607,7 +28607,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/notifications/NotificationCard.jsx",
-      "source_location": "L40",
+      "source_location": "L43",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_notifications_notificationcard",
@@ -28618,7 +28618,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/notifications/NotificationCard.jsx",
-      "source_location": "L19",
+      "source_location": "L22",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_notifications_notificationcard",
@@ -28658,6 +28658,18 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_notifications_notificationcard",
+      "target": "client_src_lib_gestures",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/notifications/NotificationCard.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_notifications_notificationcard",
       "target": "client_src_services_notifications",
       "confidence_score": 1.0
     },
@@ -28666,7 +28678,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/notifications/NotificationCard.jsx",
-      "source_location": "L4",
+      "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_notifications_notificationcard",
@@ -28678,7 +28690,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/notifications/NotificationCard.jsx",
-      "source_location": "L4",
+      "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_notifications_notificationcard",
@@ -28702,7 +28714,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/notifications/NotificationCard.jsx",
-      "source_location": "L170",
+      "source_location": "L295",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_notifications_notificationcard_notificationcard",
@@ -28715,7 +28727,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/features/notifications/NotificationCard.jsx",
-      "source_location": "L119",
+      "source_location": "L224",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_notifications_notificationcard_notificationcard",
@@ -28727,7 +28739,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/features/notifications/NotificationCard.jsx",
-      "source_location": "L202",
+      "source_location": "L324",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_notifications_notificationcard_notificationcard",
@@ -28739,7 +28751,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/features/notifications/NotificationCard.jsx",
-      "source_location": "L133",
+      "source_location": "L81",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_notifications_notificationcard_notificationcard",
@@ -28751,7 +28763,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/features/notifications/NotificationCard.jsx",
-      "source_location": "L96",
+      "source_location": "L111",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_notifications_notificationcard_notificationcard",
@@ -28773,7 +28785,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/notifications/NotificationsDropdown.jsx",
-      "source_location": "L23",
+      "source_location": "L27",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_notifications_notificationsdropdown",
@@ -28882,7 +28894,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/features/notifications/NotificationsDropdown.jsx",
-      "source_location": "L40",
+      "source_location": "L54",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_notifications_notificationsdropdown_notificationsdropdown",
@@ -28894,7 +28906,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/features/notifications/NotificationsDropdown.jsx",
-      "source_location": "L107",
+      "source_location": "L255",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_notifications_notificationsdropdown_notificationsdropdown",
@@ -28906,7 +28918,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/features/notifications/NotificationsDropdown.jsx",
-      "source_location": "L117",
+      "source_location": "L265",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_notifications_notificationsdropdown_notificationsdropdown",
@@ -28918,7 +28930,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/features/notifications/NotificationsDropdown.jsx",
-      "source_location": "L104",
+      "source_location": "L252",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_notifications_notificationsdropdown_notificationsdropdown",
@@ -28930,7 +28942,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "client/src/features/notifications/NotificationsDropdown.jsx",
-      "source_location": "L51",
+      "source_location": "L65",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_notifications_notificationsdropdown_notificationsdropdown",
@@ -47513,5 +47525,5 @@
       "source_file": "client/src/assets/ach/1_1.png"
     }
   ],
-  "built_at_commit": "a06c621970ad4a66d4ba2340fcc1bd4d01f743eb"
+  "built_at_commit": "931b2ef1f5ae162d96ebec6232aa5a8a5532b810"
 }

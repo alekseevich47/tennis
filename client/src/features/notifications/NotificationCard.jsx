@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { formatRelativeTime } from '../../lib/format';
+import { SWIPE_CLOSE_THRESHOLD } from '../../lib/gestures';
 import { markNotificationRead, isDeletableNotification } from '../../services/notifications';
 import PostContentHtml from '../feed/PostContentHtml';
 import Avatar from '../../components/ui/Avatar';
@@ -14,6 +15,8 @@ const CLICK_ACTION_LABELS = {
 };
 
 const READ_VISIBLE_DELAY_MS = 1200;
+const EXIT_MS = 220;
+const DRAG_DEADZONE = 8;
 
 /** @param {string} body */
 function parseCommentReplyParentText(body) {
@@ -52,8 +55,19 @@ export default function NotificationCard({
   const cardRef = useRef(null);
   const markedRef = useRef(false);
   const readTimeoutRef = useRef(null);
+  const gestureRef = useRef(/** @type {null | {
+    startX: number,
+    startY: number,
+    deltaX: number,
+    isVertical: boolean,
+    active: boolean
+  }} */ (null));
+  const dismissingRef = useRef(false);
+  const suppressClickRef = useRef(false);
   const [now, setNow] = useState(() => new Date());
   const [readLocally, setReadLocally] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const [exiting, setExiting] = useState(false);
 
   const id = String(notification.id);
   const isRead = Boolean(notification.is_read);
@@ -64,6 +78,7 @@ export default function NotificationCard({
   const isCommentReply =
     clickAction === 'open_comment' ||
     (meta && typeof meta === 'object' && meta.kind === 'comment_reply');
+  const canDelete = isDeletableNotification(notification);
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 60_000);
@@ -114,6 +129,96 @@ export default function NotificationCard({
     };
   }, [id, isRead, onMarkRead, scrollRootRef]);
 
+  const applyTransform = useCallback((x, opacity, withTransition) => {
+    const el = cardRef.current;
+    if (!el) return;
+    el.style.transition = withTransition
+      ? `transform ${EXIT_MS}ms ease, opacity ${EXIT_MS}ms ease`
+      : 'none';
+    el.style.transform = `translate3d(${x}px,0,0)`;
+    el.style.opacity = String(opacity);
+  }, []);
+
+  const commitDelete = useCallback(
+    (direction = -1) => {
+      if (dismissingRef.current || !canDelete) return;
+      dismissingRef.current = true;
+      setExiting(true);
+      setDragging(false);
+      const width = cardRef.current?.offsetWidth || window.innerWidth;
+      applyTransform(direction * (width + 32), 0, true);
+      window.setTimeout(() => {
+        onDelete(id);
+      }, EXIT_MS);
+    },
+    [applyTransform, canDelete, id, onDelete]
+  );
+
+  const handleTouchStart = useCallback(
+    (event) => {
+      if (!canDelete || exiting || dismissingRef.current) return;
+      const touch = event.touches[0];
+      if (!touch) return;
+      gestureRef.current = {
+        startX: touch.clientX,
+        startY: touch.clientY,
+        deltaX: 0,
+        isVertical: false,
+        active: false
+      };
+    },
+    [canDelete, exiting]
+  );
+
+  const handleTouchMove = useCallback(
+    (event) => {
+      const gesture = gestureRef.current;
+      const touch = event.touches[0];
+      if (!gesture || !touch || !canDelete || exiting || dismissingRef.current) return;
+
+      const deltaX = touch.clientX - gesture.startX;
+      const deltaY = touch.clientY - gesture.startY;
+      gesture.deltaX = deltaX;
+
+      if (!gesture.active) {
+        if (Math.abs(deltaY) > Math.abs(deltaX) * 1.5) {
+          gesture.isVertical = true;
+          return;
+        }
+        if (Math.abs(deltaX) < DRAG_DEADZONE) return;
+        gesture.active = true;
+        setDragging(true);
+      }
+
+      if (gesture.isVertical) return;
+
+      const opacity = Math.max(0.35, 1 - Math.abs(deltaX) / (SWIPE_CLOSE_THRESHOLD * 1.5));
+      applyTransform(deltaX, opacity, false);
+    },
+    [applyTransform, canDelete, exiting]
+  );
+
+  const handleTouchEnd = useCallback(() => {
+    const gesture = gestureRef.current;
+    gestureRef.current = null;
+    if (!gesture || exiting || dismissingRef.current) return;
+
+    if (gesture.isVertical || !gesture.active) {
+      setDragging(false);
+      return;
+    }
+
+    suppressClickRef.current = true;
+    const { deltaX } = gesture;
+    if (Math.abs(deltaX) >= SWIPE_CLOSE_THRESHOLD) {
+      commitDelete(deltaX > 0 ? 1 : -1);
+      return;
+    }
+
+    setDragging(false);
+    applyTransform(0, 1, true);
+  }, [applyTransform, commitDelete, exiting]);
+
   const badgeText = (() => {
     if (badgeDynamicType === 'training_countdown') {
       return formatTrainingCountdownBadge(training, now, userId);
@@ -130,7 +235,6 @@ export default function NotificationCard({
     }
     return clickAction && CLICK_ACTION_LABELS[clickAction] ? CLICK_ACTION_LABELS[clickAction] : null;
   })();
-  const canDelete = isDeletableNotification(notification);
 
   const handleActionClick = useCallback(() => {
     if (clickAction === 'open_training' && meta?.trainingId) {
@@ -153,14 +257,35 @@ export default function NotificationCard({
   const handleDelete = useCallback(
     (event) => {
       event.stopPropagation();
-      onDelete(id);
+      commitDelete(-1);
     },
-    [id, onDelete]
+    [commitDelete]
   );
 
   const handleCardClick = useCallback(() => {
+    if (suppressClickRef.current || dismissingRef.current || exiting) {
+      suppressClickRef.current = false;
+      return;
+    }
     if (isCommentReply) handleActionClick();
-  }, [handleActionClick, isCommentReply]);
+  }, [exiting, handleActionClick, isCommentReply]);
+
+  const cardClassName = clsx(
+    'notification-card',
+    isCommentReply && 'notification-card--comment-reply',
+    showUnreadDot && 'notification-card--unread',
+    dragging && 'notification-card--dragging',
+    exiting && 'notification-card--exiting'
+  );
+
+  const swipeHandlers = canDelete
+    ? {
+        onTouchStart: handleTouchStart,
+        onTouchMove: handleTouchMove,
+        onTouchEnd: handleTouchEnd,
+        onTouchCancel: handleTouchEnd
+      }
+    : {};
 
   if (isCommentReply) {
     const actor = /** @type {import('../../lib/avatar').UserAvatarLike | undefined} */ (
@@ -172,11 +297,7 @@ export default function NotificationCard({
     return (
       <article
         ref={cardRef}
-        className={clsx(
-          'notification-card',
-          'notification-card--comment-reply',
-          showUnreadDot && 'notification-card--unread'
-        )}
+        className={cardClassName}
         onClick={handleCardClick}
         onKeyDown={(event) => {
           if (event.key === 'Enter' || event.key === ' ') {
@@ -186,6 +307,7 @@ export default function NotificationCard({
         }}
         role="button"
         tabIndex={0}
+        {...swipeHandlers}
       >
         {showUnreadDot ? (
           <span className="notification-card__unread-dot" aria-hidden="true" />
@@ -242,10 +364,7 @@ export default function NotificationCard({
   }
 
   return (
-    <article
-      ref={cardRef}
-      className={clsx('notification-card', showUnreadDot && 'notification-card--unread')}
-    >
+    <article ref={cardRef} className={cardClassName} {...swipeHandlers}>
       {showUnreadDot ? (
         <span className="notification-card__unread-dot" aria-hidden="true" />
       ) : null}
