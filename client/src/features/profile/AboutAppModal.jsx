@@ -1,12 +1,5 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import Modal from '../../components/ui/Modal';
-import { useToast } from '../../components/ui/ToastContext';
-import { MAX_SELLER_URL } from '../../config';
-import {
-  BUY_MOBILE_TOAST_ACTION_LABEL,
-  isMobileMaxPlatform,
-  openSellerChat
-} from '../shop/buyMessage';
 
 const DEVELOPER_SITE = 'https://loomixx.ru';
 const DEVELOPER_EMAIL = 'loomixx.dev@ya.ru';
@@ -29,20 +22,6 @@ function openExternalUrl(url) {
  * @param {{ isOpen: boolean, onClose: () => void }} props
  */
 export default function AboutAppModal({ isOpen, onClose }) {
-  const { showToast } = useToast();
-
-  const handleAdminChat = useCallback(() => {
-    if (isMobileMaxPlatform()) {
-      showToast({
-        text: 'Чат с администратором',
-        actionLabel: BUY_MOBILE_TOAST_ACTION_LABEL,
-        onAction: () => openSellerChat(MAX_SELLER_URL)
-      });
-      return;
-    }
-    openSellerChat(MAX_SELLER_URL);
-  }, [showToast]);
-
   return (
     <Modal
       isOpen={isOpen}
@@ -54,23 +33,12 @@ export default function AboutAppModal({ isOpen, onClose }) {
     >
       <div className="about-app-body">
         <div className="about-app-row">
-          <span className="about-app-row__label">Связь с администрацией:</span>
-          <button
-            type="button"
-            className="about-app-row__value about-app-row__value--action"
-            onClick={handleAdminChat}
-          >
-            Илья Миленький
-          </button>
-        </div>
-
-        <div className="about-app-row">
           <span className="about-app-row__label">Версия приложения:</span>
           <span className="about-app-row__value">v1.0</span>
         </div>
 
         <div className="about-app-row">
-          <span className="about-app-row__label">Разработка приложения:</span>
+          <span className="about-app-row__label">Разработка:</span>
           <a
             className="about-app-row__value about-app-row__value--action"
             href={DEVELOPER_SITE}
@@ -83,7 +51,7 @@ export default function AboutAppModal({ isOpen, onClose }) {
           </a>
         </div>
 
-        <div className="about-app-row about-app-row--indent">
+        <div className="about-app-row">
           <span className="about-app-row__label">Почта:</span>
           <a
             className="about-app-row__value about-app-row__value--action"
@@ -97,7 +65,7 @@ export default function AboutAppModal({ isOpen, onClose }) {
           </a>
         </div>
 
-        <div className="about-app-row about-app-row--indent">
+        <div className="about-app-row">
           <span className="about-app-row__label">Telegram:</span>
           <a
             className="about-app-row__value about-app-row__value--action"
@@ -111,7 +79,7 @@ export default function AboutAppModal({ isOpen, onClose }) {
           </a>
         </div>
 
-        <div className="about-app-row about-app-row--indent">
+        <div className="about-app-row">
           <span className="about-app-row__label">ВК:</span>
           <a
             className="about-app-row__value about-app-row__value--action"
