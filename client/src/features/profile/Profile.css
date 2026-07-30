@@ -535,6 +535,25 @@
   margin: 20px 0;
 }
 
+.profile-contact-btn {
+  display: block;
+  width: 100%;
+  margin-top: 24px;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #17171b;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.profile-contact-btn:hover {
+  background: #0a0a0c;
+}
+
 .about-app-entry {
   display: flex;
   align-items: center;
@@ -585,24 +604,27 @@
 }
 
 .about-app-body {
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
-  column-gap: 6px;
-  row-gap: 12px;
-  align-items: baseline;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  text-align: left;
 }
 
 .about-app-row {
-  display: contents;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+  width: 100%;
+  justify-content: flex-start;
+  text-align: left;
 }
 
 .about-app-row__label {
   font-size: 15px;
   color: #444;
-}
-
-.about-app-row--indent .about-app-row__label {
-  padding-left: 16px;
+  text-align: left;
 }
 
 .about-app-row__value {

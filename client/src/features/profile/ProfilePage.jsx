@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
 import AchievementsBlock from '../../components/AchievementsBlock';
 import FloatingAchievements from '../../components/FloatingAchievements';
@@ -7,9 +7,11 @@ import Avatar from '../../components/ui/Avatar';
 import IconButton from '../../components/ui/IconButton';
 import EmptyState from '../../components/ui/EmptyState';
 import Spinner from '../../components/ui/Spinner';
+import { useToast } from '../../components/ui/ToastContext';
 import { usePlayers } from '../../hooks/usePlayers';
 import { useTrainings } from '../../hooks/useTrainings';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
+import { MAX_SELLER_URL } from '../../config';
 import { isModerator, updateUserProfile } from '../../services/auth';
 import { listCancelledTrainingsForUser } from '../../services/trainings';
 import pb from '../../services/pb';
@@ -17,6 +19,11 @@ import { error } from '../../lib/log';
 import { getPlayerRatingRank } from '../../lib/rating';
 import { compressImage } from '../../lib/compress';
 import { formatCardDateWithYear, formatTimeRange, hasTimeRangeEnded } from '../../lib/format';
+import {
+  BUY_MOBILE_TOAST_ACTION_LABEL,
+  isMobileMaxPlatform,
+  openSellerChat
+} from '../shop/buyMessage';
 import AboutAppModal from './AboutAppModal';
 import MembershipModal from './MembershipModal';
 import ProfileSingleDateField from './ProfileSingleDateField';
@@ -87,6 +94,7 @@ function ProfilePage({
   onMembershipOpened
 }) {
   const { alert } = useAlertDialog();
+  const { showToast } = useToast();
   const { data: players } = usePlayers();
   const { data: trainings, isLoading: trainingsLoading } = useTrainings();
   const { data: cancelledTrainings, isLoading: cancelledLoading } = useSWR(
@@ -111,6 +119,18 @@ function ProfilePage({
   const [trainingsExpanded, setTrainingsExpanded] = useState(false);
   const [searchDate, setSearchDate] = useState('');
   const [trainingsDateRange, setTrainingsDateRange] = useState(null);
+
+  const handleContactUs = useCallback(() => {
+    if (isMobileMaxPlatform()) {
+      showToast({
+        text: 'Чат с администратором',
+        actionLabel: BUY_MOBILE_TOAST_ACTION_LABEL,
+        onAction: () => openSellerChat(MAX_SELLER_URL)
+      });
+      return;
+    }
+    openSellerChat(MAX_SELLER_URL);
+  }, [showToast]);
 
   useEffect(() => {
     if (!openMembershipFromNotification) return;
@@ -514,6 +534,14 @@ function ProfilePage({
               )
             )}
           </div>
+
+          <button
+            type="button"
+            className="profile-contact-btn"
+            onClick={handleContactUs}
+          >
+            Связаться с нами
+          </button>
 
           <button
             type="button"
