@@ -58,7 +58,10 @@ function TournamentCommentsSection({
   const isAddingCommentRef = useRef(false);
   const commentFieldRef = useRef(/** @type {{ focus: () => void, clear: () => void } | null} */ (null));
   const commentItemRefs = useRef(/** @type {Map<string, HTMLElement>} */ (new Map()));
+  const commentsBottomRef = useRef(/** @type {HTMLDivElement | null} */ (null));
+  const scrollTimerRef = useRef(/** @type {ReturnType<typeof setTimeout> | null} */ (null));
   const highlightClearRef = useRef(/** @type {ReturnType<typeof setTimeout> | null} */ (null));
+  const skipInitialScrollRef = useRef(true);
 
   const { data: comments = [], mutate: mutateComments } = useTournamentComments(postId);
 
@@ -84,7 +87,27 @@ function TournamentCommentsSection({
     setSoftDeletedIds([]);
     setReplyTo(null);
     setHighlightedId(null);
+    skipInitialScrollRef.current = true;
   }, [postId]);
+
+  useEffect(() => {
+    if (!postId || comments.length === 0 || highlightCommentId) return undefined;
+    // Не прыгать вниз при первом открытии модалки / смене поста.
+    if (skipInitialScrollRef.current) {
+      skipInitialScrollRef.current = false;
+      return undefined;
+    }
+    if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+    scrollTimerRef.current = window.setTimeout(() => {
+      commentsBottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }, SCROLL_INTO_VIEW_DELAY_MS);
+    return () => {
+      if (scrollTimerRef.current) {
+        clearTimeout(scrollTimerRef.current);
+        scrollTimerRef.current = null;
+      }
+    };
+  }, [postId, comments.length, highlightCommentId]);
 
   const focusCommentInList = (commentId, align = 'start') => {
     if (!commentId) return;
@@ -390,6 +413,7 @@ function TournamentCommentsSection({
                 );
               })
             )}
+        <div ref={commentsBottomRef} />
       </div>
     </div>
   );

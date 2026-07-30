@@ -215,8 +215,8 @@
     "semantic_hash": ""
   },
   "client/src/features/competitions/TournamentCommentsSection.jsx": {
-    "mtime": 1785416126.9500024,
-    "ast_hash": "14a54e0e79110c9969979b013fe9bcf1",
+    "mtime": 1785416778.6199343,
+    "ast_hash": "feb69ff9ae9271e125b551ebc13005a8",
     "semantic_hash": ""
   },
   "client/src/features/competitions/TournamentPodium.jsx": {
@@ -350,8 +350,8 @@
     "semantic_hash": "84da5a05702df43b0f2b6453f5a0dc84"
   },
   "client/src/features/profile/ProfilePage.jsx": {
-    "mtime": 1785415775.878858,
-    "ast_hash": "ac4020dd120ed32694edd620796d104d",
+    "mtime": 1785417190.8502738,
+    "ast_hash": "1e47d35952bb95819613c9244904407d",
     "semantic_hash": ""
   },
   "client/src/features/profile/ProfileSingleDateField.jsx": {
@@ -1125,8 +1125,8 @@
     "semantic_hash": ""
   },
   "client/src/features/profile/AboutAppModal.jsx": {
-    "mtime": 1785169410.5732586,
-    "ast_hash": "5fb685ad2e847871704c7230afc421b7",
+    "mtime": 1785417174.3018737,
+    "ast_hash": "c9a5799a20171474d5859e1bf6b6757f",
     "semantic_hash": ""
   },
   "client/src/features/feed/CommentSwipeReply.jsx": {
