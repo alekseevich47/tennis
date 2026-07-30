@@ -54,6 +54,7 @@ function TournamentPostDetailModal({
   const [menuAnchorRect, setMenuAnchorRect] = useState(
     /** @type {{ left: number, top: number, right: number, bottom: number, width: number, height: number } | null} */ (null)
   );
+  const [composeTarget, setComposeTarget] = useState(/** @type {HTMLElement | null} */ (null));
   const menuBtnRef = useRef(/** @type {HTMLButtonElement | null} */ (null));
 
   const playerMap = useMemo(() => {
@@ -66,6 +67,7 @@ function TournamentPostDetailModal({
     if (!isOpen) {
       setMenuOpen(false);
       setMenuAnchorRect(null);
+      setComposeTarget(null);
     }
   }, [isOpen, postId]);
 
@@ -121,6 +123,12 @@ function TournamentPostDetailModal({
         ariaLabel="Просмотр итогов турнира и комментариев"
         size="large"
         showCloseButton={false}
+        footer={
+          <div
+            ref={setComposeTarget}
+            className="tournament-comment-compose-slot"
+          />
+        }
       >
         <div className="tournament-post-detail-header">
           <div className="feed-card-header tournament-post-detail-card-header">
@@ -233,6 +241,7 @@ function TournamentPostDetailModal({
           onOpenProfile={onOpenProfile}
           onCommentMutated={onCommentMutated}
           highlightCommentId={highlightCommentId}
+          composeTarget={composeTarget}
         />
       </Modal>
 

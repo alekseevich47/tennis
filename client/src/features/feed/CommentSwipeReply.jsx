@@ -66,9 +66,10 @@ function CommentSwipeReply({ enabled = true, onReply, className = '', children, 
     (maxSlide) => {
       settlingRef.current = true;
       setDragging(false);
+      // Сразу в цепочке touchend — иначе mobile webview не даёт focus/клавиатуру после setTimeout.
+      onReply();
       applySlide(-maxSlide, 1, true);
       window.setTimeout(() => {
-        onReply();
         resetSlide(true);
       }, SPRING_MS);
     },

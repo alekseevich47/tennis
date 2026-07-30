@@ -605,10 +605,14 @@
   color: #868e96;
 }
 
+.tournament-comment-compose-slot {
+  width: 100%;
+}
+
 .tournament-comments-restricted {
   border-top: none;
   border-radius: 10px;
-  margin-top: 4px;
+  margin-top: 0;
 }
 
 .tournament-comment-form {

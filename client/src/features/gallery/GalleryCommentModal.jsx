@@ -114,6 +114,9 @@ function GalleryCommentModal({
     setReplyTo(comment);
     setEditingId(null);
     commentFieldRef.current?.focus();
+    requestAnimationFrame(() => {
+      commentFieldRef.current?.focus();
+    });
   };
 
   const handleAdd = async (event) => {
