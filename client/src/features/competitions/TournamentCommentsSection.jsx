@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import IconButton from '../../components/ui/IconButton';
 import Avatar from '../../components/ui/Avatar';
 import PostContentHtml from '../feed/PostContentHtml';
@@ -32,7 +33,8 @@ const HIGHLIGHT_MS = 2500;
  *   userIsModerator: boolean,
  *   onOpenProfile?: (user: any) => void,
  *   onCommentMutated?: () => void,
- *   highlightCommentId?: string | null
+ *   highlightCommentId?: string | null,
+ *   composeTarget?: HTMLElement | null
  * }} props
  */
 function TournamentCommentsSection({
@@ -41,7 +43,8 @@ function TournamentCommentsSection({
   userIsModerator,
   onOpenProfile,
   onCommentMutated,
-  highlightCommentId = null
+  highlightCommentId = null,
+  composeTarget = null
 }) {
   const [commentText, setCommentText] = useState('');
   const [isAddingComment, setIsAddingComment] = useState(false);
@@ -116,7 +119,11 @@ function TournamentCommentsSection({
   const handleReply = (comment) => {
     setReplyTo(comment);
     setEditingId(null);
+    // Синхронно в жесте + после layout превью ответа (sticky footer / клавиатура в webview).
     commentFieldRef.current?.focus();
+    requestAnimationFrame(() => {
+      commentFieldRef.current?.focus();
+    });
   };
 
   const handleAdd = async (e) => {
@@ -205,7 +212,7 @@ function TournamentCommentsSection({
     }
   };
 
-  return (
+  const listNode = (
     <div className="tournament-comments">
       <div className="tournament-comments-list">
         {comments.length === 0 ? (
@@ -384,37 +391,45 @@ function TournamentCommentsSection({
               })
             )}
       </div>
-
-      {user?.can_comment === false ? (
-        <div className="comment-restricted-message tournament-comments-restricted">
-          Вы запрещено оставлять комментарии по причине:{' '}
-          {user.comment_restriction_reason || 'не указана'}. Свяжитесь с администратором.
-        </div>
-      ) : (
-        <div className="modal-comment-footer">
-          <CommentReplyComposeBar comment={replyTo} onCancel={() => setReplyTo(null)} />
-          <form onSubmit={handleAdd} className="tournament-comment-form">
-            <label htmlFor={`tournament-comment-input-${postId}`} className="visually-hidden">
-              Написать комментарий
-            </label>
-            <PostRichTextField
-              ref={commentFieldRef}
-              id={`tournament-comment-input-${postId}`}
-              value={commentText}
-              onChange={setCommentText}
-              enableFrame={false}
-              compact
-              placeholder="Написать комментарий…"
-              aria-label="Написать комментарий"
-            />
-            <CommentSendButton
-              disabled={isAddingComment || !hasVisibleText(commentText)}
-              busy={isAddingComment}
-            />
-          </form>
-        </div>
-      )}
     </div>
+  );
+
+  const composeNode =
+    user?.can_comment === false ? (
+      <div className="comment-restricted-message tournament-comments-restricted">
+        Вы запрещено оставлять комментарии по причине:{' '}
+        {user.comment_restriction_reason || 'не указана'}. Свяжитесь с администратором.
+      </div>
+    ) : (
+      <div className="modal-comment-footer">
+        <CommentReplyComposeBar comment={replyTo} onCancel={() => setReplyTo(null)} />
+        <form onSubmit={handleAdd} className="tournament-comment-form">
+          <label htmlFor={`tournament-comment-input-${postId}`} className="visually-hidden">
+            Написать комментарий
+          </label>
+          <PostRichTextField
+            ref={commentFieldRef}
+            id={`tournament-comment-input-${postId}`}
+            value={commentText}
+            onChange={setCommentText}
+            enableFrame={false}
+            compact
+            placeholder="Написать комментарий…"
+            aria-label="Написать комментарий"
+          />
+          <CommentSendButton
+            disabled={isAddingComment || !hasVisibleText(commentText)}
+            busy={isAddingComment}
+          />
+        </form>
+      </div>
+    );
+
+  return (
+    <>
+      {listNode}
+      {composeTarget ? createPortal(composeNode, composeTarget) : null}
+    </>
   );
 }
 
