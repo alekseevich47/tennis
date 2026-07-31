@@ -19,7 +19,6 @@ import { formatPostDate } from '../../lib/format';
 import {
   createComment,
   hardDeleteComment,
-  toggleCommentLike,
   updateComment
 } from '../../services/posts';
 import { recordContentView } from '../../services/stats';
@@ -76,7 +75,6 @@ function PostDetailModal({
   const [replyTo, setReplyTo] = useState(/** @type {any | null} */ (null));
   // Soft-удалённые в рамках текущей сессии модалки. Стираются в БД при закрытии.
   const [softDeletedIds, setSoftDeletedIds] = useState([]);
-  const [togglingLikeId, setTogglingLikeId] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuAnchorRect, setMenuAnchorRect] = useState(
     /** @type {{ left: number, top: number, right: number, bottom: number, width: number, height: number } | null} */ (null)
@@ -102,7 +100,7 @@ function PostDetailModal({
     [comments, softDeletedIds]
   );
 
-  const { countsByComment, userLikedSet, mutateLikes } = useCommentLikes(
+  const { countsByComment, userLikedSet, toggle: toggleLike } = useCommentLikes(
     isOpen ? activeCommentIds : [],
     COMMENT_COLLECTION,
     user?.id
@@ -330,17 +328,9 @@ function PostDetailModal({
     }
   };
 
-  const handleToggleLike = async (commentId) => {
-    if (!user?.id || togglingLikeId) return;
-    setTogglingLikeId(commentId);
-    try {
-      await toggleCommentLike(commentId, COMMENT_COLLECTION, user.id);
-      await mutateLikes();
-    } catch (err) {
-      error('toggle comment like:', err);
-    } finally {
-      setTogglingLikeId(null);
-    }
+  const handleToggleLike = (commentId) => {
+    if (!user?.id) return;
+    toggleLike(commentId);
   };
 
   const handleClose = async () => {
@@ -640,7 +630,7 @@ function PostDetailModal({
                             type="button"
                             className={`comment-like-btn${isLiked ? ' comment-like-btn--active' : ''}`}
                             onClick={() => handleToggleLike(c.id)}
-                            disabled={!user?.id || togglingLikeId === c.id}
+                            disabled={!user?.id}
                             aria-label={isLiked ? 'Убрать лайк' : 'Поставить лайк'}
                           >
                             <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">

@@ -13,7 +13,6 @@ import { hasVisibleText, toDisplayHtml } from '../feed/postRichText';
 import '../feed/Feed.css';
 import { useTournamentComments } from '../../hooks/useTournamentComments';
 import { useCommentLikes } from '../../hooks/useCommentLikes';
-import { toggleCommentLike } from '../../services/posts';
 import {
   createTournamentComment,
   updateTournamentComment,
@@ -52,7 +51,6 @@ function TournamentCommentsSection({
   const [editingText, setEditingText] = useState('');
   const [replyTo, setReplyTo] = useState(/** @type {any | null} */ (null));
   const [softDeletedIds, setSoftDeletedIds] = useState([]);
-  const [togglingLikeId, setTogglingLikeId] = useState(null);
   const [highlightedId, setHighlightedId] = useState(/** @type {string | null} */ (null));
 
   const isAddingCommentRef = useRef(false);
@@ -73,7 +71,7 @@ function TournamentCommentsSection({
     [comments, softDeletedIds]
   );
 
-  const { countsByComment, userLikedSet, mutateLikes } = useCommentLikes(
+  const { countsByComment, userLikedSet, toggle: toggleLike } = useCommentLikes(
     activeCommentIds,
     COMMENT_COLLECTION,
     user?.id
@@ -222,17 +220,9 @@ function TournamentCommentsSection({
     }
   };
 
-  const handleToggleLike = async (commentId) => {
-    if (!user?.id || togglingLikeId) return;
-    setTogglingLikeId(commentId);
-    try {
-      await toggleCommentLike(commentId, COMMENT_COLLECTION, user.id);
-      await mutateLikes();
-    } catch (err) {
-      error('toggle comment like:', err);
-    } finally {
-      setTogglingLikeId(null);
-    }
+  const handleToggleLike = (commentId) => {
+    if (!user?.id) return;
+    toggleLike(commentId);
   };
 
   const listNode = (
@@ -391,7 +381,7 @@ function TournamentCommentsSection({
                               type="button"
                               className={`comment-like-btn${isLiked ? ' comment-like-btn--active' : ''}`}
                               onClick={() => handleToggleLike(c.id)}
-                              disabled={!user?.id || togglingLikeId === c.id}
+                              disabled={!user?.id}
                               aria-label={isLiked ? 'Убрать лайк' : 'Поставить лайк'}
                             >
                               <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">

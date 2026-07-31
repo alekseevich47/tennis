@@ -21,7 +21,7 @@ function readComments(post) {
 }
 
 function PostCardLike({ postId, user }) {
-  const { count, isLiked, toggle, isLoading } = usePostLikes(postId);
+  const { count, isLiked, toggle } = usePostLikes(postId);
   const userId = user?.id;
   const liked = isLiked(userId);
 
@@ -53,7 +53,6 @@ function PostCardLike({ postId, user }) {
         event.preventDefault();
         toggle(postId, userId);
       }}
-      disabled={isLoading}
       aria-pressed={liked}
       aria-label={liked ? 'Убрать лайк' : 'Поставить лайк'}
     >

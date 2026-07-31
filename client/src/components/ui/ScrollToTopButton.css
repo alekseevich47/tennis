@@ -1,0 +1,33 @@
+.scroll-to-top-btn {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right, 0px));
+  /* над floating BottomNav (~56 + 6 inset + запас) */
+  bottom: calc(74px + 12px + env(safe-area-inset-bottom, 0px));
+  z-index: 950;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.94);
+  color: #007aff;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.scroll-to-top-btn--visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.scroll-to-top-btn:active {
+  transform: scale(0.96);
+}
