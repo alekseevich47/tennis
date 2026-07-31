@@ -30,7 +30,8 @@ const TOUR_STEPS = {
   4: {
     tab: 1,
     spotlight: true,
-    selectors: ['.calendar-strip', '.bottom-nav .nav-item[data-nav-index="1"]'],
+    // primary = иконка «Запись» (полный spotlight, как шаги 3/5/6/7); календарь — ring + якорь tooltip
+    selectors: ['.bottom-nav .nav-item[data-nav-index="1"]', '.calendar-strip'],
     tooltipSelector: '.calendar-strip',
     text: 'Выберите день в полосе, откройте тренировку и нажмите "Записаться". Снять запись возможно — не позднее чем за 1 час до начала.'
   },
@@ -274,6 +275,7 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
     setFinishing(true);
     try {
       await completeOnboarding();
+      onTabChange(0);
       await onComplete();
     } catch (err) {
       error('onboarding finish:', err);

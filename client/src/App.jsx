@@ -311,6 +311,7 @@ function AppMain({ user, setUser, flushBeforeCloseRef }) {
           onComplete={async () => {
             const updated = await completeOnboarding(user.id);
             handleUserUpdate(updated);
+            setActiveTab(0);
           }}
           onTabChange={setActiveTab}
         />

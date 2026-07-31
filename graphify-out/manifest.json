@@ -10,8 +10,8 @@
     "semantic_hash": "12e2dda29765e3ea83cc6c1501903fe8"
   },
   "client/src/App.jsx": {
-    "mtime": 1785508456.3829982,
-    "ast_hash": "9232ee1e194a0fd35ee31a8315d54fb5",
+    "mtime": 1785509786.009646,
+    "ast_hash": "a6350d224d1dc04397b2111afdb7c7f4",
     "semantic_hash": ""
   },
   "client/src/components/AchievementsBlock.jsx": {
@@ -320,8 +320,8 @@
     "semantic_hash": "3d0285b7d1fb0294d62f5bef1f9162a3"
   },
   "client/src/features/onboarding/OnboardingTutorial.jsx": {
-    "mtime": 1785507292.3234868,
-    "ast_hash": "578a201c9d5b80a70e0588ef3ced1e15",
+    "mtime": 1785509755.499123,
+    "ast_hash": "aca11873063b8d059f07c9b4429bd467",
     "semantic_hash": ""
   },
   "client/src/features/profile/BlockedPage.jsx": {
@@ -1145,8 +1145,8 @@
     "semantic_hash": ""
   },
   "client/src/hooks/useMaxCloseGuard.js": {
-    "mtime": 1785508414.1308036,
-    "ast_hash": "840324ba0e809fd968c8f77d917f964a",
+    "mtime": 1785509860.6784222,
+    "ast_hash": "b3c2986392bc497c2224d8577ca62380",
     "semantic_hash": ""
   }
 }
