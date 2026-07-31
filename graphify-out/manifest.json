@@ -320,8 +320,8 @@
     "semantic_hash": "3d0285b7d1fb0294d62f5bef1f9162a3"
   },
   "client/src/features/onboarding/OnboardingTutorial.jsx": {
-    "mtime": 1785509755.499123,
-    "ast_hash": "aca11873063b8d059f07c9b4429bd467",
+    "mtime": 1785510287.0764287,
+    "ast_hash": "2dc8a6bb216abaec5b32d535c94ea2b8",
     "semantic_hash": ""
   },
   "client/src/features/profile/BlockedPage.jsx": {

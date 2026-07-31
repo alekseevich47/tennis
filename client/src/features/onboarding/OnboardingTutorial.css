@@ -21,6 +21,23 @@
   bottom: 74px;
 }
 
+/* Затемнение даёт SVG multi-hole mask — overlay только блокирует клики */
+.onboarding-overlay--holes {
+  inset: 0;
+  top: 0;
+  bottom: 0;
+  background: transparent;
+}
+
+.onboarding-spotlight-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 9001;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
 .onboarding-highlight {
   position: fixed;
   z-index: 9001;
