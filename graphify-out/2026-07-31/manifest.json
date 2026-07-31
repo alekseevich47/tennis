@@ -1145,8 +1145,8 @@
     "semantic_hash": ""
   },
   "client/src/hooks/useMaxCloseGuard.js": {
-    "mtime": 1785509786.483838,
-    "ast_hash": "1bcaf970146b5fbd41a64ba4a711b753",
+    "mtime": 1785509860.6784222,
+    "ast_hash": "b3c2986392bc497c2224d8577ca62380",
     "semantic_hash": ""
   }
 }

@@ -30,9 +30,10 @@ const TOUR_STEPS = {
   4: {
     tab: 1,
     spotlight: true,
-    // primary = иконка «Запись» (полный spotlight, как шаги 3/5/6/7); календарь — ring + якорь tooltip
+    // оба — полный cutout (multi-hole SVG); tooltip на календаре
     selectors: ['.bottom-nav .nav-item[data-nav-index="1"]', '.calendar-strip'],
     tooltipSelector: '.calendar-strip',
+    fullHighlights: true,
     text: 'Выберите день в полосе, откройте тренировку и нажмите "Записаться". Снять запись возможно — не позднее чем за 1 час до начала.'
   },
   5: {
@@ -162,7 +163,13 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
   const isTopCardStep = tourConfig?.descriptionPlacement === 'top-card';
   const showNav = NAV_STEPS.has(step);
 
-  const measureTargets = useCallback((selectors, tooltipSelector, forcedPlacement, scrollBlock = 'center') => {
+  const measureTargets = useCallback((
+    selectors,
+    tooltipSelector,
+    forcedPlacement,
+    scrollBlock = 'center',
+    fullHighlights = false
+  ) => {
     const targets = selectors.map((selector) => document.querySelector(selector));
     if (targets.some((target) => !target)) {
       setHighlightRects([]);
@@ -179,7 +186,7 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
       window.requestAnimationFrame(() => {
         const rects = selectors.map((selector, index) => ({
           ...padHighlightRect(document.querySelector(selector).getBoundingClientRect()),
-          primary: index === 0
+          primary: fullHighlights || index === 0
         }));
 
         const anchorPadded = anchorTarget
@@ -240,12 +247,26 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
     const selectors = getStepSelectors(tourConfig);
     const tooltipSelector = tourConfig.tooltipSelector || selectors[0];
 
+    const fullHighlights = Boolean(tourConfig.fullHighlights);
+
     const timer = window.setTimeout(() => {
-      measureTargets(selectors, tooltipSelector, tourConfig.placement, tourConfig.scrollBlock);
+      measureTargets(
+        selectors,
+        tooltipSelector,
+        tourConfig.placement,
+        tourConfig.scrollBlock,
+        fullHighlights
+      );
     }, SPOTLIGHT_DELAY_MS);
 
     const handleLayoutChange = () => {
-      measureTargets(selectors, tooltipSelector, tourConfig.placement, tourConfig.scrollBlock);
+      measureTargets(
+        selectors,
+        tooltipSelector,
+        tourConfig.placement,
+        tourConfig.scrollBlock,
+        fullHighlights
+      );
     };
     window.addEventListener('resize', handleLayoutChange);
 
@@ -364,15 +385,57 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
   };
 
   const tooltipPlacementResolved = tourConfig?.placement || tooltipPlacement;
+  const useMultiHoleSpotlight =
+    Boolean(tourConfig?.fullHighlights) &&
+    highlightRects.length > 1 &&
+    highlightRects.every((rect) => rect.primary);
 
   return (
     <>
       <div
-        className={`onboarding-overlay${isCardStep ? ' onboarding-overlay--blocking onboarding-overlay--fullscreen' : ' onboarding-overlay--blocking onboarding-overlay--main'}`}
+        className={`onboarding-overlay${
+          isCardStep
+            ? ' onboarding-overlay--blocking onboarding-overlay--fullscreen'
+            : ` onboarding-overlay--blocking onboarding-overlay--main${useMultiHoleSpotlight ? ' onboarding-overlay--holes' : ''}`
+        }`}
         aria-hidden="true"
       />
 
+      {isSpotlightStep && useMultiHoleSpotlight && (
+        <svg
+          className="onboarding-spotlight-mask"
+          width={typeof window !== 'undefined' ? window.innerWidth : 0}
+          height={typeof window !== 'undefined' ? window.innerHeight : 0}
+          aria-hidden="true"
+        >
+          <defs>
+            <mask id="onboarding-multi-holes">
+              <rect width="100%" height="100%" fill="white" />
+              {highlightRects.map((rect, index) => (
+                <rect
+                  key={index}
+                  x={rect.left}
+                  y={rect.top}
+                  width={rect.width}
+                  height={rect.height}
+                  rx="12"
+                  ry="12"
+                  fill="black"
+                />
+              ))}
+            </mask>
+          </defs>
+          <rect
+            width="100%"
+            height="100%"
+            fill="rgba(0, 0, 0, 0.65)"
+            mask="url(#onboarding-multi-holes)"
+          />
+        </svg>
+      )}
+
       {isSpotlightStep &&
+        !useMultiHoleSpotlight &&
         highlightRects.map((rect, index) => (
           <div
             key={index}
