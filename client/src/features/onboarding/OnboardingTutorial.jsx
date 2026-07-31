@@ -321,9 +321,8 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
       patch.birth_date = birthDate || null;
     }
 
-    if (dominantHand !== (user.dominant_hand || DEFAULT_HAND)) {
-      patch.dominant_hand = dominantHand;
-    }
+    // Всегда пишем руку при сохранении онбординга (иначе дефолт «Правая» не уходит в БД).
+    patch.dominant_hand = dominantHand;
 
     if (Object.keys(patch).length === 0 && !avatarFile) {
       setStep(2);
@@ -398,7 +397,7 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
         </div>
       )}
 
-      {step === 1 && (
+      {step === 1 && !cropModalOpen && (
         <div className="onboarding-card" role="dialog" aria-modal="true">
           <h2>Ваш профиль</h2>
           <p className="onboarding-hint">

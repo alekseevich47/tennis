@@ -10,8 +10,8 @@
     "semantic_hash": "12e2dda29765e3ea83cc6c1501903fe8"
   },
   "client/src/App.jsx": {
-    "mtime": 1785508456.3829982,
-    "ast_hash": "9232ee1e194a0fd35ee31a8315d54fb5",
+    "mtime": 1785506465.393232,
+    "ast_hash": "688f284290672d58393b64d2de026aa7",
     "semantic_hash": ""
   },
   "client/src/components/AchievementsBlock.jsx": {
@@ -1137,16 +1137,6 @@
   "client/src/components/ui/ScrollToTopButton.jsx": {
     "mtime": 1785507284.5911803,
     "ast_hash": "8b3a7ffb1da727897756bab7c1e60e86",
-    "semantic_hash": ""
-  },
-  "client/src/components/ui/CloseAppConfirmSheet.jsx": {
-    "mtime": 1785508401.0887325,
-    "ast_hash": "45b367f9bb0361f80b5c06c0ee1d7736",
-    "semantic_hash": ""
-  },
-  "client/src/hooks/useMaxCloseGuard.js": {
-    "mtime": 1785508414.1308036,
-    "ast_hash": "840324ba0e809fd968c8f77d917f964a",
     "semantic_hash": ""
   }
 }

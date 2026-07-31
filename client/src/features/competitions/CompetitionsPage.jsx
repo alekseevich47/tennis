@@ -21,6 +21,7 @@ import PinnedBanner from '../feed/PinnedBanner';
 import PostContextMenu from '../feed/PostContextMenu';
 import RatingPage from '../rating/RatingPage';
 import ProfileViewModal from '../profile/ProfileViewModal';
+import ScrollToTopButton from '../../components/ui/ScrollToTopButton';
 import { useTournamentPostUpload } from '../../components/TournamentPostUploadProvider';
 import { error } from '../../lib/log';
 import { parseDateQuery, isDateQueryParsed, matchesDateQuery } from '../../lib/dateSearch';
@@ -541,6 +542,8 @@ function CompetitionsPage({
         onTabChange={onTabChange}
         onClose={() => setViewingPlayer(null)}
       />
+
+      {activeTab === 'feed' && <ScrollToTopButton scrollRef={containerRef} />}
     </section>
   );
 }

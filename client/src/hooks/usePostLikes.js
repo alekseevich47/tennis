@@ -28,20 +28,21 @@ export function usePostLikes(postId) {
       const optimisticLikes = alreadyLiked
         ? likes.filter((like) => like.user !== userId)
         : [
-          ...likes,
-          {
-            id: `optimistic-${targetPostId}-${userId}`,
-            post: targetPostId,
-            user: userId,
-            created: new Date().toISOString()
-          }
-        ];
+            ...likes,
+            {
+              id: `optimistic-${targetPostId}-${userId}`,
+              post: targetPostId,
+              user: userId,
+              created: new Date().toISOString()
+            }
+          ];
 
+      // Мгновенный UI; сеть и revalidate — в фоне (без ожидания второго round-trip).
       await mutate(optimisticLikes, { revalidate: false });
 
       try {
         await togglePostLike(targetPostId, userId);
-        await mutate();
+        mutate();
       } catch (err) {
         error('toggle post like:', err);
         await mutate();

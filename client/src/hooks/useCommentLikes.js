@@ -1,7 +1,8 @@
 // @ts-check
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import useSWR from 'swr';
-import { listCommentLikes } from '../services/posts';
+import { listCommentLikes, toggleCommentLike } from '../services/posts';
+import { error } from '../lib/log';
 
 /**
  * @param {string[]} commentIds
@@ -34,5 +35,38 @@ export function useCommentLikes(commentIds, collection, userId) {
     );
   }, [likes, userId]);
 
-  return { countsByComment, userLikedSet, mutateLikes: mutate };
+  const toggle = useCallback(
+    async (commentId) => {
+      if (!commentId || !userId) return;
+
+      const alreadyLiked = likes.some(
+        (like) => like.comment === commentId && like.author === userId
+      );
+      const optimisticLikes = alreadyLiked
+        ? likes.filter((like) => !(like.comment === commentId && like.author === userId))
+        : [
+            ...likes,
+            {
+              id: `optimistic-${commentId}-${userId}`,
+              comment: commentId,
+              comment_collection: collection,
+              author: userId,
+              created: new Date().toISOString()
+            }
+          ];
+
+      await mutate(optimisticLikes, { revalidate: false });
+
+      try {
+        await toggleCommentLike(commentId, collection, userId);
+        mutate();
+      } catch (err) {
+        error('toggle comment like:', err);
+        await mutate();
+      }
+    },
+    [likes, userId, collection, mutate]
+  );
+
+  return { countsByComment, userLikedSet, mutateLikes: mutate, toggle };
 }

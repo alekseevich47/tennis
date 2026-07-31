@@ -277,7 +277,11 @@ export async function showInRating(targetUserId) {
  * @returns {Promise<UserRecord>}
  */
 export async function completeOnboarding(userId) {
-  return updateUserProfile(userId, { onboarding_completed: true });
+  return updateUserProfile(userId, {
+    onboarding_completed: true,
+    can_comment: true,
+    is_visible: true
+  });
 }
 
 /**
