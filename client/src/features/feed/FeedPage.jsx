@@ -14,6 +14,7 @@ import EditPostModal from './EditPostModal';
 import PostDetailModal from './PostDetailModal';
 import FullscreenImageViewer from './FullscreenImageViewer';
 import ProfileViewModal from '../profile/ProfileViewModal';
+import ScrollToTopButton from '../../components/ui/ScrollToTopButton';
 import { error } from '../../lib/log';
 import { parseDateQuery, isDateQueryParsed, matchesDateQuery } from '../../lib/dateSearch';
 import { sortPinnedByCreated, usePinnedBannerIndex } from './usePinnedBannerIndex';
@@ -419,6 +420,8 @@ function FeedPage({
         targetUser={viewingPlayer}
         currentUser={user}
       />
+
+      <ScrollToTopButton scrollRef={containerRef} />
     </div>
   );
 }

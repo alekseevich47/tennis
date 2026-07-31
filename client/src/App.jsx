@@ -1,11 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useMaxAuth } from './hooks/useMaxAuth';
+import { useMaxCloseGuard } from './hooks/useMaxCloseGuard';
 import { useSessionResetKey } from './hooks/useSessionResetKey';
 import { isUserBanned, isUserBotBlocked, isModerator, completeOnboarding } from './services/auth';
 import OnboardingTutorial from './features/onboarding/OnboardingTutorial';
 import AppHeader from './components/AppHeader';
 import BottomNav from './components/BottomNav';
 import Spinner from './components/ui/Spinner';
+import CloseAppConfirmSheet from './components/ui/CloseAppConfirmSheet';
 import { ProductUploadProvider } from './components/ProductUploadProvider';
 import { FavoritesProvider, useFavorites } from './context/FavoritesContext';
 import FeedPage from './features/feed/FeedPage';
@@ -53,6 +55,27 @@ function getInitialFavoriteProductIds(user) {
 
 function AppInner() {
   const { user, isLoading, setUser } = useMaxAuth();
+  const flushBeforeCloseRef = useRef(/** @type {null | (() => Promise<void>)} */ (null));
+
+  const onBeforeClose = useCallback(async () => {
+    await flushBeforeCloseRef.current?.();
+  }, []);
+
+  const {
+    confirmOpen,
+    confirming,
+    cancelCloseConfirm,
+    confirmCloseApp
+  } = useMaxCloseGuard({ enabled: !isLoading, onBeforeClose });
+
+  const closeSheet = (
+    <CloseAppConfirmSheet
+      isOpen={confirmOpen}
+      confirming={confirming}
+      onCancel={cancelCloseConfirm}
+      onConfirm={confirmCloseApp}
+    />
+  );
 
   if (isLoading) {
     return (
@@ -66,6 +89,7 @@ function AppInner() {
     return (
       <div className="app">
         <BlockedPage user={user} />
+        {closeSheet}
       </div>
     );
   }
@@ -75,12 +99,13 @@ function AppInner() {
       userId={user?.id}
       initialProductIds={getInitialFavoriteProductIds(user)}
     >
-      <AppMain user={user} setUser={setUser} />
+      <AppMain user={user} setUser={setUser} flushBeforeCloseRef={flushBeforeCloseRef} />
+      {closeSheet}
     </FavoritesProvider>
   );
 }
 
-function AppMain({ user, setUser }) {
+function AppMain({ user, setUser, flushBeforeCloseRef }) {
   const [activeTab, setActiveTab] = useState(0);
   const [membershipOpen, setMembershipOpen] = useState(false);
   const [favoritesDropdownOpen, setFavoritesDropdownOpen] = useState(false);
@@ -188,6 +213,16 @@ function AppMain({ user, setUser }) {
       await Promise.all(tasks);
     }
   }, []);
+
+  useEffect(() => {
+    if (!flushBeforeCloseRef) return undefined;
+    flushBeforeCloseRef.current = flushPendingDeletes;
+    return () => {
+      if (flushBeforeCloseRef.current === flushPendingDeletes) {
+        flushBeforeCloseRef.current = null;
+      }
+    };
+  }, [flushBeforeCloseRef, flushPendingDeletes]);
 
   // Очистка при смене таба (старое поведение) + при закрытии webview (фикс C5).
   const userIsModerator = isModerator();

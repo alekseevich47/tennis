@@ -16,7 +16,6 @@ import {
   deleteGalleryComment,
   updateGalleryComment
 } from '../../services/catalog';
-import { toggleCommentLike } from '../../services/posts';
 import { formatPostDate } from '../../lib/format';
 import { getMediaUrl, videoPreviewUrl } from '../../lib/media';
 import { error } from '../../lib/log';
@@ -54,7 +53,6 @@ function GalleryCommentModal({
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState('');
   const [replyTo, setReplyTo] = useState(/** @type {any | null} */ (null));
-  const [togglingLikeId, setTogglingLikeId] = useState(null);
   const [highlightedId, setHighlightedId] = useState(/** @type {string | null} */ (null));
 
   const commentItemRefs = useRef(/** @type {Map<string, HTMLElement>} */ (new Map()));
@@ -64,7 +62,7 @@ function GalleryCommentModal({
 
   const commentIds = useMemo(() => comments.map((c) => c.id), [comments]);
 
-  const { countsByComment, userLikedSet, mutateLikes } = useCommentLikes(
+  const { countsByComment, userLikedSet, toggle: toggleLike } = useCommentLikes(
     isOpen ? commentIds : [],
     COMMENT_COLLECTION,
     user?.id
@@ -185,17 +183,9 @@ function GalleryCommentModal({
     }
   };
 
-  const handleToggleLike = async (commentId) => {
-    if (!user?.id || togglingLikeId) return;
-    setTogglingLikeId(commentId);
-    try {
-      await toggleCommentLike(commentId, COMMENT_COLLECTION, user.id);
-      await mutateLikes();
-    } catch (err) {
-      error('toggle gallery comment like:', err);
-    } finally {
-      setTogglingLikeId(null);
-    }
+  const handleToggleLike = (commentId) => {
+    if (!user?.id) return;
+    toggleLike(commentId);
   };
 
   return (
@@ -387,7 +377,7 @@ function GalleryCommentModal({
                           type="button"
                           className={`comment-like-btn${isLiked ? ' comment-like-btn--active' : ''}`}
                           onClick={() => handleToggleLike(comment.id)}
-                          disabled={!user?.id || togglingLikeId === comment.id}
+                          disabled={!user?.id}
                           aria-label={isLiked ? 'Убрать лайк' : 'Поставить лайк'}
                         >
                           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">

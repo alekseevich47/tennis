@@ -1,0 +1,72 @@
+.close-app-confirm-overlay {
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 12000;
+}
+
+.close-app-confirm-sheet {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  border-radius: 20px 20px 0 0;
+  padding: 20px 20px calc(20px + env(safe-area-inset-bottom, 0px));
+  animation: close-app-confirm-sheet-up 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.close-app-confirm-sheet .ui-modal-title {
+  margin-bottom: 10px;
+  padding-right: 0;
+  text-align: left;
+}
+
+.close-app-confirm-message {
+  margin: 0 0 20px;
+  font-size: 15px;
+  line-height: 1.45;
+  color: #495057;
+  text-align: left;
+}
+
+.close-app-confirm-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.close-app-confirm-btn {
+  flex: 1;
+  border: none;
+  padding: 14px 16px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 48px;
+}
+
+.close-app-confirm-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.close-app-confirm-btn--cancel {
+  background: #f1f3f5;
+  color: #495057;
+}
+
+.close-app-confirm-btn--confirm {
+  background: #ff3b30;
+  color: #ffffff;
+}
+
+@keyframes close-app-confirm-sheet-up {
+  from {
+    opacity: 0.7;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
