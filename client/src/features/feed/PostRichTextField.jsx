@@ -37,7 +37,8 @@ import {
  *   enableFrame?: boolean,
  *   compact?: boolean,
  *   revealToolbarOnFocus?: boolean,
- *   singleLine?: boolean
+ *   singleLine?: boolean,
+ *   onFocus?: () => void
  * }} props
  */
 const PostRichTextField = forwardRef(function PostRichTextField(
@@ -50,7 +51,8 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     enableFrame = true,
     compact = false,
     revealToolbarOnFocus = false,
-    singleLine = false
+    singleLine = false,
+    onFocus
   },
   ref
 ) {
@@ -88,7 +90,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
       focus: () => {
         const el = editorRef.current;
         if (!el) return;
-        el.focus();
+        el.focus({ preventScroll: true });
         const selection = window.getSelection();
         if (!selection) return;
         const range = document.createRange();
@@ -133,7 +135,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     const range = savedRangeRef.current;
     const selection = window.getSelection();
     if (!el || !range || !selection) return;
-    el.focus();
+    el.focus({ preventScroll: true });
     selection.removeAllRanges();
     selection.addRange(range);
   }, []);
@@ -258,7 +260,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
 
     setFrameOpen(false);
     restoreSelection();
-    el.focus();
+    el.focus({ preventScroll: true });
     applyFormatCommand(/** @type {'bold' | 'italic' | 'underline'} */ (command));
 
     skipNextSync.current = true;
@@ -313,7 +315,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     if (!afterFrame) return;
 
     event.preventDefault();
-    el.focus();
+    el.focus({ preventScroll: true });
     const selection = window.getSelection();
     if (!selection) return;
     const range = document.createRange();
@@ -402,6 +404,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
           onFocus={() => {
             setFocused(true);
             refreshActive();
+            onFocus?.();
           }}
           onMouseDown={handleEditorMouseDown}
           onKeyDown={(event) => {
