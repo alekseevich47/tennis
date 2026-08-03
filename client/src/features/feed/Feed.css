@@ -2088,6 +2088,8 @@ button.post-card-like:hover:not(:disabled) {
   flex-direction: column;
   gap: 8px;
   margin-top: 6px;
+  scroll-margin-top: 16px;
+  scroll-margin-bottom: 24px;
 }
 
 .comment-edit-inline-form__actions {
