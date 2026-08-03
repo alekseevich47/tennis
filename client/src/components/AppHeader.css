@@ -160,12 +160,11 @@
   margin-left: 12px;
 }
 
-.header-membership-btn svg {
+.header-membership-btn__icon {
   width: 20px;
   height: 20px;
-  fill: none;
-  stroke: #007aff;
-  stroke-width: 1.8;
+  display: block;
+  object-fit: contain;
 }
 
 .header-notifications-anchor {
