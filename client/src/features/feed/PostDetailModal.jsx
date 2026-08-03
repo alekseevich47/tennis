@@ -12,6 +12,11 @@ import CommentReplyQuote from './CommentReplyQuote';
 import CommentSwipeReply from './CommentSwipeReply';
 import PostContextMenu from './PostContextMenu';
 import { hasVisibleText, toDisplayHtml } from './postRichText';
+import {
+  findScrollParent,
+  keepCommentEditInView,
+  restoreAndKeepCommentEditInView
+} from './keepCommentEditInView';
 import sectionAvatarUrl from '../../assets/sm-avatar.png';
 import { useComments } from '../../hooks/useComments';
 import { useCommentLikes } from '../../hooks/useCommentLikes';
@@ -84,6 +89,9 @@ function PostDetailModal({
   const commentsBottomRef = useRef(null);
   const commentItemRefs = useRef(/** @type {Map<string, HTMLElement>} */ (new Map()));
   const commentFieldRef = useRef(/** @type {{ focus: () => void, clear: () => void } | null} */ (null));
+  const editFieldRef = useRef(/** @type {{ focus: () => void, clear: () => void } | null} */ (null));
+  const editFormRef = useRef(/** @type {HTMLFormElement | null} */ (null));
+  const editScrollTopBeforeFocusRef = useRef(/** @type {number | null} */ (null));
   const isAddingCommentRef = useRef(false);
   const scrollTimerRef = useRef(null);
   const highlightClearRef = useRef(/** @type {ReturnType<typeof setTimeout> | null} */ (null));
@@ -193,21 +201,25 @@ function PostDetailModal({
     anchor.scrollParent.scrollTop = anchor.scrollTop + delta;
   }, [showAll, comments]);
 
+  useLayoutEffect(() => {
+    if (!editingId) return;
+    editFieldRef.current?.focus();
+    keepCommentEditInView(editFormRef.current);
+  }, [editingId]);
+
+  useEffect(() => {
+    if (!editingId) return undefined;
+    const onViewportChange = () => keepCommentEditInView(editFormRef.current);
+    window.visualViewport?.addEventListener('resize', onViewportChange);
+    window.visualViewport?.addEventListener('scroll', onViewportChange);
+    return () => {
+      window.visualViewport?.removeEventListener('resize', onViewportChange);
+      window.visualViewport?.removeEventListener('scroll', onViewportChange);
+    };
+  }, [editingId]);
+
   const persistPendingDeletes = (idsList) => {
     sessionStorage.setItem('pending_delete_comments', JSON.stringify(idsList));
-  };
-
-  const findScrollParent = (node) => {
-    let el = node?.parentElement || null;
-    while (el) {
-      const style = window.getComputedStyle(el);
-      const overflowY = style.overflowY;
-      if (overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'overlay') {
-        return el;
-      }
-      el = el.parentElement;
-    }
-    return null;
   };
 
   const handleShowMore = () => {
@@ -365,7 +377,7 @@ function PostDetailModal({
         size="large"
         showCloseButton={false}
         footer={
-          user?.can_comment === false ? (
+          editingId ? null : user?.can_comment === false ? (
             <div className="comment-restricted-message">
               Вы запрещено оставлять комментарии по причине:{' '}
               {user.comment_restriction_reason || 'не указана'}. Свяжитесь с администратором.
@@ -584,8 +596,13 @@ function PostDetailModal({
 
                   {editingId === c.id ? (
                     <form
+                      ref={editFormRef}
                       onSubmit={(e) => handleSaveEdit(c.id, e)}
                       className="comment-edit-inline-form"
+                      onPointerDownCapture={() => {
+                        const sp = findScrollParent(editFormRef.current);
+                        editScrollTopBeforeFocusRef.current = sp?.scrollTop ?? null;
+                      }}
                     >
                       <label
                         htmlFor={`edit-comment-${c.id}`}
@@ -594,6 +611,7 @@ function PostDetailModal({
                         Редактирование комментария
                       </label>
                       <PostRichTextField
+                        ref={editFieldRef}
                         id={`edit-comment-${c.id}`}
                         value={editingText}
                         onChange={setEditingText}
@@ -601,10 +619,16 @@ function PostDetailModal({
                         compact
                         placeholder="Текст комментария…"
                         aria-label="Редактирование комментария"
+                        onFocus={() => {
+                          restoreAndKeepCommentEditInView(
+                            editFormRef.current,
+                            editScrollTopBeforeFocusRef.current
+                          );
+                        }}
                       />
                       <div className="comment-edit-inline-form__actions">
                         <button type="submit" disabled={!hasVisibleText(editingText)}>
-                          ОКК
+                          Изменить
                         </button>
                         <button type="button" onClick={() => setEditingId(null)}>
                           Отмена

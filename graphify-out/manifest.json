@@ -215,8 +215,8 @@
     "semantic_hash": ""
   },
   "client/src/features/competitions/TournamentCommentsSection.jsx": {
-    "mtime": 1785507367.917153,
-    "ast_hash": "e19d5609a99cb1422ce39370c432c104",
+    "mtime": 1785771159.329195,
+    "ast_hash": "c65a3b46a332cc3580230acd7e1953dd",
     "semantic_hash": ""
   },
   "client/src/features/competitions/TournamentPodium.jsx": {
@@ -275,8 +275,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostDetailModal.jsx": {
-    "mtime": 1785507355.7849524,
-    "ast_hash": "00af874476bf5fa1ba67de2978176443",
+    "mtime": 1785771131.9671078,
+    "ast_hash": "d470f335935e79da91faa2315634cfe6",
     "semantic_hash": ""
   },
   "client/src/features/feed/PostMedia.jsx": {
@@ -1050,8 +1050,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostRichTextField.jsx": {
-    "mtime": 1785166478.7153144,
-    "ast_hash": "8ccec221e1c429f01382762559c41dc9",
+    "mtime": 1785771100.346773,
+    "ast_hash": "2d95db8ae3ccce358a79cd30d2acc429",
     "semantic_hash": ""
   },
   "client/src/features/feed/postRichText.js": {
@@ -1162,6 +1162,11 @@
   "client/src/components/ui/MembershipIcon.jsx": {
     "mtime": 1785769922.7813742,
     "ast_hash": "d4f1789fde22710ab1685757907f3327",
+    "semantic_hash": ""
+  },
+  "client/src/features/feed/keepCommentEditInView.js": {
+    "mtime": 1785771083.6872528,
+    "ast_hash": "5afe4050a4f75079408609a1988a8de3",
     "semantic_hash": ""
   }
 }

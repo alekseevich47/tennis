@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import IconButton from '../../components/ui/IconButton';
 import Avatar from '../../components/ui/Avatar';
@@ -10,6 +10,11 @@ import CommentReplyComposeBar from '../feed/CommentReplyComposeBar';
 import CommentReplyQuote from '../feed/CommentReplyQuote';
 import CommentSwipeReply from '../feed/CommentSwipeReply';
 import { hasVisibleText, toDisplayHtml } from '../feed/postRichText';
+import {
+  findScrollParent,
+  keepCommentEditInView,
+  restoreAndKeepCommentEditInView
+} from '../feed/keepCommentEditInView';
 import '../feed/Feed.css';
 import { useTournamentComments } from '../../hooks/useTournamentComments';
 import { useCommentLikes } from '../../hooks/useCommentLikes';
@@ -55,6 +60,9 @@ function TournamentCommentsSection({
 
   const isAddingCommentRef = useRef(false);
   const commentFieldRef = useRef(/** @type {{ focus: () => void, clear: () => void } | null} */ (null));
+  const editFieldRef = useRef(/** @type {{ focus: () => void, clear: () => void } | null} */ (null));
+  const editFormRef = useRef(/** @type {HTMLFormElement | null} */ (null));
+  const editScrollTopBeforeFocusRef = useRef(/** @type {number | null} */ (null));
   const commentItemRefs = useRef(/** @type {Map<string, HTMLElement>} */ (new Map()));
   const commentsBottomRef = useRef(/** @type {HTMLDivElement | null} */ (null));
   const scrollTimerRef = useRef(/** @type {ReturnType<typeof setTimeout> | null} */ (null));
@@ -128,6 +136,23 @@ function TournamentCommentsSection({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- только внешний highlight
   }, [highlightCommentId, postId, comments.length]);
+
+  useLayoutEffect(() => {
+    if (!editingId) return;
+    editFieldRef.current?.focus();
+    keepCommentEditInView(editFormRef.current);
+  }, [editingId]);
+
+  useEffect(() => {
+    if (!editingId) return undefined;
+    const onViewportChange = () => keepCommentEditInView(editFormRef.current);
+    window.visualViewport?.addEventListener('resize', onViewportChange);
+    window.visualViewport?.addEventListener('scroll', onViewportChange);
+    return () => {
+      window.visualViewport?.removeEventListener('resize', onViewportChange);
+      window.visualViewport?.removeEventListener('scroll', onViewportChange);
+    };
+  }, [editingId]);
 
   const persistPendingDeletes = (idsList) => {
     if (idsList.length > 0) {
@@ -206,6 +231,7 @@ function TournamentCommentsSection({
   const handleStartEdit = (comment) => {
     setEditingId(comment.id);
     setEditingText(toDisplayHtml(comment.text || ''));
+    setReplyTo(null);
   };
 
   const handleSaveEdit = async (commentId, e) => {
@@ -338,13 +364,19 @@ function TournamentCommentsSection({
 
                     {editingId === c.id ? (
                       <form
+                        ref={editFormRef}
                         onSubmit={(e) => handleSaveEdit(c.id, e)}
                         className="comment-edit-inline-form"
+                        onPointerDownCapture={() => {
+                          const sp = findScrollParent(editFormRef.current);
+                          editScrollTopBeforeFocusRef.current = sp?.scrollTop ?? null;
+                        }}
                       >
                         <label htmlFor={`edit-tournament-comment-${c.id}`} className="visually-hidden">
                           Редактирование комментария
                         </label>
                         <PostRichTextField
+                          ref={editFieldRef}
                           id={`edit-tournament-comment-${c.id}`}
                           value={editingText}
                           onChange={setEditingText}
@@ -352,10 +384,16 @@ function TournamentCommentsSection({
                           compact
                           placeholder="Текст комментария…"
                           aria-label="Редактирование комментария"
+                          onFocus={() => {
+                            restoreAndKeepCommentEditInView(
+                              editFormRef.current,
+                              editScrollTopBeforeFocusRef.current
+                            );
+                          }}
                         />
                         <div className="comment-edit-inline-form__actions">
                           <button type="submit" disabled={!hasVisibleText(editingText)}>
-                            ОКК
+                            Изменить
                           </button>
                           <button type="button" onClick={() => setEditingId(null)}>
                             Отмена
@@ -442,7 +480,7 @@ function TournamentCommentsSection({
   return (
     <>
       {listNode}
-      {composeTarget ? createPortal(composeNode, composeTarget) : null}
+      {composeTarget && !editingId ? createPortal(composeNode, composeTarget) : null}
     </>
   );
 }
