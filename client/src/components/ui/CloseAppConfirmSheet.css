@@ -43,6 +43,13 @@
   font-weight: 600;
   cursor: pointer;
   min-height: 48px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.close-app-confirm-btn:focus,
+.close-app-confirm-btn:focus-visible {
+  outline: none;
+  box-shadow: none;
 }
 
 .close-app-confirm-btn:disabled {
