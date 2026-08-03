@@ -138,13 +138,6 @@
   z-index: 10;
 }
 
-.membership-btn__icon {
-  width: 24px;
-  height: 24px;
-  display: block;
-  object-fit: contain;
-}
-
 .membership-info {
   margin-bottom: 12px;
 }

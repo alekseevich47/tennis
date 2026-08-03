@@ -159,11 +159,8 @@
   margin-left: 12px;
 }
 
-.header-membership-btn__icon {
-  width: 20px;
-  height: 20px;
-  display: block;
-  object-fit: contain;
+.header-membership-btn--hidden {
+  display: none;
 }
 
 .header-notifications-anchor {

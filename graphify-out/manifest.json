@@ -10,8 +10,8 @@
     "semantic_hash": "12e2dda29765e3ea83cc6c1501903fe8"
   },
   "client/src/App.jsx": {
-    "mtime": 1785762142.6147888,
-    "ast_hash": "a6350d224d1dc04397b2111afdb7c7f4",
+    "mtime": 1785770221.3885183,
+    "ast_hash": "3c6dcdd3e5fd9f9d74ed167a0f0aa910",
     "semantic_hash": ""
   },
   "client/src/components/AchievementsBlock.jsx": {
@@ -20,8 +20,8 @@
     "semantic_hash": "a02b62ad38093049710289554817b489"
   },
   "client/src/components/AppHeader.jsx": {
-    "mtime": 1785762142.6147888,
-    "ast_hash": "9fca214c082bdc7d22ccdd88d11e9426",
+    "mtime": 1785769946.1990802,
+    "ast_hash": "78ca278253a4388e5f81af156dd60de9",
     "semantic_hash": ""
   },
   "client/src/components/AvatarCropModal.jsx": {
@@ -350,8 +350,8 @@
     "semantic_hash": "84da5a05702df43b0f2b6453f5a0dc84"
   },
   "client/src/features/profile/ProfilePage.jsx": {
-    "mtime": 1785762142.6087885,
-    "ast_hash": "3b10987bb9458d6c04b06cb233c88ad3",
+    "mtime": 1785770015.5656214,
+    "ast_hash": "5f5d2c9dcc596f0689efaf9388034b54",
     "semantic_hash": ""
   },
   "client/src/features/profile/ProfileSingleDateField.jsx": {
@@ -365,8 +365,8 @@
     "semantic_hash": "299cae2527ab38d59a4ba2d5415bcfe2"
   },
   "client/src/features/profile/ProfileViewModal.jsx": {
-    "mtime": 1785762142.601787,
-    "ast_hash": "16091e2c3f49ca6778d046caaa735572",
+    "mtime": 1785770004.7934172,
+    "ast_hash": "4e5151590a25961b860ee2b46ce29cb5",
     "semantic_hash": ""
   },
   "client/src/features/rating/PlayerForm.jsx": {
@@ -1155,8 +1155,13 @@
     "semantic_hash": ""
   },
   "client/src/assets/card.png": {
-    "mtime": 1785768406.4542108,
-    "ast_hash": "d4bb9f6e713517a60228fec17cc3e699",
+    "mtime": 1785769837.1772833,
+    "ast_hash": "3d753b77a91ec457fa2d3e599ed60ce4",
+    "semantic_hash": ""
+  },
+  "client/src/components/ui/MembershipIcon.jsx": {
+    "mtime": 1785769922.7813742,
+    "ast_hash": "d4f1789fde22710ab1685757907f3327",
     "semantic_hash": ""
   }
 }

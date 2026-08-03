@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import clsx from 'clsx';
 import useSWR from 'swr';
 import AchievementsBlock from '../../components/AchievementsBlock';
 import FloatingAchievements from '../../components/FloatingAchievements';
@@ -24,7 +25,7 @@ import {
   isMobileMaxPlatform,
   openSellerChat
 } from '../shop/buyMessage';
-import cardIconUrl from '../../assets/card.png';
+import MembershipIcon from '../../components/ui/MembershipIcon';
 import AboutAppModal from './AboutAppModal';
 import MembershipModal from './MembershipModal';
 import ProfileSingleDateField from './ProfileSingleDateField';
@@ -339,17 +340,10 @@ function ProfilePage({
           ariaLabel="Открыть абонемент"
           variant="ghost"
           size="md"
-          className="membership-btn"
+          className={clsx('membership-btn', membershipOpen && 'membership-btn--active')}
           onClick={() => setMembershipOpen(true)}
         >
-          <img
-            src={cardIconUrl}
-            alt=""
-            className="membership-btn__icon"
-            width={24}
-            height={24}
-            aria-hidden="true"
-          />
+          <MembershipIcon active={membershipOpen} />
         </IconButton>
       )}
 
