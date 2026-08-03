@@ -1,0 +1,18 @@
+.membership-icon {
+  display: block;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  background-color: #8e8e93;
+  -webkit-mask: var(--membership-icon-url) center / contain no-repeat;
+  mask: var(--membership-icon-url) center / contain no-repeat;
+}
+
+.membership-icon--sm {
+  width: 20px;
+  height: 20px;
+}
+
+.membership-icon--active {
+  background-color: #007aff;
+}

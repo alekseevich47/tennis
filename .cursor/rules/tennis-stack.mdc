@@ -305,10 +305,12 @@ Rich-text (`PostRichTextField`) подключён во всех местах в
 
 ## Иконка «Абонемент»
 
-- Везде одна иконка: `client/src/assets/card.png` — чёрный силуэт на прозрачном фоне (`import cardIconUrl from '.../assets/card.png'`).
-- `AppHeader` (раздел «Тренировки», только модератор) — `.header-membership-btn` → `<img className="header-membership-btn__icon" width={20} height={20}>`.
-- `ProfilePage` и `ProfileViewModal` — `.membership-btn` → `<img className="membership-btn__icon" width={24} height={24}>`.
-- В `AppHeader` (раздел «Тренировки», только модератор): кнопка «Абонемент» в `.header-end-group` (вместе с колокольчиком и профилем, `margin-left: auto` на группе). `.header-membership-btn` имеет доп. `margin-left`, чтобы на мобильных не наезжать на заголовок «Тренировки» (`.header-title`).
+- Везде одна иконка: `client/src/assets/card.png` (64×64, чёрный силуэт) через `MembershipIcon` (`components/ui/MembershipIcon.jsx`) — CSS `mask` + `background-color`.
+- Цвета как у BottomNav: покой `#8e8e93`, актив (открыт модал абонемента) `#007aff` (класс `--active` / prop `active`).
+- `AppHeader` (только модератор): кнопка всегда в DOM (`onMembershipClick` при `userIsModerator`), видимость на вкладке «Запись» — `membershipVisible={activeTab === 1}` (`.header-membership-btn--hidden` = `display: none`, без размонтирования — иначе задержка из‑за повторного decode). `membershipActive={membershipOpen}` → синий, пока открыт `MembershipOverviewModal`.
+- `ProfilePage` / `ProfileViewModal`: `.membership-btn` + `MembershipIcon active={membershipOpen}` → синий, пока открыт `MembershipModal`; после закрытия снова серый.
+- В `AppHeader` кнопка в `.header-end-group` (с колокольчиком и профилем). `.header-membership-btn` имеет доп. `margin-left`, чтобы на мобильных не наезжать на заголовок «Тренировки».
+- Задержка иконки на «Запись»: раньше кнопка монтировалась только при `activeTab === 1` вместе с тяжёлым `TrainingsPage` (и PNG был 770×464). Сейчас кнопка не размонтируется, ассет уменьшен, `TrainingsPage` монтируется на следующий `requestAnimationFrame` после переключения таба (`trainingsReady` в `App.jsx`).
 
 ## Колокольчик в AppHeader / Раздел «Уведомления» (TASKS_35)
 

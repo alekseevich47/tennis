@@ -26,7 +26,7 @@ import { error } from '../../lib/log';
 import { getPlayerRatingRank } from '../../lib/rating';
 import { compressImage } from '../../lib/compress';
 import { formatCardDateWithYear, formatTimeRange, hasTimeRangeEnded } from '../../lib/format';
-import cardIconUrl from '../../assets/card.png';
+import MembershipIcon from '../../components/ui/MembershipIcon';
 import MembershipModal from './MembershipModal';
 import ProfileSingleDateField from './ProfileSingleDateField';
 import ProfileTrainingsSearch, { filterProfileTrainings } from './ProfileTrainingsSearch';
@@ -509,17 +509,14 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                 ariaLabel="Открыть абонемент"
                 variant="ghost"
                 size="md"
-                className="membership-btn profile-view-membership-btn"
+                className={clsx(
+                  'membership-btn',
+                  'profile-view-membership-btn',
+                  membershipOpen && 'membership-btn--active'
+                )}
                 onClick={() => setMembershipOpen(true)}
               >
-                <img
-                  src={cardIconUrl}
-                  alt=""
-                  className="membership-btn__icon"
-                  width={24}
-                  height={24}
-                  aria-hidden="true"
-                />
+                <MembershipIcon active={membershipOpen} />
               </IconButton>
             )}
 
