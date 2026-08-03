@@ -108,6 +108,7 @@ function AppInner() {
 function AppMain({ user, setUser, flushBeforeCloseRef }) {
   const [activeTab, setActiveTab] = useState(0);
   const [membershipOpen, setMembershipOpen] = useState(false);
+  const [trainingsReady, setTrainingsReady] = useState(false);
   const [favoritesDropdownOpen, setFavoritesDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [favoriteProductToOpen, setFavoriteProductToOpen] = useState(null);
@@ -266,6 +267,17 @@ function AppMain({ user, setUser, flushBeforeCloseRef }) {
     setUser(updated);
   }, [setUser]);
 
+  // Тяжёлый TrainingsPage монтируем на следующий кадр после переключения на «Запись»,
+  // чтобы кнопка абонемента в хедере успела отрисоваться без задержки.
+  useEffect(() => {
+    if (activeTab !== 1) {
+      setTrainingsReady(false);
+      return undefined;
+    }
+    const id = requestAnimationFrame(() => setTrainingsReady(true));
+    return () => cancelAnimationFrame(id);
+  }, [activeTab]);
+
   const headerTitle = TAB_TITLES[activeTab] || TAB_TITLES[0];
   const contentClassName =
     activeTab === 1
@@ -322,10 +334,10 @@ function AppMain({ user, setUser, flushBeforeCloseRef }) {
         user={user}
         onProfileClick={() => setActiveTab(PROFILE_TAB_INDEX)}
         onMembershipClick={
-          activeTab === 1 && user?.role === 'moderator'
-            ? () => setMembershipOpen(true)
-            : undefined
+          userIsModerator ? () => setMembershipOpen(true) : undefined
         }
+        membershipVisible={activeTab === 1}
+        membershipActive={membershipOpen}
         showShopControls={activeTab === 2}
         favoritesCount={favoritesCount}
         onFavoritesClick={() => setFavoritesDropdownOpen((open) => !open)}
@@ -403,13 +415,15 @@ function AppMain({ user, setUser, flushBeforeCloseRef }) {
         )}
         {activeTab === 1 && (
           <>
-            <TrainingsPage
-              user={user}
-              onDeletedIdsChange={setPendingDeleteTrainingIds}
-              onFlushPendingDeletes={flushPendingDeletes}
-              trainingIdToOpen={notificationTrainingId}
-              onTrainingOpened={() => setNotificationTrainingId(null)}
-            />
+            {trainingsReady ? (
+              <TrainingsPage
+                user={user}
+                onDeletedIdsChange={setPendingDeleteTrainingIds}
+                onFlushPendingDeletes={flushPendingDeletes}
+                trainingIdToOpen={notificationTrainingId}
+                onTrainingOpened={() => setNotificationTrainingId(null)}
+              />
+            ) : null}
             <MembershipOverviewModal
               key={sessionResetKey}
               isOpen={membershipOpen}

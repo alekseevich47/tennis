@@ -7,7 +7,7 @@ import FavoritesDropdown from '../features/shop/FavoritesDropdown';
 import NotificationsDropdown from '../features/notifications/NotificationsDropdown';
 import DatePickerModal from '../features/trainings/components/DatePickerModal';
 import { formatDateForSearch } from '../lib/datePickerUtils';
-import cardIconUrl from '../assets/card.png';
+import MembershipIcon from './ui/MembershipIcon';
 import './AppHeader.css';
 
 /**
@@ -16,6 +16,8 @@ import './AppHeader.css';
  *   user?: import('../lib/avatar').UserAvatarLike | null,
  *   onProfileClick: () => void,
  *   onMembershipClick?: () => void,
+ *   membershipVisible?: boolean,
+ *   membershipActive?: boolean,
  *   showShopControls?: boolean,
  *   favoritesCount?: number,
  *   onFavoritesClick?: () => void,
@@ -49,6 +51,8 @@ function AppHeader({
   user,
   onProfileClick,
   onMembershipClick,
+  membershipVisible = true,
+  membershipActive = false,
   showShopControls = false,
   onFavoritesClick,
   favoritesDropdownOpen = false,
@@ -169,17 +173,16 @@ function AppHeader({
           <IconButton
             ariaLabel="Абонемент"
             variant="ghost"
-            className="header-membership-btn"
+            className={clsx(
+              'header-membership-btn',
+              membershipActive && 'header-membership-btn--active',
+              !membershipVisible && 'header-membership-btn--hidden'
+            )}
             onClick={onMembershipClick}
+            aria-hidden={!membershipVisible}
+            tabIndex={membershipVisible ? undefined : -1}
           >
-            <img
-              src={cardIconUrl}
-              alt=""
-              className="header-membership-btn__icon"
-              width={20}
-              height={20}
-              aria-hidden="true"
-            />
+            <MembershipIcon active={membershipActive} size="sm" />
           </IconButton>
         ) : null}
         {onNotificationsClick !== undefined && (

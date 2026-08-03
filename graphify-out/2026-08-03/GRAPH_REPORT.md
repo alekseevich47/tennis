@@ -1,7 +1,7 @@
-# Graph Report - tennis  (2026-07-31)
+# Graph Report - tennis  (2026-08-03)
 
 ## Corpus Check
-- 197 files · ~190,540 words
+- 197 files · ~191,654 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `463616d7`
+- Built from commit: `ae9cda41`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
