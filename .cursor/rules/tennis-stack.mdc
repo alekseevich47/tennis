@@ -305,8 +305,9 @@ Rich-text (`PostRichTextField`) подключён во всех местах в
 
 ## Иконка «Абонемент»
 
-- `AppHeader` (раздел «Тренировки», только модератор) и `ProfileViewModal` — SVG силуэта 👤: `<circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>`, `stroke="#007aff"`, `fill="none"`.
-- `ProfilePage` — кнопка `.membership-btn`: SVG-календарь из BottomNav «Тренировки» (`fill="currentColor"`, `stroke="#007aff"`), `viewBox="0 0 24 24"`.
+- Везде одна иконка: `client/src/assets/card.png` (`import cardIconUrl from '.../assets/card.png'`).
+- `AppHeader` (раздел «Тренировки», только модератор) — `.header-membership-btn` → `<img className="header-membership-btn__icon" width={20} height={20}>`.
+- `ProfilePage` и `ProfileViewModal` — `.membership-btn` → `<img className="membership-btn__icon" width={24} height={24}>`.
 - В `AppHeader` (раздел «Тренировки», только модератор): кнопка «Абонемент» в `.header-end-group` (вместе с колокольчиком и профилем, `margin-left: auto` на группе). `.header-membership-btn` имеет доп. `margin-left`, чтобы на мобильных не наезжать на заголовок «Тренировки» (`.header-title`).
 
 ## Колокольчик в AppHeader / Раздел «Уведомления» (TASKS_35)

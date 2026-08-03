@@ -26,6 +26,7 @@ import { error } from '../../lib/log';
 import { getPlayerRatingRank } from '../../lib/rating';
 import { compressImage } from '../../lib/compress';
 import { formatCardDateWithYear, formatTimeRange, hasTimeRangeEnded } from '../../lib/format';
+import cardIconUrl from '../../assets/card.png';
 import MembershipModal from './MembershipModal';
 import ProfileSingleDateField from './ProfileSingleDateField';
 import ProfileTrainingsSearch, { filterProfileTrainings } from './ProfileTrainingsSearch';
@@ -511,10 +512,14 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                 className="membership-btn profile-view-membership-btn"
                 onClick={() => setMembershipOpen(true)}
               >
-                <svg viewBox="0 0 24 24" fill="none" stroke="#007aff" strokeWidth="2" aria-hidden="true">
-                  <circle cx="12" cy="8" r="4" />
-                  <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-                </svg>
+                <img
+                  src={cardIconUrl}
+                  alt=""
+                  className="membership-btn__icon"
+                  width={24}
+                  height={24}
+                  aria-hidden="true"
+                />
               </IconButton>
             )}
 
