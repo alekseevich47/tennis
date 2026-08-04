@@ -150,6 +150,9 @@ function ProfilePage({
     setCropModalOpen(false);
   }, [user?.id, user?.full_name, user?.birth_date, user?.dominant_hand, user?.section_start_date]);
 
+  const onUpdateRef = useRef(onUpdate);
+  onUpdateRef.current = onUpdate;
+
   useEffect(() => {
     if (!user?.id) return undefined;
 
@@ -158,7 +161,7 @@ function ProfilePage({
     pb.collection('users')
       .getOne(user.id)
       .then((fresh) => {
-        if (!cancelled) onUpdate?.(fresh);
+        if (!cancelled) onUpdateRef.current?.(fresh);
       })
       .catch((err) => {
         error('refresh profile user:', err);
@@ -167,7 +170,7 @@ function ProfilePage({
     return () => {
       cancelled = true;
     };
-  }, [user?.id, onUpdate]);
+  }, [user?.id]);
 
   useEffect(() => {
     if (!avatarFile) {
