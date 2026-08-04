@@ -260,6 +260,23 @@ export async function hardDeletePost(postId) {
 }
 
 /**
+ * Зомби soft-delete: is_deleted=true без pending-restore в текущей сессии
+ * (после закрытия приложения / сбоя flush). Вызывать при старте у модератора.
+ * @param {{ signal?: AbortSignal }} [options]
+ */
+export async function purgeAbandonedPosts({ signal } = {}) {
+  const abandoned = /** @type {PostRecord[]} */ (await pb.collection('posts').getFullList({
+    filter: 'is_deleted = true',
+    requestKey: null,
+    signal
+  }));
+  await Promise.all(
+    abandoned.map((p) => hardDeletePost(p.id).catch((err) => error('purge post:', err)))
+  );
+  return abandoned;
+}
+
+/**
  * @param {{ postId: string, authorId: string, text: string, replyToId?: string | null }} params
  */
 export async function createComment({ postId, authorId, text, replyToId }) {

@@ -118,6 +118,26 @@ export async function hardDeleteTournamentPost(id) {
 }
 
 /**
+ * Зомби soft-delete tournament_posts после незавершённого flush.
+ * @param {{ signal?: AbortSignal }} [options]
+ */
+export async function purgeAbandonedTournamentPosts({ signal } = {}) {
+  const abandoned = /** @type {TournamentPostRecord[]} */ (
+    await pb.collection('tournament_posts').getFullList({
+      filter: 'is_deleted = true',
+      requestKey: null,
+      signal
+    })
+  );
+  await Promise.all(
+    abandoned.map((p) =>
+      hardDeleteTournamentPost(p.id).catch((err) => error('purge tournament post:', err))
+    )
+  );
+  return abandoned;
+}
+
+/**
  * @param {{
  *   content: string,
  *   files?: File[],

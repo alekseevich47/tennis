@@ -97,11 +97,12 @@ function FeedPage({
 
   const visiblePosts = useMemo(() => {
     if (!posts) return [];
-    if (userIsModerator) return posts;
+    // Модератору — карточки «Восстановить» только для soft-delete этой сессии;
+    // чужие/старые is_deleted не показываем (их чистит purgeAbandonedPosts).
     return posts.filter(
-      (p) => !p.is_deleted && !deletedPostIds.includes(p.id)
+      (p) => !p.is_deleted || deletedPostIds.includes(p.id)
     );
-  }, [posts, userIsModerator, deletedPostIds]);
+  }, [posts, deletedPostIds]);
 
   const pinnedPosts = useMemo(
     () =>

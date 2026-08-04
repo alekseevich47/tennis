@@ -350,8 +350,8 @@
     "semantic_hash": "84da5a05702df43b0f2b6453f5a0dc84"
   },
   "client/src/features/profile/ProfilePage.jsx": {
-    "mtime": 1785815864.3780823,
-    "ast_hash": "5f5d2c9dcc596f0689efaf9388034b54",
+    "mtime": 1785819103.6626208,
+    "ast_hash": "04a44073c66993c9af23290f69135388",
     "semantic_hash": ""
   },
   "client/src/features/profile/ProfileSingleDateField.jsx": {
@@ -530,9 +530,9 @@
     "semantic_hash": "4faf29487af1701424e8fff107ceb7da"
   },
   "client/src/hooks/useMaxAuth.js": {
-    "mtime": 1783650423.2409081,
-    "ast_hash": "25226418057d99c0c40bc71c4d128fef",
-    "semantic_hash": "25226418057d99c0c40bc71c4d128fef"
+    "mtime": 1785819103.6626208,
+    "ast_hash": "9c942319f5f746b2867f8a2d655533df",
+    "semantic_hash": ""
   },
   "client/src/hooks/useOnboarding.js": {
     "mtime": 1783006615.32676,

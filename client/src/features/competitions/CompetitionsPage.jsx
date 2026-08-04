@@ -100,11 +100,10 @@ function CompetitionsPage({
 
   const visiblePosts = useMemo(() => {
     if (!posts) return [];
-    if (moderator) return posts;
     return posts.filter(
-      (p) => !p.is_deleted && !deletedPostIds.includes(p.id)
+      (p) => !p.is_deleted || deletedPostIds.includes(p.id)
     );
-  }, [posts, moderator, deletedPostIds]);
+  }, [posts, deletedPostIds]);
 
   const pinnedPosts = useMemo(
     () =>

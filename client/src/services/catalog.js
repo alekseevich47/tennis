@@ -247,6 +247,22 @@ export async function deleteProduct(productId) {
   return pb.collection('products').delete(productId);
 }
 
+/**
+ * Зомби soft-delete товаров после незавершённого flush.
+ * @param {{ signal?: AbortSignal }} [options]
+ */
+export async function purgeAbandonedProducts({ signal } = {}) {
+  const abandoned = /** @type {ProductRecord[]} */ (await pb.collection('products').getFullList({
+    filter: 'is_deleted = true',
+    requestKey: null,
+    signal
+  }));
+  await Promise.all(
+    abandoned.map((p) => deleteProduct(p.id).catch((err) => error('purge product:', err)))
+  );
+  return abandoned;
+}
+
 // --- ИГРОКИ -----------------------------------------------------------------
 
 /** @param {{ signal?: AbortSignal, filter?: string }} [options] */
