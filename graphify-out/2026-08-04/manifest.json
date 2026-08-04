@@ -675,8 +675,8 @@
     "semantic_hash": ""
   },
   "client/src/services/notifications.js": {
-    "mtime": 1785803908.5787132,
-    "ast_hash": "f3c7947ab1a99b5e38fee6d5773bedfa",
+    "mtime": 1785812779.539935,
+    "ast_hash": "737e81ab5217d3163029819c97e84528",
     "semantic_hash": ""
   },
   "client/src/services/pb.js": {
@@ -710,8 +710,8 @@
     "semantic_hash": ""
   },
   "client/src/services/trainings.js": {
-    "mtime": 1785812446.929568,
-    "ast_hash": "1b061c15fc06d7f1d1906be85c385cc0",
+    "mtime": 1785812778.452426,
+    "ast_hash": "d274f216e292458e1a0698f17b9bcf24",
     "semantic_hash": ""
   },
   "client/src/services/users.js": {
@@ -750,9 +750,9 @@
     "semantic_hash": "2cb575dbca36ca734cf88a175848b404"
   },
   "pb_hooks/bot_notifications.pb.js": {
-    "mtime": 1783650774.2425907,
-    "ast_hash": "633a4ba75fc8d08e9893127dfbce92a4",
-    "semantic_hash": "633a4ba75fc8d08e9893127dfbce92a4"
+    "mtime": 1785812777.9451835,
+    "ast_hash": "70856e2ddf55ad9c12b196f3143e861f",
+    "semantic_hash": ""
   },
   "pb_hooks/botlib.js": {
     "mtime": 1785130729.2780502,
