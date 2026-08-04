@@ -14,7 +14,7 @@
   "12": "Achievement Badge Assets",
   "13": "MembershipModal.jsx",
   "14": "datePickerUtils.js",
-  "15": "FullscreenImageViewer.jsx",
+  "15": "users_access_guard.pb.js",
   "16": "StatsGrowthModal.jsx",
   "17": "Audit Diff Library",
   "18": "Bot Broadcast Library",
@@ -58,5 +58,6 @@
   "56": "PostDetailModal.jsx",
   "57": "log.js",
   "58": "catalog.js",
+  "59": "TournamentPostDetailModal.jsx",
   "64": "trainings_booking_validate.pb.js"
 }

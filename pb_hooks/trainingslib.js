@@ -19,21 +19,30 @@ function isUnlimitedMembership(membershipType) {
   return membershipType === 'annual' || membershipType === 'corporate';
 }
 
-function restoreMembershipSession(userId) {
+function restoreMembershipSession(app, userId, options) {
+  var skipNotify = options && options.skipNotify;
   var user;
   try {
-    user = $app.findRecordById('users', userId);
+    user = app.findRecordById('users', userId);
   } catch (_) {
     return;
   }
   var membershipType = user.getString('membership_type');
   var usedSessions = user.getFloat('used_sessions') || 0;
+  var previousAvailable = user.getFloat('available_sessions') || 0;
   user.set('used_sessions', Math.max(0, usedSessions - 1));
+  var newAvailable = previousAvailable;
   if (!isUnlimitedMembership(membershipType)) {
-    var available = user.getFloat('available_sessions') || 0;
-    user.set('available_sessions', available + 1);
+    newAvailable = previousAvailable + 1;
+    user.set('available_sessions', newAvailable);
   }
-  $app.save(user);
+  app.save(user);
+  if (!skipNotify) {
+    try {
+      var nlib = require(__hooks + '/notificationslib.js');
+      nlib.maybeNotifySessionsLeft(app, userId, previousAvailable, newAvailable, membershipType);
+    } catch (_) {}
+  }
 }
 
 function notifyTrainingCancelled(training) {
@@ -51,6 +60,7 @@ function notifyTrainingCancelled(training) {
 
 /**
  * Финализация отмены (idempotent): is_cancelled = true, возврат сессий, уведомление.
+ * Работает через $app.save — onRecordUpdateRequest не вызывается (нет двойного возврата).
  * @param {core.Record} training
  */
 function finalizeCancelledTrainingRecord(training) {
@@ -68,7 +78,7 @@ function finalizeCancelledTrainingRecord(training) {
       attendedSet[attendedUsers[i]] = true;
     }
     for (i = 0; i < bookedUsers.length; i++) {
-      restoreMembershipSession(bookedUsers[i]);
+      restoreMembershipSession($app, bookedUsers[i], { skipNotify: true });
       if (attendedSet[bookedUsers[i]]) {
         try {
           var u = $app.findRecordById('users', bookedUsers[i]);
@@ -134,47 +144,228 @@ function isReadyToFinalizePendingDelete(training, graceMs) {
 var BOT_BLOCKED_BOOKING_MESSAGE =
   'Невозможно записать: пользователь заблокировал бота в MAX, уведомления о тренировках недоступны.';
 
-/**
- * Серверная валидация новых записей на тренировку (до сохранения).
- * @param {core.Record} original
- * @param {core.Record} record
- */
-function validateBookingAdditions(original, record) {
-  var audit = require(__hooks + '/auditlib.js');
-  var added = audit.newlyAdded(original.get('booked_users'), record.get('booked_users'));
-  if (!added.length) return;
+function dayBoundsIso(dateStr) {
+  var day = parsePbDate(dateStr);
+  if (!day || isNaN(day.getTime())) return null;
+  var dayStart = new Date(day);
+  dayStart.setHours(0, 0, 0, 0);
+  var dayEnd = new Date(day);
+  dayEnd.setHours(23, 59, 59, 999);
+  return { from: dayStart.toISOString(), to: dayEnd.toISOString() };
+}
 
-  var maxSlots = record.getFloat('max_slots') || 0;
-  var bookedCount = audit.newlyAdded([], record.get('booked_users')).length;
-  if (maxSlots > 0 && bookedCount > maxSlots) {
-    throw new BadRequestError('Нет свободных мест');
+/**
+ * @param {core.App} app
+ * @param {string} userId
+ * @param {string} trainingDate
+ * @param {string} trainingId
+ */
+function hasAnnualBookingSameDay(app, userId, trainingDate, trainingId) {
+  var bounds = dayBoundsIso(trainingDate);
+  if (!bounds) return false;
+  var filter =
+    'date >= "' +
+    bounds.from +
+    '" && date <= "' +
+    bounds.to +
+    '" && booked_users ?~ "' +
+    userId +
+    '" && id != "' +
+    trainingId +
+    '" && is_deleted != true';
+  var existing = app.findRecordsByFilter('trainings', filter, '', 1, 0);
+  return existing.length > 0;
+}
+
+/**
+ * @param {core.App} app
+ * @param {string} userId
+ * @param {boolean} isModerator
+ * @param {string} trainingDate
+ * @param {string} trainingId
+ * @param {{ skipEligibilityChecks?: boolean }} [options] — restore: только баланс сессий
+ */
+function consumeMembershipSessionTx(app, userId, isModerator, trainingDate, trainingId, options) {
+  var skipEligibility = options && options.skipEligibilityChecks;
+  var user;
+  try {
+    user = app.findRecordById('users', userId);
+  } catch (_) {
+    throw new BadRequestError('Пользователь не найден');
   }
 
-  var i;
-  for (i = 0; i < added.length; i++) {
-    var userId = added[i];
-    var user;
-    try {
-      user = $app.findRecordById('users', userId);
-    } catch (_) {
-      throw new BadRequestError('Пользователь не найден');
-    }
-
+  if (!skipEligibility) {
     if (user.getBool('bot_blocked')) {
       throw new BadRequestError(BOT_BLOCKED_BOOKING_MESSAGE);
     }
     if (user.getBool('membership_frozen')) {
       throw new BadRequestError('Абонемент пользователя заморожен. Запись невозможна.');
     }
+  }
 
-    var membershipType = user.getString('membership_type') || 'regular';
-    if (!isUnlimitedMembership(membershipType)) {
-      var available = user.getFloat('available_sessions') || 0;
-      if (available <= 0) {
-        throw new BadRequestError('Нет доступных посещений');
-      }
+  var membershipType = user.getString('membership_type') || 'regular';
+  var unlimited = isUnlimitedMembership(membershipType);
+  var previousAvailable = user.getFloat('available_sessions') || 0;
+
+  if (!unlimited) {
+    if (previousAvailable <= 0) {
+      throw new BadRequestError('Нет доступных посещений');
     }
   }
+
+  if (!skipEligibility && membershipType === 'annual' && !isModerator) {
+    if (hasAnnualBookingSameDay(app, userId, trainingDate, trainingId)) {
+      throw new BadRequestError('ANNUAL_DAILY_LIMIT');
+    }
+  }
+
+  var usedSessions = user.getFloat('used_sessions') || 0;
+  user.set('used_sessions', usedSessions + 1);
+  var newAvailable = previousAvailable;
+  if (!unlimited) {
+    newAvailable = previousAvailable - 1;
+    user.set('available_sessions', newAvailable);
+  }
+  app.save(user);
+
+  try {
+    var nlib = require(__hooks + '/notificationslib.js');
+    nlib.maybeNotifySessionsLeft(app, userId, previousAvailable, newAvailable, membershipType);
+  } catch (_) {}
+}
+
+/**
+ * @param {core.App} app
+ * @param {string} userId
+ * @param {number} delta
+ */
+function adjustAttendanceCountTx(app, userId, delta) {
+  var user;
+  try {
+    user = app.findRecordById('users', userId);
+  } catch (_) {
+    throw new BadRequestError('Пользователь не найден');
+  }
+  var cnt = user.getFloat('attendance_count') || 0;
+  user.set('attendance_count', Math.max(0, cnt + delta));
+  app.save(user);
+}
+
+/**
+ * Атомарные побочные эффекты записи/отмены/посещения при API-update trainings.
+ * Cancel/restore (is_cancelled) — отдельная ветка: booked_users часто не меняется,
+ * а сессии уже возвращены при финализации через $app.save.
+ *
+ * @param {core.Record} original
+ * @param {core.Record} record
+ * @param {{ id?: string, getString?: Function } | null} auth
+ */
+function applyBookingSideEffects(original, record, auth) {
+  var audit = require(__hooks + '/auditlib.js');
+
+  var added = audit.newlyAdded(original.get('booked_users'), record.get('booked_users'));
+  var removed = audit.newlyRemoved(original.get('booked_users'), record.get('booked_users'));
+  var attendedAdded = audit.newlyAdded(original.get('attended_users'), record.get('attended_users'));
+  var attendedRemoved = audit.newlyRemoved(original.get('attended_users'), record.get('attended_users'));
+
+  var isModerator = !!(auth && auth.getString && auth.getString('role') === 'moderator');
+  var authId = auth && auth.id ? String(auth.id) : '';
+
+  var isCancelTransition = !original.getBool('is_cancelled') && record.getBool('is_cancelled');
+  var isRestoreTransition = original.getBool('is_cancelled') && !record.getBool('is_cancelled');
+  var ended = hasTimeRangeEnded(record.getString('date'), record.getFloat('duration') || 0);
+  var trainingDate = record.getString('date');
+  var trainingId = record.id;
+  var i;
+
+  // --- IDOR (C-6): обычный пользователь — только себя; посещаемость — только модератор ---
+  if (!isCancelTransition && !isRestoreTransition) {
+    if (added.length && !isModerator) {
+      for (i = 0; i < added.length; i++) {
+        if (String(added[i]) !== authId) {
+          throw new ForbiddenError('Можно записать только себя');
+        }
+      }
+    }
+    if (removed.length && !isModerator) {
+      for (i = 0; i < removed.length; i++) {
+        if (String(removed[i]) !== authId) {
+          throw new ForbiddenError('Можно снять с записи только себя');
+        }
+      }
+    }
+    if ((attendedAdded.length || attendedRemoved.length) && !isModerator) {
+      throw new ForbiddenError('Отметка посещения — только модератор');
+    }
+  }
+
+  // Лимит мест (как раньше в validateBookingAdditions)
+  var maxSlots = record.getFloat('max_slots') || 0;
+  var bookedCount = audit.newlyAdded([], record.get('booked_users')).length;
+  if (maxSlots > 0 && bookedCount > maxSlots) {
+    throw new BadRequestError('Нет свободных мест');
+  }
+
+  var hasWork =
+    isCancelTransition ||
+    isRestoreTransition ||
+    added.length ||
+    removed.length ||
+    attendedAdded.length ||
+    attendedRemoved.length;
+  if (!hasWork) return;
+
+  $app.runInTransaction(function (txApp) {
+    if (isCancelTransition) {
+      // Симметрия finalizeCancelledTrainingRecord, но для API-пути (клиентский flush).
+      if (!ended) {
+        var cancelBooked = audit.newlyAdded([], original.get('booked_users'));
+        var cancelAttended = audit.newlyAdded([], original.get('attended_users'));
+        var cancelAttendedSet = {};
+        for (i = 0; i < cancelAttended.length; i++) {
+          cancelAttendedSet[cancelAttended[i]] = true;
+        }
+        for (i = 0; i < cancelBooked.length; i++) {
+          restoreMembershipSession(txApp, cancelBooked[i], { skipNotify: true });
+          if (cancelAttendedSet[cancelBooked[i]]) {
+            adjustAttendanceCountTx(txApp, cancelBooked[i], -1);
+          }
+        }
+      }
+      return;
+    }
+
+    if (isRestoreTransition) {
+      // Сессии уже возвращены при cancel; повторно списываем только оставшихся в booked_users.
+      // Diff booked/attended НЕ применяем — снятые «insufficient» уже с восстановленными сессиями.
+      if (!ended) {
+        var restoreBooked = audit.newlyAdded([], record.get('booked_users'));
+        var restoreAttended = audit.newlyAdded([], record.get('attended_users'));
+        for (i = 0; i < restoreBooked.length; i++) {
+          consumeMembershipSessionTx(txApp, restoreBooked[i], true, trainingDate, trainingId, {
+            skipEligibilityChecks: true
+          });
+        }
+        for (i = 0; i < restoreAttended.length; i++) {
+          adjustAttendanceCountTx(txApp, restoreAttended[i], 1);
+        }
+      }
+      return;
+    }
+
+    for (i = 0; i < added.length; i++) {
+      consumeMembershipSessionTx(txApp, added[i], isModerator, trainingDate, trainingId);
+    }
+    for (i = 0; i < removed.length; i++) {
+      restoreMembershipSession(txApp, removed[i]);
+    }
+    for (i = 0; i < attendedAdded.length; i++) {
+      adjustAttendanceCountTx(txApp, attendedAdded[i], 1);
+    }
+    for (i = 0; i < attendedRemoved.length; i++) {
+      adjustAttendanceCountTx(txApp, attendedRemoved[i], -1);
+    }
+  });
 }
 
 module.exports = {
@@ -182,5 +373,9 @@ module.exports = {
   finalizeCancelledTrainingRecord: finalizeCancelledTrainingRecord,
   isReadyToFinalizePendingDelete: isReadyToFinalizePendingDelete,
   hasTimeRangeEnded: hasTimeRangeEnded,
-  validateBookingAdditions: validateBookingAdditions
+  applyBookingSideEffects: applyBookingSideEffects,
+  // backward-compat alias (если кто-то ещё require'ит старое имя)
+  validateBookingAdditions: function (original, record) {
+    applyBookingSideEffects(original, record, null);
+  }
 };

@@ -303,8 +303,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_package_dependencies_react",
-      "community": 8,
-      "community_name": "NPM Dependencies",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "react"
     },
     {
@@ -314,8 +314,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "react",
-      "community": 8,
-      "community_name": "NPM Dependencies",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "react"
     },
     {
@@ -633,8 +633,8 @@
       "source_location": "L493",
       "_origin": "ast",
       "id": "client_src_app_app",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "app()"
     },
     {
@@ -732,8 +732,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_appheader",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "appheader.jsx"
     },
     {
@@ -897,8 +897,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "galleryuploadprovider.jsx"
     },
     {
@@ -908,8 +908,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_galleryuploadcontext",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "galleryuploadcontext"
     },
     {
@@ -919,8 +919,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_isgallerykey",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "isgallerykey()"
     },
     {
@@ -930,8 +930,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_creategallerypayload",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "creategallerypayload()"
     },
     {
@@ -941,8 +941,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_galleryuploadprovider",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "galleryuploadprovider()"
     },
     {
@@ -1139,8 +1139,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "client_src_components_ui_alertdialog_alertdialogprovider",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "alertdialogprovider()"
     },
     {
@@ -1161,8 +1161,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_avatar",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "avatar.jsx"
     },
     {
@@ -1172,8 +1172,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_components_ui_avatar_avatar",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "avatar()"
     },
     {
@@ -1227,8 +1227,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_iconbutton",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "iconbutton.jsx"
     },
     {
@@ -1238,8 +1238,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_components_ui_iconbutton_iconbutton",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "iconbutton"
     },
     {
@@ -1348,8 +1348,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_spinner",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "spinner.jsx"
     },
     {
@@ -1359,8 +1359,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_components_ui_spinner_spinner",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "spinner()"
     },
     {
@@ -1370,8 +1370,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_toast",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "toast.jsx"
     },
     {
@@ -1381,8 +1381,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "client_src_components_ui_toast_toast",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "toast()"
     },
     {
@@ -1392,8 +1392,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_toastcontext",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "toastcontext.jsx"
     },
     {
@@ -1403,8 +1403,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_components_ui_toastcontext_toastcontext",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "toastcontext"
     },
     {
@@ -1414,8 +1414,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_components_ui_toastcontext_toastprovider",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "toastprovider()"
     },
     {
@@ -1425,8 +1425,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "client_src_components_ui_toastcontext_usetoast",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "usetoast()"
     },
     {
@@ -1458,8 +1458,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_config",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "config.js"
     },
     {
@@ -1469,8 +1469,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "favoritescontext.jsx"
     },
     {
@@ -1480,8 +1480,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_favoritescontext",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "favoritescontext"
     },
     {
@@ -1491,8 +1491,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_patchproductsfavoritescount",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "patchproductsfavoritescount()"
     },
     {
@@ -1502,8 +1502,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_loadfavoriteproducts",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "loadfavoriteproducts()"
     },
     {
@@ -1513,8 +1513,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_favoritesprovider",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "favoritesprovider()"
     },
     {
@@ -1810,8 +1810,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "usermultiselect.jsx"
     },
     {
@@ -1821,8 +1821,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect_getcollapsedlabel",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "getcollapsedlabel()"
     },
     {
@@ -1832,8 +1832,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect_isuserchecked",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "isuserchecked()"
     },
     {
@@ -1843,8 +1843,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect_usermultiselect",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "usermultiselect()"
     },
     {
@@ -2360,8 +2360,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentpodium",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "tournamentpodium.jsx"
     },
     {
@@ -2371,8 +2371,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentpodium_podium_order",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "podium_order"
     },
     {
@@ -2382,8 +2382,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentpodium_tournamentpodium",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "tournamentpodium()"
     },
     {
@@ -2393,8 +2393,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentpostcard",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "tournamentpostcard.jsx"
     },
     {
@@ -2404,8 +2404,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentpostcard_readtournamentcomments",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "readtournamentcomments()"
     },
     {
@@ -2415,8 +2415,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentpostcard_tournamentpostcard",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "tournamentpostcard()"
     },
     {
@@ -2426,8 +2426,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentpostdetailmodal",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "tournamentpostdetailmodal.jsx"
     },
     {
@@ -2437,8 +2437,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentpostdetailmodal_tournamentpostdetailmodal",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "tournamentpostdetailmodal()"
     },
     {
@@ -2448,8 +2448,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentparticipants",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "tournamentparticipants.js"
     },
     {
@@ -2459,8 +2459,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentparticipants_getparticipantplayer",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "getparticipantplayer()"
     },
     {
@@ -2470,8 +2470,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentparticipants_getparticipantdisplayname",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "getparticipantdisplayname()"
     },
     {
@@ -2811,8 +2811,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_postcard",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "postcard.jsx"
     },
     {
@@ -2822,8 +2822,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_features_feed_postcard_readcomments",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "readcomments()"
     },
     {
@@ -2833,8 +2833,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "client_src_features_feed_postcard_postcardlike",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "postcardlike()"
     },
     {
@@ -2844,8 +2844,8 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "client_src_features_feed_postcard_postcard",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "postcard()"
     },
     {
@@ -3163,8 +3163,8 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_hasvisibletext",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "hasvisibletext()"
     },
     {
@@ -3581,8 +3581,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationcard",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "notificationcard.jsx"
     },
     {
@@ -3592,8 +3592,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationcard_click_action_labels",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "click_action_labels"
     },
     {
@@ -3603,8 +3603,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationcard_parsecommentreplyparenttext",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "parsecommentreplyparenttext()"
     },
     {
@@ -3614,8 +3614,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationcard_notificationcard",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "notificationcard()"
     },
     {
@@ -3625,8 +3625,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationsdropdown",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "notificationsdropdown.jsx"
     },
     {
@@ -3636,8 +3636,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationsdropdown_notificationsdropdown",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "notificationsdropdown()"
     },
     {
@@ -3647,8 +3647,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationbadges",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "notificationbadges.js"
     },
     {
@@ -3658,8 +3658,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationbadges_formatcountdownpart",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "formatcountdownpart()"
     },
     {
@@ -3669,8 +3669,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationbadges_isuserbooked",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "isuserbooked()"
     },
     {
@@ -3680,8 +3680,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationbadges_formattrainingcountdownbadge",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "formattrainingcountdownbadge()"
     },
     {
@@ -3834,8 +3834,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_profile_blockedpage",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "blockedpage.jsx"
     },
     {
@@ -3845,8 +3845,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_features_profile_blockedpage_blockedpage",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "blockedpage()"
     },
     {
@@ -3922,8 +3922,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_profile_membershipmodal",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "membershipmodal.jsx"
     },
     {
@@ -3933,8 +3933,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_features_profile_membershipmodal_formatmembershipdate",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "formatmembershipdate()"
     },
     {
@@ -3944,8 +3944,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "client_src_features_profile_membershipmodal_getmembershiptypelabel",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "getmembershiptypelabel()"
     },
     {
@@ -3955,8 +3955,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "client_src_features_profile_membershipmodal_parsefreezelog",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "parsefreezelog()"
     },
     {
@@ -3966,8 +3966,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "client_src_features_profile_membershipmodal_formatfreezelogentry",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "formatfreezelogentry()"
     },
     {
@@ -3977,8 +3977,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "client_src_features_profile_membershipmodal_membershipmodal",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "membershipmodal()"
     },
     {
@@ -4164,8 +4164,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_profile_profiletrainingssearch",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "profiletrainingssearch.jsx"
     },
     {
@@ -4175,8 +4175,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_features_profile_profiletrainingssearch_formatdaterangelabel",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "formatdaterangelabel()"
     },
     {
@@ -4186,8 +4186,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_features_profile_profiletrainingssearch_calendaricon",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "calendaricon()"
     },
     {
@@ -4197,8 +4197,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "client_src_features_profile_profiletrainingssearch_filterprofiletrainings",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "filterprofiletrainings()"
     },
     {
@@ -4208,8 +4208,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "client_src_features_profile_profiletrainingssearch_profiletrainingssearch",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "profiletrainingssearch()"
     },
     {
@@ -4351,8 +4351,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_rating_playerrow",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "playerrow.jsx"
     },
     {
@@ -4362,8 +4362,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_features_rating_playerrow_stopsignicon",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "stopsignicon()"
     },
     {
@@ -4373,8 +4373,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "client_src_features_rating_playerrow_playerrow",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "playerrow()"
     },
     {
@@ -4406,8 +4406,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_shop_buybutton",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "buybutton.jsx"
     },
     {
@@ -4417,8 +4417,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "client_src_features_shop_buybutton_buybutton",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "buybutton()"
     },
     {
@@ -4450,8 +4450,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_shop_favoriteicon",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "favoriteicon.jsx"
     },
     {
@@ -4461,8 +4461,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_features_shop_favoriteicon_favoriteicon",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "favoriteicon()"
     },
     {
@@ -4670,8 +4670,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "buymessage.js"
     },
     {
@@ -4681,8 +4681,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage_formatproductline",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "formatproductline()"
     },
     {
@@ -4692,8 +4692,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage_buildbuymessage",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "buildbuymessage()"
     },
     {
@@ -4703,8 +4703,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage_ismobilemaxplatform",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "ismobilemaxplatform()"
     },
     {
@@ -4714,8 +4714,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage_opensellerchat",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "opensellerchat()"
     },
     {
@@ -4725,8 +4725,8 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage_buildmaxuserchaturl",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "buildmaxuserchaturl()"
     },
     {
@@ -4736,8 +4736,8 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage_openmaxdeeplink",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "openmaxdeeplink()"
     },
     {
@@ -4747,8 +4747,8 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage_openmaxuserchat",
-      "community": 13,
-      "community_name": "MembershipModal.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "openmaxuserchat()"
     },
     {
@@ -4758,8 +4758,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_calendarstrip",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "calendarstrip.jsx"
     },
     {
@@ -4769,8 +4769,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_features_trainings_calendarstrip_calendarstrip",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "calendarstrip()"
     },
     {
@@ -4802,8 +4802,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "client_src_features_trainings_createtrainingmodal_createtrainingmodal",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "createtrainingmodal()"
     },
     {
@@ -4813,8 +4813,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_trainingcard",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "trainingcard.jsx"
     },
     {
@@ -4824,8 +4824,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_features_trainings_trainingcard_trainingcard",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "trainingcard()"
     },
     {
@@ -4879,8 +4879,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_archivemodal",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "archivemodal.jsx"
     },
     {
@@ -4890,8 +4890,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_archivemodal_formatdaterangelabel",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "formatdaterangelabel()"
     },
     {
@@ -4901,8 +4901,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_archivemodal_calendaricon",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "calendaricon()"
     },
     {
@@ -4912,8 +4912,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_archivemodal_archivemodal",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "archivemodal()"
     },
     {
@@ -4934,8 +4934,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_datepickermodal_datepickermodal",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "datepickermodal()"
     },
     {
@@ -4967,8 +4967,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_daterangemodal_getarchivedefaultdaterange",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "getarchivedefaultdaterange()"
     },
     {
@@ -5044,8 +5044,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_edittrainingmodal",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "edittrainingmodal.jsx"
     },
     {
@@ -5055,8 +5055,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_edittrainingmodal_initial_form",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "initial_form"
     },
     {
@@ -5066,8 +5066,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_edittrainingmodal_todatetimelocalvalue",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "todatetimelocalvalue()"
     },
     {
@@ -5077,8 +5077,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_edittrainingmodal_getformfromtraining",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "getformfromtraining()"
     },
     {
@@ -5088,8 +5088,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_edittrainingmodal_getpatchfromform",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "getpatchfromform()"
     },
     {
@@ -5099,8 +5099,8 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_edittrainingmodal_getpatchfromtraining",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "getpatchfromtraining()"
     },
     {
@@ -5110,8 +5110,8 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_edittrainingmodal_buildtrainingpatch",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "buildtrainingpatch()"
     },
     {
@@ -5539,8 +5539,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usepostlikes",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "usepostlikes.js"
     },
     {
@@ -5550,8 +5550,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "client_src_hooks_usepostlikes_usepostlikes",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "usepostlikes()"
     },
     {
@@ -5561,8 +5561,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usepostviewtracker",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "usepostviewtracker.js"
     },
     {
@@ -5572,8 +5572,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "client_src_hooks_usepostviewtracker_usepostviewtracker",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "usepostviewtracker()"
     },
     {
@@ -5924,8 +5924,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_avatar",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "avatar.js"
     },
     {
@@ -5935,8 +5935,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_lib_avatar_getuseravatardata",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "getuseravatardata()"
     },
     {
@@ -6177,8 +6177,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_datesearch",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "datesearch.js"
     },
     {
@@ -6188,8 +6188,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "client_src_lib_datesearch_month_entries",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "month_entries"
     },
     {
@@ -6199,8 +6199,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "client_src_lib_datesearch_findrussianmonth",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "findrussianmonth()"
     },
     {
@@ -6210,8 +6210,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "client_src_lib_datesearch_parserussiandate",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "parserussiandate()"
     },
     {
@@ -6221,8 +6221,8 @@
       "source_location": "L75",
       "_origin": "ast",
       "id": "client_src_lib_datesearch_parsenumericdate",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "parsenumericdate()"
     },
     {
@@ -6232,8 +6232,8 @@
       "source_location": "L114",
       "_origin": "ast",
       "id": "client_src_lib_datesearch_parsedatequery",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "parsedatequery()"
     },
     {
@@ -6243,8 +6243,8 @@
       "source_location": "L125",
       "_origin": "ast",
       "id": "client_src_lib_datesearch_isdatequeryparsed",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "isdatequeryparsed()"
     },
     {
@@ -6254,8 +6254,8 @@
       "source_location": "L134",
       "_origin": "ast",
       "id": "client_src_lib_datesearch_matchesdatequery",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "matchesdatequery()"
     },
     {
@@ -6265,8 +6265,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_format",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "format.js"
     },
     {
@@ -6276,8 +6276,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_lib_format_days_short",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "days_short"
     },
     {
@@ -6287,8 +6287,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_lib_format_days_full",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "days_full"
     },
     {
@@ -6298,8 +6298,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_lib_format_months_genitive",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "months_genitive"
     },
     {
@@ -6309,8 +6309,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_lib_format_pad2",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "pad2()"
     },
     {
@@ -6320,8 +6320,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "client_src_lib_format_formatpostdate",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "formatpostdate()"
     },
     {
@@ -6342,8 +6342,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "client_src_lib_format_formatcarddatewithyear",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "formatcarddatewithyear()"
     },
     {
@@ -6353,8 +6353,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "client_src_lib_format_formattimerange",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "formattimerange()"
     },
     {
@@ -6364,8 +6364,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "client_src_lib_format_hastimerangeended",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "hastimerangeended()"
     },
     {
@@ -6386,8 +6386,8 @@
       "source_location": "L87",
       "_origin": "ast",
       "id": "client_src_lib_format_formatdatetimeshort",
-      "community": 6,
-      "community_name": "auditEventFormat.js",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "formatdatetimeshort()"
     },
     {
@@ -6397,8 +6397,8 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "client_src_lib_format_daykey",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "daykey()"
     },
     {
@@ -6408,8 +6408,8 @@
       "source_location": "L105",
       "_origin": "ast",
       "id": "client_src_lib_format_issameday",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "issameday()"
     },
     {
@@ -6430,8 +6430,8 @@
       "source_location": "L130",
       "_origin": "ast",
       "id": "client_src_lib_format_pluralize",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "pluralize()"
     },
     {
@@ -6441,8 +6441,8 @@
       "source_location": "L143",
       "_origin": "ast",
       "id": "client_src_lib_format_formatrelativetime",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "formatrelativetime()"
     },
     {
@@ -6518,8 +6518,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_log",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "log.js"
     },
     {
@@ -6529,8 +6529,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_lib_log_noop",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "noop()"
     },
     {
@@ -6551,8 +6551,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_longpress",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "longpress.js"
     },
     {
@@ -6562,8 +6562,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_lib_longpress_getlongpresscardstyle",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "getlongpresscardstyle()"
     },
     {
@@ -6573,8 +6573,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "client_src_lib_longpress_longpressring",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "longpressring()"
     },
     {
@@ -6584,8 +6584,8 @@
       "source_location": "L111",
       "_origin": "ast",
       "id": "client_src_lib_longpress_uselongpress",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "uselongpress()"
     },
     {
@@ -6749,8 +6749,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_main",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "main.jsx"
     },
     {
@@ -6760,8 +6760,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_main_globalerrorfallback",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "globalerrorfallback()"
     },
     {
@@ -7178,8 +7178,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_auth",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "auth.js"
     },
     {
@@ -7244,8 +7244,8 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "client_src_services_auth_isuserbotblocked",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "isuserbotblocked()"
     },
     {
@@ -7288,8 +7288,8 @@
       "source_location": "L172",
       "_origin": "ast",
       "id": "client_src_services_auth_getcurrentuser",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "getcurrentuser()"
     },
     {
@@ -7310,8 +7310,8 @@
       "source_location": "L190",
       "_origin": "ast",
       "id": "client_src_services_auth_hasavatarpatch",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 13,
+      "community_name": "MembershipModal.jsx",
       "norm_label": "hasavatarpatch()"
     },
     {
@@ -7453,8 +7453,8 @@
       "source_location": "L135",
       "_origin": "ast",
       "id": "client_src_services_catalog_adjustproductfavoritescount",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "adjustproductfavoritescount()"
     },
     {
@@ -7607,8 +7607,8 @@
       "source_location": "L386",
       "_origin": "ast",
       "id": "client_src_services_catalog_creategalleryitemwithprogress",
-      "community": 4,
-      "community_name": "Gallery Upload Flow",
+      "community": 1,
+      "community_name": "AvatarCropModal.jsx",
       "norm_label": "creategalleryitemwithprogress()"
     },
     {
@@ -7728,8 +7728,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_notifications",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "notifications.js"
     },
     {
@@ -7739,8 +7739,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_services_notifications_sessions_left_copy",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "sessions_left_copy"
     },
     {
@@ -7750,8 +7750,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "client_src_services_notifications_listnotifications",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "listnotifications()"
     },
     {
@@ -7761,8 +7761,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_services_notifications_usenotifications",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "usenotifications()"
     },
     {
@@ -7772,8 +7772,8 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "client_src_services_notifications_isdeletablenotification",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "isdeletablenotification()"
     },
     {
@@ -7783,8 +7783,8 @@
       "source_location": "L83",
       "_origin": "ast",
       "id": "client_src_services_notifications_marknotificationread",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "marknotificationread()"
     },
     {
@@ -7794,8 +7794,8 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "client_src_services_notifications_deletenotification",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "deletenotification()"
     },
     {
@@ -7805,8 +7805,8 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "client_src_services_notifications_clearallnotifications",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "clearallnotifications()"
     },
     {
@@ -7816,8 +7816,8 @@
       "source_location": "L109",
       "_origin": "ast",
       "id": "client_src_services_notifications_maybenotifysessionsleft",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "maybenotifysessionsleft()"
     },
     {
@@ -7827,8 +7827,8 @@
       "source_location": "L142",
       "_origin": "ast",
       "id": "client_src_services_notifications_requestcommentreplynotification",
-      "community": 15,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "requestcommentreplynotification()"
     },
     {
@@ -7838,8 +7838,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_pb",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "pb.js"
     },
     {
@@ -7849,8 +7849,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_services_pb_pb",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "pb"
     },
     {
@@ -7871,8 +7871,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_posts",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "posts.js"
     },
     {
@@ -7882,8 +7882,8 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "client_src_services_posts_getisdeletedpatchvalue",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "getisdeletedpatchvalue()"
     },
     {
@@ -7915,8 +7915,8 @@
       "source_location": "L106",
       "_origin": "ast",
       "id": "client_src_services_posts_listpostlikes",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "listpostlikes()"
     },
     {
@@ -7926,8 +7926,8 @@
       "source_location": "L128",
       "_origin": "ast",
       "id": "client_src_services_posts_togglepostlike",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "togglepostlike()"
     },
     {
@@ -7937,8 +7937,8 @@
       "source_location": "L151",
       "_origin": "ast",
       "id": "client_src_services_posts_createpost",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "createpost()"
     },
     {
@@ -8190,8 +8190,8 @@
       "source_location": "L218",
       "_origin": "ast",
       "id": "client_src_services_stats_recordcontentview",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
+      "community": 59,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "recordcontentview()"
     },
     {
@@ -8201,8 +8201,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_tournamentcomments",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "tournamentcomments.js"
     },
     {
@@ -8245,8 +8245,8 @@
       "source_location": "L72",
       "_origin": "ast",
       "id": "client_src_services_tournamentcomments_harddeletetournamentcomment",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "harddeletetournamentcomment()"
     },
     {
@@ -8256,8 +8256,8 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "client_src_services_tournamentcomments_flushpendingtournamentcommentdeletes",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "flushpendingtournamentcommentdeletes()"
     },
     {
@@ -8418,7 +8418,7 @@
       "label": "notifyTrainingBot()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L15",
+      "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_services_trainings_notifytrainingbot",
       "community": 0,
@@ -8429,7 +8429,7 @@
       "label": "getUserId()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L61",
+      "source_location": "L60",
       "_origin": "ast",
       "id": "client_src_services_trainings_getuserid",
       "community": 0,
@@ -8440,7 +8440,7 @@
       "label": "toAuditUser()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L70",
+      "source_location": "L69",
       "_origin": "ast",
       "id": "client_src_services_trainings_toaudituser",
       "community": 0,
@@ -8451,7 +8451,7 @@
       "label": "getExpandedUsers()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L83",
+      "source_location": "L82",
       "_origin": "ast",
       "id": "client_src_services_trainings_getexpandedusers",
       "community": 0,
@@ -8462,7 +8462,7 @@
       "label": "resolveAuditUsers()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L94",
+      "source_location": "L93",
       "_origin": "ast",
       "id": "client_src_services_trainings_resolveauditusers",
       "community": 0,
@@ -8473,7 +8473,7 @@
       "label": "fetchMembershipSessionInfo()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L124",
+      "source_location": "L123",
       "_origin": "ast",
       "id": "client_src_services_trainings_fetchmembershipsessioninfo",
       "community": 0,
@@ -8484,7 +8484,7 @@
       "label": "isUnlimitedMembership()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L136",
+      "source_location": "L135",
       "_origin": "ast",
       "id": "client_src_services_trainings_isunlimitedmembership",
       "community": 0,
@@ -8495,7 +8495,7 @@
       "label": "hasAvailableMembershipSession()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L144",
+      "source_location": "L143",
       "_origin": "ast",
       "id": "client_src_services_trainings_hasavailablemembershipsession",
       "community": 0,
@@ -8506,7 +8506,7 @@
       "label": "assertMembershipSessionAvailable()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L155",
+      "source_location": "L154",
       "_origin": "ast",
       "id": "client_src_services_trainings_assertmembershipsessionavailable",
       "community": 0,
@@ -8517,7 +8517,7 @@
       "label": "assertNotBotBlocked()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L165",
+      "source_location": "L164",
       "_origin": "ast",
       "id": "client_src_services_trainings_assertnotbotblocked",
       "community": 0,
@@ -8525,32 +8525,10 @@
       "norm_label": "assertnotbotblocked()"
     },
     {
-      "label": "consumeMembershipSession()",
-      "file_type": "code",
-      "source_file": "client/src/services/trainings.js",
-      "source_location": "L180",
-      "_origin": "ast",
-      "id": "client_src_services_trainings_consumemembershipsession",
-      "community": 0,
-      "community_name": "App Shell Navigation",
-      "norm_label": "consumemembershipsession()"
-    },
-    {
-      "label": "rollbackTrainingBooking()",
-      "file_type": "code",
-      "source_file": "client/src/services/trainings.js",
-      "source_location": "L210",
-      "_origin": "ast",
-      "id": "client_src_services_trainings_rollbacktrainingbooking",
-      "community": 0,
-      "community_name": "App Shell Navigation",
-      "norm_label": "rollbacktrainingbooking()"
-    },
-    {
       "label": "buildBookedUsersPatch()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L219",
+      "source_location": "L179",
       "_origin": "ast",
       "id": "client_src_services_trainings_buildbookeduserspatch",
       "community": 0,
@@ -8558,21 +8536,10 @@
       "norm_label": "buildbookeduserspatch()"
     },
     {
-      "label": "restoreMembershipSession()",
-      "file_type": "code",
-      "source_file": "client/src/services/trainings.js",
-      "source_location": "L236",
-      "_origin": "ast",
-      "id": "client_src_services_trainings_restoremembershipsession",
-      "community": 0,
-      "community_name": "App Shell Navigation",
-      "norm_label": "restoremembershipsession()"
-    },
-    {
       "label": "checkAnnualDailyLimit()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L271",
+      "source_location": "L197",
       "_origin": "ast",
       "id": "client_src_services_trainings_checkannualdailylimit",
       "community": 0,
@@ -8583,7 +8550,7 @@
       "label": "areTrainingValuesEqual()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L296",
+      "source_location": "L225",
       "_origin": "ast",
       "id": "client_src_services_trainings_aretrainingvaluesequal",
       "community": 0,
@@ -8594,7 +8561,7 @@
       "label": "getTrainingChangedFields()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L315",
+      "source_location": "L244",
       "_origin": "ast",
       "id": "client_src_services_trainings_gettrainingchangedfields",
       "community": 0,
@@ -8605,7 +8572,7 @@
       "label": "listTrainings()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L335",
+      "source_location": "L264",
       "_origin": "ast",
       "id": "client_src_services_trainings_listtrainings",
       "community": 0,
@@ -8616,7 +8583,7 @@
       "label": "listCancelledTrainingsForUser()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L357",
+      "source_location": "L286",
       "_origin": "ast",
       "id": "client_src_services_trainings_listcancelledtrainingsforuser",
       "community": 13,
@@ -8627,7 +8594,7 @@
       "label": "createTraining()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L377",
+      "source_location": "L309",
       "_origin": "ast",
       "id": "client_src_services_trainings_createtraining",
       "community": 0,
@@ -8638,7 +8605,7 @@
       "label": "updateTraining()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L394",
+      "source_location": "L326",
       "_origin": "ast",
       "id": "client_src_services_trainings_updatetraining",
       "community": 0,
@@ -8649,7 +8616,7 @@
       "label": "finalizeCancelledTraining()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L427",
+      "source_location": "L359",
       "_origin": "ast",
       "id": "client_src_services_trainings_finalizecancelledtraining",
       "community": 0,
@@ -8660,7 +8627,7 @@
       "label": "readPendingDeleteTrainingIds()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L476",
+      "source_location": "L397",
       "_origin": "ast",
       "id": "client_src_services_trainings_readpendingdeletetrainingids",
       "community": 0,
@@ -8671,7 +8638,7 @@
       "label": "writePendingDeleteTrainingIds()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L492",
+      "source_location": "L413",
       "_origin": "ast",
       "id": "client_src_services_trainings_writependingdeletetrainingids",
       "community": 0,
@@ -8682,7 +8649,7 @@
       "label": "addPendingDeleteTrainingId()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L505",
+      "source_location": "L426",
       "_origin": "ast",
       "id": "client_src_services_trainings_addpendingdeletetrainingid",
       "community": 0,
@@ -8693,7 +8660,7 @@
       "label": "removePendingDeleteTrainingId()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L512",
+      "source_location": "L433",
       "_origin": "ast",
       "id": "client_src_services_trainings_removependingdeletetrainingid",
       "community": 0,
@@ -8704,7 +8671,7 @@
       "label": "readShowDeletedTrainingsPreference()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L521",
+      "source_location": "L442",
       "_origin": "ast",
       "id": "client_src_services_trainings_readshowdeletedtrainingspreference",
       "community": 0,
@@ -8715,7 +8682,7 @@
       "label": "writeShowDeletedTrainingsPreference()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L535",
+      "source_location": "L456",
       "_origin": "ast",
       "id": "client_src_services_trainings_writeshowdeletedtrainingspreference",
       "community": 0,
@@ -8726,7 +8693,7 @@
       "label": "softDeleteTraining()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L549",
+      "source_location": "L470",
       "_origin": "ast",
       "id": "client_src_services_trainings_softdeletetraining",
       "community": 0,
@@ -8737,7 +8704,7 @@
       "label": "notifyTrainingRestoredBot()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L555",
+      "source_location": "L476",
       "_origin": "ast",
       "id": "client_src_services_trainings_notifytrainingrestoredbot",
       "community": 0,
@@ -8748,7 +8715,7 @@
       "label": "restoreTraining()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L570",
+      "source_location": "L491",
       "_origin": "ast",
       "id": "client_src_services_trainings_restoretraining",
       "community": 0,
@@ -8759,7 +8726,7 @@
       "label": "notifyTrainingStatusBot()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L659",
+      "source_location": "L572",
       "_origin": "ast",
       "id": "client_src_services_trainings_notifytrainingstatusbot",
       "community": 0,
@@ -8770,7 +8737,7 @@
       "label": "closeTraining()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L673",
+      "source_location": "L586",
       "_origin": "ast",
       "id": "client_src_services_trainings_closetraining",
       "community": 0,
@@ -8781,7 +8748,7 @@
       "label": "reopenTraining()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L684",
+      "source_location": "L597",
       "_origin": "ast",
       "id": "client_src_services_trainings_reopentraining",
       "community": 0,
@@ -8792,7 +8759,7 @@
       "label": "bookTraining()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L697",
+      "source_location": "L610",
       "_origin": "ast",
       "id": "client_src_services_trainings_booktraining",
       "community": 0,
@@ -8803,7 +8770,7 @@
       "label": "bookUserToTraining()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L752",
+      "source_location": "L652",
       "_origin": "ast",
       "id": "client_src_services_trainings_bookusertotraining",
       "community": 0,
@@ -8814,7 +8781,7 @@
       "label": "bookUsersToTraining()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L814",
+      "source_location": "L701",
       "_origin": "ast",
       "id": "client_src_services_trainings_bookuserstotraining",
       "community": 0,
@@ -8825,7 +8792,7 @@
       "label": "removeUsersFromTraining()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L900",
+      "source_location": "L774",
       "_origin": "ast",
       "id": "client_src_services_trainings_removeusersfromtraining",
       "community": 0,
@@ -8836,7 +8803,7 @@
       "label": "cancelTrainingBooking()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L948",
+      "source_location": "L816",
       "_origin": "ast",
       "id": "client_src_services_trainings_canceltrainingbooking",
       "community": 0,
@@ -8847,7 +8814,7 @@
       "label": "markAttendance()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L980",
+      "source_location": "L844",
       "_origin": "ast",
       "id": "client_src_services_trainings_markattendance",
       "community": 0,
@@ -8858,7 +8825,7 @@
       "label": "unmarkAttendance()",
       "file_type": "code",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L999",
+      "source_location": "L861",
       "_origin": "ast",
       "id": "client_src_services_trainings_unmarkattendance",
       "community": 0,
@@ -8872,8 +8839,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_users",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "users.js"
     },
     {
@@ -8883,8 +8850,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_services_users_listusers",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "listusers()"
     },
     {
@@ -9427,6 +9394,83 @@
       "norm_label": "max-auth.pb.js"
     },
     {
+      "label": "rotr()",
+      "file_type": "code",
+      "source_file": "pb_hooks/max-auth.pb.js",
+      "source_location": "L15",
+      "_origin": "ast",
+      "id": "pb_hooks_max_auth_pb_rotr",
+      "community": 42,
+      "community_name": "MAX Auth PB Hook",
+      "norm_label": "rotr()"
+    },
+    {
+      "label": "sha256Bytes()",
+      "file_type": "code",
+      "source_file": "pb_hooks/max-auth.pb.js",
+      "source_location": "L17",
+      "_origin": "ast",
+      "id": "pb_hooks_max_auth_pb_sha256bytes",
+      "community": 42,
+      "community_name": "MAX Auth PB Hook",
+      "norm_label": "sha256bytes()"
+    },
+    {
+      "label": "wordsToBytes()",
+      "file_type": "code",
+      "source_file": "pb_hooks/max-auth.pb.js",
+      "source_location": "L68",
+      "_origin": "ast",
+      "id": "pb_hooks_max_auth_pb_wordstobytes",
+      "community": 42,
+      "community_name": "MAX Auth PB Hook",
+      "norm_label": "wordstobytes()"
+    },
+    {
+      "label": "utf8Bytes()",
+      "file_type": "code",
+      "source_file": "pb_hooks/max-auth.pb.js",
+      "source_location": "L77",
+      "_origin": "ast",
+      "id": "pb_hooks_max_auth_pb_utf8bytes",
+      "community": 42,
+      "community_name": "MAX Auth PB Hook",
+      "norm_label": "utf8bytes()"
+    },
+    {
+      "label": "hexToBytes()",
+      "file_type": "code",
+      "source_file": "pb_hooks/max-auth.pb.js",
+      "source_location": "L101",
+      "_origin": "ast",
+      "id": "pb_hooks_max_auth_pb_hextobytes",
+      "community": 42,
+      "community_name": "MAX Auth PB Hook",
+      "norm_label": "hextobytes()"
+    },
+    {
+      "label": "bytesToHex()",
+      "file_type": "code",
+      "source_file": "pb_hooks/max-auth.pb.js",
+      "source_location": "L110",
+      "_origin": "ast",
+      "id": "pb_hooks_max_auth_pb_bytestohex",
+      "community": 42,
+      "community_name": "MAX Auth PB Hook",
+      "norm_label": "bytestohex()"
+    },
+    {
+      "label": "hmacSha256Hex()",
+      "file_type": "code",
+      "source_file": "pb_hooks/max-auth.pb.js",
+      "source_location": "L119",
+      "_origin": "ast",
+      "id": "pb_hooks_max_auth_pb_hmacsha256hex",
+      "community": 42,
+      "community_name": "MAX Auth PB Hook",
+      "norm_label": "hmacsha256hex()"
+    },
+    {
       "label": "notification_settings_bootstrap.pb.js",
       "file_type": "code",
       "source_file": "pb_hooks/notification_settings_bootstrap.pb.js",
@@ -9568,6 +9612,17 @@
       "community": 19,
       "community_name": "Notifications State Lib",
       "norm_label": "newlyaddeduserids()"
+    },
+    {
+      "label": "maybeNotifySessionsLeft()",
+      "file_type": "code",
+      "source_file": "pb_hooks/notificationslib.js",
+      "source_location": "L219",
+      "_origin": "ast",
+      "id": "pb_hooks_notificationslib_maybenotifysessionsleft",
+      "community": 19,
+      "community_name": "Notifications State Lib",
+      "norm_label": "maybenotifysessionsleft()"
     },
     {
       "label": "posts_autonumber.pb.js",
@@ -10123,7 +10178,7 @@
       "label": "notifyTrainingCancelled()",
       "file_type": "code",
       "source_file": "pb_hooks/trainingslib.js",
-      "source_location": "L39",
+      "source_location": "L48",
       "_origin": "ast",
       "id": "pb_hooks_trainingslib_notifytrainingcancelled",
       "community": 23,
@@ -10134,7 +10189,7 @@
       "label": "finalizeCancelledTrainingRecord()",
       "file_type": "code",
       "source_file": "pb_hooks/trainingslib.js",
-      "source_location": "L56",
+      "source_location": "L66",
       "_origin": "ast",
       "id": "pb_hooks_trainingslib_finalizecancelledtrainingrecord",
       "community": 23,
@@ -10145,7 +10200,7 @@
       "label": "isReadyToFinalizePendingDelete()",
       "file_type": "code",
       "source_file": "pb_hooks/trainingslib.js",
-      "source_location": "L123",
+      "source_location": "L133",
       "_origin": "ast",
       "id": "pb_hooks_trainingslib_isreadytofinalizependingdelete",
       "community": 23,
@@ -10153,15 +10208,70 @@
       "norm_label": "isreadytofinalizependingdelete()"
     },
     {
-      "label": "validateBookingAdditions()",
+      "label": "dayBoundsIso()",
       "file_type": "code",
       "source_file": "pb_hooks/trainingslib.js",
-      "source_location": "L142",
+      "source_location": "L147",
       "_origin": "ast",
-      "id": "pb_hooks_trainingslib_validatebookingadditions",
+      "id": "pb_hooks_trainingslib_dayboundsiso",
       "community": 23,
       "community_name": "Trainings Finalize Lib",
-      "norm_label": "validatebookingadditions()"
+      "norm_label": "dayboundsiso()"
+    },
+    {
+      "label": "hasAnnualBookingSameDay()",
+      "file_type": "code",
+      "source_file": "pb_hooks/trainingslib.js",
+      "source_location": "L163",
+      "_origin": "ast",
+      "id": "pb_hooks_trainingslib_hasannualbookingsameday",
+      "community": 23,
+      "community_name": "Trainings Finalize Lib",
+      "norm_label": "hasannualbookingsameday()"
+    },
+    {
+      "label": "consumeMembershipSessionTx()",
+      "file_type": "code",
+      "source_file": "pb_hooks/trainingslib.js",
+      "source_location": "L188",
+      "_origin": "ast",
+      "id": "pb_hooks_trainingslib_consumemembershipsessiontx",
+      "community": 23,
+      "community_name": "Trainings Finalize Lib",
+      "norm_label": "consumemembershipsessiontx()"
+    },
+    {
+      "label": "adjustAttendanceCountTx()",
+      "file_type": "code",
+      "source_file": "pb_hooks/trainingslib.js",
+      "source_location": "L242",
+      "_origin": "ast",
+      "id": "pb_hooks_trainingslib_adjustattendancecounttx",
+      "community": 23,
+      "community_name": "Trainings Finalize Lib",
+      "norm_label": "adjustattendancecounttx()"
+    },
+    {
+      "label": "applyBookingSideEffects()",
+      "file_type": "code",
+      "source_file": "pb_hooks/trainingslib.js",
+      "source_location": "L263",
+      "_origin": "ast",
+      "id": "pb_hooks_trainingslib_applybookingsideeffects",
+      "community": 23,
+      "community_name": "Trainings Finalize Lib",
+      "norm_label": "applybookingsideeffects()"
+    },
+    {
+      "label": "users_access_guard.pb.js",
+      "file_type": "code",
+      "source_file": "pb_hooks/users_access_guard.pb.js",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "pb_hooks_users_access_guard_pb",
+      "community": 15,
+      "community_name": "users_access_guard.pb.js",
+      "norm_label": "users_access_guard.pb.js"
     },
     {
       "label": "users_audit.pb.js",
@@ -39822,7 +39932,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L6",
+      "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -39882,7 +39992,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L6",
+      "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -39895,7 +40005,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L440",
+      "source_location": "L372",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_finalizecancelledtraining",
@@ -39907,7 +40017,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L590",
+      "source_location": "L511",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_restoretraining",
@@ -39919,7 +40029,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L404",
+      "source_location": "L336",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_updatetraining",
@@ -40524,43 +40634,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L727",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_trainings_booktraining",
-      "target": "client_src_lib_log_error"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "client/src/services/trainings.js",
-      "source_location": "L877",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_trainings_bookuserstotraining",
-      "target": "client_src_lib_log_error"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "client/src/services/trainings.js",
-      "source_location": "L789",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_trainings_bookusertotraining",
-      "target": "client_src_lib_log_error"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "client/src/services/trainings.js",
-      "source_location": "L385",
+      "source_location": "L317",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_createtraining",
@@ -40572,7 +40646,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L466",
+      "source_location": "L387",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_finalizecancelledtraining",
@@ -40584,7 +40658,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L369",
+      "source_location": "L301",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_listcancelledtrainingsforuser",
@@ -40596,7 +40670,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L346",
+      "source_location": "L275",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_listtrainings",
@@ -40607,7 +40681,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L24",
+      "source_location": "L23",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_notifytrainingbot",
@@ -40619,7 +40693,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L562",
+      "source_location": "L483",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_notifytrainingrestoredbot",
@@ -40631,7 +40705,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L666",
+      "source_location": "L579",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_notifytrainingstatusbot",
@@ -40644,7 +40718,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L484",
+      "source_location": "L405",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_readpendingdeletetrainingids",
@@ -40656,7 +40730,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L527",
+      "source_location": "L448",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_readshowdeletedtrainingspreference",
@@ -40667,7 +40741,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L107",
+      "source_location": "L106",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_resolveauditusers",
@@ -40680,7 +40754,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L412",
+      "source_location": "L344",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_updatetraining",
@@ -40692,7 +40766,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L539",
+      "source_location": "L460",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_writeshowdeletedtrainingspreference",
@@ -42229,7 +42303,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L16",
+      "source_location": "L15",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_notifytrainingbot",
@@ -42266,7 +42340,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L737",
+      "source_location": "L637",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_booktraining",
@@ -42278,7 +42352,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L968",
+      "source_location": "L832",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_canceltrainingbooking",
@@ -42290,7 +42364,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L339",
+      "source_location": "L268",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_listtrainings",
@@ -42980,18 +43054,6 @@
       "confidence_score": 1.0
     },
     {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/services/trainings.js",
-      "source_location": "L5",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_trainings",
-      "target": "client_src_services_notifications",
-      "confidence_score": 1.0
-    },
-    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
@@ -43037,42 +43099,6 @@
       "_origin": "ast",
       "source": "client_src_services_notifications_clearallnotifications",
       "target": "client_src_services_notifications_deletenotification",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/services/trainings.js",
-      "source_location": "L5",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_trainings",
-      "target": "client_src_services_notifications_maybenotifysessionsleft",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/services/trainings.js",
-      "source_location": "L197",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_trainings_consumemembershipsession",
-      "target": "client_src_services_notifications_maybenotifysessionsleft",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/services/trainings.js",
-      "source_location": "L256",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_trainings_restoremembershipsession",
-      "target": "client_src_services_notifications_maybenotifysessionsleft",
       "confidence_score": 1.0
     },
     {
@@ -44329,7 +44355,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L505",
+      "source_location": "L426",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44340,7 +44366,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L296",
+      "source_location": "L225",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44351,7 +44377,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L155",
+      "source_location": "L154",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44362,7 +44388,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L165",
+      "source_location": "L164",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44373,7 +44399,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L697",
+      "source_location": "L610",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44384,7 +44410,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L814",
+      "source_location": "L701",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44395,7 +44421,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L752",
+      "source_location": "L652",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44406,7 +44432,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L219",
+      "source_location": "L179",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44417,7 +44443,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L948",
+      "source_location": "L816",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44428,7 +44454,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L271",
+      "source_location": "L197",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44439,7 +44465,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L673",
+      "source_location": "L586",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44450,18 +44476,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L180",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_trainings",
-      "target": "client_src_services_trainings_consumemembershipsession",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/services/trainings.js",
-      "source_location": "L377",
+      "source_location": "L309",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44472,7 +44487,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L124",
+      "source_location": "L123",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44483,7 +44498,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L427",
+      "source_location": "L359",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44494,7 +44509,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L83",
+      "source_location": "L82",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44505,7 +44520,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L315",
+      "source_location": "L244",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44516,7 +44531,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L61",
+      "source_location": "L60",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44527,7 +44542,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L144",
+      "source_location": "L143",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44538,7 +44553,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L136",
+      "source_location": "L135",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44549,7 +44564,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L357",
+      "source_location": "L286",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44560,7 +44575,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L335",
+      "source_location": "L264",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44571,7 +44586,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L980",
+      "source_location": "L844",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44582,7 +44597,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L15",
+      "source_location": "L14",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44593,7 +44608,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L555",
+      "source_location": "L476",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44604,7 +44619,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L659",
+      "source_location": "L572",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44615,7 +44630,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L476",
+      "source_location": "L397",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44626,7 +44641,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L521",
+      "source_location": "L442",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44637,7 +44652,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L512",
+      "source_location": "L433",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44648,7 +44663,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L900",
+      "source_location": "L774",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44659,7 +44674,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L684",
+      "source_location": "L597",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44670,7 +44685,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L94",
+      "source_location": "L93",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44681,18 +44696,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L236",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_trainings",
-      "target": "client_src_services_trainings_restoremembershipsession",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/services/trainings.js",
-      "source_location": "L570",
+      "source_location": "L491",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44703,18 +44707,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L210",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_trainings",
-      "target": "client_src_services_trainings_rollbacktrainingbooking",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/services/trainings.js",
-      "source_location": "L549",
+      "source_location": "L470",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44725,7 +44718,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L70",
+      "source_location": "L69",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44736,7 +44729,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L999",
+      "source_location": "L861",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44747,7 +44740,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L394",
+      "source_location": "L326",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44758,7 +44751,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L492",
+      "source_location": "L413",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44769,7 +44762,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L535",
+      "source_location": "L456",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings",
@@ -44781,7 +44774,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L732",
+      "source_location": "L632",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_booktraining",
@@ -44793,7 +44786,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L882",
+      "source_location": "L756",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_bookuserstotraining",
@@ -44805,7 +44798,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L794",
+      "source_location": "L681",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_bookusertotraining",
@@ -44817,7 +44810,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L963",
+      "source_location": "L827",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_canceltrainingbooking",
@@ -44829,7 +44822,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L931",
+      "source_location": "L799",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_removeusersfromtraining",
@@ -44841,7 +44834,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L96",
+      "source_location": "L95",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_resolveauditusers",
@@ -44853,7 +44846,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L117",
+      "source_location": "L116",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_resolveauditusers",
@@ -44865,7 +44858,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L645",
+      "source_location": "L558",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_restoretraining",
@@ -44877,7 +44870,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L645",
+      "source_location": "L558",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_restoretraining",
@@ -44889,10 +44882,10 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L181",
+      "source_location": "L144",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "client_src_services_trainings_consumemembershipsession",
+      "source": "client_src_services_trainings_hasavailablemembershipsession",
       "target": "client_src_services_trainings_fetchmembershipsessioninfo",
       "confidence_score": 1.0
     },
@@ -44905,18 +44898,6 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_hasavailablemembershipsession",
-      "target": "client_src_services_trainings_fetchmembershipsessioninfo",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/services/trainings.js",
-      "source_location": "L182",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_trainings_consumemembershipsession",
       "target": "client_src_services_trainings_isunlimitedmembership",
       "confidence_score": 1.0
     },
@@ -44925,31 +44906,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L146",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_trainings_hasavailablemembershipsession",
-      "target": "client_src_services_trainings_isunlimitedmembership",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/services/trainings.js",
-      "source_location": "L243",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_trainings_restoremembershipsession",
-      "target": "client_src_services_trainings_isunlimitedmembership",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/services/trainings.js",
-      "source_location": "L156",
+      "source_location": "L155",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_assertmembershipsessionavailable",
@@ -44961,7 +44918,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L608",
+      "source_location": "L528",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_restoretraining",
@@ -44973,7 +44930,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L712",
+      "source_location": "L625",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_booktraining",
@@ -44985,7 +44942,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L860",
+      "source_location": "L747",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_bookuserstotraining",
@@ -44997,7 +44954,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L774",
+      "source_location": "L674",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_bookusertotraining",
@@ -45009,7 +44966,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L700",
+      "source_location": "L613",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_booktraining",
@@ -45021,7 +44978,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L755",
+      "source_location": "L655",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_bookusertotraining",
@@ -45033,91 +44990,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L721",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_trainings_booktraining",
-      "target": "client_src_services_trainings_consumemembershipsession",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/services/trainings.js",
-      "source_location": "L871",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_trainings_bookuserstotraining",
-      "target": "client_src_services_trainings_consumemembershipsession",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/services/trainings.js",
-      "source_location": "L783",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_trainings_bookusertotraining",
-      "target": "client_src_services_trainings_consumemembershipsession",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/services/trainings.js",
-      "source_location": "L610",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_trainings_restoretraining",
-      "target": "client_src_services_trainings_consumemembershipsession",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/services/trainings.js",
-      "source_location": "L725",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_trainings_booktraining",
-      "target": "client_src_services_trainings_rollbacktrainingbooking",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/services/trainings.js",
-      "source_location": "L875",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_trainings_bookuserstotraining",
-      "target": "client_src_services_trainings_rollbacktrainingbooking",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/services/trainings.js",
-      "source_location": "L787",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_trainings_bookusertotraining",
-      "target": "client_src_services_trainings_rollbacktrainingbooking",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/services/trainings.js",
-      "source_location": "L718",
+      "source_location": "L629",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_booktraining",
@@ -45129,7 +45002,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L868",
+      "source_location": "L753",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_bookuserstotraining",
@@ -45141,7 +45014,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L780",
+      "source_location": "L678",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_bookusertotraining",
@@ -45153,43 +45026,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L959",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_trainings_canceltrainingbooking",
-      "target": "client_src_services_trainings_restoremembershipsession",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/services/trainings.js",
-      "source_location": "L447",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_trainings_finalizecancelledtraining",
-      "target": "client_src_services_trainings_restoremembershipsession",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/services/trainings.js",
-      "source_location": "L925",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_trainings_removeusersfromtraining",
-      "target": "client_src_services_trainings_restoremembershipsession",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/services/trainings.js",
-      "source_location": "L706",
+      "source_location": "L619",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_booktraining",
@@ -45201,7 +45038,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L847",
+      "source_location": "L734",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_bookuserstotraining",
@@ -45213,7 +45050,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L761",
+      "source_location": "L661",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_bookusertotraining",
@@ -45225,7 +45062,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L321",
+      "source_location": "L250",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_gettrainingchangedfields",
@@ -45237,7 +45074,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L400",
+      "source_location": "L332",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_updatetraining",
@@ -45249,7 +45086,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L506",
+      "source_location": "L427",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_addpendingdeletetrainingid",
@@ -45261,7 +45098,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L514",
+      "source_location": "L435",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_removependingdeletetrainingid",
@@ -45273,7 +45110,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L506",
+      "source_location": "L427",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_addpendingdeletetrainingid",
@@ -45285,7 +45122,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L513",
+      "source_location": "L434",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_removependingdeletetrainingid",
@@ -45297,7 +45134,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L586",
+      "source_location": "L507",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_restoretraining",
@@ -45309,7 +45146,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L677",
+      "source_location": "L590",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_closetraining",
@@ -45321,7 +45158,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/trainings.js",
-      "source_location": "L688",
+      "source_location": "L601",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_trainings_reopentraining",
@@ -46041,6 +45878,143 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/max-auth.pb.js",
+      "source_location": "L110",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_max_auth_pb",
+      "target": "pb_hooks_max_auth_pb_bytestohex",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/max-auth.pb.js",
+      "source_location": "L101",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_max_auth_pb",
+      "target": "pb_hooks_max_auth_pb_hextobytes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/max-auth.pb.js",
+      "source_location": "L119",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_max_auth_pb",
+      "target": "pb_hooks_max_auth_pb_hmacsha256hex",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/max-auth.pb.js",
+      "source_location": "L15",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_max_auth_pb",
+      "target": "pb_hooks_max_auth_pb_rotr",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/max-auth.pb.js",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_max_auth_pb",
+      "target": "pb_hooks_max_auth_pb_sha256bytes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/max-auth.pb.js",
+      "source_location": "L77",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_max_auth_pb",
+      "target": "pb_hooks_max_auth_pb_utf8bytes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/max-auth.pb.js",
+      "source_location": "L68",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_max_auth_pb",
+      "target": "pb_hooks_max_auth_pb_wordstobytes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/max-auth.pb.js",
+      "source_location": "L47",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_max_auth_pb_sha256bytes",
+      "target": "pb_hooks_max_auth_pb_rotr",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/max-auth.pb.js",
+      "source_location": "L122",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_max_auth_pb_hmacsha256hex",
+      "target": "pb_hooks_max_auth_pb_sha256bytes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/max-auth.pb.js",
+      "source_location": "L122",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_max_auth_pb_hmacsha256hex",
+      "target": "pb_hooks_max_auth_pb_wordstobytes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/max-auth.pb.js",
+      "source_location": "L132",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_max_auth_pb_hmacsha256hex",
+      "target": "pb_hooks_max_auth_pb_utf8bytes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/max-auth.pb.js",
+      "source_location": "L134",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_max_auth_pb_hmacsha256hex",
+      "target": "pb_hooks_max_auth_pb_bytestohex",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "pb_hooks/notificationslib.js",
       "source_location": "L112",
       "weight": 1.0,
@@ -46086,7 +46060,7 @@
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "pb_hooks/notificationslib.js",
-      "source_location": "L194",
+      "source_location": "L248",
       "weight": 1.0,
       "_origin": "ast",
       "context": "collection",
@@ -46098,7 +46072,19 @@
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "pb_hooks/notificationslib.js",
-      "source_location": "L193",
+      "source_location": "L249",
+      "weight": 1.0,
+      "_origin": "ast",
+      "context": "collection",
+      "source": "pb_hooks_notificationslib",
+      "target": "pb_hooks_notificationslib_maybenotifysessionsleft",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "indirect_call",
+      "confidence": "INFERRED",
+      "source_file": "pb_hooks/notificationslib.js",
+      "source_location": "L247",
       "weight": 1.0,
       "_origin": "ast",
       "context": "collection",
@@ -46132,7 +46118,7 @@
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "pb_hooks/notificationslib.js",
-      "source_location": "L191",
+      "source_location": "L245",
       "weight": 1.0,
       "_origin": "ast",
       "context": "collection",
@@ -46144,7 +46130,7 @@
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "pb_hooks/notificationslib.js",
-      "source_location": "L190",
+      "source_location": "L244",
       "weight": 1.0,
       "_origin": "ast",
       "context": "collection",
@@ -46156,7 +46142,7 @@
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "pb_hooks/notificationslib.js",
-      "source_location": "L192",
+      "source_location": "L246",
       "weight": 1.0,
       "_origin": "ast",
       "context": "collection",
@@ -47165,10 +47151,55 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/trainingslib.js",
+      "source_location": "L242",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_trainingslib",
+      "target": "pb_hooks_trainingslib_adjustattendancecounttx",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "pb_hooks/trainingslib.js",
-      "source_location": "L182",
+      "source_location": "L376",
+      "weight": 1.0,
+      "_origin": "ast",
+      "context": "collection",
+      "source": "pb_hooks_trainingslib",
+      "target": "pb_hooks_trainingslib_applybookingsideeffects",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/trainingslib.js",
+      "source_location": "L188",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_trainingslib",
+      "target": "pb_hooks_trainingslib_consumemembershipsessiontx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/trainingslib.js",
+      "source_location": "L147",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_trainingslib",
+      "target": "pb_hooks_trainingslib_dayboundsiso",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "indirect_call",
+      "confidence": "INFERRED",
+      "source_file": "pb_hooks/trainingslib.js",
+      "source_location": "L373",
       "weight": 1.0,
       "_origin": "ast",
       "context": "collection",
@@ -47177,10 +47208,21 @@
       "confidence_score": 0.5
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/trainingslib.js",
+      "source_location": "L163",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_trainingslib",
+      "target": "pb_hooks_trainingslib_hasannualbookingsameday",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "pb_hooks/trainingslib.js",
-      "source_location": "L184",
+      "source_location": "L375",
       "weight": 1.0,
       "_origin": "ast",
       "context": "collection",
@@ -47192,7 +47234,7 @@
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "pb_hooks/trainingslib.js",
-      "source_location": "L183",
+      "source_location": "L374",
       "weight": 1.0,
       "_origin": "ast",
       "context": "collection",
@@ -47215,7 +47257,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "pb_hooks/trainingslib.js",
-      "source_location": "L39",
+      "source_location": "L48",
       "weight": 1.0,
       "_origin": "ast",
       "source": "pb_hooks_trainingslib",
@@ -47245,16 +47287,16 @@
       "confidence_score": 1.0
     },
     {
-      "relation": "indirect_call",
-      "confidence": "INFERRED",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
       "source_file": "pb_hooks/trainingslib.js",
-      "source_location": "L185",
+      "source_location": "L148",
       "weight": 1.0,
       "_origin": "ast",
-      "context": "collection",
-      "source": "pb_hooks_trainingslib",
-      "target": "pb_hooks_trainingslib_validatebookingadditions",
-      "confidence_score": 0.5
+      "source": "pb_hooks_trainingslib_dayboundsiso",
+      "target": "pb_hooks_trainingslib_parsepbdate",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -47273,7 +47315,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pb_hooks/trainingslib.js",
-      "source_location": "L129",
+      "source_location": "L139",
       "weight": 1.0,
       "_origin": "ast",
       "source": "pb_hooks_trainingslib_isreadytofinalizependingdelete",
@@ -47285,7 +47327,19 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pb_hooks/trainingslib.js",
-      "source_location": "L60",
+      "source_location": "L276",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_trainingslib_applybookingsideeffects",
+      "target": "pb_hooks_trainingslib_hastimerangeended",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/trainingslib.js",
+      "source_location": "L70",
       "weight": 1.0,
       "_origin": "ast",
       "source": "pb_hooks_trainingslib_finalizecancelledtrainingrecord",
@@ -47297,7 +47351,19 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pb_hooks/trainingslib.js",
-      "source_location": "L32",
+      "source_location": "L207",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_trainingslib_consumemembershipsessiontx",
+      "target": "pb_hooks_trainingslib_isunlimitedmembership",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/trainingslib.js",
+      "source_location": "L35",
       "weight": 1.0,
       "_origin": "ast",
       "source": "pb_hooks_trainingslib_restoremembershipsession",
@@ -47309,11 +47375,11 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pb_hooks/trainingslib.js",
-      "source_location": "L171",
+      "source_location": "L329",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "pb_hooks_trainingslib_validatebookingadditions",
-      "target": "pb_hooks_trainingslib_isunlimitedmembership",
+      "source": "pb_hooks_trainingslib_applybookingsideeffects",
+      "target": "pb_hooks_trainingslib_restoremembershipsession",
       "confidence_score": 1.0
     },
     {
@@ -47321,7 +47387,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pb_hooks/trainingslib.js",
-      "source_location": "L71",
+      "source_location": "L81",
       "weight": 1.0,
       "_origin": "ast",
       "source": "pb_hooks_trainingslib_finalizecancelledtrainingrecord",
@@ -47333,11 +47399,59 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "pb_hooks/trainingslib.js",
-      "source_location": "L115",
+      "source_location": "L125",
       "weight": 1.0,
       "_origin": "ast",
       "source": "pb_hooks_trainingslib_finalizecancelledtrainingrecord",
       "target": "pb_hooks_trainingslib_notifytrainingcancelled",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/trainingslib.js",
+      "source_location": "L164",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_trainingslib_hasannualbookingsameday",
+      "target": "pb_hooks_trainingslib_dayboundsiso",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/trainingslib.js",
+      "source_location": "L217",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_trainingslib_consumemembershipsessiontx",
+      "target": "pb_hooks_trainingslib_hasannualbookingsameday",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/trainingslib.js",
+      "source_location": "L345",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_trainingslib_applybookingsideeffects",
+      "target": "pb_hooks_trainingslib_consumemembershipsessiontx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/trainingslib.js",
+      "source_location": "L331",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_trainingslib_applybookingsideeffects",
+      "target": "pb_hooks_trainingslib_adjustattendancecounttx",
       "confidence_score": 1.0
     },
     {
@@ -48186,5 +48300,5 @@
       "source_file": "client/src/assets/ach/1_1.png"
     }
   ],
-  "built_at_commit": "b33d3e7cb809302f0e235fe197dad573b609e27c"
+  "built_at_commit": "a6e29045de452b703f144df151b289bb1999309e"
 }

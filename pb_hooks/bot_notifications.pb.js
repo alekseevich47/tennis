@@ -380,13 +380,13 @@ routerAdd('POST', '/api/max-bot-webhook', (c) => {
       '';
     const expectedSecret = $os.getenv('MAX_BOT_WEBHOOK_SECRET') || '';
 
-    if (expectedSecret) {
-      if (secretHeader !== expectedSecret) {
-        console.log('[bot] webhook: неверный X-Max-Bot-Api-Secret');
-        return c.json(403, { error: 'Forbidden' });
-      }
-    } else {
-      console.log('[bot] webhook: MAX_BOT_WEBHOOK_SECRET не задан — проверка секрета пропущена');
+    if (!expectedSecret) {
+      console.log('[bot] webhook: MAX_BOT_WEBHOOK_SECRET не задан — запрос отклонён');
+      return c.json(403, { error: 'Webhook not configured' });
+    }
+    if (secretHeader !== expectedSecret) {
+      console.log('[bot] webhook: неверный X-Max-Bot-Api-Secret');
+      return c.json(403, { error: 'Forbidden' });
     }
 
     const body = info.body || {};
