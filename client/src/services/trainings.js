@@ -2,7 +2,6 @@
 import pb from './pb';
 import { isModerator, getCurrentUser, BOT_BLOCKED_BOOKING_MESSAGE } from './auth';
 import { error } from '../lib/log';
-import { maybeNotifySessionsLeft } from './notifications';
 import { hasTimeRangeEnded } from '../lib/format';
 
 export const PENDING_DELETE_TRAININGS_KEY = 'pending_delete_trainings';
@@ -173,45 +172,6 @@ async function assertNotBotBlocked(userId) {
 }
 
 /**
- * Списать одно посещение абонемента при записи на тренировку.
- * used_sessions — всегда; available_sessions — только для regular.
- * @param {string} userId
- */
-async function consumeMembershipSession(userId) {
-  const user = await fetchMembershipSessionInfo(userId);
-  const unlimited = isUnlimitedMembership(user.membership_type);
-  const previousAvailable = user.available_sessions || 0;
-
-  if (!unlimited && previousAvailable <= 0) {
-    throw Object.assign(new Error('Нет доступных посещений'), { code: 'NO_AVAILABLE_SESSIONS' });
-  }
-
-  const patch = { 'used_sessions+': 1 };
-  if (!unlimited) {
-    patch['available_sessions-'] = 1;
-  }
-
-  await pb.collection('users').update(userId, patch);
-
-  if (!unlimited) {
-    await maybeNotifySessionsLeft(
-      userId,
-      previousAvailable,
-      previousAvailable - 1,
-      user.membership_type
-    );
-  }
-}
-
-/**
- * @param {string} trainingId
- * @param {string[]} bookedUsersBefore
- */
-async function rollbackTrainingBooking(trainingId, bookedUsersBefore) {
-  await pb.collection('trainings').update(trainingId, { booked_users: bookedUsersBefore });
-}
-
-/**
  * @param {TrainingRecord} training
  * @param {string[]} nextBookedUsers
  * @param {string[]} addedUserIds
@@ -226,40 +186,6 @@ function buildBookedUsersPatch(training, nextBookedUsers, addedUserIds) {
   if (nextKicked.length !== kicked.length) patch.moderator_kicked_users = nextKicked;
   if (nextInsufficient.length !== insufficient.length) patch.restore_insufficient_users = nextInsufficient;
   return patch;
-}
-
-/**
- * Вернуть одно посещение в абонемент при отмене записи.
- * used_sessions — всегда; available_sessions — только для regular.
- * @param {string} userId
- */
-async function restoreMembershipSession(userId) {
-  const user = /** @type {{ membership_type?: string, used_sessions?: number | null, available_sessions?: number | null }} */ (
-    await pb.collection('users').getOne(userId, {
-      fields: 'membership_type,used_sessions,available_sessions'
-    })
-  );
-
-  const unlimited = isUnlimitedMembership(user.membership_type);
-  const previousAvailable = user.available_sessions || 0;
-
-  const patch = {
-    used_sessions: Math.max(0, (user.used_sessions || 0) - 1)
-  };
-  if (!unlimited) {
-    patch['available_sessions+'] = 1;
-  }
-
-  await pb.collection('users').update(userId, patch);
-
-  if (!unlimited) {
-    await maybeNotifySessionsLeft(
-      userId,
-      previousAvailable,
-      previousAvailable + 1,
-      user.membership_type
-    );
-  }
 }
 
 /**
@@ -282,7 +208,10 @@ async function checkAnnualDailyLimit(userId, trainingDate) {
   dayEnd.setHours(23, 59, 59, 999);
 
   const result = await pb.collection('trainings').getList(1, 1, {
-    filter: `date >= "${dayStart.toISOString()}" && date <= "${dayEnd.toISOString()}" && booked_users ?~ "${userId}" && is_deleted != true`,
+    filter: pb.filter(
+      'date >= {:from} && date <= {:to} && booked_users ?~ {:uid} && is_deleted != true',
+      { from: dayStart.toISOString(), to: dayEnd.toISOString(), uid: userId }
+    ),
     requestKey: null
   });
   return result.totalItems > 0;
@@ -359,7 +288,10 @@ export async function listCancelledTrainingsForUser(userId, { signal } = {}) {
   try {
     return /** @type {TrainingRecord[]} */ (await pb.collection('trainings').getFullList({
       sort: '-date',
-      filter: 'is_cancelled = true && (booked_users ~ "' + userId + '" || unbooked_users ~ "' + userId + '")',
+      filter: pb.filter(
+        'is_cancelled = true && (booked_users ~ {:uid} || unbooked_users ~ {:uid})',
+        { uid: userId }
+      ),
       fields: 'id,date,duration,type',
       requestKey: null,
       signal
@@ -438,19 +370,8 @@ export async function finalizeCancelledTraining(trainingId) {
     }
 
     const ended = hasTimeRangeEnded(training.date, training.duration || 0);
-    if (!ended) {
-      const bookedUsers = training.booked_users || [];
-      const attended = training.attended_users || [];
-      const attendedSet = new Set(attended);
-      const attendedBookedUserIds = bookedUsers.filter((userId) => attendedSet.has(userId));
-
-      await Promise.all(bookedUsers.map((userId) => restoreMembershipSession(userId)));
-      await Promise.all(
-        attendedBookedUserIds.map((userId) =>
-          pb.collection('users').update(userId, { 'attendance_count-': 1 })
-        )
-      );
-    }
+    // Возврат сессий / attendance_count — серверный хук trainings_booking_validate
+    // при переходе is_cancelled false→true (симметрия finalizeCancelledTrainingRecord).
 
     const record = /** @type {TrainingRecord} */ (
       await pb.collection('trainings').update(trainingId, { is_cancelled: true })
@@ -598,7 +519,6 @@ export async function restoreTraining(trainingId) {
       );
     } else {
       const bookedUsers = training.booked_users || [];
-      const attendedSet = new Set(training.attended_users || []);
       let nextUnbooked = [...(training.unbooked_users || [])];
       let nextAttended = [...(training.attended_users || [])];
       let nextKicked = [...(training.moderator_kicked_users || [])];
@@ -607,7 +527,6 @@ export async function restoreTraining(trainingId) {
       for (const userId of bookedUsers) {
         if (await hasAvailableMembershipSession(userId)) {
           nextBooked.push(userId);
-          await consumeMembershipSession(userId);
           nextKicked = nextKicked.filter((id) => id !== userId);
         } else {
           insufficientUserIds.push(userId);
@@ -617,13 +536,7 @@ export async function restoreTraining(trainingId) {
         }
       }
 
-      const attendedToRestore = nextBooked.filter((userId) => attendedSet.has(userId));
-      await Promise.all(
-        attendedToRestore.map((userId) =>
-          pb.collection('users').update(userId, { 'attendance_count+': 1 })
-        )
-      );
-
+      // Списание сессий / attendance_count — серверный хук при is_cancelled true→false.
       record = /** @type {TrainingRecord} */ (
         await pb.collection('trainings').update(trainingId, {
           booked_users: nextBooked,
@@ -710,25 +623,12 @@ export async function bookTraining(training, userId) {
       );
     }
     await assertMembershipSessionAvailable(userId);
-    let record;
-    try {
-      record = /** @type {TrainingRecord} */ (
-        await pb.collection('trainings').update(
-          training.id,
-          buildBookedUsersPatch(training, [...current, userId], [userId])
-        )
-      );
-      await consumeMembershipSession(userId);
-    } catch (err) {
-      if (record) {
-        try {
-          await rollbackTrainingBooking(training.id, current);
-        } catch (rollbackErr) {
-          error('rollback self-booking:', rollbackErr);
-        }
-      }
-      throw err;
-    }
+    const record = /** @type {TrainingRecord} */ (
+      await pb.collection('trainings').update(
+        training.id,
+        buildBookedUsersPatch(training, [...current, userId], [userId])
+      )
+    );
     await notifyTrainingBot({
       event: 'book',
       userIds: [userId],
@@ -772,25 +672,12 @@ export async function bookUserToTraining(training, userId, targetUser, { overrid
       );
     }
     await assertMembershipSessionAvailable(userId);
-    let record;
-    try {
-      record = /** @type {TrainingRecord} */ (
-        await pb.collection('trainings').update(
-          training.id,
-          buildBookedUsersPatch(training, [...current, userId], [userId])
-        )
-      );
-      await consumeMembershipSession(userId);
-    } catch (err) {
-      if (record) {
-        try {
-          await rollbackTrainingBooking(training.id, current);
-        } catch (rollbackErr) {
-          error('rollback moderator booking:', rollbackErr);
-        }
-      }
-      throw err;
-    }
+    const record = /** @type {TrainingRecord} */ (
+      await pb.collection('trainings').update(
+        training.id,
+        buildBookedUsersPatch(training, [...current, userId], [userId])
+      )
+    );
     await notifyTrainingBot({
       event: 'book',
       userIds: [userId],
@@ -860,25 +747,12 @@ export async function bookUsersToTraining(training, userIds, targetUsers = [], {
       await assertMembershipSessionAvailable(userId);
     }
 
-    let record;
-    try {
-      record = /** @type {TrainingRecord} */ (
-        await pb.collection('trainings').update(
-          training.id,
-          buildBookedUsersPatch(training, [...current, ...nextUserIds], nextUserIds)
-        )
-      );
-      await Promise.all(nextUserIds.map((id) => consumeMembershipSession(id)));
-    } catch (err) {
-      if (record) {
-        try {
-          await rollbackTrainingBooking(training.id, current);
-        } catch (rollbackErr) {
-          error('rollback bulk booking:', rollbackErr);
-        }
-      }
-      throw err;
-    }
+    const record = /** @type {TrainingRecord} */ (
+      await pb.collection('trainings').update(
+        training.id,
+        buildBookedUsersPatch(training, [...current, ...nextUserIds], nextUserIds)
+      )
+    );
     await notifyTrainingBot({
       event: 'book',
       userIds: nextUserIds,
@@ -922,12 +796,6 @@ export async function removeUsersFromTraining(training, userIds) {
         ? { attended_users: attended.filter((id) => !removedAttendedUserIds.includes(id)) }
         : {})
     }));
-    await Promise.all(removedUserIds.map((userId) => restoreMembershipSession(userId)));
-    await Promise.all(
-      removedAttendedUserIds.map((userId) =>
-        pb.collection('users').update(userId, { 'attendance_count-': 1 })
-      )
-    );
     await notifyTrainingBot({
       event: 'unbook',
       userIds: removedUserIds,
@@ -956,10 +824,6 @@ export async function cancelTrainingBooking(training, userId) {
       unbooked_users: currentUnbooked.includes(userId) ? currentUnbooked : [...currentUnbooked, userId],
       ...(shouldRemoveAttendance ? { attended_users: attended.filter((id) => id !== userId) } : {})
     }));
-    await restoreMembershipSession(userId);
-    if (shouldRemoveAttendance) {
-      await pb.collection('users').update(userId, { 'attendance_count-': 1 });
-    }
     await notifyTrainingBot({
       event: 'unbook',
       userIds: [userId],
@@ -982,11 +846,9 @@ export async function markAttendance(training, userId) {
     if (!userId) throw new Error('Не выбран пользователь');
     const current = training.attended_users || [];
     if (current.includes(userId)) return training;
-    const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
+    return /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
       attended_users: [...current, userId]
     }));
-    await pb.collection('users').update(userId, { 'attendance_count+': 1 });
-    return record;
   } catch (err) {
     throw err;
   }
@@ -1001,11 +863,9 @@ export async function unmarkAttendance(training, userId) {
     if (!userId) throw new Error('Не выбран пользователь');
     const current = training.attended_users || [];
     if (!current.includes(userId)) return training;
-    const record = /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
+    return /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
       attended_users: current.filter((id) => id !== userId)
     }));
-    await pb.collection('users').update(userId, { 'attendance_count-': 1 });
-    return record;
   } catch (err) {
     throw err;
   }

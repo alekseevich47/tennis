@@ -185,11 +185,66 @@ function newlyAddedUserIds(oldBooked, newBooked) {
   return added;
 }
 
+var SESSIONS_LEFT_COPY = {
+  3: {
+    title: 'Движение — это жизнь 🏃‍♂️',
+    body: 'У вас осталось всего 3 визита. Самое время закрепить результат и спланировать следующие тренировки, чтобы не терять форму!',
+    badge_text: 'Осталось 3 посещения!'
+  },
+  2: {
+    title: 'Мы ценим Ваше время 🙏🏼',
+    body: 'В вашем распоряжении остается совсем немного. Продлите абонемент сейчас, чтобы не прерывать прогресс в последний момент.',
+    badge_text: 'Осталось 2 посещения!'
+  },
+  1: {
+    title: 'Скоро понадобится добавка! 🤏🏼',
+    body: 'Осталось всего ничего... Продлите абонемент заранее, чтобы не тратить время на формальности при следующем входе.',
+    badge_text: 'Осталось 1 посещение!'
+  },
+  0: {
+    title: 'Я сейчас заплачу 😭',
+    body: 'Они закончились! Но мы верим, что увидим Вас снова!',
+    badge_text: 'Осталось 0 посещений!'
+  }
+};
+
+/**
+ * In-app уведомление «осталось N посещений» при списании/возврате с сервера.
+ * @param {core.App} app
+ * @param {string} userId
+ * @param {number} previousAvailable
+ * @param {number} newAvailable
+ * @param {string} [membershipType]
+ */
+function maybeNotifySessionsLeft(app, userId, previousAvailable, newAvailable, membershipType) {
+  if (membershipType !== 'regular') return;
+  if (previousAvailable === newAvailable) return;
+  if ([0, 1, 2, 3].indexOf(newAvailable) === -1) return;
+
+  var copy = SESSIONS_LEFT_COPY[newAvailable];
+  if (!copy) return;
+
+  try {
+    var notificationsCollection = app.findCollectionByNameOrId('notifications');
+    var notification = new Record(notificationsCollection);
+    notification.set('recipient', userId);
+    notification.set('title', copy.title);
+    notification.set('body', copy.body);
+    notification.set('badge_text', copy.badge_text);
+    notification.set('click_action', 'open_membership');
+    notification.set('is_read', false);
+    app.save(notification);
+  } catch (err) {
+    console.log('[notificationslib] maybeNotifySessionsLeft: ' + err);
+  }
+}
+
 module.exports = {
   FOUR_HOURS_MS: FOUR_HOURS_MS,
   relationId: relationId,
   pbDateFilterStr: pbDateFilterStr,
   upsertTrainingNotification: upsertTrainingNotification,
   newlyAddedUserIds: newlyAddedUserIds,
-  isWithinCountdownWindow: isWithinCountdownWindow
+  isWithinCountdownWindow: isWithinCountdownWindow,
+  maybeNotifySessionsLeft: maybeNotifySessionsLeft
 };

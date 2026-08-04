@@ -32,7 +32,7 @@ const SESSIONS_LEFT_COPY = {
  */
 export async function listNotifications(userId) {
   return pb.collection('notifications').getFullList({
-    filter: `recipient = "${userId}"`,
+    filter: pb.filter('recipient = {:uid}', { uid: userId }),
     sort: '-created'
   });
 }
