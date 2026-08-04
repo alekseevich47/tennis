@@ -1,0 +1,149 @@
+# Продовый nginx-конфиг для отдельного арендованного сервера.
+# На этом сервере — ТОЛЬКО этот проект (Mini App + PocketBase), без соседних сервисов,
+# в отличие от текущего config/urban (общий сервер с другими проектами).
+#
+# Перед использованием заменить:
+#   <REPLACE_ME_DOMAIN>      — домен проекта (например, tennis.example.com)
+#   <REPLACE_ME_PB_PORT>     — порт, на котором слушает PocketBase (по умолчанию 8090)
+#   <REPLACE_ME_STATIC_PATH> — абсолютный путь к client/dist на сервере
+#   <REPLACE_ME_ADMIN_IP>    — статический IP/VPN-подсеть для допуска к /_/ (если используете allow-list)
+#
+# Basic auth для /_/ (активный вариант ниже) требует создать пароль:
+#   sudo apt install apache2-utils
+#   sudo htpasswd -c /etc/nginx/.htpasswd_pb_admin admin
+#
+# ВНИМАНИЕ: этот конфиг раздаёт фронтенд с корня "/" (отдельный домен только под этот проект),
+# а не из-под "/tt-api/", как в config/urban (там nginx делит домен с другими проектами).
+# Если используете этот конфиг — поменяйте в client/vite.config.js base: '/tt-api/' -> base: '/'
+# и пересоберите (npm run build), иначе ассеты будут запрашиваться по неверным путям.
+
+# === RATE LIMITING ===
+limit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;
+
+# === UPSTREAM PocketBase (локально на этом же сервере) ===
+upstream pocketbase {
+    server 127.0.0.1:<REPLACE_ME_PB_PORT>;
+    keepalive 32;
+}
+
+server {
+    server_name <REPLACE_ME_DOMAIN>;
+    listen 443 ssl http2;
+
+    ssl_certificate /etc/letsencrypt/live/<REPLACE_ME_DOMAIN>/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/<REPLACE_ME_DOMAIN>/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # === Безопасность (заголовки) ===
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+
+    # === Файлы PocketBase (кэшируемые медиа) ===
+    location ^~ /api/files/ {
+        proxy_pass http://pocketbase/api/files/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_valid 200 7d;
+        add_header Cache-Control "public, max-age=604800, immutable";
+    }
+
+    # === PocketBase API ===
+    location /api/ {
+        limit_req zone=api burst=50 nodelay;
+        proxy_pass http://pocketbase;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 300s;
+        proxy_send_timeout 300s;
+        client_max_body_size 100M;
+    }
+
+    # === PocketBase Admin UI — НЕ должен быть открыт всему интернету без доп. защиты ===
+    # ВАРИАНТ 1 (активен) — Basic Auth. Работает с любого IP, проще настроить на съёмном сервере.
+    location /_/ {
+        auth_basic "PocketBase Admin";
+        auth_basic_user_file /etc/nginx/.htpasswd_pb_admin;
+
+        limit_req zone=api burst=20 nodelay;
+        proxy_pass http://pocketbase;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # ВАРИАНТ 2 (закомментирован) — allow-list по IP/VPN. Раскомментировать и закомментировать
+    # ВАРИАНТ 1 выше, если есть статический IP/VPN для админки (можно комбинировать оба варианта —
+    # добавить allow/deny внутрь ВАРИАНТА 1 вместе с auth_basic для двухфакторной защиты).
+    # location /_/ {
+    #     allow <REPLACE_ME_ADMIN_IP>;
+    #     deny all;
+    #
+    #     limit_req zone=api burst=20 nodelay;
+    #     proxy_pass http://pocketbase;
+    #     proxy_set_header Host $host;
+    #     proxy_set_header X-Real-IP $remote_addr;
+    #     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    #     proxy_set_header X-Forwarded-Proto $scheme;
+    # }
+
+    # === Фронтенд (Mini App, статика из client/dist) ===
+    location = /sw.js {
+        alias <REPLACE_ME_STATIC_PATH>/sw.js;
+        add_header Service-Worker-Allowed "/" always;
+        add_header Cache-Control "no-cache" always;
+    }
+
+    location = / {
+        alias <REPLACE_ME_STATIC_PATH>/index.html;
+        add_header Cache-Control "no-cache" always;
+    }
+
+    location = /index.html {
+        alias <REPLACE_ME_STATIC_PATH>/index.html;
+        add_header Cache-Control "no-cache" always;
+    }
+
+    location / {
+        alias <REPLACE_ME_STATIC_PATH>/;
+        index index.html;
+        try_files $uri $uri/ /index.html;
+
+        location ~* \.(?:js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$ {
+            expires 1y;
+            add_header Cache-Control "public, no-transform";
+        }
+    }
+
+    # === Health check ===
+    location /health {
+        access_log off;
+        return 200 "OK\n";
+        add_header Content-Type text/plain;
+    }
+}
+
+# === HTTP → HTTPS redirect ===
+server {
+    listen 80;
+    server_name <REPLACE_ME_DOMAIN>;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
