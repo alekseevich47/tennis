@@ -123,16 +123,35 @@ location /smile {
 	    add_header Cache-Control "public, max-age=604800, immutable";
 }
 
-    # === 4. PocketBase TT Bot API ===
-    location /tt/api/ {
-        proxy_pass http://pocketbase_tt/api/; # /api/ Слэш в конце важен
+    # === 4a. PocketBase TT Realtime (SSE) — ДО общего /tt/api/
+    # PB использует SSE, не WebSocket. Connection: upgrade + буфер → ERR_HTTP2_PROTOCOL_ERROR.
+    location ^~ /tt/api/realtime {
+        proxy_pass http://pocketbase_tt/api/realtime;
         proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
+        proxy_set_header Connection '';
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_buffering off;
+        proxy_cache off;
+        chunked_transfer_encoding off;
+        proxy_read_timeout 3600s;
+        proxy_send_timeout 3600s;
+    }
+
+    # === 4. PocketBase TT Bot API ===
+    location /tt/api/ {
+        proxy_pass http://pocketbase_tt/api/; # /api/ Слэш в конце важен
+        proxy_http_version 1.1;
+        # keepalive upstream; Upgrade не нужен (realtime — отдельный location выше)
+        proxy_set_header Connection '';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 300s;
+        proxy_send_timeout 300s;
 	client_max_body_size 100M;
     }
 
