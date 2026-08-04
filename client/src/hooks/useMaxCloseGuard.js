@@ -188,11 +188,8 @@ export function useMaxCloseGuard({ enabled = true, onBeforeClose } = {}) {
       }
       // Нативный vertical-swipe закрывает слишком рано (по пику, не по отпусканию) —
       // отключаем и ведём свой pull с commit по финальной позиции пальца.
-      try {
-        webApp.disableVerticalSwipes?.();
-      } catch {
-        // ignore
-      }
+      // SDK может вернуть Promise.reject(UnsupportedEvent) — try/catch этого не ловит.
+      Promise.resolve(webApp.disableVerticalSwipes?.()).catch(() => {});
       try {
         webApp.BackButton.show?.();
         webApp.BackButton.onClick(handleBack);
@@ -305,11 +302,7 @@ export function useMaxCloseGuard({ enabled = true, onBeforeClose } = {}) {
         } catch {
           // ignore
         }
-        try {
-          webApp.enableVerticalSwipes?.();
-        } catch {
-          // ignore
-        }
+        Promise.resolve(webApp.enableVerticalSwipes?.()).catch(() => {});
         // closing confirmation оставляем включённой до следующего mount —
         // при unmount всего App закрытие и так идёт через pagehide.
       }
