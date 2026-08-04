@@ -1,16 +1,16 @@
 # Graph Report - tennis  (2026-08-04)
 
 ## Corpus Check
-- 200 files · ~195,596 words
+- 201 files · ~195,621 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1006 nodes · 3139 edges · 61 communities (55 shown, 6 thin omitted)
-- Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 114 edges (avg confidence: 0.61)
+- 1007 nodes · 3139 edges · 62 communities (56 shown, 6 thin omitted)
+- Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 116 edges (avg confidence: 0.61)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a6e29045`
+- Built from commit: `5ea0b5b3`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -45,12 +45,12 @@
 - Features Folder Structure
 - Services Module Split
 - Bottom Nav Items
-- MAX Auth PB Hook
 - Touch UI Performance
 - PostDetailModal.jsx
 - log.js
 - catalog.js
 - TournamentPostDetailModal.jsx
+- maxauthlib.js
 
 ## God Nodes (most connected - your core abstractions)
 1. `error` - 117 edges
@@ -84,7 +84,7 @@
 - **PocketBase collections** — readme_schema_users, readme_schema_posts, readme_schema_comments, readme_schema_trainings, readme_schema_products, readme_schema_championships, readme_schema_matches, readme_schema_gallery [EXTRACTED 1.00]
 - **Achievement badge asset set** — client_src_assets_ach_1_1_png_badge, client_src_assets_ach_1_2_png_badge, client_src_assets_ach_1_3_png_badge, client_src_assets_ach_1_4_png_badge, client_src_assets_ach_1_5_png_badge, client_src_assets_ach_2_1_png_badge, client_src_assets_ach_2_2_png_badge, client_src_assets_ach_2_3_png_badge, client_src_assets_ach_2_4_png_badge, client_src_assets_ach_2_5_png_badge, client_src_assets_ach_3_1_png_badge, client_src_assets_ach_3_2_png_badge, client_src_assets_ach_3_3_png_badge, client_src_assets_ach_3_4_png_badge, client_src_assets_ach_3_5_png_badge, client_src_assets_ach_4_1_png_badge, client_src_assets_ach_4_2_png_badge, client_src_assets_ach_4_3_png_badge, client_src_assets_ach_4_4_png_badge, client_src_assets_ach_4_5_png_badge, client_src_assets_ach_5_1_png_badge, client_src_assets_ach_5_2_png_badge, client_src_assets_ach_5_3_png_badge, client_src_assets_ach_5_4_png_badge, client_src_assets_ach_5_5_png_badge [INFERRED 0.85]
 
-## Communities (61 total, 6 thin omitted)
+## Communities (62 total, 6 thin omitted)
 
 ### Community 0 - "App Shell Navigation"
 Cohesion: 0.06
@@ -186,10 +186,6 @@ Nodes (3): dispatchScheduledBroadcast(), dispatchScheduledNotification(), resolv
 Cohesion: 0.50
 Nodes (4): PB collection products, Магазин, Shopping cart animation snippet, Shopping cart animation
 
-### Community 42 - "MAX Auth PB Hook"
-Cohesion: 0.43
-Nodes (6): bytesToHex(), hmacSha256Hex(), rotr(), sha256Bytes(), utf8Bytes(), wordsToBytes()
-
 ### Community 56 - "PostDetailModal.jsx"
 Cohesion: 0.07
 Nodes (60): TournamentCommentsSection(), CommentReplyButton(), CommentReplyComposeBar(), CommentReplyQuote(), CommentSendButton(), CommentSwipeReply(), FrameColorPicker(), hexToHsv() (+52 more)
@@ -205,6 +201,10 @@ Nodes (24): AchievementRow(), AchievementsBlock(), clampProgress(), getCurrentLe
 ### Community 59 - "TournamentPostDetailModal.jsx"
 Cohesion: 0.12
 Nodes (22): react, Avatar(), getParticipantDisplayName(), getParticipantPlayer(), PODIUM_ORDER, TournamentPodium(), readTournamentComments(), TournamentPostCard() (+14 more)
+
+### Community 60 - "maxauthlib.js"
+Cohesion: 0.43
+Nodes (6): bytesToHex(), hmacSha256Hex(), rotr(), sha256Bytes(), utf8Bytes(), wordsToBytes()
 
 ## Knowledge Gaps
 - **108 isolated node(s):** `name`, `version`, `description`, `private`, `dev` (+103 more)
