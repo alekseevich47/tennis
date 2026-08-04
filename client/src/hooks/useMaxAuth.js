@@ -1,5 +1,5 @@
 // @ts-check
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import pb from '../services/pb';
 import {
   initMaxAuth,
@@ -39,14 +39,14 @@ export function useMaxAuth() {
   // Гвард против двойного вызова StrictMode и любых параллельных монтирований.
   const startedRef = useRef(false);
 
-  const applyUser = (/** @type {UserRecord | null} */ nextUser) => {
+  const applyUser = useCallback((/** @type {UserRecord | null} */ nextUser) => {
     if (isUserBanned(nextUser)) {
       bannedRef.current = nextUser;
     } else {
       bannedRef.current = null;
     }
     setUser(nextUser);
-  };
+  }, []);
 
   useEffect(() => {
     if (startedRef.current) return;
@@ -156,9 +156,14 @@ export function useMaxAuth() {
     };
   }, [user?.id]);
 
-  const setUserSafe = (/** @type {UserRecord | null} */ nextUser) => {
-    applyUser(nextUser);
-  };
+  // Стабильная ссылка: иначе App handleUserUpdate меняется каждый рендер →
+  // ProfilePage useEffect([user.id, onUpdate]) → бесконечный getOne.
+  const setUserSafe = useCallback(
+    (/** @type {UserRecord | null} */ nextUser) => {
+      applyUser(nextUser);
+    },
+    [applyUser]
+  );
 
   return { user, isLoading, error: err, setUser: setUserSafe };
 }
