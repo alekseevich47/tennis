@@ -124,8 +124,8 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
 
   const visibleProducts = useMemo(() => {
     if (!products) return [];
-    const baseProducts = moderator ? products : products.filter(
-      (product) => !product.is_deleted && !deletedProductIds.includes(product.id)
+    const baseProducts = products.filter(
+      (product) => !product.is_deleted || deletedProductIds.includes(product.id)
     );
     const normalizedSearchQuery = searchQuery.trim().toLowerCase();
     if (!normalizedSearchQuery) return baseProducts;
@@ -140,7 +140,7 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
     return baseProducts.filter((product) =>
       String(product.title || '').toLowerCase().includes(normalizedSearchQuery)
     );
-  }, [products, moderator, deletedProductIds, searchQuery]);
+  }, [products, deletedProductIds, searchQuery]);
 
   const handleCloseSearchUI = useCallback(() => {
     setIsSearchOpen(false);

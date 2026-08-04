@@ -200,8 +200,8 @@
     "semantic_hash": ""
   },
   "client/src/features/competitions/CompetitionsPage.jsx": {
-    "mtime": 1785507410.5220878,
-    "ast_hash": "9208ffe3abbd3526d00902c4b4d156a9",
+    "mtime": 1785820330.4323337,
+    "ast_hash": "a8aecea81e0ea2b8c071d7f0624d1e5e",
     "semantic_hash": ""
   },
   "client/src/features/competitions/CreateTournamentPostModal.jsx": {
@@ -255,8 +255,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/FeedPage.jsx": {
-    "mtime": 1785507375.6136787,
-    "ast_hash": "a3be7b4e587c6898ebf0ec3acb9ee739",
+    "mtime": 1785820326.7267258,
+    "ast_hash": "7ddc18f3350df72878d6c6901f4dee92",
     "semantic_hash": ""
   },
   "client/src/features/feed/FullscreenImageViewer.jsx": {
@@ -425,9 +425,9 @@
     "semantic_hash": "febb138e4f8310fa8e1b30d866c01d0d"
   },
   "client/src/features/shop/ShopPage.jsx": {
-    "mtime": 1783651109.3367481,
-    "ast_hash": "670116ef530be7ece75519c33b14f7a3",
-    "semantic_hash": "670116ef530be7ece75519c33b14f7a3"
+    "mtime": 1785820330.6996448,
+    "ast_hash": "06b58ffea31bfe75113c65c4fd635555",
+    "semantic_hash": ""
   },
   "client/src/features/shop/buyMessage.js": {
     "mtime": 1782791330.4747348,
@@ -530,8 +530,8 @@
     "semantic_hash": "4faf29487af1701424e8fff107ceb7da"
   },
   "client/src/hooks/useMaxAuth.js": {
-    "mtime": 1785819103.6626208,
-    "ast_hash": "9c942319f5f746b2867f8a2d655533df",
+    "mtime": 1785820325.0923603,
+    "ast_hash": "3b8b5df1445029d202b20f8d63ae42a4",
     "semantic_hash": ""
   },
   "client/src/hooks/useOnboarding.js": {
@@ -670,8 +670,8 @@
     "semantic_hash": ""
   },
   "client/src/services/catalog.js": {
-    "mtime": 1785338509.5232084,
-    "ast_hash": "21da0a17708cc3e86ae9f4b1fdd85d50",
+    "mtime": 1785820318.5289485,
+    "ast_hash": "70fabfef82df5d351c3bb95cc0a239a3",
     "semantic_hash": ""
   },
   "client/src/services/notifications.js": {
@@ -690,8 +690,8 @@
     "semantic_hash": "9525072dec67d8b780296ec1c25bc852"
   },
   "client/src/services/posts.js": {
-    "mtime": 1785338765.1795652,
-    "ast_hash": "f7d266def4380524dff55bd532d6adc1",
+    "mtime": 1785820312.9311607,
+    "ast_hash": "7af65a21123ba3808605d5fa72d2eb9a",
     "semantic_hash": ""
   },
   "client/src/services/stats.js": {
@@ -705,8 +705,8 @@
     "semantic_hash": ""
   },
   "client/src/services/tournamentPosts.js": {
-    "mtime": 1784991466.1642075,
-    "ast_hash": "4a75be4014930d34041aad3e92baf642",
+    "mtime": 1785820313.2601454,
+    "ast_hash": "1805c1d0b2db493f3103e2761062a58a",
     "semantic_hash": ""
   },
   "client/src/services/trainings.js": {
