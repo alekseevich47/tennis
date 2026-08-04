@@ -38023,7 +38023,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/hooks/useMaxCloseGuard.js",
-      "source_location": "L221",
+      "source_location": "L218",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_hooks_usemaxcloseguard_usemaxcloseguard",
@@ -38035,7 +38035,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/hooks/useMaxCloseGuard.js",
-      "source_location": "L221",
+      "source_location": "L218",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_hooks_usemaxcloseguard_usemaxcloseguard",
@@ -48313,5 +48313,5 @@
       "source_file": "client/src/assets/ach/1_1.png"
     }
   ],
-  "built_at_commit": "5ea0b5b3c0c8b61ca066eb8b24d11deda85598ee"
+  "built_at_commit": "2ba528aab74e97a281064f6cb1dac560de1ec0d7"
 }
