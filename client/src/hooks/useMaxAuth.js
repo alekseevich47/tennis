@@ -9,8 +9,11 @@ import {
   refreshAuthUser,
   saveBanInfo
 } from '../services/auth';
-import { purgeAbandonedComments } from '../services/posts';
+import { purgeAbandonedComments, purgeAbandonedPosts } from '../services/posts';
+import { purgeAbandonedTournamentPosts } from '../services/tournamentPosts';
+import { purgeAbandonedProducts } from '../services/catalog';
 import { warn, error } from '../lib/log';
+import { mutate as mutateSWR } from 'swr';
 
 /**
  * @typedef {import('../services/auth').UserRecord} UserRecord
@@ -78,11 +81,22 @@ export function useMaxAuth() {
         if (cancelled) return;
         applyUser(loggedUser);
 
-        // Параллельная зачистка зомби-комментариев — не блокирует UI (правило async-parallel).
+        // Параллельная зачистка зомби soft-delete — не блокирует UI.
         if (loggedUser?.id && !isUserBanned(loggedUser)) {
           purgeAbandonedComments(loggedUser.id, { signal: controller.signal }).catch((e) =>
             error('Ошибка автозачистки старых комментариев:', e)
           );
+          if (loggedUser.role === 'moderator') {
+            Promise.all([
+              purgeAbandonedPosts({ signal: controller.signal }),
+              purgeAbandonedTournamentPosts({ signal: controller.signal }),
+              purgeAbandonedProducts({ signal: controller.signal })
+            ])
+              .then(() => {
+                mutateSWR((key) => Array.isArray(key) && (key[0] === 'posts' || key[0] === 'tournament_posts' || key[0] === 'products'));
+              })
+              .catch((e) => error('Ошибка автозачистки soft-delete:', e));
+          }
         }
       } catch (e) {
         if (!cancelled) setErr(/** @type {Error} */ (e));
