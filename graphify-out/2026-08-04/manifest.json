@@ -1145,8 +1145,8 @@
     "semantic_hash": ""
   },
   "client/src/hooks/useMaxCloseGuard.js": {
-    "mtime": 1785509860.6784222,
-    "ast_hash": "b3c2986392bc497c2224d8577ca62380",
+    "mtime": 1785817601.2922473,
+    "ast_hash": "551bdfc9bd41a81dd5f13b575a759d57",
     "semantic_hash": ""
   },
   "card.png": {
@@ -1170,18 +1170,23 @@
     "semantic_hash": ""
   },
   "config/nginx_config_prod.txt": {
-    "mtime": 1785809144.8802202,
-    "ast_hash": "2a48af9b816ffba38d5795e1114a159c",
+    "mtime": 1785817697.1022441,
+    "ast_hash": "9516e402b6897147c312a6847292dd35",
     "semantic_hash": ""
   },
   "pb_hooks/users_access_guard.pb.js": {
-    "mtime": 1785811710.6711228,
-    "ast_hash": "50ba8ee355361c948a13f59084651666",
+    "mtime": 1785818904.4258566,
+    "ast_hash": "89fedaa26717da934a8ae903a2f7dc0b",
     "semantic_hash": ""
   },
   "pb_hooks/maxauthlib.js": {
     "mtime": 1785817376.4577534,
     "ast_hash": "26f526344fb40a52d630d9058dfc4924",
+    "semantic_hash": ""
+  },
+  "pb_hooks/users_access_guard_lib.js": {
+    "mtime": 1785818904.6457016,
+    "ast_hash": "7fb8f7143fa449d33ce59984a220de3b",
     "semantic_hash": ""
   }
 }
