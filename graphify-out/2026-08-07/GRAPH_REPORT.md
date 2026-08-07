@@ -1,7 +1,7 @@
 # Graph Report - tennis  (2026-08-07)
 
 ## Corpus Check
-- 208 files · ~199,003 words
+- 208 files · ~199,063 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `38f16872`
+- Built from commit: `03f3eea6`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -212,7 +212,7 @@ Nodes (6): bytesToHex(), hmacSha256Hex(), rotr(), sha256Bytes(), utf8Bytes(), wo
 
 ### Community 61 - "error"
 Cohesion: 0.57
-Nodes (6): detectMediaKind(), fetchContentBytes(), headerValue(), isYadiskPublicUrl(), normalizePublicUrl(), resolvePublicResource()
+Nodes (6): detectMediaKind(), fetchContentFile(), guessContentType(), isYadiskPublicUrl(), normalizePublicUrl(), resolvePublicResource()
 
 ### Community 63 - "achievements.js"
 Cohesion: 0.15

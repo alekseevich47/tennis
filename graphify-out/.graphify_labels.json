@@ -69,5 +69,10 @@
   "67": "RatingPage.jsx",
   "68": "MembershipOverviewModal.jsx",
   "69": "FavoritesContext.jsx",
-  "70": "BottomNav.jsx"
+  "70": "BottomNav.jsx",
+  "71": "TournamentCommentsSection.jsx",
+  "72": "claimlib.js",
+  "73": "tournamentComments.js",
+  "74": "Avatar.jsx",
+  "75": "users_claim.pb.js"
 }
