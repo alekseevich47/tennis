@@ -5,6 +5,7 @@ import FullscreenImageViewer from './FullscreenImageViewer';
 import MediaPreviewGrid from './MediaPreviewGrid';
 import PostRichTextField from './PostRichTextField';
 import { useLocalMediaFullscreen } from './useLocalMediaFullscreen';
+import { useYadiskEmbed } from './useYadiskEmbed';
 import {
   MAX_POST_MEDIA_FILES,
   getMediaUrl,
@@ -55,9 +56,23 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
         : [],
     [post, keptExistingMediaNames]
   );
+
+  const yadiskSlots = Math.max(
+    0,
+    MAX_POST_MEDIA_FILES - keptExistingMediaNames.length - mediaFiles.length
+  );
+  const yadisk = useYadiskEmbed({
+    text,
+    setText,
+    remainingSlots: yadiskSlots,
+    initialKey: isOpen && post ? post.id : null,
+    initialItems: post?.external_media,
+    enabled: isOpen
+  });
+
   const previewItems = useMemo(
-    () => [...existingPreviewItems, ...newPreviewItems],
-    [existingPreviewItems, newPreviewItems]
+    () => [...existingPreviewItems, ...newPreviewItems, ...yadisk.previewItems],
+    [existingPreviewItems, newPreviewItems, yadisk.previewItems]
   );
   const {
     openItem: openPreviewMedia,
@@ -68,7 +83,10 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
   } = useLocalMediaFullscreen(previewItems, 'edit-post');
   const remainingMediaSlots = Math.max(
     0,
-    MAX_POST_MEDIA_FILES - keptExistingMediaNames.length - mediaFiles.length
+    MAX_POST_MEDIA_FILES -
+      keptExistingMediaNames.length -
+      mediaFiles.length -
+      yadisk.count
   );
 
   useEffect(() => {
@@ -93,21 +111,31 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!post || submitting) return;
+    if (!post || submitting || yadisk.hasPending) return;
 
     if (!hasVisibleText(text)) return;
     const nextContent = text;
 
     setSubmitting(true);
     try {
-      const hasMediaChanges = removedMediaNames.length > 0 || mediaFiles.length > 0;
-      let payload = /** @type {FormData | { content: string }} */ ({ content: nextContent });
+      const hasFileChanges = removedMediaNames.length > 0 || mediaFiles.length > 0;
+      const initialExternal = JSON.stringify(post.external_media || []);
+      const nextExternal = JSON.stringify(yadisk.storedMedia);
+      const hasExternalChanges = initialExternal !== nextExternal;
 
-      if (hasMediaChanges) {
+      let payload = /** @type {FormData | Record<string, unknown>} */ ({
+        content: nextContent,
+        external_media: yadisk.storedMedia
+      });
+
+      if (hasFileChanges) {
         payload = new FormData();
         payload.append('content', nextContent);
+        payload.append('external_media', nextExternal);
         removedMediaNames.forEach((filename) => payload.append('media-', filename));
         mediaFiles.forEach((file) => payload.append('media', file));
+      } else if (!hasExternalChanges) {
+        payload = { content: nextContent };
       }
 
       const updatedPost = await updatePost(post.id, payload);
@@ -153,6 +181,10 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
               className="media-remove-btn"
               onClick={(event) => {
                 event.stopPropagation();
+                if (String(item.key).startsWith('yadisk-')) {
+                  yadisk.removeItem(item.key);
+                  return;
+                }
                 if (item.key.startsWith('existing-')) {
                   const filename = item.key.slice('existing-'.length);
                   setRemovedMediaNames((current) =>
@@ -202,7 +234,8 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
           )}
         </div>
         <p className="edit-post-hint">
-          До {MAX_POST_MEDIA_FILES} файлов в публикации. Удалённые и новые файлы применятся после сохранения.
+          До {MAX_POST_MEDIA_FILES} файлов. Ссылка Яндекс.Диска в тексте → превью. Удалённые и новые
+          файлы применятся после сохранения.
         </p>
 
         <div className="modal-actions edit-post-actions">
@@ -217,9 +250,9 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
           <button
             type="submit"
             className="submit-btn-full edit-post-save-btn"
-            disabled={submitting || !hasVisibleText(text)}
+            disabled={submitting || yadisk.hasPending || !hasVisibleText(text)}
           >
-            {submitting ? 'Сохраняем…' : 'Сохранить'}
+            {submitting ? 'Сохраняем…' : yadisk.hasPending ? 'Превью…' : 'Сохранить'}
           </button>
         </div>
       </form>

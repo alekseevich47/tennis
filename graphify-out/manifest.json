@@ -245,13 +245,13 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/CreatePostModal.jsx": {
-    "mtime": 1784996850.7434938,
-    "ast_hash": "e11022205b23731f956f705a51617bb7",
+    "mtime": 1786102840.346226,
+    "ast_hash": "92a9ef3806126050a37d221cec60f545",
     "semantic_hash": ""
   },
   "client/src/features/feed/EditPostModal.jsx": {
-    "mtime": 1784996859.81345,
-    "ast_hash": "7a5ccca47245581b3f9207c0847f4ff0",
+    "mtime": 1786102840.346226,
+    "ast_hash": "580b9dc53c4631dbf031d87d54bdfbe4",
     "semantic_hash": ""
   },
   "client/src/features/feed/FeedPage.jsx": {
@@ -265,8 +265,8 @@
     "semantic_hash": "db3dc6b743d7ff38be11277df4904434"
   },
   "client/src/features/feed/MediaPreviewGrid.jsx": {
-    "mtime": 1784996841.1763496,
-    "ast_hash": "54c51e1ef40dd695f6b4c41229c7b76c",
+    "mtime": 1786102787.6746266,
+    "ast_hash": "270979f9575dd99721b3935fa6eba58a",
     "semantic_hash": ""
   },
   "client/src/features/feed/PostCard.jsx": {
@@ -280,9 +280,9 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostMedia.jsx": {
-    "mtime": 1782477961.1326315,
-    "ast_hash": "d9b6df11335c09404a9d190423ca73bc",
-    "semantic_hash": "d9b6df11335c09404a9d190423ca73bc"
+    "mtime": 1786102889.9352102,
+    "ast_hash": "115f4ce5447a7cf5d5e918c702f85b5b",
+    "semantic_hash": ""
   },
   "client/src/features/gallery/AddImageModal.jsx": {
     "mtime": 1779857053.1167667,
@@ -690,8 +690,8 @@
     "semantic_hash": "9525072dec67d8b780296ec1c25bc852"
   },
   "client/src/services/posts.js": {
-    "mtime": 1785820312.9311607,
-    "ast_hash": "7af65a21123ba3808605d5fa72d2eb9a",
+    "mtime": 1786102897.8837917,
+    "ast_hash": "bdc61e615a6348d9484a5030ec44abad",
     "semantic_hash": ""
   },
   "client/src/services/stats.js": {
@@ -860,8 +860,8 @@
     "semantic_hash": ""
   },
   "schema.json": {
-    "mtime": 1785807484.669322,
-    "ast_hash": "7258fa7b3c2d847f85f9f8106607a2ed",
+    "mtime": 1786102891.1842868,
+    "ast_hash": "e21a1fe25af2e61d3fa80bad6c158862",
     "semantic_hash": ""
   },
   "AUDIT.md": {
@@ -1187,6 +1187,36 @@
   "pb_hooks/users_access_guard_lib.js": {
     "mtime": 1785818904.6457016,
     "ast_hash": "7fb8f7143fa449d33ce59984a220de3b",
+    "semantic_hash": ""
+  },
+  "client/src/features/feed/useResolvedExternalMedia.js": {
+    "mtime": 1786102911.6760008,
+    "ast_hash": "284490369b2213c1db6003c0d8bc7f4d",
+    "semantic_hash": ""
+  },
+  "client/src/features/feed/useYadiskEmbed.js": {
+    "mtime": 1786103031.8780098,
+    "ast_hash": "7284a351e1eabd3ea8abc9b4d402254c",
+    "semantic_hash": ""
+  },
+  "client/src/lib/yadisk.js": {
+    "mtime": 1786102693.86851,
+    "ast_hash": "1625adaa70705d97f2a5fbf9c0a7cb59",
+    "semantic_hash": ""
+  },
+  "client/src/services/yadisk.js": {
+    "mtime": 1786102694.0424578,
+    "ast_hash": "5d64effbaa222aae145422a9678e24f2",
+    "semantic_hash": ""
+  },
+  "pb_hooks/yadisk.pb.js": {
+    "mtime": 1786102689.1255102,
+    "ast_hash": "082a66eee03adc2ac93ab9708e7d716b",
+    "semantic_hash": ""
+  },
+  "pb_hooks/yadisklib.js": {
+    "mtime": 1786102678.6319838,
+    "ast_hash": "552e4bb7ea6534efc6a7176f1b526f08",
     "semantic_hash": ""
   }
 }
