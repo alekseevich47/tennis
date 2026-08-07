@@ -14,10 +14,13 @@ import { useTrainings } from '../../hooks/useTrainings';
 import { listCancelledTrainingsForUser } from '../../services/trainings';
 import {
   banUser,
+  claimMaxAccount,
   hideFromRating,
+  listClaimCandidates,
   restrictComments,
   showInRating,
   unbanUser,
+  unclaimMaxAccount,
   unrestrictComments,
   updateUserProfile
 } from '../../services/auth';
@@ -101,7 +104,7 @@ function isModerator(user) {
  * }} props
  */
 function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChange, onMutated }) {
-  const { alert } = useAlertDialog();
+  const { alert, confirm } = useAlertDialog();
   const { data: players } = usePlayers();
   const avatarInputRef = useRef(null);
   const menuBtnRef = useRef(null);
@@ -131,6 +134,12 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
   const [restrictReasonDialogOpen, setRestrictReasonDialogOpen] = useState(false);
   const [banReason, setBanReason] = useState('');
   const [restrictReason, setRestrictReason] = useState('');
+  const [claimDialogOpen, setClaimDialogOpen] = useState(false);
+  const [claimMaxId, setClaimMaxId] = useState('');
+  const [claimMaxUserId, setClaimMaxUserId] = useState('');
+  const [claimCandidates, setClaimCandidates] = useState([]);
+  const [claimLoading, setClaimLoading] = useState(false);
+  const [claimSubmitting, setClaimSubmitting] = useState(false);
 
   const targetUserId = targetUser?.id;
   const currentUserId = currentUser?.id;
@@ -138,6 +147,7 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
   const canEditSectionStartDate = isModerator(currentUser);
   const canManageProfile = Boolean(isOwnProfile || canEditSectionStartDate);
   const displayName = displayUser?.full_name || 'Профиль';
+  const linkedMaxId = (displayUser?.max_id && String(displayUser.max_id).trim()) || '';
 
   const { data: cancelledTrainings, isLoading: cancelledLoading } = useSWR(
     isOpen && targetUserId ? ['cancelled-trainings', targetUserId] : null,
@@ -188,6 +198,10 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
       setRestrictReasonDialogOpen(false);
       setBanReason('');
       setRestrictReason('');
+      setClaimDialogOpen(false);
+      setClaimMaxId('');
+      setClaimMaxUserId('');
+      setClaimCandidates([]);
       return undefined;
     }
 
@@ -490,6 +504,111 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
     }
   };
 
+  const openClaimDialog = async () => {
+    setMenuOpen(false);
+    setClaimMaxId(linkedMaxId);
+    setClaimMaxUserId('');
+    setClaimDialogOpen(true);
+    if (linkedMaxId) return;
+    setClaimLoading(true);
+    try {
+      const candidates = await listClaimCandidates(targetUserId);
+      setClaimCandidates(candidates);
+    } catch (err) {
+      error('list claim candidates:', err);
+      setClaimCandidates([]);
+    } finally {
+      setClaimLoading(false);
+    }
+  };
+
+  const handleClaimCandidateChange = (value) => {
+    setClaimMaxUserId(value);
+    if (!value) return;
+    const candidate = claimCandidates.find((item) => item.id === value);
+    if (candidate?.max_id) setClaimMaxId(String(candidate.max_id));
+  };
+
+  const handleClaimConfirm = async () => {
+    const maxId = claimMaxId.trim();
+    if (!maxId && !claimMaxUserId) {
+      await alert({ title: 'Привязка MAX', message: 'Укажите max_id или выберите аккаунт MAX.' });
+      return;
+    }
+
+    if (claimMaxUserId) {
+      const confirmed = await confirm({
+        title: 'Объединить аккаунты?',
+        message:
+          'MAX-аккаунт будет слит с этим профилем и удалён. История (тренировки, комментарии и т.д.) перейдёт сюда.',
+        confirmText: 'Объединить',
+        cancelText: 'Отмена'
+      });
+      if (!confirmed) return;
+    } else {
+      const confirmed = await confirm({
+        title: 'Привязать MAX?',
+        message:
+          'Если max_id свободен — привяжем к этому профилю (вариант A). Если уже есть MAX-аккаунт с этим id — объединим и удалим дубль (вариант B).',
+        confirmText: 'Продолжить',
+        cancelText: 'Отмена'
+      });
+      if (!confirmed) return;
+    }
+
+    setClaimSubmitting(true);
+    try {
+      const result = await claimMaxAccount({
+        targetUserId,
+        ...(claimMaxUserId ? { maxUserId: claimMaxUserId } : { maxId })
+      });
+      applyProfileMutation(result.user);
+      setClaimDialogOpen(false);
+      setClaimMaxId('');
+      setClaimMaxUserId('');
+      await alert({
+        title: result.mode === 'merge' ? 'Аккаунты объединены' : 'MAX привязан',
+        message:
+          result.mode === 'merge'
+            ? 'Дубль MAX удалён, данные перенесены на этот профиль.'
+            : `Профиль привязан к max_id: ${result.user?.max_id || maxId}`
+      });
+    } catch (err) {
+      error('claim max:', err);
+      const message =
+        err?.response?.data?.error || err?.message || 'Не удалось привязать MAX.';
+      await alert({ title: 'Ошибка', message: String(message) });
+    } finally {
+      setClaimSubmitting(false);
+    }
+  };
+
+  const handleUnclaimConfirm = async () => {
+    const confirmed = await confirm({
+      title: 'Отвязать MAX?',
+      message: `С профиля будет снят max_id ${linkedMaxId}. Пользователь сможет снова войти только после новой привязки.`,
+      confirmText: 'Отвязать',
+      cancelText: 'Отмена'
+    });
+    if (!confirmed) return;
+
+    setClaimSubmitting(true);
+    try {
+      const result = await unclaimMaxAccount(targetUserId);
+      applyProfileMutation(result.user);
+      setClaimDialogOpen(false);
+      setClaimMaxId('');
+      await alert({ title: 'MAX отвязан', message: 'Привязка снята.' });
+    } catch (err) {
+      error('unclaim max:', err);
+      const message =
+        err?.response?.data?.error || err?.message || 'Не удалось отвязать MAX.';
+      await alert({ title: 'Ошибка', message: String(message) });
+    } finally {
+      setClaimSubmitting(false);
+    }
+  };
+
   if (!targetUser) return null;
 
   return (
@@ -600,6 +719,15 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                       }
                     >
                       {displayUser?.is_banned === true ? 'Разблокировать' : 'Заблокировать'}
+                    </button>
+
+                    <button
+                      type="button"
+                      className="profile-menu-item profile-menu-item--divider"
+                      role="menuitem"
+                      onClick={openClaimDialog}
+                    >
+                      {linkedMaxId ? 'MAX: управление' : 'Привязать к MAX'}
                     </button>
                   </div>
                 )}
@@ -756,6 +884,25 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                   <p><strong>Дата рождения:</strong> {formatDate(displayUser?.birth_date) || 'Не указана'}</p>
                   <p><strong>Рука:</strong> {displayUser?.dominant_hand || 'Не указана'}</p>
                   <p><strong>В секции с:</strong> {formatDate(displayUser?.section_start_date || displayUser?.created) || 'Не указана'}</p>
+                  {canEditSectionStartDate && (
+                    <p>
+                      <strong>MAX:</strong>{' '}
+                      {linkedMaxId ? (
+                        <button
+                          type="button"
+                          className="profile-max-id-btn"
+                          onClick={() => {
+                            navigator.clipboard?.writeText(linkedMaxId);
+                          }}
+                          title="Скопировать max_id"
+                        >
+                          {linkedMaxId}
+                        </button>
+                      ) : (
+                        <span className="profile-max-id-empty">не привязан</span>
+                      )}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -910,6 +1057,101 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
           rows={4}
           maxLength={500}
         />
+      </Modal>
+
+      <Modal
+        isOpen={claimDialogOpen}
+        onClose={() => {
+          if (claimSubmitting) return;
+          setClaimDialogOpen(false);
+        }}
+        title={linkedMaxId ? 'Управление MAX' : 'Привязать к MAX'}
+        footer={
+          <div className="profile-reason-dialog-footer">
+            <button
+              type="button"
+              className="profile-reason-dialog-btn profile-reason-dialog-btn--secondary"
+              disabled={claimSubmitting}
+              onClick={() => setClaimDialogOpen(false)}
+            >
+              Отмена
+            </button>
+            {linkedMaxId ? (
+              <button
+                type="button"
+                className="profile-reason-dialog-btn profile-reason-dialog-btn--danger"
+                disabled={claimSubmitting}
+                onClick={handleUnclaimConfirm}
+              >
+                {claimSubmitting ? '…' : 'Отвязать'}
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="profile-reason-dialog-btn profile-reason-dialog-btn--primary"
+                disabled={claimSubmitting || claimLoading}
+                onClick={handleClaimConfirm}
+              >
+                {claimSubmitting ? 'Сохраняем…' : 'Привязать'}
+              </button>
+            )}
+          </div>
+        }
+      >
+        {linkedMaxId ? (
+          <p className="profile-claim-hint">
+            Сейчас привязан <strong>{linkedMaxId}</strong>. Отвязка нужна, чтобы привязать другой
+            max_id.
+          </p>
+        ) : (
+          <div className="profile-claim-form">
+            <p className="profile-claim-hint">
+              Вариант A: введите max_id до первого входа. Вариант B: выберите уже созданный
+              MAX-аккаунт — он будет слит с этим профилем и удалён.
+            </p>
+            <label className="profile-claim-label" htmlFor="profile-claim-max-id">
+              max_id
+            </label>
+            <input
+              id="profile-claim-max-id"
+              className="profile-claim-input"
+              type="text"
+              value={claimMaxId}
+              onChange={(e) => {
+                setClaimMaxId(e.target.value);
+                setClaimMaxUserId('');
+              }}
+              placeholder="ID пользователя в MAX"
+              autoComplete="off"
+              disabled={claimSubmitting}
+            />
+            <label className="profile-claim-label" htmlFor="profile-claim-candidate">
+              Или аккаунт MAX
+            </label>
+            {claimLoading ? (
+              <Spinner label="Загрузка…" inline />
+            ) : (
+              <select
+                id="profile-claim-candidate"
+                className="profile-claim-select"
+                value={claimMaxUserId}
+                onChange={(e) => handleClaimCandidateChange(e.target.value)}
+                disabled={claimSubmitting || claimCandidates.length === 0}
+              >
+                <option value="">
+                  {claimCandidates.length === 0
+                    ? 'Нет аккаунтов с max_id'
+                    : 'Не выбран'}
+                </option>
+                {claimCandidates.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {(c.full_name || 'Без имени') + ` · ${c.max_id}`}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+        )}
       </Modal>
     </>
   );

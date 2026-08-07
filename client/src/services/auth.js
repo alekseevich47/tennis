@@ -10,6 +10,7 @@ import { log, error } from '../lib/log';
  * @property {string} [email]
  * @property {string | string[]} [avatar]
  * @property {string} [avatar_url]
+ * @property {string} [max_id]
  * @property {string} [dominant_hand]
  * @property {number} [rating_points]
  * @property {number} [wins]
@@ -264,6 +265,43 @@ export async function hideFromRating(targetUserId) {
 export async function showInRating(targetUserId) {
   const updated = await pb.collection('users').update(targetUserId, { is_visible: true });
   return /** @type {UserRecord} */ (updated);
+}
+
+/**
+ * Привязка max_id к ручному профилю (A) или объединение с дублем MAX (B).
+ * @param {{ targetUserId: string, maxId?: string, maxUserId?: string }} payload
+ * @returns {Promise<{ success: boolean, mode: 'link'|'merge', deletedUserId?: string|null, user: UserRecord }>}
+ */
+export async function claimMaxAccount(payload) {
+  return /** @type {Promise<{ success: boolean, mode: 'link'|'merge', deletedUserId?: string|null, user: UserRecord }>} */ (
+    pb.send('/api/users-claim-max', {
+      method: 'POST',
+      body: payload
+    })
+  );
+}
+
+/**
+ * @param {string} targetUserId
+ * @returns {Promise<{ success: boolean, maxId: string, user: UserRecord }>}
+ */
+export async function unclaimMaxAccount(targetUserId) {
+  return /** @type {Promise<{ success: boolean, maxId: string, user: UserRecord }>} */ (
+    pb.send('/api/users-unclaim-max', {
+      method: 'POST',
+      body: { targetUserId }
+    })
+  );
+}
+
+/**
+ * @param {string} [excludeUserId]
+ * @returns {Promise<Array<{ id: string, full_name: string, max_id: string, avatar?: string, avatar_url?: string, email?: string, created?: string, rating_points?: number, available_sessions?: number }>>}
+ */
+export async function listClaimCandidates(excludeUserId) {
+  const qs = excludeUserId ? `?exclude=${encodeURIComponent(excludeUserId)}` : '';
+  const data = await pb.send(`/api/users-claim-candidates${qs}`, { method: 'GET' });
+  return (data && data.candidates) || [];
 }
 
 /**
