@@ -22,8 +22,9 @@ routerAdd('POST', '/api/yadisk-preview', (c) => {
   }
 });
 
-// Прокси байтов (img/video): прямые URL downloader.disk.yandex.ru в браузере часто ломаются.
+// Прокси байтов (img/video): прямые URL downloader в браузере не открываются.
 routerAdd('GET', '/api/yadisk-content', (c) => {
+  var reader = null;
   try {
     var yadisk = require(__hooks + '/yadisklib.js');
     var info = c.requestInfo();
@@ -33,12 +34,12 @@ routerAdd('GET', '/api/yadisk-content', (c) => {
 
     var query = info.query || {};
     var kind = query.kind === 'file' ? 'file' : 'preview';
-    var result = yadisk.fetchContentBytes(query.url || '', kind);
+    var result = yadisk.fetchContentFile(query.url || '', kind);
     if (result.error) {
       return c.json(result.status || 400, { error: result.error });
     }
 
-    c.response.header().set('Content-Type', result.contentType || 'application/octet-stream');
+    reader = result.file.reader.open();
     c.response.header().set('Cache-Control', 'private, max-age=600');
     if (result.name) {
       c.response.header().set(
@@ -46,11 +47,18 @@ routerAdd('GET', '/api/yadisk-content', (c) => {
         'inline; filename="' + String(result.name).replace(/"/g, '') + '"'
       );
     }
-    c.response.writeHeader(200);
-    c.response.write(result.body);
-    return null;
+    // stream читает синхронно до возврата
+    return c.stream(200, result.contentType || 'application/octet-stream', reader);
   } catch (err) {
     console.log('[yadisk] content: ' + (err && err.stack ? err.stack : err));
     return c.json(500, { error: 'Internal error' });
+  } finally {
+    if (reader) {
+      try {
+        reader.close();
+      } catch (closeErr) {
+        // ignore
+      }
+    }
   }
 });
