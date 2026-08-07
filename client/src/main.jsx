@@ -8,7 +8,9 @@ import { ToastProvider } from './components/ui/ToastContext';
 import { PostUploadProvider } from './components/PostUploadProvider';
 import { TournamentPostUploadProvider } from './components/TournamentPostUploadProvider';
 import { GalleryUploadProvider } from './components/GalleryUploadProvider';
-import './styles/global.css'; // fonts.css → Nunito Variable (откат: см. styles/fonts.css)
+// Nunito Variable (self-hosted). Откат: закомментировать + --app-font-family-legacy в fonts.css
+import '@fontsource-variable/nunito/wght.css';
+import './styles/global.css';
 
 function GlobalErrorFallback({ error, resetErrorBoundary }) {
   return (

@@ -6900,7 +6900,7 @@
       "label": "GlobalErrorFallback()",
       "file_type": "code",
       "source_file": "client/src/main.jsx",
-      "source_location": "L13",
+      "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_main_globalerrorfallback",
       "community": 59,
@@ -42818,7 +42818,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/main.jsx",
-      "source_location": "L13",
+      "source_location": "L15",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_main",
@@ -51000,5 +51000,5 @@
       "source_file": "client/src/assets/ach/1_1.png"
     }
   ],
-  "built_at_commit": "a98a4cc2922f911af739d425cceab5c5e5050b53"
+  "built_at_commit": "84484566e372f7c16d5bafe6422defa9911d46f3"
 }
