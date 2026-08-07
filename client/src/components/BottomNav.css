@@ -1,7 +1,7 @@
 .bottom-nav {
   --bottom-nav-side: 20px;
   --bottom-nav-bottom: 10px;
-  --bottom-nav-height: 64px;
+  --bottom-nav-height: 72px;
 
   /* Полоса на весь низ экрана (без safe-area) — пилюля внутри с отступами
      от краёв, чтобы визуально «отлипала» от границ экрана. */
@@ -33,7 +33,7 @@
   height: var(--bottom-nav-height);
   padding: 6px;
   box-sizing: border-box;
-  border-radius: 28px;
+  border-radius: 32px;
   /* blur-радиус тени должен быть меньше бокового отступа (--bottom-nav-side),
      иначе тень «вылезает» до края экрана и читается как серая рамка/полоса. */
   box-shadow: 0 6px 14px rgba(15, 23, 42, 0.1);
@@ -51,7 +51,7 @@
   position: absolute;
   inset: 0;
   z-index: 0;
-  border-radius: 28px;
+  border-radius: 32px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.97);
 }
@@ -94,12 +94,12 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1px;
+  gap: 4px;
   background: none;
   border: none;
   color: #8e8e93;
   cursor: pointer;
-  padding: 2px 4px;
+  padding: 4px 4px;
   min-width: 44px;
   min-height: 44px;
   border-radius: 22px;
