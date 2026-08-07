@@ -1,8 +1,8 @@
 {
   "client/package.json": {
-    "mtime": 1784302749.0637343,
-    "ast_hash": "ec05401d119fae912857d9a2b2fb91b4",
-    "semantic_hash": "ec05401d119fae912857d9a2b2fb91b4"
+    "mtime": 1786117422.8970616,
+    "ast_hash": "946e10b065b3cb5dafd2c611a31d5b90",
+    "semantic_hash": ""
   },
   "client/public/sw.js": {
     "mtime": 1779892609.9341662,
@@ -645,9 +645,9 @@
     "semantic_hash": "702b0fa6d03ddc691735c8af1861b9d8"
   },
   "client/src/main.jsx": {
-    "mtime": 1782803824.1192515,
-    "ast_hash": "cb3e3973f4749b2edaef5a200bb3a0e7",
-    "semantic_hash": "cb3e3973f4749b2edaef5a200bb3a0e7"
+    "mtime": 1786117503.3815825,
+    "ast_hash": "5ade495dcf64da8f4127bbb0012cad03",
+    "semantic_hash": ""
   },
   "client/src/services/achievements.js": {
     "mtime": 1783702311.4886029,
@@ -875,8 +875,8 @@
     "semantic_hash": "430ffb07fdf04da7c4013b537853ef5a"
   },
   "client/index.html": {
-    "mtime": 1784999911.5483966,
-    "ast_hash": "83b091395ee514007e0d9fd17020629e",
+    "mtime": 1786117503.2590876,
+    "ast_hash": "36c795f68275c2e93907db55a624f0e8",
     "semantic_hash": ""
   },
   "drop_category.txt": {

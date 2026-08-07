@@ -645,8 +645,8 @@
     "semantic_hash": "702b0fa6d03ddc691735c8af1861b9d8"
   },
   "client/src/main.jsx": {
-    "mtime": 1786117503.3815825,
-    "ast_hash": "5ade495dcf64da8f4127bbb0012cad03",
+    "mtime": 1786118058.7092805,
+    "ast_hash": "c428af6e4510816b7e5861eb0fff991c",
     "semantic_hash": ""
   },
   "client/src/services/achievements.js": {
