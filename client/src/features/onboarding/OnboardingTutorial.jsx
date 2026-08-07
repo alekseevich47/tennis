@@ -53,12 +53,12 @@ const TOUR_STEPS = {
     text: 'Здесь Вы можете ознакомиться с результатами соревнований и прокомментиравать публикации 💬.'
   },
   7: {
-    tab: 4,
+    tab: 5,
     spotlight: true,
-    selector: '.bottom-nav .nav-item[data-nav-index="4"]',
+    selector: '.bottom-nav .nav-item[data-nav-index="5"]',
     descriptionPlacement: 'top-card',
     scrollBlock: 'nearest',
-    text: 'В разделе галерея вы можете погрузиться в нашу дружескую атмосферу.'
+    text: 'Профиль — ваши данные, абонемент и посещённые тренировки.'
   }
 };
 

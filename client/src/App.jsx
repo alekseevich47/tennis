@@ -19,7 +19,11 @@ import GalleryPage from './features/gallery/GalleryPage';
 import ProfilePage from './features/profile/ProfilePage';
 import BlockedPage from './features/profile/BlockedPage';
 import AdminPanelPage from './features/admin/AdminPanelPage';
-import { ADMIN_TAB_INDEX } from './components/BottomNav';
+import {
+  ADMIN_TAB_INDEX,
+  GALLERY_TAB_INDEX,
+  PROFILE_TAB_INDEX
+} from './components/BottomNav';
 import {
   finalizeCancelledTraining,
   readPendingDeleteTrainingIds,
@@ -40,10 +44,8 @@ const TAB_TITLES = [
   'Турнир',
   'Галерея',
   'Мой профиль',
-  'Админ-панель'
+  'Админ'
 ];
-
-const PROFILE_TAB_INDEX = 5;
 
 function getInitialFavoriteProductIds(user) {
   const favorites = user?.favorite_products;
@@ -303,7 +305,7 @@ function AppMain({ user, setUser, flushBeforeCloseRef }) {
             onClose: () => setCompetitionsSearch({ open: false, query: '' }),
             showDateSearch: true
           }
-        : activeTab === 4
+        : activeTab === GALLERY_TAB_INDEX
           ? {
               open: gallerySearch.open,
               query: gallerySearch.query,
@@ -331,8 +333,6 @@ function AppMain({ user, setUser, flushBeforeCloseRef }) {
 
       <AppHeader
         title={headerTitle}
-        user={user}
-        onProfileClick={() => setActiveTab(PROFILE_TAB_INDEX)}
         onMembershipClick={
           userIsModerator ? () => setMembershipOpen(true) : undefined
         }
@@ -387,7 +387,7 @@ function AppMain({ user, setUser, flushBeforeCloseRef }) {
             return;
           }
           if (collection === 'gallery_comments' && meta?.mediaId) {
-            setActiveTab(4);
+            setActiveTab(GALLERY_TAB_INDEX);
             setNotificationCommentTarget({
               collection,
               mediaId: String(meta.mediaId),
@@ -457,7 +457,7 @@ function AppMain({ user, setUser, flushBeforeCloseRef }) {
             onCommentTargetOpened={() => setNotificationCommentTarget(null)}
           />
         )}
-        {activeTab === 4 && (
+        {activeTab === GALLERY_TAB_INDEX && (
           <GalleryPage
             user={user}
             searchQuery={gallerySearch.query}
@@ -482,7 +482,7 @@ function AppMain({ user, setUser, flushBeforeCloseRef }) {
       </main>
 
       <BottomNav
-        activeTab={activeTab === PROFILE_TAB_INDEX ? -1 : activeTab}
+        activeTab={activeTab}
         onTabChange={handleTabChange}
         showAdmin={userIsModerator}
       />
