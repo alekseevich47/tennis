@@ -260,7 +260,25 @@ function adjustAttendanceCountTx(app, userId, delta) {
  * @param {core.Record} record
  * @param {{ id?: string, getString?: Function } | null} auth
  */
+/** Временный флаг: remapping user id при claim MAX без списания/возврата сессий. */
+var skipBookingSideEffectsDepth = 0;
+
+/**
+ * @param {Function} fn
+ * @returns {*}
+ */
+function withSkipBookingSideEffects(fn) {
+  skipBookingSideEffectsDepth += 1;
+  try {
+    return fn();
+  } finally {
+    skipBookingSideEffectsDepth -= 1;
+  }
+}
+
 function applyBookingSideEffects(original, record, auth) {
+  if (skipBookingSideEffectsDepth > 0) return;
+
   var audit = require(__hooks + '/auditlib.js');
 
   var added = audit.newlyAdded(original.get('booked_users'), record.get('booked_users'));
@@ -374,6 +392,7 @@ module.exports = {
   isReadyToFinalizePendingDelete: isReadyToFinalizePendingDelete,
   hasTimeRangeEnded: hasTimeRangeEnded,
   applyBookingSideEffects: applyBookingSideEffects,
+  withSkipBookingSideEffects: withSkipBookingSideEffects,
   // backward-compat alias (если кто-то ещё require'ит старое имя)
   validateBookingAdditions: function (original, record) {
     applyBookingSideEffects(original, record, null);

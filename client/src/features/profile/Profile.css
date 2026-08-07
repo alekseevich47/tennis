@@ -118,6 +118,54 @@
   color: #fff;
 }
 
+.profile-reason-dialog-btn--danger {
+  background: #ff3b30;
+  color: #fff;
+}
+
+.profile-max-id-btn {
+  border: none;
+  background: none;
+  padding: 0;
+  color: #007aff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.profile-max-id-empty {
+  color: #8e8e93;
+}
+
+.profile-claim-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.profile-claim-hint {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: #3c3c43;
+  line-height: 1.4;
+}
+
+.profile-claim-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #3c3c43;
+}
+
+.profile-claim-input,
+.profile-claim-select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+}
+
 .profile-view-close-btn {
   position: absolute !important;
   top: 10px;
