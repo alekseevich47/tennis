@@ -45,6 +45,19 @@ function detectMediaKind(resource) {
 }
 
 /**
+ * @param {any} headers
+ * @param {string} fallback
+ * @returns {string}
+ */
+function headerValue(headers, fallback) {
+  if (!headers) return fallback;
+  var raw = headers['Content-Type'] || headers['content-type'];
+  if (Array.isArray(raw) && raw[0]) return String(raw[0]).split(';')[0].trim() || fallback;
+  if (typeof raw === 'string' && raw) return raw.split(';')[0].trim();
+  return fallback;
+}
+
+/**
  * @param {string} publicUrl
  * @returns {{ status?: number, error?: string, item?: object }}
  */
@@ -126,8 +139,62 @@ function resolvePublicResource(publicUrl) {
   };
 }
 
+/**
+ * Скачивает preview/file через сервер (browser не может грузить downloader.disk.yandex.ru напрямую).
+ * @param {string} publicUrl
+ * @param {string} kind 'preview' | 'file'
+ * @returns {{ status?: number, error?: string, body?: any, contentType?: string, name?: string, mediaType?: string }}
+ */
+function fetchContentBytes(publicUrl, kind) {
+  var resolved = resolvePublicResource(publicUrl);
+  if (resolved.error) return resolved;
+
+  var item = resolved.item;
+  var target = '';
+  if (kind === 'file') {
+    target = item.fileUrl || item.previewUrl || '';
+  } else {
+    target = item.previewUrl || item.fileUrl || '';
+  }
+  if (!target) {
+    return { status: 502, error: 'Нет ссылки на контент' };
+  }
+
+  var fileRes;
+  try {
+    fileRes = $http.send({
+      method: 'GET',
+      url: target,
+      timeout: 60,
+      headers: {
+        Accept: '*/*'
+      }
+    });
+  } catch (err) {
+    return { status: 502, error: 'Не удалось скачать файл с Диска' };
+  }
+
+  if (fileRes.statusCode < 200 || fileRes.statusCode >= 300 || !fileRes.body) {
+    return {
+      status: 502,
+      error: 'Яндекс.Диск не отдал файл (' + fileRes.statusCode + ')'
+    };
+  }
+
+  var fallbackType =
+    item.mediaType === 'video' ? 'video/mp4' : item.mimeType || 'image/jpeg';
+
+  return {
+    body: fileRes.body,
+    contentType: headerValue(fileRes.headers, fallbackType),
+    name: item.name,
+    mediaType: item.mediaType
+  };
+}
+
 module.exports = {
   normalizePublicUrl: normalizePublicUrl,
   isYadiskPublicUrl: isYadiskPublicUrl,
-  resolvePublicResource: resolvePublicResource
+  resolvePublicResource: resolvePublicResource,
+  fetchContentBytes: fetchContentBytes
 };
