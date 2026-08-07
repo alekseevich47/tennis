@@ -11,6 +11,7 @@ import { PB_URL } from '../config';
  * @property {string} [content]
  * @property {string} [text]
  * @property {string | string[]} [media]
+ * @property {Array<{ source?: string, publicUrl: string, name?: string, mediaType?: 'image' | 'video' }> | null} [external_media]
  * @property {string} [author]
  * @property {boolean} [is_deleted]
  * @property {boolean} [is_pinned]
