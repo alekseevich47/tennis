@@ -14,7 +14,6 @@ var YADISK_URL_RE =
 function normalizePublicUrl(raw) {
   if (!raw || typeof raw !== 'string') return '';
   var trimmed = raw.trim();
-  // Обрезаем хвост пунктуации из plain-text / HTML.
   trimmed = trimmed.replace(/[),.\]>'"]+$/g, '');
   return trimmed;
 }
@@ -45,16 +44,22 @@ function detectMediaKind(resource) {
 }
 
 /**
- * @param {any} headers
- * @param {string} fallback
+ * @param {any} item
  * @returns {string}
  */
-function headerValue(headers, fallback) {
-  if (!headers) return fallback;
-  var raw = headers['Content-Type'] || headers['content-type'];
-  if (Array.isArray(raw) && raw[0]) return String(raw[0]).split(';')[0].trim() || fallback;
-  if (typeof raw === 'string' && raw) return raw.split(';')[0].trim();
-  return fallback;
+function guessContentType(item) {
+  var name = String((item && item.name) || '').toLowerCase();
+  if (/\.png$/i.test(name)) return 'image/png';
+  if (/\.jpe?g$/i.test(name)) return 'image/jpeg';
+  if (/\.gif$/i.test(name)) return 'image/gif';
+  if (/\.webp$/i.test(name)) return 'image/webp';
+  if (/\.bmp$/i.test(name)) return 'image/bmp';
+  if (/\.heic$/i.test(name)) return 'image/heic';
+  if (/\.mp4$/i.test(name)) return 'video/mp4';
+  if (/\.webm$/i.test(name)) return 'video/webm';
+  if (/\.mov$/i.test(name)) return 'video/quicktime';
+  if (item && item.mimeType) return item.mimeType;
+  return item && item.mediaType === 'video' ? 'video/mp4' : 'image/jpeg';
 }
 
 /**
@@ -140,55 +145,54 @@ function resolvePublicResource(publicUrl) {
 }
 
 /**
- * Скачивает preview/file через сервер (browser не может грузить downloader.disk.yandex.ru напрямую).
+ * Скачивает файл через $filesystem.fileFromURL.
+ * ($http.send для бинарников часто даёт 200 и пустой body — отсюда ошибка «не отдал файл (200)»).
+ *
  * @param {string} publicUrl
  * @param {string} kind 'preview' | 'file'
- * @returns {{ status?: number, error?: string, body?: any, contentType?: string, name?: string, mediaType?: string }}
+ * @returns {{ status?: number, error?: string, file?: any, contentType?: string, name?: string, mediaType?: string }}
  */
-function fetchContentBytes(publicUrl, kind) {
+function fetchContentFile(publicUrl, kind) {
   var resolved = resolvePublicResource(publicUrl);
   if (resolved.error) return resolved;
 
   var item = resolved.item;
-  var target = '';
+  /** @type {string[]} */
+  var candidates = [];
   if (kind === 'file') {
-    target = item.fileUrl || item.previewUrl || '';
+    if (item.fileUrl) candidates.push(item.fileUrl);
+    if (item.previewUrl && item.previewUrl !== item.fileUrl) candidates.push(item.previewUrl);
   } else {
-    target = item.previewUrl || item.fileUrl || '';
+    if (item.previewUrl) candidates.push(item.previewUrl);
+    if (item.fileUrl && item.fileUrl !== item.previewUrl) candidates.push(item.fileUrl);
   }
-  if (!target) {
+  if (!candidates.length) {
     return { status: 502, error: 'Нет ссылки на контент' };
   }
 
-  var fileRes;
-  try {
-    fileRes = $http.send({
-      method: 'GET',
-      url: target,
-      timeout: 60,
-      headers: {
-        Accept: '*/*'
+  var lastError = '';
+  for (var i = 0; i < candidates.length; i++) {
+    try {
+      var file = $filesystem.fileFromURL(candidates[i], 60);
+      if (file && file.size > 0) {
+        return {
+          file: file,
+          contentType: guessContentType(item),
+          name: item.name,
+          mediaType: item.mediaType
+        };
       }
-    });
-  } catch (err) {
-    return { status: 502, error: 'Не удалось скачать файл с Диска' };
+      lastError = 'пустой ответ';
+    } catch (err) {
+      lastError = String(err && err.message ? err.message : err);
+    }
   }
-
-  if (fileRes.statusCode < 200 || fileRes.statusCode >= 300 || !fileRes.body) {
-    return {
-      status: 502,
-      error: 'Яндекс.Диск не отдал файл (' + fileRes.statusCode + ')'
-    };
-  }
-
-  var fallbackType =
-    item.mediaType === 'video' ? 'video/mp4' : item.mimeType || 'image/jpeg';
 
   return {
-    body: fileRes.body,
-    contentType: headerValue(fileRes.headers, fallbackType),
-    name: item.name,
-    mediaType: item.mediaType
+    status: 502,
+    error: lastError
+      ? 'Яндекс.Диск не отдал файл: ' + lastError
+      : 'Яндекс.Диск не отдал файл'
   };
 }
 
@@ -196,5 +200,5 @@ module.exports = {
   normalizePublicUrl: normalizePublicUrl,
   isYadiskPublicUrl: isYadiskPublicUrl,
   resolvePublicResource: resolvePublicResource,
-  fetchContentBytes: fetchContentBytes
+  fetchContentFile: fetchContentFile
 };
