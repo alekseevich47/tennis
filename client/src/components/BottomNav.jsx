@@ -1,5 +1,6 @@
 import React, { memo, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
+import Avatar from './ui/Avatar';
 import './BottomNav.css';
 
 /** Индекс скрытого раздела «Галерея» — код страницы остаётся, в меню не показываем. */
@@ -50,11 +51,7 @@ const NAV_ITEMS = [
   {
     label: 'Профиль',
     tabIndex: PROFILE_TAB_INDEX,
-    icon: (
-      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-      </svg>
-    )
+    isProfile: true
   }
 ];
 
@@ -82,9 +79,14 @@ const ADMIN_NAV_ITEM = {
 export const BOTTOM_NAV_ITEMS = NAV_ITEMS;
 
 /**
- * @param {{ activeTab: number, onTabChange: (idx: number) => void, showAdmin?: boolean }} props
+ * @param {{
+ *   activeTab: number,
+ *   onTabChange: (idx: number) => void,
+ *   showAdmin?: boolean,
+ *   user?: import('../lib/avatar').UserAvatarLike | null
+ * }} props
  */
-function BottomNav({ activeTab, onTabChange, showAdmin = false }) {
+function BottomNav({ activeTab, onTabChange, showAdmin = false, user = null }) {
   const navRef = useRef(/** @type {HTMLElement | null} */ (null));
   const itemRefs = useRef(/** @type {Map<number, HTMLButtonElement>} */ (new Map()));
   const [indicator, setIndicator] = useState({ left: 0, width: 0, ready: false });
@@ -162,13 +164,21 @@ function BottomNav({ activeTab, onTabChange, showAdmin = false }) {
               key={item.label}
               ref={(el) => setItemRef(item.tabIndex, el)}
               type="button"
-              className={clsx('nav-item', isActive && 'active')}
+              className={clsx(
+                'nav-item',
+                item.isProfile && 'nav-item--profile',
+                isActive && 'active'
+              )}
               data-nav-index={item.tabIndex}
               onClick={() => onTabChange(item.tabIndex)}
               aria-label={item.label}
               aria-current={isActive ? 'page' : undefined}
             >
-              {item.icon}
+              {item.isProfile ? (
+                <Avatar user={user} size="sm" className="nav-item__avatar" />
+              ) : (
+                item.icon
+              )}
               <span className="nav-item__label">{item.label}</span>
             </button>
           );

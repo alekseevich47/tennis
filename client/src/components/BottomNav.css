@@ -137,6 +137,31 @@
   transform: scale(1.08);
 }
 
+.nav-item__avatar.ui-avatar--sm {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1), border-color 0.25s ease;
+}
+
+.nav-item__avatar .ui-avatar-img,
+.nav-item__avatar .ui-avatar-fallback {
+  border-radius: 50%;
+}
+
+.nav-item__avatar .ui-avatar-fallback {
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.nav-item.active .nav-item__avatar {
+  border-color: #007aff;
+  transform: scale(1.08);
+}
+
 .nav-item:active {
   opacity: 0.75;
 }

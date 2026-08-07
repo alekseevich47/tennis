@@ -485,6 +485,7 @@ function AppMain({ user, setUser, flushBeforeCloseRef }) {
         activeTab={activeTab}
         onTabChange={handleTabChange}
         showAdmin={userIsModerator}
+        user={user}
       />
     </div>
   );

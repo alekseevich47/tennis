@@ -10,8 +10,8 @@
     "semantic_hash": "12e2dda29765e3ea83cc6c1501903fe8"
   },
   "client/src/App.jsx": {
-    "mtime": 1786099507.1317961,
-    "ast_hash": "053866f597e50dfce3c36152dce51a69",
+    "mtime": 1786100134.7671556,
+    "ast_hash": "9f78e87fedfcaa8823686c469eff3716",
     "semantic_hash": ""
   },
   "client/src/components/AchievementsBlock.jsx": {
@@ -30,8 +30,8 @@
     "semantic_hash": "a5f97ceb0a531f5ce31a9216fa871c9a"
   },
   "client/src/components/BottomNav.jsx": {
-    "mtime": 1786099439.73337,
-    "ast_hash": "e2bcafea584a0678140ba0f02e90ee06",
+    "mtime": 1786100131.5045614,
+    "ast_hash": "014ce8606f33839851c3ebca36046661",
     "semantic_hash": ""
   },
   "client/src/components/FloatingAchievements.jsx": {
