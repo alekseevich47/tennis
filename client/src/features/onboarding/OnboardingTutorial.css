@@ -18,7 +18,7 @@
   left: 0;
   right: 0;
   /* floating BottomNav: 56 + 6 inset + запас */
-  bottom: 74px;
+  bottom: 82px;
 }
 
 /* Затемнение даёт SVG multi-hole mask — overlay только блокирует клики */
