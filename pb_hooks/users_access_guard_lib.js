@@ -60,8 +60,6 @@ function applyCreateDefaults(record) {
   record.set('used_sessions', 0);
   record.set('attendance_count', 0);
   record.set('rating_points', 0);
-  record.set('wins', 0);
-  record.set('losses', 0);
   record.set('membership_type', 'regular');
   record.set('membership_frozen', false);
   record.set('bot_blocked', false);

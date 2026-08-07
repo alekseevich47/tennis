@@ -114,7 +114,6 @@ routerAdd("POST", "/api/max-auth", (c) => {
             user.set("avatar_url", maxAvatarUrl);
             user.set("role", "user");
             user.set("rating_points", 0);
-            user.set("wins", 0);
             // Bool без default в схеме = false; $app.save не бьёт onRecordCreateRequest.
             user.set("is_visible", true);
             user.set("can_comment", true);

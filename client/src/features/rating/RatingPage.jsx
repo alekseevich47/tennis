@@ -4,15 +4,19 @@ import { isModerator } from '../../services/auth';
 import { createPlayer } from '../../services/catalog';
 import Spinner from '../../components/ui/Spinner';
 import EmptyState from '../../components/ui/EmptyState';
+import { useAlertDialog } from '../../components/ui/AlertDialog';
 import PlayerRow from './PlayerRow';
 import PlayerForm from './PlayerForm';
 import ProfileViewModal from '../profile/ProfileViewModal';
+import { formatAdminSaveError } from '../admin/adminResultAlert';
 import { error } from '../../lib/log';
 import { buildPlayerRanks, getRatingPoints, isRatingVisible } from '../../lib/rating';
 import './Rating.css';
+import '../feed/Feed.css';
 
 function RatingPage({ user, onTabChange }) {
   const moderator = isModerator();
+  const { alert } = useAlertDialog();
   const { data: players, isLoading, mutate } = usePlayers(
     moderator
       ? undefined
@@ -101,9 +105,14 @@ function RatingPage({ user, onTabChange }) {
         mutate();
       } catch (err) {
         error('create player:', err);
+        await alert({
+          title: 'Не получилось',
+          message: formatAdminSaveError(err, 'Не удалось создать игрока.')
+        });
+        throw err;
       }
     },
-    [mutate]
+    [alert, mutate]
   );
 
   const handleProfileTabChange = useCallback(
