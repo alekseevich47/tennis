@@ -1,14 +1,14 @@
 /*
  * Nunito Variable — self-hosted (@fontsource-variable/nunito).
  * Веса 200–1000 (в т.ч. ExtraLight 200, Light 300, Regular 400) + кириллица.
- * Файлы бандлятся Vite и отдаются с того же origin (/tt-api/assets/…).
+ * woff2 бандлятся Vite (/tt-api/assets/…). Импорт CSS шрифта — в main.jsx
+ * (`import '@fontsource-variable/nunito/wght.css'`), не через @import в CSS
+ * (Vite/postcss не резолвит пакет из @import).
  *
  * Откат после проверки (вернуть системный стек):
  * 1) --app-font-family: var(--app-font-family-legacy);
- * 2) закомментировать @import ниже (чтобы не грузить woff2).
+ * 2) закомментировать import шрифта в main.jsx (чтобы не грузить woff2).
  */
-
-@import '@fontsource-variable/nunito/wght.css';
 
 :root {
   --app-font-family-nunito: 'Nunito Variable', 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
