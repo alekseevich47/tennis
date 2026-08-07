@@ -10,19 +10,32 @@ function randomManualEmail() {
   );
 }
 
+/** Multipart/JSON body в goja часто не string — trim только после приведения. */
+function asString(value) {
+  if (value == null || value === '') return '';
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+  if (Array.isArray(value) && value.length > 0) return asString(value[0]);
+  try {
+    return String(value);
+  } catch (_) {
+    return '';
+  }
+}
+
 /**
  * @param {*} app
  * @param {{
- *   full_name?: string,
- *   birth_date?: string,
- *   dominant_hand?: string,
- *   rating_points?: number|string,
+ *   full_name?: *,
+ *   birth_date?: *,
+ *   dominant_hand?: *,
+ *   rating_points?: *,
  *   avatarFile?: *
  * }} input
  * @returns {*} созданный Record
  */
 function createManualUser(app, input) {
-  var fullName = (input.full_name || '').trim();
+  var fullName = asString(input && input.full_name).trim();
   if (!fullName) {
     throw new BadRequestError('Укажите Фамилию Имя');
   }
@@ -34,7 +47,7 @@ function createManualUser(app, input) {
   user.setPassword($security.randomString(32));
   user.set('full_name', fullName);
   user.set('role', 'user');
-  user.set('rating_points', Number(input.rating_points) || 0);
+  user.set('rating_points', Number(asString(input && input.rating_points)) || 0);
   user.set('is_visible', true);
   user.set('can_comment', true);
   user.set('onboarding_completed', true);
@@ -47,13 +60,13 @@ function createManualUser(app, input) {
   user.set('membership_frozen', false);
   user.set('bot_blocked', false);
 
-  var hand = (input.dominant_hand || '').trim();
+  var hand = asString(input && input.dominant_hand).trim();
   if (hand) user.set('dominant_hand', hand);
 
-  var birth = (input.birth_date || '').trim();
+  var birth = asString(input && input.birth_date).trim();
   if (birth) user.set('birth_date', birth);
 
-  if (input.avatarFile) {
+  if (input && input.avatarFile) {
     user.set('avatar', input.avatarFile);
   }
 
@@ -62,5 +75,6 @@ function createManualUser(app, input) {
 }
 
 module.exports = {
-  createManualUser: createManualUser
+  createManualUser: createManualUser,
+  asString: asString
 };

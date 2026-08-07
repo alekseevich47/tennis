@@ -15,6 +15,7 @@ import { listCancelledTrainingsForUser } from '../../services/trainings';
 import {
   banUser,
   claimMaxAccount,
+  deleteUserAccount,
   hideFromRating,
   listClaimCandidates,
   restrictComments,
@@ -29,6 +30,7 @@ import { error } from '../../lib/log';
 import { getPlayerRatingRank } from '../../lib/rating';
 import { compressImage } from '../../lib/compress';
 import { formatCardDateWithYear, formatTimeRange, hasTimeRangeEnded } from '../../lib/format';
+import { formatAdminSaveError } from '../admin/adminResultAlert';
 import MembershipIcon from '../../components/ui/MembershipIcon';
 import MembershipModal from './MembershipModal';
 import ProfileSingleDateField from './ProfileSingleDateField';
@@ -609,6 +611,31 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
     }
   };
 
+  const handleDeleteAccount = async () => {
+    setMenuOpen(false);
+    const name = displayUser?.full_name || 'игрока';
+    const confirmed = await confirm({
+      title: 'Удалить аккаунт?',
+      message: `Аккаунт «${name}» будет удалён из базы безвозвратно вместе с комментариями, лайками и уведомлениями. Записи на тренировки снимутся. Это нельзя отменить.`,
+      confirmText: 'Удалить',
+      cancelText: 'Отмена'
+    });
+    if (!confirmed) return;
+
+    try {
+      await deleteUserAccount(targetUserId);
+      onClose();
+      onMutated?.();
+      await alert({ title: 'Готово', message: `Аккаунт «${name}» удалён.` });
+    } catch (err) {
+      error('delete user:', err);
+      await alert({
+        title: 'Не получилось',
+        message: formatAdminSaveError(err, 'Не удалось удалить аккаунт.')
+      });
+    }
+  };
+
   if (!targetUser) return null;
 
   return (
@@ -728,6 +755,15 @@ function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChang
                       onClick={openClaimDialog}
                     >
                       {linkedMaxId ? 'MAX: управление' : 'Привязать к MAX'}
+                    </button>
+
+                    <button
+                      type="button"
+                      className="profile-menu-item profile-menu-item--danger profile-menu-item--divider"
+                      role="menuitem"
+                      onClick={handleDeleteAccount}
+                    >
+                      Удалить аккаунт
                     </button>
                   </div>
                 )}
