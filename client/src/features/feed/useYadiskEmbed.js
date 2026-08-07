@@ -6,7 +6,7 @@ import {
   stripYadiskUrlsFromHtml,
   toStoredExternalMedia
 } from '../../lib/yadisk';
-import { fetchYadiskPreview } from '../../services/yadisk';
+import { fetchYadiskObjectUrl, fetchYadiskPreview } from '../../services/yadisk';
 import { videoPreviewUrl } from '../../lib/media';
 
 /**
@@ -51,6 +51,15 @@ export function useYadiskEmbed({
   const pendingRef = useRef(/** @type {Set<string>} */ (new Set()));
   const knownRef = useRef(/** @type {Set<string>} */ (new Set()));
   const abortMapRef = useRef(/** @type {Map<string, AbortController>} */ (new Map()));
+  const objectUrlsRef = useRef(/** @type {Map<string, string>} */ (new Map()));
+
+  const revokeObjectUrl = useCallback((publicUrl) => {
+    const prev = objectUrlsRef.current.get(publicUrl);
+    if (prev) {
+      URL.revokeObjectURL(prev);
+      objectUrlsRef.current.delete(publicUrl);
+    }
+  }, []);
 
   const clearRequests = useCallback(() => {
     abortMapRef.current.forEach((controller) => controller.abort());
@@ -61,41 +70,47 @@ export function useYadiskEmbed({
   const reset = useCallback(() => {
     clearRequests();
     knownRef.current.clear();
+    objectUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+    objectUrlsRef.current.clear();
     setItems([]);
   }, [clearRequests]);
 
-  const applyResolved = useCallback((publicUrl, resolved) => {
-    const isVideo = resolved.mediaType === 'video';
-    const displayUrl = isVideo
-      ? videoPreviewUrl(resolved.fileUrl || '')
-      : resolved.previewUrl || resolved.fileUrl || '';
-    setItems((current) =>
-      current.map((item) =>
-        item.publicUrl === publicUrl
-          ? {
-              ...item,
-              name: resolved.name || item.name,
-              isVideo,
-              url: displayUrl,
-              fileUrl: resolved.fileUrl || null,
-              status: displayUrl ? 'ready' : 'error',
-              error: displayUrl ? undefined : 'Нет ссылки на файл'
-            }
-          : item
-      )
-    );
-  }, []);
+  const applyResolved = useCallback(
+    (publicUrl, resolved, objectUrl) => {
+      const isVideo = resolved.mediaType === 'video';
+      revokeObjectUrl(publicUrl);
+      objectUrlsRef.current.set(publicUrl, objectUrl);
+      const displayUrl = isVideo ? videoPreviewUrl(objectUrl) : objectUrl;
+      setItems((current) =>
+        current.map((item) =>
+          item.publicUrl === publicUrl
+            ? {
+                ...item,
+                name: resolved.name || item.name,
+                isVideo,
+                url: displayUrl,
+                fileUrl: objectUrl,
+                status: 'ready',
+                error: undefined
+              }
+            : item
+        )
+      );
+    },
+    [revokeObjectUrl]
+  );
 
   const applyError = useCallback((publicUrl, message, forget = false) => {
     if (forget) knownRef.current.delete(publicUrl);
+    revokeObjectUrl(publicUrl);
     setItems((current) =>
       current.map((item) =>
         item.publicUrl === publicUrl
-          ? { ...item, status: 'error', error: message || 'Не удалось загрузить' }
+          ? { ...item, status: 'error', error: message || 'Не удалось загрузить', url: '' }
           : item
       )
     );
-  }, []);
+  }, [revokeObjectUrl]);
 
   const startResolve = useCallback(
     (publicUrl, { forgetOnError = false } = {}) => {
@@ -105,10 +120,14 @@ export function useYadiskEmbed({
       const controller = new AbortController();
       abortMapRef.current.set(publicUrl, controller);
       fetchYadiskPreview(publicUrl, { signal: controller.signal })
-        .then((resolved) => {
+        .then(async (resolved) => {
+          const kind = resolved.mediaType === 'video' ? 'file' : 'preview';
+          const objectUrl = await fetchYadiskObjectUrl(publicUrl, kind, {
+            signal: controller.signal
+          });
           pendingRef.current.delete(publicUrl);
           abortMapRef.current.delete(publicUrl);
-          applyResolved(publicUrl, resolved);
+          applyResolved(publicUrl, resolved, objectUrl);
         })
         .catch((err) => {
           if (err?.name === 'AbortError') return;
@@ -123,6 +142,8 @@ export function useYadiskEmbed({
   useEffect(() => {
     clearRequests();
     knownRef.current.clear();
+    objectUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+    objectUrlsRef.current.clear();
 
     const stored = normalizeExternalMedia(initialItemsRef.current);
     if (!initialKey || !stored.length) {
@@ -202,10 +223,11 @@ export function useYadiskEmbed({
         pendingRef.current.delete(target.publicUrl);
         abortMapRef.current.get(target.publicUrl)?.abort();
         abortMapRef.current.delete(target.publicUrl);
+        revokeObjectUrl(target.publicUrl);
       }
       return current.filter((item) => item.key !== key);
     });
-  }, []);
+  }, [revokeObjectUrl]);
 
   const previewItems = items.map((item) => ({
     key: item.key,

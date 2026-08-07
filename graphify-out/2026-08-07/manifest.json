@@ -1195,8 +1195,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/useYadiskEmbed.js": {
-    "mtime": 1786102958.399167,
-    "ast_hash": "8779fa24f3e8e14ba88058a69a13b53a",
+    "mtime": 1786103031.8780098,
+    "ast_hash": "7284a351e1eabd3ea8abc9b4d402254c",
     "semantic_hash": ""
   },
   "client/src/lib/yadisk.js": {

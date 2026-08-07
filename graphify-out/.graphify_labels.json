@@ -62,5 +62,12 @@
   "60": "maxauthlib.js",
   "61": "error",
   "62": "main.jsx",
-  "64": "trainings_booking_validate.pb.js"
+  "63": "achievements.js",
+  "64": "trainings_booking_validate.pb.js",
+  "65": "App.jsx",
+  "66": "OnboardingTutorial.jsx",
+  "67": "RatingPage.jsx",
+  "68": "MembershipOverviewModal.jsx",
+  "69": "FavoritesContext.jsx",
+  "70": "BottomNav.jsx"
 }

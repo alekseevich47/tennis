@@ -1,7 +1,8 @@
 // @ts-check
 import { useEffect, useState } from 'react';
 import { normalizeExternalMedia } from '../../lib/yadisk';
-import { fetchYadiskPreview } from '../../services/yadisk';
+import { fetchYadiskObjectUrl, fetchYadiskPreview } from '../../services/yadisk';
+import { videoPreviewUrl } from '../../lib/media';
 
 /**
  * @typedef {{
@@ -15,7 +16,7 @@ import { fetchYadiskPreview } from '../../services/yadisk';
  */
 
 /**
- * Резолв `posts.external_media` для сетки ленты (с кешем в state на жизнь карточки).
+ * Резолв `posts.external_media` для сетки ленты через серверный прокси → blob URL.
  *
  * @param {unknown} externalMedia
  * @param {string} originPrefix
@@ -33,6 +34,8 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
 
     const controller = new AbortController();
     let cancelled = false;
+    /** @type {string[]} */
+    const objectUrls = [];
 
     Promise.all(
       stored.map(async (entry, index) => {
@@ -41,14 +44,15 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
             signal: controller.signal
           });
           const isVideo = resolved.mediaType === 'video';
-          const fileUrl = resolved.fileUrl || '';
-          const previewUrl = resolved.previewUrl || fileUrl;
-          const url = isVideo ? fileUrl : previewUrl;
-          if (!url) return null;
+          const kind = isVideo ? 'file' : 'preview';
+          const objectUrl = await fetchYadiskObjectUrl(entry.publicUrl, kind, {
+            signal: controller.signal
+          });
+          objectUrls.push(objectUrl);
           return {
             filename: resolved.name || entry.name,
-            url,
-            thumbUrl: previewUrl || url,
+            url: isVideo ? videoPreviewUrl(objectUrl) : objectUrl,
+            thumbUrl: objectUrl,
             isVideo,
             originKey: `${originPrefix}-ext-${index}`,
             publicUrl: entry.publicUrl
@@ -59,13 +63,17 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
         }
       })
     ).then((results) => {
-      if (cancelled) return;
+      if (cancelled) {
+        objectUrls.forEach((url) => URL.revokeObjectURL(url));
+        return;
+      }
       setItems(results.filter(Boolean));
     });
 
     return () => {
       cancelled = true;
       controller.abort();
+      objectUrls.forEach((url) => URL.revokeObjectURL(url));
     };
   }, [externalMedia, originPrefix]);
 
