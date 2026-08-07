@@ -1,10 +1,11 @@
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 import clsx from 'clsx';
 import { getMediaThumbUrl, getMediaUrl, isVideoMediaName, mediaNames, videoPreviewUrl } from '../../lib/media';
+import { useResolvedExternalMedia } from './useResolvedExternalMedia';
 
 /**
  * @param {{
- *   post: { id: string, created?: string, media?: string | string[] },
+ *   post: { id: string, created?: string, media?: string | string[], external_media?: unknown },
  *   collection?: string,
  *   variant?: 'card' | 'detail',
  *   className?: string,
@@ -20,19 +21,33 @@ function PostMedia({
   hiddenMediaKey = null,
   onOpenFullscreen
 }) {
-  const items = mediaNames(post.media).flatMap((filename, index) => {
-    const url = getMediaUrl(post, collection, filename);
-    const thumbUrl = getMediaThumbUrl(post, collection, filename, '800x0');
-    return url
-      ? [{
-        filename,
-        url,
-        thumbUrl: thumbUrl || url,
-        isVideo: isVideoMediaName(filename),
-        originKey: `${variant}-${post.id}-${index}`
-      }]
-      : [];
-  });
+  const fileItems = useMemo(
+    () =>
+      mediaNames(post.media).flatMap((filename, index) => {
+        const url = getMediaUrl(post, collection, filename);
+        const thumbUrl = getMediaThumbUrl(post, collection, filename, '800x0');
+        return url
+          ? [{
+            filename,
+            url,
+            thumbUrl: thumbUrl || url,
+            isVideo: isVideoMediaName(filename),
+            originKey: `${variant}-${post.id}-${index}`
+          }]
+          : [];
+      }),
+    [post, collection, variant]
+  );
+
+  const externalItems = useResolvedExternalMedia(
+    post.external_media,
+    `${variant}-${post.id}`
+  );
+
+  const items = useMemo(
+    () => [...fileItems, ...externalItems].slice(0, 5),
+    [fileItems, externalItems]
+  );
 
   if (items.length === 0) return null;
 
@@ -72,7 +87,7 @@ function PostMedia({
 
           if (!onOpenFullscreen) {
             return (
-              <div key={item.filename} className="post-media-static">
+              <div key={item.originKey || item.filename} className="post-media-static">
                 {video}
               </div>
             );
@@ -80,7 +95,7 @@ function PostMedia({
 
           return (
             <button
-              key={item.filename}
+              key={item.originKey || item.filename}
               type="button"
               className={clsx(
                 'post-media-btn post-media-video-btn',
@@ -109,7 +124,7 @@ function PostMedia({
 
         return onOpenFullscreen ? (
           <button
-            key={item.filename}
+            key={item.originKey || item.filename}
             type="button"
             className={clsx(
               'post-media-btn',
@@ -122,7 +137,7 @@ function PostMedia({
             {image}
           </button>
         ) : (
-          <div key={item.filename} className="post-media-static">
+          <div key={item.originKey || item.filename} className="post-media-static">
             {image}
           </div>
         );

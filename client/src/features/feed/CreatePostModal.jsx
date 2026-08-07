@@ -5,6 +5,7 @@ import FullscreenImageViewer from './FullscreenImageViewer';
 import MediaPreviewGrid from './MediaPreviewGrid';
 import PostRichTextField from './PostRichTextField';
 import { useLocalMediaFullscreen } from './useLocalMediaFullscreen';
+import { useYadiskEmbed } from './useYadiskEmbed';
 import { compressImage } from '../../lib/compress';
 import {
   MAX_POST_MEDIA_FILES,
@@ -26,13 +27,23 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
   const [files, setFiles] = useState(/** @type {File[]} */ ([]));
   const [previewItems, setPreviewItems] = useState([]);
   const { confirm } = useAlertDialog();
+
+  const yadiskSlots = Math.max(0, MAX_POST_MEDIA_FILES - files.length);
+  const yadisk = useYadiskEmbed({
+    text,
+    setText,
+    remainingSlots: yadiskSlots,
+    enabled: isOpen
+  });
+
+  const allPreviewItems = [...previewItems, ...yadisk.previewItems];
   const {
     openItem: openPreviewMedia,
     fullscreen: previewFullscreen,
     close: closePreviewFullscreen,
     hiddenMediaKey,
     onCloseStart: handlePreviewCloseStart
-  } = useLocalMediaFullscreen(previewItems, 'create-post');
+  } = useLocalMediaFullscreen(allPreviewItems, 'create-post');
 
   useEffect(() => {
     const items = files.map((file) => ({
@@ -46,14 +57,17 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
   }, [files]);
 
   const hasText = hasVisibleText(text);
+  const hasMedia = files.length > 0 || yadisk.readyCount > 0;
+  const fileSlotsLeft = Math.max(0, MAX_POST_MEDIA_FILES - files.length - yadisk.count);
 
   const reset = () => {
     setText('');
     setFiles([]);
+    yadisk.reset();
   };
 
   const handleClose = async () => {
-    if (hasText || files.length > 0) {
+    if (hasText || files.length > 0 || yadisk.count > 0) {
       const ok = await confirm({
         title: 'Отменить публикацию?',
         message: 'Введённый текст и выбранные файлы будут потеряны.',
@@ -68,10 +82,11 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!hasText && files.length === 0) return;
+    if ((!hasText && !hasMedia) || yadisk.hasPending) return;
     const formData = new FormData();
     formData.append('content', text.trim());
     formData.append('author', user?.id || '');
+    formData.append('external_media', JSON.stringify(yadisk.storedMedia));
     const preparedFiles = await Promise.all(
       files.map((file) => (isVideoFile(file) ? file : compressImage(file)))
     );
@@ -110,18 +125,21 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
               type="file"
               accept="image/*,video/mp4"
               multiple
+              disabled={fileSlotsLeft === 0}
               onChange={(e) => {
-                setFiles(readSelectedFiles(e.target.files, MAX_POST_MEDIA_FILES));
+                setFiles(readSelectedFiles(e.target.files, fileSlotsLeft));
                 e.currentTarget.value = '';
               }}
               className="visually-hidden"
             />
           </label>
-          <span className="file-name-preview">До {MAX_POST_MEDIA_FILES} файлов</span>
+          <span className="file-name-preview">
+            До {MAX_POST_MEDIA_FILES} файлов · ссылка Яндекс.Диска → превью
+          </span>
         </div>
 
         <MediaPreviewGrid
-          items={previewItems}
+          items={allPreviewItems}
           className="create-post-preview-grid"
           originKeyPrefix="create-post"
           hiddenMediaKey={hiddenMediaKey}
@@ -132,6 +150,10 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
               className="media-remove-btn"
               onClick={(event) => {
                 event.stopPropagation();
+                if (String(item.key).startsWith('yadisk-')) {
+                  yadisk.removeItem(item.key);
+                  return;
+                }
                 setFiles((current) =>
                   current.filter((file) => `${file.name}-${file.lastModified}` !== item.key)
                 );
@@ -147,9 +169,9 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
           <button
             type="submit"
             className="submit-btn-full"
-            disabled={!hasText && files.length === 0}
+            disabled={(!hasText && !hasMedia) || yadisk.hasPending}
           >
-            Опубликовать
+            {yadisk.hasPending ? 'Загружаем превью…' : 'Опубликовать'}
           </button>
         </div>
       </form>
