@@ -10,8 +10,8 @@
     "semantic_hash": "12e2dda29765e3ea83cc6c1501903fe8"
   },
   "client/src/App.jsx": {
-    "mtime": 1786099507.1317961,
-    "ast_hash": "053866f597e50dfce3c36152dce51a69",
+    "mtime": 1785815864.3810904,
+    "ast_hash": "3c6dcdd3e5fd9f9d74ed167a0f0aa910",
     "semantic_hash": ""
   },
   "client/src/components/AchievementsBlock.jsx": {
@@ -20,18 +20,18 @@
     "semantic_hash": "a02b62ad38093049710289554817b489"
   },
   "client/src/components/AppHeader.jsx": {
-    "mtime": 1786099507.3789287,
-    "ast_hash": "622f37b53e357b9dcee2e4a57fb610dd",
+    "mtime": 1785815864.3780823,
+    "ast_hash": "78ca278253a4388e5f81af156dd60de9",
     "semantic_hash": ""
   },
   "client/src/components/AvatarCropModal.jsx": {
-    "mtime": 1786099029.7271488,
+    "mtime": 1785815864.3790886,
     "ast_hash": "a5f97ceb0a531f5ce31a9216fa871c9a",
     "semantic_hash": "a5f97ceb0a531f5ce31a9216fa871c9a"
   },
   "client/src/components/BottomNav.jsx": {
-    "mtime": 1786099439.73337,
-    "ast_hash": "e2bcafea584a0678140ba0f02e90ee06",
+    "mtime": 1785002748.2673144,
+    "ast_hash": "1af6b1c41a083cd34016471564233458",
     "semantic_hash": ""
   },
   "client/src/components/FloatingAchievements.jsx": {
@@ -305,12 +305,12 @@
     "semantic_hash": ""
   },
   "client/src/features/notifications/NotificationCard.jsx": {
-    "mtime": 1786099029.7271488,
+    "mtime": 1785815864.3896112,
     "ast_hash": "8b8687bfbbeacb424c3cf4b901cfbe88",
     "semantic_hash": ""
   },
   "client/src/features/notifications/NotificationsDropdown.jsx": {
-    "mtime": 1786099029.7271488,
+    "mtime": 1785815864.384611,
     "ast_hash": "ac368ef203565a02133942132b6ad4cd",
     "semantic_hash": ""
   },
@@ -320,8 +320,8 @@
     "semantic_hash": "3d0285b7d1fb0294d62f5bef1f9162a3"
   },
   "client/src/features/onboarding/OnboardingTutorial.jsx": {
-    "mtime": 1786099517.92653,
-    "ast_hash": "09d2b604fe334acb5571e4e61d7349e7",
+    "mtime": 1785510287.0764287,
+    "ast_hash": "2dc8a6bb216abaec5b32d535c94ea2b8",
     "semantic_hash": ""
   },
   "client/src/features/profile/BlockedPage.jsx": {
@@ -335,7 +335,7 @@
     "semantic_hash": "2f4fe2c5245f65355f2300a61fe0e632"
   },
   "client/src/features/profile/MembershipModal.jsx": {
-    "mtime": 1786099029.7271488,
+    "mtime": 1785815864.384611,
     "ast_hash": "6acd75fc99c60167959971b728d765b5",
     "semantic_hash": "6acd75fc99c60167959971b728d765b5"
   },
@@ -350,7 +350,7 @@
     "semantic_hash": "84da5a05702df43b0f2b6453f5a0dc84"
   },
   "client/src/features/profile/ProfilePage.jsx": {
-    "mtime": 1786099029.7131543,
+    "mtime": 1785819103.6626208,
     "ast_hash": "04a44073c66993c9af23290f69135388",
     "semantic_hash": ""
   },
@@ -415,7 +415,7 @@
     "semantic_hash": "967a6d0eb3beb46dd4d4c554b2d04a43"
   },
   "client/src/features/shop/ProductForm.jsx": {
-    "mtime": 1786099029.7271488,
+    "mtime": 1785815864.3790886,
     "ast_hash": "bfbba550b8cd88c61f655fea81c74f03",
     "semantic_hash": "bfbba550b8cd88c61f655fea81c74f03"
   },
@@ -675,7 +675,7 @@
     "semantic_hash": ""
   },
   "client/src/services/notifications.js": {
-    "mtime": 1786099029.7271488,
+    "mtime": 1785815864.3790886,
     "ast_hash": "737e81ab5217d3163029819c97e84528",
     "semantic_hash": ""
   },
@@ -780,7 +780,7 @@
     "semantic_hash": "63e1159936118fdfe363bb7aa0059e0f"
   },
   "pb_hooks/notificationslib.js": {
-    "mtime": 1786099029.7131543,
+    "mtime": 1785815864.3725667,
     "ast_hash": "b24bc5af9a93b9e0291a1ccc29f54960",
     "semantic_hash": ""
   },
@@ -800,7 +800,7 @@
     "semantic_hash": ""
   },
   "pb_hooks/statslib.js": {
-    "mtime": 1786099029.7131543,
+    "mtime": 1785815864.3780823,
     "ast_hash": "016461e48758c6b66a6584997960fbde",
     "semantic_hash": ""
   },
@@ -825,17 +825,17 @@
     "semantic_hash": "d6d29ae20393eefdca9c023a6e139dcd"
   },
   "pb_hooks/trainings_notify_completed.pb.js": {
-    "mtime": 1786099029.7131543,
+    "mtime": 1785815864.371062,
     "ast_hash": "b3f38c4419916ea663e15d67f71dce07",
     "semantic_hash": "b3f38c4419916ea663e15d67f71dce07"
   },
   "pb_hooks/trainings_notify_lifecycle.pb.js": {
-    "mtime": 1786099029.7131543,
+    "mtime": 1785815864.3780823,
     "ast_hash": "d3cf9015c44f07a247cb60ca645577a0",
     "semantic_hash": "d3cf9015c44f07a247cb60ca645577a0"
   },
   "pb_hooks/trainings_reminders_4h.pb.js": {
-    "mtime": 1786099029.7131543,
+    "mtime": 1785815864.371062,
     "ast_hash": "f712110b07c6aa47a317c8dc16b069be",
     "semantic_hash": "f712110b07c6aa47a317c8dc16b069be"
   },

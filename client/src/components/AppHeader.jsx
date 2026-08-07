@@ -1,6 +1,5 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
-import Avatar from './ui/Avatar';
 import IconButton from './ui/IconButton';
 import FavoriteIcon from '../features/shop/FavoriteIcon';
 import FavoritesDropdown from '../features/shop/FavoritesDropdown';
@@ -13,8 +12,6 @@ import './AppHeader.css';
 /**
  * @param {{
  *   title: string,
- *   user?: import('../lib/avatar').UserAvatarLike | null,
- *   onProfileClick: () => void,
  *   onMembershipClick?: () => void,
  *   membershipVisible?: boolean,
  *   membershipActive?: boolean,
@@ -48,8 +45,6 @@ import './AppHeader.css';
  */
 function AppHeader({
   title,
-  user,
-  onProfileClick,
   onMembershipClick,
   membershipVisible = true,
   membershipActive = false,
@@ -76,7 +71,6 @@ function AppHeader({
   const notificationsAnchorRef = useRef(null);
   const searchInputRef = useRef(null);
   const [datePickerOpen, setDatePickerOpen] = useState(false);
-  const displayName = user?.full_name || 'Гость';
 
   useEffect(() => {
     if (searchConfig?.open) {
@@ -142,8 +136,8 @@ function AppHeader({
       ) : (
         <h1 className="header-title">{title}</h1>
       )}
-      {showShopControls ? (
-        <div className="header-shop-controls">
+      <div className="header-end-group">
+        {showShopControls ? (
           <div ref={favoritesAnchorRef} className="header-favorites-anchor">
             <FavoriteIcon onClick={onFavoritesClick} />
             <FavoritesDropdown
@@ -153,22 +147,20 @@ function AppHeader({
               favoritesAnchorRef={favoritesAnchorRef}
             />
           </div>
-        </div>
-      ) : null}
-      {searchConfig && !searchConfig.open ? (
-        <IconButton
-          ariaLabel="Поиск"
-          variant="ghost"
-          className="header-search-btn"
-          onClick={searchConfig.onToggle}
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-            <circle cx="11" cy="11" r="7" />
-            <path d="M20 20l-3-3" />
-          </svg>
-        </IconButton>
-      ) : null}
-      <div className="header-end-group">
+        ) : null}
+        {searchConfig && !searchConfig.open ? (
+          <IconButton
+            ariaLabel="Поиск"
+            variant="ghost"
+            className="header-search-btn"
+            onClick={searchConfig.onToggle}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" />
+              <path d="M20 20l-3-3" />
+            </svg>
+          </IconButton>
+        ) : null}
         {onMembershipClick ? (
           <IconButton
             ariaLabel="Абонемент"
@@ -219,14 +211,6 @@ function AppHeader({
             ) : null}
           </div>
         )}
-        <button
-          type="button"
-          className="header-profile-badge"
-          onClick={onProfileClick}
-          aria-label={`Открыть мой профиль (${displayName})`}
-        >
-          <Avatar user={user} size="sm" className="header-profile-avatar" />
-        </button>
       </div>
       {searchConfig?.showDateSearch ? (
         <DatePickerModal

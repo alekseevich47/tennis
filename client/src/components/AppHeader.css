@@ -43,7 +43,6 @@
 }
 
 .header-search-btn {
-  margin-left: auto;
   flex-shrink: 0;
   color: #444;
 }
@@ -156,7 +155,6 @@
 
 .header-membership-btn {
   flex-shrink: 0;
-  margin-left: 12px;
 }
 
 .header-membership-btn--hidden {
@@ -217,37 +215,6 @@
   80% {
     transform: rotate(-6deg);
   }
-}
-
-.header-profile-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 50%;
-  transition: background 0.2s;
-  background: transparent;
-  border: none;
-  min-height: 40px;
-  min-width: 40px;
-  flex-shrink: 0;
-}
-
-.header-profile-avatar {
-  border: 1px solid #000;
-  border-radius: 50%;
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-.header-profile-badge:hover {
-  background: #f5f5f5;
-}
-
-.header-profile-badge:focus-visible {
-  outline: 2px solid #007aff;
-  outline-offset: 2px;
 }
 
 .header-shop-controls {

@@ -64,8 +64,8 @@ body {
 .content {
   flex: 1;
   overflow-y: auto;
-  /* floating BottomNav: 56 height + 6 bottom inset + запас */
-  padding-bottom: 74px;
+  /* floating BottomNav: 64 height + 6 bottom inset + запас */
+  padding-bottom: 82px;
 }
 
 textarea, input[type="text"], input[type="number"], input[type="date"], input[type="time"], input[type="datetime-local"], input[type="email"], input[type="search"], input[type="password"], select {
@@ -84,8 +84,8 @@ input[type="file"] {
 }
 
 .content-with-header {
-  /* 48 header + ~62 floating BottomNav (56 + 6) */
-  height: calc(100vh - 110px);
+  /* 48 header + ~70 floating BottomNav (64 + 6) */
+  height: calc(100vh - 118px);
   min-height: 0;
   overflow-y: auto;
   background: #ffffff;
