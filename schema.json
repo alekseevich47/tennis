@@ -175,9 +175,9 @@
     "id": "_pb_users_auth_",
     "listRule": "",
     "viewRule": "",
-    "createRule": "",
+    "createRule": "@request.auth.role = \"moderator\"",
     "updateRule": "",
-    "deleteRule": "",
+    "deleteRule": "@request.auth.role = \"moderator\"",
     "name": "users",
     "type": "auth",
     "fields": [
@@ -638,7 +638,7 @@
     ],
     "system": false,
     "authRule": "",
-    "manageRule": null,
+    "manageRule": "@request.auth.role = \"moderator\"",
     "authAlert": {
       "enabled": false,
       "emailTemplate": {

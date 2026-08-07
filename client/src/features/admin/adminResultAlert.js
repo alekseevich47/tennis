@@ -40,6 +40,16 @@ export function formatAdminSaveError(err, fallback) {
   }
 
   if (
+    response &&
+    typeof response === 'object' &&
+    'error' in response &&
+    typeof /** @type {{ error?: unknown }} */ (response).error === 'string' &&
+    /** @type {{ error: string }} */ (response).error.trim()
+  ) {
+    return /** @type {{ error: string }} */ (response).error.trim();
+  }
+
+  if (
     err &&
     typeof err === 'object' &&
     'message' in err &&
