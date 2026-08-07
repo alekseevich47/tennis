@@ -286,7 +286,6 @@ export async function listPlayers({ signal, filter } = {}) {
         'used_sessions',
         'attendance_count',
         'rating_points',
-        'wins',
         'role',
         'email',
         'max_id',
@@ -304,51 +303,42 @@ export async function listPlayers({ signal, filter } = {}) {
   }
 }
 
-function randomAuthSecret() {
-  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-    return `${crypto.randomUUID().replace(/-/g, '')}${crypto.randomUUID().replace(/-/g, '').slice(0, 8)}`;
+/**
+ * Тело для POST /api/users-create-manual (без email/password — задаёт сервер через $app.save).
+ * @param {FormData | Record<string, unknown>} payload
+ * @returns {FormData}
+ */
+function buildManualPlayerPayload(payload) {
+  const data = new FormData();
+  const source =
+    payload instanceof FormData
+      ? payload
+      : Object.entries(payload || {}).reduce((fd, [key, value]) => {
+          if (value != null && value !== '') fd.append(key, /** @type {string | Blob} */ (value));
+          return fd;
+        }, new FormData());
+
+  for (const [key, value] of source.entries()) {
+    if (key === 'birth_date' && !value) continue;
+    if (key === 'email' || key === 'password' || key === 'passwordConfirm' || key === 'wins') continue;
+    data.append(key, value);
   }
-  return `${Date.now()}${Math.random().toString(36).slice(2)}${Math.random().toString(36).slice(2)}`;
+  return data;
 }
 
 /**
+ * Ручное создание игрока модератором.
+ * Идёт через `/api/users-create-manual` ($app.save): клиентский `users.create` ломается на
+ * hidden `password` при `manageRule`, не совпадающем с ролью (раньше был `null` = только superuser).
  * @param {FormData | Record<string, unknown>} payload
- * @returns {FormData | Record<string, unknown>}
  */
-function buildManualPlayerPayload(payload) {
-  const email = `manual_${Date.now()}_${Math.random().toString(36).slice(2, 10)}@local.tennis`;
-  const password = randomAuthSecret();
-
-  if (payload instanceof FormData) {
-    const data = new FormData();
-    for (const [key, value] of payload.entries()) {
-      if (key === 'birth_date' && !value) continue;
-      data.append(key, value);
-    }
-    data.append('email', email);
-    data.append('password', password);
-    data.append('passwordConfirm', password);
-    data.append('role', 'user');
-    data.append('wins', '0');
-    return data;
-  }
-
-  const { birth_date, ...rest } = payload;
-  return {
-    ...rest,
-    ...(birth_date ? { birth_date } : {}),
-    email,
-    password,
-    passwordConfirm: password,
-    role: 'user',
-    wins: 0
-  };
-}
-
-/** @param {FormData | Record<string, unknown>} payload */
 export async function createPlayer(payload) {
   const data = buildManualPlayerPayload(payload);
-  return pb.collection('users').create(/** @type {Record<string, unknown>} */ (data));
+  const result = await pb.send('/api/users-create-manual', {
+    method: 'POST',
+    body: data
+  });
+  return /** @type {PlayerRecord} */ (result?.user || result);
 }
 
 /**

@@ -155,9 +155,9 @@
     "semantic_hash": "fea3b9acb8bfc665cddefbbf7d5d2f7d"
   },
   "client/src/features/admin/adminResultAlert.js": {
-    "mtime": 1783649925.9913337,
-    "ast_hash": "60fa80796eafd0fd521b0475afcb6a32",
-    "semantic_hash": "60fa80796eafd0fd521b0475afcb6a32"
+    "mtime": 1786114778.5274155,
+    "ast_hash": "739d263527b2141d31733faffcbe6322",
+    "semantic_hash": ""
   },
   "client/src/features/admin/stats/StatsAchievementsModal.jsx": {
     "mtime": 1784305198.872109,
@@ -380,9 +380,9 @@
     "semantic_hash": "da392fcecdf17f5fea4251cf0209f6d4"
   },
   "client/src/features/rating/RatingPage.jsx": {
-    "mtime": 1783650492.3328743,
-    "ast_hash": "4d8eb55d9668b90abaaaebe53e04952c",
-    "semantic_hash": "4d8eb55d9668b90abaaaebe53e04952c"
+    "mtime": 1786114765.086052,
+    "ast_hash": "2ac2697df1aef36e429e895cc005b6d0",
+    "semantic_hash": ""
   },
   "client/src/features/shop/BuyButton.jsx": {
     "mtime": 1783703072.890782,
@@ -670,8 +670,8 @@
     "semantic_hash": ""
   },
   "client/src/services/catalog.js": {
-    "mtime": 1785820318.5289485,
-    "ast_hash": "70fabfef82df5d351c3bb95cc0a239a3",
+    "mtime": 1786114805.460646,
+    "ast_hash": "b4863176afbf65db48e525b9622bf33a",
     "semantic_hash": ""
   },
   "client/src/services/notifications.js": {
@@ -770,8 +770,8 @@
     "semantic_hash": "2f95deab71338fdfedd13db872a4cbe3"
   },
   "pb_hooks/max-auth.pb.js": {
-    "mtime": 1785817376.604316,
-    "ast_hash": "8385624183ddc35c0458b6a5be679688",
+    "mtime": 1786114807.6426787,
+    "ast_hash": "c7b3bb649dac33813604de0ef7a4e891",
     "semantic_hash": ""
   },
   "pb_hooks/notification_settings_bootstrap.pb.js": {
@@ -860,8 +860,8 @@
     "semantic_hash": ""
   },
   "schema.json": {
-    "mtime": 1786110398.2935157,
-    "ast_hash": "9cc72a5c2b7d3c3ac9bad57f57e78ac8",
+    "mtime": 1786114786.450706,
+    "ast_hash": "e850f18fd3f35c3c9adcbaa5324276d2",
     "semantic_hash": ""
   },
   "AUDIT.md": {
@@ -1185,8 +1185,8 @@
     "semantic_hash": ""
   },
   "pb_hooks/users_access_guard_lib.js": {
-    "mtime": 1785818904.6457016,
-    "ast_hash": "7fb8f7143fa449d33ce59984a220de3b",
+    "mtime": 1786114874.3138714,
+    "ast_hash": "622ac4b986aa7a67c324ee611ffd3cfa",
     "semantic_hash": ""
   },
   "client/src/features/feed/useResolvedExternalMedia.js": {
@@ -1227,6 +1227,16 @@
   "pb_hooks/users_claim.pb.js": {
     "mtime": 1786110511.1691003,
     "ast_hash": "09e246e9be542d709a491338772db5c5",
+    "semantic_hash": ""
+  },
+  "pb_hooks/manualuserlib.js": {
+    "mtime": 1786114744.62169,
+    "ast_hash": "4c473afa33aa52df2ead0f682ffac2f0",
+    "semantic_hash": ""
+  },
+  "pb_hooks/users_manual.pb.js": {
+    "mtime": 1786114744.7868958,
+    "ast_hash": "2bd2b8b386469ab96088beda7447bc86",
     "semantic_hash": ""
   }
 }
