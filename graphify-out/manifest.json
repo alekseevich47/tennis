@@ -1,8 +1,8 @@
 {
   "client/package.json": {
-    "mtime": 1784302749.0637343,
-    "ast_hash": "ec05401d119fae912857d9a2b2fb91b4",
-    "semantic_hash": "ec05401d119fae912857d9a2b2fb91b4"
+    "mtime": 1786117422.8970616,
+    "ast_hash": "946e10b065b3cb5dafd2c611a31d5b90",
+    "semantic_hash": ""
   },
   "client/public/sw.js": {
     "mtime": 1779892609.9341662,
@@ -365,8 +365,8 @@
     "semantic_hash": "299cae2527ab38d59a4ba2d5415bcfe2"
   },
   "client/src/features/profile/ProfileViewModal.jsx": {
-    "mtime": 1786110622.8820841,
-    "ast_hash": "d7c6eb99e69295032471067e9bbb512b",
+    "mtime": 1786117120.8273919,
+    "ast_hash": "0c172eb2f23848d1be1e3f68f9d8c910",
     "semantic_hash": ""
   },
   "client/src/features/rating/PlayerForm.jsx": {
@@ -645,9 +645,9 @@
     "semantic_hash": "702b0fa6d03ddc691735c8af1861b9d8"
   },
   "client/src/main.jsx": {
-    "mtime": 1782803824.1192515,
-    "ast_hash": "cb3e3973f4749b2edaef5a200bb3a0e7",
-    "semantic_hash": "cb3e3973f4749b2edaef5a200bb3a0e7"
+    "mtime": 1786117503.3815825,
+    "ast_hash": "5ade495dcf64da8f4127bbb0012cad03",
+    "semantic_hash": ""
   },
   "client/src/services/achievements.js": {
     "mtime": 1783702311.4886029,
@@ -665,8 +665,8 @@
     "semantic_hash": ""
   },
   "client/src/services/auth.js": {
-    "mtime": 1786110641.0301697,
-    "ast_hash": "8964ff24400192872d323ff47da0e9b9",
+    "mtime": 1786117084.0950344,
+    "ast_hash": "ec1dee1bf41fa15a259eb50c9ce8dfcb",
     "semantic_hash": ""
   },
   "client/src/services/catalog.js": {
@@ -875,8 +875,8 @@
     "semantic_hash": "430ffb07fdf04da7c4013b537853ef5a"
   },
   "client/index.html": {
-    "mtime": 1784999911.5483966,
-    "ast_hash": "83b091395ee514007e0d9fd17020629e",
+    "mtime": 1786117503.2590876,
+    "ast_hash": "36c795f68275c2e93907db55a624f0e8",
     "semantic_hash": ""
   },
   "drop_category.txt": {
@@ -1230,13 +1230,23 @@
     "semantic_hash": ""
   },
   "pb_hooks/manualuserlib.js": {
-    "mtime": 1786114744.62169,
-    "ast_hash": "4c473afa33aa52df2ead0f682ffac2f0",
+    "mtime": 1786116848.0761096,
+    "ast_hash": "4764e0d375bc771aa2cc6d78f2f34e05",
     "semantic_hash": ""
   },
   "pb_hooks/users_manual.pb.js": {
     "mtime": 1786114744.7868958,
     "ast_hash": "2bd2b8b386469ab96088beda7447bc86",
+    "semantic_hash": ""
+  },
+  "pb_hooks/userdeletelib.js": {
+    "mtime": 1786117080.5190585,
+    "ast_hash": "f53e39c33200855a637a3a369e2f13da",
+    "semantic_hash": ""
+  },
+  "pb_hooks/users_delete.pb.js": {
+    "mtime": 1786117083.8829136,
+    "ast_hash": "6cbeb5b3bf56eacf7fd35ca779b8e6d5",
     "semantic_hash": ""
   }
 }

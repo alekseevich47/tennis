@@ -1,0 +1,23 @@
+/*
+ * Nunito Variable — self-hosted (@fontsource-variable/nunito).
+ * Веса 200–1000 (в т.ч. ExtraLight 200, Light 300, Regular 400) + кириллица.
+ * Файлы бандлятся Vite и отдаются с того же origin (/tt-api/assets/…).
+ *
+ * Откат после проверки (вернуть системный стек):
+ * 1) --app-font-family: var(--app-font-family-legacy);
+ * 2) закомментировать @import ниже (чтобы не грузить woff2).
+ */
+
+@import '@fontsource-variable/nunito/wght.css';
+
+:root {
+  --app-font-family-nunito: 'Nunito Variable', 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --app-font-family-legacy: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  /* Активный стек — откат: var(--app-font-family-legacy) */
+  --app-font-family: var(--app-font-family-nunito);
+
+  --font-weight-extralight: 200;
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+}
