@@ -303,8 +303,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_package_dependencies_react",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 61,
+      "community_name": "error",
       "norm_label": "react"
     },
     {
@@ -314,8 +314,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "react",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 61,
+      "community_name": "error",
       "norm_label": "react"
     },
     {
@@ -630,11 +630,11 @@
       "label": "App()",
       "file_type": "code",
       "source_file": "client/src/App.jsx",
-      "source_location": "L493",
+      "source_location": "L494",
       "_origin": "ast",
       "id": "client_src_app_app",
-      "community": 62,
-      "community_name": "main.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "app()"
     },
     {
@@ -732,8 +732,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_appheader",
-      "community": 14,
-      "community_name": "datePickerUtils.js",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "appheader.jsx"
     },
     {
@@ -806,7 +806,7 @@
       "label": "NAV_ITEMS",
       "file_type": "code",
       "source_file": "client/src/components/BottomNav.jsx",
-      "source_location": "L13",
+      "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_components_bottomnav_nav_items",
       "community": 66,
@@ -817,7 +817,7 @@
       "label": "GALLERY_NAV_ITEM",
       "file_type": "code",
       "source_file": "client/src/components/BottomNav.jsx",
-      "source_location": "L62",
+      "source_location": "L59",
       "_origin": "ast",
       "id": "client_src_components_bottomnav_gallery_nav_item",
       "community": 66,
@@ -828,7 +828,7 @@
       "label": "ADMIN_NAV_ITEM",
       "file_type": "code",
       "source_file": "client/src/components/BottomNav.jsx",
-      "source_location": "L72",
+      "source_location": "L69",
       "_origin": "ast",
       "id": "client_src_components_bottomnav_admin_nav_item",
       "community": 66,
@@ -839,7 +839,7 @@
       "label": "BottomNav()",
       "file_type": "code",
       "source_file": "client/src/components/BottomNav.jsx",
-      "source_location": "L87",
+      "source_location": "L89",
       "_origin": "ast",
       "id": "client_src_components_bottomnav_bottomnav",
       "community": 66,
@@ -908,8 +908,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider",
-      "community": 62,
-      "community_name": "main.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "galleryuploadprovider.jsx"
     },
     {
@@ -919,8 +919,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_galleryuploadcontext",
-      "community": 62,
-      "community_name": "main.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "galleryuploadcontext"
     },
     {
@@ -930,8 +930,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_isgallerykey",
-      "community": 62,
-      "community_name": "main.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "isgallerykey()"
     },
     {
@@ -941,8 +941,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_creategallerypayload",
-      "community": 62,
-      "community_name": "main.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "creategallerypayload()"
     },
     {
@@ -952,8 +952,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_galleryuploadprovider",
-      "community": 62,
-      "community_name": "main.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "galleryuploadprovider()"
     },
     {
@@ -1018,8 +1018,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_productuploadprovider",
-      "community": 58,
-      "community_name": "catalog.js",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "productuploadprovider.jsx"
     },
     {
@@ -1029,8 +1029,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_components_productuploadprovider_productuploadcontext",
-      "community": 58,
-      "community_name": "catalog.js",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "productuploadcontext"
     },
     {
@@ -1040,8 +1040,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_components_productuploadprovider_isproductskey",
-      "community": 58,
-      "community_name": "catalog.js",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "isproductskey()"
     },
     {
@@ -1051,8 +1051,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_components_productuploadprovider_productuploadprovider",
-      "community": 58,
-      "community_name": "catalog.js",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "productuploadprovider()"
     },
     {
@@ -1062,8 +1062,8 @@
       "source_location": "L145",
       "_origin": "ast",
       "id": "client_src_components_productuploadprovider_useproductupload",
-      "community": 58,
-      "community_name": "catalog.js",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "useproductupload()"
     },
     {
@@ -1117,8 +1117,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_alertdialog",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "alertdialog.jsx"
     },
     {
@@ -1128,8 +1128,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "client_src_components_ui_alertdialog_alertdialogcontext",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "alertdialogcontext"
     },
     {
@@ -1139,8 +1139,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_components_ui_alertdialog_initial_state",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "initial_state"
     },
     {
@@ -1150,8 +1150,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "client_src_components_ui_alertdialog_alertdialogprovider",
-      "community": 62,
-      "community_name": "main.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "alertdialogprovider()"
     },
     {
@@ -1161,8 +1161,8 @@
       "source_location": "L133",
       "_origin": "ast",
       "id": "client_src_components_ui_alertdialog_usealertdialog",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "usealertdialog()"
     },
     {
@@ -1172,8 +1172,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_avatar",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 66,
+      "community_name": "BottomNav.jsx",
       "norm_label": "avatar.jsx"
     },
     {
@@ -1183,8 +1183,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_components_ui_avatar_avatar",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 66,
+      "community_name": "BottomNav.jsx",
       "norm_label": "avatar()"
     },
     {
@@ -1238,8 +1238,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_iconbutton",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "iconbutton.jsx"
     },
     {
@@ -1249,8 +1249,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_components_ui_iconbutton_iconbutton",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "iconbutton"
     },
     {
@@ -1359,8 +1359,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_spinner",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "spinner.jsx"
     },
     {
@@ -1370,8 +1370,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_components_ui_spinner_spinner",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "spinner()"
     },
     {
@@ -1381,8 +1381,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_toast",
-      "community": 62,
-      "community_name": "main.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "toast.jsx"
     },
     {
@@ -1392,8 +1392,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "client_src_components_ui_toast_toast",
-      "community": 62,
-      "community_name": "main.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "toast()"
     },
     {
@@ -1403,8 +1403,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_toastcontext",
-      "community": 62,
-      "community_name": "main.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "toastcontext.jsx"
     },
     {
@@ -1414,8 +1414,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_components_ui_toastcontext_toastcontext",
-      "community": 62,
-      "community_name": "main.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "toastcontext"
     },
     {
@@ -1425,8 +1425,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_components_ui_toastcontext_toastprovider",
-      "community": 62,
-      "community_name": "main.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "toastprovider()"
     },
     {
@@ -1447,8 +1447,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_toggle",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "toggle.jsx"
     },
     {
@@ -1458,8 +1458,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_components_ui_toggle_toggle",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "toggle()"
     },
     {
@@ -1469,8 +1469,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_config",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "config.js"
     },
     {
@@ -1480,8 +1480,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext",
-      "community": 65,
-      "community_name": "FavoritesContext.jsx",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "favoritescontext.jsx"
     },
     {
@@ -1491,8 +1491,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_favoritescontext",
-      "community": 65,
-      "community_name": "FavoritesContext.jsx",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "favoritescontext"
     },
     {
@@ -1502,8 +1502,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_patchproductsfavoritescount",
-      "community": 65,
-      "community_name": "FavoritesContext.jsx",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "patchproductsfavoritescount()"
     },
     {
@@ -1513,8 +1513,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_loadfavoriteproducts",
-      "community": 65,
-      "community_name": "FavoritesContext.jsx",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "loadfavoriteproducts()"
     },
     {
@@ -1524,8 +1524,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_favoritesprovider",
-      "community": 65,
-      "community_name": "FavoritesContext.jsx",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "favoritesprovider()"
     },
     {
@@ -1546,8 +1546,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_adminpanelpage",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "adminpanelpage.jsx"
     },
     {
@@ -1568,8 +1568,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_broadcastmodal",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "broadcastmodal.jsx"
     },
     {
@@ -1579,8 +1579,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "client_src_features_admin_broadcastmodal_defaultdatetimelocal",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "defaultdatetimelocal()"
     },
     {
@@ -1590,8 +1590,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "client_src_features_admin_broadcastmodal_getaudiencelabel",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "getaudiencelabel()"
     },
     {
@@ -1601,8 +1601,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "client_src_features_admin_broadcastmodal_broadcastmodal",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "broadcastmodal()"
     },
     {
@@ -1711,8 +1711,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_notificationsendmodal",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "notificationsendmodal.jsx"
     },
     {
@@ -1722,8 +1722,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_features_admin_notificationsendmodal_defaultdatetimelocal",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "defaultdatetimelocal()"
     },
     {
@@ -1733,8 +1733,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "client_src_features_admin_notificationsendmodal_getaudiencelabel",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "getaudiencelabel()"
     },
     {
@@ -1744,8 +1744,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "client_src_features_admin_notificationsendmodal_notificationsendmodal",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "notificationsendmodal()"
     },
     {
@@ -1755,8 +1755,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_notificationsettingsmodal",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "notificationsettingsmodal.jsx"
     },
     {
@@ -1766,8 +1766,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_features_admin_notificationsettingsmodal_settings_rows",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "settings_rows"
     },
     {
@@ -1777,8 +1777,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "client_src_features_admin_notificationsettingsmodal_notificationsettingsmodal",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "notificationsettingsmodal()"
     },
     {
@@ -1788,8 +1788,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_statisticshubmodal",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "statisticshubmodal.jsx"
     },
     {
@@ -1799,8 +1799,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_features_admin_statisticshubmodal_metrics",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "metrics"
     },
     {
@@ -1810,8 +1810,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "client_src_features_admin_statisticshubmodal_statisticshubmodal",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "statisticshubmodal()"
     },
     {
@@ -1821,8 +1821,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "usermultiselect.jsx"
     },
     {
@@ -1832,8 +1832,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect_getcollapsedlabel",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "getcollapsedlabel()"
     },
     {
@@ -1843,8 +1843,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect_isuserchecked",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "isuserchecked()"
     },
     {
@@ -1854,8 +1854,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect_usermultiselect",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "usermultiselect()"
     },
     {
@@ -1865,8 +1865,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_adminresultalert",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "adminresultalert.js"
     },
     {
@@ -1876,8 +1876,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "client_src_features_admin_adminresultalert_formatadminsaveerror",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "formatadminsaveerror()"
     },
     {
@@ -1887,8 +1887,8 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "client_src_features_admin_adminresultalert_buildsendresultalert",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "buildsendresultalert()"
     },
     {
@@ -2217,8 +2217,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statstrainingscountmodal",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "statstrainingscountmodal.jsx"
     },
     {
@@ -2228,8 +2228,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statstrainingscountmodal_formataxisdate",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "formataxisdate()"
     },
     {
@@ -2239,8 +2239,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statstrainingscountmodal_formattooltipdate",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "formattooltipdate()"
     },
     {
@@ -2250,8 +2250,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statstrainingscountmodal_formatdaytitle",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "formatdaytitle()"
     },
     {
@@ -2261,8 +2261,8 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statstrainingscountmodal_statstrainingscountmodal",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "statstrainingscountmodal()"
     },
     {
@@ -2349,8 +2349,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentcommentssection",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "tournamentcommentssection.jsx"
     },
     {
@@ -2360,8 +2360,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentcommentssection_tournamentcommentssection",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "tournamentcommentssection()"
     },
     {
@@ -2371,8 +2371,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentpodium",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 63,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "tournamentpodium.jsx"
     },
     {
@@ -2382,8 +2382,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentpodium_podium_order",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 63,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "podium_order"
     },
     {
@@ -2393,8 +2393,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentpodium_tournamentpodium",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 63,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "tournamentpodium()"
     },
     {
@@ -2404,8 +2404,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentpostcard",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 63,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "tournamentpostcard.jsx"
     },
     {
@@ -2415,8 +2415,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentpostcard_readtournamentcomments",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 63,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "readtournamentcomments()"
     },
     {
@@ -2426,8 +2426,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentpostcard_tournamentpostcard",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 63,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "tournamentpostcard()"
     },
     {
@@ -2437,8 +2437,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentpostdetailmodal",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 63,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "tournamentpostdetailmodal.jsx"
     },
     {
@@ -2448,8 +2448,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentpostdetailmodal_tournamentpostdetailmodal",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 63,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "tournamentpostdetailmodal()"
     },
     {
@@ -2459,8 +2459,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentparticipants",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 63,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "tournamentparticipants.js"
     },
     {
@@ -2470,8 +2470,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentparticipants_getparticipantplayer",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 63,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "getparticipantplayer()"
     },
     {
@@ -2481,8 +2481,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentparticipants_getparticipantdisplayname",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 63,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "getparticipantdisplayname()"
     },
     {
@@ -2492,8 +2492,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_commentreplybutton",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "commentreplybutton.jsx"
     },
     {
@@ -2503,8 +2503,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_features_feed_commentreplybutton_commentreplybutton",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "commentreplybutton()"
     },
     {
@@ -2514,8 +2514,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_commentreplycomposebar",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 62,
+      "community_name": "main.jsx",
       "norm_label": "commentreplycomposebar.jsx"
     },
     {
@@ -2525,8 +2525,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_features_feed_commentreplycomposebar_commentreplycomposebar",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 62,
+      "community_name": "main.jsx",
       "norm_label": "commentreplycomposebar()"
     },
     {
@@ -2536,8 +2536,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_commentreplyquote",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 62,
+      "community_name": "main.jsx",
       "norm_label": "commentreplyquote.jsx"
     },
     {
@@ -2547,8 +2547,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_features_feed_commentreplyquote_commentreplyquote",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 62,
+      "community_name": "main.jsx",
       "norm_label": "commentreplyquote()"
     },
     {
@@ -2558,8 +2558,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_commentsendbutton",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "commentsendbutton.jsx"
     },
     {
@@ -2569,8 +2569,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "client_src_features_feed_commentsendbutton_commentsendbutton",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "commentsendbutton()"
     },
     {
@@ -2580,8 +2580,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_commentswipereply",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "commentswipereply.jsx"
     },
     {
@@ -2591,8 +2591,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_features_feed_commentswipereply_commentswipereply",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "commentswipereply()"
     },
     {
@@ -2602,8 +2602,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_commentspreview",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 61,
+      "community_name": "error",
       "norm_label": "commentspreview.jsx"
     },
     {
@@ -2613,8 +2613,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_features_feed_commentspreview_commentspreview",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 61,
+      "community_name": "error",
       "norm_label": "commentspreview()"
     },
     {
@@ -2822,8 +2822,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_postcard",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 61,
+      "community_name": "error",
       "norm_label": "postcard.jsx"
     },
     {
@@ -2833,8 +2833,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_features_feed_postcard_readcomments",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 61,
+      "community_name": "error",
       "norm_label": "readcomments()"
     },
     {
@@ -2844,8 +2844,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "client_src_features_feed_postcard_postcardlike",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 61,
+      "community_name": "error",
       "norm_label": "postcardlike()"
     },
     {
@@ -2855,8 +2855,8 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "client_src_features_feed_postcard_postcard",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 61,
+      "community_name": "error",
       "norm_label": "postcard()"
     },
     {
@@ -2866,8 +2866,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_postcontenthtml",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 61,
+      "community_name": "error",
       "norm_label": "postcontenthtml.jsx"
     },
     {
@@ -2877,8 +2877,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_features_feed_postcontenthtml_postcontenthtml",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 61,
+      "community_name": "error",
       "norm_label": "postcontenthtml()"
     },
     {
@@ -2943,8 +2943,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_postdetailmodal",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "postdetailmodal.jsx"
     },
     {
@@ -2954,8 +2954,8 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "client_src_features_feed_postdetailmodal_postdetailmodal",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "postdetailmodal()"
     },
     {
@@ -3031,8 +3031,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_keepcommenteditinview",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "keepcommenteditinview.js"
     },
     {
@@ -3042,8 +3042,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_features_feed_keepcommenteditinview_findscrollparent",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "findscrollparent()"
     },
     {
@@ -3053,8 +3053,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "client_src_features_feed_keepcommenteditinview_keepcommenteditinview",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "keepcommenteditinview()"
     },
     {
@@ -3064,8 +3064,8 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "client_src_features_feed_keepcommenteditinview_restoreandkeepcommenteditinview",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "restoreandkeepcommenteditinview()"
     },
     {
@@ -3339,8 +3339,8 @@
       "source_location": "L420",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_lockanimframewidth",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 61,
+      "community_name": "error",
       "norm_label": "lockanimframewidth()"
     },
     {
@@ -3350,8 +3350,8 @@
       "source_location": "L446",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_startanimframes",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 61,
+      "community_name": "error",
       "norm_label": "startanimframes()"
     },
     {
@@ -3471,8 +3471,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_gallery_gallerycommentmodal",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 62,
+      "community_name": "main.jsx",
       "norm_label": "gallerycommentmodal.jsx"
     },
     {
@@ -3482,8 +3482,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "client_src_features_gallery_gallerycommentmodal_gallerycommentmodal",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 62,
+      "community_name": "main.jsx",
       "norm_label": "gallerycommentmodal()"
     },
     {
@@ -3592,8 +3592,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationcard",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "notificationcard.jsx"
     },
     {
@@ -3603,8 +3603,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationcard_click_action_labels",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "click_action_labels"
     },
     {
@@ -3614,8 +3614,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationcard_parsecommentreplyparenttext",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "parsecommentreplyparenttext()"
     },
     {
@@ -3625,8 +3625,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationcard_notificationcard",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "notificationcard()"
     },
     {
@@ -3636,8 +3636,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationsdropdown",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "notificationsdropdown.jsx"
     },
     {
@@ -3647,8 +3647,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationsdropdown_notificationsdropdown",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "notificationsdropdown()"
     },
     {
@@ -3658,8 +3658,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationbadges",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "notificationbadges.js"
     },
     {
@@ -3669,8 +3669,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationbadges_formatcountdownpart",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "formatcountdownpart()"
     },
     {
@@ -3680,8 +3680,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationbadges_isuserbooked",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "isuserbooked()"
     },
     {
@@ -3691,8 +3691,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationbadges_formattrainingcountdownbadge",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "formattrainingcountdownbadge()"
     },
     {
@@ -3702,8 +3702,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial",
-      "community": 63,
-      "community_name": "OnboardingTutorial.jsx",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "onboardingtutorial.jsx"
     },
     {
@@ -3713,8 +3713,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_tour_steps",
-      "community": 63,
-      "community_name": "OnboardingTutorial.jsx",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "tour_steps"
     },
     {
@@ -3724,8 +3724,8 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_card_steps",
-      "community": 63,
-      "community_name": "OnboardingTutorial.jsx",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "card_steps"
     },
     {
@@ -3735,8 +3735,8 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_nav_steps",
-      "community": 63,
-      "community_name": "OnboardingTutorial.jsx",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "nav_steps"
     },
     {
@@ -3746,8 +3746,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_normalizedateinput",
-      "community": 63,
-      "community_name": "OnboardingTutorial.jsx",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "normalizedateinput()"
     },
     {
@@ -3757,8 +3757,8 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_scrolltargetintoview",
-      "community": 63,
-      "community_name": "OnboardingTutorial.jsx",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "scrolltargetintoview()"
     },
     {
@@ -3768,8 +3768,8 @@
       "source_location": "L99",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_padhighlightrect",
-      "community": 63,
-      "community_name": "OnboardingTutorial.jsx",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "padhighlightrect()"
     },
     {
@@ -3779,8 +3779,8 @@
       "source_location": "L112",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_gettooltipstyle",
-      "community": 63,
-      "community_name": "OnboardingTutorial.jsx",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "gettooltipstyle()"
     },
     {
@@ -3790,8 +3790,8 @@
       "source_location": "L131",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_getstepselectors",
-      "community": 63,
-      "community_name": "OnboardingTutorial.jsx",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "getstepselectors()"
     },
     {
@@ -3801,8 +3801,8 @@
       "source_location": "L141",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_onboardingtutorial",
-      "community": 63,
-      "community_name": "OnboardingTutorial.jsx",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "onboardingtutorial()"
     },
     {
@@ -3812,8 +3812,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_profile_aboutappmodal",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 10,
+      "community_name": "LogsModal.jsx",
       "norm_label": "aboutappmodal.jsx"
     },
     {
@@ -3823,8 +3823,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_features_profile_aboutappmodal_openexternalurl",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 10,
+      "community_name": "LogsModal.jsx",
       "norm_label": "openexternalurl()"
     },
     {
@@ -3834,8 +3834,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "client_src_features_profile_aboutappmodal_aboutappmodal",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 10,
+      "community_name": "LogsModal.jsx",
       "norm_label": "aboutappmodal()"
     },
     {
@@ -3845,8 +3845,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_profile_blockedpage",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "blockedpage.jsx"
     },
     {
@@ -3856,8 +3856,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_features_profile_blockedpage_blockedpage",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "blockedpage()"
     },
     {
@@ -4175,8 +4175,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_profile_profiletrainingssearch",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "profiletrainingssearch.jsx"
     },
     {
@@ -4186,8 +4186,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_features_profile_profiletrainingssearch_formatdaterangelabel",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "formatdaterangelabel()"
     },
     {
@@ -4197,8 +4197,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_features_profile_profiletrainingssearch_calendaricon",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "calendaricon()"
     },
     {
@@ -4219,8 +4219,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "client_src_features_profile_profiletrainingssearch_profiletrainingssearch",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "profiletrainingssearch()"
     },
     {
@@ -4329,8 +4329,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_rating_playerform",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 10,
+      "community_name": "LogsModal.jsx",
       "norm_label": "playerform.jsx"
     },
     {
@@ -4340,8 +4340,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_features_rating_playerform_initial",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 10,
+      "community_name": "LogsModal.jsx",
       "norm_label": "initial"
     },
     {
@@ -4351,8 +4351,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_features_rating_playerform_playerform",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 10,
+      "community_name": "LogsModal.jsx",
       "norm_label": "playerform()"
     },
     {
@@ -4362,8 +4362,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_rating_playerrow",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 66,
+      "community_name": "BottomNav.jsx",
       "norm_label": "playerrow.jsx"
     },
     {
@@ -4373,8 +4373,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_features_rating_playerrow_stopsignicon",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 66,
+      "community_name": "BottomNav.jsx",
       "norm_label": "stopsignicon()"
     },
     {
@@ -4384,8 +4384,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "client_src_features_rating_playerrow_playerrow",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 66,
+      "community_name": "BottomNav.jsx",
       "norm_label": "playerrow()"
     },
     {
@@ -4461,8 +4461,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_shop_favoriteicon",
-      "community": 14,
-      "community_name": "datePickerUtils.js",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "favoriteicon.jsx"
     },
     {
@@ -4472,8 +4472,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_features_shop_favoriteicon_favoriteicon",
-      "community": 14,
-      "community_name": "datePickerUtils.js",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "favoriteicon()"
     },
     {
@@ -4637,8 +4637,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_shop_searchbar",
-      "community": 58,
-      "community_name": "catalog.js",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "searchbar.jsx"
     },
     {
@@ -4648,8 +4648,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_shop_searchbar_searchbar",
-      "community": 58,
-      "community_name": "catalog.js",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "searchbar()"
     },
     {
@@ -4659,8 +4659,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_shop_shoppage",
-      "community": 58,
-      "community_name": "catalog.js",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "shoppage.jsx"
     },
     {
@@ -4670,8 +4670,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "client_src_features_shop_shoppage_shoppage",
-      "community": 58,
-      "community_name": "catalog.js",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "shoppage()"
     },
     {
@@ -4824,8 +4824,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_trainingcard",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "trainingcard.jsx"
     },
     {
@@ -4835,8 +4835,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_features_trainings_trainingcard_trainingcard",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "trainingcard()"
     },
     {
@@ -4846,8 +4846,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_trainingdetailmodal",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "trainingdetailmodal.jsx"
     },
     {
@@ -4857,8 +4857,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "client_src_features_trainings_trainingdetailmodal_trainingdetailmodal",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "trainingdetailmodal()"
     },
     {
@@ -5198,8 +5198,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_userpickermodal",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "userpickermodal.jsx"
     },
     {
@@ -5209,8 +5209,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_userpickermodal_isuserbookingdisabled",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "isuserbookingdisabled()"
     },
     {
@@ -5220,8 +5220,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_userpickermodal_userpickermodal",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "userpickermodal()"
     },
     {
@@ -5286,8 +5286,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usecommentlikes",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 62,
+      "community_name": "main.jsx",
       "norm_label": "usecommentlikes.js"
     },
     {
@@ -5297,8 +5297,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_hooks_usecommentlikes_usecommentlikes",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 62,
+      "community_name": "main.jsx",
       "norm_label": "usecommentlikes()"
     },
     {
@@ -5308,8 +5308,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usecomments",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "usecomments.js"
     },
     {
@@ -5319,8 +5319,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_hooks_usecomments_usecomments",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "usecomments()"
     },
     {
@@ -5352,8 +5352,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usegallerycomments",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 62,
+      "community_name": "main.jsx",
       "norm_label": "usegallerycomments.js"
     },
     {
@@ -5363,8 +5363,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_hooks_usegallerycomments_usegallerycomments",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 62,
+      "community_name": "main.jsx",
       "norm_label": "usegallerycomments()"
     },
     {
@@ -5396,8 +5396,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usemaxauth",
-      "community": 61,
-      "community_name": "error",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "usemaxauth.js"
     },
     {
@@ -5407,8 +5407,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "client_src_hooks_usemaxauth_getinitialuser",
-      "community": 61,
-      "community_name": "error",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "getinitialuser()"
     },
     {
@@ -5418,8 +5418,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "client_src_hooks_usemaxauth_usemaxauth",
-      "community": 61,
-      "community_name": "error",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "usemaxauth()"
     },
     {
@@ -5473,8 +5473,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_useonboarding",
-      "community": 63,
-      "community_name": "OnboardingTutorial.jsx",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "useonboarding.js"
     },
     {
@@ -5484,8 +5484,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_hooks_useonboarding_useonboarding",
-      "community": 63,
-      "community_name": "OnboardingTutorial.jsx",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "useonboarding()"
     },
     {
@@ -5550,8 +5550,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usepostlikes",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 61,
+      "community_name": "error",
       "norm_label": "usepostlikes.js"
     },
     {
@@ -5561,8 +5561,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "client_src_hooks_usepostlikes_usepostlikes",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 61,
+      "community_name": "error",
       "norm_label": "usepostlikes()"
     },
     {
@@ -5572,8 +5572,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usepostviewtracker",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 63,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "usepostviewtracker.js"
     },
     {
@@ -5583,8 +5583,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "client_src_hooks_usepostviewtracker_usepostviewtracker",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 63,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "usepostviewtracker()"
     },
     {
@@ -5638,8 +5638,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_useproducts",
-      "community": 58,
-      "community_name": "catalog.js",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "useproducts.js"
     },
     {
@@ -5649,8 +5649,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_hooks_useproducts_useproducts",
-      "community": 58,
-      "community_name": "catalog.js",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "useproducts()"
     },
     {
@@ -5682,8 +5682,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usetournamentcomments",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "usetournamentcomments.js"
     },
     {
@@ -5693,8 +5693,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_hooks_usetournamentcomments_usetournamentcomments",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "usetournamentcomments()"
     },
     {
@@ -5726,8 +5726,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usetrainings",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "usetrainings.js"
     },
     {
@@ -5737,8 +5737,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_hooks_usetrainings_usetrainings",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "usetrainings()"
     },
     {
@@ -5935,8 +5935,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_avatar",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 66,
+      "community_name": "BottomNav.jsx",
       "norm_label": "avatar.js"
     },
     {
@@ -5946,8 +5946,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_lib_avatar_getuseravatardata",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 66,
+      "community_name": "BottomNav.jsx",
       "norm_label": "getuseravatardata()"
     },
     {
@@ -6276,8 +6276,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_format",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "format.js"
     },
     {
@@ -6298,8 +6298,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_lib_format_days_full",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "days_full"
     },
     {
@@ -6309,8 +6309,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_lib_format_months_genitive",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "months_genitive"
     },
     {
@@ -6320,8 +6320,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_lib_format_pad2",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "pad2()"
     },
     {
@@ -6331,8 +6331,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "client_src_lib_format_formatpostdate",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 63,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "formatpostdate()"
     },
     {
@@ -6342,8 +6342,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "client_src_lib_format_formatcarddate",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "formatcarddate()"
     },
     {
@@ -6364,8 +6364,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "client_src_lib_format_formattimerange",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "formattimerange()"
     },
     {
@@ -6441,8 +6441,8 @@
       "source_location": "L130",
       "_origin": "ast",
       "id": "client_src_lib_format_pluralize",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "pluralize()"
     },
     {
@@ -6452,8 +6452,8 @@
       "source_location": "L143",
       "_origin": "ast",
       "id": "client_src_lib_format_formatrelativetime",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "formatrelativetime()"
     },
     {
@@ -6529,8 +6529,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_log",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "log.js"
     },
     {
@@ -6540,8 +6540,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_lib_log_noop",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "noop()"
     },
     {
@@ -6551,8 +6551,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_lib_log_error",
-      "community": 61,
-      "community_name": "error",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "error"
     },
     {
@@ -6562,8 +6562,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_longpress",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 61,
+      "community_name": "error",
       "norm_label": "longpress.js"
     },
     {
@@ -6573,8 +6573,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_lib_longpress_getlongpresscardstyle",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 61,
+      "community_name": "error",
       "norm_label": "getlongpresscardstyle()"
     },
     {
@@ -6584,8 +6584,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "client_src_lib_longpress_longpressring",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 61,
+      "community_name": "error",
       "norm_label": "longpressring()"
     },
     {
@@ -6595,8 +6595,8 @@
       "source_location": "L111",
       "_origin": "ast",
       "id": "client_src_lib_longpress_uselongpress",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 61,
+      "community_name": "error",
       "norm_label": "uselongpress()"
     },
     {
@@ -6760,8 +6760,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_main",
-      "community": 62,
-      "community_name": "main.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "main.jsx"
     },
     {
@@ -6771,8 +6771,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_main_globalerrorfallback",
-      "community": 62,
-      "community_name": "main.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "globalerrorfallback()"
     },
     {
@@ -6914,8 +6914,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_admin",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "admin.js"
     },
     {
@@ -6925,8 +6925,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_services_admin_dispatchnow",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "dispatchnow()"
     },
     {
@@ -6936,8 +6936,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "client_src_services_admin_todatetimelocalvalue",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "todatetimelocalvalue()"
     },
     {
@@ -6947,8 +6947,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "client_src_services_admin_fromdatetimelocalvalue",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "fromdatetimelocalvalue()"
     },
     {
@@ -6958,8 +6958,8 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "client_src_services_admin_buildbroadcastrecordpayload",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "buildbroadcastrecordpayload()"
     },
     {
@@ -6969,8 +6969,8 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "client_src_services_admin_listscheduledbroadcasts",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "listscheduledbroadcasts()"
     },
     {
@@ -6980,8 +6980,8 @@
       "source_location": "L115",
       "_origin": "ast",
       "id": "client_src_services_admin_createscheduledbroadcast",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "createscheduledbroadcast()"
     },
     {
@@ -6991,8 +6991,8 @@
       "source_location": "L160",
       "_origin": "ast",
       "id": "client_src_services_admin_updatescheduledbroadcast",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "updatescheduledbroadcast()"
     },
     {
@@ -7002,8 +7002,8 @@
       "source_location": "L206",
       "_origin": "ast",
       "id": "client_src_services_admin_cancelscheduledbroadcast",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "cancelscheduledbroadcast()"
     },
     {
@@ -7013,8 +7013,8 @@
       "source_location": "L210",
       "_origin": "ast",
       "id": "client_src_services_admin_listschedulednotifications",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "listschedulednotifications()"
     },
     {
@@ -7024,8 +7024,8 @@
       "source_location": "L223",
       "_origin": "ast",
       "id": "client_src_services_admin_createschedulednotification",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "createschedulednotification()"
     },
     {
@@ -7035,8 +7035,8 @@
       "source_location": "L263",
       "_origin": "ast",
       "id": "client_src_services_admin_updateschedulednotification",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "updateschedulednotification()"
     },
     {
@@ -7046,8 +7046,8 @@
       "source_location": "L295",
       "_origin": "ast",
       "id": "client_src_services_admin_cancelschedulednotification",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "cancelschedulednotification()"
     },
     {
@@ -7057,8 +7057,8 @@
       "source_location": "L299",
       "_origin": "ast",
       "id": "client_src_services_admin_getnotificationsettings",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "getnotificationsettings()"
     },
     {
@@ -7068,8 +7068,8 @@
       "source_location": "L308",
       "_origin": "ast",
       "id": "client_src_services_admin_updatenotificationsettings",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "updatenotificationsettings()"
     },
     {
@@ -7200,8 +7200,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "client_src_services_auth_buildbanneduser",
-      "community": 61,
-      "community_name": "error",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "buildbanneduser()"
     },
     {
@@ -7211,8 +7211,8 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "client_src_services_auth_savebaninfo",
-      "community": 61,
-      "community_name": "error",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "savebaninfo()"
     },
     {
@@ -7222,8 +7222,8 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "client_src_services_auth_clearbaninfo",
-      "community": 61,
-      "community_name": "error",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "clearbaninfo()"
     },
     {
@@ -7233,8 +7233,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "client_src_services_auth_loadbaninfo",
-      "community": 61,
-      "community_name": "error",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "loadbaninfo()"
     },
     {
@@ -7244,8 +7244,8 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "client_src_services_auth_isuserbanned",
-      "community": 61,
-      "community_name": "error",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "isuserbanned()"
     },
     {
@@ -7255,8 +7255,8 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "client_src_services_auth_isuserbotblocked",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "isuserbotblocked()"
     },
     {
@@ -7266,8 +7266,8 @@
       "source_location": "L92",
       "_origin": "ast",
       "id": "client_src_services_auth_finalizebanneduser",
-      "community": 61,
-      "community_name": "error",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "finalizebanneduser()"
     },
     {
@@ -7277,8 +7277,8 @@
       "source_location": "L104",
       "_origin": "ast",
       "id": "client_src_services_auth_refreshauthuser",
-      "community": 61,
-      "community_name": "error",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "refreshauthuser()"
     },
     {
@@ -7288,8 +7288,8 @@
       "source_location": "L120",
       "_origin": "ast",
       "id": "client_src_services_auth_initmaxauth",
-      "community": 61,
-      "community_name": "error",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "initmaxauth()"
     },
     {
@@ -7299,8 +7299,8 @@
       "source_location": "L172",
       "_origin": "ast",
       "id": "client_src_services_auth_getcurrentuser",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "getcurrentuser()"
     },
     {
@@ -7310,8 +7310,8 @@
       "source_location": "L180",
       "_origin": "ast",
       "id": "client_src_services_auth_ismoderator",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "ismoderator()"
     },
     {
@@ -7398,8 +7398,8 @@
       "source_location": "L279",
       "_origin": "ast",
       "id": "client_src_services_auth_completeonboarding",
-      "community": 63,
-      "community_name": "OnboardingTutorial.jsx",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "completeonboarding()"
     },
     {
@@ -7420,8 +7420,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_catalog",
-      "community": 58,
-      "community_name": "catalog.js",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "catalog.js"
     },
     {
@@ -7442,8 +7442,8 @@
       "source_location": "L104",
       "_origin": "ast",
       "id": "client_src_services_catalog_listproducts",
-      "community": 58,
-      "community_name": "catalog.js",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "listproducts()"
     },
     {
@@ -7453,8 +7453,8 @@
       "source_location": "L124",
       "_origin": "ast",
       "id": "client_src_services_catalog_incrementproductviews",
-      "community": 58,
-      "community_name": "catalog.js",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "incrementproductviews()"
     },
     {
@@ -7464,8 +7464,8 @@
       "source_location": "L135",
       "_origin": "ast",
       "id": "client_src_services_catalog_adjustproductfavoritescount",
-      "community": 65,
-      "community_name": "FavoritesContext.jsx",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "adjustproductfavoritescount()"
     },
     {
@@ -7475,8 +7475,8 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "client_src_services_catalog_createproduct",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "createproduct()"
     },
     {
@@ -7486,8 +7486,8 @@
       "source_location": "L157",
       "_origin": "ast",
       "id": "client_src_services_catalog_createproductwithprogress",
-      "community": 58,
-      "community_name": "catalog.js",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "createproductwithprogress()"
     },
     {
@@ -7497,8 +7497,8 @@
       "source_location": "L225",
       "_origin": "ast",
       "id": "client_src_services_catalog_updateproduct",
-      "community": 58,
-      "community_name": "catalog.js",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "updateproduct()"
     },
     {
@@ -7508,8 +7508,8 @@
       "source_location": "L232",
       "_origin": "ast",
       "id": "client_src_services_catalog_softdeleteproduct",
-      "community": 58,
-      "community_name": "catalog.js",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "softdeleteproduct()"
     },
     {
@@ -7519,8 +7519,8 @@
       "source_location": "L239",
       "_origin": "ast",
       "id": "client_src_services_catalog_restoreproduct",
-      "community": 58,
-      "community_name": "catalog.js",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "restoreproduct()"
     },
     {
@@ -7541,8 +7541,8 @@
       "source_location": "L254",
       "_origin": "ast",
       "id": "client_src_services_catalog_purgeabandonedproducts",
-      "community": 61,
-      "community_name": "error",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "purgeabandonedproducts()"
     },
     {
@@ -7552,8 +7552,8 @@
       "source_location": "L269",
       "_origin": "ast",
       "id": "client_src_services_catalog_listplayers",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "listplayers()"
     },
     {
@@ -7563,8 +7563,8 @@
       "source_location": "L307",
       "_origin": "ast",
       "id": "client_src_services_catalog_randomauthsecret",
-      "community": 58,
-      "community_name": "catalog.js",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "randomauthsecret()"
     },
     {
@@ -7574,8 +7574,8 @@
       "source_location": "L318",
       "_origin": "ast",
       "id": "client_src_services_catalog_buildmanualplayerpayload",
-      "community": 58,
-      "community_name": "catalog.js",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "buildmanualplayerpayload()"
     },
     {
@@ -7596,8 +7596,8 @@
       "source_location": "L358",
       "_origin": "ast",
       "id": "client_src_services_catalog_updateplayer",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "updateplayer()"
     },
     {
@@ -7618,8 +7618,8 @@
       "source_location": "L383",
       "_origin": "ast",
       "id": "client_src_services_catalog_creategalleryformdata",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "creategalleryformdata()"
     },
     {
@@ -7629,8 +7629,8 @@
       "source_location": "L402",
       "_origin": "ast",
       "id": "client_src_services_catalog_creategalleryitemwithprogress",
-      "community": 62,
-      "community_name": "main.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "creategalleryitemwithprogress()"
     },
     {
@@ -7640,8 +7640,8 @@
       "source_location": "L468",
       "_origin": "ast",
       "id": "client_src_services_catalog_addgalleryimage",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "addgalleryimage()"
     },
     {
@@ -7706,8 +7706,8 @@
       "source_location": "L560",
       "_origin": "ast",
       "id": "client_src_services_catalog_listgallerycomments",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 62,
+      "community_name": "main.jsx",
       "norm_label": "listgallerycomments()"
     },
     {
@@ -7717,8 +7717,8 @@
       "source_location": "L581",
       "_origin": "ast",
       "id": "client_src_services_catalog_creategallerycomment",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 62,
+      "community_name": "main.jsx",
       "norm_label": "creategallerycomment()"
     },
     {
@@ -7728,8 +7728,8 @@
       "source_location": "L603",
       "_origin": "ast",
       "id": "client_src_services_catalog_deletegallerycomment",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 62,
+      "community_name": "main.jsx",
       "norm_label": "deletegallerycomment()"
     },
     {
@@ -7739,8 +7739,8 @@
       "source_location": "L612",
       "_origin": "ast",
       "id": "client_src_services_catalog_updategallerycomment",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 62,
+      "community_name": "main.jsx",
       "norm_label": "updategallerycomment()"
     },
     {
@@ -7750,8 +7750,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_notifications",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "notifications.js"
     },
     {
@@ -7761,8 +7761,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_services_notifications_sessions_left_copy",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "sessions_left_copy"
     },
     {
@@ -7772,8 +7772,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "client_src_services_notifications_listnotifications",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "listnotifications()"
     },
     {
@@ -7783,8 +7783,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_services_notifications_usenotifications",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "usenotifications()"
     },
     {
@@ -7794,8 +7794,8 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "client_src_services_notifications_isdeletablenotification",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "isdeletablenotification()"
     },
     {
@@ -7805,8 +7805,8 @@
       "source_location": "L83",
       "_origin": "ast",
       "id": "client_src_services_notifications_marknotificationread",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "marknotificationread()"
     },
     {
@@ -7816,8 +7816,8 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "client_src_services_notifications_deletenotification",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "deletenotification()"
     },
     {
@@ -7827,8 +7827,8 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "client_src_services_notifications_clearallnotifications",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "clearallnotifications()"
     },
     {
@@ -7849,8 +7849,8 @@
       "source_location": "L142",
       "_origin": "ast",
       "id": "client_src_services_notifications_requestcommentreplynotification",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "requestcommentreplynotification()"
     },
     {
@@ -7860,8 +7860,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_pb",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "pb.js"
     },
     {
@@ -7871,8 +7871,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_services_pb_pb",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "pb"
     },
     {
@@ -7882,8 +7882,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_pocketbase",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "pocketbase.js"
     },
     {
@@ -7926,8 +7926,8 @@
       "source_location": "L85",
       "_origin": "ast",
       "id": "client_src_services_posts_listcommentsforpost",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "listcommentsforpost()"
     },
     {
@@ -7937,8 +7937,8 @@
       "source_location": "L106",
       "_origin": "ast",
       "id": "client_src_services_posts_listpostlikes",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 61,
+      "community_name": "error",
       "norm_label": "listpostlikes()"
     },
     {
@@ -7948,8 +7948,8 @@
       "source_location": "L128",
       "_origin": "ast",
       "id": "client_src_services_posts_togglepostlike",
-      "community": 7,
-      "community_name": "App.jsx",
+      "community": 61,
+      "community_name": "error",
       "norm_label": "togglepostlike()"
     },
     {
@@ -7959,8 +7959,8 @@
       "source_location": "L151",
       "_origin": "ast",
       "id": "client_src_services_posts_createpost",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 7,
+      "community_name": "App.jsx",
       "norm_label": "createpost()"
     },
     {
@@ -8025,8 +8025,8 @@
       "source_location": "L267",
       "_origin": "ast",
       "id": "client_src_services_posts_purgeabandonedposts",
-      "community": 61,
-      "community_name": "error",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "purgeabandonedposts()"
     },
     {
@@ -8036,8 +8036,8 @@
       "source_location": "L282",
       "_origin": "ast",
       "id": "client_src_services_posts_createcomment",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "createcomment()"
     },
     {
@@ -8047,8 +8047,8 @@
       "source_location": "L300",
       "_origin": "ast",
       "id": "client_src_services_posts_updatecomment",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "updatecomment()"
     },
     {
@@ -8069,8 +8069,8 @@
       "source_location": "L329",
       "_origin": "ast",
       "id": "client_src_services_posts_listcommentlikes",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 62,
+      "community_name": "main.jsx",
       "norm_label": "listcommentlikes()"
     },
     {
@@ -8080,8 +8080,8 @@
       "source_location": "L354",
       "_origin": "ast",
       "id": "client_src_services_posts_togglecommentlike",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 62,
+      "community_name": "main.jsx",
       "norm_label": "togglecommentlike()"
     },
     {
@@ -8091,8 +8091,8 @@
       "source_location": "L382",
       "_origin": "ast",
       "id": "client_src_services_posts_purgeabandonedcomments",
-      "community": 61,
-      "community_name": "error",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "purgeabandonedcomments()"
     },
     {
@@ -8190,8 +8190,8 @@
       "source_location": "L157",
       "_origin": "ast",
       "id": "client_src_services_stats_fetchstatstrainingsday",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "fetchstatstrainingsday()"
     },
     {
@@ -8223,8 +8223,8 @@
       "source_location": "L218",
       "_origin": "ast",
       "id": "client_src_services_stats_recordcontentview",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 63,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "recordcontentview()"
     },
     {
@@ -8234,8 +8234,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_tournamentcomments",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "tournamentcomments.js"
     },
     {
@@ -8245,8 +8245,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "client_src_services_tournamentcomments_listcommentsfortournamentpost",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "listcommentsfortournamentpost()"
     },
     {
@@ -8256,8 +8256,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_services_tournamentcomments_createtournamentcomment",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "createtournamentcomment()"
     },
     {
@@ -8267,8 +8267,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "client_src_services_tournamentcomments_updatetournamentcomment",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "updatetournamentcomment()"
     },
     {
@@ -8278,8 +8278,8 @@
       "source_location": "L72",
       "_origin": "ast",
       "id": "client_src_services_tournamentcomments_harddeletetournamentcomment",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "harddeletetournamentcomment()"
     },
     {
@@ -8289,8 +8289,8 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "client_src_services_tournamentcomments_flushpendingtournamentcommentdeletes",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 58,
+      "community_name": "catalog.js",
       "norm_label": "flushpendingtournamentcommentdeletes()"
     },
     {
@@ -8399,8 +8399,8 @@
       "source_location": "L124",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_purgeabandonedtournamentposts",
-      "community": 61,
-      "community_name": "error",
+      "community": 59,
+      "community_name": "App.jsx",
       "norm_label": "purgeabandonedtournamentposts()"
     },
     {
@@ -8619,8 +8619,8 @@
       "source_location": "L264",
       "_origin": "ast",
       "id": "client_src_services_trainings_listtrainings",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "listtrainings()"
     },
     {
@@ -8861,8 +8861,8 @@
       "source_location": "L844",
       "_origin": "ast",
       "id": "client_src_services_trainings_markattendance",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "markattendance()"
     },
     {
@@ -8872,8 +8872,8 @@
       "source_location": "L861",
       "_origin": "ast",
       "id": "client_src_services_trainings_unmarkattendance",
-      "community": 10,
-      "community_name": "LogsModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "unmarkattendance()"
     },
     {
@@ -8883,8 +8883,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_users",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "users.js"
     },
     {
@@ -8894,8 +8894,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_services_users_listusers",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 4,
+      "community_name": "Gallery Upload Flow",
       "norm_label": "listusers()"
     },
     {
@@ -10442,7 +10442,7 @@
       "label": "BOTTOM_NAV_ITEMS",
       "file_type": "code",
       "source_file": "client/src/components/BottomNav.jsx",
-      "source_location": "L82",
+      "source_location": "L79",
       "_origin": "ast",
       "id": "client_src_components_bottomnav_bottom_nav_items",
       "community": 34,
@@ -11968,7 +11968,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/App.jsx",
-      "source_location": "L493",
+      "source_location": "L494",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_app",
@@ -13645,7 +13645,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/components/BottomNav.jsx",
-      "source_location": "L72",
+      "source_location": "L69",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_components_bottomnav",
@@ -13656,7 +13656,7 @@
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "client/src/components/BottomNav.jsx",
-      "source_location": "L195",
+      "source_location": "L205",
       "weight": 1.0,
       "_origin": "ast",
       "context": "argument",
@@ -13668,7 +13668,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/components/BottomNav.jsx",
-      "source_location": "L62",
+      "source_location": "L59",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_components_bottomnav",
@@ -13679,11 +13679,23 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/components/BottomNav.jsx",
-      "source_location": "L13",
+      "source_location": "L14",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_components_bottomnav",
       "target": "client_src_components_bottomnav_nav_items",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/components/BottomNav.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_components_bottomnav",
+      "target": "client_src_components_ui_avatar",
       "confidence_score": 1.0
     },
     {
@@ -48648,5 +48660,5 @@
       "source_file": "client/src/assets/ach/1_1.png"
     }
   ],
-  "built_at_commit": "032ddd4c463669640f832039ff9be2fa358fcde3"
+  "built_at_commit": "8eb0eadcffd356c42436d79ddf3bbc1fd7e1a3a1"
 }
