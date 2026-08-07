@@ -8,7 +8,7 @@ import { ToastProvider } from './components/ui/ToastContext';
 import { PostUploadProvider } from './components/PostUploadProvider';
 import { TournamentPostUploadProvider } from './components/TournamentPostUploadProvider';
 import { GalleryUploadProvider } from './components/GalleryUploadProvider';
-import './styles/global.css';
+import './styles/global.css'; // fonts.css → Nunito Variable (откат: см. styles/fonts.css)
 
 function GlobalErrorFallback({ error, resetErrorBoundary }) {
   return (

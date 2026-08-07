@@ -305,6 +305,20 @@ export async function listClaimCandidates(excludeUserId) {
 }
 
 /**
+ * Полное удаление аккаунта из БД (модератор).
+ * @param {string} targetUserId
+ * @returns {Promise<{ success: boolean, deletedUserId: string, fullName: string }>}
+ */
+export async function deleteUserAccount(targetUserId) {
+  return /** @type {Promise<{ success: boolean, deletedUserId: string, fullName: string }>} */ (
+    pb.send('/api/users-delete', {
+      method: 'POST',
+      body: { targetUserId }
+    })
+  );
+}
+
+/**
  * Безопасное обновление профиля + actualisation через authRefresh (исправляет C10).
  * @param {string} userId
  * @param {Partial<UserRecord> | FormData} patch
