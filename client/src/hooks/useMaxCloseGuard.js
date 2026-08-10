@@ -24,6 +24,15 @@ function isEditableFocus(el) {
 }
 
 /**
+ * Повторно глушит нативный vertical-swipe закрытия MAX.
+ * Свайп по шапке MAX SDK всё ещё может закрывать — отдельного API нет.
+ * @param {typeof window.WebApp | undefined} webApp
+ */
+function disableMaxVerticalSwipes(webApp) {
+  Promise.resolve(webApp?.disableVerticalSwipes?.()).catch(() => {});
+}
+
+/**
  * Перехват закрытия мини-приложения MAX.
  *
  * Системная «Назад» (приоритет):
@@ -34,7 +43,9 @@ function isEditableFocus(el) {
  * 5) иначе — bottom sheet подтверждения выхода
  *
  * ✕ / клик вне webview → `enableClosingConfirmation()` (нативный диалог MAX).
- * Кастомный свайп-закрытия нет (`disableVerticalSwipes`); pull-to-refresh — на страницах списков.
+ * Нативный свайп-закрытия по контенту: `disableVerticalSwipes` при старте и при
+ * возврате во вкладку (visibility/pageshow); на unmount снова **не** включаем.
+ * Pull-to-refresh — на страницах списков.
  *
  * @param {{
  *   enabled?: boolean,
@@ -150,6 +161,8 @@ export function useMaxCloseGuard({
     };
 
     let usedBridge = false;
+    /** @type {(() => void) | null} */
+    let reassertSwipes = null;
 
     if (webApp?.BackButton?.onClick) {
       usedBridge = true;
@@ -163,7 +176,12 @@ export function useMaxCloseGuard({
       } catch {
         // ignore
       }
-      Promise.resolve(webApp.disableVerticalSwipes?.()).catch(() => {});
+      disableMaxVerticalSwipes(webApp);
+      // MAX иногда сбрасывает флаг после resume / смены видимости
+      reassertSwipes = () => disableMaxVerticalSwipes(webApp);
+      document.addEventListener('visibilitychange', reassertSwipes);
+      window.addEventListener('pageshow', reassertSwipes);
+      window.addEventListener('focus', reassertSwipes);
       try {
         webApp.BackButton.show?.();
         webApp.BackButton.onClick(handleBack);
@@ -194,7 +212,14 @@ export function useMaxCloseGuard({
         } catch {
           // ignore
         }
-        Promise.resolve(webApp.enableVerticalSwipes?.()).catch(() => {});
+        if (reassertSwipes) {
+          document.removeEventListener('visibilitychange', reassertSwipes);
+          window.removeEventListener('pageshow', reassertSwipes);
+          window.removeEventListener('focus', reassertSwipes);
+        }
+        // Не вызываем enableVerticalSwipes — PTR и списки должны оставаться без
+        // системного swipe-close на всё время сессии мини-приложения.
+        disableMaxVerticalSwipes(webApp);
       }
       if (!usedBridge) {
         window.removeEventListener('popstate', handlePopState);

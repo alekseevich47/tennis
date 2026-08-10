@@ -308,63 +308,64 @@ function FeedPage({
 
   return (
     <div className="feed-scroll-container" ref={containerRef}>
-      <PullToRefresh scrollRef={containerRef} onRefresh={handleRefresh} />
-      {userIsModerator && (
-        <div className="floating-btn-wrapper">
-          <button
-            type="button"
-            className={clsx('floating-add-btn', isButtonVisible ? 'visible' : 'hidden')}
-            onClick={() => setShowAddModal(true)}
-          >
-            Добавить
-          </button>
-        </div>
-      )}
+      <PullToRefresh scrollRef={containerRef} onRefresh={handleRefresh}>
+        {userIsModerator && (
+          <div className="floating-btn-wrapper">
+            <button
+              type="button"
+              className={clsx('floating-add-btn', isButtonVisible ? 'visible' : 'hidden')}
+              onClick={() => setShowAddModal(true)}
+            >
+              Добавить
+            </button>
+          </div>
+        )}
 
-      {pinnedPosts.length > 0 && !searchOpen && (
-        <PinnedBanner
-          pinnedPosts={pinnedPosts}
-          collection="posts"
-          activeIndex={activePinnedIndex}
-          onOpen={handleOpenPinned}
-        />
-      )}
-
-      <div className="feed-list">
-        {isLoading && <FeedListSkeleton />}
-
-        {!isLoading && filteredPosts.length === 0 && (
-          <EmptyState
-            title={isSearchActive ? 'Ничего не найдено' : 'Пока ничего нет'}
-            description={
-              isSearchActive
-                ? 'Попробуйте другой запрос.'
-                : 'Здесь появятся первые публикации секции.'
-            }
+        {pinnedPosts.length > 0 && !searchOpen && (
+          <PinnedBanner
+            pinnedPosts={pinnedPosts}
+            collection="posts"
+            activeIndex={activePinnedIndex}
+            onOpen={handleOpenPinned}
           />
         )}
 
-        {filteredPosts.map((post) => {
-          const isSoftDeleted =
-            deletedPostIds.includes(post.id) || post.is_deleted === true;
-          return (
-            <PostCard
-              key={post.id}
-              post={post}
-              user={user}
-              isSoftDeleted={isSoftDeleted}
-              userIsModerator={userIsModerator}
-              onOpenDetail={handleOpenDetail}
-              onRestore={handleRestorePost}
-              onLongPress={handleLongPress}
-              cardRef={handleRegisterCardRef(post.id)}
-              hiddenMediaKey={hiddenMediaKey}
-              onOpenFullscreen={handleOpenFullscreen}
-              scrollRootRef={containerRef}
+        <div className="feed-list">
+          {isLoading && <FeedListSkeleton />}
+
+          {!isLoading && filteredPosts.length === 0 && (
+            <EmptyState
+              title={isSearchActive ? 'Ничего не найдено' : 'Пока ничего нет'}
+              description={
+                isSearchActive
+                  ? 'Попробуйте другой запрос.'
+                  : 'Здесь появятся первые публикации секции.'
+              }
             />
-          );
-        })}
-      </div>
+          )}
+
+          {filteredPosts.map((post) => {
+            const isSoftDeleted =
+              deletedPostIds.includes(post.id) || post.is_deleted === true;
+            return (
+              <PostCard
+                key={post.id}
+                post={post}
+                user={user}
+                isSoftDeleted={isSoftDeleted}
+                userIsModerator={userIsModerator}
+                onOpenDetail={handleOpenDetail}
+                onRestore={handleRestorePost}
+                onLongPress={handleLongPress}
+                cardRef={handleRegisterCardRef(post.id)}
+                hiddenMediaKey={hiddenMediaKey}
+                onOpenFullscreen={handleOpenFullscreen}
+                scrollRootRef={containerRef}
+              />
+            );
+          })}
+        </div>
+      </PullToRefresh>
 
       <PostContextMenu
         isOpen={Boolean(contextMenuPost && contextMenuState)}

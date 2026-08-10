@@ -413,66 +413,67 @@ function CompetitionsPage({
 
       {activeTab === 'feed' && (
         <div className="competitions-scroll-container" ref={containerRef}>
-          <PullToRefresh scrollRef={containerRef} onRefresh={handleFeedRefresh} />
-          {moderator && (
-            <div className="floating-btn-wrapper">
-              <button
-                type="button"
-                className={clsx('floating-add-btn', isChromeVisible ? 'visible' : 'hidden')}
-                onClick={() => setShowCreatePost(true)}
-              >
-                Добавить
-              </button>
-            </div>
-          )}
+          <PullToRefresh scrollRef={containerRef} onRefresh={handleFeedRefresh}>
+            {moderator && (
+              <div className="floating-btn-wrapper">
+                <button
+                  type="button"
+                  className={clsx('floating-add-btn', isChromeVisible ? 'visible' : 'hidden')}
+                  onClick={() => setShowCreatePost(true)}
+                >
+                  Добавить
+                </button>
+              </div>
+            )}
 
-          {pinnedPosts.length > 0 && !searchOpen && (
-            <PinnedBanner
-              pinnedPosts={pinnedPosts}
-              collection="tournament_posts"
-              activeIndex={activePinnedIndex}
-              onOpen={handleOpenPinned}
-            />
-          )}
-
-          <div className="competitions-feed-list">
-            {postsLoading && <FeedListSkeleton />}
-
-            {!postsLoading && filteredPosts.length === 0 && (
-              <EmptyState
-                title={isSearchActive ? 'Ничего не найдено' : 'Пока нет итогов'}
-                description={
-                  isSearchActive
-                    ? 'Попробуйте другой запрос.'
-                    : 'Здесь появятся результаты турниров секции.'
-                }
+            {pinnedPosts.length > 0 && !searchOpen && (
+              <PinnedBanner
+                pinnedPosts={pinnedPosts}
+                collection="tournament_posts"
+                activeIndex={activePinnedIndex}
+                onOpen={handleOpenPinned}
               />
             )}
 
-            {!postsLoading &&
-              filteredPosts.map((post) => {
-                const isSoftDeleted =
-                  deletedPostIds.includes(post.id) || post.is_deleted === true;
-                return (
-                  <TournamentPostCard
-                    key={post.id}
-                    post={post}
-                    players={players || []}
-                    user={user}
-                    userIsModerator={moderator}
-                    isSoftDeleted={isSoftDeleted}
-                    onOpenDetail={handleOpenDetail}
-                    onRestore={handleRestorePost}
-                    onLongPress={handleLongPress}
-                    cardRef={handleRegisterCardRef(post.id)}
-                    hiddenMediaKey={hiddenMediaKey}
-                    onOpenFullscreen={handleOpenFullscreen}
-                    onOpenProfile={setViewingPlayer}
-                    scrollRootRef={containerRef}
-                  />
-                );
-              })}
-          </div>
+            <div className="competitions-feed-list">
+              {postsLoading && <FeedListSkeleton />}
+
+              {!postsLoading && filteredPosts.length === 0 && (
+                <EmptyState
+                  title={isSearchActive ? 'Ничего не найдено' : 'Пока нет итогов'}
+                  description={
+                    isSearchActive
+                      ? 'Попробуйте другой запрос.'
+                      : 'Здесь появятся результаты турниров секции.'
+                  }
+                />
+              )}
+
+              {!postsLoading &&
+                filteredPosts.map((post) => {
+                  const isSoftDeleted =
+                    deletedPostIds.includes(post.id) || post.is_deleted === true;
+                  return (
+                    <TournamentPostCard
+                      key={post.id}
+                      post={post}
+                      players={players || []}
+                      user={user}
+                      userIsModerator={moderator}
+                      isSoftDeleted={isSoftDeleted}
+                      onOpenDetail={handleOpenDetail}
+                      onRestore={handleRestorePost}
+                      onLongPress={handleLongPress}
+                      cardRef={handleRegisterCardRef(post.id)}
+                      hiddenMediaKey={hiddenMediaKey}
+                      onOpenFullscreen={handleOpenFullscreen}
+                      onOpenProfile={setViewingPlayer}
+                      scrollRootRef={containerRef}
+                    />
+                  );
+                })}
+            </div>
+          </PullToRefresh>
         </div>
       )}
 

@@ -1,37 +1,64 @@
-.pull-to-refresh-indicator {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  z-index: 5;
+.pull-to-refresh {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.pull-to-refresh__slot {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+  pointer-events: none;
+  will-change: height;
+}
+
+.pull-to-refresh__slot--spring {
+  transition: height 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.pull-to-refresh__indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 28px;
   height: 28px;
-  margin: 0;
-  pointer-events: none;
-  opacity: 0;
+  margin-bottom: 10px;
   transition: opacity 0.15s ease;
 }
 
-.pull-to-refresh-indicator--visible {
-  transition: none;
-}
-
-.pull-to-refresh-spinner {
+.pull-to-refresh__spinner {
   display: block;
   width: 22px;
   height: 22px;
-  margin: 3px;
-  border: 2.5px solid rgba(60, 60, 67, 0.18);
+  border: 2.5px solid rgba(60, 60, 67, 0.16);
   border-top-color: rgba(60, 60, 67, 0.55);
   border-radius: 50%;
   box-sizing: border-box;
 }
 
-.pull-to-refresh-indicator--spinning .pull-to-refresh-spinner {
+.pull-to-refresh__indicator--spinning .pull-to-refresh__spinner {
   animation: pull-to-refresh-spin 0.7s linear infinite;
+}
+
+.pull-to-refresh__content {
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 @keyframes pull-to-refresh-spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pull-to-refresh__slot--spring {
+    transition: none;
+  }
+
+  .pull-to-refresh__indicator--spinning .pull-to-refresh__spinner {
+    animation: none;
   }
 }
