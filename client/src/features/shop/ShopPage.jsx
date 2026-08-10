@@ -4,14 +4,17 @@ import { useProducts } from '../../hooks/useProducts';
 import { isModerator } from '../../services/auth';
 import { incrementProductViews, restoreProduct, softDeleteProduct } from '../../services/catalog';
 import { useProductUpload } from '../../components/ProductUploadProvider';
-import Spinner from '../../components/ui/Spinner';
 import EmptyState from '../../components/ui/EmptyState';
+import PullToRefresh from '../../components/ui/PullToRefresh';
+import { ShopGridSkeleton } from '../../components/ui/Skeleton';
 import ProductCard from './ProductCard';
 import ProductForm from './ProductForm';
 import ProductDetail from './ProductDetail';
 import CategoryDropdown from './CategoryDropdown';
 import SearchBar from './SearchBar';
 import FullscreenImageViewer from '../feed/FullscreenImageViewer';
+import { useSectionScroll } from '../../hooks/useSectionScroll';
+import { useOverlayClose } from '../../hooks/useOverlayClose';
 import { error } from '../../lib/log';
 import './Shop.css';
 
@@ -49,6 +52,13 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
   const lastScrollTopRef = useRef(0);
   const isSearchOpenRef = useRef(isSearchOpen);
   const searchQueryRef = useRef(searchQuery);
+
+  useSectionScroll(containerRef);
+  useOverlayClose(isSearchOpen, () => setIsSearchOpen(false), 'shop-search');
+
+  const handleRefresh = useCallback(async () => {
+    await mutate();
+  }, [mutate]);
 
   useEffect(() => {
     isSearchOpenRef.current = isSearchOpen;
@@ -215,6 +225,7 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
 
   return (
     <section className="shop" ref={containerRef} aria-label="Магазин секции">
+      <PullToRefresh scrollRef={containerRef} onRefresh={handleRefresh} />
       {moderator && (
         <div className="floating-btn-wrapper">
           <button
@@ -246,7 +257,9 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
       </div>
 
       {isLoading ? (
-        <Spinner label="Загрузка товаров..." />
+        <div className="shop-skeleton-wrap">
+          <ShopGridSkeleton />
+        </div>
       ) : visibleProducts.length === 0 ? (
         <EmptyState title="Нет товаров" description="Скоро здесь появятся первые позиции." />
       ) : (

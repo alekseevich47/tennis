@@ -4,8 +4,9 @@ import { usePosts } from '../../hooks/usePosts';
 import { pinPost, unpinPost, updatePost } from '../../services/posts';
 import { isModerator } from '../../services/auth';
 import { usePostUpload } from '../../components/PostUploadProvider';
-import Spinner from '../../components/ui/Spinner';
 import EmptyState from '../../components/ui/EmptyState';
+import PullToRefresh from '../../components/ui/PullToRefresh';
+import { FeedListSkeleton } from '../../components/ui/Skeleton';
 import PostCard from './PostCard';
 import PinnedBanner from './PinnedBanner';
 import PostContextMenu from './PostContextMenu';
@@ -15,6 +16,7 @@ import PostDetailModal from './PostDetailModal';
 import FullscreenImageViewer from './FullscreenImageViewer';
 import ProfileViewModal from '../profile/ProfileViewModal';
 import ScrollToTopButton from '../../components/ui/ScrollToTopButton';
+import { useSectionScroll } from '../../hooks/useSectionScroll';
 import { error } from '../../lib/log';
 import { parseDateQuery, isDateQueryParsed, matchesDateQuery } from '../../lib/dateSearch';
 import { sortPinnedByCreated, usePinnedBannerIndex } from './usePinnedBannerIndex';
@@ -62,6 +64,12 @@ function FeedPage({
   const containerRef = useRef(null);
   const lastScrollTopRef = useRef(0);
   const cardRefs = useRef(/** @type {Map<string, HTMLElement>} */ (new Map()));
+
+  useSectionScroll(containerRef);
+
+  const handleRefresh = useCallback(async () => {
+    await mutate();
+  }, [mutate]);
 
   useEffect(() => {
     onDeletedIdsChange?.(deletedPostIds);
@@ -300,6 +308,7 @@ function FeedPage({
 
   return (
     <div className="feed-scroll-container" ref={containerRef}>
+      <PullToRefresh scrollRef={containerRef} onRefresh={handleRefresh} />
       {userIsModerator && (
         <div className="floating-btn-wrapper">
           <button
@@ -322,7 +331,7 @@ function FeedPage({
       )}
 
       <div className="feed-list">
-        {isLoading && <Spinner label="Загрузка ленты…" />}
+        {isLoading && <FeedListSkeleton />}
 
         {!isLoading && filteredPosts.length === 0 && (
           <EmptyState

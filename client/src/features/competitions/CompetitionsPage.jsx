@@ -10,8 +10,9 @@ import {
   updateTournamentPost
 } from '../../services/tournamentPosts';
 import { flushPendingTournamentCommentDeletes } from '../../services/tournamentComments';
-import Spinner from '../../components/ui/Spinner';
 import EmptyState from '../../components/ui/EmptyState';
+import PullToRefresh from '../../components/ui/PullToRefresh';
+import { FeedListSkeleton } from '../../components/ui/Skeleton';
 import CreateTournamentPostModal from './CreateTournamentPostModal';
 import EditTournamentPostModal from './EditTournamentPostModal';
 import TournamentPostCard from './TournamentPostCard';
@@ -23,6 +24,7 @@ import RatingPage from '../rating/RatingPage';
 import ProfileViewModal from '../profile/ProfileViewModal';
 import ScrollToTopButton from '../../components/ui/ScrollToTopButton';
 import { useTournamentPostUpload } from '../../components/TournamentPostUploadProvider';
+import { useSectionScroll } from '../../hooks/useSectionScroll';
 import { error } from '../../lib/log';
 import { parseDateQuery, isDateQueryParsed, matchesDateQuery } from '../../lib/dateSearch';
 import {
@@ -93,6 +95,12 @@ function CompetitionsPage({
   const accumDeltaRef = useRef(0);
   const cardRefs = useRef(/** @type {Map<string, HTMLElement>} */ (new Map()));
   const { startUpload } = useTournamentPostUpload();
+
+  useSectionScroll(containerRef, activeTab === 'feed');
+
+  const handleFeedRefresh = useCallback(async () => {
+    await mutateTournamentPosts();
+  }, [mutateTournamentPosts]);
 
   useEffect(() => {
     onDeletedIdsChange?.(deletedPostIds);
@@ -405,6 +413,7 @@ function CompetitionsPage({
 
       {activeTab === 'feed' && (
         <div className="competitions-scroll-container" ref={containerRef}>
+          <PullToRefresh scrollRef={containerRef} onRefresh={handleFeedRefresh} />
           {moderator && (
             <div className="floating-btn-wrapper">
               <button
@@ -427,7 +436,7 @@ function CompetitionsPage({
           )}
 
           <div className="competitions-feed-list">
-            {postsLoading && <Spinner label="Загрузка ленты..." />}
+            {postsLoading && <FeedListSkeleton />}
 
             {!postsLoading && filteredPosts.length === 0 && (
               <EmptyState
@@ -469,7 +478,7 @@ function CompetitionsPage({
 
       {activeTab === 'rating' && (
         <div className="competitions-rating-scroll" ref={ratingScrollRef}>
-          <RatingPage user={user} onTabChange={onTabChange} />
+          <RatingPage user={user} onTabChange={onTabChange} scrollRef={ratingScrollRef} />
         </div>
       )}
 

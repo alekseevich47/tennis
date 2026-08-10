@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import { createPortal } from 'react-dom';
 import clsx from 'clsx';
 import { clamp } from '../../lib/gestures';
+import { useOverlayClose } from '../../hooks/useOverlayClose';
 import './Feed.css';
 
 const MENU_VIEWPORT_PAD = 8;
@@ -83,6 +84,7 @@ export default function PostContextMenu({
   onDelete,
   onClose
 }) {
+  useOverlayClose(Boolean(isOpen), onClose, 'post-context-menu');
   const menuRef = useRef(/** @type {HTMLDivElement | null} */ (null));
   const [mounted, setMounted] = useState(false);
   const [isVisible, setIsVisible] = useState(false);

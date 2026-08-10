@@ -1,6 +1,15 @@
 import React, { memo, useMemo } from 'react';
 import clsx from 'clsx';
-import { getMediaThumbUrl, getMediaUrl, isVideoMediaName, mediaNames, videoPreviewUrl } from '../../lib/media';
+import {
+  getMediaThumbUrl,
+  getMediaUrl,
+  isVideoMediaName,
+  MEDIA_CARD_THUMB,
+  MEDIA_LQIP_THUMB,
+  mediaNames,
+  videoPreviewUrl
+} from '../../lib/media';
+import ProgressiveImage from './ProgressiveImage';
 import { useResolvedExternalMedia } from './useResolvedExternalMedia';
 
 /**
@@ -25,12 +34,14 @@ function PostMedia({
     () =>
       mediaNames(post.media).flatMap((filename, index) => {
         const url = getMediaUrl(post, collection, filename);
-        const thumbUrl = getMediaThumbUrl(post, collection, filename, '800x0');
+        const thumbUrl = getMediaThumbUrl(post, collection, filename, MEDIA_CARD_THUMB);
+        const previewUrl = getMediaThumbUrl(post, collection, filename, MEDIA_LQIP_THUMB);
         return url
           ? [{
             filename,
             url,
             thumbUrl: thumbUrl || url,
+            previewUrl: previewUrl || thumbUrl || url,
             isVideo: isVideoMediaName(filename),
             originKey: `${variant}-${post.id}-${index}`
           }]
@@ -52,6 +63,7 @@ function PostMedia({
   if (items.length === 0) return null;
 
   const count = Math.min(items.length, 5);
+  const singleNativeAspect = count === 1 && !items[0]?.isVideo;
   const openFullscreen = (event, index) => {
     event.stopPropagation();
     const item = items[index];
@@ -63,6 +75,7 @@ function PostMedia({
       className={clsx(
         'telegram-post-media-grid',
         `telegram-post-media-grid--${count}`,
+        singleNativeAspect && 'telegram-post-media-grid--native-aspect',
         variant === 'detail' && 'telegram-post-media-grid--detail',
         className
       )}
@@ -112,13 +125,15 @@ function PostMedia({
         }
 
         const image = (
-          <img
+          <ProgressiveImage
             src={item.thumbUrl}
+            previewSrc={item.previewUrl}
             alt={alt}
             className="telegram-post-media-item"
             loading={index === 0 ? 'eager' : 'lazy'}
-            width="800"
-            height="600"
+            nativeAspect={singleNativeAspect}
+            width={800}
+            height={600}
           />
         );
 

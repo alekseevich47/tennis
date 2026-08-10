@@ -62,12 +62,24 @@ export function saveFramePresets(colors) {
   localStorage.setItem(FRAME_PRESETS_KEY, JSON.stringify(cleaned));
 }
 
+/** Сущности, которые пишет `escapeHtml` / sanitize (без тегов → иначе двойной escape в UI). */
+const ESCAPED_ENTITY_RE = /&(?:amp|lt|gt|quot);/i;
+
 /**
  * @param {string} html
  * @returns {boolean}
  */
 export function looksLikeRichHtml(html) {
   return /<(?:b|strong|i|em|u|a|br|div|p|span)\b/i.test(html || '');
+}
+
+/**
+ * Plain после sanitize без тегов: `hello &quot;x&quot;` — уже безопасный HTML-фрагмент.
+ * @param {string} value
+ * @returns {boolean}
+ */
+export function looksLikeEscapedPlain(value) {
+  return ESCAPED_ENTITY_RE.test(value || '');
 }
 
 /**
@@ -251,7 +263,11 @@ function serializeSanitized(node, prevSibling = null) {
  */
 export function toDisplayHtml(content) {
   if (!content) return '';
-  if (looksLikeRichHtml(content)) return sanitizePostHtml(content);
+  // Rich HTML или уже entity-escaped plain (sanitize без тегов) — один проход sanitize,
+  // иначе `"`/`&`/`<>` показываются как `&quot;` / `&amp;` / `&lt;` / `&gt;`.
+  if (looksLikeRichHtml(content) || looksLikeEscapedPlain(content)) {
+    return sanitizePostHtml(content);
+  }
   return escapeHtml(content).replace(/\n/g, '<br>');
 }
 
