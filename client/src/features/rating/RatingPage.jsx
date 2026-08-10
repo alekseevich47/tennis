@@ -2,8 +2,9 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { usePlayers } from '../../hooks/usePlayers';
 import { isModerator } from '../../services/auth';
 import { createPlayer } from '../../services/catalog';
-import Spinner from '../../components/ui/Spinner';
 import EmptyState from '../../components/ui/EmptyState';
+import PullToRefresh from '../../components/ui/PullToRefresh';
+import { RatingListSkeleton } from '../../components/ui/Skeleton';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import PlayerRow from './PlayerRow';
 import PlayerForm from './PlayerForm';
@@ -14,7 +15,14 @@ import { buildPlayerRanks, getRatingPoints, isRatingVisible } from '../../lib/ra
 import './Rating.css';
 import '../feed/Feed.css';
 
-function RatingPage({ user, onTabChange }) {
+/**
+ * @param {{
+ *   user?: any,
+ *   onTabChange?: (tab: number) => void,
+ *   scrollRef?: React.RefObject<HTMLElement | null>
+ * }} props
+ */
+function RatingPage({ user, onTabChange, scrollRef }) {
   const moderator = isModerator();
   const { alert } = useAlertDialog();
   const { data: players, isLoading, mutate } = usePlayers(
@@ -28,6 +36,9 @@ function RatingPage({ user, onTabChange }) {
   const [sortDir, setSortDir] = useState('asc');
   const [searchQuery, setSearchQuery] = useState('');
 
+  const handleRefresh = useCallback(async () => {
+    await mutate();
+  }, [mutate]);
   const visiblePlayers = useMemo(() => {
     if (!players) return [];
     return players.filter(isRatingVisible);
@@ -156,6 +167,7 @@ function RatingPage({ user, onTabChange }) {
 
   return (
     <section className="rating" aria-label="Рейтинг игроков">
+      {scrollRef ? <PullToRefresh scrollRef={scrollRef} onRefresh={handleRefresh} /> : null}
       <div className="rating-action-bar">
         {!isLoading && visiblePlayers.length > 0 && (
           <div className="rating-search-bar">
@@ -181,7 +193,7 @@ function RatingPage({ user, onTabChange }) {
       </div>
 
       {isLoading ? (
-        <Spinner label="Загрузка рейтинга..." />
+        <RatingListSkeleton />
       ) : visiblePlayers.length === 0 &&
         (!moderator ||
           (hiddenPlayers.length === 0 &&

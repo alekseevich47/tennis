@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { usePinchZoom } from '../../hooks/usePinchZoom';
+import { useOverlayClose } from '../../hooks/useOverlayClose';
 import IconButton from '../../components/ui/IconButton';
 import { videoPreviewUrl } from '../../lib/media';
 
@@ -45,6 +46,7 @@ function FullscreenImageViewer({
   onActiveVideoRef,
   onClose
 }) {
+  useOverlayClose(true, onClose, 'fullscreen');
   const [activeIndex, setActiveIndex] = useState(initialIndex);
   const [swipeOffset, setSwipeOffset] = useState(0);
   const [isSliding, setIsSliding] = useState(false);
