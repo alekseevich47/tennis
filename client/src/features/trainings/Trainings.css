@@ -123,10 +123,16 @@
   min-height: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
+  overscroll-behavior-y: none;
   touch-action: pan-y;
   padding-bottom: 16px;
   position: relative;
+}
+
+.trainings-list-layout .pull-to-refresh__content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .training-row-card {
