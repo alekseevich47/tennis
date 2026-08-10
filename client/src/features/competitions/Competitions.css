@@ -58,6 +58,7 @@
   height: auto;
   overflow-y: auto;
   overflow-anchor: none;
+  overscroll-behavior-y: none;
   position: relative;
   /* Верхний зазор до плашки/контента — как margin-bottom у .pinned-banner */
   padding: 4px 16px 16px;
@@ -70,6 +71,7 @@
   min-height: 0;
   overflow-y: auto;
   overflow-anchor: none;
+  overscroll-behavior-y: none;
   -webkit-overflow-scrolling: touch;
   position: relative;
 }

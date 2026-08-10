@@ -3,24 +3,39 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import './PullToRefresh.css';
 
-const PULL_DEADZONE = 10;
-const PULL_THRESHOLD = 64;
-const PULL_MAX = 110;
+const PULL_DEADZONE = 8;
+const PULL_THRESHOLD = 72;
+const PULL_MAX = 120;
+const REFRESH_HOLD = 56;
+const SPRING_MS = 280;
 
 /**
- * iOS-style pull-to-refresh: индикатор внутри скролл-контейнера (`scrollRef`).
+ * iOS-style pull-to-refresh: контент уезжает вниз, в зазоре проявляется спиннер,
+ * после refresh — пружина обратно.
+ *
+ * Вешать внутрь скролл-контейнера и оборачивать его содержимое; `scrollRef` — сам контейнер.
  *
  * @param {{
  *   scrollRef: React.RefObject<HTMLElement | null>,
  *   onRefresh: () => void | Promise<void>,
- *   enabled?: boolean
+ *   enabled?: boolean,
+ *   children?: React.ReactNode,
+ *   className?: string
  * }} props
  */
-export default function PullToRefresh({ scrollRef, onRefresh, enabled = true }) {
+export default function PullToRefresh({
+  scrollRef,
+  onRefresh,
+  enabled = true,
+  children,
+  className
+}) {
   const [offset, setOffset] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
+  const [springing, setSpringing] = useState(false);
   const offsetRef = useRef(0);
   const refreshingRef = useRef(false);
+  const springTimerRef = useRef(/** @type {number | null} */ (null));
   const gestureRef = useRef(/** @type {null | {
     startY: number,
     startX: number,
@@ -31,16 +46,29 @@ export default function PullToRefresh({ scrollRef, onRefresh, enabled = true }) 
   const onRefreshRef = useRef(onRefresh);
   onRefreshRef.current = onRefresh;
 
-  const setPull = useCallback((value) => {
+  const setPull = useCallback((value, withSpring = false) => {
     offsetRef.current = value;
+    setSpringing(withSpring);
     setOffset(value);
   }, []);
+
+  const springTo = useCallback(
+    (value) => {
+      setPull(value, true);
+      if (springTimerRef.current) window.clearTimeout(springTimerRef.current);
+      springTimerRef.current = window.setTimeout(() => {
+        springTimerRef.current = null;
+        setSpringing(false);
+      }, SPRING_MS);
+    },
+    [setPull]
+  );
 
   const runRefresh = useCallback(async () => {
     if (refreshingRef.current) return;
     refreshingRef.current = true;
     setRefreshing(true);
-    setPull(PULL_THRESHOLD * 0.55);
+    springTo(REFRESH_HOLD);
     try {
       await onRefreshRef.current?.();
     } catch {
@@ -48,9 +76,15 @@ export default function PullToRefresh({ scrollRef, onRefresh, enabled = true }) 
     } finally {
       refreshingRef.current = false;
       setRefreshing(false);
-      setPull(0);
+      springTo(0);
     }
-  }, [setPull]);
+  }, [springTo]);
+
+  useEffect(() => {
+    return () => {
+      if (springTimerRef.current) window.clearTimeout(springTimerRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (!enabled) return undefined;
@@ -99,8 +133,9 @@ export default function PullToRefresh({ scrollRef, onRefresh, enabled = true }) 
       }
 
       const raw = Math.max(0, deltaY - PULL_DEADZONE);
-      const next = raw <= PULL_MAX ? raw * 0.5 : PULL_MAX * 0.5 + (raw - PULL_MAX) * 0.1;
-      setPull(next);
+      const next =
+        raw <= PULL_MAX ? raw * 0.55 : PULL_MAX * 0.55 + (raw - PULL_MAX) * 0.12;
+      setPull(next, false);
       if (event.cancelable) event.preventDefault();
     };
 
@@ -108,14 +143,14 @@ export default function PullToRefresh({ scrollRef, onRefresh, enabled = true }) 
       const gesture = gestureRef.current;
       gestureRef.current = null;
       if (!gesture || gesture.blocked || gesture.horizontal || !gesture.active) {
-        if (!refreshingRef.current) setPull(0);
+        if (!refreshingRef.current && offsetRef.current > 0) springTo(0);
         return;
       }
-      if (offsetRef.current >= PULL_THRESHOLD * 0.5) {
+      if (offsetRef.current >= PULL_THRESHOLD * 0.55) {
         runRefresh();
         return;
       }
-      setPull(0);
+      springTo(0);
     };
 
     el.addEventListener('touchstart', handleStart, { passive: true });
@@ -129,32 +164,39 @@ export default function PullToRefresh({ scrollRef, onRefresh, enabled = true }) 
       el.removeEventListener('touchend', handleEnd);
       el.removeEventListener('touchcancel', handleEnd);
     };
-  }, [enabled, scrollRef, runRefresh, setPull]);
+  }, [enabled, scrollRef, runRefresh, setPull, springTo]);
 
-  const visible = offset > 2 || refreshing;
-  const progress = Math.min(1, offset / (PULL_THRESHOLD * 0.5));
-  const rotation = refreshing ? undefined : progress * 300;
+  const progress = Math.min(1, offset / (PULL_THRESHOLD * 0.55));
+  const showSpinner = offset > 4 || refreshing;
+  const rotation = refreshing ? undefined : progress * 320;
 
   return (
-    <div
-      className={clsx(
-        'pull-to-refresh-indicator',
-        visible && 'pull-to-refresh-indicator--visible',
-        refreshing && 'pull-to-refresh-indicator--spinning'
-      )}
-      style={{
-        transform: `translate3d(-50%, ${8 + offset * 0.35}px, 0)`,
-        opacity: visible ? Math.min(1, 0.25 + progress * 0.75) : 0
-      }}
-      aria-hidden={!visible}
-      role="status"
-      aria-live="polite"
-      aria-label={refreshing ? 'Обновление' : undefined}
-    >
-      <span
-        className="pull-to-refresh-spinner"
-        style={rotation != null ? { transform: `rotate(${rotation}deg)` } : undefined}
-      />
+    <div className={clsx('pull-to-refresh', className)}>
+      <div
+        className={clsx(
+          'pull-to-refresh__slot',
+          springing && 'pull-to-refresh__slot--spring'
+        )}
+        style={{ height: offset }}
+        aria-hidden={!showSpinner}
+      >
+        <div
+          className={clsx(
+            'pull-to-refresh__indicator',
+            refreshing && 'pull-to-refresh__indicator--spinning'
+          )}
+          style={{ opacity: showSpinner ? Math.min(1, 0.2 + progress * 0.8) : 0 }}
+          role="status"
+          aria-live="polite"
+          aria-label={refreshing ? 'Обновление' : undefined}
+        >
+          <span
+            className="pull-to-refresh__spinner"
+            style={rotation != null ? { transform: `rotate(${rotation}deg)` } : undefined}
+          />
+        </div>
+      </div>
+      <div className="pull-to-refresh__content">{children}</div>
     </div>
   );
 }

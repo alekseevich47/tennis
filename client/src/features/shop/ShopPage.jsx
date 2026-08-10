@@ -225,64 +225,65 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
 
   return (
     <section className="shop" ref={containerRef} aria-label="Магазин секции">
-      <PullToRefresh scrollRef={containerRef} onRefresh={handleRefresh} />
-      {moderator && (
-        <div className="floating-btn-wrapper">
-          <button
-            type="button"
-            className={clsx('floating-add-btn', showAddButton ? 'visible' : 'hidden')}
-            onClick={() => setShowAddModal(true)}
-          >
-            Добавить
-          </button>
-        </div>
-      )}
+      <PullToRefresh scrollRef={containerRef} onRefresh={handleRefresh}>
+        {moderator && (
+          <div className="floating-btn-wrapper">
+            <button
+              type="button"
+              className={clsx('floating-add-btn', showAddButton ? 'visible' : 'hidden')}
+              onClick={() => setShowAddModal(true)}
+            >
+              Добавить
+            </button>
+          </div>
+        )}
 
-      <div className={clsx('shop-header-bar-new', isSearchOpen && 'search-open')}>
-        <CategoryDropdown
-          selectedCategoryId={selectedCategoryId}
-          onCategoryChange={setSelectedCategoryId}
-          isSearchOpen={isSearchOpen}
-          onCloseSearch={handleCloseSearchUI}
-          onOpenChange={setIsCategoryDropdownOpen}
-        />
-        <SearchBar
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          isOpen={isSearchOpen}
-          onOpenChange={setIsSearchOpen}
-          onSearchToggle={setIsSearchOpen}
-          onFocusChange={setIsSearchFocused}
-        />
-      </div>
+        <div className={clsx('shop-header-bar-new', isSearchOpen && 'search-open')}>
+          <CategoryDropdown
+            selectedCategoryId={selectedCategoryId}
+            onCategoryChange={setSelectedCategoryId}
+            isSearchOpen={isSearchOpen}
+            onCloseSearch={handleCloseSearchUI}
+            onOpenChange={setIsCategoryDropdownOpen}
+          />
+          <SearchBar
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            isOpen={isSearchOpen}
+            onOpenChange={setIsSearchOpen}
+            onSearchToggle={setIsSearchOpen}
+            onFocusChange={setIsSearchFocused}
+          />
+        </div>
 
-      {isLoading ? (
-        <div className="shop-skeleton-wrap">
-          <ShopGridSkeleton />
-        </div>
-      ) : visibleProducts.length === 0 ? (
-        <EmptyState title="Нет товаров" description="Скоро здесь появятся первые позиции." />
-      ) : (
-        <div className="products-grid">
-          {visibleProducts.map((product) => {
-            const isSoftDeleted =
-              deletedProductIds.includes(product.id) || product.is_deleted === true;
-            return (
-              <ProductCard
-                key={product.id}
-                product={product}
-                isSoftDeleted={isSoftDeleted}
-                moderator={moderator}
-                hiddenMediaKey={hiddenMediaKey}
-                onOpen={openProduct}
-                onDelete={handleDelete}
-                onRestore={handleRestore}
-                onOpenFullscreen={handleOpenFullscreen}
-              />
-            );
-          })}
-        </div>
-      )}
+        {isLoading ? (
+          <div className="shop-skeleton-wrap">
+            <ShopGridSkeleton />
+          </div>
+        ) : visibleProducts.length === 0 ? (
+          <EmptyState title="Нет товаров" description="Скоро здесь появятся первые позиции." />
+        ) : (
+          <div className="products-grid">
+            {visibleProducts.map((product) => {
+              const isSoftDeleted =
+                deletedProductIds.includes(product.id) || product.is_deleted === true;
+              return (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  isSoftDeleted={isSoftDeleted}
+                  moderator={moderator}
+                  hiddenMediaKey={hiddenMediaKey}
+                  onOpen={openProduct}
+                  onDelete={handleDelete}
+                  onRestore={handleRestore}
+                  onOpenFullscreen={handleOpenFullscreen}
+                />
+              );
+            })}
+          </div>
+        )}
+      </PullToRefresh>
 
       <ProductForm
         isOpen={showAddModal}

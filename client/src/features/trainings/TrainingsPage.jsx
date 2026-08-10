@@ -491,32 +491,33 @@ function TrainingsPage({
       </div>
 
       <div className="trainings-list-layout" ref={listScrollRef}>
-        <PullToRefresh scrollRef={listScrollRef} onRefresh={handleRefresh} />
-        {isLoading && <TrainingListSkeleton />}
+        <PullToRefresh scrollRef={listScrollRef} onRefresh={handleRefresh}>
+          {isLoading && <TrainingListSkeleton />}
 
-        {!isLoading && filteredTrainings.length === 0 && (
-          <EmptyState
-            title="Свободный день"
-            description="На этот день тренировок пока не запланировано."
-          />
-        )}
+          {!isLoading && filteredTrainings.length === 0 && (
+            <EmptyState
+              title="Свободный день"
+              description="На этот день тренировок пока не запланировано."
+            />
+          )}
 
-        {filteredTrainings.map((training) => (
-          <TrainingCard
-            key={training.id}
-            training={training}
-            userId={user?.id}
-            userIsModerator={userIsModerator}
-            canSelfBook={canSelfBook}
-            onOpen={handleOpenDetail}
-            onBook={handleBook}
-            onBookUser={handleBookUser}
-            onCancelBooking={handleCancelBooking}
-            onToggleClose={handleToggleClose}
-            onRestore={handleRestore}
-            isDeleting={deletingTrainingIds.has(training.id)}
-          />
-        ))}
+          {filteredTrainings.map((training) => (
+            <TrainingCard
+              key={training.id}
+              training={training}
+              userId={user?.id}
+              userIsModerator={userIsModerator}
+              canSelfBook={canSelfBook}
+              onOpen={handleOpenDetail}
+              onBook={handleBook}
+              onBookUser={handleBookUser}
+              onCancelBooking={handleCancelBooking}
+              onToggleClose={handleToggleClose}
+              onRestore={handleRestore}
+              isDeleting={deletingTrainingIds.has(training.id)}
+            />
+          ))}
+        </PullToRefresh>
       </div>
 
       <CreateTrainingModal

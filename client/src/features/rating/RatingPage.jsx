@@ -165,9 +165,8 @@ function RatingPage({ user, onTabChange, scrollRef }) {
     );
   };
 
-  return (
-    <section className="rating" aria-label="Рейтинг игроков">
-      {scrollRef ? <PullToRefresh scrollRef={scrollRef} onRefresh={handleRefresh} /> : null}
+  const ratingBody = (
+    <>
       <div className="rating-action-bar">
         {!isLoading && visiblePlayers.length > 0 && (
           <div className="rating-search-bar">
@@ -278,6 +277,18 @@ function RatingPage({ user, onTabChange, scrollRef }) {
             </div>
           )}
         </>
+      )}
+    </>
+  );
+
+  return (
+    <section className="rating" aria-label="Рейтинг игроков">
+      {scrollRef ? (
+        <PullToRefresh scrollRef={scrollRef} onRefresh={handleRefresh}>
+          {ratingBody}
+        </PullToRefresh>
+      ) : (
+        ratingBody
       )}
 
       <PlayerForm

@@ -3,6 +3,7 @@
   min-height: 100%;
   overflow-y: auto;
   position: relative;
+  overscroll-behavior-y: none;
   background: #f8f9fa;
   box-sizing: border-box;
 }
