@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTrainings } from '../../hooks/useTrainings';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { useToast } from '../../components/ui/ToastContext';
@@ -17,9 +17,10 @@ import {
   restoreTraining,
   softDeleteTraining
 } from '../../services/trainings';
-import Spinner from '../../components/ui/Spinner';
 import EmptyState from '../../components/ui/EmptyState';
 import IconButton from '../../components/ui/IconButton';
+import PullToRefresh from '../../components/ui/PullToRefresh';
+import { TrainingListSkeleton } from '../../components/ui/Skeleton';
 import CalendarStrip from './CalendarStrip';
 import TrainingCard from './TrainingCard';
 import CreateTrainingModal from './CreateTrainingModal';
@@ -36,6 +37,7 @@ import {
   isSameDay
 } from '../../lib/format';
 import { error } from '../../lib/log';
+import { useSectionScroll } from '../../hooks/useSectionScroll';
 import './Trainings.css';
 
 const DAYS_COUNT = 14;
@@ -67,6 +69,13 @@ function TrainingsPage({
   const { data: trainings, isLoading, mutate } = useTrainings();
   const { alert, confirm } = useAlertDialog();
   const { showToast } = useToast();
+  const listScrollRef = useRef(null);
+
+  useSectionScroll(listScrollRef);
+
+  const handleRefresh = useCallback(async () => {
+    await mutate();
+  }, [mutate]);
 
   // Lazy init — устраняет H2/H6.
   const days = useMemo(() => generateNextDays(DAYS_COUNT), []);
@@ -481,8 +490,9 @@ function TrainingsPage({
         )}
       </div>
 
-      <div className="trainings-list-layout">
-        {isLoading && <Spinner label="Загрузка расписания..." />}
+      <div className="trainings-list-layout" ref={listScrollRef}>
+        <PullToRefresh scrollRef={listScrollRef} onRefresh={handleRefresh} />
+        {isLoading && <TrainingListSkeleton />}
 
         {!isLoading && filteredTrainings.length === 0 && (
           <EmptyState

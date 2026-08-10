@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useMaxAuth } from './hooks/useMaxAuth';
 import { useMaxCloseGuard } from './hooks/useMaxCloseGuard';
 import { useSessionResetKey } from './hooks/useSessionResetKey';
+import { useOverlayClose } from './hooks/useOverlayClose';
 import { isUserBanned, isUserBotBlocked, isModerator, completeOnboarding } from './services/auth';
 import OnboardingTutorial from './features/onboarding/OnboardingTutorial';
 import AppHeader from './components/AppHeader';
@@ -63,22 +64,6 @@ function AppInner() {
     await flushBeforeCloseRef.current?.();
   }, []);
 
-  const {
-    confirmOpen,
-    confirming,
-    cancelCloseConfirm,
-    confirmCloseApp
-  } = useMaxCloseGuard({ enabled: !isLoading, onBeforeClose });
-
-  const closeSheet = (
-    <CloseAppConfirmSheet
-      isOpen={confirmOpen}
-      confirming={confirming}
-      onCancel={cancelCloseConfirm}
-      onConfirm={confirmCloseApp}
-    />
-  );
-
   if (isLoading) {
     return (
       <div className="app-boot">
@@ -89,10 +74,7 @@ function AppInner() {
 
   if (isUserBanned(user) || isUserBotBlocked(user)) {
     return (
-      <div className="app">
-        <BlockedPage user={user} />
-        {closeSheet}
-      </div>
+      <BlockedAppShell user={user} onBeforeClose={onBeforeClose} />
     );
   }
 
@@ -101,13 +83,38 @@ function AppInner() {
       userId={user?.id}
       initialProductIds={getInitialFavoriteProductIds(user)}
     >
-      <AppMain user={user} setUser={setUser} flushBeforeCloseRef={flushBeforeCloseRef} />
-      {closeSheet}
+      <AppMain
+        user={user}
+        setUser={setUser}
+        flushBeforeCloseRef={flushBeforeCloseRef}
+        onBeforeClose={onBeforeClose}
+      />
     </FavoritesProvider>
   );
 }
 
-function AppMain({ user, setUser, flushBeforeCloseRef }) {
+function BlockedAppShell({ user, onBeforeClose }) {
+  const {
+    confirmOpen,
+    confirming,
+    cancelCloseConfirm,
+    confirmCloseApp
+  } = useMaxCloseGuard({ enabled: true, onBeforeClose });
+
+  return (
+    <div className="app">
+      <BlockedPage user={user} />
+      <CloseAppConfirmSheet
+        isOpen={confirmOpen}
+        confirming={confirming}
+        onCancel={cancelCloseConfirm}
+        onConfirm={confirmCloseApp}
+      />
+    </div>
+  );
+}
+
+function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
   const [activeTab, setActiveTab] = useState(0);
   const [membershipOpen, setMembershipOpen] = useState(false);
   const [trainingsReady, setTrainingsReady] = useState(false);
@@ -127,6 +134,55 @@ function AppMain({ user, setUser, flushBeforeCloseRef }) {
   const { data: notifications = [], mutate: mutateNotifications } = useNotifications(user?.id);
   const unreadCount = notifications.filter((item) => !item.is_read).length;
   const sessionResetKey = useSessionResetKey();
+
+  const supportsScrollThenClose =
+    activeTab === 0 ||
+    activeTab === 1 ||
+    activeTab === 2 ||
+    (activeTab === 3 && competitionsSubTab === 'feed');
+  const leaveSectionOnBack =
+    activeTab === GALLERY_TAB_INDEX ||
+    activeTab === PROFILE_TAB_INDEX ||
+    activeTab === ADMIN_TAB_INDEX ||
+    (activeTab === 3 && competitionsSubTab === 'rating');
+
+  const handleLeaveSection = useCallback(() => {
+    setFavoritesDropdownOpen(false);
+    setNotificationsOpen(false);
+    setFeedSearch({ open: false, query: '' });
+    setCompetitionsSearch({ open: false, query: '' });
+    setGallerySearch({ open: false, query: '' });
+    setActiveTab(0);
+  }, []);
+
+  const {
+    confirmOpen,
+    confirming,
+    cancelCloseConfirm,
+    confirmCloseApp
+  } = useMaxCloseGuard({
+    enabled: true,
+    onBeforeClose,
+    supportsScrollThenClose,
+    leaveSectionOnBack,
+    onLeaveSection: handleLeaveSection
+  });
+
+  useOverlayClose(favoritesDropdownOpen, () => setFavoritesDropdownOpen(false), 'favorites');
+  useOverlayClose(notificationsOpen, () => setNotificationsOpen(false), 'notifications');
+
+  const headerSearchOpen =
+    (activeTab === 0 && feedSearch.open) ||
+    (activeTab === 3 && competitionsSubTab === 'feed' && competitionsSearch.open) ||
+    (activeTab === GALLERY_TAB_INDEX && gallerySearch.open);
+
+  const closeHeaderSearch = useCallback(() => {
+    if (activeTab === 0) setFeedSearch({ open: false, query: '' });
+    else if (activeTab === 3) setCompetitionsSearch({ open: false, query: '' });
+    else if (activeTab === GALLERY_TAB_INDEX) setGallerySearch({ open: false, query: '' });
+  }, [activeTab]);
+
+  useOverlayClose(headerSearchOpen, closeHeaderSearch, 'header-search');
 
   // ID-буферы pending soft-delete. Передаются дочерним фичам через колбэки.
   const [pendingDeletePostIds, setPendingDeletePostIds] = useState([]);
@@ -486,6 +542,13 @@ function AppMain({ user, setUser, flushBeforeCloseRef }) {
         onTabChange={handleTabChange}
         showAdmin={userIsModerator}
         user={user}
+      />
+
+      <CloseAppConfirmSheet
+        isOpen={confirmOpen}
+        confirming={confirming}
+        onCancel={cancelCloseConfirm}
+        onConfirm={confirmCloseApp}
       />
     </div>
   );

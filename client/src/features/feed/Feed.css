@@ -362,6 +362,55 @@
   background: #111827;
 }
 
+.progressive-image {
+  position: relative;
+  overflow: hidden;
+}
+
+.progressive-image__layer {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #111827;
+}
+
+.progressive-image__preview,
+.progressive-image__full {
+  opacity: 0;
+  transition: opacity 0.28s ease;
+}
+
+.progressive-image__preview.is-visible {
+  opacity: 1;
+  filter: blur(12px);
+  transform: scale(1.06);
+}
+
+.progressive-image__full.is-visible {
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+
+.progressive-image:not(.progressive-image--single) .progressive-image__full {
+  position: absolute;
+  inset: 0;
+}
+
+.progressive-image:not(.progressive-image--single) .progressive-image__preview {
+  position: relative;
+  z-index: 0;
+}
+
+.progressive-image:not(.progressive-image--single) .progressive-image__full.is-visible {
+  z-index: 1;
+}
+
+.progressive-image--single .progressive-image__full {
+  position: relative;
+}
+
 .telegram-video-preview video {
   pointer-events: none;
 }
@@ -372,6 +421,27 @@
 .telegram-media-grid--1 .telegram-video-preview {
   aspect-ratio: 16 / 10;
   max-height: 320px;
+}
+
+/* Одно фото: соотношение сторон оригинала (после onLoad), без кропа 16/10. */
+.telegram-post-media-grid--native-aspect .telegram-post-media-item.progressive-image {
+  aspect-ratio: 16 / 10;
+  height: auto;
+  min-height: 0;
+  max-height: 320px;
+}
+
+.telegram-post-media-grid--native-aspect .progressive-image__layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #0f172a;
+}
+
+.telegram-post-media-grid--detail.telegram-post-media-grid--native-aspect .telegram-post-media-item.progressive-image {
+  max-height: 420px;
 }
 
 .telegram-post-media-grid--detail .telegram-post-media-item {

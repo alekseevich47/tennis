@@ -9,6 +9,7 @@ import { videoPreviewUrl } from '../../lib/media';
  *   filename: string,
  *   url: string,
  *   thumbUrl: string,
+ *   previewUrl: string,
  *   isVideo: boolean,
  *   originKey: string,
  *   publicUrl: string
@@ -17,6 +18,7 @@ import { videoPreviewUrl } from '../../lib/media';
 
 /**
  * Резолв `posts.external_media` для сетки ленты через серверный прокси → blob URL.
+ * Для фото: сначала preview (LQIP), затем file (резкое отображение / fullscreen).
  *
  * @param {unknown} externalMedia
  * @param {string} originPrefix
@@ -37,37 +39,107 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
     /** @type {string[]} */
     const objectUrls = [];
 
-    Promise.all(
-      stored.map(async (entry, index) => {
-        try {
-          const resolved = await fetchYadiskPreview(entry.publicUrl, {
-            signal: controller.signal
-          });
-          const isVideo = resolved.mediaType === 'video';
-          const kind = isVideo ? 'file' : 'preview';
-          const objectUrl = await fetchYadiskObjectUrl(entry.publicUrl, kind, {
-            signal: controller.signal
-          });
-          objectUrls.push(objectUrl);
-          return {
-            filename: resolved.name || entry.name,
-            url: isVideo ? videoPreviewUrl(objectUrl) : objectUrl,
+    const track = (url) => {
+      objectUrls.push(url);
+      return url;
+    };
+
+    /**
+     * @param {string} originKey
+     * @param {Partial<ResolvedExternalMediaItem>} patch
+     */
+    const patchItem = (originKey, patch) => {
+      if (cancelled) return;
+      setItems((current) =>
+        current.map((item) => (item.originKey === originKey ? { ...item, ...patch } : item))
+      );
+    };
+
+    /**
+     * @param {string} originKey
+     */
+    const dropItem = (originKey) => {
+      if (cancelled) return;
+      setItems((current) => current.filter((item) => item.originKey !== originKey));
+    };
+
+    setItems(
+      stored.map((entry, index) => ({
+        filename: entry.name,
+        url: '',
+        thumbUrl: '',
+        previewUrl: '',
+        isVideo: entry.mediaType === 'video',
+        originKey: `${originPrefix}-ext-${index}`,
+        publicUrl: entry.publicUrl
+      }))
+    );
+
+    stored.forEach(async (entry, index) => {
+      const originKey = `${originPrefix}-ext-${index}`;
+      try {
+        const resolved = await fetchYadiskPreview(entry.publicUrl, {
+          signal: controller.signal
+        });
+        if (cancelled) return;
+
+        const isVideo = resolved.mediaType === 'video';
+        const filename = resolved.name || entry.name;
+
+        if (isVideo) {
+          const objectUrl = track(
+            await fetchYadiskObjectUrl(entry.publicUrl, 'file', {
+              signal: controller.signal
+            })
+          );
+          if (cancelled) return;
+          const display = videoPreviewUrl(objectUrl);
+          patchItem(originKey, {
+            filename,
+            url: display,
             thumbUrl: objectUrl,
-            isVideo,
-            originKey: `${originPrefix}-ext-${index}`,
-            publicUrl: entry.publicUrl
-          };
-        } catch (err) {
-          if (err?.name === 'AbortError') return null;
-          return null;
+            previewUrl: objectUrl,
+            isVideo: true
+          });
+          return;
         }
-      })
-    ).then((results) => {
-      if (cancelled) {
-        objectUrls.forEach((url) => URL.revokeObjectURL(url));
-        return;
+
+        const previewObjectUrl = track(
+          await fetchYadiskObjectUrl(entry.publicUrl, 'preview', {
+            signal: controller.signal
+          })
+        );
+        if (cancelled) return;
+
+        patchItem(originKey, {
+          filename,
+          url: previewObjectUrl,
+          thumbUrl: previewObjectUrl,
+          previewUrl: previewObjectUrl,
+          isVideo: false
+        });
+
+        try {
+          const fileObjectUrl = track(
+            await fetchYadiskObjectUrl(entry.publicUrl, 'file', {
+              signal: controller.signal
+            })
+          );
+          if (cancelled) return;
+          patchItem(originKey, {
+            filename,
+            url: fileObjectUrl,
+            thumbUrl: fileObjectUrl,
+            previewUrl: previewObjectUrl,
+            isVideo: false
+          });
+        } catch (fileErr) {
+          if (fileErr?.name === 'AbortError' || cancelled) return;
+        }
+      } catch (err) {
+        if (err?.name === 'AbortError' || cancelled) return;
+        dropItem(originKey);
       }
-      setItems(results.filter(Boolean));
     });
 
     return () => {
@@ -77,5 +149,5 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
     };
   }, [externalMedia, originPrefix]);
 
-  return items;
+  return items.filter((item) => Boolean(item.url || item.thumbUrl));
 }

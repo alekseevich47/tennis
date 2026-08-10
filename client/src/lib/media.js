@@ -3,6 +3,12 @@ import { MEDIA_BASE_URL } from '../config';
 
 export const MAX_POST_MEDIA_FILES = 5;
 
+/** Крошечный thumb для LQIP (progressive preview в ленте). */
+export const MEDIA_LQIP_THUMB = '100x0';
+
+/** Thumb карточки / сетки (после LQIP). */
+export const MEDIA_CARD_THUMB = '800x0';
+
 /**
  * @typedef {{ id: string, collectionId?: string, collectionName?: string }} BaseRecord
  */
@@ -36,7 +42,7 @@ export function getMediaThumbUrl(
   record,
   collectionFallback,
   fileField,
-  thumb = '800x0'
+  thumb = MEDIA_CARD_THUMB
 ) {
   const url = getMediaUrl(record, collectionFallback, fileField);
   if (!url) return null;

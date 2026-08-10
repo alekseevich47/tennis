@@ -10,8 +10,8 @@
     "semantic_hash": ""
   },
   "src/App.jsx": {
-    "mtime": 1786320333.18943,
-    "ast_hash": "8e1c6656ce386554b2c9249abe20cf6e",
+    "mtime": 1786110074.8360906,
+    "ast_hash": "9f78e87fedfcaa8823686c469eff3716",
     "semantic_hash": ""
   },
   "src/components/AchievementsBlock.jsx": {
@@ -20,12 +20,12 @@
     "semantic_hash": ""
   },
   "src/components/AppHeader.jsx": {
-    "mtime": 1786319148.7966752,
+    "mtime": 1786110074.8347335,
     "ast_hash": "622f37b53e357b9dcee2e4a57fb610dd",
     "semantic_hash": ""
   },
   "src/components/AvatarCropModal.jsx": {
-    "mtime": 1786319148.7966752,
+    "mtime": 1786110074.8360906,
     "ast_hash": "a5f97ceb0a531f5ce31a9216fa871c9a",
     "semantic_hash": ""
   },
@@ -95,8 +95,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/Modal.jsx": {
-    "mtime": 1786320258.600804,
-    "ast_hash": "77d88203d710a204c6f4ca647ce481e7",
+    "mtime": 1784974946.3945925,
+    "ast_hash": "a80203ca18e1ad4ca7c35264b176511e",
     "semantic_hash": ""
   },
   "src/components/ui/ScrollToTopButton.jsx": {
@@ -215,8 +215,8 @@
     "semantic_hash": ""
   },
   "src/features/competitions/CompetitionsPage.jsx": {
-    "mtime": 1786320396.4851863,
-    "ast_hash": "1bd64fc8577613b1dccd46c6c57899e4",
+    "mtime": 1785820330.4323337,
+    "ast_hash": "a8aecea81e0ea2b8c071d7f0624d1e5e",
     "semantic_hash": ""
   },
   "src/features/competitions/CreateTournamentPostModal.jsx": {
@@ -295,8 +295,8 @@
     "semantic_hash": ""
   },
   "src/features/feed/FeedPage.jsx": {
-    "mtime": 1786320353.4426854,
-    "ast_hash": "4cc93b9eec944d1beac0d580d649616a",
+    "mtime": 1785820326.7267258,
+    "ast_hash": "7ddc18f3350df72878d6c6901f4dee92",
     "semantic_hash": ""
   },
   "src/features/feed/FrameColorPicker.jsx": {
@@ -305,8 +305,8 @@
     "semantic_hash": ""
   },
   "src/features/feed/FullscreenImageViewer.jsx": {
-    "mtime": 1786320259.8836207,
-    "ast_hash": "0694f3663a60ab8fcb2ef2d9f1ffeacf",
+    "mtime": 1783532986.616243,
+    "ast_hash": "db3dc6b743d7ff38be11277df4904434",
     "semantic_hash": ""
   },
   "src/features/feed/MediaPreviewGrid.jsx": {
@@ -330,8 +330,8 @@
     "semantic_hash": ""
   },
   "src/features/feed/PostContextMenu.jsx": {
-    "mtime": 1786320261.589343,
-    "ast_hash": "ab73b510e26ad3b4f45b63eeb5f7c40b",
+    "mtime": 1785029686.3218505,
+    "ast_hash": "1773b7ff6ed914c7756e8897b764c87f",
     "semantic_hash": ""
   },
   "src/features/feed/PostDetailModal.jsx": {
@@ -360,8 +360,8 @@
     "semantic_hash": ""
   },
   "src/features/feed/postRichText.js": {
-    "mtime": 1786320227.924086,
-    "ast_hash": "f3d991363a20a7119d7aa0abe86fda12",
+    "mtime": 1785042270.0834246,
+    "ast_hash": "e12d2748ca32314f6465a8ed757a112c",
     "semantic_hash": ""
   },
   "src/features/feed/useLocalMediaFullscreen.js": {
@@ -405,12 +405,12 @@
     "semantic_hash": ""
   },
   "src/features/notifications/NotificationCard.jsx": {
-    "mtime": 1786319148.7966752,
+    "mtime": 1786110074.844126,
     "ast_hash": "8b8687bfbbeacb424c3cf4b901cfbe88",
     "semantic_hash": ""
   },
   "src/features/notifications/NotificationsDropdown.jsx": {
-    "mtime": 1786319148.7966752,
+    "mtime": 1786110074.8360906,
     "ast_hash": "ac368ef203565a02133942132b6ad4cd",
     "semantic_hash": ""
   },
@@ -440,7 +440,7 @@
     "semantic_hash": ""
   },
   "src/features/profile/MembershipModal.jsx": {
-    "mtime": 1786319148.7966752,
+    "mtime": 1786110074.83815,
     "ast_hash": "6acd75fc99c60167959971b728d765b5",
     "semantic_hash": ""
   },
@@ -455,7 +455,7 @@
     "semantic_hash": ""
   },
   "src/features/profile/ProfilePage.jsx": {
-    "mtime": 1786319148.7966752,
+    "mtime": 1786110074.8334832,
     "ast_hash": "04a44073c66993c9af23290f69135388",
     "semantic_hash": ""
   },
@@ -485,8 +485,8 @@
     "semantic_hash": ""
   },
   "src/features/rating/RatingPage.jsx": {
-    "mtime": 1786320399.6651504,
-    "ast_hash": "326647331263e337e674d166372cebd6",
+    "mtime": 1786114765.086052,
+    "ast_hash": "2ac2697df1aef36e429e895cc005b6d0",
     "semantic_hash": ""
   },
   "src/features/shop/BuyButton.jsx": {
@@ -495,8 +495,8 @@
     "semantic_hash": ""
   },
   "src/features/shop/CategoryDropdown.jsx": {
-    "mtime": 1786320364.615078,
-    "ast_hash": "59dd29b27eaf5d75d72c2edf67ae0911",
+    "mtime": 1781357772.828737,
+    "ast_hash": "fd605e324288735f8e0245caf6b4dcbf",
     "semantic_hash": ""
   },
   "src/features/shop/FavoriteIcon.jsx": {
@@ -520,7 +520,7 @@
     "semantic_hash": ""
   },
   "src/features/shop/ProductForm.jsx": {
-    "mtime": 1786319148.7966752,
+    "mtime": 1786110074.8360906,
     "ast_hash": "bfbba550b8cd88c61f655fea81c74f03",
     "semantic_hash": ""
   },
@@ -530,8 +530,8 @@
     "semantic_hash": ""
   },
   "src/features/shop/ShopPage.jsx": {
-    "mtime": 1786320361.207967,
-    "ast_hash": "7169a4ec501d37ff561ab7a31eb51bb6",
+    "mtime": 1785820330.6996448,
+    "ast_hash": "06b58ffea31bfe75113c65c4fd635555",
     "semantic_hash": ""
   },
   "src/features/shop/buyMessage.js": {
@@ -560,8 +560,8 @@
     "semantic_hash": ""
   },
   "src/features/trainings/TrainingsPage.jsx": {
-    "mtime": 1786320379.083828,
-    "ast_hash": "0d5107b81dfda2fc26dd0685dfd5bcc2",
+    "mtime": 1783694698.7614353,
+    "ast_hash": "908303e7c30da0acbe6b46f439d0006f",
     "semantic_hash": ""
   },
   "src/features/trainings/components/ArchiveModal.jsx": {
@@ -640,8 +640,8 @@
     "semantic_hash": ""
   },
   "src/hooks/useMaxCloseGuard.js": {
-    "mtime": 1786320288.7921004,
-    "ast_hash": "bf30a286a3b5bb01b72400df96f897e3",
+    "mtime": 1785817601.2922473,
+    "ast_hash": "551bdfc9bd41a81dd5f13b575a759d57",
     "semantic_hash": ""
   },
   "src/hooks/useOnboarding.js": {
@@ -795,7 +795,7 @@
     "semantic_hash": ""
   },
   "src/services/notifications.js": {
-    "mtime": 1786319148.7966752,
+    "mtime": 1786110074.8360906,
     "ast_hash": "737e81ab5217d3163029819c97e84528",
     "semantic_hash": ""
   },
@@ -1007,36 +1007,6 @@
   "src/assets/sm.png": {
     "mtime": 1779634796.113677,
     "ast_hash": "1b688d2e5709aa3d66fa198afa86ea49",
-    "semantic_hash": ""
-  },
-  "src/components/ui/PullToRefresh.jsx": {
-    "mtime": 1786320301.4809573,
-    "ast_hash": "06fd6a4f381397ee64e147cb24dde6f2",
-    "semantic_hash": ""
-  },
-  "src/components/ui/Skeleton.jsx": {
-    "mtime": 1786320310.2256029,
-    "ast_hash": "fa8656d6834e9df1ccd20006e374c914",
-    "semantic_hash": ""
-  },
-  "src/hooks/useOverlayClose.js": {
-    "mtime": 1786320231.154524,
-    "ast_hash": "0ec5fd73505511063734fc132c94ae73",
-    "semantic_hash": ""
-  },
-  "src/hooks/useSectionScroll.js": {
-    "mtime": 1786320237.416889,
-    "ast_hash": "94451a6e19a131ca1f65e554e92d4c75",
-    "semantic_hash": ""
-  },
-  "src/lib/overlayStack.js": {
-    "mtime": 1786320229.1744585,
-    "ast_hash": "572b12bdce4faff196be9944c91358c3",
-    "semantic_hash": ""
-  },
-  "src/lib/sectionScroll.js": {
-    "mtime": 1786320231.5924098,
-    "ast_hash": "c5f98b12a5bed2312a9edcc51d12d207",
     "semantic_hash": ""
   }
 }

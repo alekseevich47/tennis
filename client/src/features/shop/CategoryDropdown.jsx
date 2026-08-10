@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { useProductCategories } from '../../hooks/useProductCategories';
+import { useOverlayClose } from '../../hooks/useOverlayClose';
 import './CategoryDropdown.css';
 
 const PLACEHOLDER = 'Все категории';
@@ -36,6 +37,8 @@ export default function CategoryDropdown({
   const [isLabelVisible, setIsLabelVisible] = useState(true);
   const [isExpandingFromSearch, setIsExpandingFromSearch] = useState(false);
   const { data: categories = [] } = useProductCategories();
+
+  useOverlayClose(isOpen, () => setIsOpen(false), 'shop-category');
 
   const selectedCategoryName = useMemo(() => {
     if (!selectedCategoryId) return PLACEHOLDER;

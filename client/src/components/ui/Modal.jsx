@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useId, useLayoutEffect, useRef } from 'react';
 import clsx from 'clsx';
 import IconButton from './IconButton';
+import { useOverlayClose } from '../../hooks/useOverlayClose';
 import './Modal.css';
 
 const FOCUSABLE_SELECTORS = [
@@ -48,6 +49,8 @@ function Modal({
   const titleId = useId();
   const dialogRef = useRef(null);
   const previousActiveRef = useRef(null);
+
+  useOverlayClose(Boolean(isOpen), onClose);
 
   // ESC handler.
   useEffect(() => {

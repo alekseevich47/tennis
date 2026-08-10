@@ -71,6 +71,7 @@
   overflow-y: auto;
   overflow-anchor: none;
   -webkit-overflow-scrolling: touch;
+  position: relative;
 }
 
 .competitions-feed-list {
