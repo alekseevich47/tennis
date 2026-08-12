@@ -265,10 +265,83 @@ export function toDisplayHtml(content) {
   if (!content) return '';
   // Rich HTML или уже entity-escaped plain (sanitize без тегов) — один проход sanitize,
   // иначе `"`/`&`/`<>` показываются как `&quot;` / `&amp;` / `&lt;` / `&gt;`.
+  let html;
   if (looksLikeRichHtml(content) || looksLikeEscapedPlain(content)) {
-    return sanitizePostHtml(content);
+    html = sanitizePostHtml(content);
+  } else {
+    html = escapeHtml(content).replace(/\n/g, '<br>');
   }
-  return escapeHtml(content).replace(/\n/g, '<br>');
+  return linkifyPlainUrls(html);
+}
+
+/** http(s)://… или www.… */
+const AUTOLINK_RE = /\b(?:https?:\/\/|www\.)[^\s<>"'`]+/gi;
+
+/**
+ * Bare URL / www.… в тексте → кликабельные `<a>` (не трогает уже существующие ссылки).
+ * @param {string} html
+ * @returns {string}
+ */
+export function linkifyPlainUrls(html) {
+  if (!html) return '';
+  const doc = new DOMParser().parseFromString(`<div id="__linkify_root">${html}</div>`, 'text/html');
+  const root = doc.getElementById('__linkify_root');
+  if (!root) return html;
+
+  const walker = doc.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  /** @type {Text[]} */
+  const textNodes = [];
+  let node = walker.nextNode();
+  while (node) {
+    textNodes.push(/** @type {Text} */ (node));
+    node = walker.nextNode();
+  }
+
+  for (const textNode of textNodes) {
+    if (!textNode.parentElement) continue;
+    if (textNode.parentElement.closest('a')) continue;
+    const raw = textNode.textContent || '';
+    AUTOLINK_RE.lastIndex = 0;
+    if (!AUTOLINK_RE.test(raw)) continue;
+    AUTOLINK_RE.lastIndex = 0;
+
+    const frag = doc.createDocumentFragment();
+    let last = 0;
+    let match;
+    while ((match = AUTOLINK_RE.exec(raw)) !== null) {
+      const start = match.index;
+      const full = match[0];
+      let urlText = full;
+      let trailing = '';
+      while (urlText && /[.,;:!?)]+$/.test(urlText)) {
+        trailing = urlText.slice(-1) + trailing;
+        urlText = urlText.slice(0, -1);
+      }
+      if (start > last) {
+        frag.appendChild(doc.createTextNode(raw.slice(last, start)));
+      }
+      const href = urlText ? normalizeHref(urlText) : null;
+      if (href && urlText) {
+        const a = doc.createElement('a');
+        a.setAttribute('href', href);
+        a.setAttribute('target', '_blank');
+        a.setAttribute('rel', 'noopener noreferrer');
+        a.textContent = urlText;
+        frag.appendChild(a);
+      } else {
+        frag.appendChild(doc.createTextNode(full));
+        trailing = '';
+      }
+      if (trailing) frag.appendChild(doc.createTextNode(trailing));
+      last = start + full.length;
+    }
+    if (last < raw.length) {
+      frag.appendChild(doc.createTextNode(raw.slice(last)));
+    }
+    textNode.parentNode?.replaceChild(frag, textNode);
+  }
+
+  return root.innerHTML;
 }
 
 /**
@@ -394,9 +467,10 @@ export function getLinkDraftFromSelection(editor) {
  * Вставка / обновление гиперссылки на месте выделения.
  * @param {{ href: string, title: string }} payload
  * @param {HTMLElement} editor
+ * @param {Range | null} [preferredRange]
  * @returns {boolean}
  */
-export function applyHyperlink(payload, editor) {
+export function applyHyperlink(payload, editor, preferredRange = null) {
   const href = normalizeHref(payload.href);
   const title = String(payload.title || '').replace(/[\u200B\u00A0]/g, '').trim();
   if (!href || !title || !editor) return false;
@@ -405,10 +479,18 @@ export function applyHyperlink(payload, editor) {
   if (!selection) return false;
   editor.focus({ preventScroll: true });
 
-  let range;
-  if (selection.rangeCount > 0 && editor.contains(selection.anchorNode)) {
+  let range = null;
+  if (preferredRange) {
+    try {
+      range = preferredRange.cloneRange();
+    } catch {
+      range = null;
+    }
+  }
+  if (!range && selection.rangeCount > 0 && editor.contains(selection.anchorNode)) {
     range = selection.getRangeAt(0);
-  } else {
+  }
+  if (!range) {
     range = document.createRange();
     range.selectNodeContents(editor);
     range.collapse(false);

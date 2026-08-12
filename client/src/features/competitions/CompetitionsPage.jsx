@@ -430,6 +430,7 @@ function CompetitionsPage({
           >
             {moderator && (
               <FloatingAddButton
+                variant="liquid"
                 visible={isChromeVisible}
                 onClick={() => setShowCreatePost(true)}
               />

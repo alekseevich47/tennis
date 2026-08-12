@@ -57,7 +57,7 @@
   "55": "Touch UI Performance",
   "56": "PostDetailModal.jsx",
   "57": "log.js",
-  "58": "catalog.js",
+  "58": "achievements.js",
   "59": "FeedPage.jsx",
   "60": "maxauthlib.js",
   "61": "error",
@@ -69,11 +69,10 @@
   "67": "RatingPage.jsx",
   "68": "GalleryCommentModal.jsx",
   "69": "PullToRefresh.jsx",
-  "70": "format.js",
+  "70": "PostContentHtml.jsx",
   "71": "Skeleton.jsx",
   "72": "claimlib.js",
   "73": "tournamentComments.js",
   "74": "Avatar.jsx",
-  "75": "users_claim.pb.js",
-  "76": "usePinnedBannerIndex.js"
+  "75": "users_claim.pb.js"
 }
