@@ -10,6 +10,7 @@ import {
   videoPreviewUrl
 } from '../../lib/media';
 import ProgressiveImage from './ProgressiveImage';
+import AlbumStackBadge from './AlbumStackBadge';
 import { useResolvedExternalMedia } from './useResolvedExternalMedia';
 
 /**
@@ -44,7 +45,10 @@ function PostMedia({
             previewUrl: previewUrl || thumbUrl || url,
             isVideo: isVideoMediaName(filename),
             originKey: `${variant}-${post.id}-${index}`,
-            isLoading: false
+            isLoading: false,
+            isAlbumCover: false,
+            albumId: null,
+            albumCount: 0
           }]
           : [];
       }),
@@ -56,19 +60,46 @@ function PostMedia({
     `${variant}-${post.id}`
   );
 
-  const items = useMemo(
-    () => [...fileItems, ...externalItems].slice(0, 5),
-    [fileItems, externalItems]
+  const albumId = useMemo(
+    () => externalItems.find((item) => item.albumId)?.albumId || null,
+    [externalItems]
   );
+
+  const albumItems = useMemo(
+    () => (albumId ? externalItems.filter((item) => item.albumId === albumId) : []),
+    [albumId, externalItems]
+  );
+
+  const items = useMemo(() => {
+    if (albumId) {
+      const cover = albumItems.find((item) => item.isAlbumCover) || albumItems[0];
+      return cover ? [cover] : [];
+    }
+    return [...fileItems, ...externalItems.filter((item) => !item.albumId)].slice(0, 5);
+  }, [albumId, albumItems, fileItems, externalItems]);
 
   if (items.length === 0) return null;
 
   const count = Math.min(items.length, 5);
-  const singleNativeAspect = count === 1 && !items[0]?.isVideo;
+  const singleNativeAspect = count === 1 && !items[0]?.isVideo && !items[0]?.albumId;
   const openFullscreen = (event, index) => {
     event.stopPropagation();
     const item = items[index];
     if (!item?.url || item.isLoading) return;
+
+    if (item.albumId) {
+      const readyAlbum = albumItems.filter((entry) => entry.url && !entry.isLoading);
+      if (!readyAlbum.length) return;
+      const readyIndex = readyAlbum.findIndex((entry) => entry.originKey === item.originKey);
+      onOpenFullscreen?.(
+        readyAlbum,
+        Math.max(0, readyIndex),
+        event.currentTarget.getBoundingClientRect(),
+        item.originKey
+      );
+      return;
+    }
+
     const readyItems = items.filter((entry) => entry.url && !entry.isLoading);
     const readyIndex = readyItems.findIndex((entry) => entry.originKey === item.originKey);
     if (readyIndex < 0) return;
@@ -93,6 +124,7 @@ function PostMedia({
       {items.map((item, index) => {
         const alt = `Медиа ${index + 1} к посту от ${post.created}`;
         const pending = Boolean(item.isLoading) || (!item.url && !item.thumbUrl);
+        const showAlbumBadge = Boolean(item.albumId);
 
         if (item.isVideo) {
           if (pending) {
@@ -125,6 +157,7 @@ function PostMedia({
             return (
               <div key={item.originKey || item.filename} className="post-media-static">
                 {video}
+                {showAlbumBadge ? <AlbumStackBadge /> : null}
               </div>
             );
           }
@@ -139,10 +172,15 @@ function PostMedia({
               )}
               data-media-origin-key={item.originKey}
               onClick={(event) => openFullscreen(event, index)}
-              aria-label={`Открыть видео ${index + 1} на весь экран`}
+              aria-label={
+                showAlbumBadge
+                  ? `Открыть альбом на весь экран`
+                  : `Открыть видео ${index + 1} на весь экран`
+              }
             >
               {video}
               <span className="post-media-play-badge" aria-hidden="true">▶</span>
+              {showAlbumBadge ? <AlbumStackBadge /> : null}
             </button>
           );
         }
@@ -169,6 +207,7 @@ function PostMedia({
               aria-label={pending ? 'Загрузка изображения' : undefined}
             >
               {image}
+              {showAlbumBadge && !pending ? <AlbumStackBadge /> : null}
             </div>
           );
         }
@@ -183,9 +222,14 @@ function PostMedia({
             )}
             data-media-origin-key={item.originKey}
             onClick={(event) => openFullscreen(event, index)}
-            aria-label={`Открыть медиа ${index + 1} на весь экран`}
+            aria-label={
+              showAlbumBadge
+                ? 'Открыть альбом на весь экран'
+                : `Открыть медиа ${index + 1} на весь экран`
+            }
           >
             {image}
+            {showAlbumBadge ? <AlbumStackBadge /> : null}
           </button>
         );
       })}

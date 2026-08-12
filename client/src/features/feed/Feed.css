@@ -564,6 +564,44 @@
   }
 }
 
+.album-stack-badge {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 3;
+  width: 28px;
+  height: 24px;
+  pointer-events: none;
+}
+
+.album-stack-badge__rect {
+  position: absolute;
+  width: 16px;
+  height: 12px;
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.25);
+  background: transparent;
+}
+
+.album-stack-badge__rect--back {
+  left: 8px;
+  top: 0;
+  opacity: 0.55;
+}
+
+.album-stack-badge__rect--mid {
+  left: 4px;
+  top: 4px;
+  opacity: 0.8;
+}
+
+.album-stack-badge__rect--front {
+  left: 0;
+  top: 8px;
+  opacity: 1;
+}
+
 .media-remove-btn {
   position: absolute;
   top: 8px;
@@ -756,6 +794,11 @@ button.post-card-like:hover:not(:disabled) {
   align-items: stretch;
 }
 
+/* Поверх create/edit-модалки (оба `.ui-modal-overlay` = 2000). */
+.post-link-modal-overlay {
+  z-index: 3600;
+}
+
 .create-post-modal {
   max-width: 100%;
   width: 100%;
@@ -853,6 +896,12 @@ button.post-card-like:hover:not(:disabled) {
   border-radius: 10px;
   font-size: 15px;
   margin-bottom: 4px;
+}
+
+.post-link-form__error {
+  margin: 0 0 4px;
+  font-size: 13px;
+  color: #ff3b30;
 }
 
 .post-link-form__actions {

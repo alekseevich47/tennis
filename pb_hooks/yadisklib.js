@@ -7,6 +7,9 @@ var PUBLIC_DOWNLOAD_URL = 'https://cloud-api.yandex.net/v1/disk/public/resources
 var YADISK_URL_RE =
   /^https?:\/\/(?:disk\.yandex\.(?:ru|com(?:\.tr)?)|yadi\.sk)\/(?:i|d|public)\/[^\s?#]+/i;
 
+var LIST_LIMIT = 100;
+var MAX_ALBUM_DEPTH = 24;
+
 /**
  * @param {string} raw
  * @returns {string}
@@ -16,6 +19,21 @@ function normalizePublicUrl(raw) {
   var trimmed = raw.trim();
   trimmed = trimmed.replace(/[),.\]>'"]+$/g, '');
   return trimmed;
+}
+
+/**
+ * @param {string} raw
+ * @returns {string}
+ */
+function normalizePath(raw) {
+  if (!raw || typeof raw !== 'string') return '';
+  var path = raw.trim();
+  if (!path || path === '/') return '';
+  if (path.indexOf('disk:') === 0) {
+    path = path.slice(5);
+  }
+  if (path.charAt(0) !== '/') path = '/' + path;
+  return path;
 }
 
 /**
@@ -64,24 +82,60 @@ function guessContentType(item) {
 
 /**
  * @param {string} publicUrl
- * @returns {{ status?: number, error?: string, item?: object }}
+ * @param {string} [path]
+ * @returns {string}
  */
-function resolvePublicResource(publicUrl) {
-  var url = normalizePublicUrl(publicUrl);
-  if (!isYadiskPublicUrl(url)) {
-    return { status: 400, error: 'Некорректная ссылка Яндекс.Диска' };
+function buildMetaUrl(publicUrl, path) {
+  var url =
+    PUBLIC_META_URL +
+    '?public_key=' +
+    encodeURIComponent(publicUrl) +
+    '&preview_size=XL';
+  var normalizedPath = normalizePath(path || '');
+  if (normalizedPath) {
+    url += '&path=' + encodeURIComponent(normalizedPath);
+  }
+  return url;
+}
+
+/**
+ * @param {string} publicUrl
+ * @param {string} [path]
+ * @returns {string}
+ */
+function buildDownloadUrl(publicUrl, path) {
+  var url = PUBLIC_DOWNLOAD_URL + '?public_key=' + encodeURIComponent(publicUrl);
+  var normalizedPath = normalizePath(path || '');
+  if (normalizedPath) {
+    url += '&path=' + encodeURIComponent(normalizedPath);
+  }
+  return url;
+}
+
+/**
+ * @param {string} publicUrl
+ * @param {string} [path]
+ * @param {number} [offset]
+ * @param {number} [limit]
+ * @returns {{ status?: number, error?: string, resource?: object }}
+ */
+function fetchPublicResource(publicUrl, path, offset, limit) {
+  var url = buildMetaUrl(publicUrl, path);
+  if (typeof offset === 'number' && offset > 0) {
+    url += '&offset=' + offset;
+  }
+  if (typeof limit === 'number' && limit > 0) {
+    url += '&limit=' + limit;
+  } else {
+    url += '&limit=' + LIST_LIMIT;
   }
 
   var metaRes;
   try {
     metaRes = $http.send({
       method: 'GET',
-      url:
-        PUBLIC_META_URL +
-        '?public_key=' +
-        encodeURIComponent(url) +
-        '&preview_size=XL',
-      timeout: 12
+      url: url,
+      timeout: 20
     });
   } catch (err) {
     return { status: 502, error: 'Не удалось связаться с Яндекс.Диском' };
@@ -94,33 +148,44 @@ function resolvePublicResource(publicUrl) {
     return { status: 502, error: 'Яндекс.Диск вернул ошибку (' + metaRes.statusCode + ')' };
   }
 
-  var resource = metaRes.json;
-  if (resource.type === 'dir') {
-    return {
-      status: 400,
-      error: 'Нужна ссылка на файл (фото/видео), не на папку'
-    };
-  }
+  return { resource: metaRes.json };
+}
 
+/**
+ * @param {string} publicUrl
+ * @param {string} [path]
+ * @returns {string}
+ */
+function fetchDownloadHref(publicUrl, path) {
+  try {
+    var dlRes = $http.send({
+      method: 'GET',
+      url: buildDownloadUrl(publicUrl, path),
+      timeout: 12
+    });
+    if (dlRes.statusCode === 200 && dlRes.json && dlRes.json.href) {
+      return String(dlRes.json.href);
+    }
+  } catch (dlErr) {
+    // preview может хватить для фото
+  }
+  return '';
+}
+
+/**
+ * @param {object} resource
+ * @param {string} publicUrl
+ * @param {string} [path]
+ * @returns {{ status?: number, error?: string, item?: object }}
+ */
+function buildFileItem(resource, publicUrl, path) {
   var kind = detectMediaKind(resource);
   if (!kind) {
     return { status: 400, error: 'Поддерживаются только фото и видео' };
   }
 
-  var fileUrl = '';
-  try {
-    var dlRes = $http.send({
-      method: 'GET',
-      url: PUBLIC_DOWNLOAD_URL + '?public_key=' + encodeURIComponent(url),
-      timeout: 12
-    });
-    if (dlRes.statusCode === 200 && dlRes.json && dlRes.json.href) {
-      fileUrl = String(dlRes.json.href);
-    }
-  } catch (dlErr) {
-    // preview может хватить для фото
-  }
-
+  var normalizedPath = normalizePath(path || '');
+  var fileUrl = fetchDownloadHref(publicUrl, normalizedPath);
   var previewUrl = resource.preview ? String(resource.preview) : '';
   if (!previewUrl && kind === 'image') {
     previewUrl = fileUrl;
@@ -131,9 +196,11 @@ function resolvePublicResource(publicUrl) {
 
   return {
     item: {
+      type: 'file',
       source: 'yadisk',
-      publicUrl: url,
-      publicKey: resource.public_key ? String(resource.public_key) : url,
+      publicUrl: publicUrl,
+      path: normalizedPath || null,
+      publicKey: resource.public_key ? String(resource.public_key) : publicUrl,
       name: resource.name ? String(resource.name) : 'media',
       mediaType: kind,
       mimeType: resource.mime_type ? String(resource.mime_type) : '',
@@ -145,16 +212,141 @@ function resolvePublicResource(publicUrl) {
 }
 
 /**
+ * Рекурсивный обход публичной папки → список медиа-файлов.
+ *
+ * @param {string} publicUrl
+ * @param {string} path
+ * @param {number} depth
+ * @param {Array} out
+ * @returns {{ status?: number, error?: string } | null}
+ */
+function collectAlbumItems(publicUrl, path, depth, out) {
+  if (depth > MAX_ALBUM_DEPTH) return null;
+
+  var offset = 0;
+  var total = Infinity;
+
+  while (offset < total) {
+    var listed = fetchPublicResource(publicUrl, path, offset, LIST_LIMIT);
+    if (listed.error) return listed;
+
+    var resource = listed.resource;
+    var embedded = resource && resource._embedded ? resource._embedded : null;
+    var items = embedded && Array.isArray(embedded.items) ? embedded.items : [];
+    total =
+      embedded && typeof embedded.total === 'number' ? embedded.total : items.length + offset;
+
+    for (var i = 0; i < items.length; i++) {
+      var child = items[i];
+      if (!child) continue;
+      var childPath = child.path ? String(child.path) : '';
+      if (!childPath && child.name) {
+        childPath = (path || '') + '/' + String(child.name);
+        childPath = normalizePath(childPath);
+      }
+
+      if (child.type === 'dir') {
+        var nested = collectAlbumItems(publicUrl, childPath, depth + 1, out);
+        if (nested && nested.error) return nested;
+        continue;
+      }
+
+      var kind = detectMediaKind(child);
+      if (!kind) continue;
+
+      out.push({
+        path: normalizePath(childPath),
+        name: child.name ? String(child.name) : 'media',
+        mediaType: kind,
+        mimeType: child.mime_type ? String(child.mime_type) : '',
+        size: typeof child.size === 'number' ? child.size : null
+      });
+    }
+
+    offset += items.length;
+    if (!items.length) break;
+  }
+
+  return null;
+}
+
+/**
+ * @param {string} publicUrl
+ * @returns {{ status?: number, error?: string, item?: object }}
+ */
+function resolvePublicAlbum(publicUrl) {
+  var listed = fetchPublicResource(publicUrl, '', 0, 1);
+  if (listed.error) return listed;
+
+  var root = listed.resource;
+  if (!root || root.type !== 'dir') {
+    return { status: 400, error: 'Нужна ссылка на папку (альбом)' };
+  }
+
+  /** @type {Array} */
+  var items = [];
+  var walkError = collectAlbumItems(publicUrl, '', 0, items);
+  if (walkError && walkError.error) return walkError;
+
+  if (!items.length) {
+    return { status: 400, error: 'В папке нет фото или видео' };
+  }
+
+  return {
+    item: {
+      type: 'album',
+      source: 'yadisk',
+      publicUrl: publicUrl,
+      publicKey: root.public_key ? String(root.public_key) : publicUrl,
+      name: root.name ? String(root.name) : 'Альбом',
+      mediaType: items[0].mediaType,
+      items: items,
+      cover: items[0]
+    }
+  };
+}
+
+/**
+ * @param {string} publicUrl
+ * @param {string} [path]
+ * @returns {{ status?: number, error?: string, item?: object }}
+ */
+function resolvePublicResource(publicUrl, path) {
+  var url = normalizePublicUrl(publicUrl);
+  if (!isYadiskPublicUrl(url)) {
+    return { status: 400, error: 'Некорректная ссылка Яндекс.Диска' };
+  }
+
+  var normalizedPath = normalizePath(path || '');
+  var fetched = fetchPublicResource(url, normalizedPath, 0, LIST_LIMIT);
+  if (fetched.error) return fetched;
+
+  var resource = fetched.resource;
+  if (resource.type === 'dir') {
+    if (normalizedPath) {
+      return resolvePublicAlbum(url);
+    }
+    return resolvePublicAlbum(url);
+  }
+
+  return buildFileItem(resource, url, normalizedPath);
+}
+
+/**
  * Скачивает файл через $filesystem.fileFromURL.
  * ($http.send для бинарников часто даёт 200 и пустой body — отсюда ошибка «не отдал файл (200)»).
  *
  * @param {string} publicUrl
  * @param {string} kind 'preview' | 'file'
+ * @param {string} [path]
  * @returns {{ status?: number, error?: string, file?: any, contentType?: string, name?: string, mediaType?: string }}
  */
-function fetchContentFile(publicUrl, kind) {
-  var resolved = resolvePublicResource(publicUrl);
+function fetchContentFile(publicUrl, kind, path) {
+  var resolved = resolvePublicResource(publicUrl, path);
   if (resolved.error) return resolved;
+  if (resolved.item && resolved.item.type === 'album') {
+    return { status: 400, error: 'Нужна ссылка на файл внутри альбома' };
+  }
 
   var item = resolved.item;
   /** @type {string[]} */
@@ -198,7 +390,9 @@ function fetchContentFile(publicUrl, kind) {
 
 module.exports = {
   normalizePublicUrl: normalizePublicUrl,
+  normalizePath: normalizePath,
   isYadiskPublicUrl: isYadiskPublicUrl,
   resolvePublicResource: resolvePublicResource,
+  resolvePublicAlbum: resolvePublicAlbum,
   fetchContentFile: fetchContentFile
 };

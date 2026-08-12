@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import FullscreenImageViewer from './FullscreenImageViewer';
@@ -31,15 +31,47 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
   const fileInputRef = useRef(/** @type {HTMLInputElement | null} */ (null));
   const { confirm } = useAlertDialog();
 
+  const onAlbumConflict = useCallback(
+    () =>
+      confirm({
+        title: 'Заменить медиа альбомом?',
+        message: 'В публикации может быть только один альбом Яндекс.Диска. Текущие медиа будут удалены.',
+        confirmText: 'Заменить',
+        cancelText: 'Отмена'
+      }),
+    [confirm]
+  );
+
+  const onSinglesConflict = useCallback(
+    () =>
+      confirm({
+        title: 'Заменить альбом?',
+        message: 'Альбом Яндекс.Диска будет удалён, вместо него можно добавить одиночные медиа.',
+        confirmText: 'Заменить',
+        cancelText: 'Отмена'
+      }),
+    [confirm]
+  );
+
+  const clearLocalMedia = useCallback(() => {
+    setFiles([]);
+  }, []);
+
   const yadiskSlots = Math.max(0, MAX_POST_MEDIA_FILES - files.length);
   const yadisk = useYadiskEmbed({
     text,
     setText,
     remainingSlots: yadiskSlots,
-    enabled: isOpen
+    enabled: isOpen,
+    hasLocalMedia: files.length > 0,
+    onClearLocalMedia: clearLocalMedia,
+    onAlbumConflict,
+    onSinglesConflict
   });
 
-  const allPreviewItems = [...previewItems, ...yadisk.previewItems];
+  const allPreviewItems = yadisk.albumMode
+    ? yadisk.previewItems
+    : [...previewItems, ...yadisk.previewItems];
   const {
     openItem: openPreviewMedia,
     fullscreen: previewFullscreen,
@@ -61,7 +93,9 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
 
   const hasText = hasVisibleText(text);
   const hasMedia = files.length > 0 || yadisk.readyCount > 0;
-  const fileSlotsLeft = Math.max(0, MAX_POST_MEDIA_FILES - files.length - yadisk.count);
+  const fileSlotsLeft = yadisk.albumMode
+    ? 0
+    : Math.max(0, MAX_POST_MEDIA_FILES - files.length - yadisk.count);
 
   const reset = () => {
     setText('');
@@ -84,6 +118,15 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
     onClose();
   };
 
+  const handleAttachClick = async () => {
+    if (yadisk.albumMode) {
+      const ok = await onSinglesConflict();
+      if (!ok) return;
+      yadisk.reset();
+    }
+    fileInputRef.current?.click();
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if ((!hasText && !hasMedia) || yadisk.hasPending) return;
@@ -91,10 +134,12 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
     formData.append('content', text.trim());
     formData.append('author', user?.id || '');
     formData.append('external_media', JSON.stringify(yadisk.storedMedia));
-    const preparedFiles = await Promise.all(
-      files.map((file) => (isVideoFile(file) ? file : compressImage(file)))
-    );
-    preparedFiles.forEach((file) => formData.append('media', file));
+    if (!yadisk.albumMode) {
+      const preparedFiles = await Promise.all(
+        files.map((file) => (isVideoFile(file) ? file : compressImage(file)))
+      );
+      preparedFiles.forEach((file) => formData.append('media', file));
+    }
     onCreated(formData);
     reset();
     onClose();
@@ -126,9 +171,10 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
           type="file"
           accept="image/*,video/mp4"
           multiple
-          disabled={fileSlotsLeft === 0}
+          disabled={fileSlotsLeft === 0 && !yadisk.albumMode}
           onChange={(e) => {
-            setFiles(readSelectedFiles(e.target.files, fileSlotsLeft));
+            const incoming = readSelectedFiles(e.target.files, fileSlotsLeft);
+            setFiles((current) => [...current, ...incoming]);
             e.currentTarget.value = '';
           }}
           className="visually-hidden"
@@ -163,8 +209,8 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
 
         <div className="modal-actions create-post-form__actions create-post-form__actions--with-attach">
           <PostAttachButton
-            disabled={fileSlotsLeft === 0}
-            onClick={() => fileInputRef.current?.click()}
+            disabled={fileSlotsLeft === 0 && !yadisk.albumMode}
+            onClick={handleAttachClick}
           />
           <button
             type="submit"

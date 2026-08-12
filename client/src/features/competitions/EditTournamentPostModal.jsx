@@ -1,11 +1,13 @@
-import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import Modal from '../../components/ui/Modal';
+import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { updateTournamentPost } from '../../services/tournamentPosts';
 import FullscreenImageViewer from '../feed/FullscreenImageViewer';
 import MediaPreviewGrid from '../feed/MediaPreviewGrid';
 import PostAttachButton from '../feed/PostAttachButton';
 import PostRichTextField from '../feed/PostRichTextField';
 import { useLocalMediaFullscreen } from '../feed/useLocalMediaFullscreen';
+import { useYadiskEmbed } from '../feed/useYadiskEmbed';
 import {
   MAX_POST_MEDIA_FILES,
   getMediaUrl,
@@ -34,6 +36,7 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
   const [removedMediaNames, setRemovedMediaNames] = useState(/** @type {string[]} */ ([]));
   const [newPreviewItems, setNewPreviewItems] = useState([]);
   const [submitting, setSubmitting] = useState(false);
+  const { confirm } = useAlertDialog();
 
   const existingMediaNames = useMemo(() => mediaNames(post?.media), [post?.media]);
   const keptExistingMediaNames = useMemo(
@@ -57,9 +60,57 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
         : [],
     [post, keptExistingMediaNames]
   );
+
+  const onAlbumConflict = useCallback(
+    () =>
+      confirm({
+        title: 'Заменить медиа альбомом?',
+        message: 'В публикации может быть только один альбом Яндекс.Диска. Текущие медиа будут удалены.',
+        confirmText: 'Заменить',
+        cancelText: 'Отмена'
+      }),
+    [confirm]
+  );
+
+  const onSinglesConflict = useCallback(
+    () =>
+      confirm({
+        title: 'Заменить альбом?',
+        message: 'Альбом Яндекс.Диска будет удалён, вместо него можно добавить одиночные медиа.',
+        confirmText: 'Заменить',
+        cancelText: 'Отмена'
+      }),
+    [confirm]
+  );
+
+  const clearLocalMedia = useCallback(() => {
+    setMediaFiles([]);
+    setRemovedMediaNames(existingMediaNames);
+  }, [existingMediaNames]);
+
+  const yadiskSlots = Math.max(
+    0,
+    MAX_POST_MEDIA_FILES - keptExistingMediaNames.length - mediaFiles.length
+  );
+  const yadisk = useYadiskEmbed({
+    text,
+    setText,
+    remainingSlots: yadiskSlots,
+    initialKey: isOpen && post ? post.id : null,
+    initialItems: post?.external_media,
+    enabled: isOpen,
+    hasLocalMedia: keptExistingMediaNames.length > 0 || mediaFiles.length > 0,
+    onClearLocalMedia: clearLocalMedia,
+    onAlbumConflict,
+    onSinglesConflict
+  });
+
   const previewItems = useMemo(
-    () => [...existingPreviewItems, ...newPreviewItems],
-    [existingPreviewItems, newPreviewItems]
+    () =>
+      yadisk.albumMode
+        ? yadisk.previewItems
+        : [...existingPreviewItems, ...newPreviewItems, ...yadisk.previewItems],
+    [existingPreviewItems, newPreviewItems, yadisk.albumMode, yadisk.previewItems]
   );
   const {
     openItem: openPreviewMedia,
@@ -68,10 +119,15 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
     hiddenMediaKey,
     onCloseStart: handlePreviewCloseStart
   } = useLocalMediaFullscreen(previewItems, 'edit-tournament-post');
-  const remainingMediaSlots = Math.max(
-    0,
-    MAX_POST_MEDIA_FILES - keptExistingMediaNames.length - mediaFiles.length
-  );
+  const remainingMediaSlots = yadisk.albumMode
+    ? 0
+    : Math.max(
+      0,
+      MAX_POST_MEDIA_FILES -
+        keptExistingMediaNames.length -
+        mediaFiles.length -
+        yadisk.count
+    );
 
   useEffect(() => {
     const items = mediaFiles.map((file) => ({
@@ -93,23 +149,52 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
     setRemovedMediaNames([]);
   }, [isOpen, post]);
 
+  const handleAttachClick = async () => {
+    if (yadisk.albumMode) {
+      const ok = await onSinglesConflict();
+      if (!ok) return;
+      yadisk.reset();
+    }
+    fileInputRef.current?.click();
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!post || submitting) return;
+    if (!post || submitting || yadisk.hasPending) return;
 
     if (!hasVisibleText(text)) return;
     const nextContent = text;
 
     setSubmitting(true);
     try {
-      const hasMediaChanges = removedMediaNames.length > 0 || mediaFiles.length > 0;
-      let payload = /** @type {FormData | { content: string }} */ ({ content: nextContent });
+      const hasFileChanges =
+        removedMediaNames.length > 0 || mediaFiles.length > 0 || yadisk.albumMode;
+      const initialExternal = JSON.stringify(post.external_media || []);
+      const nextExternal = JSON.stringify(yadisk.storedMedia);
+      const hasExternalChanges = initialExternal !== nextExternal;
 
-      if (hasMediaChanges) {
+      let payload = /** @type {FormData | Record<string, unknown>} */ ({
+        content: nextContent,
+        external_media: yadisk.storedMedia
+      });
+
+      if (hasFileChanges || yadisk.albumMode) {
         payload = new FormData();
         payload.append('content', nextContent);
-        removedMediaNames.forEach((filename) => payload.append('media-', filename));
-        mediaFiles.forEach((file) => payload.append('media', file));
+        payload.append('external_media', nextExternal);
+        if (yadisk.albumMode) {
+          existingMediaNames.forEach((filename) => payload.append('media-', filename));
+        } else {
+          removedMediaNames.forEach((filename) => payload.append('media-', filename));
+          mediaFiles.forEach((file) => payload.append('media', file));
+        }
+      } else if (hasExternalChanges) {
+        payload = {
+          content: nextContent,
+          external_media: yadisk.storedMedia
+        };
+      } else {
+        payload = { content: nextContent };
       }
 
       const updatedPost = await updateTournamentPost(post.id, payload);
@@ -155,6 +240,10 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
               className="media-remove-btn"
               onClick={(event) => {
                 event.stopPropagation();
+                if (String(item.key).startsWith('yadisk-')) {
+                  yadisk.removeItem(item.key);
+                  return;
+                }
                 if (item.key.startsWith('existing-')) {
                   const filename = item.key.slice('existing-'.length);
                   setRemovedMediaNames((current) =>
@@ -180,10 +269,10 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
           type="file"
           accept="image/*,video/mp4"
           multiple
-          disabled={remainingMediaSlots === 0 || submitting}
+          disabled={(remainingMediaSlots === 0 && !yadisk.albumMode) || submitting}
           onChange={(event) => {
             const incoming = readSelectedFiles(event.target.files, remainingMediaSlots);
-            setMediaFiles((current) => [...current, ...incoming].slice(0, MAX_POST_MEDIA_FILES));
+            setMediaFiles((current) => [...current, ...incoming]);
             event.currentTarget.value = '';
           }}
           className="visually-hidden"
@@ -200,15 +289,15 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
           </button>
           <div className="edit-post-actions__primary create-post-form__actions--with-attach">
             <PostAttachButton
-              disabled={remainingMediaSlots === 0 || submitting}
-              onClick={() => fileInputRef.current?.click()}
+              disabled={(remainingMediaSlots === 0 && !yadisk.albumMode) || submitting}
+              onClick={handleAttachClick}
             />
             <button
               type="submit"
               className="submit-btn-full edit-post-save-btn create-post-form__publish"
-              disabled={submitting || !hasVisibleText(text)}
+              disabled={submitting || yadisk.hasPending || !hasVisibleText(text)}
             >
-              {submitting ? 'Сохраняем…' : 'Сохранить'}
+              {submitting ? 'Сохраняем…' : yadisk.hasPending ? 'Превью…' : 'Сохранить'}
             </button>
           </div>
         </div>

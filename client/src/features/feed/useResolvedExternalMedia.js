@@ -13,15 +13,18 @@ import { videoPreviewUrl } from '../../lib/media';
  *   isVideo: boolean,
  *   originKey: string,
  *   publicUrl: string,
- *   isLoading?: boolean
+ *   path?: string | null,
+ *   isLoading?: boolean,
+ *   isAlbumCover?: boolean,
+ *   albumId?: string | null,
+ *   albumCount?: number
  * }} ResolvedExternalMediaItem
  */
 
 /**
  * Резолв `posts.external_media` для сетки ленты через серверный прокси → blob URL.
- * Для фото: сначала preview (LQIP), затем file (резкое отображение / fullscreen).
- * Пока байты не пришли — слоты остаются в списке (`isLoading`), чтобы сетка
- * показывала placeholder, а не пустое место.
+ * Файл: preview (LQIP) → file. Альбом: одна запись в storage → все файлы при просмотре;
+ * в карточке — только обложка (`isAlbumCover`) + `albumCount`.
  *
  * @param {unknown} externalMedia
  * @param {string} originPrefix
@@ -66,34 +69,28 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
       setItems((current) => current.filter((item) => item.originKey !== originKey));
     };
 
-    setItems(
-      stored.map((entry, index) => ({
-        filename: entry.name,
-        url: '',
-        thumbUrl: '',
-        previewUrl: '',
-        isVideo: entry.mediaType === 'video',
-        originKey: `${originPrefix}-ext-${index}`,
-        publicUrl: entry.publicUrl,
-        isLoading: true
-      }))
-    );
-
-    stored.forEach(async (entry, index) => {
-      const originKey = `${originPrefix}-ext-${index}`;
+    /**
+     * @param {ResolvedExternalMediaItem} base
+     * @param {string} publicUrl
+     * @param {string | null | undefined} path
+     */
+    const resolveFileBytes = async (base, publicUrl, path) => {
+      const originKey = base.originKey;
       try {
-        const resolved = await fetchYadiskPreview(entry.publicUrl, {
-          signal: controller.signal
+        const resolved = await fetchYadiskPreview(publicUrl, {
+          signal: controller.signal,
+          path: path || null
         });
         if (cancelled) return;
 
         const isVideo = resolved.mediaType === 'video';
-        const filename = resolved.name || entry.name;
+        const filename = resolved.name || base.filename;
 
         if (isVideo) {
           const objectUrl = track(
-            await fetchYadiskObjectUrl(entry.publicUrl, 'file', {
-              signal: controller.signal
+            await fetchYadiskObjectUrl(publicUrl, 'file', {
+              signal: controller.signal,
+              path: path || null
             })
           );
           if (cancelled) return;
@@ -110,8 +107,9 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
         }
 
         const previewObjectUrl = track(
-          await fetchYadiskObjectUrl(entry.publicUrl, 'preview', {
-            signal: controller.signal
+          await fetchYadiskObjectUrl(publicUrl, 'preview', {
+            signal: controller.signal,
+            path: path || null
           })
         );
         if (cancelled) return;
@@ -127,8 +125,9 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
 
         try {
           const fileObjectUrl = track(
-            await fetchYadiskObjectUrl(entry.publicUrl, 'file', {
-              signal: controller.signal
+            await fetchYadiskObjectUrl(publicUrl, 'file', {
+              signal: controller.signal,
+              path: path || null
             })
           );
           if (cancelled) return;
@@ -147,7 +146,79 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
         if (err?.name === 'AbortError' || cancelled) return;
         dropItem(originKey);
       }
-    });
+    };
+
+    void (async () => {
+      /** @type {ResolvedExternalMediaItem[]} */
+      const nextItems = [];
+
+      for (let index = 0; index < stored.length; index++) {
+        const entry = stored[index];
+        if (entry.type === 'album') {
+          try {
+            const album = await fetchYadiskPreview(entry.publicUrl, {
+              signal: controller.signal
+            });
+            if (cancelled) return;
+            if (album.type !== 'album' || !album.items?.length) {
+              continue;
+            }
+            const albumId = `${originPrefix}-album-${index}`;
+            album.items.forEach((member, memberIndex) => {
+              nextItems.push({
+                filename: member.name || entry.name,
+                url: '',
+                thumbUrl: '',
+                previewUrl: '',
+                isVideo: member.mediaType === 'video',
+                originKey: `${albumId}-${memberIndex}`,
+                publicUrl: entry.publicUrl,
+                path: member.path || null,
+                isLoading: true,
+                isAlbumCover: memberIndex === 0,
+                albumId,
+                albumCount: album.items?.length || 0
+              });
+            });
+          } catch (err) {
+            if (err?.name === 'AbortError' || cancelled) return;
+          }
+          continue;
+        }
+
+        nextItems.push({
+          filename: entry.name,
+          url: '',
+          thumbUrl: '',
+          previewUrl: '',
+          isVideo: entry.mediaType === 'video',
+          originKey: `${originPrefix}-ext-${index}`,
+          publicUrl: entry.publicUrl,
+          path: entry.path || null,
+          isLoading: true,
+          isAlbumCover: false,
+          albumId: null,
+          albumCount: 0
+        });
+      }
+
+      if (cancelled) return;
+      setItems(nextItems);
+
+      // Обложки альбомов и одиночные — сразу; остальные файлы альбома — следом (blur preview).
+      const priority = nextItems.filter((item) => !item.albumId || item.isAlbumCover);
+      const rest = nextItems.filter((item) => item.albumId && !item.isAlbumCover);
+
+      for (const item of priority) {
+        if (cancelled) return;
+        await resolveFileBytes(item, item.publicUrl, item.path);
+      }
+      for (const item of rest) {
+        if (cancelled) return;
+        // Не блокируем очередь на каждом файле полностью — параллелим умеренно
+        void resolveFileBytes(item, item.publicUrl, item.path);
+      }
+    })();
 
     return () => {
       cancelled = true;

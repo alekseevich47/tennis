@@ -1,16 +1,27 @@
 import React, { memo } from 'react';
 import clsx from 'clsx';
 import { videoPreviewUrl } from '../../lib/media';
+import AlbumStackBadge from './AlbumStackBadge';
 
 /**
  * @param {{
- *   items: Array<{ key: string, url: string, name: string, isVideo: boolean, status?: 'loading' | 'ready' | 'error', error?: string }>,
+ *   items: Array<{
+ *     key: string,
+ *     url: string,
+ *     name: string,
+ *     isVideo: boolean,
+ *     status?: 'loading' | 'ready' | 'error',
+ *     error?: string,
+ *     isAlbum?: boolean,
+ *     albumCount?: number,
+ *     albumViewerItems?: Array<{ key: string, url: string, name: string, isVideo: boolean }>
+ *   }>,
  *   className?: string,
  *   showCaption?: boolean,
  *   originKeyPrefix?: string,
  *   hiddenMediaKey?: string | null,
- *   onItemClick?: (item: { key: string, url: string, name: string, isVideo: boolean }, index: number, event: React.MouseEvent) => void,
- *   getAction?: (item: { key: string, url: string, name: string, isVideo: boolean }) => React.ReactNode
+ *   onItemClick?: (item: any, index: number, event: React.MouseEvent) => void,
+ *   getAction?: (item: any) => React.ReactNode
  * }} props
  */
 function MediaPreviewGrid({
@@ -80,12 +91,22 @@ function MediaPreviewGrid({
                 className="telegram-media-item__open"
                 data-media-origin-key={originKey}
                 onClick={(event) => onItemClick(item, index, event)}
-                aria-label={item.isVideo ? `Открыть видео ${item.name}` : `Открыть фото ${item.name}`}
+                aria-label={
+                  item.isAlbum
+                    ? `Открыть альбом ${item.name}`
+                    : item.isVideo
+                      ? `Открыть видео ${item.name}`
+                      : `Открыть фото ${item.name}`
+                }
               >
                 {media}
+                {item.isAlbum ? <AlbumStackBadge /> : null}
               </button>
             ) : (
-              media
+              <>
+                {media}
+                {item.isAlbum && status === 'ready' ? <AlbumStackBadge /> : null}
+              </>
             )}
             {showCaption ? <figcaption>{item.name}</figcaption> : null}
             {getAction?.(item)}

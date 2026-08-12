@@ -11,7 +11,10 @@ routerAdd('POST', '/api/yadisk-preview', (c) => {
 
     var body = info.body || {};
     var url = body.url || '';
-    var result = yadisk.resolvePublicResource(url);
+    var path = body.path || '';
+    var result = path
+      ? yadisk.resolvePublicResource(url, path)
+      : yadisk.resolvePublicResource(url);
     if (result.error) {
       return c.json(result.status || 400, { error: result.error });
     }
@@ -34,7 +37,8 @@ routerAdd('GET', '/api/yadisk-content', (c) => {
 
     var query = info.query || {};
     var kind = query.kind === 'file' ? 'file' : 'preview';
-    var result = yadisk.fetchContentFile(query.url || '', kind);
+    var path = query.path || '';
+    var result = yadisk.fetchContentFile(query.url || '', kind, path);
     if (result.error) {
       return c.json(result.status || 400, { error: result.error });
     }
