@@ -1,7 +1,7 @@
 # Graph Report - tennis  (2026-08-12)
 
 ## Corpus Check
-- 225 files · ~210,533 words
+- 225 files · ~210,631 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `fc697488`
+- Built from commit: `9a224ffa`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -201,8 +201,8 @@ Cohesion: 0.19
 Nodes (11): App(), createGalleryPayload(), GalleryUploadContext, GalleryUploadProvider(), isGalleryKey(), PostUploadContext, PostUploadProvider(), AlertDialogProvider() (+3 more)
 
 ### Community 59 - "FeedPage.jsx"
-Cohesion: 0.31
-Nodes (7): AppInner(), getInitialFavoriteProductIds(), TAB_TITLES, CloseAppConfirmSheet(), BlockedPage(), useSessionResetKey(), isUserBotBlocked()
+Cohesion: 0.27
+Nodes (8): AppInner(), BlockedAppShell(), getInitialFavoriteProductIds(), TAB_TITLES, CloseAppConfirmSheet(), BlockedPage(), useSessionResetKey(), isUserBotBlocked()
 
 ### Community 60 - "maxauthlib.js"
 Cohesion: 0.43
@@ -221,8 +221,8 @@ Cohesion: 0.24
 Nodes (9): AvatarCropModal(), getCropCircle(), getImagePlacement(), resolvePanLimits(), usePinchZoom(), backdropOpacityForDrag(), clamp(), getTouchDistance() (+1 more)
 
 ### Community 66 - "OnboardingTutorial.jsx"
-Cohesion: 0.26
-Nodes (8): BlockedAppShell(), disableMaxVerticalSwipes(), isEditableFocus(), useMaxCloseGuard(), closeTopOverlay(), stack, isSectionScrollAtTop(), scrollSectionToTop()
+Cohesion: 0.29
+Nodes (7): disableMaxVerticalSwipes(), isEditableFocus(), useMaxCloseGuard(), closeTopOverlay(), stack, isSectionScrollAtTop(), scrollSectionToTop()
 
 ### Community 67 - "RatingPage.jsx"
 Cohesion: 0.17

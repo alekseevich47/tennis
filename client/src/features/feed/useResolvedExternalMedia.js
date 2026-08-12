@@ -23,8 +23,7 @@ import { videoPreviewUrl } from '../../lib/media';
 
 /**
  * Резолв `posts.external_media` для сетки ленты через серверный прокси → blob URL.
- * Файл: preview (LQIP) → file. Альбом: одна запись в storage → все файлы при просмотре;
- * в карточке — только обложка (`isAlbumCover`) + `albumCount`.
+ * Файл: preview (LQIP) → file. Альбом: сразу слот-обложка (shimmer), затем expand + байты.
  *
  * @param {unknown} externalMedia
  * @param {string} originPrefix
@@ -148,6 +147,43 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
       }
     };
 
+    // Сразу shimmer-слоты (альбом = одна обложка), чтобы сетка/модалка не были пустыми.
+    /** @type {ResolvedExternalMediaItem[]} */
+    const placeholders = stored.map((entry, index) => {
+      if (entry.type === 'album') {
+        const albumId = `${originPrefix}-album-${index}`;
+        return {
+          filename: entry.name || 'Альбом',
+          url: '',
+          thumbUrl: '',
+          previewUrl: '',
+          isVideo: false,
+          originKey: `${albumId}-cover`,
+          publicUrl: entry.publicUrl,
+          path: null,
+          isLoading: true,
+          isAlbumCover: true,
+          albumId,
+          albumCount: 0
+        };
+      }
+      return {
+        filename: entry.name,
+        url: '',
+        thumbUrl: '',
+        previewUrl: '',
+        isVideo: entry.mediaType === 'video',
+        originKey: `${originPrefix}-ext-${index}`,
+        publicUrl: entry.publicUrl,
+        path: entry.path || null,
+        isLoading: true,
+        isAlbumCover: false,
+        albumId: null,
+        albumCount: 0
+      };
+    });
+    setItems(placeholders);
+
     void (async () => {
       /** @type {ResolvedExternalMediaItem[]} */
       const nextItems = [];
@@ -155,15 +191,17 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
       for (let index = 0; index < stored.length; index++) {
         const entry = stored[index];
         if (entry.type === 'album') {
+          const albumId = `${originPrefix}-album-${index}`;
+          const coverKey = `${albumId}-cover`;
           try {
             const album = await fetchYadiskPreview(entry.publicUrl, {
               signal: controller.signal
             });
             if (cancelled) return;
             if (album.type !== 'album' || !album.items?.length) {
+              dropItem(coverKey);
               continue;
             }
-            const albumId = `${originPrefix}-album-${index}`;
             album.items.forEach((member, memberIndex) => {
               nextItems.push({
                 filename: member.name || entry.name,
@@ -171,7 +209,7 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
                 thumbUrl: '',
                 previewUrl: '',
                 isVideo: member.mediaType === 'video',
-                originKey: `${albumId}-${memberIndex}`,
+                originKey: memberIndex === 0 ? coverKey : `${albumId}-${memberIndex}`,
                 publicUrl: entry.publicUrl,
                 path: member.path || null,
                 isLoading: true,
@@ -182,6 +220,7 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
             });
           } catch (err) {
             if (err?.name === 'AbortError' || cancelled) return;
+            dropItem(coverKey);
           }
           continue;
         }
@@ -205,7 +244,6 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
       if (cancelled) return;
       setItems(nextItems);
 
-      // Обложки альбомов и одиночные — сразу; остальные файлы альбома — следом (blur preview).
       const priority = nextItems.filter((item) => !item.albumId || item.isAlbumCover);
       const rest = nextItems.filter((item) => item.albumId && !item.isAlbumCover);
 
@@ -215,7 +253,6 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
       }
       for (const item of rest) {
         if (cancelled) return;
-        // Не блокируем очередь на каждом файле полностью — параллелим умеренно
         void resolveFileBytes(item, item.publicUrl, item.path);
       }
     })();
