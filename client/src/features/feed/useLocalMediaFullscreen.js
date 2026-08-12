@@ -23,20 +23,25 @@ export function useLocalMediaFullscreen(items, keyPrefix = 'preview') {
   const [hiddenMediaKey, setHiddenMediaKey] = useState(/** @type {string | null} */ (null));
 
   const openItem = useCallback(
-    (item, _index, event) => {
+    (item, index, event) => {
       if (!item || !items.length) return;
       const originKey = `${keyPrefix}-${item.key}`;
 
       if (item.isAlbum && item.albumViewerItems?.length) {
-        const viewerItems = item.albumViewerItems.map((entry) => ({
-          filename: entry.name,
-          url: entry.url,
-          isVideo: entry.isVideo,
-          originKey: `${keyPrefix}-${entry.key}`
-        }));
+        const viewerItems = item.albumViewerItems
+          .filter((entry) => entry.url || entry.status === 'loading' || entry.status === 'ready')
+          .map((entry) => ({
+            filename: entry.name,
+            url: entry.url || '',
+            isVideo: entry.isVideo,
+            originKey: `${keyPrefix}-${entry.key}`,
+            isLoading: !entry.url
+          }));
+        if (!viewerItems.length) return;
+        const startIndex = Math.max(0, Math.min(index || 0, viewerItems.length - 1));
         setFullscreen({
           items: viewerItems,
-          index: 0,
+          index: startIndex,
           originRect: event?.currentTarget?.getBoundingClientRect?.() || null,
           originKey
         });

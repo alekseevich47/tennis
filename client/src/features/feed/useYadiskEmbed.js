@@ -541,14 +541,13 @@ export function useYadiskEmbed({
     isAlbum: Boolean(item.isAlbum),
     albumCount: item.isAlbum ? item.albumItems?.length || 0 : 0,
     albumViewerItems: item.isAlbum
-      ? (item.albumItems || [])
-          .filter((entry) => entry.status === 'ready' && entry.url)
-          .map((entry) => ({
-            key: entry.key,
-            url: entry.url,
-            name: entry.name,
-            isVideo: entry.isVideo
-          }))
+      ? (item.albumItems || []).map((entry) => ({
+          key: entry.key,
+          url: entry.url || '',
+          name: entry.name,
+          isVideo: entry.isVideo,
+          status: entry.status
+        }))
       : undefined
   }));
 
