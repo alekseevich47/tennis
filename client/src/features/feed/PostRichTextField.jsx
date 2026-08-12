@@ -292,13 +292,16 @@ const PostRichTextField = forwardRef(function PostRichTextField(
   const handleApplyLink = ({ title, href }) => {
     const el = editorRef.current;
     if (!el) return;
-    restoreSelection();
-    applyHyperlink({ title, href }, el);
+    const range = savedRangeRef.current;
     setLinkOpen(false);
     setSelectionToolbar(null);
-    skipNextSync.current = true;
-    syncEmptyAndValue();
-    refreshActive();
+    // После закрытия модалки — следующий кадр: фокус/selection уже не заняты оверлеем.
+    requestAnimationFrame(() => {
+      applyHyperlink({ title, href }, el, range);
+      skipNextSync.current = true;
+      syncEmptyAndValue();
+      refreshActive();
+    });
   };
 
   const handleApplyFrame = (hex) => {

@@ -14,6 +14,7 @@ import { PB_URL } from '../config';
  * @property {string} id
  * @property {string} [content]
  * @property {string | string[]} [media]
+ * @property {Array<{ source?: string, publicUrl: string, name?: string, mediaType?: 'image' | 'video', type?: 'file' | 'album' }> | null} [external_media]
  * @property {string} [author]
  * @property {TournamentParticipant[]} [participants]
  * @property {number} [post_number]
@@ -141,11 +142,12 @@ export async function purgeAbandonedTournamentPosts({ signal } = {}) {
  * @param {{
  *   content: string,
  *   files?: File[],
+ *   externalMedia?: unknown,
  *   rawParticipants: Array<{ userId: string, fullName: string, points: number }>
  * }} params
  * @returns {{ formData: FormData, participants: TournamentParticipant[] }}
  */
-function buildTournamentPostPayload({ content, files = [], rawParticipants }) {
+function buildTournamentPostPayload({ content, files = [], externalMedia, rawParticipants }) {
   const author = getCurrentUser();
   if (!author?.id) {
     throw new Error('Не авторизован: нельзя опубликовать итоги турнира');
@@ -156,6 +158,7 @@ function buildTournamentPostPayload({ content, files = [], rawParticipants }) {
   formData.append('content', content.trim());
   formData.append('author', author.id);
   formData.append('participants', JSON.stringify(participants));
+  formData.append('external_media', JSON.stringify(externalMedia || []));
   files.forEach((file) => formData.append('media', file));
 
   return { formData, participants };
@@ -177,6 +180,7 @@ async function applyTournamentPostSideEffects(participants) {
  * @param {{
  *   content: string,
  *   files?: File[],
+ *   externalMedia?: unknown,
  *   rawParticipants: Array<{ userId: string, fullName: string, points: number }>
  * }} params
  * @returns {Promise<TournamentPostRecord>}
@@ -194,6 +198,7 @@ export async function publishTournamentPost(params) {
  * @param {{
  *   content: string,
  *   files?: File[],
+ *   externalMedia?: unknown,
  *   rawParticipants: Array<{ userId: string, fullName: string, points: number }>
  * }} params
  * @param {{ signal?: AbortSignal, onProgress?: (percent: number) => void }} [options]

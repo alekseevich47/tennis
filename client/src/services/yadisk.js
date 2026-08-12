@@ -5,31 +5,48 @@ import { error } from '../lib/log';
 
 /**
  * @typedef {{
+ *   path: string,
+ *   name: string,
+ *   mediaType: 'image' | 'video',
+ *   mimeType?: string,
+ *   size?: number | null
+ * }} YadiskAlbumMember
+ */
+
+/**
+ * @typedef {{
+ *   type?: 'file' | 'album',
  *   source: string,
  *   publicUrl: string,
  *   publicKey?: string,
+ *   path?: string | null,
  *   name: string,
  *   mediaType: 'image' | 'video',
  *   mimeType?: string,
  *   size?: number | null,
  *   previewUrl?: string | null,
- *   fileUrl?: string | null
+ *   fileUrl?: string | null,
+ *   items?: YadiskAlbumMember[],
+ *   cover?: YadiskAlbumMember | null
  * }} YadiskPreviewItem
  */
 
 /**
  * @param {string} url
- * @param {{ signal?: AbortSignal }} [options]
+ * @param {{ signal?: AbortSignal, path?: string | null }} [options]
  * @returns {Promise<YadiskPreviewItem>}
  */
-export async function fetchYadiskPreview(url, { signal } = {}) {
+export async function fetchYadiskPreview(url, { signal, path } = {}) {
   const res = await fetch(`${PB_URL}/api/yadisk-preview`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       ...(pb.authStore.token ? { Authorization: pb.authStore.token } : {})
     },
-    body: JSON.stringify({ url }),
+    body: JSON.stringify({
+      url,
+      ...(path ? { path } : {})
+    }),
     signal
   });
 
@@ -55,14 +72,15 @@ export async function fetchYadiskPreview(url, { signal } = {}) {
  *
  * @param {string} publicUrl
  * @param {'preview' | 'file'} [kind]
- * @param {{ signal?: AbortSignal }} [options]
+ * @param {{ signal?: AbortSignal, path?: string | null }} [options]
  * @returns {Promise<string>}
  */
-export async function fetchYadiskObjectUrl(publicUrl, kind = 'preview', { signal } = {}) {
+export async function fetchYadiskObjectUrl(publicUrl, kind = 'preview', { signal, path } = {}) {
   const qs = new URLSearchParams({
     url: publicUrl,
     kind
   });
+  if (path) qs.set('path', path);
   const res = await fetch(`${PB_URL}/api/yadisk-content?${qs}`, {
     headers: {
       ...(pb.authStore.token ? { Authorization: pb.authStore.token } : {})

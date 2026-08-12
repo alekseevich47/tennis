@@ -3471,6 +3471,16 @@
       },
       {
         "hidden": false,
+        "id": "json_tournament_posts_external_media",
+        "maxSize": 200000,
+        "name": "external_media",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "json"
+      },
+      {
+        "hidden": false,
         "id": "autodate2990389176",
         "name": "created",
         "onCreate": true,
