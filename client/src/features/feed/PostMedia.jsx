@@ -134,7 +134,10 @@ function PostMedia({
                 className="post-media-static post-media-pending"
                 aria-label="Загрузка видео"
               >
-                <span className="post-media-skeleton" aria-hidden="true" />
+                <div className="media-frame">
+                  <span className="post-media-skeleton" aria-hidden="true" />
+                  {showAlbumBadge ? <AlbumStackBadge /> : null}
+                </div>
               </div>
             );
           }
@@ -156,8 +159,11 @@ function PostMedia({
           if (!onOpenFullscreen) {
             return (
               <div key={item.originKey || item.filename} className="post-media-static">
-                {video}
-                {showAlbumBadge ? <AlbumStackBadge /> : null}
+                <div className="media-frame">
+                  {video}
+                  <span className="post-media-play-badge" aria-hidden="true">▶</span>
+                  {showAlbumBadge ? <AlbumStackBadge /> : null}
+                </div>
               </div>
             );
           }
@@ -178,9 +184,11 @@ function PostMedia({
                   : `Открыть видео ${index + 1} на весь экран`
               }
             >
-              {video}
-              <span className="post-media-play-badge" aria-hidden="true">▶</span>
-              {showAlbumBadge ? <AlbumStackBadge /> : null}
+              <div className="media-frame">
+                {video}
+                <span className="post-media-play-badge" aria-hidden="true">▶</span>
+                {showAlbumBadge ? <AlbumStackBadge /> : null}
+              </div>
             </button>
           );
         }
@@ -206,8 +214,10 @@ function PostMedia({
               className={clsx('post-media-static', pending && 'post-media-pending')}
               aria-label={pending ? 'Загрузка изображения' : undefined}
             >
-              {image}
-              {showAlbumBadge && !pending ? <AlbumStackBadge /> : null}
+              <div className="media-frame">
+                {image}
+                {showAlbumBadge ? <AlbumStackBadge /> : null}
+              </div>
             </div>
           );
         }
@@ -228,8 +238,10 @@ function PostMedia({
                 : `Открыть медиа ${index + 1} на весь экран`
             }
           >
-            {image}
-            {showAlbumBadge ? <AlbumStackBadge /> : null}
+            <div className="media-frame">
+              {image}
+              {showAlbumBadge ? <AlbumStackBadge /> : null}
+            </div>
           </button>
         );
       })}

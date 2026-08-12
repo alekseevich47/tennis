@@ -45,8 +45,11 @@ function MediaPreviewGrid({
         let media;
         if (status === 'loading') {
           media = (
-            <div className="telegram-media-item__state" aria-label="Загрузка превью">
-              <span className="telegram-media-item__spinner" aria-hidden="true" />
+            <div
+              className="telegram-media-item__skeleton"
+              aria-label="Загрузка превью"
+            >
+              <span className="post-media-skeleton" aria-hidden="true" />
             </div>
           );
         } else if (status === 'error' || !item.url) {
@@ -76,6 +79,14 @@ function MediaPreviewGrid({
         }
 
         const canOpen = Boolean(onItemClick) && status === 'ready' && Boolean(item.url);
+        const showAlbumBadge = Boolean(item.isAlbum) && status !== 'error';
+
+        const frame = (
+          <div className="media-frame">
+            {media}
+            {showAlbumBadge ? <AlbumStackBadge /> : null}
+          </div>
+        );
 
         return (
           <figure
@@ -99,14 +110,10 @@ function MediaPreviewGrid({
                       : `Открыть фото ${item.name}`
                 }
               >
-                {media}
-                {item.isAlbum ? <AlbumStackBadge /> : null}
+                {frame}
               </button>
             ) : (
-              <>
-                {media}
-                {item.isAlbum && status === 'ready' ? <AlbumStackBadge /> : null}
-              </>
+              frame
             )}
             {showCaption ? <figcaption>{item.name}</figcaption> : null}
             {getAction?.(item)}
