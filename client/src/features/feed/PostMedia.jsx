@@ -43,7 +43,8 @@ function PostMedia({
             thumbUrl: thumbUrl || url,
             previewUrl: previewUrl || thumbUrl || url,
             isVideo: isVideoMediaName(filename),
-            originKey: `${variant}-${post.id}-${index}`
+            originKey: `${variant}-${post.id}-${index}`,
+            isLoading: false
           }]
           : [];
       }),
@@ -67,7 +68,16 @@ function PostMedia({
   const openFullscreen = (event, index) => {
     event.stopPropagation();
     const item = items[index];
-    onOpenFullscreen?.(items, index, event.currentTarget.getBoundingClientRect(), item?.originKey);
+    if (!item?.url || item.isLoading) return;
+    const readyItems = items.filter((entry) => entry.url && !entry.isLoading);
+    const readyIndex = readyItems.findIndex((entry) => entry.originKey === item.originKey);
+    if (readyIndex < 0) return;
+    onOpenFullscreen?.(
+      readyItems,
+      readyIndex,
+      event.currentTarget.getBoundingClientRect(),
+      item.originKey
+    );
   };
 
   return (
@@ -82,8 +92,21 @@ function PostMedia({
     >
       {items.map((item, index) => {
         const alt = `Медиа ${index + 1} к посту от ${post.created}`;
+        const pending = Boolean(item.isLoading) || (!item.url && !item.thumbUrl);
 
         if (item.isVideo) {
+          if (pending) {
+            return (
+              <div
+                key={item.originKey || item.filename}
+                className="post-media-static post-media-pending"
+                aria-label="Загрузка видео"
+              >
+                <span className="post-media-skeleton" aria-hidden="true" />
+              </div>
+            );
+          }
+
           const video = (
             <video
               src={videoPreviewUrl(item.url)}
@@ -126,18 +149,31 @@ function PostMedia({
 
         const image = (
           <ProgressiveImage
-            src={item.thumbUrl}
-            previewSrc={item.previewUrl}
+            src={pending ? null : item.thumbUrl}
+            previewSrc={pending ? null : item.previewUrl}
             alt={alt}
             className="telegram-post-media-item"
             loading={index === 0 ? 'eager' : 'lazy'}
             nativeAspect={singleNativeAspect}
+            pending={pending}
             width={800}
             height={600}
           />
         );
 
-        return onOpenFullscreen ? (
+        if (pending || !onOpenFullscreen) {
+          return (
+            <div
+              key={item.originKey || item.filename}
+              className={clsx('post-media-static', pending && 'post-media-pending')}
+              aria-label={pending ? 'Загрузка изображения' : undefined}
+            >
+              {image}
+            </div>
+          );
+        }
+
+        return (
           <button
             key={item.originKey || item.filename}
             type="button"
@@ -151,10 +187,6 @@ function PostMedia({
           >
             {image}
           </button>
-        ) : (
-          <div key={item.originKey || item.filename} className="post-media-static">
-            {image}
-          </div>
         );
       })}
     </div>

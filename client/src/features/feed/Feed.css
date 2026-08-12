@@ -318,14 +318,35 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+/* 3 медиа: слева ~2/3 на всю высоту, справа две стопкой ~1/3 (как Telegram).
+   minmax(0, …) обязателен — иначе width="800" у img раздувает первую колонку. */
 .telegram-post-media-grid--3,
 .telegram-media-grid--3 {
-  grid-template-columns: 1.25fr 1fr;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  aspect-ratio: 3 / 2;
 }
 
 .telegram-post-media-grid--3 > :first-child,
 .telegram-media-grid--3 > :first-child {
   grid-row: span 2;
+}
+
+.telegram-post-media-grid--3 > *,
+.telegram-media-grid--3 > * {
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+
+.telegram-post-media-grid--3 .telegram-post-media-item,
+.telegram-media-grid--3 .telegram-media-item img,
+.telegram-media-grid--3 .telegram-media-item video,
+.telegram-media-grid--3 .telegram-video-preview,
+.telegram-post-media-grid--3 .post-media-skeleton {
+  aspect-ratio: auto;
+  min-height: 0;
+  height: 100%;
 }
 
 .telegram-post-media-grid--5 > :first-child,
@@ -366,14 +387,45 @@
 .progressive-image {
   position: relative;
   overflow: hidden;
+  background: #c5ccd6;
+}
+
+.progressive-image__placeholder {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(110deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.45) 50%, rgba(255, 255, 255, 0) 70%),
+    #c5ccd6;
+  background-size: 200% 100%, auto;
+  animation: progressive-image-shimmer 1.2s ease-in-out infinite;
+  transition: opacity 0.28s ease;
+}
+
+.progressive-image--ready .progressive-image__placeholder,
+.progressive-image:has(.progressive-image__preview.is-visible) .progressive-image__placeholder {
+  opacity: 0;
+  animation: none;
+  pointer-events: none;
+}
+
+@keyframes progressive-image-shimmer {
+  0% {
+    background-position: 100% 0, 0 0;
+  }
+  100% {
+    background-position: -100% 0, 0 0;
+  }
 }
 
 .progressive-image__layer {
+  position: relative;
+  z-index: 1;
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  background: #111827;
+  background: transparent;
 }
 
 .progressive-image__preview,
@@ -384,8 +436,8 @@
 
 .progressive-image__preview.is-visible {
   opacity: 1;
-  filter: blur(12px);
-  transform: scale(1.06);
+  filter: blur(14px);
+  transform: scale(1.08);
 }
 
 .progressive-image__full.is-visible {
@@ -394,22 +446,47 @@
   transform: none;
 }
 
+.post-media-pending {
+  background: #c5ccd6;
+}
+
+.post-media-skeleton {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 128px;
+  aspect-ratio: 1 / 1;
+  background:
+    linear-gradient(110deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.45) 50%, rgba(255, 255, 255, 0) 70%),
+    #c5ccd6;
+  background-size: 200% 100%, auto;
+  animation: progressive-image-shimmer 1.2s ease-in-out infinite;
+}
+
 .progressive-image:not(.progressive-image--single) .progressive-image__full {
   position: absolute;
   inset: 0;
+  z-index: 2;
 }
 
 .progressive-image:not(.progressive-image--single) .progressive-image__preview {
   position: relative;
-  z-index: 0;
+  z-index: 1;
 }
 
 .progressive-image:not(.progressive-image--single) .progressive-image__full.is-visible {
-  z-index: 1;
+  z-index: 2;
 }
 
 .progressive-image--single .progressive-image__full {
   position: relative;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progressive-image__placeholder,
+  .post-media-skeleton {
+    animation: none;
+  }
 }
 
 .telegram-video-preview video {

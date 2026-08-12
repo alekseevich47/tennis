@@ -1,6 +1,7 @@
 // @ts-check
 import { useCallback, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
+import { hasOpenOverlay } from '../../lib/overlayStack';
 import './PullToRefresh.css';
 
 const PULL_DEADZONE = 8;
@@ -10,15 +11,16 @@ const REFRESH_HOLD = 56;
 const SPRING_MS = 280;
 
 /**
- * iOS-style pull-to-refresh: контент уезжает вниз, в зазоре проявляется спиннер,
- * после refresh — пружина обратно.
+ * iOS-style pull-to-refresh: `header` остаётся на месте, вниз уезжает только
+ * `children`; спиннер проявляется в слоте между ними.
  *
- * Вешать внутрь скролл-контейнера и оборачивать его содержимое; `scrollRef` — сам контейнер.
+ * Вешать внутрь скролл-контейнера; `scrollRef` — сам контейнер.
  *
  * @param {{
  *   scrollRef: React.RefObject<HTMLElement | null>,
  *   onRefresh: () => void | Promise<void>,
  *   enabled?: boolean,
+ *   header?: React.ReactNode,
  *   children?: React.ReactNode,
  *   className?: string
  * }} props
@@ -27,6 +29,7 @@ export default function PullToRefresh({
   scrollRef,
   onRefresh,
   enabled = true,
+  header = null,
   children,
   className
 }) {
@@ -93,6 +96,12 @@ export default function PullToRefresh({
 
     const handleStart = (/** @type {TouchEvent} */ event) => {
       if (refreshingRef.current || event.touches.length !== 1) return;
+      // Fullscreen / модалки живут внутри scroll-контейнера — жест вниз не должен
+      // запускать refresh под оверлеем.
+      if (hasOpenOverlay()) {
+        gestureRef.current = null;
+        return;
+      }
       const touch = event.touches[0];
       if (!touch) return;
       gestureRef.current = {
@@ -108,6 +117,11 @@ export default function PullToRefresh({
       const gesture = gestureRef.current;
       const touch = event.touches[0];
       if (!gesture || !touch || refreshingRef.current) return;
+      if (hasOpenOverlay()) {
+        gesture.blocked = true;
+        if (offsetRef.current > 0) setPull(0);
+        return;
+      }
       if (gesture.blocked || gesture.horizontal) return;
 
       const deltaX = touch.clientX - gesture.startX;
@@ -172,6 +186,9 @@ export default function PullToRefresh({
 
   return (
     <div className={clsx('pull-to-refresh', className)}>
+      {header != null ? (
+        <div className="pull-to-refresh__header">{header}</div>
+      ) : null}
       <div
         className={clsx(
           'pull-to-refresh__slot',

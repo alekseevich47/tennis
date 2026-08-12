@@ -413,28 +413,34 @@ function CompetitionsPage({
 
       {activeTab === 'feed' && (
         <div className="competitions-scroll-container" ref={containerRef}>
-          <PullToRefresh scrollRef={containerRef} onRefresh={handleFeedRefresh}>
-            {moderator && (
-              <div className="floating-btn-wrapper">
-                <button
-                  type="button"
-                  className={clsx('floating-add-btn', isChromeVisible ? 'visible' : 'hidden')}
-                  onClick={() => setShowCreatePost(true)}
-                >
-                  Добавить
-                </button>
-              </div>
-            )}
+          <PullToRefresh
+            scrollRef={containerRef}
+            onRefresh={handleFeedRefresh}
+            header={(
+              <>
+                {moderator && (
+                  <div className="floating-btn-wrapper">
+                    <button
+                      type="button"
+                      className={clsx('floating-add-btn', isChromeVisible ? 'visible' : 'hidden')}
+                      onClick={() => setShowCreatePost(true)}
+                    >
+                      Добавить
+                    </button>
+                  </div>
+                )}
 
-            {pinnedPosts.length > 0 && !searchOpen && (
-              <PinnedBanner
-                pinnedPosts={pinnedPosts}
-                collection="tournament_posts"
-                activeIndex={activePinnedIndex}
-                onOpen={handleOpenPinned}
-              />
+                {pinnedPosts.length > 0 && !searchOpen && (
+                  <PinnedBanner
+                    pinnedPosts={pinnedPosts}
+                    collection="tournament_posts"
+                    activeIndex={activePinnedIndex}
+                    onOpen={handleOpenPinned}
+                  />
+                )}
+              </>
             )}
-
+          >
             <div className="competitions-feed-list">
               {postsLoading && <FeedListSkeleton />}
 

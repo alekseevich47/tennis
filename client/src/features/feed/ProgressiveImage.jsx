@@ -2,29 +2,33 @@ import React, { memo, useEffect, useState } from 'react';
 import clsx from 'clsx';
 
 /**
- * LQIP → полное фото. Опционально выставляет aspect-ratio по naturalWidth/Height.
+ * Placeholder → LQIP blur → полное фото.
+ * Опционально выставляет aspect-ratio по naturalWidth/Height.
  *
  * @param {{
- *   src: string,
+ *   src?: string | null,
  *   previewSrc?: string | null,
  *   alt?: string,
  *   className?: string,
  *   loading?: 'eager' | 'lazy',
  *   width?: number | string,
  *   height?: number | string,
- *   nativeAspect?: boolean
+ *   nativeAspect?: boolean,
+ *   pending?: boolean
  * }} props
  */
 function ProgressiveImage({
-  src,
+  src = null,
   previewSrc = null,
   alt = '',
   className,
   loading = 'lazy',
   width = 800,
   height = 600,
-  nativeAspect = false
+  nativeAspect = false,
+  pending = false
 }) {
+  const hasSrc = Boolean(src);
   const hasDistinctPreview = Boolean(previewSrc && previewSrc !== src);
   const [aspect, setAspect] = useState(/** @type {number | null} */ (null));
   const [previewReady, setPreviewReady] = useState(false);
@@ -43,9 +47,25 @@ function ProgressiveImage({
     if (w > 0 && h > 0) setAspect(w / h);
   };
 
+  const handlePreviewLoad = (event) => {
+    setPreviewReady(true);
+    captureAspect(event.currentTarget);
+  };
+
+  const handleFullLoad = (event) => {
+    setFullReady(true);
+    captureAspect(event.currentTarget);
+  };
+
+  const bindIfComplete = (img, onReady) => {
+    if (img?.complete && img.naturalWidth > 0) onReady({ currentTarget: img });
+  };
+
   const wrapperStyle = nativeAspect
     ? { aspectRatio: String(aspect ?? 1.6) }
     : undefined;
+
+  const showPlaceholder = pending || !fullReady;
 
   return (
     <span
@@ -54,12 +74,15 @@ function ProgressiveImage({
         className,
         nativeAspect && 'progressive-image--native-aspect',
         fullReady && 'progressive-image--ready',
+        showPlaceholder && 'progressive-image--pending',
         !hasDistinctPreview && 'progressive-image--single'
       )}
       style={wrapperStyle}
     >
+      <span className="progressive-image__placeholder" aria-hidden="true" />
       {hasDistinctPreview ? (
         <img
+          ref={(el) => bindIfComplete(el, handlePreviewLoad)}
           src={previewSrc}
           alt=""
           aria-hidden="true"
@@ -71,29 +94,26 @@ function ProgressiveImage({
           width={width}
           height={height}
           decoding="async"
-          onLoad={(event) => {
-            setPreviewReady(true);
-            captureAspect(event.currentTarget);
-          }}
+          onLoad={handlePreviewLoad}
         />
       ) : null}
-      <img
-        src={src}
-        alt={alt}
-        className={clsx(
-          'progressive-image__layer',
-          'progressive-image__full',
-          (!hasDistinctPreview || fullReady) && 'is-visible'
-        )}
-        width={width}
-        height={height}
-        loading={loading}
-        decoding="async"
-        onLoad={(event) => {
-          setFullReady(true);
-          captureAspect(event.currentTarget);
-        }}
-      />
+      {hasSrc ? (
+        <img
+          ref={(el) => bindIfComplete(el, handleFullLoad)}
+          src={src}
+          alt={alt}
+          className={clsx(
+            'progressive-image__layer',
+            'progressive-image__full',
+            fullReady && 'is-visible'
+          )}
+          width={width}
+          height={height}
+          loading={loading}
+          decoding="async"
+          onLoad={handleFullLoad}
+        />
+      ) : null}
     </span>
   );
 }
