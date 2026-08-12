@@ -308,28 +308,34 @@ function FeedPage({
 
   return (
     <div className="feed-scroll-container" ref={containerRef}>
-      <PullToRefresh scrollRef={containerRef} onRefresh={handleRefresh}>
-        {userIsModerator && (
-          <div className="floating-btn-wrapper">
-            <button
-              type="button"
-              className={clsx('floating-add-btn', isButtonVisible ? 'visible' : 'hidden')}
-              onClick={() => setShowAddModal(true)}
-            >
-              Добавить
-            </button>
-          </div>
-        )}
+      <PullToRefresh
+        scrollRef={containerRef}
+        onRefresh={handleRefresh}
+        header={(
+          <>
+            {userIsModerator && (
+              <div className="floating-btn-wrapper">
+                <button
+                  type="button"
+                  className={clsx('floating-add-btn', isButtonVisible ? 'visible' : 'hidden')}
+                  onClick={() => setShowAddModal(true)}
+                >
+                  Добавить
+                </button>
+              </div>
+            )}
 
-        {pinnedPosts.length > 0 && !searchOpen && (
-          <PinnedBanner
-            pinnedPosts={pinnedPosts}
-            collection="posts"
-            activeIndex={activePinnedIndex}
-            onOpen={handleOpenPinned}
-          />
+            {pinnedPosts.length > 0 && !searchOpen && (
+              <PinnedBanner
+                pinnedPosts={pinnedPosts}
+                collection="posts"
+                activeIndex={activePinnedIndex}
+                onOpen={handleOpenPinned}
+              />
+            )}
+          </>
         )}
-
+      >
         <div className="feed-list">
           {isLoading && <FeedListSkeleton />}
 
