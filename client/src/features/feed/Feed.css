@@ -29,48 +29,6 @@
   border: 0;
 }
 
-.floating-btn-wrapper {
-  position: sticky;
-  top: -4px;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  z-index: 99;
-  height: 0;
-}
-
-.floating-add-btn {
-  background: #007aff;
-  color: #ffffff;
-  border: none;
-  padding: 10px 25px;
-  border-radius: 24px;
-  font-size: 14px;
-  font-weight: 600;
-  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.25);
-  cursor: pointer;
-  pointer-events: auto;
-  transition: opacity 0.25s ease, transform 0.25s ease;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 38px;
-  min-height: 44px;
-  box-sizing: border-box;
-}
-
-.floating-add-btn.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.floating-add-btn.hidden {
-  opacity: 0;
-  transform: translateY(-20px);
-  pointer-events: none;
-}
-
 .feed-card {
   background: #ffffff;
   border-radius: 16px;
@@ -827,6 +785,100 @@ button.post-card-like:hover:not(:disabled) {
   flex-shrink: 0;
 }
 
+.create-post-form__actions--with-attach {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  justify-content: flex-start;
+}
+
+.create-post-attach-btn {
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  margin-top: 16px;
+  padding: 0;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: #f8f9fa;
+  color: #8e8e93;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.create-post-attach-btn:hover:not(:disabled) {
+  background: #f1f3f5;
+  color: #636366;
+}
+
+.create-post-attach-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.create-post-attach-btn__icon {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+
+.create-post-form__publish {
+  flex: 1;
+  width: auto;
+  margin-top: 16px;
+}
+
+.post-link-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.post-link-form__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #5c6670;
+}
+
+.post-link-form__input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #dfe3e8;
+  border-radius: 10px;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.post-link-form__actions {
+  margin-top: 8px;
+  align-items: stretch;
+}
+
+.post-link-form__cancel {
+  flex: 0 0 auto;
+  border: none;
+  background: #f1f3f5;
+  color: #495057;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.post-link-form__submit {
+  flex: 1;
+  width: auto;
+  margin-top: 0;
+}
+
 .post-rich-text {
   display: flex;
   flex-direction: column;
@@ -1519,6 +1571,20 @@ button.post-card-like:hover:not(:disabled) {
 
 .edit-post-actions {
   align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.edit-post-actions__primary {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.edit-post-actions__primary .create-post-attach-btn,
+.edit-post-actions__primary .create-post-form__publish {
+  margin-top: 0;
 }
 
 .edit-post-cancel-btn {

@@ -338,6 +338,118 @@ export function applyFormatCommand(command) {
 }
 
 /**
+ * Нормализация URL для `<a href>`. Без схемы → `https://`.
+ * @param {string} value
+ * @returns {string | null}
+ */
+export function normalizeHref(value) {
+  let href = String(value || '').trim();
+  if (!href) return null;
+  if (/^mailto:/i.test(href)) return href;
+  if (!/^https?:\/\//i.test(href)) href = `https://${href}`;
+  try {
+    // eslint-disable-next-line no-new
+    new URL(href);
+    return href;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Текст и href текущего выделения / родительской ссылки (для модалки).
+ * @param {HTMLElement | null} editor
+ * @returns {{ title: string, href: string, hasSelection: boolean }}
+ */
+export function getLinkDraftFromSelection(editor) {
+  const selection = window.getSelection();
+  if (!editor || !selection || selection.rangeCount === 0) {
+    return { title: '', href: '', hasSelection: false };
+  }
+  const range = selection.getRangeAt(0);
+  if (!editor.contains(range.commonAncestorContainer)) {
+    return { title: '', href: '', hasSelection: false };
+  }
+
+  const anchor =
+    range.startContainer.nodeType === Node.ELEMENT_NODE
+      ? /** @type {Element} */ (range.startContainer).closest?.('a')
+      : range.startContainer.parentElement?.closest?.('a');
+  const linkEl =
+    anchor && editor.contains(anchor) ? /** @type {HTMLAnchorElement} */ (anchor) : null;
+
+  if (linkEl) {
+    return {
+      title: (linkEl.textContent || '').replace(/[\u200B\u00A0]/g, '').trim(),
+      href: linkEl.getAttribute('href') || '',
+      hasSelection: true
+    };
+  }
+
+  const title = selection.toString().replace(/[\u200B\u00A0]/g, '').trim();
+  return { title, href: '', hasSelection: !selection.isCollapsed && title.length > 0 };
+}
+
+/**
+ * Вставка / обновление гиперссылки на месте выделения.
+ * @param {{ href: string, title: string }} payload
+ * @param {HTMLElement} editor
+ * @returns {boolean}
+ */
+export function applyHyperlink(payload, editor) {
+  const href = normalizeHref(payload.href);
+  const title = String(payload.title || '').replace(/[\u200B\u00A0]/g, '').trim();
+  if (!href || !title || !editor) return false;
+
+  const selection = window.getSelection();
+  if (!selection) return false;
+  editor.focus({ preventScroll: true });
+
+  let range;
+  if (selection.rangeCount > 0 && editor.contains(selection.anchorNode)) {
+    range = selection.getRangeAt(0);
+  } else {
+    range = document.createRange();
+    range.selectNodeContents(editor);
+    range.collapse(false);
+  }
+
+  const startEl =
+    range.startContainer.nodeType === Node.ELEMENT_NODE
+      ? /** @type {Element} */ (range.startContainer)
+      : range.startContainer.parentElement;
+  const existing = startEl?.closest?.('a');
+  if (existing && editor.contains(existing)) {
+    const a = /** @type {HTMLAnchorElement} */ (existing);
+    a.href = href;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.textContent = title;
+    range = document.createRange();
+    range.setStartAfter(a);
+    range.collapse(true);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    return true;
+  }
+
+  const a = document.createElement('a');
+  a.href = href;
+  a.target = '_blank';
+  a.rel = 'noopener noreferrer';
+  a.textContent = title;
+
+  range.deleteContents();
+  range.insertNode(a);
+
+  range.setStartAfter(a);
+  range.collapse(true);
+  selection.removeAllRanges();
+  selection.addRange(range);
+  return true;
+}
+
+/**
  * Wrap selection (or insert template) as animated color frame.
  * @param {string} color
  * @param {HTMLElement} editor
@@ -412,17 +524,28 @@ export function ensureFrameCarets(editor) {
 }
 
 /**
- * @returns {{ bold: boolean, italic: boolean, underline: boolean }}
+ * @returns {{ bold: boolean, italic: boolean, underline: boolean, link: boolean }}
  */
 export function readActiveFormats() {
   try {
+    let link = false;
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount > 0) {
+      const node = selection.anchorNode;
+      const el =
+        node?.nodeType === Node.ELEMENT_NODE
+          ? /** @type {Element} */ (node)
+          : node?.parentElement;
+      link = Boolean(el?.closest?.('a'));
+    }
     return {
       bold: document.queryCommandState('bold'),
       italic: document.queryCommandState('italic'),
-      underline: document.queryCommandState('underline')
+      underline: document.queryCommandState('underline'),
+      link
     };
   } catch {
-    return { bold: false, italic: false, underline: false };
+    return { bold: false, italic: false, underline: false, link: false };
   }
 }
 

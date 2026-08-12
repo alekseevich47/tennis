@@ -3,10 +3,10 @@ import clsx from 'clsx';
 
 /**
  * @param {{
- *   active?: { bold?: boolean, italic?: boolean, underline?: boolean },
+ *   active?: { bold?: boolean, italic?: boolean, underline?: boolean, link?: boolean },
  *   frameOpen?: boolean,
  *   enableFrame?: boolean,
- *   onCommand: (command: 'bold' | 'italic' | 'underline' | 'frame') => void
+ *   onCommand: (command: 'bold' | 'italic' | 'underline' | 'frame' | 'link') => void
  * }} props
  */
 function PostFormatToolbar({ active = {}, frameOpen = false, enableFrame = true, onCommand }) {
@@ -55,6 +55,40 @@ function PostFormatToolbar({ active = {}, frameOpen = false, enableFrame = true,
         <span className="post-format-toolbar__glyph post-format-toolbar__glyph--underline" aria-hidden="true">
           Ч
         </span>
+      </button>
+      <button
+        type="button"
+        className={clsx('post-format-toolbar__btn', active.link && 'is-active')}
+        aria-label="Ссылка"
+        aria-pressed={Boolean(active.link)}
+        onClick={run('link')}
+      >
+        <svg className="post-format-toolbar__icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle
+            cx="12"
+            cy="12"
+            r="9"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+          />
+          <ellipse
+            cx="12"
+            cy="12"
+            rx="4"
+            ry="9"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+          />
+          <path
+            d="M3.5 9.5h17M3.5 14.5h17"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+          />
+        </svg>
       </button>
       {enableFrame ? (
         <>

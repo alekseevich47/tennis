@@ -6,6 +6,7 @@ import { incrementProductViews, restoreProduct, softDeleteProduct } from '../../
 import { useProductUpload } from '../../components/ProductUploadProvider';
 import EmptyState from '../../components/ui/EmptyState';
 import PullToRefresh from '../../components/ui/PullToRefresh';
+import FloatingAddButton from '../../components/ui/FloatingAddButton';
 import { ShopGridSkeleton } from '../../components/ui/Skeleton';
 import ProductCard from './ProductCard';
 import ProductForm from './ProductForm';
@@ -229,39 +230,32 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
         scrollRef={containerRef}
         onRefresh={handleRefresh}
         header={(
-          <>
-            {moderator && (
-              <div className="floating-btn-wrapper">
-                <button
-                  type="button"
-                  className={clsx('floating-add-btn', showAddButton ? 'visible' : 'hidden')}
-                  onClick={() => setShowAddModal(true)}
-                >
-                  Добавить
-                </button>
-              </div>
-            )}
-
-            <div className={clsx('shop-header-bar-new', isSearchOpen && 'search-open')}>
-              <CategoryDropdown
-                selectedCategoryId={selectedCategoryId}
-                onCategoryChange={setSelectedCategoryId}
-                isSearchOpen={isSearchOpen}
-                onCloseSearch={handleCloseSearchUI}
-                onOpenChange={setIsCategoryDropdownOpen}
-              />
-              <SearchBar
-                searchQuery={searchQuery}
-                onSearchChange={setSearchQuery}
-                isOpen={isSearchOpen}
-                onOpenChange={setIsSearchOpen}
-                onSearchToggle={setIsSearchOpen}
-                onFocusChange={setIsSearchFocused}
-              />
-            </div>
-          </>
+          <div className={clsx('shop-header-bar-new', isSearchOpen && 'search-open')}>
+            <CategoryDropdown
+              selectedCategoryId={selectedCategoryId}
+              onCategoryChange={setSelectedCategoryId}
+              isSearchOpen={isSearchOpen}
+              onCloseSearch={handleCloseSearchUI}
+              onOpenChange={setIsCategoryDropdownOpen}
+            />
+            <SearchBar
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              isOpen={isSearchOpen}
+              onOpenChange={setIsSearchOpen}
+              onSearchToggle={setIsSearchOpen}
+              onFocusChange={setIsSearchFocused}
+            />
+          </div>
         )}
       >
+        {moderator && (
+          <FloatingAddButton
+            visible={showAddButton}
+            onClick={() => setShowAddModal(true)}
+          />
+        )}
+
         {isLoading ? (
           <div className="shop-skeleton-wrap">
             <ShopGridSkeleton />

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
 import PostMedia from '../feed/PostMedia';
+import PostContentHtml from '../feed/PostContentHtml';
 import PostContextMenu from '../feed/PostContextMenu';
 import TournamentPodium from './TournamentPodium';
 import TournamentCommentsSection from './TournamentCommentsSection';
@@ -186,7 +187,9 @@ function TournamentPostDetailModal({
           </div>
         </div>
 
-        {post.content ? <p className="tournament-post-content">{post.content}</p> : null}
+        {post.content ? (
+          <PostContentHtml as="div" className="tournament-post-content post-text-detail" content={post.content} />
+        ) : null}
 
         <PostMedia
           post={post}

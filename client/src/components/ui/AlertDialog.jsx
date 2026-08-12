@@ -17,6 +17,7 @@ const INITIAL_STATE = {
   variant: 'alert', // 'alert' | 'confirm'
   confirmText: 'Понятно',
   cancelText: 'Отмена',
+  confirmVariant: 'primary', // 'primary' | 'danger'
   overlayClassName: undefined,
   onConfirm: undefined,
   onCancel: undefined
@@ -59,6 +60,7 @@ export function AlertDialogProvider({ children }) {
       message,
       confirmText = 'Да, продолжить',
       cancelText = 'Отмена',
+      confirmVariant = 'primary',
       overlayClassName
     } = {}) =>
       new Promise((resolve) => {
@@ -70,6 +72,7 @@ export function AlertDialogProvider({ children }) {
           variant: 'confirm',
           confirmText,
           cancelText,
+          confirmVariant,
           overlayClassName,
           onConfirm: () => {
             close();
@@ -113,7 +116,9 @@ export function AlertDialogProvider({ children }) {
           )}
           <button
             type="button"
-            className="ui-alert-btn ui-alert-btn--confirm"
+            className={`ui-alert-btn ui-alert-btn--confirm${
+              state.confirmVariant === 'danger' ? ' ui-alert-btn--confirm-danger' : ''
+            }`}
             onClick={state.onConfirm}
           >
             {state.confirmText}
@@ -127,7 +132,7 @@ export function AlertDialogProvider({ children }) {
 /**
  * @returns {{
  *   alert: (opts?: { title?: string, message?: string, confirmText?: string, overlayClassName?: string }) => Promise<true>,
- *   confirm: (opts?: { title?: string, message?: string, confirmText?: string, cancelText?: string, overlayClassName?: string }) => Promise<boolean>
+ *   confirm: (opts?: { title?: string, message?: string, confirmText?: string, cancelText?: string, confirmVariant?: 'primary' | 'danger', overlayClassName?: string }) => Promise<boolean>
  * }}
  */
 export function useAlertDialog() {

@@ -11,13 +11,16 @@ import React, {
 import { createPortal } from 'react-dom';
 import clsx from 'clsx';
 import PostFormatToolbar from './PostFormatToolbar';
+import PostLinkModal from './PostLinkModal';
 import FrameColorPicker from './FrameColorPicker';
 import {
   FRAME_CLASS,
   applyAnimFrame,
   applyFormatCommand,
+  applyHyperlink,
   ensureFrameCarets,
   getEditorHtml,
+  getLinkDraftFromSelection,
   isEditorEmpty,
   normalizeHexColor,
   readActiveFormats
@@ -64,11 +67,18 @@ const PostRichTextField = forwardRef(function PostRichTextField(
   const savedRangeRef = useRef(/** @type {Range | null} */ (null));
   const valueRef = useRef(value);
   valueRef.current = value;
-  const [active, setActive] = useState({ bold: false, italic: false, underline: false });
+  const [active, setActive] = useState({
+    bold: false,
+    italic: false,
+    underline: false,
+    link: false
+  });
   const [empty, setEmpty] = useState(true);
   const [focused, setFocused] = useState(false);
   const [frameOpen, setFrameOpen] = useState(false);
   const [frameColor, setFrameColor] = useState('#FF4D6D');
+  const [linkOpen, setLinkOpen] = useState(false);
+  const [linkDraft, setLinkDraft] = useState({ title: '', href: '' });
   const [selectionToolbar, setSelectionToolbar] = useState(
     /** @type {{ top: number, left: number } | null} */ (null)
   );
@@ -162,7 +172,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
       return;
     }
 
-    const toolbarWidth = floatingRef.current?.offsetWidth || 148;
+    const toolbarWidth = floatingRef.current?.offsetWidth || 180;
     const gap = 20;
     const left = Math.min(
       Math.max(8, rect.left + rect.width / 2 - toolbarWidth / 2),
@@ -258,6 +268,16 @@ const PostRichTextField = forwardRef(function PostRichTextField(
       return;
     }
 
+    if (command === 'link') {
+      saveSelection();
+      setFrameOpen(false);
+      const draft = getLinkDraftFromSelection(el);
+      setLinkDraft({ title: draft.title, href: draft.href });
+      setLinkOpen(true);
+      setSelectionToolbar(null);
+      return;
+    }
+
     setFrameOpen(false);
     restoreSelection();
     el.focus({ preventScroll: true });
@@ -267,6 +287,18 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     syncEmptyAndValue();
     refreshActive();
     requestAnimationFrame(updateSelectionToolbar);
+  };
+
+  const handleApplyLink = ({ title, href }) => {
+    const el = editorRef.current;
+    if (!el) return;
+    restoreSelection();
+    applyHyperlink({ title, href }, el);
+    setLinkOpen(false);
+    setSelectionToolbar(null);
+    skipNextSync.current = true;
+    syncEmptyAndValue();
+    refreshActive();
   };
 
   const handleApplyFrame = (hex) => {
@@ -407,6 +439,13 @@ const PostRichTextField = forwardRef(function PostRichTextField(
             onFocus?.();
           }}
           onMouseDown={handleEditorMouseDown}
+          onClick={(event) => {
+            // В редакторе не уходить по ссылке — только правка.
+            const link = event.target instanceof Element ? event.target.closest('a') : null;
+            if (link && editorRef.current?.contains(link)) {
+              event.preventDefault();
+            }
+          }}
           onKeyDown={(event) => {
             if (singleLine && event.key === 'Enter') {
               event.preventDefault();
@@ -460,6 +499,14 @@ const PostRichTextField = forwardRef(function PostRichTextField(
       </div>
 
       {floatingToolbar}
+
+      <PostLinkModal
+        isOpen={linkOpen}
+        initialTitle={linkDraft.title}
+        initialHref={linkDraft.href}
+        onClose={() => setLinkOpen(false)}
+        onSubmit={handleApplyLink}
+      />
     </div>
   );
 });

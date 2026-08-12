@@ -40,7 +40,7 @@ const NAV_ITEMS = [
     )
   },
   {
-    label: 'Рейтинг',
+    label: 'Турнир',
     tabIndex: 3,
     icon: (
       <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

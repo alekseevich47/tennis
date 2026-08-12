@@ -1,5 +1,5 @@
 // @ts-check
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { hasOpenOverlay } from '../../lib/overlayStack';
 import './PullToRefresh.css';
@@ -9,6 +9,20 @@ const PULL_THRESHOLD = 72;
 const PULL_MAX = 120;
 const REFRESH_HOLD = 56;
 const SPRING_MS = 280;
+
+/**
+ * @typedef {{ offset: number, refreshing: boolean, springing: boolean }} PullToRefreshState
+ */
+
+/** @type {PullToRefreshState} */
+const DEFAULT_PULL_STATE = { offset: 0, refreshing: false, springing: false };
+
+const PullToRefreshStateContext = createContext(DEFAULT_PULL_STATE);
+
+/** @returns {PullToRefreshState} */
+export function usePullToRefreshState() {
+  return useContext(PullToRefreshStateContext);
+}
 
 /**
  * iOS-style pull-to-refresh: `header` остаётся на месте, вниз уезжает только
@@ -96,8 +110,6 @@ export default function PullToRefresh({
 
     const handleStart = (/** @type {TouchEvent} */ event) => {
       if (refreshingRef.current || event.touches.length !== 1) return;
-      // Fullscreen / модалки живут внутри scroll-контейнера — жест вниз не должен
-      // запускать refresh под оверлеем.
       if (hasOpenOverlay()) {
         gestureRef.current = null;
         return;
@@ -184,36 +196,43 @@ export default function PullToRefresh({
   const showSpinner = offset > 4 || refreshing;
   const rotation = refreshing ? undefined : progress * 320;
 
+  const pullState = useMemo(
+    () => ({ offset, refreshing, springing }),
+    [offset, refreshing, springing]
+  );
+
   return (
-    <div className={clsx('pull-to-refresh', className)}>
-      {header != null ? (
-        <div className="pull-to-refresh__header">{header}</div>
-      ) : null}
-      <div
-        className={clsx(
-          'pull-to-refresh__slot',
-          springing && 'pull-to-refresh__slot--spring'
-        )}
-        style={{ height: offset }}
-        aria-hidden={!showSpinner}
-      >
+    <PullToRefreshStateContext.Provider value={pullState}>
+      <div className={clsx('pull-to-refresh', className)}>
+        {header != null ? (
+          <div className="pull-to-refresh__header">{header}</div>
+        ) : null}
         <div
           className={clsx(
-            'pull-to-refresh__indicator',
-            refreshing && 'pull-to-refresh__indicator--spinning'
+            'pull-to-refresh__slot',
+            springing && 'pull-to-refresh__slot--spring'
           )}
-          style={{ opacity: showSpinner ? Math.min(1, 0.2 + progress * 0.8) : 0 }}
-          role="status"
-          aria-live="polite"
-          aria-label={refreshing ? 'Обновление' : undefined}
+          style={{ height: offset }}
+          aria-hidden={!showSpinner}
         >
-          <span
-            className="pull-to-refresh__spinner"
-            style={rotation != null ? { transform: `rotate(${rotation}deg)` } : undefined}
-          />
+          <div
+            className={clsx(
+              'pull-to-refresh__indicator',
+              refreshing && 'pull-to-refresh__indicator--spinning'
+            )}
+            style={{ opacity: showSpinner ? Math.min(1, 0.2 + progress * 0.8) : 0 }}
+            role="status"
+            aria-live="polite"
+            aria-label={refreshing ? 'Обновление' : undefined}
+          >
+            <span
+              className="pull-to-refresh__spinner"
+              style={rotation != null ? { transform: `rotate(${rotation}deg)` } : undefined}
+            />
+          </div>
         </div>
+        <div className="pull-to-refresh__content">{children}</div>
       </div>
-      <div className="pull-to-refresh__content">{children}</div>
-    </div>
+    </PullToRefreshStateContext.Provider>
   );
 }
