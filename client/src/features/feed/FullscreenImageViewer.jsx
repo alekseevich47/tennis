@@ -26,7 +26,7 @@ function getOriginRect(originKey) {
 
 /**
  * @param {{
- *   items: Array<{ filename: string, url: string, isVideo: boolean, originKey?: string, postNumber?: number }>,
+ *   items: Array<{ filename: string, url: string, isVideo: boolean, originKey?: string, postNumber?: number, isLoading?: boolean }>,
  *   initialIndex?: number,
  *   originRect?: DOMRect | null,
  *   originKey?: string | null,
@@ -477,13 +477,21 @@ function FullscreenImageViewer({
         >
           {trackItems.map((item, index) => {
             const isActiveSlide = !hasMultiple || index === 1;
+            const pending = Boolean(item.isLoading) || !item.url;
             return (
               <div
                 className="fullscreen-carousel-slide"
                 data-active={isActiveSlide ? 'true' : undefined}
-                key={`${item.filename}-${index}`}
+                key={`${item.originKey || item.filename}-${index}`}
               >
-                {item.isVideo ? (
+                {pending ? (
+                  <div
+                    className="fullscreen-media-pending"
+                    aria-label="Загрузка медиа"
+                  >
+                    <span className="fullscreen-media-pending__spinner" aria-hidden="true" />
+                  </div>
+                ) : item.isVideo ? (
                   <div className="fullscreen-video-container">
                     <video
                       ref={isActiveSlide ? (el) => {

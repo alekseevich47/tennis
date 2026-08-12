@@ -200,8 +200,8 @@
     "semantic_hash": ""
   },
   "client/src/features/competitions/CompetitionsPage.jsx": {
-    "mtime": 1786540387.06249,
-    "ast_hash": "b86e13a93eed8fb9b175ce824adf446a",
+    "mtime": 1786543290.821426,
+    "ast_hash": "4451703d45c71483951a72a5461d21f0",
     "semantic_hash": ""
   },
   "client/src/features/competitions/CreateTournamentPostModal.jsx": {
@@ -255,18 +255,18 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/FeedPage.jsx": {
-    "mtime": 1786513093.1846333,
-    "ast_hash": "28b233e36e9dce3df38a28e4bae10af4",
+    "mtime": 1786543305.479267,
+    "ast_hash": "bcb50cead98607e210688d6557cada95",
     "semantic_hash": ""
   },
   "client/src/features/feed/FullscreenImageViewer.jsx": {
-    "mtime": 1786320259.8836207,
-    "ast_hash": "0694f3663a60ab8fcb2ef2d9f1ffeacf",
+    "mtime": 1786543325.977294,
+    "ast_hash": "0693ac0c5d86e54bafacad5a41109dec",
     "semantic_hash": ""
   },
   "client/src/features/feed/MediaPreviewGrid.jsx": {
-    "mtime": 1786538920.159159,
-    "ast_hash": "3a6218f246e1235485f4a7af69c35b5e",
+    "mtime": 1786541371.7320774,
+    "ast_hash": "157710dd1b419e5fde1b72ebd7bf441d",
     "semantic_hash": ""
   },
   "client/src/features/feed/PostCard.jsx": {
@@ -280,8 +280,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostMedia.jsx": {
-    "mtime": 1786538945.6979775,
-    "ast_hash": "d6aae3882ae3471bae795d9102e705b6",
+    "mtime": 1786543307.3543308,
+    "ast_hash": "dddbd73e9ce126257cec8dffaa1cf9bf",
     "semantic_hash": ""
   },
   "client/src/features/gallery/AddImageModal.jsx": {
@@ -1090,8 +1090,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/useLocalMediaFullscreen.js": {
-    "mtime": 1786538939.2612722,
-    "ast_hash": "abecc77d7d2df811b8d543b93a496d01",
+    "mtime": 1786543311.0060346,
+    "ast_hash": "e80adc2f41e3d239f963718ca7176b2e",
     "semantic_hash": ""
   },
   "client/src/features/feed/CommentReplyButton.jsx": {
@@ -1190,13 +1190,13 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/useResolvedExternalMedia.js": {
-    "mtime": 1786538900.361835,
-    "ast_hash": "95245237153f588d52895e217f9e0252",
+    "mtime": 1786543277.025278,
+    "ast_hash": "22a93a85229f5f558d3f0a2d11b5edef",
     "semantic_hash": ""
   },
   "client/src/features/feed/useYadiskEmbed.js": {
-    "mtime": 1786539141.2326727,
-    "ast_hash": "d028fe6163a83fe4761477920636ca44",
+    "mtime": 1786543310.514579,
+    "ast_hash": "53a40411d1af2e1c964197d2e670257c",
     "semantic_hash": ""
   },
   "client/src/lib/yadisk.js": {
@@ -1302,6 +1302,11 @@
   "client/src/features/feed/AlbumStackBadge.jsx": {
     "mtime": 1786538900.5958967,
     "ast_hash": "6363552bf6b774c24a933fe52337ac3e",
+    "semantic_hash": ""
+  },
+  "client/src/features/feed/yadiskAlbumCache.js": {
+    "mtime": 1786543137.913261,
+    "ast_hash": "ee5faad71620939c52eb37981035df30",
     "semantic_hash": ""
   }
 }

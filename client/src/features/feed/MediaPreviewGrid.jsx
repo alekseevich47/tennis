@@ -2,6 +2,148 @@ import React, { memo } from 'react';
 import clsx from 'clsx';
 import { videoPreviewUrl } from '../../lib/media';
 import AlbumStackBadge from './AlbumStackBadge';
+import MediaSwipeDots from './MediaSwipeDots';
+import { useSwipeGallery } from './useSwipeGallery';
+
+/**
+ * @param {{
+ *   item: {
+ *     key: string,
+ *     url: string,
+ *     name: string,
+ *     isVideo: boolean,
+ *     status?: 'loading' | 'ready' | 'error',
+ *     error?: string,
+ *     isAlbum?: boolean,
+ *     albumViewerItems?: Array<{
+ *       key: string,
+ *       url: string,
+ *       name: string,
+ *       isVideo: boolean,
+ *       status?: string
+ *     }>
+ *   },
+ *   originKey: string,
+ *   hiddenMediaKey?: string | null,
+ *   showCaption?: boolean,
+ *   onItemClick?: (item: any, index: number, event: React.MouseEvent) => void,
+ *   gridIndex: number,
+ *   getAction?: (item: any) => React.ReactNode
+ * }} props
+ */
+function MediaPreviewAlbumItem({
+  item,
+  originKey,
+  hiddenMediaKey,
+  showCaption,
+  onItemClick,
+  getAction
+}) {
+  const slides = item.albumViewerItems?.length
+    ? item.albumViewerItems
+    : [
+        {
+          key: item.key,
+          url: item.url,
+          name: item.name,
+          isVideo: item.isVideo,
+          status: item.status
+        }
+      ];
+
+  const {
+    index,
+    setIndex,
+    handleTouchStart,
+    handleTouchEnd,
+    consumeSuppressClick
+  } = useSwipeGallery(slides.length, item.key);
+
+  const active = slides[index] || slides[0];
+  const status = active?.status || item.status || (active?.url ? 'ready' : 'loading');
+
+  let media;
+  if (status === 'loading' || (!active?.url && status !== 'error')) {
+    media = (
+      <div className="telegram-media-item__skeleton" aria-label="Загрузка превью">
+        <span className="post-media-skeleton" aria-hidden="true" />
+      </div>
+    );
+  } else if (status === 'error' || !active?.url) {
+    media = (
+      <div className="telegram-media-item__state telegram-media-item__state--error" role="alert">
+        {item.error || 'Ошибка'}
+      </div>
+    );
+  } else if (active.isVideo) {
+    media = (
+      <div className="telegram-video-preview">
+        <video
+          src={videoPreviewUrl(active.url)}
+          preload="metadata"
+          playsInline
+          muted
+          disablePictureInPicture
+          aria-label={active.name}
+          width="800"
+          height="600"
+        />
+        <span className="post-media-play-badge" aria-hidden="true">▶</span>
+      </div>
+    );
+  } else {
+    media = <img src={active.url} alt={active.name} loading="lazy" width="800" height="600" />;
+  }
+
+  const canOpen = Boolean(onItemClick) && Boolean(active?.url) && status !== 'error';
+
+  const handleOpen = (event) => {
+    if (consumeSuppressClick()) return;
+    // Для альбома второй аргумент — индекс слайда внутри альбома.
+    onItemClick?.(item, index, event);
+  };
+
+  const frame = (
+    <div className="media-frame">
+      {media}
+      <AlbumStackBadge />
+      <MediaSwipeDots count={slides.length} activeIndex={index} onSelect={setIndex} />
+    </div>
+  );
+
+  return (
+    <figure
+      className={clsx(
+        'telegram-media-item',
+        hiddenMediaKey === originKey && 'is-returning-origin'
+      )}
+    >
+      {canOpen ? (
+        <button
+          type="button"
+          className="telegram-media-item__open"
+          data-media-origin-key={originKey}
+          onClick={handleOpen}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          aria-label={`Открыть альбом ${item.name}`}
+        >
+          {frame}
+        </button>
+      ) : (
+        <div
+          className="telegram-media-item__open"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
+          {frame}
+        </div>
+      )}
+      {showCaption ? <figcaption>{item.name}</figcaption> : null}
+      {getAction?.(item)}
+    </figure>
+  );
+}
 
 /**
  * @param {{
@@ -14,7 +156,7 @@ import AlbumStackBadge from './AlbumStackBadge';
  *     error?: string,
  *     isAlbum?: boolean,
  *     albumCount?: number,
- *     albumViewerItems?: Array<{ key: string, url: string, name: string, isVideo: boolean }>
+ *     albumViewerItems?: Array<{ key: string, url: string, name: string, isVideo: boolean, status?: string }>
  *   }>,
  *   className?: string,
  *   showCaption?: boolean,
@@ -41,14 +183,26 @@ function MediaPreviewGrid({
     >
       {items.map((item, index) => {
         const originKey = `${originKeyPrefix}-${item.key}`;
+
+        if (item.isAlbum) {
+          return (
+            <MediaPreviewAlbumItem
+              key={item.key}
+              item={item}
+              originKey={originKey}
+              hiddenMediaKey={hiddenMediaKey}
+              showCaption={showCaption}
+              onItemClick={onItemClick}
+              getAction={getAction}
+            />
+          );
+        }
+
         const status = item.status || 'ready';
         let media;
         if (status === 'loading') {
           media = (
-            <div
-              className="telegram-media-item__skeleton"
-              aria-label="Загрузка превью"
-            >
+            <div className="telegram-media-item__skeleton" aria-label="Загрузка превью">
               <span className="post-media-skeleton" aria-hidden="true" />
             </div>
           );
@@ -79,14 +233,8 @@ function MediaPreviewGrid({
         }
 
         const canOpen = Boolean(onItemClick) && status === 'ready' && Boolean(item.url);
-        const showAlbumBadge = Boolean(item.isAlbum) && status !== 'error';
 
-        const frame = (
-          <div className="media-frame">
-            {media}
-            {showAlbumBadge ? <AlbumStackBadge /> : null}
-          </div>
-        );
+        const frame = <div className="media-frame">{media}</div>;
 
         return (
           <figure
@@ -103,11 +251,7 @@ function MediaPreviewGrid({
                 data-media-origin-key={originKey}
                 onClick={(event) => onItemClick(item, index, event)}
                 aria-label={
-                  item.isAlbum
-                    ? `Открыть альбом ${item.name}`
-                    : item.isVideo
-                      ? `Открыть видео ${item.name}`
-                      : `Открыть фото ${item.name}`
+                  item.isVideo ? `Открыть видео ${item.name}` : `Открыть фото ${item.name}`
                 }
               >
                 {frame}

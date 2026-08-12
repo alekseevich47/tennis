@@ -74,5 +74,7 @@
   "72": "claimlib.js",
   "73": "tournamentComments.js",
   "74": "Avatar.jsx",
-  "75": "users_claim.pb.js"
+  "75": "users_claim.pb.js",
+  "76": "Skeleton.jsx",
+  "77": "BottomNav.jsx"
 }
