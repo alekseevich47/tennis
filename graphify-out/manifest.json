@@ -265,8 +265,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/MediaPreviewGrid.jsx": {
-    "mtime": 1786538920.159159,
-    "ast_hash": "3a6218f246e1235485f4a7af69c35b5e",
+    "mtime": 1786541371.7320774,
+    "ast_hash": "157710dd1b419e5fde1b72ebd7bf441d",
     "semantic_hash": ""
   },
   "client/src/features/feed/PostCard.jsx": {
@@ -280,8 +280,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostMedia.jsx": {
-    "mtime": 1786538945.6979775,
-    "ast_hash": "d6aae3882ae3471bae795d9102e705b6",
+    "mtime": 1786541374.3966198,
+    "ast_hash": "5019ac2b87290d5d8944e8962e599a7c",
     "semantic_hash": ""
   },
   "client/src/features/gallery/AddImageModal.jsx": {
@@ -1190,8 +1190,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/useResolvedExternalMedia.js": {
-    "mtime": 1786538900.361835,
-    "ast_hash": "95245237153f588d52895e217f9e0252",
+    "mtime": 1786541357.4185457,
+    "ast_hash": "df3380019ffad713d13b66eb4db167d2",
     "semantic_hash": ""
   },
   "client/src/features/feed/useYadiskEmbed.js": {

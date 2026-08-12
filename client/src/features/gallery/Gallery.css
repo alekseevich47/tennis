@@ -23,14 +23,16 @@
 }
 
 .floating-add-btn {
-  background: #007aff;
-  color: #ffffff;
-  border: none;
+  background: rgba(255, 255, 255, 0.22);
+  color: rgba(30, 30, 30, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.55);
   padding: 10px 25px;
   border-radius: 24px;
   font-size: 14px;
   font-weight: 600;
-  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.25);
+  box-shadow:
+    0 2px 12px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
   cursor: pointer;
   pointer-events: auto;
   transition: opacity 0.25s ease, transform 0.25s ease, background 0.2s ease;
@@ -40,6 +42,14 @@
   height: 38px;
   min-height: 44px;
   box-sizing: border-box;
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .floating-add-btn {
+    background: rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(14px) saturate(1.1);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  }
 }
 
 .floating-add-btn.visible {
@@ -55,6 +65,10 @@
 
 .floating-add-btn--delete {
   background: #ff3b30;
+  color: #ffffff;
+  border-color: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   box-shadow: 0 4px 16px rgba(255, 59, 48, 0.28);
 }
 
