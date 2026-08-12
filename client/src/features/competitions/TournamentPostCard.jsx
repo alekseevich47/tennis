@@ -1,6 +1,7 @@
 import React, { memo, useCallback, useMemo } from 'react';
 import Avatar from '../../components/ui/Avatar';
 import PostMedia from '../feed/PostMedia';
+import PostContentHtml from '../feed/PostContentHtml';
 import CommentsPreview from '../feed/CommentsPreview';
 import TournamentPodium from './TournamentPodium';
 import { getParticipantDisplayName, getParticipantPlayer } from './tournamentParticipants';
@@ -91,6 +92,15 @@ function TournamentPostCard({
   };
 
   const handleCardClick = (event) => {
+    // Лайк/комменты/ссылки — не открывать деталку
+    if (
+      event.target instanceof Element &&
+      event.target.closest(
+        'button, a, input, textarea, [role="button"], .post-card-like, .post-card-comment-btn, .comments-preview-trigger'
+      )
+    ) {
+      return;
+    }
     longPressHandlers.onClick(event);
     if (event.defaultPrevented) return;
     handleOpenDetail();
@@ -164,7 +174,9 @@ function TournamentPostCard({
           </div>
         </div>
 
-        {post.content ? <p className="tournament-post-content">{post.content}</p> : null}
+        {post.content ? (
+          <PostContentHtml as="div" className="tournament-post-content" content={post.content} />
+        ) : null}
 
         <div onClick={(event) => event.stopPropagation()}>
           <PostMedia

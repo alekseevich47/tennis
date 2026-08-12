@@ -1,10 +1,11 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import Avatar from '../../components/ui/Avatar';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { useToast } from '../../components/ui/ToastContext';
 import FullscreenImageViewer from '../feed/FullscreenImageViewer';
 import MediaPreviewGrid from '../feed/MediaPreviewGrid';
+import PostAttachButton from '../feed/PostAttachButton';
 import PostRichTextField from '../feed/PostRichTextField';
 import { useLocalMediaFullscreen } from '../feed/useLocalMediaFullscreen';
 import { compressImage } from '../../lib/compress';
@@ -15,6 +16,7 @@ import {
 } from '../../lib/media';
 import { BOT_BLOCKED_TOURNAMENT_MESSAGE } from '../../services/auth';
 import { hasVisibleText } from '../feed/postRichText';
+
 /**
  * @param {{
  *   isOpen: boolean,
@@ -29,6 +31,8 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
   const [previewItems, setPreviewItems] = useState([]);
   const [search, setSearch] = useState('');
   const [pointsByUserId, setPointsByUserId] = useState(/** @type {Record<string, string>} */ ({}));
+  const fileInputId = useId();
+  const fileInputRef = useRef(/** @type {HTMLInputElement | null} */ (null));
   const { confirm } = useAlertDialog();
   const { showToast } = useToast();
   const {
@@ -65,7 +69,8 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
         title: 'Отменить публикацию?',
         message: 'Введённые данные будут потеряны.',
         confirmText: 'Отменить',
-        cancelText: 'Продолжить'
+        cancelText: 'Продолжить',
+        confirmVariant: 'danger'
       });
       if (!ok) return;
     }
@@ -137,25 +142,20 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title="Итоги турнира" size="tall">
       <form onSubmit={handleSubmit} className="create-tournament-post-form">
-        <div className="media-upload-group">
-          <label htmlFor="tournament-post-media" className="media-input-label">
-            <span aria-hidden="true">📎</span>{' '}
-            {files.length > 0 ? `Выбрано: ${files.length}` : 'Добавить медиа'}
-            <input
-              id="tournament-post-media"
-              name="tournament-post-media"
-              type="file"
-              accept="image/*,video/mp4"
-              multiple
-              onChange={(event) => {
-                setFiles(readSelectedFiles(event.target.files, MAX_POST_MEDIA_FILES));
-                event.currentTarget.value = '';
-              }}
-              className="visually-hidden"
-            />
-          </label>
-          <span className="file-name-preview">До {MAX_POST_MEDIA_FILES} файлов</span>
-        </div>
+        <input
+          ref={fileInputRef}
+          id={fileInputId}
+          name="tournament-post-media"
+          type="file"
+          accept="image/*,video/mp4"
+          multiple
+          disabled={files.length >= MAX_POST_MEDIA_FILES}
+          onChange={(event) => {
+            setFiles(readSelectedFiles(event.target.files, MAX_POST_MEDIA_FILES));
+            event.currentTarget.value = '';
+          }}
+          className="visually-hidden"
+        />
 
         <MediaPreviewGrid
           items={previewItems}
@@ -254,10 +254,14 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
           </div>
         </div>
 
-        <div className="modal-actions">
+        <div className="modal-actions create-post-form__actions--with-attach">
+          <PostAttachButton
+            disabled={files.length >= MAX_POST_MEDIA_FILES}
+            onClick={() => fileInputRef.current?.click()}
+          />
           <button
             type="submit"
-            className="submit-btn-full"
+            className="submit-btn-full create-post-form__publish"
             disabled={!hasText || selectedParticipants.length < 2}
           >
             Опубликовать

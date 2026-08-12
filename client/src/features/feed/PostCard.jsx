@@ -136,6 +136,11 @@ function PostCard({
   };
 
   const handlePostTextClick = (event) => {
+    // Клик по гиперссылке — открыть URL, не деталку.
+    if (event.target instanceof Element && event.target.closest('a[href]')) {
+      event.stopPropagation();
+      return;
+    }
     event.stopPropagation();
     onOpenDetail(post);
   };
@@ -210,10 +215,17 @@ function PostCard({
 
         <div className="feed-card-body">
           <PostContentHtml
-            as="button"
-            type="button"
+            as="div"
+            role="button"
+            tabIndex={0}
             className="post-text"
             onClick={handlePostTextClick}
+            onKeyDown={(event) => {
+              if (event.key !== 'Enter' && event.key !== ' ') return;
+              if (event.target instanceof Element && event.target.closest('a[href]')) return;
+              event.preventDefault();
+              onOpenDetail(post);
+            }}
             content={post.content || post.text}
           />
           <PostMedia

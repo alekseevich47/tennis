@@ -1,8 +1,9 @@
-import React, { useEffect, useId, useMemo, useState } from 'react';
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import { updatePost } from '../../services/posts';
 import FullscreenImageViewer from './FullscreenImageViewer';
 import MediaPreviewGrid from './MediaPreviewGrid';
+import PostAttachButton from './PostAttachButton';
 import PostRichTextField from './PostRichTextField';
 import { useLocalMediaFullscreen } from './useLocalMediaFullscreen';
 import { useYadiskEmbed } from './useYadiskEmbed';
@@ -28,6 +29,7 @@ import { hasVisibleText, toDisplayHtml } from './postRichText';
 function EditPostModal({ isOpen, post, onClose, onSaved }) {
   const textareaId = useId();
   const fileInputId = useId();
+  const fileInputRef = useRef(/** @type {HTMLInputElement | null} */ (null));
   const [text, setText] = useState('');
   const [mediaFiles, setMediaFiles] = useState(/** @type {File[]} */ ([]));
   const [removedMediaNames, setRemovedMediaNames] = useState(/** @type {string[]} */ ([]));
@@ -203,40 +205,21 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
           )}
         />
 
-        <div className="edit-post-media-controls">
-          <label className="media-input-label">
-            <span aria-hidden="true">📎</span>{' '}
-            Добавить медиа
-            <input
-              id={fileInputId}
-              name="edit-post-media"
-              type="file"
-              accept="image/*,video/mp4"
-              multiple
-              disabled={remainingMediaSlots === 0}
-              onChange={(event) => {
-                const incoming = readSelectedFiles(event.target.files, remainingMediaSlots);
-                setMediaFiles((current) => [...current, ...incoming].slice(0, MAX_POST_MEDIA_FILES));
-                event.currentTarget.value = '';
-              }}
-              className="visually-hidden"
-            />
-          </label>
-          {mediaFiles.length > 0 && (
-            <button
-              type="button"
-              className="edit-post-reset-media-btn"
-              onClick={() => setMediaFiles([])}
-              disabled={submitting}
-            >
-              Убрать новые файлы
-            </button>
-          )}
-        </div>
-        <p className="edit-post-hint">
-          До {MAX_POST_MEDIA_FILES} файлов. Ссылка Яндекс.Диска в тексте → превью. Удалённые и новые
-          файлы применятся после сохранения.
-        </p>
+        <input
+          ref={fileInputRef}
+          id={fileInputId}
+          name="edit-post-media"
+          type="file"
+          accept="image/*,video/mp4"
+          multiple
+          disabled={remainingMediaSlots === 0 || submitting}
+          onChange={(event) => {
+            const incoming = readSelectedFiles(event.target.files, remainingMediaSlots);
+            setMediaFiles((current) => [...current, ...incoming].slice(0, MAX_POST_MEDIA_FILES));
+            event.currentTarget.value = '';
+          }}
+          className="visually-hidden"
+        />
 
         <div className="modal-actions edit-post-actions">
           <button
@@ -247,13 +230,19 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
           >
             Отмена
           </button>
-          <button
-            type="submit"
-            className="submit-btn-full edit-post-save-btn"
-            disabled={submitting || yadisk.hasPending || !hasVisibleText(text)}
-          >
-            {submitting ? 'Сохраняем…' : yadisk.hasPending ? 'Превью…' : 'Сохранить'}
-          </button>
+          <div className="edit-post-actions__primary create-post-form__actions--with-attach">
+            <PostAttachButton
+              disabled={remainingMediaSlots === 0 || submitting}
+              onClick={() => fileInputRef.current?.click()}
+            />
+            <button
+              type="submit"
+              className="submit-btn-full edit-post-save-btn create-post-form__publish"
+              disabled={submitting || yadisk.hasPending || !hasVisibleText(text)}
+            >
+              {submitting ? 'Сохраняем…' : yadisk.hasPending ? 'Превью…' : 'Сохранить'}
+            </button>
+          </div>
         </div>
       </form>
 
