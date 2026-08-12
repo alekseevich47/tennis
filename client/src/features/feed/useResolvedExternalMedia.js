@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { normalizeExternalMedia } from '../../lib/yadisk';
 import { fetchYadiskObjectUrl, fetchYadiskPreview } from '../../services/yadisk';
 import { videoPreviewUrl } from '../../lib/media';
+import { setYadiskAlbumCache } from './yadiskAlbumCache';
 
 /**
  * @typedef {{
@@ -20,6 +21,37 @@ import { videoPreviewUrl } from '../../lib/media';
  *   albumCount?: number
  * }} ResolvedExternalMediaItem
  */
+
+/**
+ * @param {ResolvedExternalMediaItem[]} list
+ */
+function publishAlbums(list) {
+  /** @type {Map<string, ResolvedExternalMediaItem[]>} */
+  const byUrl = new Map();
+  for (const item of list) {
+    if (!item.albumId || !item.publicUrl) continue;
+    const bucket = byUrl.get(item.publicUrl) || [];
+    bucket.push(item);
+    byUrl.set(item.publicUrl, bucket);
+  }
+  byUrl.forEach((albumItems, publicUrl) => {
+    setYadiskAlbumCache(
+      publicUrl,
+      albumItems.map((entry, index) => ({
+        filename: entry.filename,
+        url: entry.url,
+        thumbUrl: entry.thumbUrl,
+        previewUrl: entry.previewUrl,
+        isVideo: entry.isVideo,
+        // Стабильный ключ между card/detail — по path внутри альбома.
+        originKey: entry.path || `${publicUrl}::${index}`,
+        publicUrl: entry.publicUrl,
+        path: entry.path,
+        isLoading: entry.isLoading
+      }))
+    );
+  });
+}
 
 /**
  * Резолв `posts.external_media` для сетки ленты через серверный прокси → blob URL.
@@ -43,10 +75,22 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
     let cancelled = false;
     /** @type {string[]} */
     const objectUrls = [];
+    /** @type {ResolvedExternalMediaItem[]} */
+    let working = [];
 
     const track = (url) => {
       objectUrls.push(url);
       return url;
+    };
+
+    /**
+     * @param {ResolvedExternalMediaItem[]} next
+     */
+    const commit = (next) => {
+      working = next;
+      if (cancelled) return;
+      setItems(next);
+      publishAlbums(next);
     };
 
     /**
@@ -55,8 +99,8 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
      */
     const patchItem = (originKey, patch) => {
       if (cancelled) return;
-      setItems((current) =>
-        current.map((item) => (item.originKey === originKey ? { ...item, ...patch } : item))
+      commit(
+        working.map((item) => (item.originKey === originKey ? { ...item, ...patch } : item))
       );
     };
 
@@ -65,7 +109,7 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
      */
     const dropItem = (originKey) => {
       if (cancelled) return;
-      setItems((current) => current.filter((item) => item.originKey !== originKey));
+      commit(working.filter((item) => item.originKey !== originKey));
     };
 
     /**
@@ -147,7 +191,6 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
       }
     };
 
-    // Сразу shimmer-слоты (альбом = одна обложка), чтобы сетка/модалка не были пустыми.
     /** @type {ResolvedExternalMediaItem[]} */
     const placeholders = stored.map((entry, index) => {
       if (entry.type === 'album') {
@@ -182,7 +225,7 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
         albumCount: 0
       };
     });
-    setItems(placeholders);
+    commit(placeholders);
 
     void (async () => {
       /** @type {ResolvedExternalMediaItem[]} */
@@ -242,19 +285,12 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
       }
 
       if (cancelled) return;
-      setItems(nextItems);
+      commit(nextItems);
 
-      const priority = nextItems.filter((item) => !item.albumId || item.isAlbumCover);
-      const rest = nextItems.filter((item) => item.albumId && !item.isAlbumCover);
-
-      for (const item of priority) {
-        if (cancelled) return;
-        await resolveFileBytes(item, item.publicUrl, item.path);
-      }
-      for (const item of rest) {
-        if (cancelled) return;
-        void resolveFileBytes(item, item.publicUrl, item.path);
-      }
+      // Все слоты параллельно — fullscreen сразу получает полный список из кэша.
+      await Promise.all(
+        nextItems.map((item) => resolveFileBytes(item, item.publicUrl, item.path))
+      );
     })();
 
     return () => {

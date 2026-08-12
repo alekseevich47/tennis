@@ -11,7 +11,10 @@ import {
 } from '../../lib/media';
 import ProgressiveImage from './ProgressiveImage';
 import AlbumStackBadge from './AlbumStackBadge';
+import MediaSwipeDots from './MediaSwipeDots';
 import { useResolvedExternalMedia } from './useResolvedExternalMedia';
+import { useSwipeGallery } from './useSwipeGallery';
+import { getYadiskAlbumCache, toFullscreenAlbumItems } from './yadiskAlbumCache';
 
 /**
  * @param {{
@@ -20,7 +23,13 @@ import { useResolvedExternalMedia } from './useResolvedExternalMedia';
  *   variant?: 'card' | 'detail',
  *   className?: string,
  *   hiddenMediaKey?: string | null,
- *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, thumbUrl: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void
+ *   onOpenFullscreen?: (
+ *     items: Array<{ filename: string, url: string, thumbUrl: string, isVideo: boolean, originKey: string, isLoading?: boolean }>,
+ *     index: number,
+ *     originRect?: DOMRect,
+ *     originKey?: string,
+ *     meta?: { albumPublicUrl?: string }
+ *   ) => void
  * }} props
  */
 function PostMedia({
@@ -48,7 +57,9 @@ function PostMedia({
             isLoading: false,
             isAlbumCover: false,
             albumId: null,
-            albumCount: 0
+            albumCount: 0,
+            publicUrl: '',
+            path: null
           }]
           : [];
       }),
@@ -70,32 +81,60 @@ function PostMedia({
     [albumId, externalItems]
   );
 
+  const isAlbum = Boolean(albumId && albumItems.length > 0);
+  const albumPublicUrl = albumItems[0]?.publicUrl || '';
+
+  const {
+    index: albumIndex,
+    setIndex: setAlbumIndex,
+    handleTouchStart,
+    handleTouchEnd,
+    consumeSuppressClick
+  } = useSwipeGallery(isAlbum ? albumItems.length : 0, `${post.id}-${albumId || ''}`);
+
   const items = useMemo(() => {
-    if (albumId) {
-      const cover = albumItems.find((item) => item.isAlbumCover) || albumItems[0];
-      return cover ? [cover] : [];
+    if (isAlbum) {
+      const active = albumItems[albumIndex] || albumItems[0];
+      return active ? [active] : [];
     }
     return [...fileItems, ...externalItems.filter((item) => !item.albumId)].slice(0, 5);
-  }, [albumId, albumItems, fileItems, externalItems]);
+  }, [isAlbum, albumItems, albumIndex, fileItems, externalItems]);
 
   if (items.length === 0) return null;
 
   const count = Math.min(items.length, 5);
-  const singleNativeAspect = count === 1 && !items[0]?.isVideo && !items[0]?.albumId;
+  const singleNativeAspect = count === 1 && !items[0]?.isVideo && !isAlbum;
+
   const openFullscreen = (event, index) => {
     event.stopPropagation();
+    if (consumeSuppressClick()) return;
+
     const item = items[index];
     if (!item?.url || item.isLoading) return;
 
-    if (item.albumId) {
-      const readyAlbum = albumItems.filter((entry) => entry.url && !entry.isLoading);
-      if (!readyAlbum.length) return;
-      const readyIndex = readyAlbum.findIndex((entry) => entry.originKey === item.originKey);
+    if (isAlbum && albumPublicUrl) {
+      const cached = getYadiskAlbumCache(albumPublicUrl);
+      const source =
+        cached && cached.length > 0
+          ? cached
+          : albumItems.length > 0
+            ? albumItems
+            : [item];
+      const viewerItems = toFullscreenAlbumItems(source);
+      if (!viewerItems.length) return;
+      const targetKey = item.path || `${albumPublicUrl}::0`;
+      const foundIndex = viewerItems.findIndex(
+        (entry) =>
+          entry.originKey === targetKey ||
+          entry.originKey === item.originKey ||
+          (item.path != null && entry.originKey === item.path)
+      );
       onOpenFullscreen?.(
-        readyAlbum,
-        Math.max(0, readyIndex),
+        viewerItems,
+        foundIndex >= 0 ? foundIndex : albumIndex,
         event.currentTarget.getBoundingClientRect(),
-        item.originKey
+        item.originKey,
+        { albumPublicUrl }
       );
       return;
     }
@@ -117,6 +156,7 @@ function PostMedia({
         'telegram-post-media-grid',
         `telegram-post-media-grid--${count}`,
         singleNativeAspect && 'telegram-post-media-grid--native-aspect',
+        isAlbum && 'telegram-post-media-grid--album',
         variant === 'detail' && 'telegram-post-media-grid--detail',
         className
       )}
@@ -124,7 +164,14 @@ function PostMedia({
       {items.map((item, index) => {
         const alt = `Медиа ${index + 1} к посту от ${post.created}`;
         const pending = Boolean(item.isLoading) || (!item.url && !item.thumbUrl);
-        const showAlbumBadge = Boolean(item.albumId);
+        const showAlbumBadge = isAlbum;
+
+        const swipeProps = isAlbum
+          ? {
+              onTouchStart: handleTouchStart,
+              onTouchEnd: handleTouchEnd
+            }
+          : {};
 
         if (item.isVideo) {
           if (pending) {
@@ -137,6 +184,13 @@ function PostMedia({
                 <div className="media-frame">
                   <span className="post-media-skeleton" aria-hidden="true" />
                   {showAlbumBadge ? <AlbumStackBadge /> : null}
+                  {isAlbum ? (
+                    <MediaSwipeDots
+                      count={albumItems.length}
+                      activeIndex={albumIndex}
+                      onSelect={setAlbumIndex}
+                    />
+                  ) : null}
                 </div>
               </div>
             );
@@ -158,11 +212,22 @@ function PostMedia({
 
           if (!onOpenFullscreen) {
             return (
-              <div key={item.originKey || item.filename} className="post-media-static">
+              <div
+                key={item.originKey || item.filename}
+                className="post-media-static"
+                {...swipeProps}
+              >
                 <div className="media-frame">
                   {video}
                   <span className="post-media-play-badge" aria-hidden="true">▶</span>
                   {showAlbumBadge ? <AlbumStackBadge /> : null}
+                  {isAlbum ? (
+                    <MediaSwipeDots
+                      count={albumItems.length}
+                      activeIndex={albumIndex}
+                      onSelect={setAlbumIndex}
+                    />
+                  ) : null}
                 </div>
               </div>
             );
@@ -178,6 +243,7 @@ function PostMedia({
               )}
               data-media-origin-key={item.originKey}
               onClick={(event) => openFullscreen(event, index)}
+              {...swipeProps}
               aria-label={
                 showAlbumBadge
                   ? `Открыть альбом на весь экран`
@@ -188,6 +254,13 @@ function PostMedia({
                 {video}
                 <span className="post-media-play-badge" aria-hidden="true">▶</span>
                 {showAlbumBadge ? <AlbumStackBadge /> : null}
+                {isAlbum ? (
+                  <MediaSwipeDots
+                    count={albumItems.length}
+                    activeIndex={albumIndex}
+                    onSelect={setAlbumIndex}
+                  />
+                ) : null}
               </div>
             </button>
           );
@@ -213,10 +286,18 @@ function PostMedia({
               key={item.originKey || item.filename}
               className={clsx('post-media-static', pending && 'post-media-pending')}
               aria-label={pending ? 'Загрузка изображения' : undefined}
+              {...swipeProps}
             >
               <div className="media-frame">
                 {image}
                 {showAlbumBadge ? <AlbumStackBadge /> : null}
+                {isAlbum ? (
+                  <MediaSwipeDots
+                    count={albumItems.length}
+                    activeIndex={albumIndex}
+                    onSelect={setAlbumIndex}
+                  />
+                ) : null}
               </div>
             </div>
           );
@@ -232,6 +313,7 @@ function PostMedia({
             )}
             data-media-origin-key={item.originKey}
             onClick={(event) => openFullscreen(event, index)}
+            {...swipeProps}
             aria-label={
               showAlbumBadge
                 ? 'Открыть альбом на весь экран'
@@ -241,6 +323,13 @@ function PostMedia({
             <div className="media-frame">
               {image}
               {showAlbumBadge ? <AlbumStackBadge /> : null}
+              {isAlbum ? (
+                <MediaSwipeDots
+                  count={albumItems.length}
+                  activeIndex={albumIndex}
+                  onSelect={setAlbumIndex}
+                />
+              ) : null}
             </div>
           </button>
         );

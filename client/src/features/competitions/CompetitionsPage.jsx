@@ -29,6 +29,10 @@ import { useSectionScroll } from '../../hooks/useSectionScroll';
 import { error } from '../../lib/log';
 import { parseDateQuery, isDateQueryParsed, matchesDateQuery } from '../../lib/dateSearch';
 import {
+  subscribeYadiskAlbumCache,
+  toFullscreenAlbumItems
+} from '../feed/yadiskAlbumCache';
+import {
   sortPinnedByCreated,
   usePinnedBannerIndex
 } from '../feed/usePinnedBannerIndex';
@@ -245,9 +249,15 @@ function CompetitionsPage({
     };
   }, [mutateTournamentPosts]);
 
-  const handleOpenFullscreen = useCallback((items, index = 0, originRect = null, originKey = null) => {
+  const handleOpenFullscreen = useCallback((items, index = 0, originRect = null, originKey = null, meta = null) => {
     setHiddenMediaKey(null);
-    setFullscreenMedia({ items, index, originRect, originKey });
+    setFullscreenMedia({
+      items,
+      index,
+      originRect,
+      originKey,
+      albumPublicUrl: meta?.albumPublicUrl || null
+    });
   }, []);
 
   const handleCloseFullscreen = useCallback(() => {
@@ -258,6 +268,30 @@ function CompetitionsPage({
   const handleFullscreenCloseStart = useCallback((originKey) => {
     setHiddenMediaKey(originKey || null);
   }, []);
+
+  useEffect(() => {
+    const albumPublicUrl = fullscreenMedia?.albumPublicUrl;
+    if (!albumPublicUrl) return undefined;
+    return subscribeYadiskAlbumCache((publicUrl, albumItems) => {
+      if (publicUrl !== albumPublicUrl) return;
+      const nextItems = toFullscreenAlbumItems(albumItems);
+      if (!nextItems.length) return;
+      setFullscreenMedia((prev) => {
+        if (!prev || prev.albumPublicUrl !== albumPublicUrl) return prev;
+        const currentKey = prev.items[prev.index]?.originKey;
+        let nextIndex = Math.min(prev.index, nextItems.length - 1);
+        if (currentKey) {
+          const found = nextItems.findIndex((entry) => entry.originKey === currentKey);
+          if (found >= 0) nextIndex = found;
+        }
+        return {
+          ...prev,
+          items: nextItems,
+          index: Math.max(0, nextIndex)
+        };
+      });
+    });
+  }, [fullscreenMedia?.albumPublicUrl]);
 
   const handleOpenDetail = useCallback((post) => {
     setOpenedPost(post);
