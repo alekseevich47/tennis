@@ -32,6 +32,7 @@ import {
   subscribeYadiskAlbumCache,
   toFullscreenAlbumItems
 } from '../feed/yadiskAlbumCache';
+import { ALBUM_WINDOW_RADIUS, requestAlbumLazyFocus } from '../feed/yadiskAlbumLazy';
 import {
   sortPinnedByCreated,
   usePinnedBannerIndex
@@ -86,6 +87,7 @@ function CompetitionsPage({
   const [isChromeVisible, setIsChromeVisible] = useState(true);
   const [viewingPlayer, setViewingPlayer] = useState(null);
   const [openedPost, setOpenedPost] = useState(null);
+  const [focusComment, setFocusComment] = useState(false);
   const [highlightCommentId, setHighlightCommentId] = useState(/** @type {string | null} */ (null));
   const [editingPost, setEditingPost] = useState(null);
   const [deletedPostIds, setDeletedPostIds] = useState([]);
@@ -163,6 +165,8 @@ function CompetitionsPage({
     (tabId) => {
       if (tabId !== activeTab) {
         setOpenedPost(null);
+        setFocusComment(false);
+        setHighlightCommentId(null);
         setContextMenuState(null);
         flushPendingTournamentCommentDeletes();
       }
@@ -251,6 +255,9 @@ function CompetitionsPage({
 
   const handleOpenFullscreen = useCallback((items, index = 0, originRect = null, originKey = null, meta = null) => {
     setHiddenMediaKey(null);
+    if (meta?.albumPublicUrl) {
+      requestAlbumLazyFocus(meta.albumPublicUrl, index, { radius: ALBUM_WINDOW_RADIUS });
+    }
     setFullscreenMedia({
       items,
       index,
@@ -293,8 +300,19 @@ function CompetitionsPage({
     });
   }, [fullscreenMedia?.albumPublicUrl]);
 
-  const handleOpenDetail = useCallback((post) => {
+  const handleFullscreenAlbumIndex = useCallback(
+    (index) => {
+      const albumPublicUrl = fullscreenMedia?.albumPublicUrl;
+      if (!albumPublicUrl) return;
+      requestAlbumLazyFocus(albumPublicUrl, index, { radius: ALBUM_WINDOW_RADIUS });
+      setFullscreenMedia((prev) => (prev ? { ...prev, index } : prev));
+    },
+    [fullscreenMedia?.albumPublicUrl]
+  );
+
+  const handleOpenDetail = useCallback((post, shouldFocusComment = false) => {
     setOpenedPost(post);
+    setFocusComment(shouldFocusComment);
     setHighlightCommentId(null);
   }, []);
 
@@ -305,6 +323,7 @@ function CompetitionsPage({
     setActiveTab('feed');
     onSubTabChange?.('feed');
     setOpenedPost(post);
+    setFocusComment(true);
     setHighlightCommentId(commentTargetToOpen.commentId || null);
     onCommentTargetOpened?.();
   }, [commentTargetToOpen, posts, onCommentTargetOpened, onSubTabChange]);
@@ -549,6 +568,9 @@ function CompetitionsPage({
           originRect={fullscreenMedia.originRect}
           originKey={fullscreenMedia.originKey}
           onCloseStart={handleFullscreenCloseStart}
+          onActiveIndexChange={
+            fullscreenMedia.albumPublicUrl ? handleFullscreenAlbumIndex : undefined
+          }
           onClose={handleCloseFullscreen}
         />
       )}
@@ -559,18 +581,22 @@ function CompetitionsPage({
         players={players || []}
         user={user}
         userIsModerator={moderator}
+        focusComment={focusComment}
         highlightCommentId={highlightCommentId}
         onClose={() => {
           setOpenedPost(null);
+          setFocusComment(false);
           setHighlightCommentId(null);
         }}
         onOpenProfile={setViewingPlayer}
         onEdit={(post) => {
           setOpenedPost(null);
+          setFocusComment(false);
           handleOpenEdit(post);
         }}
         onDelete={(postId) => {
           setOpenedPost(null);
+          setFocusComment(false);
           handleDeletePost(postId);
         }}
         onTogglePin={handleTogglePin}

@@ -1,0 +1,120 @@
+/* Liquid glass floating close — тот же приём, что FloatingAddButton variant=liquid
+   (https://codepen.io/lucasromerodb/pen/vEOWpYM), круг 40×40 под ✕ в модалке поста. */
+
+.modal-floating-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  z-index: 6;
+  width: 40px;
+  height: 40px;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  will-change: opacity;
+}
+
+.modal-floating-close--visible {
+  pointer-events: auto;
+}
+
+.modal-floating-close__svg-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.modal-floating-close__btn {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: #111;
+  cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.1),
+    0 6px 18px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(0, 0, 0, 0.06);
+  transition:
+    transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 2.2),
+    box-shadow 0.35s ease;
+}
+
+.modal-floating-close__btn:hover {
+  transform: scale(1.06);
+}
+
+.modal-floating-close__btn:active {
+  transform: scale(0.97);
+}
+
+.modal-floating-close__effect {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  isolation: isolate;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  filter: var(--modal-close-glass-filter);
+}
+
+.modal-floating-close__tint {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  border-radius: inherit;
+  background: rgba(255, 255, 255, 0.16);
+  pointer-events: none;
+}
+
+.modal-floating-close__shine {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+  box-shadow:
+    inset 2px 2px 1px 0 rgba(255, 255, 255, 0.5),
+    inset -1px -1px 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+.modal-floating-close__label {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+  color: rgba(20, 20, 20, 0.95);
+  user-select: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-floating-close,
+  .modal-floating-close__btn {
+    transition-duration: 0.01ms;
+  }
+
+  .modal-floating-close__btn:hover,
+  .modal-floating-close__btn:active {
+    transform: none;
+  }
+}

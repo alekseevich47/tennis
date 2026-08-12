@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 import clsx from 'clsx';
 import { videoPreviewUrl } from '../../lib/media';
 import AlbumStackBadge from './AlbumStackBadge';
@@ -27,6 +27,7 @@ import { useSwipeGallery } from './useSwipeGallery';
  *   hiddenMediaKey?: string | null,
  *   showCaption?: boolean,
  *   onItemClick?: (item: any, index: number, event: React.MouseEvent) => void,
+ *   onAlbumIndexChange?: (item: any, index: number) => void,
  *   gridIndex: number,
  *   getAction?: (item: any) => React.ReactNode
  * }} props
@@ -37,6 +38,7 @@ function MediaPreviewAlbumItem({
   hiddenMediaKey,
   showCaption,
   onItemClick,
+  onAlbumIndexChange,
   getAction
 }) {
   const slides = item.albumViewerItems?.length
@@ -58,6 +60,12 @@ function MediaPreviewAlbumItem({
     handleTouchEnd,
     consumeSuppressClick
   } = useSwipeGallery(slides.length, item.key);
+
+  useEffect(() => {
+    onAlbumIndexChange?.(item, index);
+    // Только индекс/ключ — не на каждый байт url.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- item.url меняется часто
+  }, [index, item.key]);
 
   const active = slides[index] || slides[0];
   const status = active?.status || item.status || (active?.url ? 'ready' : 'loading');
@@ -163,6 +171,7 @@ function MediaPreviewAlbumItem({
  *   originKeyPrefix?: string,
  *   hiddenMediaKey?: string | null,
  *   onItemClick?: (item: any, index: number, event: React.MouseEvent) => void,
+ *   onAlbumIndexChange?: (item: any, index: number) => void,
  *   getAction?: (item: any) => React.ReactNode
  * }} props
  */
@@ -173,6 +182,7 @@ function MediaPreviewGrid({
   originKeyPrefix = 'preview',
   hiddenMediaKey = null,
   onItemClick,
+  onAlbumIndexChange,
   getAction
 }) {
   if (!items.length) return null;
@@ -193,6 +203,7 @@ function MediaPreviewGrid({
               hiddenMediaKey={hiddenMediaKey}
               showCaption={showCaption}
               onItemClick={onItemClick}
+              onAlbumIndexChange={onAlbumIndexChange}
               getAction={getAction}
             />
           );

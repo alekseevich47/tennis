@@ -7,6 +7,7 @@ import PostAttachButton from './PostAttachButton';
 import PostRichTextField from './PostRichTextField';
 import { useLocalMediaFullscreen } from './useLocalMediaFullscreen';
 import { useYadiskEmbed } from './useYadiskEmbed';
+import { ALBUM_COVER_RADIUS, ALBUM_WINDOW_RADIUS } from './yadiskAlbumLazy';
 import { compressImage } from '../../lib/compress';
 import {
   MAX_POST_MEDIA_FILES,
@@ -69,6 +70,23 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
     onSinglesConflict
   });
 
+  const albumExpandedRef = useRef(false);
+
+  const handleAlbumFocus = useCallback(
+    (index, focusOptions) => {
+      if (!yadisk.albumPublicUrl) return;
+      if (index !== 0) albumExpandedRef.current = true;
+      const radius =
+        typeof focusOptions?.radius === 'number'
+          ? focusOptions.radius
+          : albumExpandedRef.current
+            ? ALBUM_WINDOW_RADIUS
+            : ALBUM_COVER_RADIUS;
+      yadisk.setAlbumFocus(yadisk.albumPublicUrl, index, { radius });
+    },
+    [yadisk]
+  );
+
   const allPreviewItems = yadisk.albumMode
     ? yadisk.previewItems
     : [...previewItems, ...yadisk.previewItems];
@@ -77,8 +95,18 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
     fullscreen: previewFullscreen,
     close: closePreviewFullscreen,
     hiddenMediaKey,
-    onCloseStart: handlePreviewCloseStart
-  } = useLocalMediaFullscreen(allPreviewItems, 'create-post');
+    onCloseStart: handlePreviewCloseStart,
+    handleActiveIndexChange: handlePreviewAlbumIndex
+  } = useLocalMediaFullscreen(allPreviewItems, 'create-post', {
+    onAlbumFocus: handleAlbumFocus
+  });
+
+  const handleAlbumIndexChange = useCallback(
+    (_item, index) => {
+      handleAlbumFocus(index);
+    },
+    [handleAlbumFocus]
+  );
 
   useEffect(() => {
     const items = files.map((file) => ({
@@ -100,6 +128,7 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
   const reset = () => {
     setText('');
     setFiles([]);
+    albumExpandedRef.current = false;
     yadisk.reset();
   };
 
@@ -186,6 +215,7 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
           originKeyPrefix="create-post"
           hiddenMediaKey={hiddenMediaKey}
           onItemClick={openPreviewMedia}
+          onAlbumIndexChange={handleAlbumIndexChange}
           getAction={(item) => (
             <button
               type="button"
@@ -229,6 +259,9 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
           originRect={previewFullscreen.originRect}
           originKey={previewFullscreen.originKey}
           onCloseStart={handlePreviewCloseStart}
+          onActiveIndexChange={
+            previewFullscreen.isAlbum ? handlePreviewAlbumIndex : undefined
+          }
           onClose={closePreviewFullscreen}
         />
       ) : null}

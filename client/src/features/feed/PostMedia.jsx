@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useEffect, useMemo, useRef } from 'react';
 import clsx from 'clsx';
 import {
   getMediaThumbUrl,
@@ -15,6 +15,7 @@ import MediaSwipeDots from './MediaSwipeDots';
 import { useResolvedExternalMedia } from './useResolvedExternalMedia';
 import { useSwipeGallery } from './useSwipeGallery';
 import { getYadiskAlbumCache, toFullscreenAlbumItems } from './yadiskAlbumCache';
+import { ALBUM_COVER_RADIUS, ALBUM_WINDOW_RADIUS } from './yadiskAlbumLazy';
 
 /**
  * @param {{
@@ -66,7 +67,7 @@ function PostMedia({
     [post, collection, variant]
   );
 
-  const externalItems = useResolvedExternalMedia(
+  const { items: externalItems, setAlbumFocus } = useResolvedExternalMedia(
     post.external_media,
     `${variant}-${post.id}`
   );
@@ -91,6 +92,20 @@ function PostMedia({
     handleTouchEnd,
     consumeSuppressClick
   } = useSwipeGallery(isAlbum ? albumItems.length : 0, `${post.id}-${albumId || ''}`);
+
+  const albumExpandedRef = useRef(false);
+
+  useEffect(() => {
+    albumExpandedRef.current = false;
+  }, [albumPublicUrl]);
+
+  useEffect(() => {
+    if (!isAlbum || !albumPublicUrl) return;
+    if (albumIndex !== 0) albumExpandedRef.current = true;
+    setAlbumFocus(albumPublicUrl, albumIndex, {
+      radius: albumExpandedRef.current ? ALBUM_WINDOW_RADIUS : ALBUM_COVER_RADIUS
+    });
+  }, [isAlbum, albumPublicUrl, albumIndex, setAlbumFocus]);
 
   const items = useMemo(() => {
     if (isAlbum) {
@@ -129,9 +144,12 @@ function PostMedia({
           entry.originKey === item.originKey ||
           (item.path != null && entry.originKey === item.path)
       );
+      const openIndex = foundIndex >= 0 ? foundIndex : albumIndex;
+      albumExpandedRef.current = true;
+      setAlbumFocus(albumPublicUrl, openIndex, { radius: ALBUM_WINDOW_RADIUS });
       onOpenFullscreen?.(
         viewerItems,
-        foundIndex >= 0 ? foundIndex : albumIndex,
+        openIndex,
         event.currentTarget.getBoundingClientRect(),
         item.originKey,
         { albumPublicUrl }
