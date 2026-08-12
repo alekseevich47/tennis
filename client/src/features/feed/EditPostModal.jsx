@@ -8,6 +8,7 @@ import PostAttachButton from './PostAttachButton';
 import PostRichTextField from './PostRichTextField';
 import { useLocalMediaFullscreen } from './useLocalMediaFullscreen';
 import { useYadiskEmbed } from './useYadiskEmbed';
+import { ALBUM_COVER_RADIUS, ALBUM_WINDOW_RADIUS } from './yadiskAlbumLazy';
 import {
   MAX_POST_MEDIA_FILES,
   getMediaUrl,
@@ -105,6 +106,23 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
     onSinglesConflict
   });
 
+  const albumExpandedRef = useRef(false);
+
+  const handleAlbumFocus = useCallback(
+    (index, focusOptions) => {
+      if (!yadisk.albumPublicUrl) return;
+      if (index !== 0) albumExpandedRef.current = true;
+      const radius =
+        typeof focusOptions?.radius === 'number'
+          ? focusOptions.radius
+          : albumExpandedRef.current
+            ? ALBUM_WINDOW_RADIUS
+            : ALBUM_COVER_RADIUS;
+      yadisk.setAlbumFocus(yadisk.albumPublicUrl, index, { radius });
+    },
+    [yadisk]
+  );
+
   const previewItems = useMemo(
     () =>
       yadisk.albumMode
@@ -117,8 +135,18 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
     fullscreen: previewFullscreen,
     close: closePreviewFullscreen,
     hiddenMediaKey,
-    onCloseStart: handlePreviewCloseStart
-  } = useLocalMediaFullscreen(previewItems, 'edit-post');
+    onCloseStart: handlePreviewCloseStart,
+    handleActiveIndexChange: handlePreviewAlbumIndex
+  } = useLocalMediaFullscreen(previewItems, 'edit-post', {
+    onAlbumFocus: handleAlbumFocus
+  });
+
+  const handleAlbumIndexChange = useCallback(
+    (_item, index) => {
+      handleAlbumFocus(index);
+    },
+    [handleAlbumFocus]
+  );
   const remainingMediaSlots = yadisk.albumMode
     ? 0
     : Math.max(
@@ -234,6 +262,7 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
           originKeyPrefix="edit-post"
           hiddenMediaKey={hiddenMediaKey}
           onItemClick={openPreviewMedia}
+          onAlbumIndexChange={handleAlbumIndexChange}
           getAction={(item) => (
             <button
               type="button"
@@ -310,6 +339,9 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
           originRect={previewFullscreen.originRect}
           originKey={previewFullscreen.originKey}
           onCloseStart={handlePreviewCloseStart}
+          onActiveIndexChange={
+            previewFullscreen.isAlbum ? handlePreviewAlbumIndex : undefined
+          }
           onClose={closePreviewFullscreen}
         />
       ) : null}

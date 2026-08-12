@@ -9,6 +9,7 @@ import PostAttachButton from '../feed/PostAttachButton';
 import PostRichTextField from '../feed/PostRichTextField';
 import { useLocalMediaFullscreen } from '../feed/useLocalMediaFullscreen';
 import { useYadiskEmbed } from '../feed/useYadiskEmbed';
+import { ALBUM_COVER_RADIUS, ALBUM_WINDOW_RADIUS } from '../feed/yadiskAlbumLazy';
 import { compressImage } from '../../lib/compress';
 import {
   MAX_POST_MEDIA_FILES,
@@ -80,6 +81,23 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
     onSinglesConflict
   });
 
+  const albumExpandedRef = useRef(false);
+
+  const handleAlbumFocus = useCallback(
+    (index, focusOptions) => {
+      if (!yadisk.albumPublicUrl) return;
+      if (index !== 0) albumExpandedRef.current = true;
+      const radius =
+        typeof focusOptions?.radius === 'number'
+          ? focusOptions.radius
+          : albumExpandedRef.current
+            ? ALBUM_WINDOW_RADIUS
+            : ALBUM_COVER_RADIUS;
+      yadisk.setAlbumFocus(yadisk.albumPublicUrl, index, { radius });
+    },
+    [yadisk]
+  );
+
   const allPreviewItems = yadisk.albumMode
     ? yadisk.previewItems
     : [...previewItems, ...yadisk.previewItems];
@@ -88,8 +106,18 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
     fullscreen: previewFullscreen,
     close: closePreviewFullscreen,
     hiddenMediaKey,
-    onCloseStart: handlePreviewCloseStart
-  } = useLocalMediaFullscreen(allPreviewItems, 'create-tournament-post');
+    onCloseStart: handlePreviewCloseStart,
+    handleActiveIndexChange: handlePreviewAlbumIndex
+  } = useLocalMediaFullscreen(allPreviewItems, 'create-tournament-post', {
+    onAlbumFocus: handleAlbumFocus
+  });
+
+  const handleAlbumIndexChange = useCallback(
+    (_item, index) => {
+      handleAlbumFocus(index);
+    },
+    [handleAlbumFocus]
+  );
 
   useEffect(() => {
     const items = files.map((file) => ({
@@ -112,6 +140,7 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
     setFiles([]);
     setSearch('');
     setPointsByUserId({});
+    albumExpandedRef.current = false;
     yadisk.reset();
   };
 
@@ -227,6 +256,7 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
           originKeyPrefix="create-tournament-post"
           hiddenMediaKey={hiddenMediaKey}
           onItemClick={openPreviewMedia}
+          onAlbumIndexChange={handleAlbumIndexChange}
           getAction={(item) => (
             <button
               type="button"
@@ -343,6 +373,9 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
           originRect={previewFullscreen.originRect}
           originKey={previewFullscreen.originKey}
           onCloseStart={handlePreviewCloseStart}
+          onActiveIndexChange={
+            previewFullscreen.isAlbum ? handlePreviewAlbumIndex : undefined
+          }
           onClose={closePreviewFullscreen}
         />
       ) : null}

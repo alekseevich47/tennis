@@ -1,9 +1,16 @@
 // @ts-check
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { normalizeExternalMedia } from '../../lib/yadisk';
 import { fetchYadiskObjectUrl, fetchYadiskPreview } from '../../services/yadisk';
 import { videoPreviewUrl } from '../../lib/media';
 import { setYadiskAlbumCache } from './yadiskAlbumCache';
+import {
+  ALBUM_COVER_RADIUS,
+  ALBUM_WINDOW_RADIUS,
+  createAlbumWindowController,
+  registerAlbumLazyFocus,
+  requestAlbumLazyFocus
+} from './yadiskAlbumLazy';
 
 /**
  * @typedef {{
@@ -43,7 +50,6 @@ function publishAlbums(list) {
         thumbUrl: entry.thumbUrl,
         previewUrl: entry.previewUrl,
         isVideo: entry.isVideo,
-        // Стабильный ключ между card/detail — по path внутри альбома.
         originKey: entry.path || `${publicUrl}::${index}`,
         publicUrl: entry.publicUrl,
         path: entry.path,
@@ -55,19 +61,31 @@ function publishAlbums(list) {
 
 /**
  * Резолв `posts.external_media` для сетки ленты через серверный прокси → blob URL.
- * Файл: preview (LQIP) → file. Альбом: сразу слот-обложка (shimmer), затем expand + байты.
+ * Альбом: meta сразу, байты — обложка; окно ±N по focus (свайп/fullscreen).
  *
  * @param {unknown} externalMedia
  * @param {string} originPrefix
- * @returns {ResolvedExternalMediaItem[]}
+ * @returns {{
+ *   items: ResolvedExternalMediaItem[],
+ *   setAlbumFocus: (publicUrl: string, index: number, options?: { radius?: number }) => void
+ * }}
  */
 export function useResolvedExternalMedia(externalMedia, originPrefix) {
   const [items, setItems] = useState(/** @type {ResolvedExternalMediaItem[]} */ ([]));
+  const focusHandlersRef = useRef(
+    /** @type {Map<string, (index: number, options?: { radius?: number }) => void>} */ (new Map())
+  );
+
+  const setAlbumFocus = useCallback((publicUrl, index, options) => {
+    focusHandlersRef.current.get(publicUrl)?.(index, options);
+    requestAlbumLazyFocus(publicUrl, index, options);
+  }, []);
 
   useEffect(() => {
     const stored = normalizeExternalMedia(externalMedia);
     if (!stored.length) {
       setItems([]);
+      focusHandlersRef.current.clear();
       return undefined;
     }
 
@@ -77,6 +95,10 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
     const objectUrls = [];
     /** @type {ResolvedExternalMediaItem[]} */
     let working = [];
+    /** @type {Array<{ destroy: () => void }>} */
+    const albumControllers = [];
+    /** @type {Array<() => void>} */
+    const unsubs = [];
 
     const track = (url) => {
       objectUrls.push(url);
@@ -230,6 +252,8 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
     void (async () => {
       /** @type {ResolvedExternalMediaItem[]} */
       const nextItems = [];
+      /** @type {Array<{ publicUrl: string, albumId: string, start: number, count: number }>} */
+      const albums = [];
 
       for (let index = 0; index < stored.length; index++) {
         const entry = stored[index];
@@ -245,6 +269,7 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
               dropItem(coverKey);
               continue;
             }
+            const start = nextItems.length;
             album.items.forEach((member, memberIndex) => {
               nextItems.push({
                 filename: member.name || entry.name,
@@ -260,6 +285,12 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
                 albumId,
                 albumCount: album.items?.length || 0
               });
+            });
+            albums.push({
+              publicUrl: entry.publicUrl,
+              albumId,
+              start,
+              count: album.items.length
             });
           } catch (err) {
             if (err?.name === 'AbortError' || cancelled) return;
@@ -287,18 +318,64 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
       if (cancelled) return;
       commit(nextItems);
 
-      // Все слоты параллельно — fullscreen сразу получает полный список из кэша.
+      for (const album of albums) {
+        const ctrl = createAlbumWindowController({
+          publicUrl: album.publicUrl,
+          getMembers: () =>
+            working
+              .filter((item) => item.albumId === album.albumId)
+              .map((item) => ({ originKey: item.originKey, path: item.path })),
+          signal: controller.signal,
+          onResolved: (originKey, bytes) => {
+            patchItem(originKey, {
+              ...(bytes.name ? { filename: bytes.name } : {}),
+              url: bytes.displayUrl,
+              thumbUrl: bytes.fileUrl || bytes.previewUrl,
+              previewUrl: bytes.previewUrl,
+              isVideo: bytes.isVideo,
+              isLoading: false
+            });
+          },
+          onCleared: (originKey) => {
+            patchItem(originKey, {
+              url: '',
+              thumbUrl: '',
+              previewUrl: '',
+              isLoading: true
+            });
+          },
+          onError: () => {
+            // слот остаётся shimmer; не выкидываем из альбома
+          }
+        });
+        albumControllers.push(ctrl);
+
+        const handler = (index, options) => {
+          ctrl.setFocus(index, {
+            radius:
+              typeof options?.radius === 'number' ? options.radius : ALBUM_WINDOW_RADIUS
+          });
+        };
+        focusHandlersRef.current.set(album.publicUrl, handler);
+        unsubs.push(registerAlbumLazyFocus(album.publicUrl, handler));
+        ctrl.setFocus(0, { radius: ALBUM_COVER_RADIUS });
+      }
+
+      const singles = nextItems.filter((item) => !item.albumId);
       await Promise.all(
-        nextItems.map((item) => resolveFileBytes(item, item.publicUrl, item.path))
+        singles.map((item) => resolveFileBytes(item, item.publicUrl, item.path))
       );
     })();
 
     return () => {
       cancelled = true;
       controller.abort();
+      albumControllers.forEach((ctrl) => ctrl.destroy());
+      unsubs.forEach((off) => off());
+      focusHandlersRef.current.clear();
       objectUrls.forEach((url) => URL.revokeObjectURL(url));
     };
   }, [externalMedia, originPrefix]);
 
-  return items;
+  return { items, setAlbumFocus };
 }
