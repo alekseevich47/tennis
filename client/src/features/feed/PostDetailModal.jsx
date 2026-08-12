@@ -2,6 +2,7 @@ import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 're
 import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
 import Avatar from '../../components/ui/Avatar';
+import ModalFloatingCloseButton from '../../components/ui/ModalFloatingCloseButton';
 import PostMedia from './PostMedia';
 import PostContentHtml from './PostContentHtml';
 import PostRichTextField from './PostRichTextField';
@@ -99,6 +100,7 @@ function PostDetailModal({
     /** @type {{ id: string, offsetTop: number, scrollTop: number, scrollParent: HTMLElement } | null} */ (null)
   );
   const menuBtnRef = useRef(/** @type {HTMLButtonElement | null} */ (null));
+  const closeBtnRef = useRef(/** @type {HTMLButtonElement | null} */ (null));
 
   const activeCommentIds = useMemo(
     () =>
@@ -170,6 +172,13 @@ function PostDetailModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- только внешний highlight
   }, [isOpen, highlightCommentId, comments.length]);
 
+  // Открытие «на начало поста» — сброс скролла body; к комментариям — только focusComment.
+  useLayoutEffect(() => {
+    if (!isOpen || focusComment || highlightCommentId) return;
+    const body = closeBtnRef.current?.closest('.ui-modal-body');
+    if (body instanceof HTMLElement) body.scrollTop = 0;
+  }, [isOpen, postId, focusComment, highlightCommentId]);
+
   useEffect(() => {
     if (!isOpen || !focusComment || highlightCommentId) return undefined;
     const timer = window.setTimeout(() => {
@@ -178,8 +187,11 @@ function PostDetailModal({
     return () => clearTimeout(timer);
   }, [isOpen, focusComment, highlightCommentId, postId]);
 
+  // После подгрузки комментариев доскроллить только если открыли с фокусом на них.
   useEffect(() => {
-    if (!isOpen || comments.length === 0 || highlightCommentId) return undefined;
+    if (!isOpen || !focusComment || comments.length === 0 || highlightCommentId) {
+      return undefined;
+    }
     scrollTimerRef.current = window.setTimeout(() => {
       commentsBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, SCROLL_INTO_VIEW_DELAY_MS);
@@ -189,7 +201,7 @@ function PostDetailModal({
         scrollTimerRef.current = null;
       }
     };
-  }, [isOpen, comments.length, highlightCommentId]);
+  }, [isOpen, focusComment, comments.length, highlightCommentId]);
 
   useLayoutEffect(() => {
     const anchor = expandAnchorRef.current;
@@ -454,6 +466,7 @@ function PostDetailModal({
               </IconButton>
             ) : null}
             <IconButton
+              ref={closeBtnRef}
               type="button"
               className="ui-modal-close"
               ariaLabel="Закрыть"
@@ -463,6 +476,12 @@ function PostDetailModal({
             </IconButton>
           </div>
         </div>
+
+        <ModalFloatingCloseButton
+          isOpen={isOpen}
+          anchorRef={closeBtnRef}
+          onClose={handleClose}
+        />
 
         <PostContentHtml
           as="p"

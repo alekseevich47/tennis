@@ -1,8 +1,8 @@
 // @ts-check
 
-/** Публичные ссылки на файл/папку Яндекс.Диска. */
+/** Публичные ссылки на файл/папку/альбом Яндекс.Диска (`/i/`, `/d/`, `/a/`, `/public/`). */
 export const YADISK_URL_RE =
-  /https?:\/\/(?:disk\.yandex\.(?:ru|com(?:\.tr)?)|yadi\.sk)\/(?:i|d|public)\/[^\s<"')\]]+/gi;
+  /https?:\/\/(?:disk\.yandex\.(?:ru|com(?:\.tr)?)|yadi\.sk)\/(?:i|d|a|public)\/[^\s<"')\]]+/gi;
 
 /**
  * @param {string | null | undefined} raw

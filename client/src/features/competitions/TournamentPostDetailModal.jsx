@@ -1,6 +1,7 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
+import ModalFloatingCloseButton from '../../components/ui/ModalFloatingCloseButton';
 import PostMedia from '../feed/PostMedia';
 import PostContentHtml from '../feed/PostContentHtml';
 import PostContextMenu from '../feed/PostContextMenu';
@@ -13,6 +14,8 @@ import { flushPendingTournamentCommentDeletes } from '../../services/tournamentC
 import { getParticipantDisplayName, getParticipantPlayer } from './tournamentParticipants';
 import { recordContentView } from '../../services/stats';
 
+const SCROLL_INTO_VIEW_DELAY_MS = 200;
+
 /**
  * @param {{
  *   isOpen: boolean,
@@ -20,6 +23,7 @@ import { recordContentView } from '../../services/stats';
  *   players?: any[],
  *   user?: any,
  *   userIsModerator?: boolean,
+ *   focusComment?: boolean,
  *   onClose: () => void,
  *   onOpenProfile?: (user: any) => void,
  *   onEdit?: (post: any) => void,
@@ -38,6 +42,7 @@ function TournamentPostDetailModal({
   players = [],
   user = null,
   userIsModerator = false,
+  focusComment = false,
   onClose,
   onOpenProfile,
   onEdit,
@@ -57,6 +62,8 @@ function TournamentPostDetailModal({
   );
   const [composeTarget, setComposeTarget] = useState(/** @type {HTMLElement | null} */ (null));
   const menuBtnRef = useRef(/** @type {HTMLButtonElement | null} */ (null));
+  const closeBtnRef = useRef(/** @type {HTMLButtonElement | null} */ (null));
+  const commentsSectionRef = useRef(/** @type {HTMLElement | null} */ (null));
 
   const playerMap = useMemo(() => {
     const map = new Map();
@@ -88,6 +95,20 @@ function TournamentPostDetailModal({
       window.clearTimeout(timer);
     };
   }, [trackView, isOpen, postId, user?.id]);
+
+  useLayoutEffect(() => {
+    if (!isOpen || focusComment || highlightCommentId) return;
+    const body = closeBtnRef.current?.closest('.ui-modal-body');
+    if (body instanceof HTMLElement) body.scrollTop = 0;
+  }, [isOpen, postId, focusComment, highlightCommentId]);
+
+  useEffect(() => {
+    if (!isOpen || !focusComment || highlightCommentId) return undefined;
+    const timer = window.setTimeout(() => {
+      commentsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, SCROLL_INTO_VIEW_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [isOpen, focusComment, highlightCommentId, postId]);
 
   if (!post) return null;
 
@@ -177,6 +198,7 @@ function TournamentPostDetailModal({
               </IconButton>
             ) : null}
             <IconButton
+              ref={closeBtnRef}
               type="button"
               className="ui-modal-close"
               ariaLabel="Закрыть"
@@ -186,6 +208,12 @@ function TournamentPostDetailModal({
             </IconButton>
           </div>
         </div>
+
+        <ModalFloatingCloseButton
+          isOpen={isOpen}
+          anchorRef={closeBtnRef}
+          onClose={handleClose}
+        />
 
         {post.content ? (
           <PostContentHtml as="div" className="tournament-post-content post-text-detail" content={post.content} />
@@ -235,7 +263,12 @@ function TournamentPostDetailModal({
 
         <div className="tournament-post-detail-divider" role="separator" />
 
-        <h3 className="tournament-comments-modal-title">Комментарии</h3>
+        <h3
+          ref={commentsSectionRef}
+          className="tournament-comments-modal-title"
+        >
+          Комментарии
+        </h3>
 
         <TournamentCommentsSection
           postId={post.id}

@@ -27,7 +27,7 @@ function readTournamentComments(post) {
  *   user?: any,
  *   userIsModerator?: boolean,
  *   isSoftDeleted?: boolean,
- *   onOpenDetail: (post: import('../../services/tournamentPosts').TournamentPostRecord) => void,
+ *   onOpenDetail: (post: import('../../services/tournamentPosts').TournamentPostRecord, focusComment?: boolean) => void,
  *   onOpenProfile?: (user: any) => void,
  *   onRestore: (postId: string) => void,
  *   onLongPress?: (post: import('../../services/tournamentPosts').TournamentPostRecord, point: { x: number, y: number }) => void,
@@ -91,12 +91,17 @@ function TournamentPostCard({
     onOpenDetail(post);
   };
 
+  const handleOpenComments = (event) => {
+    event.stopPropagation();
+    onOpenDetail(post, true);
+  };
+
   const handleCardClick = (event) => {
-    // Лайк/комменты/ссылки — не открывать деталку
+    // Лайк/комменты/ссылки/медиа — не открывать деталку
     if (
       event.target instanceof Element &&
       event.target.closest(
-        'button, a, input, textarea, [role="button"], .post-card-like, .post-card-comment-btn, .comments-preview-trigger'
+        'button, a, input, textarea, [role="button"], .post-card-like, .post-card-comment-btn, .comments-preview-trigger, .telegram-post-media-grid'
       )
     ) {
       return;
@@ -106,10 +111,19 @@ function TournamentPostCard({
     handleOpenDetail();
   };
 
+  const handlePostTextClick = (event) => {
+    if (event.target instanceof Element && event.target.closest('a[href]')) {
+      event.stopPropagation();
+      return;
+    }
+    event.stopPropagation();
+    onOpenDetail(post);
+  };
+
   const handleCommentsPreviewKeyDown = (event) => {
     if (event.key !== 'Enter' && event.key !== ' ') return;
     event.preventDefault();
-    handleOpenDetail();
+    handleOpenComments(event);
   };
 
   const handleOpenParticipantProfile = (event, participant) => {
@@ -175,19 +189,30 @@ function TournamentPostCard({
         </div>
 
         {post.content ? (
-          <PostContentHtml as="div" className="tournament-post-content" content={post.content} />
+          <PostContentHtml
+            as="div"
+            role="button"
+            tabIndex={0}
+            className="tournament-post-content"
+            onClick={handlePostTextClick}
+            onKeyDown={(event) => {
+              if (event.key !== 'Enter' && event.key !== ' ') return;
+              if (event.target instanceof Element && event.target.closest('a[href]')) return;
+              event.preventDefault();
+              onOpenDetail(post);
+            }}
+            content={post.content}
+          />
         ) : null}
 
-        <div onClick={(event) => event.stopPropagation()}>
-          <PostMedia
-            post={post}
-            collection="tournament_posts"
-            variant="card"
-            className="tournament-post-media"
-            hiddenMediaKey={hiddenMediaKey}
-            onOpenFullscreen={onOpenFullscreen}
-          />
-        </div>
+        <PostMedia
+          post={post}
+          collection="tournament_posts"
+          variant="card"
+          className="tournament-post-media"
+          hiddenMediaKey={hiddenMediaKey}
+          onOpenFullscreen={onOpenFullscreen}
+        />
 
         {participants.length > 0 ? (
           <TournamentPodium
@@ -222,14 +247,16 @@ function TournamentPostCard({
           </ol>
         ) : null}
 
-        <div className="feed-card-footer feed-card-bottom-bar tournament-post-card-footer">
+        <div
+          className="feed-card-footer feed-card-bottom-bar tournament-post-card-footer"
+          onClick={(event) => event.stopPropagation()}
+          onPointerDown={(event) => event.stopPropagation()}
+        >
           <button
             type="button"
             className="post-card-comment-btn"
-            onClick={(event) => {
-              event.stopPropagation();
-              handleOpenDetail();
-            }}
+            onPointerDown={(event) => event.stopPropagation()}
+            onClick={handleOpenComments}
             aria-label={`Открыть комментарии к публикации. Комментариев: ${commentCount}`}
           >
             <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -244,10 +271,7 @@ function TournamentPostCard({
             role="button"
             tabIndex={0}
             className="comments-preview-trigger"
-            onClick={(event) => {
-              event.stopPropagation();
-              handleOpenDetail();
-            }}
+            onClick={handleOpenComments}
             onKeyDown={handleCommentsPreviewKeyDown}
             aria-label="Открыть комментарии к публикации"
           >

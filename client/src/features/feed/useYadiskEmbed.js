@@ -9,6 +9,13 @@ import {
 } from '../../lib/yadisk';
 import { fetchYadiskObjectUrl, fetchYadiskPreview } from '../../services/yadisk';
 import { videoPreviewUrl } from '../../lib/media';
+import {
+  ALBUM_COVER_RADIUS,
+  ALBUM_WINDOW_RADIUS,
+  createAlbumWindowController,
+  registerAlbumLazyFocus,
+  requestAlbumLazyFocus
+} from './yadiskAlbumLazy';
 
 /**
  * @typedef {{
@@ -74,6 +81,12 @@ export function useYadiskEmbed({
   const knownRef = useRef(/** @type {Set<string>} */ (new Set()));
   const abortMapRef = useRef(/** @type {Map<string, AbortController>} */ (new Map()));
   const objectUrlsRef = useRef(/** @type {Map<string, string>} */ (new Map()));
+  const albumControllersRef = useRef(
+    /** @type {Map<string, { destroy: () => void, setFocus: (i: number, o?: { radius?: number }) => void }>} */ (
+      new Map()
+    )
+  );
+  const albumFocusUnsubsRef = useRef(/** @type {Map<string, () => void>} */ (new Map()));
   const hasLocalMediaRef = useRef(hasLocalMedia);
   hasLocalMediaRef.current = hasLocalMedia;
   const onClearLocalMediaRef = useRef(onClearLocalMedia);
@@ -93,11 +106,23 @@ export function useYadiskEmbed({
     objectUrlsRef.current.delete(key);
   }, []);
 
+  const destroyAlbumController = useCallback((publicUrl) => {
+    abortMapRef.current.get(`album-window-${publicUrl}`)?.abort();
+    abortMapRef.current.delete(`album-window-${publicUrl}`);
+    albumControllersRef.current.get(publicUrl)?.destroy();
+    albumControllersRef.current.delete(publicUrl);
+    albumFocusUnsubsRef.current.get(publicUrl)?.();
+    albumFocusUnsubsRef.current.delete(publicUrl);
+  }, []);
+
   const clearRequests = useCallback(() => {
     abortMapRef.current.forEach((controller) => controller.abort());
     abortMapRef.current.clear();
     pendingRef.current.clear();
-  }, []);
+    for (const publicUrl of [...albumControllersRef.current.keys()]) {
+      destroyAlbumController(publicUrl);
+    }
+  }, [destroyAlbumController]);
 
   const reset = useCallback(() => {
     clearRequests();
@@ -107,6 +132,101 @@ export function useYadiskEmbed({
     itemsRef.current = [];
     setItems([]);
   }, [clearRequests]);
+
+  /**
+   * @param {string} publicUrl
+   * @param {Array<{ key: string, path: string }>} albumItems
+   */
+  const attachAlbumWindow = useCallback(
+    (publicUrl, albumItems) => {
+      destroyAlbumController(publicUrl);
+      const windowController = new AbortController();
+      abortMapRef.current.set(`album-window-${publicUrl}`, windowController);
+
+      const ctrl = createAlbumWindowController({
+        publicUrl,
+        getMembers: () =>
+          (itemsRef.current.find((item) => item.publicUrl === publicUrl && item.isAlbum)
+            ?.albumItems || albumItems
+          ).map((entry) => ({
+            originKey: entry.path || entry.key,
+            path: entry.path
+          })),
+        signal: windowController.signal,
+        onResolved: (originKey, bytes) => {
+          const path = originKey;
+          const displayUrl = bytes.displayUrl;
+          const key = objectKey(publicUrl, path);
+          revokeObjectUrl(key);
+          objectUrlsRef.current.set(key, bytes.fileUrl || bytes.previewUrl);
+          setItems((current) =>
+            current.map((item) => {
+              if (!(item.isAlbum && item.publicUrl === publicUrl)) return item;
+              const nextAlbumItems = (item.albumItems || []).map((entry) =>
+                entry.path === path || entry.key === originKey || entry.path === originKey
+                  ? {
+                      ...entry,
+                      name: bytes.name || entry.name,
+                      isVideo: bytes.isVideo,
+                      url: displayUrl,
+                      fileUrl: bytes.fileUrl,
+                      status: /** @type {const} */ ('ready')
+                    }
+                  : entry
+              );
+              const cover = nextAlbumItems[0];
+              return {
+                ...item,
+                isVideo: cover?.isVideo || false,
+                url: cover?.url || '',
+                fileUrl: cover?.fileUrl || null,
+                status: cover?.status === 'ready' ? 'ready' : item.status,
+                albumItems: nextAlbumItems,
+                error: undefined
+              };
+            })
+          );
+        },
+        onCleared: (originKey) => {
+          const path = originKey;
+          revokeObjectUrl(objectKey(publicUrl, path));
+          setItems((current) =>
+            current.map((item) => {
+              if (!(item.isAlbum && item.publicUrl === publicUrl)) return item;
+              return {
+                ...item,
+                albumItems: (item.albumItems || []).map((entry) =>
+                  entry.path === path || entry.path === originKey
+                    ? {
+                        ...entry,
+                        url: '',
+                        fileUrl: null,
+                        status: /** @type {const} */ ('loading')
+                      }
+                    : entry
+                )
+              };
+            })
+          );
+        }
+      });
+
+      const handler = (index, options) => {
+        ctrl.setFocus(index, {
+          radius: typeof options?.radius === 'number' ? options.radius : ALBUM_WINDOW_RADIUS
+        });
+      };
+      albumControllersRef.current.set(publicUrl, ctrl);
+      albumFocusUnsubsRef.current.set(publicUrl, registerAlbumLazyFocus(publicUrl, handler));
+      ctrl.setFocus(0, { radius: ALBUM_COVER_RADIUS });
+    },
+    [destroyAlbumController, objectKey, revokeObjectUrl]
+  );
+
+  const setAlbumFocus = useCallback((publicUrl, index, options) => {
+    albumControllersRef.current.get(publicUrl)?.setFocus(index, options);
+    requestAlbumLazyFocus(publicUrl, index, options);
+  }, []);
 
   const applyFileResolved = useCallback(
     (publicUrl, path, resolved, objectUrl) => {
@@ -266,11 +386,7 @@ export function useYadiskEmbed({
 
           pendingRef.current.delete(publicUrl);
           abortMapRef.current.delete(publicUrl);
-
-          // Обложка сразу; остальные — фоновая предзагрузка preview.
-          albumItems.forEach((entry, index) => {
-            startResolveFile(publicUrl, entry.path, { forgetOnError: index === 0 && forgetOnError });
-          });
+          attachAlbumWindow(publicUrl, albumItems);
         })
         .catch((err) => {
           if (err?.name === 'AbortError') return;
@@ -279,7 +395,7 @@ export function useYadiskEmbed({
           applyError(publicUrl, err?.message, forgetOnError);
         });
     },
-    [applyError, startResolveFile]
+    [applyError, attachAlbumWindow]
   );
 
   const startResolve = useCallback(
@@ -317,11 +433,7 @@ export function useYadiskEmbed({
                   : item
               )
             );
-            albumItems.forEach((entry, index) => {
-              startResolveFile(publicUrl, entry.path, {
-                forgetOnError: index === 0 && forgetOnError
-              });
-            });
+            attachAlbumWindow(publicUrl, albumItems);
             return;
           }
 
@@ -340,7 +452,7 @@ export function useYadiskEmbed({
           applyError(publicUrl, err?.message, forgetOnError);
         });
     },
-    [applyError, applyFileResolved, startResolveFile]
+    [applyError, applyFileResolved, attachAlbumWindow]
   );
 
   useEffect(() => {
@@ -514,6 +626,7 @@ export function useYadiskEmbed({
           abortMapRef.current.get(target.publicUrl)?.abort();
           abortMapRef.current.delete(target.publicUrl);
           if (target.isAlbum) {
+            destroyAlbumController(target.publicUrl);
             (target.albumItems || []).forEach((entry) => {
               const k = objectKey(target.publicUrl, entry.path);
               pendingRef.current.delete(k);
@@ -527,7 +640,7 @@ export function useYadiskEmbed({
         return current.filter((item) => item.key !== key);
       });
     },
-    [objectKey, revokeObjectUrl]
+    [destroyAlbumController, objectKey, revokeObjectUrl]
   );
 
   const previewItems = items.map((item) => ({
@@ -569,12 +682,11 @@ export function useYadiskEmbed({
     );
 
   const hasPending = items.some((item) => {
-    if (item.status === 'loading') return true;
     if (item.isAlbum) {
       const cover = item.albumItems?.[0];
       return !cover || cover.status === 'loading';
     }
-    return false;
+    return item.status === 'loading';
   });
   const readyCount = items.filter((item) => {
     if (item.isAlbum) return (item.albumItems || []).some((entry) => entry.status === 'ready');
@@ -591,12 +703,16 @@ export function useYadiskEmbed({
     }))
   );
 
+  const albumPublicUrl = items.find((item) => item.isAlbum)?.publicUrl || '';
+
   return {
     items,
     previewItems,
     storedMedia,
     removeItem,
     reset,
+    setAlbumFocus,
+    albumPublicUrl,
     hasPending,
     readyCount,
     count: items.length,

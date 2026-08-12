@@ -125,7 +125,7 @@ function PostCard({
     if (
       event.target instanceof Element &&
       event.target.closest(
-        'button, a, input, textarea, [role="button"], .post-card-like, .post-card-comment-btn, .comments-preview-trigger'
+        'button, a, input, textarea, [role="button"], .post-card-like, .post-card-comment-btn, .comments-preview-trigger, .telegram-post-media-grid'
       )
     ) {
       return;

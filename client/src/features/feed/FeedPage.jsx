@@ -21,6 +21,7 @@ import { error } from '../../lib/log';
 import { parseDateQuery, isDateQueryParsed, matchesDateQuery } from '../../lib/dateSearch';
 import { sortPinnedByCreated, usePinnedBannerIndex } from './usePinnedBannerIndex';
 import { subscribeYadiskAlbumCache, toFullscreenAlbumItems } from './yadiskAlbumCache';
+import { ALBUM_WINDOW_RADIUS, requestAlbumLazyFocus } from './yadiskAlbumLazy';
 import './Feed.css';
 
 const SCROLL_TOP_THRESHOLD = 8;
@@ -282,6 +283,9 @@ function FeedPage({
 
   const handleOpenFullscreen = useCallback((items, index = 0, originRect = null, originKey = null, meta = null) => {
     setHiddenMediaKey(null);
+    if (meta?.albumPublicUrl) {
+      requestAlbumLazyFocus(meta.albumPublicUrl, index, { radius: ALBUM_WINDOW_RADIUS });
+    }
     setFullscreenMedia({
       items,
       index,
@@ -323,6 +327,16 @@ function FeedPage({
       });
     });
   }, [fullscreenMedia?.albumPublicUrl]);
+
+  const handleFullscreenAlbumIndex = useCallback(
+    (index) => {
+      const albumPublicUrl = fullscreenMedia?.albumPublicUrl;
+      if (!albumPublicUrl) return;
+      requestAlbumLazyFocus(albumPublicUrl, index, { radius: ALBUM_WINDOW_RADIUS });
+      setFullscreenMedia((prev) => (prev ? { ...prev, index } : prev));
+    },
+    [fullscreenMedia?.albumPublicUrl]
+  );
 
   const handleCreated = useCallback(
     (payload) => {
@@ -451,6 +465,9 @@ function FeedPage({
           originRect={fullscreenMedia.originRect}
           originKey={fullscreenMedia.originKey}
           onCloseStart={handleFullscreenCloseStart}
+          onActiveIndexChange={
+            fullscreenMedia.albumPublicUrl ? handleFullscreenAlbumIndex : undefined
+          }
           onClose={handleCloseFullscreen}
         />
       )}

@@ -5,7 +5,7 @@ var PUBLIC_META_URL = 'https://cloud-api.yandex.net/v1/disk/public/resources';
 var PUBLIC_DOWNLOAD_URL = 'https://cloud-api.yandex.net/v1/disk/public/resources/download';
 
 var YADISK_URL_RE =
-  /^https?:\/\/(?:disk\.yandex\.(?:ru|com(?:\.tr)?)|yadi\.sk)\/(?:i|d|public)\/[^\s?#]+/i;
+  /^https?:\/\/(?:disk\.yandex\.(?:ru|com(?:\.tr)?)|yadi\.sk)\/(?:i|d|a|public)\/[^\s?#]+/i;
 
 var LIST_LIMIT = 100;
 var MAX_ALBUM_DEPTH = 24;
@@ -142,7 +142,13 @@ function fetchPublicResource(publicUrl, path, offset, limit) {
   }
 
   if (metaRes.statusCode === 404) {
-    return { status: 404, error: 'Файл не найден или ссылка закрыта' };
+    var isAlbumLink = /\/a\//i.test(String(publicUrl || ''));
+    return {
+      status: 404,
+      error: isAlbumLink
+        ? 'Альбом недоступен по публичному API. Откройте «Поделиться» и скопируйте публичную ссылку (обычно /d/ или /i/)'
+        : 'Файл не найден или ссылка закрыта'
+    };
   }
   if (metaRes.statusCode !== 200 || !metaRes.json) {
     return { status: 502, error: 'Яндекс.Диск вернул ошибку (' + metaRes.statusCode + ')' };
