@@ -12,6 +12,7 @@ import {
 import { flushPendingTournamentCommentDeletes } from '../../services/tournamentComments';
 import EmptyState from '../../components/ui/EmptyState';
 import PullToRefresh from '../../components/ui/PullToRefresh';
+import FloatingAddButton from '../../components/ui/FloatingAddButton';
 import { FeedListSkeleton } from '../../components/ui/Skeleton';
 import CreateTournamentPostModal from './CreateTournamentPostModal';
 import EditTournamentPostModal from './EditTournamentPostModal';
@@ -416,31 +417,24 @@ function CompetitionsPage({
           <PullToRefresh
             scrollRef={containerRef}
             onRefresh={handleFeedRefresh}
-            header={(
-              <>
-                {moderator && (
-                  <div className="floating-btn-wrapper">
-                    <button
-                      type="button"
-                      className={clsx('floating-add-btn', isChromeVisible ? 'visible' : 'hidden')}
-                      onClick={() => setShowCreatePost(true)}
-                    >
-                      Добавить
-                    </button>
-                  </div>
-                )}
-
-                {pinnedPosts.length > 0 && !searchOpen && (
-                  <PinnedBanner
-                    pinnedPosts={pinnedPosts}
-                    collection="tournament_posts"
-                    activeIndex={activePinnedIndex}
-                    onOpen={handleOpenPinned}
-                  />
-                )}
-              </>
-            )}
+            header={
+              pinnedPosts.length > 0 && !searchOpen ? (
+                <PinnedBanner
+                  pinnedPosts={pinnedPosts}
+                  collection="tournament_posts"
+                  activeIndex={activePinnedIndex}
+                  onOpen={handleOpenPinned}
+                />
+              ) : null
+            }
           >
+            {moderator && (
+              <FloatingAddButton
+                visible={isChromeVisible}
+                onClick={() => setShowCreatePost(true)}
+              />
+            )}
+
             <div className="competitions-feed-list">
               {postsLoading && <FeedListSkeleton />}
 

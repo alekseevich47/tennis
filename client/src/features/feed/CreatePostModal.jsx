@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import FullscreenImageViewer from './FullscreenImageViewer';
 import MediaPreviewGrid from './MediaPreviewGrid';
+import PostAttachButton from './PostAttachButton';
 import PostRichTextField from './PostRichTextField';
 import { useLocalMediaFullscreen } from './useLocalMediaFullscreen';
 import { useYadiskEmbed } from './useYadiskEmbed';
@@ -26,6 +27,8 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
   const [text, setText] = useState('');
   const [files, setFiles] = useState(/** @type {File[]} */ ([]));
   const [previewItems, setPreviewItems] = useState([]);
+  const fileInputId = useId();
+  const fileInputRef = useRef(/** @type {HTMLInputElement | null} */ (null));
   const { confirm } = useAlertDialog();
 
   const yadiskSlots = Math.max(0, MAX_POST_MEDIA_FILES - files.length);
@@ -72,7 +75,8 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
         title: 'Отменить публикацию?',
         message: 'Введённый текст и выбранные файлы будут потеряны.',
         confirmText: 'Отменить',
-        cancelText: 'Продолжить'
+        cancelText: 'Продолжить',
+        confirmVariant: 'danger'
       });
       if (!ok) return;
     }
@@ -115,28 +119,20 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
           placeholder="Что нового в секции?…"
         />
 
-        <div className="media-upload-group">
-          <label htmlFor="create-post-media" className="media-input-label">
-            <span aria-hidden="true">📎</span>{' '}
-            {files.length > 0 ? `Выбрано: ${files.length}` : 'Добавить медиа'}
-            <input
-              id="create-post-media"
-              name="post-media"
-              type="file"
-              accept="image/*,video/mp4"
-              multiple
-              disabled={fileSlotsLeft === 0}
-              onChange={(e) => {
-                setFiles(readSelectedFiles(e.target.files, fileSlotsLeft));
-                e.currentTarget.value = '';
-              }}
-              className="visually-hidden"
-            />
-          </label>
-          <span className="file-name-preview">
-            До {MAX_POST_MEDIA_FILES} файлов · ссылка Яндекс.Диска → превью
-          </span>
-        </div>
+        <input
+          ref={fileInputRef}
+          id={fileInputId}
+          name="post-media"
+          type="file"
+          accept="image/*,video/mp4"
+          multiple
+          disabled={fileSlotsLeft === 0}
+          onChange={(e) => {
+            setFiles(readSelectedFiles(e.target.files, fileSlotsLeft));
+            e.currentTarget.value = '';
+          }}
+          className="visually-hidden"
+        />
 
         <MediaPreviewGrid
           items={allPreviewItems}
@@ -165,10 +161,14 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
           )}
         />
 
-        <div className="modal-actions create-post-form__actions">
+        <div className="modal-actions create-post-form__actions create-post-form__actions--with-attach">
+          <PostAttachButton
+            disabled={fileSlotsLeft === 0}
+            onClick={() => fileInputRef.current?.click()}
+          />
           <button
             type="submit"
-            className="submit-btn-full"
+            className="submit-btn-full create-post-form__publish"
             disabled={(!hasText && !hasMedia) || yadisk.hasPending}
           >
             {yadisk.hasPending ? 'Загружаем превью…' : 'Опубликовать'}

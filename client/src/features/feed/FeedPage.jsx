@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import clsx from 'clsx';
 import { usePosts } from '../../hooks/usePosts';
 import { pinPost, unpinPost, updatePost } from '../../services/posts';
 import { isModerator } from '../../services/auth';
 import { usePostUpload } from '../../components/PostUploadProvider';
 import EmptyState from '../../components/ui/EmptyState';
 import PullToRefresh from '../../components/ui/PullToRefresh';
+import FloatingAddButton from '../../components/ui/FloatingAddButton';
 import { FeedListSkeleton } from '../../components/ui/Skeleton';
 import PostCard from './PostCard';
 import PinnedBanner from './PinnedBanner';
@@ -311,31 +311,24 @@ function FeedPage({
       <PullToRefresh
         scrollRef={containerRef}
         onRefresh={handleRefresh}
-        header={(
-          <>
-            {userIsModerator && (
-              <div className="floating-btn-wrapper">
-                <button
-                  type="button"
-                  className={clsx('floating-add-btn', isButtonVisible ? 'visible' : 'hidden')}
-                  onClick={() => setShowAddModal(true)}
-                >
-                  Добавить
-                </button>
-              </div>
-            )}
-
-            {pinnedPosts.length > 0 && !searchOpen && (
-              <PinnedBanner
-                pinnedPosts={pinnedPosts}
-                collection="posts"
-                activeIndex={activePinnedIndex}
-                onOpen={handleOpenPinned}
-              />
-            )}
-          </>
-        )}
+        header={
+          pinnedPosts.length > 0 && !searchOpen ? (
+            <PinnedBanner
+              pinnedPosts={pinnedPosts}
+              collection="posts"
+              activeIndex={activePinnedIndex}
+              onOpen={handleOpenPinned}
+            />
+          ) : null
+        }
       >
+        {userIsModerator && (
+          <FloatingAddButton
+            visible={isButtonVisible}
+            onClick={() => setShowAddModal(true)}
+          />
+        )}
+
         <div className="feed-list">
           {isLoading && <FeedListSkeleton />}
 

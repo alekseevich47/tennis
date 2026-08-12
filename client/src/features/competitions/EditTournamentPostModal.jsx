@@ -1,8 +1,9 @@
-import React, { useEffect, useId, useMemo, useState } from 'react';
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import { updateTournamentPost } from '../../services/tournamentPosts';
 import FullscreenImageViewer from '../feed/FullscreenImageViewer';
 import MediaPreviewGrid from '../feed/MediaPreviewGrid';
+import PostAttachButton from '../feed/PostAttachButton';
 import PostRichTextField from '../feed/PostRichTextField';
 import { useLocalMediaFullscreen } from '../feed/useLocalMediaFullscreen';
 import {
@@ -27,6 +28,7 @@ import { hasVisibleText, toDisplayHtml } from '../feed/postRichText';
 function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
   const textareaId = useId();
   const fileInputId = useId();
+  const fileInputRef = useRef(/** @type {HTMLInputElement | null} */ (null));
   const [text, setText] = useState('');
   const [mediaFiles, setMediaFiles] = useState(/** @type {File[]} */ ([]));
   const [removedMediaNames, setRemovedMediaNames] = useState(/** @type {string[]} */ ([]));
@@ -171,39 +173,21 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
           )}
         />
 
-        <div className="edit-post-media-controls">
-          <label className="media-input-label">
-            <span aria-hidden="true">📎</span>{' '}
-            Добавить медиа
-            <input
-              id={fileInputId}
-              name="edit-tournament-post-media"
-              type="file"
-              accept="image/*,video/mp4"
-              multiple
-              disabled={remainingMediaSlots === 0}
-              onChange={(event) => {
-                const incoming = readSelectedFiles(event.target.files, remainingMediaSlots);
-                setMediaFiles((current) => [...current, ...incoming].slice(0, MAX_POST_MEDIA_FILES));
-                event.currentTarget.value = '';
-              }}
-              className="visually-hidden"
-            />
-          </label>
-          {mediaFiles.length > 0 && (
-            <button
-              type="button"
-              className="edit-post-reset-media-btn"
-              onClick={() => setMediaFiles([])}
-              disabled={submitting}
-            >
-              Убрать новые файлы
-            </button>
-          )}
-        </div>
-        <p className="edit-post-hint">
-          До {MAX_POST_MEDIA_FILES} файлов в публикации. Удалённые и новые файлы применятся после сохранения.
-        </p>
+        <input
+          ref={fileInputRef}
+          id={fileInputId}
+          name="edit-tournament-post-media"
+          type="file"
+          accept="image/*,video/mp4"
+          multiple
+          disabled={remainingMediaSlots === 0 || submitting}
+          onChange={(event) => {
+            const incoming = readSelectedFiles(event.target.files, remainingMediaSlots);
+            setMediaFiles((current) => [...current, ...incoming].slice(0, MAX_POST_MEDIA_FILES));
+            event.currentTarget.value = '';
+          }}
+          className="visually-hidden"
+        />
 
         <div className="modal-actions edit-post-actions">
           <button
@@ -214,13 +198,19 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
           >
             Отмена
           </button>
-          <button
-            type="submit"
-            className="submit-btn-full edit-post-save-btn"
-            disabled={submitting || !hasVisibleText(text)}
-          >
-            {submitting ? 'Сохраняем…' : 'Сохранить'}
-          </button>
+          <div className="edit-post-actions__primary create-post-form__actions--with-attach">
+            <PostAttachButton
+              disabled={remainingMediaSlots === 0 || submitting}
+              onClick={() => fileInputRef.current?.click()}
+            />
+            <button
+              type="submit"
+              className="submit-btn-full edit-post-save-btn create-post-form__publish"
+              disabled={submitting || !hasVisibleText(text)}
+            >
+              {submitting ? 'Сохраняем…' : 'Сохранить'}
+            </button>
+          </div>
         </div>
       </form>
 

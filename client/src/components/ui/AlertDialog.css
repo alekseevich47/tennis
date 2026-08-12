@@ -32,6 +32,15 @@
   background: #0063cc;
 }
 
+.ui-alert-btn--confirm-danger {
+  background: #ff3b30;
+  color: #ffffff;
+}
+
+.ui-alert-btn--confirm-danger:hover {
+  background: #e0342b;
+}
+
 .ui-alert-btn--cancel {
   background: #f1f3f5;
   color: #495057;
