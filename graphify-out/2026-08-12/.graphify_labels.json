@@ -58,6 +58,7 @@
   "56": "PostDetailModal.jsx",
   "57": "log.js",
   "58": "catalog.js",
+  "59": "App.jsx",
   "60": "maxauthlib.js",
   "61": "error",
   "62": "main.jsx",
@@ -67,10 +68,17 @@
   "66": "OnboardingTutorial.jsx",
   "67": "RatingPage.jsx",
   "68": "GalleryCommentModal.jsx",
+  "69": "Avatar.jsx",
   "70": "PostContentHtml.jsx",
   "71": "error",
   "72": "claimlib.js",
   "73": "tournamentComments.js",
   "74": "Avatar.jsx",
-  "75": "users_claim.pb.js"
+  "75": "users_claim.pb.js",
+  "76": "main.jsx",
+  "77": "log.js",
+  "78": "TournamentCommentsSection.jsx",
+  "79": "useMaxCloseGuard.js",
+  "80": "ProductUploadProvider.jsx",
+  "81": "FavoritesContext.jsx"
 }

@@ -12,13 +12,16 @@ import { videoPreviewUrl } from '../../lib/media';
  *   previewUrl: string,
  *   isVideo: boolean,
  *   originKey: string,
- *   publicUrl: string
+ *   publicUrl: string,
+ *   isLoading?: boolean
  * }} ResolvedExternalMediaItem
  */
 
 /**
  * Резолв `posts.external_media` для сетки ленты через серверный прокси → blob URL.
  * Для фото: сначала preview (LQIP), затем file (резкое отображение / fullscreen).
+ * Пока байты не пришли — слоты остаются в списке (`isLoading`), чтобы сетка
+ * показывала placeholder, а не пустое место.
  *
  * @param {unknown} externalMedia
  * @param {string} originPrefix
@@ -71,7 +74,8 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
         previewUrl: '',
         isVideo: entry.mediaType === 'video',
         originKey: `${originPrefix}-ext-${index}`,
-        publicUrl: entry.publicUrl
+        publicUrl: entry.publicUrl,
+        isLoading: true
       }))
     );
 
@@ -99,7 +103,8 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
             url: display,
             thumbUrl: objectUrl,
             previewUrl: objectUrl,
-            isVideo: true
+            isVideo: true,
+            isLoading: false
           });
           return;
         }
@@ -116,7 +121,8 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
           url: previewObjectUrl,
           thumbUrl: previewObjectUrl,
           previewUrl: previewObjectUrl,
-          isVideo: false
+          isVideo: false,
+          isLoading: false
         });
 
         try {
@@ -131,7 +137,8 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
             url: fileObjectUrl,
             thumbUrl: fileObjectUrl,
             previewUrl: previewObjectUrl,
-            isVideo: false
+            isVideo: false,
+            isLoading: false
           });
         } catch (fileErr) {
           if (fileErr?.name === 'AbortError' || cancelled) return;
@@ -149,5 +156,5 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
     };
   }, [externalMedia, originPrefix]);
 
-  return items.filter((item) => Boolean(item.url || item.thumbUrl));
+  return items;
 }

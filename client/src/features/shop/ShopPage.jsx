@@ -225,37 +225,43 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
 
   return (
     <section className="shop" ref={containerRef} aria-label="Магазин секции">
-      <PullToRefresh scrollRef={containerRef} onRefresh={handleRefresh}>
-        {moderator && (
-          <div className="floating-btn-wrapper">
-            <button
-              type="button"
-              className={clsx('floating-add-btn', showAddButton ? 'visible' : 'hidden')}
-              onClick={() => setShowAddModal(true)}
-            >
-              Добавить
-            </button>
-          </div>
+      <PullToRefresh
+        scrollRef={containerRef}
+        onRefresh={handleRefresh}
+        header={(
+          <>
+            {moderator && (
+              <div className="floating-btn-wrapper">
+                <button
+                  type="button"
+                  className={clsx('floating-add-btn', showAddButton ? 'visible' : 'hidden')}
+                  onClick={() => setShowAddModal(true)}
+                >
+                  Добавить
+                </button>
+              </div>
+            )}
+
+            <div className={clsx('shop-header-bar-new', isSearchOpen && 'search-open')}>
+              <CategoryDropdown
+                selectedCategoryId={selectedCategoryId}
+                onCategoryChange={setSelectedCategoryId}
+                isSearchOpen={isSearchOpen}
+                onCloseSearch={handleCloseSearchUI}
+                onOpenChange={setIsCategoryDropdownOpen}
+              />
+              <SearchBar
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                isOpen={isSearchOpen}
+                onOpenChange={setIsSearchOpen}
+                onSearchToggle={setIsSearchOpen}
+                onFocusChange={setIsSearchFocused}
+              />
+            </div>
+          </>
         )}
-
-        <div className={clsx('shop-header-bar-new', isSearchOpen && 'search-open')}>
-          <CategoryDropdown
-            selectedCategoryId={selectedCategoryId}
-            onCategoryChange={setSelectedCategoryId}
-            isSearchOpen={isSearchOpen}
-            onCloseSearch={handleCloseSearchUI}
-            onOpenChange={setIsCategoryDropdownOpen}
-          />
-          <SearchBar
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            isOpen={isSearchOpen}
-            onOpenChange={setIsSearchOpen}
-            onSearchToggle={setIsSearchOpen}
-            onFocusChange={setIsSearchFocused}
-          />
-        </div>
-
+      >
         {isLoading ? (
           <div className="shop-skeleton-wrap">
             <ShopGridSkeleton />
