@@ -5,7 +5,7 @@ import './ScrollToTopButton.css';
 const DEFAULT_SHOW_AFTER = 120;
 
 /**
- * Кнопка «наверх» над BottomNav (снизу справа).
+ * Кнопка «наверх» чуть выше BottomNav (снизу справа).
  * @param {{
  *   scrollRef: React.RefObject<HTMLElement | null>,
  *   showAfterPx?: number,

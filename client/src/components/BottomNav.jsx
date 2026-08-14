@@ -88,6 +88,7 @@ export const BOTTOM_NAV_ITEMS = NAV_ITEMS;
  * }} props
  */
 function BottomNav({ activeTab, onTabChange, showAdmin = false, user = null }) {
+  const rootRef = useRef(/** @type {HTMLElement | null} */ (null));
   const navRef = useRef(/** @type {HTMLElement | null} */ (null));
   const itemRefs = useRef(/** @type {Map<number, HTMLButtonElement>} */ (new Map()));
   const [indicator, setIndicator] = useState({ left: 0, width: 0, ready: false });
@@ -99,6 +100,31 @@ function BottomNav({ activeTab, onTabChange, showAdmin = false, user = null }) {
     if (el) itemRefs.current.set(index, el);
     else itemRefs.current.delete(index);
   };
+
+  // Клавиатура в MAX/Android webview сжимает visual viewport → fixed bottom
+  // уезжает вверх. Компенсируем inset, чтобы меню оставалось у низа экрана
+  // (под клавиатурой). Дополнительно: interactive-widget=overlays-content.
+  useEffect(() => {
+    const root = rootRef.current;
+    const vv = window.visualViewport;
+    if (!root || !vv) return undefined;
+
+    const syncKeyboardShift = () => {
+      const inset = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+      root.style.setProperty('--bottom-nav-keyboard-shift', `${inset}px`);
+    };
+
+    syncKeyboardShift();
+    vv.addEventListener('resize', syncKeyboardShift);
+    vv.addEventListener('scroll', syncKeyboardShift);
+    window.addEventListener('resize', syncKeyboardShift);
+    return () => {
+      vv.removeEventListener('resize', syncKeyboardShift);
+      vv.removeEventListener('scroll', syncKeyboardShift);
+      window.removeEventListener('resize', syncKeyboardShift);
+      root.style.setProperty('--bottom-nav-keyboard-shift', '0px');
+    };
+  }, []);
 
   useLayoutEffect(() => {
     const nav = navRef.current;
@@ -147,7 +173,7 @@ function BottomNav({ activeTab, onTabChange, showAdmin = false, user = null }) {
   }, [showAdmin, activeTab]);
 
   return (
-    <nav className="bottom-nav" aria-label="Основная навигация">
+    <nav ref={rootRef} className="bottom-nav" aria-label="Основная навигация">
       <div ref={navRef} className="bottom-nav__pill">
         <span className="bottom-nav__glass" aria-hidden="true" />
         <span

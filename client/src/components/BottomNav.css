@@ -2,13 +2,16 @@
   --bottom-nav-side: 10px;
   --bottom-nav-bottom: 10px;
   --bottom-nav-height: 66px;
+  /* Сдвиг вниз на высоту клавиатуры (visualViewport), чтобы меню оставалось
+     у низа экрана под клавиатурой, а не «прыгало» над ней. */
+  --bottom-nav-keyboard-shift: 0px;
 
   /* Полоса на весь низ экрана (без safe-area) — пилюля почти на всю ширину
      (боковые отступы ~8–12px + safe-area). */
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: calc(0px - var(--bottom-nav-keyboard-shift));
   z-index: 1000;
   display: flex;
   justify-content: center;
