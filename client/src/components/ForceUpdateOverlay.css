@@ -1,0 +1,53 @@
+.force-update-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 13000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 20px calc(24px + env(safe-area-inset-bottom, 0px));
+  background: rgba(0, 0, 0, 0.72);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.force-update-card {
+  width: 100%;
+  max-width: 340px;
+  padding: 24px 20px 20px;
+  border-radius: 20px;
+  background: #ffffff;
+  text-align: center;
+}
+
+.force-update-title {
+  margin: 0 0 10px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.force-update-text {
+  margin: 0 0 20px;
+  font-size: 15px;
+  line-height: 1.45;
+  color: #495057;
+}
+
+.force-update-btn {
+  width: 100%;
+  border: none;
+  padding: 14px 16px;
+  border-radius: 14px;
+  min-height: 48px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  background: #007aff;
+  cursor: pointer;
+}
+
+.force-update-btn:focus,
+.force-update-btn:focus-visible {
+  outline: none;
+  box-shadow: none;
+}

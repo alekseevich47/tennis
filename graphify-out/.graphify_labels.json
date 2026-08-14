@@ -66,16 +66,12 @@
   "64": "trainings_booking_validate.pb.js",
   "65": "ProfilePage.jsx",
   "66": "media.js",
-  "67": "FeedPage.jsx",
+  "67": "ShopPage.jsx",
   "68": "GalleryCommentModal.jsx",
-  "69": "gestures.js",
-  "70": "MembershipOverviewModal.jsx",
-  "71": "useMaxAuth.js",
+  "69": "PostMedia.jsx",
   "72": "claimlib.js",
   "73": "tournamentComments.js",
   "74": "Avatar.jsx",
   "75": "users_claim.pb.js",
-  "76": "server-bootstrap.sh",
-  "77": "useMaxCloseGuard.js",
-  "78": "deploy.sh"
+  "77": "useMaxCloseGuard.js"
 }

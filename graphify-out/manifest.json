@@ -10,8 +10,8 @@
     "semantic_hash": "12e2dda29765e3ea83cc6c1501903fe8"
   },
   "client/src/App.jsx": {
-    "mtime": 1786721879.7056062,
-    "ast_hash": "1a416b44c1b0e0517783120a42b700f1",
+    "mtime": 1786727413.4822297,
+    "ast_hash": "6cc86c1e80efb5b589cae727d40e7b15",
     "semantic_hash": ""
   },
   "client/src/components/AchievementsBlock.jsx": {
@@ -30,8 +30,8 @@
     "semantic_hash": "a5f97ceb0a531f5ce31a9216fa871c9a"
   },
   "client/src/components/BottomNav.jsx": {
-    "mtime": 1786726639.2030447,
-    "ast_hash": "ce061b903134446ee3efdb6909de9a8c",
+    "mtime": 1786727214.6799479,
+    "ast_hash": "3b058873e94c9ab8c3d48b93cda3a421",
     "semantic_hash": ""
   },
   "client/src/components/FloatingAchievements.jsx": {
@@ -455,7 +455,7 @@
     "semantic_hash": "96829ba30d2fda2d1d9e38c456a0199d"
   },
   "client/src/features/trainings/TrainingsPage.jsx": {
-    "mtime": 1786726619.0990195,
+    "mtime": 1786727023.1849115,
     "ast_hash": "dbe7b61d567564a4750a980384e66ef3",
     "semantic_hash": ""
   },
@@ -725,9 +725,9 @@
     "semantic_hash": "8f68c27c3fc38817b2726b20e2d4f1ee"
   },
   "client/vite.config.js": {
-    "mtime": 1778688020.840289,
-    "ast_hash": "b27758bd1ce50eb09948825d50430385",
-    "semantic_hash": "b27758bd1ce50eb09948825d50430385"
+    "mtime": 1786727770.1277776,
+    "ast_hash": "da154774eec36a03f3731c885f348849",
+    "semantic_hash": ""
   },
   "pb_hooks/admin_audit.pb.js": {
     "mtime": 1783703269.3541982,
@@ -775,8 +775,8 @@
     "semantic_hash": ""
   },
   "pb_hooks/notification_settings_bootstrap.pb.js": {
-    "mtime": 1786725373.2914045,
-    "ast_hash": "d769db0bc3a62d2239bfa18465dd87a9",
+    "mtime": 1786727023.2086372,
+    "ast_hash": "63e1159936118fdfe363bb7aa0059e0f",
     "semantic_hash": ""
   },
   "pb_hooks/notificationslib.js": {
@@ -1125,8 +1125,8 @@
     "semantic_hash": ""
   },
   "client/src/features/profile/AboutAppModal.jsx": {
-    "mtime": 1785417174.3018737,
-    "ast_hash": "c9a5799a20171474d5859e1bf6b6757f",
+    "mtime": 1786727763.997345,
+    "ast_hash": "cb01ca9b846d3c68412879b2316f879c",
     "semantic_hash": ""
   },
   "client/src/features/feed/CommentSwipeReply.jsx": {
@@ -1354,14 +1354,24 @@
     "ast_hash": "e0cf5e422e83ec07d9938fb06ffb8307",
     "semantic_hash": ""
   },
-  "scripts/deploy.sh": {
-    "mtime": 1786724944.838246,
-    "ast_hash": "41cd9432328e42b20e791a01048aae36",
+  "client/src/components/ForceUpdateOverlay.jsx": {
+    "mtime": 1786727401.6595862,
+    "ast_hash": "689e78120ea48480435e40d5a48a82ef",
     "semantic_hash": ""
   },
-  "scripts/server-bootstrap.sh": {
-    "mtime": 1786725617.2103086,
-    "ast_hash": "7154784c856ba42448b79f217d50eb4b",
+  "client/src/hooks/useAppVersionCheck.js": {
+    "mtime": 1786727762.8753507,
+    "ast_hash": "23b17f6c3431e28d7c831c2d9a357081",
+    "semantic_hash": ""
+  },
+  "client/src/lib/appVersion.js": {
+    "mtime": 1786727761.66092,
+    "ast_hash": "b1f4d569902fd7cc1e690d4dc5c58919",
+    "semantic_hash": ""
+  },
+  "scripts/deploy.sh": {
+    "mtime": 1786727413.2226746,
+    "ast_hash": "08ca655e0e44e7338ed187aba4bd46e0",
     "semantic_hash": ""
   }
 }
