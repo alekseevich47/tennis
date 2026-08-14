@@ -178,17 +178,28 @@ function PostMedia({
 
     const readyItems = items
       .filter((entry) => entry.url || entry.thumbUrl || entry.previewUrl)
-      .map((entry) => ({
-        filename: entry.filename,
-        url: entry.url || entry.thumbUrl || entry.previewUrl || '',
-        thumbUrl: entry.thumbUrl || entry.previewUrl || entry.url || '',
-        previewUrl: entry.previewUrl || entry.thumbUrl || '',
-        isVideo: Boolean(entry.isVideo),
-        originKey: entry.originKey,
-        isLoading: Boolean(entry.isLoading) && !entry.url && !entry.thumbUrl,
-        publicUrl: entry.publicUrl || '',
-        path: entry.path || null
-      }));
+      .map((entry) => {
+        const preview = entry.previewUrl || entry.thumbUrl || '';
+        const original =
+          entry.url && entry.url !== preview ? entry.url : '';
+        return {
+          filename: entry.filename,
+          url: original || preview || '',
+          thumbUrl: entry.thumbUrl || entry.previewUrl || entry.url || '',
+          previewUrl: preview,
+          isVideo: Boolean(entry.isVideo),
+          originKey: entry.originKey,
+          isLoading: Boolean(entry.isLoading) && !entry.url && !entry.thumbUrl,
+          isUpgrading:
+            Boolean(entry.publicUrl) &&
+            !entry.isVideo &&
+            Boolean(preview) &&
+            !original &&
+            (entry.isUpgrading !== false),
+          publicUrl: entry.publicUrl || '',
+          path: entry.path || null
+        };
+      });
     const readyIndex = readyItems.findIndex((entry) => entry.originKey === item.originKey);
     if (readyIndex < 0) return;
     onOpenFullscreen?.(

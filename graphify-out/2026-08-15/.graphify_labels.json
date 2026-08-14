@@ -66,10 +66,22 @@
   "64": "trainings_booking_validate.pb.js",
   "65": "ProfilePage.jsx",
   "66": "media.js",
+  "67": "ShopPage.jsx",
   "68": "GalleryCommentModal.jsx",
+  "69": "PostMedia.jsx",
+  "70": "Modal.jsx",
+  "71": "AdminPanelPage.jsx",
   "72": "claimlib.js",
   "73": "tournamentComments.js",
   "74": "Avatar.jsx",
   "75": "users_claim.pb.js",
-  "77": "useMaxCloseGuard.js"
+  "76": "StatsGrowthModal.jsx",
+  "77": "useMaxCloseGuard.js",
+  "78": "AboutAppModal.jsx",
+  "79": "main.jsx",
+  "80": "StatsReachModal.jsx",
+  "81": "EditTrainingModal.jsx",
+  "82": "Skeleton.jsx",
+  "83": "dateSearch.js",
+  "84": "usePinnedBannerIndex.js"
 }

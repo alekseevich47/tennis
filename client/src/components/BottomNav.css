@@ -172,10 +172,12 @@
 }
 
 .nav-item--add {
-  /* Цвет активной вкладки + светлый «водяной» перелив только по низу. */
+  /* База = цвет активной вкладки; единый «водяной» перелив: сверху темнее, снизу светлее. */
   --nav-add-base: #007aff;
+  --nav-add-dark: #004eb8;
+  --nav-add-darker: #003d96;
   --nav-add-light: #5cbcff;
-  --nav-add-shine: #a8dcff;
+  --nav-add-shine: #b6e2ff;
 
   flex: 0 0 52px;
   width: 52px;
@@ -207,25 +209,37 @@
 
 .nav-item--add__wave {
   position: absolute;
-  left: -60%;
-  bottom: -28%;
-  width: 220%;
-  height: 70%;
+  left: -70%;
+  top: -45%;
+  width: 240%;
+  height: 190%;
   pointer-events: none;
-  border-radius: 50%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(92, 188, 255, 0.15) 18%,
-    var(--nav-add-light) 42%,
-    var(--nav-add-shine) 50%,
-    var(--nav-add-light) 58%,
-    rgba(92, 188, 255, 0.15) 82%,
-    transparent 100%
-  );
-  filter: blur(7px);
-  opacity: 0.9;
-  animation: nav-add-wave 4.2s ease-in-out infinite;
+  /* Один слой: тёмный верх → база → светлый низ, течёт целиком. */
+  background:
+    radial-gradient(
+      ellipse 70% 55% at 35% 18%,
+      var(--nav-add-darker) 0%,
+      var(--nav-add-dark) 38%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 75% 60% at 68% 82%,
+      var(--nav-add-shine) 0%,
+      var(--nav-add-light) 42%,
+      transparent 74%
+    ),
+    linear-gradient(
+      168deg,
+      var(--nav-add-darker) 0%,
+      var(--nav-add-dark) 22%,
+      transparent 46%,
+      transparent 54%,
+      var(--nav-add-light) 78%,
+      var(--nav-add-shine) 100%
+    );
+  filter: blur(14px);
+  opacity: 0.88;
+  animation: nav-add-wave 6.5s ease-in-out infinite;
   will-change: transform;
 }
 
@@ -243,17 +257,18 @@
 @keyframes nav-add-wave {
   0%,
   100% {
-    transform: translate3d(-16%, 0, 0) scaleY(1);
+    transform: translate3d(-12%, 2%, 0) rotate(-2deg);
   }
   50% {
-    transform: translate3d(16%, -4%, 0) scaleY(1.08);
+    transform: translate3d(12%, -2%, 0) rotate(2deg);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .nav-item--add__wave {
     animation: none;
-    left: -10%;
+    left: -20%;
+    top: -20%;
     transform: none;
   }
 
