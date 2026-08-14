@@ -45,7 +45,7 @@ function PlayerRow({ player, rank, hidden = false, banned = false, botBlocked = 
   );
 
   return (
-    <div className={rowClass} onClick={handleClick}>
+    <div className={rowClass} onClick={handleClick} data-modal-origin=""
       {rankContent}
       <div className="player-info">
         <Avatar

@@ -260,8 +260,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/FullscreenImageViewer.jsx": {
-    "mtime": 1786721219.8504367,
-    "ast_hash": "d9347914390c1dbfe04fc98d9c0f9828",
+    "mtime": 1786729188.6634674,
+    "ast_hash": "3b543bbe37c115240da60e044a756876",
     "semantic_hash": ""
   },
   "client/src/features/feed/MediaPreviewGrid.jsx": {
@@ -280,8 +280,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostMedia.jsx": {
-    "mtime": 1786721273.9438536,
-    "ast_hash": "d8c08ed5ac0e89fae9ba81534a24dd04",
+    "mtime": 1786728374.8675501,
+    "ast_hash": "dff76ffee218cdba66d166b25763a68d",
     "semantic_hash": ""
   },
   "client/src/features/gallery/AddImageModal.jsx": {
@@ -300,8 +300,8 @@
     "semantic_hash": "42a8d6654c868628a4644dd84fb92c13"
   },
   "client/src/features/gallery/GalleryPage.jsx": {
-    "mtime": 1785042571.599313,
-    "ast_hash": "1530e70763f05ef3b97079d5f1b29a1b",
+    "mtime": 1786729205.63671,
+    "ast_hash": "c59763237079f55d006bcc7ca9a76acd",
     "semantic_hash": ""
   },
   "client/src/features/notifications/NotificationCard.jsx": {
@@ -405,14 +405,14 @@
     "semantic_hash": "e25625ba38bb4fec779d9dfb03bbd78c"
   },
   "client/src/features/shop/ProductCard.jsx": {
-    "mtime": 1786721273.8658624,
-    "ast_hash": "4587b4715b763f3ee0a0ff3dcb6a1f70",
+    "mtime": 1786729211.7701602,
+    "ast_hash": "18bc91aff6629607c6a2db524deb55bf",
     "semantic_hash": ""
   },
   "client/src/features/shop/ProductDetail.jsx": {
-    "mtime": 1783651148.86428,
-    "ast_hash": "967a6d0eb3beb46dd4d4c554b2d04a43",
-    "semantic_hash": "967a6d0eb3beb46dd4d4c554b2d04a43"
+    "mtime": 1786729206.1594698,
+    "ast_hash": "1addfb09041036348527ffc03e29cde5",
+    "semantic_hash": ""
   },
   "client/src/features/shop/ProductForm.jsx": {
     "mtime": 1786717330.5186024,
@@ -1190,8 +1190,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/useResolvedExternalMedia.js": {
-    "mtime": 1786718981.9368699,
-    "ast_hash": "9b1c7a7d2db9f91188e5b8e27a0a742b",
+    "mtime": 1786728473.5227091,
+    "ast_hash": "bf75d9f2f8ff7c3e1794c506c17a62aa",
     "semantic_hash": ""
   },
   "client/src/features/feed/useYadiskEmbed.js": {
@@ -1205,8 +1205,8 @@
     "semantic_hash": ""
   },
   "client/src/services/yadisk.js": {
-    "mtime": 1786728319.2158673,
-    "ast_hash": "ad28d65185a0d19114a2f7fdf553a6f2",
+    "mtime": 1786729177.955893,
+    "ast_hash": "0db178256adbdb75a52a5694012da86f",
     "semantic_hash": ""
   },
   "pb_hooks/yadisk.pb.js": {
@@ -1300,8 +1300,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/yadiskAlbumCache.js": {
-    "mtime": 1786718635.38088,
-    "ast_hash": "f985642d0d6d18f1ff8a0c597e50e63b",
+    "mtime": 1786728361.2917163,
+    "ast_hash": "9de4a6c6cc45c29c08739fc322d6c03b",
     "semantic_hash": ""
   },
   "client/src/features/feed/MediaSwipeDots.jsx": {
@@ -1315,8 +1315,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/yadiskAlbumLazy.js": {
-    "mtime": 1786718983.3824377,
-    "ast_hash": "9d3ef4b99ae978e9ec716338e9692b32",
+    "mtime": 1786728354.969095,
+    "ast_hash": "3af19197fd392ad3bf7f358d68a2c793",
     "semantic_hash": ""
   },
   "client/src/components/ui/ModalFloatingCloseButton.jsx": {
@@ -1372,6 +1372,16 @@
   "scripts/deploy.sh": {
     "mtime": 1786727413.2226746,
     "ast_hash": "08ca655e0e44e7338ed187aba4bd46e0",
+    "semantic_hash": ""
+  },
+  "client/src/features/feed/useFetchedOriginal.js": {
+    "mtime": 1786729183.2546124,
+    "ast_hash": "45833fc32308d9b51b852174092ebcdc",
+    "semantic_hash": ""
+  },
+  "client/src/lib/fetchBlobProgress.js": {
+    "mtime": 1786729177.221828,
+    "ast_hash": "2df04ccf988d1cff59c9ba3488ae3abb",
     "semantic_hash": ""
   }
 }

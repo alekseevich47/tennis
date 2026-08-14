@@ -12,7 +12,7 @@ import FullscreenImageViewer from '../feed/FullscreenImageViewer';
 import GalleryMediaOverlay from './GalleryMediaOverlay';
 import GalleryCommentModal from './GalleryCommentModal';
 import ProfileViewModal from '../profile/ProfileViewModal';
-import { getMediaUrl, videoPreviewUrl } from '../../lib/media';
+import { getMediaThumbUrl, getMediaUrl, MEDIA_CARD_THUMB, videoPreviewUrl } from '../../lib/media';
 import { error } from '../../lib/log';
 import './Gallery.css';
 
@@ -322,11 +322,16 @@ function GalleryPage({
       const filename = img.image || img.video;
       const url = getMediaUrl(img, 'gallery', mediaFile);
       if (!filename || !url) return [];
+      const thumbUrl = isVideo
+        ? url
+        : getMediaThumbUrl(img, 'gallery', mediaFile, MEDIA_CARD_THUMB) || url;
 
       return [{
         id: img.id,
         filename,
         url,
+        thumbUrl,
+        previewUrl: thumbUrl,
         isVideo,
         aspectRatio: img.aspect_ratio,
         originKey: img.id,
