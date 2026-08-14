@@ -135,10 +135,14 @@ function memberBytesForDisplay(cached, preferFull) {
 /**
  * @param {string} publicUrl
  * @param {string | null | undefined} path
- * @param {{ signal?: AbortSignal, preferFull?: boolean }} [options]
+ * @param {{ signal?: AbortSignal, preferFull?: boolean, name?: string, isVideo?: boolean }} [options]
  * @returns {Promise<CachedMemberBytes>}
  */
-export async function fetchAlbumMemberBytes(publicUrl, path, { signal, preferFull = false } = {}) {
+export async function fetchAlbumMemberBytes(
+  publicUrl,
+  path,
+  { signal, preferFull = false, name, isVideo } = {}
+) {
   const cached = getCachedMemberBytes(publicUrl, path);
   if (cached) {
     if (!preferFull || cached.isVideo || (cached.fileUrl && cached.fileUrl !== cached.previewUrl)) {
@@ -146,18 +150,25 @@ export async function fetchAlbumMemberBytes(publicUrl, path, { signal, preferFul
     }
   }
 
-  const resolved = await fetchYadiskPreview(publicUrl, {
-    signal,
-    path: path || null
-  });
-  if (resolved.type === 'album') {
-    throw new Error('Ожидался файл внутри альбома');
+  let resolvedName = name || 'media';
+  let resolvedIsVideo = isVideo;
+
+  if (typeof resolvedIsVideo !== 'boolean') {
+    const resolved = await fetchYadiskPreview(publicUrl, {
+      signal,
+      path: path || null
+    });
+    if (resolved.type === 'album') {
+      throw new Error('Ожидался файл внутри альбома');
+    }
+    resolvedIsVideo = resolved.mediaType === 'video';
+    resolvedName = resolved.name || resolvedName;
   }
 
-  const isVideo = resolved.mediaType === 'video';
-  const name = resolved.name || 'media';
+  const isVideoResolved = resolvedIsVideo;
+  const mediaName = resolvedName;
 
-  if (isVideo) {
+  if (isVideoResolved) {
     const fileUrl =
       cached?.fileUrl ||
       (await fetchYadiskObjectUrl(publicUrl, 'file', {
@@ -166,7 +177,7 @@ export async function fetchAlbumMemberBytes(publicUrl, path, { signal, preferFul
       }));
     const bytes = {
       isVideo: true,
-      name,
+      name: mediaName,
       displayUrl: videoPreviewUrl(fileUrl),
       previewUrl: fileUrl,
       fileUrl
@@ -185,7 +196,7 @@ export async function fetchAlbumMemberBytes(publicUrl, path, { signal, preferFul
   if (!preferFull) {
     const bytes = {
       isVideo: false,
-      name,
+      name: mediaName,
       displayUrl: previewUrl,
       previewUrl,
       fileUrl: cached?.fileUrl || null
@@ -209,7 +220,7 @@ export async function fetchAlbumMemberBytes(publicUrl, path, { signal, preferFul
 
   const bytes = {
     isVideo: false,
-    name,
+    name: mediaName,
     displayUrl: fileUrl,
     previewUrl,
     fileUrl
@@ -260,7 +271,7 @@ export function requestAlbumLazyFocus(publicUrl, index, options) {
  *
  * @param {{
  *   publicUrl: string,
- *   getMembers: () => Array<{ originKey: string, path?: string | null }>,
+ *   getMembers: () => Array<{ originKey: string, path?: string | null, name?: string, isVideo?: boolean }>,
  *   concurrency?: number,
  *   signal: AbortSignal,
  *   onResolved: (originKey: string, bytes: CachedMemberBytes) => void,
@@ -372,7 +383,9 @@ export function createAlbumWindowController({
         try {
           const bytes = await fetchAlbumMemberBytes(publicUrl, member.path, {
             signal: jobController.signal,
-            preferFull
+            preferFull,
+            name: member.name,
+            isVideo: member.isVideo
           });
           if (destroyed || jobController.signal.aborted) return;
           revokeHeld(originKey);

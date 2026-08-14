@@ -150,7 +150,9 @@ export function useYadiskEmbed({
             ?.albumItems || albumItems
           ).map((entry) => ({
             originKey: entry.path || entry.key,
-            path: entry.path
+            path: entry.path,
+            name: entry.name,
+            isVideo: entry.isVideo
           })),
         signal: windowController.signal,
         onResolved: (originKey, bytes) => {

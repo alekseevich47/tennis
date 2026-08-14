@@ -9,6 +9,9 @@ var YADISK_URL_RE =
 
 var LIST_LIMIT = 100;
 var MAX_ALBUM_DEPTH = 24;
+var RESOLVE_CACHE_TTL_MS = 600000;
+/** @type {Record<string, { expires: number, value: object }>} */
+var resolveCache = {};
 
 /**
  * @param {string} raw
@@ -90,7 +93,7 @@ function buildMetaUrl(publicUrl, path) {
     PUBLIC_META_URL +
     '?public_key=' +
     encodeURIComponent(publicUrl) +
-    '&preview_size=XL';
+    '&preview_size=S';
   var normalizedPath = normalizePath(path || '');
   if (normalizedPath) {
     url += '&path=' + encodeURIComponent(normalizedPath);
@@ -315,6 +318,37 @@ function resolvePublicAlbum(publicUrl) {
 /**
  * @param {string} publicUrl
  * @param {string} [path]
+ * @returns {string}
+ */
+function resolveCacheKey(publicUrl, path) {
+  return normalizePublicUrl(publicUrl) + '\0' + normalizePath(path || '');
+}
+
+/**
+ * @param {string} key
+ * @returns {object | null}
+ */
+function getResolveCache(key) {
+  var entry = resolveCache[key];
+  if (!entry) return null;
+  if (Date.now() > entry.expires) {
+    delete resolveCache[key];
+    return null;
+  }
+  return entry.value;
+}
+
+/**
+ * @param {string} key
+ * @param {object} value
+ */
+function setResolveCache(key, value) {
+  resolveCache[key] = { expires: Date.now() + RESOLVE_CACHE_TTL_MS, value: value };
+}
+
+/**
+ * @param {string} publicUrl
+ * @param {string} [path]
  * @returns {{ status?: number, error?: string, item?: object }}
  */
 function resolvePublicResource(publicUrl, path) {
@@ -324,18 +358,25 @@ function resolvePublicResource(publicUrl, path) {
   }
 
   var normalizedPath = normalizePath(path || '');
+  var cacheKey = resolveCacheKey(url, normalizedPath);
+  var cached = getResolveCache(cacheKey);
+  if (cached) return cached;
+
   var fetched = fetchPublicResource(url, normalizedPath, 0, LIST_LIMIT);
   if (fetched.error) return fetched;
 
   var resource = fetched.resource;
+  var result;
   if (resource.type === 'dir') {
-    if (normalizedPath) {
-      return resolvePublicAlbum(url);
-    }
-    return resolvePublicAlbum(url);
+    result = resolvePublicAlbum(url);
+  } else {
+    result = buildFileItem(resource, url, normalizedPath);
   }
 
-  return buildFileItem(resource, url, normalizedPath);
+  if (!result.error) {
+    setResolveCache(cacheKey, result);
+  }
+  return result;
 }
 
 /**
