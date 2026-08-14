@@ -1,17 +1,11 @@
 // @ts-check
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { normalizeExternalMedia } from '../../lib/yadisk';
-import { fetchYadiskObjectUrl, fetchYadiskPreview } from '../../services/yadisk';
-import { videoPreviewUrl } from '../../lib/media';
+import { fetchYadiskPreview } from '../../services/yadisk';
 import { setYadiskAlbumCache } from './yadiskAlbumCache';
+import { getCachedMemberBytes } from './yadiskMediaSessionCache';
 import {
-  getCachedMemberBytes,
-  isSessionCachedBlobUrl,
-  setCachedMemberBytes
-} from './yadiskMediaSessionCache';
-import {
-  ALBUM_COVER_RADIUS,
-  ALBUM_WINDOW_RADIUS,
+  ALBUM_PREVIEW_ALL_RADIUS,
   createAlbumWindowController,
   registerAlbumLazyFocus,
   requestAlbumLazyFocus
@@ -66,13 +60,14 @@ function publishAlbums(list) {
 
 /**
  * Резолв `posts.external_media` для сетки ленты через серверный прокси → blob URL.
- * Альбом: meta сразу, байты — обложка; окно ±N по focus (свайп/fullscreen).
+ * Альбом и одиночные: все L-preview сразу; оригинал (`preferFull`) при viewport/fullscreen.
  *
  * @param {unknown} externalMedia
  * @param {string} originPrefix
  * @returns {{
  *   items: ResolvedExternalMediaItem[],
- *   setAlbumFocus: (publicUrl: string, index: number, options?: { radius?: number, preferFull?: boolean }) => void
+ *   setAlbumFocus: (publicUrl: string, index: number, options?: { radius?: number, preferFull?: boolean }) => void,
+ *   setPreferFull: (enabled: boolean) => void
  * }}
  */
 export function useResolvedExternalMedia(externalMedia, originPrefix) {
@@ -81,9 +76,18 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
     /** @type {Map<string, (index: number, options?: { radius?: number }) => void>} */ (new Map())
   );
 
+  const preferFullRef = useRef(false);
+
   const setAlbumFocus = useCallback((publicUrl, index, options) => {
     focusHandlersRef.current.get(publicUrl)?.(index, options);
     requestAlbumLazyFocus(publicUrl, index, options);
+  }, []);
+
+  const setPreferFull = useCallback((enabled) => {
+    preferFullRef.current = Boolean(enabled);
+    focusHandlersRef.current.forEach((handler) => {
+      handler(0, { preferFull: Boolean(enabled), keepIndex: true });
+    });
   }, []);
 
   useEffect(() => {
@@ -96,19 +100,12 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
 
     const controller = new AbortController();
     let cancelled = false;
-    /** @type {string[]} */
-    const objectUrls = [];
     /** @type {ResolvedExternalMediaItem[]} */
     let working = [];
     /** @type {Array<{ destroy: () => void }>} */
     const albumControllers = [];
     /** @type {Array<() => void>} */
     const unsubs = [];
-
-    const track = (url) => {
-      objectUrls.push(url);
-      return url;
-    };
 
     /**
      * @param {ResolvedExternalMediaItem[]} next
@@ -140,84 +137,49 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
     };
 
     /**
-     * @param {ResolvedExternalMediaItem} base
-     * @param {string} publicUrl
-     * @param {string | null | undefined} path
+     * @param {import('./yadiskMediaSessionCache').CachedMemberBytes} bytes
      */
-    const resolveFileBytes = async (base, publicUrl, path) => {
-      const originKey = base.originKey;
-      try {
-        const resolved = await fetchYadiskPreview(publicUrl, {
-          signal: controller.signal,
-          path: path || null
-        });
-        if (cancelled) return;
+    const patchFromBytes = (originKey, bytes) => {
+      const preview = bytes.previewUrl;
+      const original =
+        bytes.fileUrl && bytes.fileUrl !== bytes.previewUrl ? bytes.fileUrl : null;
+      patchItem(originKey, {
+        ...(bytes.name ? { filename: bytes.name } : {}),
+        url: original || preview,
+        thumbUrl: preview,
+        previewUrl: preview,
+        isVideo: bytes.isVideo,
+        isLoading: false
+      });
+    };
 
-        const isVideo = resolved.mediaType === 'video';
-        const filename = resolved.name || base.filename;
-
-        if (isVideo) {
-          const objectUrl = track(
-            await fetchYadiskObjectUrl(publicUrl, 'file', {
-              signal: controller.signal,
-              path: path || null
-            })
-          );
-          if (cancelled) return;
-          const display = videoPreviewUrl(objectUrl);
-          setCachedMemberBytes(publicUrl, path, {
-            previewUrl: objectUrl,
-            fileUrl: objectUrl,
-            isVideo: true,
-            name: filename,
-            displayUrl: display
-          });
-          patchItem(originKey, {
-            filename,
-            url: display,
-            thumbUrl: objectUrl,
-            previewUrl: objectUrl,
-            isVideo: true,
-            isLoading: false
-          });
-          return;
-        }
-
-        const previewObjectUrl = track(
-          await fetchYadiskObjectUrl(publicUrl, 'preview', {
-            signal: controller.signal,
-            path: path || null
-          })
-        );
-        if (cancelled) return;
-
-        setCachedMemberBytes(publicUrl, path, {
-          previewUrl: previewObjectUrl,
-          fileUrl: null,
-          isVideo: false,
-          name: filename,
-          displayUrl: previewObjectUrl
-        });
-
-        patchItem(originKey, {
-          filename,
-          url: previewObjectUrl,
-          thumbUrl: previewObjectUrl,
-          previewUrl: previewObjectUrl,
-          isVideo: false,
-          isLoading: false
-        });
-      } catch (err) {
-        if (err?.name === 'AbortError' || cancelled) return;
-        dropItem(originKey);
-      }
+    /**
+     * @param {ResolvedExternalMediaItem} item
+     * @returns {ResolvedExternalMediaItem}
+     */
+    const withCache = (item) => {
+      if (!item.publicUrl) return item;
+      const cached = getCachedMemberBytes(item.publicUrl, item.path);
+      if (!cached) return item;
+      const preview = cached.previewUrl;
+      const original =
+        cached.fileUrl && cached.fileUrl !== cached.previewUrl ? cached.fileUrl : null;
+      return {
+        ...item,
+        filename: cached.name || item.filename,
+        url: original || preview,
+        thumbUrl: preview,
+        previewUrl: preview,
+        isVideo: cached.isVideo,
+        isLoading: false
+      };
     };
 
     /** @type {ResolvedExternalMediaItem[]} */
     const placeholders = stored.map((entry, index) => {
       if (entry.type === 'album') {
         const albumId = `${originPrefix}-album-${index}`;
-        return {
+        return withCache({
           filename: entry.name || 'Альбом',
           url: '',
           thumbUrl: '',
@@ -230,9 +192,9 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
           isAlbumCover: true,
           albumId,
           albumCount: 0
-        };
+        });
       }
-      return {
+      return withCache({
         filename: entry.name,
         url: '',
         thumbUrl: '',
@@ -245,7 +207,7 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
         isAlbumCover: false,
         albumId: null,
         albumCount: 0
-      };
+      });
     });
     commit(placeholders);
 
@@ -271,20 +233,22 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
             }
             const start = nextItems.length;
             album.items.forEach((member, memberIndex) => {
-              nextItems.push({
-                filename: member.name || entry.name,
-                url: '',
-                thumbUrl: '',
-                previewUrl: '',
-                isVideo: member.mediaType === 'video',
-                originKey: memberIndex === 0 ? coverKey : `${albumId}-${memberIndex}`,
-                publicUrl: entry.publicUrl,
-                path: member.path || null,
-                isLoading: true,
-                isAlbumCover: memberIndex === 0,
-                albumId,
-                albumCount: album.items?.length || 0
-              });
+              nextItems.push(
+                withCache({
+                  filename: member.name || entry.name,
+                  url: '',
+                  thumbUrl: '',
+                  previewUrl: '',
+                  isVideo: member.mediaType === 'video',
+                  originKey: memberIndex === 0 ? coverKey : `${albumId}-${memberIndex}`,
+                  publicUrl: entry.publicUrl,
+                  path: member.path || null,
+                  isLoading: true,
+                  isAlbumCover: memberIndex === 0,
+                  albumId,
+                  albumCount: album.items?.length || 0
+                })
+              );
             });
             albums.push({
               publicUrl: entry.publicUrl,
@@ -299,20 +263,22 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
           continue;
         }
 
-        nextItems.push({
-          filename: entry.name,
-          url: '',
-          thumbUrl: '',
-          previewUrl: '',
-          isVideo: entry.mediaType === 'video',
-          originKey: `${originPrefix}-ext-${index}`,
-          publicUrl: entry.publicUrl,
-          path: entry.path || null,
-          isLoading: true,
-          isAlbumCover: false,
-          albumId: null,
-          albumCount: 0
-        });
+        nextItems.push(
+          withCache({
+            filename: entry.name,
+            url: '',
+            thumbUrl: '',
+            previewUrl: '',
+            isVideo: entry.mediaType === 'video',
+            originKey: `${originPrefix}-ext-${index}`,
+            publicUrl: entry.publicUrl,
+            path: entry.path || null,
+            isLoading: true,
+            isAlbumCover: false,
+            albumId: null,
+            albumCount: 0
+          })
+        );
       }
 
       if (cancelled) return;
@@ -332,14 +298,7 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
               })),
           signal: controller.signal,
           onResolved: (originKey, bytes) => {
-            patchItem(originKey, {
-              ...(bytes.name ? { filename: bytes.name } : {}),
-              url: bytes.displayUrl,
-              thumbUrl: bytes.previewUrl,
-              previewUrl: bytes.previewUrl,
-              isVideo: bytes.isVideo,
-              isLoading: false
-            });
+            patchFromBytes(originKey, bytes);
           },
           onCleared: (originKey) => {
             patchItem(originKey, {
@@ -358,19 +317,68 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
         const handler = (index, options) => {
           ctrl.setFocus(index, {
             radius:
-              typeof options?.radius === 'number' ? options.radius : ALBUM_WINDOW_RADIUS,
-            preferFull: options?.preferFull === true
+              typeof options?.radius === 'number' ? options.radius : ALBUM_PREVIEW_ALL_RADIUS,
+            preferFull:
+              typeof options?.preferFull === 'boolean'
+                ? options.preferFull
+                : preferFullRef.current,
+            keepIndex: options?.keepIndex === true
           });
         };
         focusHandlersRef.current.set(album.publicUrl, handler);
         unsubs.push(registerAlbumLazyFocus(album.publicUrl, handler));
-        ctrl.setFocus(0, { radius: ALBUM_COVER_RADIUS });
+        ctrl.setFocus(0, {
+          radius: ALBUM_PREVIEW_ALL_RADIUS,
+          preferFull: preferFullRef.current
+        });
       }
 
       const singles = nextItems.filter((item) => !item.albumId);
-      await Promise.all(
-        singles.map((item) => resolveFileBytes(item, item.publicUrl, item.path))
-      );
+      if (singles.length > 0) {
+        const singlesKey = `${originPrefix}::singles`;
+        const ctrl = createAlbumWindowController({
+          publicUrl: singlesKey,
+          getMembers: () =>
+            working
+              .filter((item) => !item.albumId)
+              .map((item) => ({
+                originKey: item.originKey,
+                path: item.path,
+                name: item.filename,
+                isVideo: item.isVideo,
+                publicUrl: item.publicUrl
+              })),
+          signal: controller.signal,
+          onResolved: (originKey, bytes) => {
+            patchFromBytes(originKey, bytes);
+          },
+          onCleared: (originKey) => {
+            patchItem(originKey, {
+              url: '',
+              thumbUrl: '',
+              previewUrl: '',
+              isLoading: true
+            });
+          },
+          onError: () => {}
+        });
+        albumControllers.push(ctrl);
+        const handler = (index, options) => {
+          ctrl.setFocus(index, {
+            radius: ALBUM_PREVIEW_ALL_RADIUS,
+            preferFull:
+              typeof options?.preferFull === 'boolean'
+                ? options.preferFull
+                : preferFullRef.current,
+            keepIndex: options?.keepIndex === true
+          });
+        };
+        focusHandlersRef.current.set(singlesKey, handler);
+        ctrl.setFocus(0, {
+          radius: ALBUM_PREVIEW_ALL_RADIUS,
+          preferFull: preferFullRef.current
+        });
+      }
     })();
 
     return () => {
@@ -379,11 +387,8 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
       albumControllers.forEach((ctrl) => ctrl.destroy());
       unsubs.forEach((off) => off());
       focusHandlersRef.current.clear();
-      objectUrls.forEach((url) => {
-        if (!isSessionCachedBlobUrl(url)) URL.revokeObjectURL(url);
-      });
     };
   }, [externalMedia, originPrefix]);
 
-  return { items, setAlbumFocus };
+  return { items, setAlbumFocus, setPreferFull };
 }

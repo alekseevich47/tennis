@@ -12,6 +12,7 @@ import ProfileViewModal from '../profile/ProfileViewModal';
 import { formatAdminSaveError } from '../admin/adminResultAlert';
 import { error } from '../../lib/log';
 import { buildPlayerRanks, getRatingPoints, isRatingVisible } from '../../lib/rating';
+import { useRegisterAddAction } from '../../context/AddActionContext';
 import './Rating.css';
 import '../feed/Feed.css';
 
@@ -35,6 +36,8 @@ function RatingPage({ user, onTabChange, scrollRef }) {
   const [sortField, setSortField] = useState(null);
   const [sortDir, setSortDir] = useState('asc');
   const [searchQuery, setSearchQuery] = useState('');
+
+  useRegisterAddAction(() => setShowAddModal(true), moderator);
 
   const handleRefresh = useCallback(async () => {
     await mutate();

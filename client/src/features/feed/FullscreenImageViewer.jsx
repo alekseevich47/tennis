@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import clsx from 'clsx';
 import { usePinchZoom } from '../../hooks/usePinchZoom';
 import { useOverlayClose } from '../../hooks/useOverlayClose';
 import IconButton from '../../components/ui/IconButton';
@@ -24,9 +25,81 @@ function getOriginRect(originKey) {
   return element?.getBoundingClientRect?.() || null;
 }
 
+function FullscreenSlideImage({
+  item,
+  isActiveSlide,
+  mediaRef,
+  alt,
+  style
+}) {
+  const placeholder = item.thumbUrl || item.previewUrl || '';
+  const fullSrc = item.url || placeholder;
+  const distinctFull = Boolean(fullSrc && placeholder && fullSrc !== placeholder);
+  const [fullReady, setFullReady] = useState(false);
+
+  useEffect(() => {
+    setFullReady(false);
+  }, [fullSrc]);
+
+  const pending = Boolean(item.isLoading) && !placeholder && !fullSrc;
+  const showSpinner = pending || (distinctFull && !fullReady) || (!fullSrc && !placeholder);
+
+  if (pending && !placeholder) {
+    return (
+      <div className="fullscreen-media-pending" aria-label="Загрузка медиа">
+        <span className="fullscreen-media-pending__spinner" aria-hidden="true" />
+      </div>
+    );
+  }
+
+  return (
+    <span className="fullscreen-image-stack">
+      {placeholder ? (
+        <img
+          src={placeholder}
+          alt=""
+          aria-hidden="true"
+          className={clsx(
+            'fullscreen-target-img',
+            'fullscreen-target-img--preview',
+            (!distinctFull || !fullReady) && 'is-visible'
+          )}
+          width="1200"
+          height="900"
+          style={style}
+        />
+      ) : null}
+      {fullSrc ? (
+        <img
+          src={fullSrc}
+          alt={alt}
+          className={clsx(
+            'fullscreen-target-img',
+            'fullscreen-target-img--full',
+            (!distinctFull || fullReady) && 'is-visible'
+          )}
+          width="1200"
+          height="900"
+          onLoad={() => setFullReady(true)}
+          ref={(el) => {
+            if (isActiveSlide) mediaRef.current = el;
+            if (el?.complete && el.naturalWidth > 0) setFullReady(true);
+          }}
+          style={style}
+        />
+      ) : null}
+      {showSpinner ? (
+        <span className="fullscreen-media-upgrade-spinner" aria-label="Загрузка оригинала">
+          <span className="fullscreen-media-pending__spinner" aria-hidden="true" />
+        </span>
+      ) : null}
+    </span>
+  );
+}
+
 /**
  * @param {{
- *   items: Array<{ filename: string, url: string, isVideo: boolean, originKey?: string, postNumber?: number, isLoading?: boolean }>,
+ *   items: Array<{ filename: string, url: string, thumbUrl?: string, previewUrl?: string, isVideo: boolean, originKey?: string, postNumber?: number, isLoading?: boolean, publicUrl?: string, path?: string | null }>,
  *   initialIndex?: number,
  *   originRect?: DOMRect | null,
  *   originKey?: string | null,
@@ -477,21 +550,29 @@ function FullscreenImageViewer({
         >
           {trackItems.map((item, index) => {
             const isActiveSlide = !hasMultiple || index === 1;
-            const pending = Boolean(item.isLoading) || !item.url;
+            const pendingVideo = item.isVideo && (Boolean(item.isLoading) || !item.url);
+            const imageStyle = {
+              transform: isClosing && isActiveSlide && returnTransform
+                ? returnTransform
+                : isActiveSlide
+                ? `translate(${position.x}px, ${position.y}px) scale(${scale})`
+                : undefined
+            };
             return (
               <div
                 className="fullscreen-carousel-slide"
                 data-active={isActiveSlide ? 'true' : undefined}
                 key={`${item.originKey || item.filename}-${index}`}
               >
-                {pending ? (
-                  <div
-                    className="fullscreen-media-pending"
-                    aria-label="Загрузка медиа"
-                  >
-                    <span className="fullscreen-media-pending__spinner" aria-hidden="true" />
-                  </div>
-                ) : item.isVideo ? (
+                {item.isVideo ? (
+                  pendingVideo ? (
+                    <div
+                      className="fullscreen-media-pending"
+                      aria-label="Загрузка медиа"
+                    >
+                      <span className="fullscreen-media-pending__spinner" aria-hidden="true" />
+                    </div>
+                  ) : (
                   <div className="fullscreen-video-container">
                     <video
                       ref={isActiveSlide ? (el) => {
@@ -523,21 +604,14 @@ function FullscreenImageViewer({
                       />
                     )}
                   </div>
+                  )
                 ) : (
-                  <img
-                    ref={isActiveSlide ? (el) => { mediaRef.current = el; } : undefined}
-                    src={item.url}
+                  <FullscreenSlideImage
+                    item={item}
+                    isActiveSlide={isActiveSlide}
+                    mediaRef={mediaRef}
                     alt={`Полноразмерное изображение ${activeIndex + 1}`}
-                    className="fullscreen-target-img"
-                    width="1200"
-                    height="900"
-                    style={{
-                      transform: isClosing && isActiveSlide && returnTransform
-                        ? returnTransform
-                        : isActiveSlide
-                        ? `translate(${position.x}px, ${position.y}px) scale(${scale})`
-                        : undefined
-                    }}
+                    style={imageStyle}
                   />
                 )}
               </div>

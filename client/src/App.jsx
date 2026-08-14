@@ -11,6 +11,7 @@ import Spinner from './components/ui/Spinner';
 import CloseAppConfirmSheet from './components/ui/CloseAppConfirmSheet';
 import { ProductUploadProvider } from './components/ProductUploadProvider';
 import { FavoritesProvider, useFavorites } from './context/FavoritesContext';
+import { AddActionProvider } from './context/AddActionContext';
 import FeedPage from './features/feed/FeedPage';
 import TrainingsPage from './features/trainings/TrainingsPage';
 import MembershipOverviewModal from './features/trainings/components/MembershipOverviewModal';
@@ -83,12 +84,14 @@ function AppInner() {
       userId={user?.id}
       initialProductIds={getInitialFavoriteProductIds(user)}
     >
-      <AppMain
-        user={user}
-        setUser={setUser}
-        flushBeforeCloseRef={flushBeforeCloseRef}
-        onBeforeClose={onBeforeClose}
-      />
+      <AddActionProvider>
+        <AppMain
+          user={user}
+          setUser={setUser}
+          flushBeforeCloseRef={flushBeforeCloseRef}
+          onBeforeClose={onBeforeClose}
+        />
+      </AddActionProvider>
     </FavoritesProvider>
   );
 }

@@ -232,6 +232,7 @@ function PostCard({
             post={post}
             hiddenMediaKey={hiddenMediaKey}
             onOpenFullscreen={onOpenFullscreen}
+            scrollRootRef={scrollRootRef}
           />
         </div>
 
