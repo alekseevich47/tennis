@@ -1848,25 +1848,44 @@ button.post-card-like:hover:not(:disabled) {
   height: 100%;
 }
 
-.fullscreen-image-stack .fullscreen-target-img--preview,
+.fullscreen-image-stack .fullscreen-target-img--preview {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  opacity: 1;
+  z-index: 0;
+  transition: none;
+}
+
 .fullscreen-image-stack .fullscreen-target-img--full {
   position: absolute;
   inset: 0;
   margin: auto;
   opacity: 0;
+  z-index: 1;
   transition: opacity 0.2s ease;
 }
 
-.fullscreen-image-stack .fullscreen-target-img.is-visible {
+.fullscreen-image-stack .fullscreen-target-img--full.is-visible {
   opacity: 1;
 }
 
 .fullscreen-media-upgrade-spinner {
   position: absolute;
-  right: 16px;
-  bottom: 16px;
-  z-index: 2;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   pointer-events: none;
+}
+
+.fullscreen-media-upgrade-spinner .fullscreen-media-pending__spinner {
+  width: 36px;
+  height: 36px;
+  border-width: 2.5px;
+  box-shadow: 0 0 0 6px rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.18);
 }
 
 .fullscreen-media-pending {

@@ -204,6 +204,7 @@ function ProductCard({
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
             data-media-origin-key={activeItem.originKey}
+            data-section-swipe-ignore="true"
             aria-label="Открыть фото товара на весь экран"
           >
             {activeItem.isVideo ? (

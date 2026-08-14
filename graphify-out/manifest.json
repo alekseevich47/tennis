@@ -10,8 +10,8 @@
     "semantic_hash": "12e2dda29765e3ea83cc6c1501903fe8"
   },
   "client/src/App.jsx": {
-    "mtime": 1786719666.248031,
-    "ast_hash": "64f8da6f4526aa693b549a372f3ae72f",
+    "mtime": 1786721269.5526345,
+    "ast_hash": "c66a07a1f4d5a2e42055e0599320cecc",
     "semantic_hash": ""
   },
   "client/src/components/AchievementsBlock.jsx": {
@@ -260,8 +260,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/FullscreenImageViewer.jsx": {
-    "mtime": 1786718821.6967463,
-    "ast_hash": "fe6e57c998736992ed80e52cf63883c0",
+    "mtime": 1786721219.8504367,
+    "ast_hash": "d9347914390c1dbfe04fc98d9c0f9828",
     "semantic_hash": ""
   },
   "client/src/features/feed/MediaPreviewGrid.jsx": {
@@ -280,8 +280,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostMedia.jsx": {
-    "mtime": 1786718821.6967463,
-    "ast_hash": "da1f2e39e5514dfd3619c1a9793b175b",
+    "mtime": 1786721273.9438536,
+    "ast_hash": "d8c08ed5ac0e89fae9ba81534a24dd04",
     "semantic_hash": ""
   },
   "client/src/features/gallery/AddImageModal.jsx": {
@@ -405,9 +405,9 @@
     "semantic_hash": "e25625ba38bb4fec779d9dfb03bbd78c"
   },
   "client/src/features/shop/ProductCard.jsx": {
-    "mtime": 1781355989.323131,
-    "ast_hash": "50633ae050b1d25f4d29c288210ff3ea",
-    "semantic_hash": "50633ae050b1d25f4d29c288210ff3ea"
+    "mtime": 1786721273.8658624,
+    "ast_hash": "4587b4715b763f3ee0a0ff3dcb6a1f70",
+    "semantic_hash": ""
   },
   "client/src/features/shop/ProductDetail.jsx": {
     "mtime": 1783651148.86428,
@@ -1275,8 +1275,8 @@
     "semantic_hash": ""
   },
   "client/src/lib/overlayStack.js": {
-    "mtime": 1786320229.1744585,
-    "ast_hash": "572b12bdce4faff196be9944c91358c3",
+    "mtime": 1786721225.0187037,
+    "ast_hash": "0a82c08e8203ddba30c5b865196dcaed",
     "semantic_hash": ""
   },
   "client/src/lib/sectionScroll.js": {
@@ -1337,6 +1337,11 @@
   "client/src/context/AddActionContext.jsx": {
     "mtime": 1786719581.2051835,
     "ast_hash": "49a5a4e3a5e711df5f6077026abe7ab8",
+    "semantic_hash": ""
+  },
+  "client/src/hooks/useSectionSwipe.js": {
+    "mtime": 1786721425.580848,
+    "ast_hash": "cd5aac42c62f1c45509b01ab70e42b57",
     "semantic_hash": ""
   }
 }

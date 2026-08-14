@@ -45,6 +45,20 @@ export function hasOpenOverlay() {
   return stack.length > 0;
 }
 
+/**
+ * Есть ли оверлей, блокирующий свайп разделов.
+ * `allowSuffixes` — суффиксы id (`:favorites`, `:notifications`, …), которые
+ * свайп «перебивает» (не блокируют жест).
+ * @param {string[]} [allowSuffixes]
+ */
+export function hasBlockingOverlay(allowSuffixes = []) {
+  if (stack.length === 0) return false;
+  if (allowSuffixes.length === 0) return true;
+  return stack.some(
+    (entry) => !allowSuffixes.some((suffix) => entry.id.includes(suffix))
+  );
+}
+
 /** @returns {number} */
 export function getOverlayDepth() {
   return stack.length;

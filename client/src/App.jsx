@@ -3,6 +3,7 @@ import { useMaxAuth } from './hooks/useMaxAuth';
 import { useMaxCloseGuard } from './hooks/useMaxCloseGuard';
 import { useSessionResetKey } from './hooks/useSessionResetKey';
 import { useOverlayClose } from './hooks/useOverlayClose';
+import { useSectionSwipe } from './hooks/useSectionSwipe';
 import { isUserBanned, isUserBotBlocked, isModerator, completeOnboarding } from './services/auth';
 import OnboardingTutorial from './features/onboarding/OnboardingTutorial';
 import AppHeader from './components/AppHeader';
@@ -344,6 +345,16 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
     activeTab === 1
       ? 'content-with-header content-with-header--contained'
       : 'content-with-header';
+  const contentRef = useRef(/** @type {HTMLElement | null} */ (null));
+  const sectionSwipeEnabled = Boolean(user?.onboarding_completed);
+
+  useSectionSwipe({
+    enabled: sectionSwipeEnabled,
+    activeTab,
+    showAdmin: userIsModerator,
+    onTabChange: handleTabChange,
+    containerRef: contentRef
+  });
 
   const searchConfig =
     activeTab === 0
@@ -457,7 +468,7 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
         searchConfig={searchConfig}
       />
 
-      <main className={contentClassName}>
+      <main ref={contentRef} className={contentClassName}>
         {activeTab === 0 && (
           <FeedPage
             user={user}
