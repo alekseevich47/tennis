@@ -480,15 +480,6 @@ function TrainingsPage({
                 <path d="M10 12h4" />
               </svg>
             </IconButton>
-            <IconButton
-              ariaLabel="Добавить тренировку на выбранный день"
-              variant="soft"
-              size="sm"
-              className="add-training-context-btn"
-              onClick={() => setShowAddModal(true)}
-            >
-              <span aria-hidden="true">+</span>
-            </IconButton>
           </div>
         )}
       </div>
