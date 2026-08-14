@@ -15,6 +15,7 @@ import { BOT_BLOCKED_BOOKING_MESSAGE } from '../../services/auth';
 import { error } from '../../lib/log';
 import UserPickerModal from './components/UserPickerModal';
 import ProfileViewModal from '../profile/ProfileViewModal';
+import { useKeepForModalClose } from '../../hooks/useKeepForModalClose';
 
 /**
  * @param {{
@@ -31,7 +32,7 @@ import ProfileViewModal from '../profile/ProfileViewModal';
  */
 function TrainingDetailModal({
   isOpen,
-  training,
+  training: trainingProp,
   userIsModerator,
   onClose,
   onMutated,
@@ -40,6 +41,7 @@ function TrainingDetailModal({
   onDelete,
   currentUser
 }) {
+  const training = useKeepForModalClose(isOpen, trainingProp);
   const { confirm, alert } = useAlertDialog();
   const [isUserPickerOpen, setIsUserPickerOpen] = useState(false);
   const [viewingPlayer, setViewingPlayer] = useState(null);

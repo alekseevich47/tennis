@@ -9,6 +9,7 @@ import {
   isYadiskOriginalPending,
   subscribeMemberLoadProgress
 } from './yadiskMediaSessionCache';
+import { useFetchedOriginal } from './useFetchedOriginal';
 
 const SWIPE_NAV_THRESHOLD_PX = 36;
 const NAV_CLICK_DRIFT_PX = 8;
@@ -109,11 +110,23 @@ function FullscreenSlideImage({
   const distinctFull = Boolean(fullSrc && placeholder && fullSrc !== placeholder);
   const [fullReady, setFullReady] = useState(false);
   const [previewRetained, setPreviewRetained] = useState(Boolean(placeholder));
+  const yadiskPhoto = Boolean(item.publicUrl) && !item.isVideo;
+  const needsPbFetch =
+    !yadiskPhoto &&
+    !item.isVideo &&
+    distinctFull &&
+    /^https?:\/\//i.test(fullSrc);
+  const pbOriginal = useFetchedOriginal(needsPbFetch ? fullSrc : '', needsPbFetch);
+  const displayFullSrc = needsPbFetch
+    ? pbOriginal.blobUrl || (pbOriginal.failed ? fullSrc : '')
+    : fullSrc && (distinctFull || !placeholder)
+      ? fullSrc
+      : '';
 
   useEffect(() => {
     setFullReady(false);
     setPreviewRetained(Boolean(placeholder));
-  }, [fullSrc, placeholder]);
+  }, [displayFullSrc, placeholder]);
 
   useEffect(() => {
     if (!fullReady || !distinctFull) return undefined;
@@ -132,20 +145,27 @@ function FullscreenSlideImage({
     finish();
   }, [fullReady]);
 
-  const loadProgress = useYadiskLoadProgress(item.publicUrl, item.path);
+  const yadiskProgress = useYadiskLoadProgress(item.publicUrl, item.path);
   const originalPending = isYadiskOriginalPending(item);
   const pending = Boolean(item.isLoading) && !placeholder && !fullSrc;
-  const bytesInFlight =
-    originalPending || (typeof loadProgress === 'number' && loadProgress < 100);
-  const awaitingSwap =
-    Boolean(item.publicUrl) &&
-    !item.isVideo &&
-    loadProgress === 100 &&
-    !distinctFull &&
-    !fullReady;
-  const upgrading = bytesInFlight || awaitingSwap || (distinctFull && !fullReady);
-  const showSpinner = pending || upgrading || (!fullSrc && !placeholder);
-  const dimPreview = Boolean(placeholder && previewRetained && upgrading);
+  const yadiskBytesInFlight =
+    yadiskPhoto &&
+    (originalPending || (typeof yadiskProgress === 'number' && yadiskProgress < 100));
+  const pbBytesInFlight =
+    needsPbFetch &&
+    !pbOriginal.blobUrl &&
+    !pbOriginal.failed &&
+    (pbOriginal.progress == null || pbOriginal.progress < 100);
+  const loadProgress = yadiskPhoto ? yadiskProgress : needsPbFetch ? pbOriginal.progress : null;
+  const showSpinner =
+    pending ||
+    yadiskBytesInFlight ||
+    pbBytesInFlight ||
+    (!fullSrc && !placeholder) ||
+    (pbOriginal.failed && distinctFull && !fullReady);
+  const dimPreview = Boolean(
+    placeholder && previewRetained && (yadiskPhoto || distinctFull)
+  );
 
   if (pending && !placeholder) {
     return (
@@ -176,9 +196,9 @@ function FullscreenSlideImage({
           style={style}
         />
       ) : null}
-      {fullSrc && (distinctFull || !placeholder) ? (
+      {displayFullSrc ? (
         <img
-          src={fullSrc}
+          src={displayFullSrc}
           alt={alt}
           className={clsx(
             'fullscreen-target-img',
@@ -244,6 +264,10 @@ function FullscreenImageViewer({
   const closeTimerRef = useRef(null);
   const rippleTimerRef = useRef(null);
   const hasItems = items.length > 0;
+  const galleryKey = useMemo(
+    () => items.map((item) => item.originKey || item.filename).join('\0'),
+    [items]
+  );
   const activeItem = items[activeIndex] || null;
   const hasMultiple = items.length > 1;
   const hideActiveOrigin = useCallback(() => {
@@ -348,7 +372,7 @@ function FullscreenImageViewer({
     setRipple(null);
     gestureModeRef.current = 'idle';
     reset();
-  }, [initialIndex, items, reset]);
+  }, [initialIndex, galleryKey, items.length, reset]);
 
   useEffect(() => {
     if (!hasItems) return undefined;
