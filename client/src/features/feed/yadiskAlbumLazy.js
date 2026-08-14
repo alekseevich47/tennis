@@ -7,7 +7,8 @@ import { fetchYadiskObjectUrl, fetchYadiskPreview } from '../../services/yadisk'
 import { videoPreviewUrl } from '../../lib/media';
 import {
   getCachedMemberBytes,
-  setCachedMemberBytes
+  setCachedMemberBytes,
+  setMemberLoadProgress
 } from './yadiskMediaSessionCache';
 
 export const ALBUM_WINDOW_RADIUS = 2;
@@ -143,13 +144,13 @@ function memberBytesForDisplay(cached, preferFull) {
 /**
  * @param {string} publicUrl
  * @param {string | null | undefined} path
- * @param {{ signal?: AbortSignal, preferFull?: boolean, name?: string, isVideo?: boolean }} [options]
+ * @param {{ signal?: AbortSignal, preferFull?: boolean, name?: string, isVideo?: boolean, onProgress?: (percent: number) => void }} [options]
  * @returns {Promise<CachedMemberBytes>}
  */
 export async function fetchAlbumMemberBytes(
   publicUrl,
   path,
-  { signal, preferFull = false, name, isVideo } = {}
+  { signal, preferFull = false, name, isVideo, onProgress } = {}
 ) {
   const cached = getCachedMemberBytes(publicUrl, path);
   if (cached) {
@@ -216,9 +217,11 @@ export async function fetchAlbumMemberBytes(
   let fileUrl = cached?.fileUrl || null;
   if (!fileUrl || fileUrl === previewUrl) {
     try {
+      onProgress?.(0);
       fileUrl = await fetchYadiskObjectUrl(publicUrl, 'file', {
         signal,
-        path: path || null
+        path: path || null,
+        onProgress
       });
     } catch (err) {
       if (err?.name === 'AbortError') throw err;
@@ -396,19 +399,28 @@ export function createAlbumWindowController({
           aborts.set(jobKey, jobController);
           const onParentAbort = () => jobController.abort();
           signal.addEventListener('abort', onParentAbort, { once: true });
+          setMemberLoadProgress(sourceUrl, member.path, 0);
           try {
             const bytes = await fetchAlbumMemberBytes(sourceUrl, member.path, {
               signal: jobController.signal,
               preferFull: true,
               name: member.name,
-              isVideo: member.isVideo
+              isVideo: member.isVideo,
+              onProgress: (percent) => setMemberLoadProgress(sourceUrl, member.path, percent)
             });
-            if (destroyed || jobController.signal.aborted) return;
+            if (destroyed || jobController.signal.aborted) {
+              setMemberLoadProgress(sourceUrl, member.path, null);
+              return;
+            }
             held.add(originKey);
             onResolved(originKey, memberBytesForDisplay(bytes, true));
           } catch (err) {
-            if (err?.name === 'AbortError' || destroyed) return;
+            if (err?.name === 'AbortError' || destroyed) {
+              setMemberLoadProgress(sourceUrl, member.path, null);
+              return;
+            }
             onError?.(originKey, err);
+            setMemberLoadProgress(sourceUrl, member.path, null);
           } finally {
             signal.removeEventListener('abort', onParentAbort);
             aborts.delete(jobKey);

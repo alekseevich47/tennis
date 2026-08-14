@@ -1,5 +1,6 @@
 // @ts-check
 /** Общий кэш развёрнутых альбомов Яндекс.Диска — card/detail/fullscreen шарят один список. */
+import { isYadiskOriginalPending } from './yadiskMediaSessionCache';
 
 /**
  * @typedef {{
@@ -11,7 +12,8 @@
  *   originKey: string,
  *   publicUrl: string,
  *   path?: string | null,
- *   isLoading?: boolean
+ *   isLoading?: boolean,
+ *   isUpgrading?: boolean
  * }} YadiskAlbumCacheItem
  */
 
@@ -66,6 +68,7 @@ export function toFullscreenAlbumItems(items, originPrefix) {
     .map((entry, index) => {
       const preview = entry.previewUrl || entry.thumbUrl || '';
       const full = entry.url || preview;
+      const isUpgrading = isYadiskOriginalPending(entry);
       return {
         filename: entry.filename || `media-${index + 1}`,
         url: full,
@@ -76,6 +79,7 @@ export function toFullscreenAlbumItems(items, originPrefix) {
           ? `${originPrefix}-${entry.originKey || index}`
           : entry.originKey || `album-${index}`,
         isLoading: Boolean(entry.isLoading) && !full && !preview,
+        isUpgrading,
         publicUrl: entry.publicUrl || '',
         path: entry.path || null
       };

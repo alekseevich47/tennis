@@ -22,6 +22,7 @@ import {
  *   publicUrl: string,
  *   path?: string | null,
  *   isLoading?: boolean,
+ *   isUpgrading?: boolean,
  *   isAlbumCover?: boolean,
  *   albumId?: string | null,
  *   albumCount?: number
@@ -52,7 +53,8 @@ function publishAlbums(list) {
         originKey: entry.path || `${publicUrl}::${index}`,
         publicUrl: entry.publicUrl,
         path: entry.path,
-        isLoading: entry.isLoading
+        isLoading: entry.isLoading,
+        isUpgrading: entry.isUpgrading
       }))
     );
   });
@@ -149,7 +151,8 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
         thumbUrl: preview,
         previewUrl: preview,
         isVideo: bytes.isVideo,
-        isLoading: false
+        isLoading: false,
+        isUpgrading: !bytes.isVideo && bytes.fileUrl == null
       });
     };
 
@@ -171,7 +174,8 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
         thumbUrl: preview,
         previewUrl: preview,
         isVideo: cached.isVideo,
-        isLoading: false
+        isLoading: false,
+        isUpgrading: !cached.isVideo && cached.fileUrl == null
       };
     };
 
@@ -305,7 +309,8 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
               url: '',
               thumbUrl: '',
               previewUrl: '',
-              isLoading: true
+              isLoading: true,
+              isUpgrading: false
             });
           },
           onError: () => {
@@ -357,7 +362,8 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
               url: '',
               thumbUrl: '',
               previewUrl: '',
-              isLoading: true
+              isLoading: true,
+              isUpgrading: false
             });
           },
           onError: () => {}
