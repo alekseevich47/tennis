@@ -1,7 +1,7 @@
 {
   "client/package.json": {
-    "mtime": 1786117422.8970616,
-    "ast_hash": "946e10b065b3cb5dafd2c611a31d5b90",
+    "mtime": 1786731270.370593,
+    "ast_hash": "4c29d6e7650ea423e7cf4e7c561bbaea",
     "semantic_hash": ""
   },
   "client/public/sw.js": {
@@ -10,8 +10,8 @@
     "semantic_hash": "12e2dda29765e3ea83cc6c1501903fe8"
   },
   "client/src/App.jsx": {
-    "mtime": 1786727413.4822297,
-    "ast_hash": "6cc86c1e80efb5b589cae727d40e7b15",
+    "mtime": 1786732008.4088733,
+    "ast_hash": "bb5dede375dae5efdf3e4b32b631d7df",
     "semantic_hash": ""
   },
   "client/src/components/AchievementsBlock.jsx": {
@@ -30,8 +30,8 @@
     "semantic_hash": "a5f97ceb0a531f5ce31a9216fa871c9a"
   },
   "client/src/components/BottomNav.jsx": {
-    "mtime": 1786727214.6799479,
-    "ast_hash": "3b058873e94c9ab8c3d48b93cda3a421",
+    "mtime": 1786732006.2422726,
+    "ast_hash": "573d388e27c830bf9e367a035a9ed21c",
     "semantic_hash": ""
   },
   "client/src/components/FloatingAchievements.jsx": {
@@ -110,9 +110,9 @@
     "semantic_hash": "98d4ec35d2434f83ff3373abe3aee48d"
   },
   "client/src/config.js": {
-    "mtime": 1780500344.683183,
-    "ast_hash": "c302ef2dbfee57362f5d5d735685dccb",
-    "semantic_hash": "c302ef2dbfee57362f5d5d735685dccb"
+    "mtime": 1786732044.6668675,
+    "ast_hash": "71ff3cd827b8648892ba17eb3a362079",
+    "semantic_hash": ""
   },
   "client/src/context/FavoritesContext.jsx": {
     "mtime": 1783651170.275172,
@@ -260,7 +260,7 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/FullscreenImageViewer.jsx": {
-    "mtime": 1786730305.34498,
+    "mtime": 1786731270.3747241,
     "ast_hash": "a2596e1e0b254570a1efa111db72d319",
     "semantic_hash": ""
   },
@@ -280,7 +280,7 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostMedia.jsx": {
-    "mtime": 1786728374.8675501,
+    "mtime": 1786731270.3757236,
     "ast_hash": "dff76ffee218cdba66d166b25763a68d",
     "semantic_hash": ""
   },
@@ -300,7 +300,7 @@
     "semantic_hash": "42a8d6654c868628a4644dd84fb92c13"
   },
   "client/src/features/gallery/GalleryPage.jsx": {
-    "mtime": 1786729205.63671,
+    "mtime": 1786731270.3787613,
     "ast_hash": "c59763237079f55d006bcc7ca9a76acd",
     "semantic_hash": ""
   },
@@ -365,7 +365,7 @@
     "semantic_hash": "299cae2527ab38d59a4ba2d5415bcfe2"
   },
   "client/src/features/profile/ProfileViewModal.jsx": {
-    "mtime": 1786729522.6743627,
+    "mtime": 1786731270.3799849,
     "ast_hash": "a21d8f4edf9e70be340e30c2b78dcd8e",
     "semantic_hash": ""
   },
@@ -375,8 +375,8 @@
     "semantic_hash": "b34240695cc8997516c3bf980f1c974b"
   },
   "client/src/features/rating/PlayerRow.jsx": {
-    "mtime": 1786729967.884514,
-    "ast_hash": "0e9278720e91631c612cc958e9f992f6",
+    "mtime": 1786731270.3810387,
+    "ast_hash": "7ac897034f7b70eaa1c5e539431faca4",
     "semantic_hash": ""
   },
   "client/src/features/rating/RatingPage.jsx": {
@@ -405,12 +405,12 @@
     "semantic_hash": "e25625ba38bb4fec779d9dfb03bbd78c"
   },
   "client/src/features/shop/ProductCard.jsx": {
-    "mtime": 1786729211.7701602,
+    "mtime": 1786731270.3810387,
     "ast_hash": "18bc91aff6629607c6a2db524deb55bf",
     "semantic_hash": ""
   },
   "client/src/features/shop/ProductDetail.jsx": {
-    "mtime": 1786729521.3458512,
+    "mtime": 1786731270.3820863,
     "ast_hash": "8b0796d75847ef46aa039c66b56429a7",
     "semantic_hash": ""
   },
@@ -450,12 +450,12 @@
     "semantic_hash": "aaad4b5bb3b87176e47c5bb4dbaa46d5"
   },
   "client/src/features/trainings/TrainingDetailModal.jsx": {
-    "mtime": 1786729520.014705,
+    "mtime": 1786731270.3830843,
     "ast_hash": "ecad676d6afdb9d117f701ab5d405ea9",
     "semantic_hash": ""
   },
   "client/src/features/trainings/TrainingsPage.jsx": {
-    "mtime": 1786727023.1849115,
+    "mtime": 1786731270.3840857,
     "ast_hash": "dbe7b61d567564a4750a980384e66ef3",
     "semantic_hash": ""
   },
@@ -530,8 +530,8 @@
     "semantic_hash": "4faf29487af1701424e8fff107ceb7da"
   },
   "client/src/hooks/useMaxAuth.js": {
-    "mtime": 1785820325.0923603,
-    "ast_hash": "3b8b5df1445029d202b20f8d63ae42a4",
+    "mtime": 1786732000.3911045,
+    "ast_hash": "c5538e86b4dd21c6bc290bffeb6ed720",
     "semantic_hash": ""
   },
   "client/src/hooks/useOnboarding.js": {
@@ -725,7 +725,7 @@
     "semantic_hash": "8f68c27c3fc38817b2726b20e2d4f1ee"
   },
   "client/vite.config.js": {
-    "mtime": 1786727770.1277776,
+    "mtime": 1786731270.3863313,
     "ast_hash": "da154774eec36a03f3731c885f348849",
     "semantic_hash": ""
   },
@@ -775,8 +775,8 @@
     "semantic_hash": ""
   },
   "pb_hooks/notification_settings_bootstrap.pb.js": {
-    "mtime": 1786727023.2086372,
-    "ast_hash": "63e1159936118fdfe363bb7aa0059e0f",
+    "mtime": 1786731509.2322464,
+    "ast_hash": "d769db0bc3a62d2239bfa18465dd87a9",
     "semantic_hash": ""
   },
   "pb_hooks/notificationslib.js": {
@@ -1125,7 +1125,7 @@
     "semantic_hash": ""
   },
   "client/src/features/profile/AboutAppModal.jsx": {
-    "mtime": 1786727763.997345,
+    "mtime": 1786731270.3787613,
     "ast_hash": "cb01ca9b846d3c68412879b2316f879c",
     "semantic_hash": ""
   },
@@ -1190,7 +1190,7 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/useResolvedExternalMedia.js": {
-    "mtime": 1786728473.5227091,
+    "mtime": 1786731270.3767536,
     "ast_hash": "bf75d9f2f8ff7c3e1794c506c17a62aa",
     "semantic_hash": ""
   },
@@ -1205,12 +1205,12 @@
     "semantic_hash": ""
   },
   "client/src/services/yadisk.js": {
-    "mtime": 1786729177.955893,
+    "mtime": 1786731270.3863313,
     "ast_hash": "0db178256adbdb75a52a5694012da86f",
     "semantic_hash": ""
   },
   "pb_hooks/yadisk.pb.js": {
-    "mtime": 1786728319.0803502,
+    "mtime": 1786731270.4201488,
     "ast_hash": "3964a22976364752225df2feff534bf3",
     "semantic_hash": ""
   },
@@ -1300,7 +1300,7 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/yadiskAlbumCache.js": {
-    "mtime": 1786728361.2917163,
+    "mtime": 1786731270.3767536,
     "ast_hash": "9de4a6c6cc45c29c08739fc322d6c03b",
     "semantic_hash": ""
   },
@@ -1315,7 +1315,7 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/yadiskAlbumLazy.js": {
-    "mtime": 1786728354.969095,
+    "mtime": 1786731270.3777592,
     "ast_hash": "3af19197fd392ad3bf7f358d68a2c793",
     "semantic_hash": ""
   },
@@ -1330,7 +1330,7 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/yadiskMediaSessionCache.js": {
-    "mtime": 1786728336.6768167,
+    "mtime": 1786731270.3787613,
     "ast_hash": "3a4d82a3d0f189cafeadb772d4519b41",
     "semantic_hash": ""
   },
@@ -1350,38 +1350,43 @@
     "semantic_hash": ""
   },
   "client/src/lib/modalOrigin.js": {
-    "mtime": 1786729517.6632552,
+    "mtime": 1786731270.3853257,
     "ast_hash": "284b6e51350f8ee58fee4880318d7666",
     "semantic_hash": ""
   },
   "client/src/components/ForceUpdateOverlay.jsx": {
-    "mtime": 1786727401.6595862,
+    "mtime": 1786731270.3737192,
     "ast_hash": "689e78120ea48480435e40d5a48a82ef",
     "semantic_hash": ""
   },
   "client/src/hooks/useAppVersionCheck.js": {
-    "mtime": 1786727762.8753507,
+    "mtime": 1786731270.3840857,
     "ast_hash": "23b17f6c3431e28d7c831c2d9a357081",
     "semantic_hash": ""
   },
   "client/src/lib/appVersion.js": {
-    "mtime": 1786727761.66092,
+    "mtime": 1786731270.3840857,
     "ast_hash": "b1f4d569902fd7cc1e690d4dc5c58919",
     "semantic_hash": ""
   },
   "scripts/deploy.sh": {
-    "mtime": 1786727413.2226746,
-    "ast_hash": "08ca655e0e44e7338ed187aba4bd46e0",
+    "mtime": 1786731314.8992603,
+    "ast_hash": "9370194b90a92e334d53eb573a39f1e1",
     "semantic_hash": ""
   },
   "client/src/features/feed/useFetchedOriginal.js": {
-    "mtime": 1786729183.2546124,
+    "mtime": 1786731270.3757236,
     "ast_hash": "45833fc32308d9b51b852174092ebcdc",
     "semantic_hash": ""
   },
   "client/src/lib/fetchBlobProgress.js": {
-    "mtime": 1786729177.221828,
+    "mtime": 1786731270.3853257,
     "ast_hash": "2df04ccf988d1cff59c9ba3488ae3abb",
+    "semantic_hash": ""
+  },
+  "scripts/server-bootstrap.sh": {
+    "mtime": 1786731509.2322464,
+    "ast_hash": "abea8adbd2aab47922cc332f282cadef",
     "semantic_hash": ""
   }
 }

@@ -260,8 +260,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/FullscreenImageViewer.jsx": {
-    "mtime": 1786729188.6634674,
-    "ast_hash": "3b543bbe37c115240da60e044a756876",
+    "mtime": 1786730305.34498,
+    "ast_hash": "a2596e1e0b254570a1efa111db72d319",
     "semantic_hash": ""
   },
   "client/src/features/feed/MediaPreviewGrid.jsx": {

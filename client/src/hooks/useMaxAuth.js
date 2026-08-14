@@ -60,7 +60,22 @@ export function useMaxAuth() {
 
     (async () => {
       try {
-        const initData = /** @type {{ initData?: string }} */ (window).WebApp?.initData;
+        const webApp = /** @type {{ ready?: () => void, initData?: string } | undefined} */ (
+          window
+        ).WebApp;
+        try {
+          webApp?.ready?.();
+        } catch {
+          // ignore
+        }
+
+        let initData = webApp?.initData || '';
+        // Иногда Bridge отдаёт initData чуть позже ready().
+        if (!initData) {
+          await new Promise((resolve) => window.setTimeout(resolve, 50));
+          initData = webApp?.initData || '';
+        }
+
         let loggedUser = null;
 
         if (initData) {
