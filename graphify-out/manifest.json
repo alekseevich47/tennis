@@ -30,8 +30,8 @@
     "semantic_hash": "a5f97ceb0a531f5ce31a9216fa871c9a"
   },
   "client/src/components/BottomNav.jsx": {
-    "mtime": 1786722298.5650966,
-    "ast_hash": "26edcbc7136e3b60965d66bdd530465c",
+    "mtime": 1786726639.2030447,
+    "ast_hash": "ce061b903134446ee3efdb6909de9a8c",
     "semantic_hash": ""
   },
   "client/src/components/FloatingAchievements.jsx": {
@@ -455,8 +455,8 @@
     "semantic_hash": "96829ba30d2fda2d1d9e38c456a0199d"
   },
   "client/src/features/trainings/TrainingsPage.jsx": {
-    "mtime": 1786719807.9801621,
-    "ast_hash": "481c266646412a34a50db9a43c51dd68",
+    "mtime": 1786726619.0990195,
+    "ast_hash": "dbe7b61d567564a4750a980384e66ef3",
     "semantic_hash": ""
   },
   "client/src/features/trainings/components/ArchiveModal.jsx": {
@@ -775,9 +775,9 @@
     "semantic_hash": ""
   },
   "pb_hooks/notification_settings_bootstrap.pb.js": {
-    "mtime": 1783532228.9992063,
-    "ast_hash": "63e1159936118fdfe363bb7aa0059e0f",
-    "semantic_hash": "63e1159936118fdfe363bb7aa0059e0f"
+    "mtime": 1786725373.2914045,
+    "ast_hash": "d769db0bc3a62d2239bfa18465dd87a9",
+    "semantic_hash": ""
   },
   "pb_hooks/notificationslib.js": {
     "mtime": 1786717330.5034919,
@@ -1352,6 +1352,16 @@
   "client/src/lib/modalOrigin.js": {
     "mtime": 1786722781.7716522,
     "ast_hash": "e0cf5e422e83ec07d9938fb06ffb8307",
+    "semantic_hash": ""
+  },
+  "scripts/deploy.sh": {
+    "mtime": 1786724944.838246,
+    "ast_hash": "41cd9432328e42b20e791a01048aae36",
+    "semantic_hash": ""
+  },
+  "scripts/server-bootstrap.sh": {
+    "mtime": 1786725617.2103086,
+    "ast_hash": "7154784c856ba42448b79f217d50eb4b",
     "semantic_hash": ""
   }
 }

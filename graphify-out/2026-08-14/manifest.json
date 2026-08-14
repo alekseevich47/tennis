@@ -775,9 +775,9 @@
     "semantic_hash": ""
   },
   "pb_hooks/notification_settings_bootstrap.pb.js": {
-    "mtime": 1783532228.9992063,
-    "ast_hash": "63e1159936118fdfe363bb7aa0059e0f",
-    "semantic_hash": "63e1159936118fdfe363bb7aa0059e0f"
+    "mtime": 1786725373.2914045,
+    "ast_hash": "d769db0bc3a62d2239bfa18465dd87a9",
+    "semantic_hash": ""
   },
   "pb_hooks/notificationslib.js": {
     "mtime": 1786717330.5034919,
@@ -1340,8 +1340,8 @@
     "semantic_hash": ""
   },
   "client/src/hooks/useSectionSwipe.js": {
-    "mtime": 1786721872.959712,
-    "ast_hash": "442ba57986550d330efac852ac8fb855",
+    "mtime": 1786723379.799568,
+    "ast_hash": "9c4045362371f3625ef8443fd544e8b9",
     "semantic_hash": ""
   },
   "client/src/hooks/useKeepForModalClose.js": {
@@ -1352,6 +1352,16 @@
   "client/src/lib/modalOrigin.js": {
     "mtime": 1786722781.7716522,
     "ast_hash": "e0cf5e422e83ec07d9938fb06ffb8307",
+    "semantic_hash": ""
+  },
+  "scripts/deploy.sh": {
+    "mtime": 1786724944.838246,
+    "ast_hash": "41cd9432328e42b20e791a01048aae36",
+    "semantic_hash": ""
+  },
+  "scripts/server-bootstrap.sh": {
+    "mtime": 1786725617.2103086,
+    "ast_hash": "7154784c856ba42448b79f217d50eb4b",
     "semantic_hash": ""
   }
 }
