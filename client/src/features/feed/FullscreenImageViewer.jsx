@@ -4,6 +4,11 @@ import { usePinchZoom } from '../../hooks/usePinchZoom';
 import { useOverlayClose } from '../../hooks/useOverlayClose';
 import IconButton from '../../components/ui/IconButton';
 import { videoPreviewUrl } from '../../lib/media';
+import {
+  getMemberLoadProgress,
+  isYadiskOriginalPending,
+  subscribeMemberLoadProgress
+} from './yadiskMediaSessionCache';
 
 const SWIPE_NAV_THRESHOLD_PX = 36;
 const NAV_CLICK_DRIFT_PX = 8;
@@ -13,6 +18,73 @@ const SLIDE_ANIMATION_MS = 240;
 const RIPPLE_ANIMATION_MS = 420;
 /** Нижний отступ тап-зоны: нативная полоска controls (~44–56px, эмпирически под Chrome/Android WebView/iOS). */
 const VIDEO_CONTROLS_RESERVED_PX = 48;
+const PROGRESS_RING_R = 15.5;
+const PROGRESS_RING_C = 2 * Math.PI * PROGRESS_RING_R;
+
+/**
+ * @param {string | undefined} publicUrl
+ * @param {string | null | undefined} path
+ * @returns {number | null}
+ */
+function useYadiskLoadProgress(publicUrl, path) {
+  const [progress, setProgress] = useState(() =>
+    publicUrl ? getMemberLoadProgress(publicUrl, path) : null
+  );
+
+  useEffect(() => {
+    if (!publicUrl) {
+      setProgress(null);
+      return undefined;
+    }
+    setProgress(getMemberLoadProgress(publicUrl, path));
+    return subscribeMemberLoadProgress((url, memberPath, percent) => {
+      if (url === publicUrl && (memberPath || '') === (path || '')) {
+        setProgress(percent);
+      }
+    });
+  }, [publicUrl, path]);
+
+  return progress;
+}
+
+/**
+ * @param {{ progress: number | null }} props
+ */
+function FullscreenLoadSpinner({ progress }) {
+  const determinate = typeof progress === 'number' && progress > 0 && progress < 100;
+  const pct = determinate ? progress : null;
+
+  return (
+    <span className="fullscreen-media-upgrade-spinner" aria-label="Загрузка оригинала">
+      {pct != null ? (
+        <span
+          className="fullscreen-media-progress"
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={pct}
+        >
+          <svg viewBox="0 0 36 36" aria-hidden="true">
+            <circle className="fullscreen-media-progress__track" cx="18" cy="18" r={PROGRESS_RING_R} />
+            <circle
+              className="fullscreen-media-progress__value"
+              cx="18"
+              cy="18"
+              r={PROGRESS_RING_R}
+              style={{
+                strokeDasharray: `${PROGRESS_RING_C} ${PROGRESS_RING_C}`,
+                strokeDashoffset: PROGRESS_RING_C * (1 - pct / 100)
+              }}
+            />
+          </svg>
+          <span className="fullscreen-media-progress__label">{pct}%</span>
+        </span>
+      ) : (
+        <span className="fullscreen-media-pending__spinner" aria-hidden="true" />
+      )}
+    </span>
+  );
+}
 
 function getWindowWidth() {
   return window.innerWidth || document.documentElement.clientWidth || 360;
@@ -60,9 +132,20 @@ function FullscreenSlideImage({
     finish();
   }, [fullReady]);
 
+  const loadProgress = useYadiskLoadProgress(item.publicUrl, item.path);
+  const originalPending = isYadiskOriginalPending(item);
   const pending = Boolean(item.isLoading) && !placeholder && !fullSrc;
-  const upgrading = distinctFull && !fullReady;
+  const bytesInFlight =
+    originalPending || (typeof loadProgress === 'number' && loadProgress < 100);
+  const awaitingSwap =
+    Boolean(item.publicUrl) &&
+    !item.isVideo &&
+    loadProgress === 100 &&
+    !distinctFull &&
+    !fullReady;
+  const upgrading = bytesInFlight || awaitingSwap || (distinctFull && !fullReady);
   const showSpinner = pending || upgrading || (!fullSrc && !placeholder);
+  const dimPreview = Boolean(placeholder && previewRetained && upgrading);
 
   if (pending && !placeholder) {
     return (
@@ -79,13 +162,21 @@ function FullscreenSlideImage({
           src={placeholder}
           alt=""
           aria-hidden="true"
-          className="fullscreen-target-img fullscreen-target-img--preview is-visible"
+          className={clsx(
+            'fullscreen-target-img',
+            'fullscreen-target-img--preview',
+            'is-visible',
+            dimPreview && 'is-dimmed'
+          )}
           width="1200"
           height="900"
+          ref={(el) => {
+            if (isActiveSlide && (!distinctFull || !fullReady)) mediaRef.current = el;
+          }}
           style={style}
         />
       ) : null}
-      {fullSrc ? (
+      {fullSrc && (distinctFull || !placeholder) ? (
         <img
           src={fullSrc}
           alt={alt}
@@ -98,24 +189,20 @@ function FullscreenSlideImage({
           height="900"
           onLoad={(event) => markFullReady(event.currentTarget)}
           ref={(el) => {
-            if (isActiveSlide) mediaRef.current = el;
+            if (isActiveSlide && (distinctFull || !placeholder)) mediaRef.current = el;
             if (el?.complete && el.naturalWidth > 0) markFullReady(el);
           }}
           style={style}
         />
       ) : null}
-      {showSpinner ? (
-        <span className="fullscreen-media-upgrade-spinner" aria-label="Загрузка оригинала">
-          <span className="fullscreen-media-pending__spinner" aria-hidden="true" />
-        </span>
-      ) : null}
+      {showSpinner ? <FullscreenLoadSpinner progress={loadProgress} /> : null}
     </span>
   );
 }
 
 /**
  * @param {{
- *   items: Array<{ filename: string, url: string, thumbUrl?: string, previewUrl?: string, isVideo: boolean, originKey?: string, postNumber?: number, isLoading?: boolean, publicUrl?: string, path?: string | null }>,
+ *   items: Array<{ filename: string, url: string, thumbUrl?: string, previewUrl?: string, isVideo: boolean, originKey?: string, postNumber?: number, isLoading?: boolean, isUpgrading?: boolean, publicUrl?: string, path?: string | null }>,
  *   initialIndex?: number,
  *   originRect?: DOMRect | null,
  *   originKey?: string | null,

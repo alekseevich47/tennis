@@ -725,8 +725,8 @@
     "semantic_hash": "8f68c27c3fc38817b2726b20e2d4f1ee"
   },
   "client/vite.config.js": {
-    "mtime": 1786727421.304554,
-    "ast_hash": "34bc65846c60aaaa7c6bc4a74e17ff33",
+    "mtime": 1786727770.1277776,
+    "ast_hash": "da154774eec36a03f3731c885f348849",
     "semantic_hash": ""
   },
   "pb_hooks/admin_audit.pb.js": {
@@ -1125,8 +1125,8 @@
     "semantic_hash": ""
   },
   "client/src/features/profile/AboutAppModal.jsx": {
-    "mtime": 1786727413.4822297,
-    "ast_hash": "5f6bd6e03f6c4280b5cf5cea03498da9",
+    "mtime": 1786727763.997345,
+    "ast_hash": "cb01ca9b846d3c68412879b2316f879c",
     "semantic_hash": ""
   },
   "client/src/features/feed/CommentSwipeReply.jsx": {
@@ -1205,13 +1205,13 @@
     "semantic_hash": ""
   },
   "client/src/services/yadisk.js": {
-    "mtime": 1786716590.8408635,
-    "ast_hash": "d204f9136a68df1356e350020906cb6b",
+    "mtime": 1786728319.2158673,
+    "ast_hash": "ad28d65185a0d19114a2f7fdf553a6f2",
     "semantic_hash": ""
   },
   "pb_hooks/yadisk.pb.js": {
-    "mtime": 1786538793.376155,
-    "ast_hash": "b888c9944baa111d5d93ae1b1b99e02a",
+    "mtime": 1786728319.0803502,
+    "ast_hash": "3964a22976364752225df2feff534bf3",
     "semantic_hash": ""
   },
   "pb_hooks/yadisklib.js": {
@@ -1330,8 +1330,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/yadiskMediaSessionCache.js": {
-    "mtime": 1786718712.1506574,
-    "ast_hash": "8697accc1b13fe176b3a7dde70e6d8e0",
+    "mtime": 1786728336.6768167,
+    "ast_hash": "3a4d82a3d0f189cafeadb772d4519b41",
     "semantic_hash": ""
   },
   "client/src/context/AddActionContext.jsx": {
@@ -1360,13 +1360,13 @@
     "semantic_hash": ""
   },
   "client/src/hooks/useAppVersionCheck.js": {
-    "mtime": 1786727399.7537458,
-    "ast_hash": "053f19bab283cb96bb31df21b22a5582",
+    "mtime": 1786727762.8753507,
+    "ast_hash": "23b17f6c3431e28d7c831c2d9a357081",
     "semantic_hash": ""
   },
   "client/src/lib/appVersion.js": {
-    "mtime": 1786727396.7775831,
-    "ast_hash": "5c7cd828659e5a217c9187d8f203e2b7",
+    "mtime": 1786727761.66092,
+    "ast_hash": "b1f4d569902fd7cc1e690d4dc5c58919",
     "semantic_hash": ""
   },
   "scripts/deploy.sh": {
