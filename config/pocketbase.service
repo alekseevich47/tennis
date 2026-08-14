@@ -1,0 +1,17 @@
+[Unit]
+Description=PocketBase (Секция Миленьких)
+After=network.target
+
+[Service]
+Type=simple
+User=pocketbase
+Group=pocketbase
+WorkingDirectory=/opt/pocketbase
+ExecStart=/opt/pocketbase/pocketbase serve --http=127.0.0.1:8090 --dir=/opt/pocketbase/pb_data --hooksDir=/opt/tennis/pb_hooks
+Restart=on-failure
+RestartSec=3
+LimitNOFILE=4096
+# Секреты — в /etc/systemd/system/pocketbase.service.d/override.conf (не в git)
+
+[Install]
+WantedBy=multi-user.target
