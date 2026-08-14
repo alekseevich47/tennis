@@ -64,15 +64,15 @@ if [[ ! -f "$CRED_FILE" ]]; then
   umask 077
   cat > "$CRED_FILE" <<EOF
 PocketBase superuser: ${PB_ADMIN_EMAIL}
-PocketBase password:  ${PB_ADMIN_PASS}
-Nginx /_/ login:      admin
-Nginx /_/ password:   ${NGINX_ADMIN_PASS}
-Admin UI:             https://${DOMAIN}/_/
+PocketBase password: ${PB_ADMIN_PASS}
+Nginx /_/ login: admin
+Nginx /_/ password: ${NGINX_ADMIN_PASS}
+Admin UI: https://${DOMAIN}/_/
 EOF
 else
-  PB_ADMIN_EMAIL=$(awk -F': ' '/PocketBase superuser/{print $2}' "$CRED_FILE")
-  PB_ADMIN_PASS=$(awk -F': ' '/PocketBase password/{print $2}' "$CRED_FILE")
-  NGINX_ADMIN_PASS=$(awk -F': ' '/Nginx \/_\/ password/{print $2}' "$CRED_FILE")
+  PB_ADMIN_EMAIL=$(awk -F': ' '/PocketBase superuser/{gsub(/^[ \t]+/,"",$2); print $2}' "$CRED_FILE")
+  PB_ADMIN_PASS=$(awk -F': ' '/PocketBase password/{gsub(/^[ \t]+/,"",$2); print $2}' "$CRED_FILE")
+  NGINX_ADMIN_PASS=$(awk -F': ' '/Nginx \/_\/ password/{gsub(/^[ \t]+/,"",$2); print $2}' "$CRED_FILE")
 fi
 
 htpasswd -bc /etc/nginx/.htpasswd_pb_admin admin "$NGINX_ADMIN_PASS"
