@@ -725,8 +725,8 @@
     "semantic_hash": "8f68c27c3fc38817b2726b20e2d4f1ee"
   },
   "client/vite.config.js": {
-    "mtime": 1786727770.1277776,
-    "ast_hash": "da154774eec36a03f3731c885f348849",
+    "mtime": 1786727421.304554,
+    "ast_hash": "34bc65846c60aaaa7c6bc4a74e17ff33",
     "semantic_hash": ""
   },
   "pb_hooks/admin_audit.pb.js": {
@@ -1125,8 +1125,8 @@
     "semantic_hash": ""
   },
   "client/src/features/profile/AboutAppModal.jsx": {
-    "mtime": 1786727763.997345,
-    "ast_hash": "cb01ca9b846d3c68412879b2316f879c",
+    "mtime": 1786727413.4822297,
+    "ast_hash": "5f6bd6e03f6c4280b5cf5cea03498da9",
     "semantic_hash": ""
   },
   "client/src/features/feed/CommentSwipeReply.jsx": {
@@ -1360,13 +1360,13 @@
     "semantic_hash": ""
   },
   "client/src/hooks/useAppVersionCheck.js": {
-    "mtime": 1786727762.8753507,
-    "ast_hash": "23b17f6c3431e28d7c831c2d9a357081",
+    "mtime": 1786727399.7537458,
+    "ast_hash": "053f19bab283cb96bb31df21b22a5582",
     "semantic_hash": ""
   },
   "client/src/lib/appVersion.js": {
-    "mtime": 1786727761.66092,
-    "ast_hash": "b1f4d569902fd7cc1e690d4dc5c58919",
+    "mtime": 1786727396.7775831,
+    "ast_hash": "5c7cd828659e5a217c9187d8f203e2b7",
     "semantic_hash": ""
   },
   "scripts/deploy.sh": {

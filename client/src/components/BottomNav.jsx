@@ -211,8 +211,7 @@ function BottomNav({ activeTab, onTabChange, showAdmin = false, user = null }) {
           aria-label="Добавить"
           onClick={() => triggerAdd()}
         >
-          <span className="nav-item--add__rim" aria-hidden="true" />
-          <span className="nav-item--add__core" aria-hidden="true" />
+          <span className="nav-item--add__wave" aria-hidden="true" />
           <span className="nav-item--add__plus" aria-hidden="true">
             +
           </span>
