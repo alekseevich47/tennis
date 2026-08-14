@@ -616,6 +616,7 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
         activeTab={activeTab}
         onTabChange={handleTabChange}
         showAdmin={userIsModerator}
+        showAdd={userIsModerator}
         user={user}
       />
 

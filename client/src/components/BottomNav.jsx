@@ -84,10 +84,11 @@ export const BOTTOM_NAV_ITEMS = NAV_ITEMS;
  *   activeTab: number,
  *   onTabChange: (idx: number) => void,
  *   showAdmin?: boolean,
+ *   showAdd?: boolean,
  *   user?: import('../lib/avatar').UserAvatarLike | null
  * }} props
  */
-function BottomNav({ activeTab, onTabChange, showAdmin = false, user = null }) {
+function BottomNav({ activeTab, onTabChange, showAdmin = false, showAdd = false, user = null }) {
   const rootRef = useRef(/** @type {HTMLElement | null} */ (null));
   const navRef = useRef(/** @type {HTMLElement | null} */ (null));
   const itemRefs = useRef(/** @type {Map<number, HTMLButtonElement>} */ (new Map()));
@@ -152,11 +153,11 @@ function BottomNav({ activeTab, onTabChange, showAdmin = false, user = null }) {
       ro?.disconnect();
       window.removeEventListener('resize', update);
     };
-  }, [activeTab, showAdmin]);
+  }, [activeTab, showAdmin, showAdd]);
 
   useEffect(() => {
-    // После появления админ-кнопки пересчитать индикатор в следующем кадре
-    if (!showAdmin) return undefined;
+    // После появления админ/«+» пересчитать индикатор в следующем кадре
+    if (!showAdmin && !showAdd) return undefined;
     const id = window.requestAnimationFrame(() => {
       const nav = navRef.current;
       const activeEl = itemRefs.current.get(activeTab);
@@ -170,7 +171,7 @@ function BottomNav({ activeTab, onTabChange, showAdmin = false, user = null }) {
       });
     });
     return () => window.cancelAnimationFrame(id);
-  }, [showAdmin, activeTab]);
+  }, [showAdmin, showAdd, activeTab]);
 
   return (
     <nav ref={rootRef} className="bottom-nav" aria-label="Основная навигация">
@@ -205,17 +206,19 @@ function BottomNav({ activeTab, onTabChange, showAdmin = false, user = null }) {
             </button>
           );
         })}
-        <button
-          type="button"
-          className="nav-item nav-item--add"
-          aria-label="Добавить"
-          onClick={() => triggerAdd()}
-        >
-          <span className="nav-item--add__wave" aria-hidden="true" />
-          <span className="nav-item--add__plus" aria-hidden="true">
-            +
-          </span>
-        </button>
+        {showAdd ? (
+          <button
+            type="button"
+            className="nav-item nav-item--add"
+            aria-label="Добавить"
+            onClick={() => triggerAdd()}
+          >
+            <span className="nav-item--add__wave" aria-hidden="true" />
+            <span className="nav-item--add__plus" aria-hidden="true">
+              +
+            </span>
+          </button>
+        ) : null}
         {trailingItems.map((item) => {
           const isActive = activeTab === item.tabIndex;
           return (
