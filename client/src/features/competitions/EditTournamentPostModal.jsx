@@ -118,7 +118,10 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
           : albumExpandedRef.current
             ? ALBUM_WINDOW_RADIUS
             : ALBUM_COVER_RADIUS;
-      yadisk.setAlbumFocus(yadisk.albumPublicUrl, index, { radius });
+      yadisk.setAlbumFocus(yadisk.albumPublicUrl, index, {
+        radius,
+        preferFull: albumExpandedRef.current || focusOptions?.preferFull === true
+      });
     },
     [yadisk]
   );

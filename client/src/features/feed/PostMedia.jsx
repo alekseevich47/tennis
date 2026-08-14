@@ -103,7 +103,8 @@ function PostMedia({
     if (!isAlbum || !albumPublicUrl) return;
     if (albumIndex !== 0) albumExpandedRef.current = true;
     setAlbumFocus(albumPublicUrl, albumIndex, {
-      radius: albumExpandedRef.current ? ALBUM_WINDOW_RADIUS : ALBUM_COVER_RADIUS
+      radius: albumExpandedRef.current ? ALBUM_WINDOW_RADIUS : ALBUM_COVER_RADIUS,
+      preferFull: albumExpandedRef.current
     });
   }, [isAlbum, albumPublicUrl, albumIndex, setAlbumFocus]);
 
@@ -146,7 +147,10 @@ function PostMedia({
       );
       const openIndex = foundIndex >= 0 ? foundIndex : albumIndex;
       albumExpandedRef.current = true;
-      setAlbumFocus(albumPublicUrl, openIndex, { radius: ALBUM_WINDOW_RADIUS });
+      setAlbumFocus(albumPublicUrl, openIndex, {
+        radius: ALBUM_WINDOW_RADIUS,
+        preferFull: true
+      });
       onOpenFullscreen?.(
         viewerItems,
         openIndex,
