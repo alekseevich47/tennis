@@ -45,6 +45,9 @@ routerAdd('GET', '/api/yadisk-content', (c) => {
 
     reader = result.file.reader.open();
     c.response.header().set('Cache-Control', 'private, max-age=600');
+    if (result.file.size > 0) {
+      c.response.header().set('Content-Length', String(result.file.size));
+    }
     if (result.name) {
       c.response.header().set(
         'Content-Disposition',

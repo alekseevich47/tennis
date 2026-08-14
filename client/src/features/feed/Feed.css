@@ -1854,7 +1854,11 @@ button.post-card-like:hover:not(:disabled) {
   margin: auto;
   opacity: 1;
   z-index: 0;
-  transition: none;
+  transition: filter 0.2s ease;
+}
+
+.fullscreen-image-stack .fullscreen-target-img--preview.is-dimmed {
+  filter: brightness(0.42);
 }
 
 .fullscreen-image-stack .fullscreen-target-img--full {
@@ -1863,11 +1867,14 @@ button.post-card-like:hover:not(:disabled) {
   margin: auto;
   opacity: 0;
   z-index: 1;
-  transition: opacity 0.2s ease;
 }
 
 .fullscreen-image-stack .fullscreen-target-img--full.is-visible {
   opacity: 1;
+}
+
+.fullscreen-image-stack .fullscreen-target-img--full.is-visible.is-fading {
+  transition: opacity 0.2s ease;
 }
 
 .fullscreen-media-upgrade-spinner {
@@ -1886,6 +1893,52 @@ button.post-card-like:hover:not(:disabled) {
   border-width: 2.5px;
   box-shadow: 0 0 0 6px rgba(0, 0, 0, 0.2);
   background: rgba(0, 0, 0, 0.18);
+}
+
+.fullscreen-media-progress {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.28);
+  box-shadow: 0 0 0 6px rgba(0, 0, 0, 0.18);
+}
+
+.fullscreen-media-progress svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.fullscreen-media-progress__track,
+.fullscreen-media-progress__value {
+  fill: none;
+  stroke-width: 2.5;
+}
+
+.fullscreen-media-progress__track {
+  stroke: rgba(255, 255, 255, 0.22);
+}
+
+.fullscreen-media-progress__value {
+  stroke: rgba(255, 255, 255, 0.95);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.16s linear;
+}
+
+.fullscreen-media-progress__label {
+  position: relative;
+  z-index: 1;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
 }
 
 .fullscreen-media-pending {

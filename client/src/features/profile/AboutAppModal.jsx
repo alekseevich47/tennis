@@ -1,5 +1,6 @@
 import React from 'react';
 import Modal from '../../components/ui/Modal';
+import { APP_DISPLAY_VERSION } from '../../lib/appVersion';
 
 const DEVELOPER_SITE = 'https://loomixx.ru';
 const DEVELOPER_EMAIL = 'loomixx.dev@ya.ru';
@@ -34,7 +35,7 @@ export default function AboutAppModal({ isOpen, onClose }) {
       <div className="about-app-body">
         <div className="about-app-row">
           <span className="about-app-row__label">Версия приложения:</span>
-          <span className="about-app-row__value">v1.0</span>
+          <span className="about-app-row__value">{APP_DISPLAY_VERSION ? `v${APP_DISPLAY_VERSION}` : 'v—'}</span>
         </div>
 
         <div className="about-app-row">

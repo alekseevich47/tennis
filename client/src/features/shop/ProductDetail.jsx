@@ -5,7 +5,8 @@ import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { useFavorites } from '../../context/FavoritesContext';
 import { useProductCategories } from '../../hooks/useProductCategories';
 import BuyButton from './BuyButton';
-import { getMediaUrl, isVideoMediaName, mediaNames, videoPreviewUrl } from '../../lib/media';
+import { getMediaThumbUrl, getMediaUrl, isVideoMediaName, mediaNames, videoPreviewUrl } from '../../lib/media';
+import { useKeepForModalClose } from '../../hooks/useKeepForModalClose';
 
 const SWIPE_THRESHOLD_PX = 36;
 
@@ -26,13 +27,14 @@ function getProductCategoryIds(product) {
  */
 function ProductDetail({
   isOpen,
-  product,
+  product: productProp,
   moderator,
   onClose,
   onEdit,
   onDelete,
   onOpenFullscreen
 }) {
+  const product = useKeepForModalClose(isOpen, productProp);
   const { alert } = useAlertDialog();
   const { data: categories = [] } = useProductCategories();
   const { isFavorite, addItem, removeItem } = useFavorites();
@@ -48,9 +50,14 @@ function ProductDetail({
     return mediaNames(product.images).flatMap((filename) => {
       const url = getMediaUrl(product, 'products', filename);
       if (!url) return [];
+      const thumbUrl = isVideoMediaName(filename)
+        ? url
+        : getMediaThumbUrl(product, 'products', filename, '600x0') || url;
       return [{
         filename,
         url,
+        thumbUrl,
+        previewUrl: thumbUrl,
         isVideo: isVideoMediaName(filename),
         originKey: `product-detail-${product.id}-${filename}`
       }];

@@ -51,6 +51,7 @@ function ProductCard({
         filename,
         url,
         thumbUrl: thumbUrl || url,
+        previewUrl: thumbUrl || url,
         isVideo: isVideoMediaName(filename),
         originKey: `product-card-${product.id}-${index}`
       }];

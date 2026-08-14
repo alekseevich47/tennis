@@ -12,7 +12,7 @@
   "10": "LogsModal.jsx",
   "11": "Stats Library Helpers",
   "12": "Achievement Badge Assets",
-  "13": "MembershipModal.jsx",
+  "13": "gestures.js",
   "14": "datePickerUtils.js",
   "15": "users_access_guard.pb.js",
   "16": "StatsGrowthModal.jsx",
@@ -66,13 +66,15 @@
   "64": "trainings_booking_validate.pb.js",
   "65": "ProfilePage.jsx",
   "66": "media.js",
-  "67": "FeedPage.jsx",
+  "67": "ShopPage.jsx",
   "68": "GalleryCommentModal.jsx",
-  "69": "gestures.js",
-  "70": "MembershipOverviewModal.jsx",
+  "69": "ArchiveModal.jsx",
+  "70": "GalleryPage.jsx",
+  "71": "error",
   "72": "claimlib.js",
   "73": "tournamentComments.js",
   "74": "Avatar.jsx",
   "75": "users_claim.pb.js",
-  "77": "useMaxCloseGuard.js"
+  "77": "useMaxCloseGuard.js",
+  "78": "AddActionContext.jsx"
 }

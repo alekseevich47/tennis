@@ -22,8 +22,13 @@ if [[ ! -f "$APP_DIR/client/.env" ]]; then
 fi
 
 cd "$APP_DIR/client"
+export VITE_APP_VERSION="$(git -C "$APP_DIR" rev-parse --short HEAD)"
 npm ci
 npx vite build --base /
+
+install -m 644 "$APP_DIR/config/nginx-app.conf" /etc/nginx/sites-available/tennis
+nginx -t
+systemctl reload nginx
 
 systemctl restart pocketbase
 systemctl --no-pager --full status pocketbase | head -n 20

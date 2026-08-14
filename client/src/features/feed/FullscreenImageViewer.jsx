@@ -4,6 +4,12 @@ import { usePinchZoom } from '../../hooks/usePinchZoom';
 import { useOverlayClose } from '../../hooks/useOverlayClose';
 import IconButton from '../../components/ui/IconButton';
 import { videoPreviewUrl } from '../../lib/media';
+import {
+  getMemberLoadProgress,
+  isYadiskOriginalPending,
+  subscribeMemberLoadProgress
+} from './yadiskMediaSessionCache';
+import { useFetchedOriginal } from './useFetchedOriginal';
 
 const SWIPE_NAV_THRESHOLD_PX = 36;
 const NAV_CLICK_DRIFT_PX = 8;
@@ -13,6 +19,73 @@ const SLIDE_ANIMATION_MS = 240;
 const RIPPLE_ANIMATION_MS = 420;
 /** Нижний отступ тап-зоны: нативная полоска controls (~44–56px, эмпирически под Chrome/Android WebView/iOS). */
 const VIDEO_CONTROLS_RESERVED_PX = 48;
+const PROGRESS_RING_R = 15.5;
+const PROGRESS_RING_C = 2 * Math.PI * PROGRESS_RING_R;
+
+/**
+ * @param {string | undefined} publicUrl
+ * @param {string | null | undefined} path
+ * @returns {number | null}
+ */
+function useYadiskLoadProgress(publicUrl, path) {
+  const [progress, setProgress] = useState(() =>
+    publicUrl ? getMemberLoadProgress(publicUrl, path) : null
+  );
+
+  useEffect(() => {
+    if (!publicUrl) {
+      setProgress(null);
+      return undefined;
+    }
+    setProgress(getMemberLoadProgress(publicUrl, path));
+    return subscribeMemberLoadProgress((url, memberPath, percent) => {
+      if (url === publicUrl && (memberPath || '') === (path || '')) {
+        setProgress(percent);
+      }
+    });
+  }, [publicUrl, path]);
+
+  return progress;
+}
+
+/**
+ * @param {{ progress: number | null }} props
+ */
+function FullscreenLoadSpinner({ progress }) {
+  const determinate = typeof progress === 'number' && progress > 0 && progress < 100;
+  const pct = determinate ? progress : null;
+
+  return (
+    <span className="fullscreen-media-upgrade-spinner" aria-label="Загрузка оригинала">
+      {pct != null ? (
+        <span
+          className="fullscreen-media-progress"
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={pct}
+        >
+          <svg viewBox="0 0 36 36" aria-hidden="true">
+            <circle className="fullscreen-media-progress__track" cx="18" cy="18" r={PROGRESS_RING_R} />
+            <circle
+              className="fullscreen-media-progress__value"
+              cx="18"
+              cy="18"
+              r={PROGRESS_RING_R}
+              style={{
+                strokeDasharray: `${PROGRESS_RING_C} ${PROGRESS_RING_C}`,
+                strokeDashoffset: PROGRESS_RING_C * (1 - pct / 100)
+              }}
+            />
+          </svg>
+          <span className="fullscreen-media-progress__label">{pct}%</span>
+        </span>
+      ) : (
+        <span className="fullscreen-media-pending__spinner" aria-hidden="true" />
+      )}
+    </span>
+  );
+}
 
 function getWindowWidth() {
   return window.innerWidth || document.documentElement.clientWidth || 360;
@@ -25,6 +98,23 @@ function getOriginRect(originKey) {
   return element?.getBoundingClientRect?.() || null;
 }
 
+function itemSlideId(item) {
+  return item?.originKey || item?.filename || item?.url || item?.previewUrl || '';
+}
+
+function carouselSlideKey(item, index, trackItems) {
+  const id = itemSlideId(item) || `slide-${index}`;
+  const first = trackItems.findIndex((other) => itemSlideId(other) === id);
+  return first === index ? id : `${id}__dup`;
+}
+
+function isImagePaintReady(src) {
+  if (!src || typeof Image === 'undefined') return false;
+  const probe = new Image();
+  probe.src = src;
+  return Boolean(probe.complete && probe.naturalWidth > 0);
+}
+
 function FullscreenSlideImage({
   item,
   isActiveSlide,
@@ -35,13 +125,36 @@ function FullscreenSlideImage({
   const placeholder = item.thumbUrl || item.previewUrl || '';
   const fullSrc = item.url || placeholder;
   const distinctFull = Boolean(fullSrc && placeholder && fullSrc !== placeholder);
-  const [fullReady, setFullReady] = useState(false);
-  const [previewRetained, setPreviewRetained] = useState(Boolean(placeholder));
+  const yadiskPhoto = Boolean(item.publicUrl) && !item.isVideo;
+  const needsPbFetch =
+    !yadiskPhoto &&
+    !item.isVideo &&
+    distinctFull &&
+    /^https?:\/\//i.test(fullSrc);
+  const pbOriginal = useFetchedOriginal(needsPbFetch ? fullSrc : '', needsPbFetch);
+  const displayFullSrc = needsPbFetch
+    ? pbOriginal.blobUrl || (pbOriginal.failed ? fullSrc : '')
+    : fullSrc && (distinctFull || !placeholder)
+      ? fullSrc
+      : '';
+  const srcEpoch = `${displayFullSrc}\0${placeholder}`;
+  const [fullReady, setFullReady] = useState(() =>
+    Boolean(displayFullSrc && (!distinctFull || isImagePaintReady(displayFullSrc)))
+  );
+  const [previewRetained, setPreviewRetained] = useState(Boolean(placeholder) && !fullReady);
+  const [fadeFull, setFadeFull] = useState(false);
+  const srcEpochRef = useRef(srcEpoch);
 
   useEffect(() => {
-    setFullReady(false);
-    setPreviewRetained(Boolean(placeholder));
-  }, [fullSrc, placeholder]);
+    if (srcEpochRef.current === srcEpoch) return;
+    srcEpochRef.current = srcEpoch;
+    const ready = Boolean(
+      displayFullSrc && (!distinctFull || isImagePaintReady(displayFullSrc))
+    );
+    setFullReady(ready);
+    setPreviewRetained(Boolean(placeholder) && !ready);
+    setFadeFull(false);
+  }, [displayFullSrc, distinctFull, placeholder, srcEpoch]);
 
   useEffect(() => {
     if (!fullReady || !distinctFull) return undefined;
@@ -52,7 +165,10 @@ function FullscreenSlideImage({
 
   const markFullReady = useCallback((img) => {
     if (!img || fullReady) return;
-    const finish = () => setFullReady(true);
+    const finish = () => {
+      setFadeFull(true);
+      setFullReady(true);
+    };
     if (typeof img.decode === 'function') {
       img.decode().then(finish).catch(finish);
       return;
@@ -60,9 +176,27 @@ function FullscreenSlideImage({
     finish();
   }, [fullReady]);
 
+  const yadiskProgress = useYadiskLoadProgress(item.publicUrl, item.path);
+  const originalPending = isYadiskOriginalPending(item);
   const pending = Boolean(item.isLoading) && !placeholder && !fullSrc;
-  const upgrading = distinctFull && !fullReady;
-  const showSpinner = pending || upgrading || (!fullSrc && !placeholder);
+  const yadiskBytesInFlight =
+    yadiskPhoto &&
+    (originalPending || (typeof yadiskProgress === 'number' && yadiskProgress < 100));
+  const pbBytesInFlight =
+    needsPbFetch &&
+    !pbOriginal.blobUrl &&
+    !pbOriginal.failed &&
+    (pbOriginal.progress == null || pbOriginal.progress < 100);
+  const loadProgress = yadiskPhoto ? yadiskProgress : needsPbFetch ? pbOriginal.progress : null;
+  const showSpinner =
+    pending ||
+    yadiskBytesInFlight ||
+    pbBytesInFlight ||
+    (!fullSrc && !placeholder) ||
+    (pbOriginal.failed && distinctFull && !fullReady);
+  const dimPreview = Boolean(
+    placeholder && previewRetained && (yadiskPhoto || distinctFull)
+  );
 
   if (pending && !placeholder) {
     return (
@@ -79,43 +213,48 @@ function FullscreenSlideImage({
           src={placeholder}
           alt=""
           aria-hidden="true"
-          className="fullscreen-target-img fullscreen-target-img--preview is-visible"
+          className={clsx(
+            'fullscreen-target-img',
+            'fullscreen-target-img--preview',
+            'is-visible',
+            dimPreview && 'is-dimmed'
+          )}
           width="1200"
           height="900"
+          ref={(el) => {
+            if (isActiveSlide && (!distinctFull || !fullReady)) mediaRef.current = el;
+          }}
           style={style}
         />
       ) : null}
-      {fullSrc ? (
+      {displayFullSrc ? (
         <img
-          src={fullSrc}
+          src={displayFullSrc}
           alt={alt}
           className={clsx(
             'fullscreen-target-img',
             'fullscreen-target-img--full',
-            (!distinctFull || fullReady) && 'is-visible'
+            (!distinctFull || fullReady) && 'is-visible',
+            fadeFull && 'is-fading'
           )}
           width="1200"
           height="900"
           onLoad={(event) => markFullReady(event.currentTarget)}
           ref={(el) => {
-            if (isActiveSlide) mediaRef.current = el;
+            if (isActiveSlide && (distinctFull || !placeholder)) mediaRef.current = el;
             if (el?.complete && el.naturalWidth > 0) markFullReady(el);
           }}
           style={style}
         />
       ) : null}
-      {showSpinner ? (
-        <span className="fullscreen-media-upgrade-spinner" aria-label="Загрузка оригинала">
-          <span className="fullscreen-media-pending__spinner" aria-hidden="true" />
-        </span>
-      ) : null}
+      {showSpinner ? <FullscreenLoadSpinner progress={loadProgress} /> : null}
     </span>
   );
 }
 
 /**
  * @param {{
- *   items: Array<{ filename: string, url: string, thumbUrl?: string, previewUrl?: string, isVideo: boolean, originKey?: string, postNumber?: number, isLoading?: boolean, publicUrl?: string, path?: string | null }>,
+ *   items: Array<{ filename: string, url: string, thumbUrl?: string, previewUrl?: string, isVideo: boolean, originKey?: string, postNumber?: number, isLoading?: boolean, isUpgrading?: boolean, publicUrl?: string, path?: string | null }>,
  *   initialIndex?: number,
  *   originRect?: DOMRect | null,
  *   originKey?: string | null,
@@ -157,6 +296,10 @@ function FullscreenImageViewer({
   const closeTimerRef = useRef(null);
   const rippleTimerRef = useRef(null);
   const hasItems = items.length > 0;
+  const galleryKey = useMemo(
+    () => items.map((item) => item.originKey || item.filename).join('\0'),
+    [items]
+  );
   const activeItem = items[activeIndex] || null;
   const hasMultiple = items.length > 1;
   const hideActiveOrigin = useCallback(() => {
@@ -261,7 +404,7 @@ function FullscreenImageViewer({
     setRipple(null);
     gestureModeRef.current = 'idle';
     reset();
-  }, [initialIndex, items, reset]);
+  }, [initialIndex, galleryKey, items.length, reset]);
 
   useEffect(() => {
     if (!hasItems) return undefined;
@@ -570,15 +713,13 @@ function FullscreenImageViewer({
             const imageStyle = {
               transform: isClosing && isActiveSlide && returnTransform
                 ? returnTransform
-                : isActiveSlide
-                ? `translate(${position.x}px, ${position.y}px) scale(${scale})`
-                : undefined
+                : `translate(${isActiveSlide ? position.x : 0}px, ${isActiveSlide ? position.y : 0}px) scale(${isActiveSlide ? scale : 1})`
             };
             return (
               <div
                 className="fullscreen-carousel-slide"
                 data-active={isActiveSlide ? 'true' : undefined}
-                key={`${item.originKey || item.filename}-${index}`}
+                key={carouselSlideKey(item, index, trackItems)}
               >
                 {item.isVideo ? (
                   pendingVideo ? (
