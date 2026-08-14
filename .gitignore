@@ -13,6 +13,11 @@ client/tasks/
 /TASKS*.md
 
 # Environment variables
+.env
+.env.*
+!.env.example
+!.env.prod.example
+client/.env
 
 # IDE files
 .vscode/
