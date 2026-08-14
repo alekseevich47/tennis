@@ -324,7 +324,12 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
           getMembers: () =>
             working
               .filter((item) => item.albumId === album.albumId)
-              .map((item) => ({ originKey: item.originKey, path: item.path })),
+              .map((item) => ({
+                originKey: item.originKey,
+                path: item.path,
+                name: item.filename,
+                isVideo: item.isVideo
+              })),
           signal: controller.signal,
           onResolved: (originKey, bytes) => {
             patchItem(originKey, {
