@@ -5,6 +5,11 @@ import { fetchYadiskObjectUrl, fetchYadiskPreview } from '../../services/yadisk'
 import { videoPreviewUrl } from '../../lib/media';
 import { setYadiskAlbumCache } from './yadiskAlbumCache';
 import {
+  getCachedMemberBytes,
+  isSessionCachedBlobUrl,
+  setCachedMemberBytes
+} from './yadiskMediaSessionCache';
+import {
   ALBUM_COVER_RADIUS,
   ALBUM_WINDOW_RADIUS,
   createAlbumWindowController,
@@ -67,7 +72,7 @@ function publishAlbums(list) {
  * @param {string} originPrefix
  * @returns {{
  *   items: ResolvedExternalMediaItem[],
- *   setAlbumFocus: (publicUrl: string, index: number, options?: { radius?: number }) => void
+ *   setAlbumFocus: (publicUrl: string, index: number, options?: { radius?: number, preferFull?: boolean }) => void
  * }}
  */
 export function useResolvedExternalMedia(externalMedia, originPrefix) {
@@ -160,6 +165,13 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
           );
           if (cancelled) return;
           const display = videoPreviewUrl(objectUrl);
+          setCachedMemberBytes(publicUrl, path, {
+            previewUrl: objectUrl,
+            fileUrl: objectUrl,
+            isVideo: true,
+            name: filename,
+            displayUrl: display
+          });
           patchItem(originKey, {
             filename,
             url: display,
@@ -179,6 +191,14 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
         );
         if (cancelled) return;
 
+        setCachedMemberBytes(publicUrl, path, {
+          previewUrl: previewObjectUrl,
+          fileUrl: null,
+          isVideo: false,
+          name: filename,
+          displayUrl: previewObjectUrl
+        });
+
         patchItem(originKey, {
           filename,
           url: previewObjectUrl,
@@ -187,26 +207,6 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
           isVideo: false,
           isLoading: false
         });
-
-        try {
-          const fileObjectUrl = track(
-            await fetchYadiskObjectUrl(publicUrl, 'file', {
-              signal: controller.signal,
-              path: path || null
-            })
-          );
-          if (cancelled) return;
-          patchItem(originKey, {
-            filename,
-            url: fileObjectUrl,
-            thumbUrl: fileObjectUrl,
-            previewUrl: previewObjectUrl,
-            isVideo: false,
-            isLoading: false
-          });
-        } catch (fileErr) {
-          if (fileErr?.name === 'AbortError' || cancelled) return;
-        }
       } catch (err) {
         if (err?.name === 'AbortError' || cancelled) return;
         dropItem(originKey);
@@ -330,7 +330,7 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
             patchItem(originKey, {
               ...(bytes.name ? { filename: bytes.name } : {}),
               url: bytes.displayUrl,
-              thumbUrl: bytes.fileUrl || bytes.previewUrl,
+              thumbUrl: bytes.previewUrl,
               previewUrl: bytes.previewUrl,
               isVideo: bytes.isVideo,
               isLoading: false
@@ -353,7 +353,8 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
         const handler = (index, options) => {
           ctrl.setFocus(index, {
             radius:
-              typeof options?.radius === 'number' ? options.radius : ALBUM_WINDOW_RADIUS
+              typeof options?.radius === 'number' ? options.radius : ALBUM_WINDOW_RADIUS,
+            preferFull: options?.preferFull === true
           });
         };
         focusHandlersRef.current.set(album.publicUrl, handler);
@@ -373,7 +374,9 @@ export function useResolvedExternalMedia(externalMedia, originPrefix) {
       albumControllers.forEach((ctrl) => ctrl.destroy());
       unsubs.forEach((off) => off());
       focusHandlersRef.current.clear();
-      objectUrls.forEach((url) => URL.revokeObjectURL(url));
+      objectUrls.forEach((url) => {
+        if (!isSessionCachedBlobUrl(url)) URL.revokeObjectURL(url);
+      });
     };
   }, [externalMedia, originPrefix]);
 
