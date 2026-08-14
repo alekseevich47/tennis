@@ -12,7 +12,7 @@ const AXIS_RATIO = 1.4;
 const COMMIT_RATIO = 0.5;
 const EDGE_MAX_PX = 72;
 const EDGE_RESISTANCE = 0.28;
-const ANIM_MS = 280;
+const ANIM_MS = 300;
 const SWIPE_ALLOW_OVERLAY_SUFFIXES = [
   ':favorites',
   ':notifications',
@@ -44,7 +44,6 @@ const IGNORE_SELECTOR = [
 export function getSwipeableTabs(activeTab, showAdmin) {
   const tabs = [0, 1, 2, 3, PROFILE_TAB_INDEX];
   if (showAdmin) tabs.push(ADMIN_TAB_INDEX);
-  // Галерея вне цепочки — свайп на ней отключён.
   if (activeTab === GALLERY_TAB_INDEX) return [];
   return tabs;
 }
@@ -71,15 +70,18 @@ function getWindowWidth() {
 }
 
 /**
- * Горизонтальный свайп между основными разделами BottomNav.
- * Порог коммита — ≥ 1/2 ширины экрана; на краях — rubber-band.
+ * Пейджер разделов: во время жеста виден соседний экран.
+ * Transform только на `.section-swipe-track` (не на `main`) — иначе stacking
+ * context прячет модалки/fullscreen под BottomNav.
  *
  * @param {{
  *   enabled?: boolean,
  *   activeTab: number,
  *   showAdmin?: boolean,
  *   onTabChange: (tab: number) => void,
- *   containerRef: React.RefObject<HTMLElement | null>
+ *   viewportRef: React.RefObject<HTMLElement | null>,
+ *   trackRef: React.RefObject<HTMLElement | null>,
+ *   onPeekChange: (peek: { tab: number, direction: -1 | 1 } | null) => void
  * }} options
  */
 export function useSectionSwipe({
@@ -87,65 +89,83 @@ export function useSectionSwipe({
   activeTab,
   showAdmin = false,
   onTabChange,
-  containerRef
+  viewportRef,
+  trackRef,
+  onPeekChange
 }) {
   const activeTabRef = useRef(activeTab);
   const showAdminRef = useRef(showAdmin);
   const onTabChangeRef = useRef(onTabChange);
+  const onPeekChangeRef = useRef(onPeekChange);
   const enabledRef = useRef(enabled);
   activeTabRef.current = activeTab;
   showAdminRef.current = showAdmin;
   onTabChangeRef.current = onTabChange;
+  onPeekChangeRef.current = onPeekChange;
   enabledRef.current = enabled;
 
   const gestureRef = useRef({
-    mode: /** @type {'idle' | 'pending' | 'horizontal' | 'ignored'} */ ('idle'),
+    mode: /** @type {'idle' | 'pending' | 'horizontal' | 'edge' | 'ignored'} */ ('idle'),
     startX: 0,
     startY: 0,
-    offset: 0,
+    /** @type {-1 | 1 | 0} */
+    direction: 0,
     animating: false
   });
 
   useEffect(() => {
-    const node = containerRef.current;
-    if (!node) return undefined;
+    const viewport = viewportRef.current;
+    const track = trackRef.current;
+    if (!viewport || !track) return undefined;
 
-    const setOffset = (px, { animate = false } = {}) => {
-      gestureRef.current.offset = px;
+    const setTrackX = (px, { animate = false } = {}) => {
       if (animate) {
-        node.classList.add('section-swipe--animating');
-        node.style.transition = `transform ${ANIM_MS}ms cubic-bezier(0.32, 0.72, 0, 1)`;
+        track.classList.add('section-swipe-track--animating');
+        track.style.transition = `transform ${ANIM_MS}ms cubic-bezier(0.25, 0.1, 0.25, 1)`;
       } else {
-        node.classList.remove('section-swipe--animating');
-        node.style.transition = 'none';
+        track.classList.remove('section-swipe-track--animating');
+        track.style.transition = 'none';
       }
-      node.style.transform = px === 0 ? '' : `translate3d(${px}px, 0, 0)`;
+      track.style.transform = px === 0 ? 'none' : `translate3d(${px}px, 0, 0)`;
+    };
+
+    const clearPeek = () => {
+      onPeekChangeRef.current(null);
+      viewport.classList.remove('section-swipe-viewport--dragging');
+      track.classList.remove(
+        'section-swipe-track--animating',
+        'section-swipe-track--dragging'
+      );
+      setTrackX(0, { animate: false });
     };
 
     const resetIdle = () => {
       gestureRef.current.mode = 'idle';
+      gestureRef.current.direction = 0;
       gestureRef.current.animating = false;
-      node.classList.remove('section-swipe--dragging', 'section-swipe--animating');
-      setOffset(0, { animate: false });
-    };
-
-    const rubberOffset = (dx, atStart, atEnd) => {
-      if ((atStart && dx > 0) || (atEnd && dx < 0)) {
-        const capped = Math.sign(dx) * Math.min(Math.abs(dx) * EDGE_RESISTANCE, EDGE_MAX_PX);
-        return capped;
-      }
-      return dx;
+      clearPeek();
     };
 
     const canStart = () => {
       if (!enabledRef.current) return false;
       if (gestureRef.current.animating) return false;
-      if (document.documentElement.classList.contains('onboarding-active')) return false;
       if (document.querySelector('.app.onboarding-active')) return false;
       if (isTextFieldFocused()) return false;
       if (hasBlockingOverlay(SWIPE_ALLOW_OVERLAY_SUFFIXES)) return false;
       const tabs = getSwipeableTabs(activeTabRef.current, showAdminRef.current);
       return tabs.includes(activeTabRef.current);
+    };
+
+    /**
+     * @param {number} targetX
+     * @param {() => void} [done]
+     */
+    const animateTo = (targetX, done) => {
+      gestureRef.current.animating = true;
+      setTrackX(targetX, { animate: true });
+      window.setTimeout(() => {
+        done?.();
+      }, ANIM_MS);
     };
 
     const onTouchStart = (event) => {
@@ -159,9 +179,9 @@ export function useSectionSwipe({
       }
       const touch = event.touches[0];
       gestureRef.current.mode = 'pending';
+      gestureRef.current.direction = 0;
       gestureRef.current.startX = touch.clientX;
       gestureRef.current.startY = touch.clientY;
-      gestureRef.current.offset = 0;
     };
 
     const onTouchMove = (event) => {
@@ -176,65 +196,68 @@ export function useSectionSwipe({
       const idx = tabs.indexOf(activeTabRef.current);
       const atStart = idx <= 0;
       const atEnd = idx < 0 || idx >= tabs.length - 1;
+      const width = getWindowWidth();
 
       if (g.mode === 'pending') {
         if (Math.abs(dx) < LOCK_PX && Math.abs(dy) < LOCK_PX) return;
-        if (Math.abs(dx) > Math.abs(dy) * AXIS_RATIO && Math.abs(dx) >= LOCK_PX) {
-          g.mode = 'horizontal';
-          node.classList.add('section-swipe--dragging');
-        } else {
+        if (!(Math.abs(dx) > Math.abs(dy) * AXIS_RATIO && Math.abs(dx) >= LOCK_PX)) {
           g.mode = 'ignored';
           return;
         }
+
+        // Свайп влево (dx<0) → следующий; вправо → предыдущий.
+        if (dx < 0 && atEnd) {
+          g.mode = 'edge';
+        } else if (dx > 0 && atStart) {
+          g.mode = 'edge';
+        } else if (dx < 0) {
+          g.mode = 'horizontal';
+          g.direction = 1;
+          onPeekChangeRef.current({ tab: tabs[idx + 1], direction: 1 });
+          track.classList.add('section-swipe-track--dragging');
+          viewport.classList.add('section-swipe-viewport--dragging');
+          setTrackX(0, { animate: false });
+        } else {
+          g.mode = 'horizontal';
+          g.direction = -1;
+          onPeekChangeRef.current({ tab: tabs[idx - 1], direction: -1 });
+          track.classList.add('section-swipe-track--dragging');
+          viewport.classList.add('section-swipe-viewport--dragging');
+          // [prev][current] — сразу показать current (смещение -width).
+          setTrackX(-width, { animate: false });
+        }
+      }
+
+      if (g.mode === 'edge') {
+        if (event.cancelable) event.preventDefault();
+        const capped =
+          Math.sign(dx) * Math.min(Math.abs(dx) * EDGE_RESISTANCE, EDGE_MAX_PX);
+        setTrackX(capped, { animate: false });
+        return;
       }
 
       if (g.mode !== 'horizontal') return;
       if (event.cancelable) event.preventDefault();
-      setOffset(rubberOffset(dx, atStart, atEnd), { animate: false });
-    };
 
-    /**
-     * @param {number} targetX
-     * @param {() => void} [done]
-     */
-    const animateTo = (targetX, done) => {
-      gestureRef.current.animating = true;
-      setOffset(targetX, { animate: true });
-      window.setTimeout(() => {
-        done?.();
-      }, ANIM_MS);
-    };
-
-    const finishCommit = (direction) => {
-      const tabs = getSwipeableTabs(activeTabRef.current, showAdminRef.current);
-      const idx = tabs.indexOf(activeTabRef.current);
-      const nextIdx = idx + direction;
-      if (idx < 0 || nextIdx < 0 || nextIdx >= tabs.length) {
-        animateTo(0, resetIdle);
-        return;
+      if (g.direction === 1) {
+        // [current][next], dx ≤ 0
+        setTrackX(Math.min(0, dx), { animate: false });
+      } else {
+        // [prev][current], стартовали с -width, dx ≥ 0
+        setTrackX(Math.min(0, -width + Math.max(0, dx)), { animate: false });
       }
-
-      const width = getWindowWidth();
-      const exitX = direction < 0 ? -width : width;
-      const enterX = direction < 0 ? width : -width;
-      const nextTab = tabs[nextIdx];
-
-      animateTo(exitX, () => {
-        onTabChangeRef.current(nextTab);
-        setOffset(enterX, { animate: false });
-        // Двойной rAF: дождаться paint новой вкладки перед въездом.
-        window.requestAnimationFrame(() => {
-          window.requestAnimationFrame(() => {
-            setOffset(0, { animate: true });
-            window.setTimeout(resetIdle, ANIM_MS);
-          });
-        });
-      });
     };
 
     const onTouchEnd = (event) => {
       const g = gestureRef.current;
-      if (g.mode !== 'horizontal' || g.animating) {
+      if (g.animating) return;
+
+      if (g.mode === 'edge') {
+        animateTo(0, resetIdle);
+        return;
+      }
+
+      if (g.mode !== 'horizontal') {
         if (g.mode !== 'idle') g.mode = 'idle';
         return;
       }
@@ -246,47 +269,69 @@ export function useSectionSwipe({
       }
 
       const dx = touch.clientX - g.startX;
-      const tabs = getSwipeableTabs(activeTabRef.current, showAdminRef.current);
-      const idx = tabs.indexOf(activeTabRef.current);
-      const atStart = idx <= 0;
-      const atEnd = idx < 0 || idx >= tabs.length - 1;
       const width = getWindowWidth();
       const threshold = width * COMMIT_RATIO;
-      const applied = rubberOffset(dx, atStart, atEnd);
+      const direction = g.direction;
+      const tabs = getSwipeableTabs(activeTabRef.current, showAdminRef.current);
+      const idx = tabs.indexOf(activeTabRef.current);
+      const nextTab =
+        direction === 1 ? tabs[idx + 1] : direction === -1 ? tabs[idx - 1] : null;
 
-      // Край: всегда пружина назад, без смены таба.
-      if ((atStart && dx > 0) || (atEnd && dx < 0)) {
-        animateTo(0, resetIdle);
+      const traveled =
+        direction === 1 ? Math.max(0, -dx) : Math.max(0, dx);
+      const commit = Boolean(nextTab != null && traveled >= threshold);
+
+      if (commit && nextTab != null) {
+        const settleX = direction === 1 ? -width : 0;
+        animateTo(settleX, () => {
+          onTabChangeRef.current(nextTab);
+          // После смены таба peeks снимаем без обратного «пружинного» въезда.
+          gestureRef.current.animating = false;
+          gestureRef.current.mode = 'idle';
+          gestureRef.current.direction = 0;
+          onPeekChangeRef.current(null);
+          viewport.classList.remove('section-swipe-viewport--dragging');
+          track.classList.remove(
+            'section-swipe-track--animating',
+            'section-swipe-track--dragging'
+          );
+          setTrackX(0, { animate: false });
+        });
         return;
       }
 
-      if (Math.abs(applied) >= threshold) {
-        finishCommit(dx < 0 ? 1 : -1);
-        return;
-      }
-
-      animateTo(0, resetIdle);
+      // Отмена: вернуться к current (0 для next-peek, -width для prev-peek).
+      const cancelX = direction === -1 ? -width : 0;
+      animateTo(cancelX, resetIdle);
     };
 
     const onTouchCancel = () => {
-      if (gestureRef.current.mode === 'horizontal' && !gestureRef.current.animating) {
+      const g = gestureRef.current;
+      if (g.animating) return;
+      if (g.mode === 'edge') {
         animateTo(0, resetIdle);
         return;
       }
-      gestureRef.current.mode = 'idle';
+      if (g.mode === 'horizontal') {
+        const width = getWindowWidth();
+        const cancelX = g.direction === -1 ? -width : 0;
+        animateTo(cancelX, resetIdle);
+        return;
+      }
+      g.mode = 'idle';
     };
 
-    node.addEventListener('touchstart', onTouchStart, { passive: true });
-    node.addEventListener('touchmove', onTouchMove, { passive: false });
-    node.addEventListener('touchend', onTouchEnd);
-    node.addEventListener('touchcancel', onTouchCancel);
+    viewport.addEventListener('touchstart', onTouchStart, { passive: true });
+    viewport.addEventListener('touchmove', onTouchMove, { passive: false });
+    viewport.addEventListener('touchend', onTouchEnd);
+    viewport.addEventListener('touchcancel', onTouchCancel);
 
     return () => {
-      node.removeEventListener('touchstart', onTouchStart);
-      node.removeEventListener('touchmove', onTouchMove);
-      node.removeEventListener('touchend', onTouchEnd);
-      node.removeEventListener('touchcancel', onTouchCancel);
+      viewport.removeEventListener('touchstart', onTouchStart);
+      viewport.removeEventListener('touchmove', onTouchMove);
+      viewport.removeEventListener('touchend', onTouchEnd);
+      viewport.removeEventListener('touchcancel', onTouchCancel);
       resetIdle();
     };
-  }, [containerRef]);
+  }, [viewportRef, trackRef]);
 }
