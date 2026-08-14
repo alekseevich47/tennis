@@ -19,6 +19,7 @@ import {
 import { formatPostDate } from '../../lib/format';
 import { getMediaUrl, videoPreviewUrl } from '../../lib/media';
 import { error } from '../../lib/log';
+import { useKeepForModalClose } from '../../hooks/useKeepForModalClose';
 import '../feed/Feed.css';
 
 const COMMENT_COLLECTION = 'gallery_comments';
@@ -38,13 +39,14 @@ const HIGHLIGHT_MS = 2500;
  */
 function GalleryCommentModal({
   isOpen,
-  mediaItem,
+  mediaItem: mediaItemProp,
   user,
   userIsModerator,
   onClose,
   onOpenProfile,
   highlightCommentId = null
 }) {
+  const mediaItem = useKeepForModalClose(isOpen, mediaItemProp);
   const mediaId = mediaItem?.id || null;
   const { comments, mutate, isLoading } = useGalleryComments(isOpen ? mediaId : null);
   const [commentText, setCommentText] = useState('');

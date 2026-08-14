@@ -236,11 +236,7 @@ function PostCard({
           />
         </div>
 
-        <div
-          className="feed-card-footer feed-card-bottom-bar"
-          onClick={(event) => event.stopPropagation()}
-          onPointerDown={(event) => event.stopPropagation()}
-        >
+        <div className="feed-card-footer feed-card-bottom-bar">
           <PostCardLike postId={post.id} user={user} />
           <button
             type="button"

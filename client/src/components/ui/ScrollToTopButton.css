@@ -1,8 +1,8 @@
 .scroll-to-top-btn {
   position: fixed;
   right: max(16px, env(safe-area-inset-right, 0px));
-  /* над floating BottomNav (~56 + 6 inset + запас) */
-  bottom: calc(74px + 12px + env(safe-area-inset-bottom, 0px));
+  /* чуть выше BottomNav (66 + 10 inset + 8 gap); без safe-area — меню уже у низа экрана */
+  bottom: calc(66px + 10px + 8px);
   z-index: 950;
   width: 44px;
   height: 44px;

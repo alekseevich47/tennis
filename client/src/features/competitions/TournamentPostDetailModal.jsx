@@ -13,6 +13,7 @@ import { formatPostDate } from '../../lib/format';
 import { flushPendingTournamentCommentDeletes } from '../../services/tournamentComments';
 import { getParticipantDisplayName, getParticipantPlayer } from './tournamentParticipants';
 import { recordContentView } from '../../services/stats';
+import { useKeepForModalClose } from '../../hooks/useKeepForModalClose';
 
 const SCROLL_INTO_VIEW_DELAY_MS = 200;
 
@@ -38,7 +39,7 @@ const SCROLL_INTO_VIEW_DELAY_MS = 200;
  */
 function TournamentPostDetailModal({
   isOpen,
-  post,
+  post: postProp,
   players = [],
   user = null,
   userIsModerator = false,
@@ -54,6 +55,7 @@ function TournamentPostDetailModal({
   trackView = true,
   highlightCommentId = null
 }) {
+  const post = useKeepForModalClose(isOpen, postProp);
   const participants = Array.isArray(post?.participants) ? post.participants : [];
   const postId = post?.id || null;
   const [menuOpen, setMenuOpen] = useState(false);

@@ -248,11 +248,7 @@ function TournamentPostCard({
           </ol>
         ) : null}
 
-        <div
-          className="feed-card-footer feed-card-bottom-bar tournament-post-card-footer"
-          onClick={(event) => event.stopPropagation()}
-          onPointerDown={(event) => event.stopPropagation()}
-        >
+        <div className="feed-card-footer feed-card-bottom-bar tournament-post-card-footer">
           <button
             type="button"
             className="post-card-comment-btn"
