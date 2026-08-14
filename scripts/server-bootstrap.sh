@@ -56,16 +56,6 @@ fi
 mkdir -p "$PB_DIR/pb_data"
 chown -R pocketbase:pocketbase "$PB_DIR"
 
-install -m 644 "$APP_DIR/config/pocketbase.service" /etc/systemd/system/pocketbase.service
-mkdir -p /etc/systemd/system/pocketbase.service.d
-cat > /etc/systemd/system/pocketbase.service.d/override.conf <<EOF
-[Service]
-Environment=MAX_BOT_TOKEN=${MAX_BOT_TOKEN}
-Environment=MAX_BOT_WEBHOOK_SECRET=${MAX_BOT_WEBHOOK_SECRET}
-Environment=PB_PUBLIC_URL=https://${DOMAIN}
-EOF
-chmod 600 /etc/systemd/system/pocketbase.service.d/override.conf
-
 CRED_FILE=/root/tennis-credentials.txt
 if [[ ! -f "$CRED_FILE" ]]; then
   PB_ADMIN_EMAIL="admin@${DOMAIN}"
@@ -91,27 +81,41 @@ chmod 640 /etc/nginx/.htpasswd_pb_admin
 
 install -m 644 "$APP_DIR/config/env.prod.example" "$APP_DIR/client/.env"
 
+# Сначала без хуков: на пустой БД onBootstrap падает (нет коллекций).
+install -m 644 "$APP_DIR/config/pocketbase.service" /etc/systemd/system/pocketbase.service
+mkdir -p /etc/systemd/system/pocketbase.service.d
+cat > /etc/systemd/system/pocketbase.service.d/override.conf <<EOF
+[Service]
+Environment=MAX_BOT_TOKEN=${MAX_BOT_TOKEN}
+Environment=MAX_BOT_WEBHOOK_SECRET=${MAX_BOT_WEBHOOK_SECRET}
+Environment=PB_PUBLIC_URL=https://${DOMAIN}
+ExecStart=
+ExecStart=/opt/pocketbase/pocketbase serve --http=127.0.0.1:8090 --dir=/opt/pocketbase/pb_data
+EOF
+chmod 600 /etc/systemd/system/pocketbase.service.d/override.conf
+
 systemctl daemon-reload
 systemctl enable pocketbase
 systemctl restart pocketbase
 
-for i in $(seq 1 40); do
-  if curl -sf http://127.0.0.1:8090/api/health >/dev/null; then
-    break
-  fi
-  sleep 1
-done
+wait_pb() {
+  for i in $(seq 1 40); do
+    if curl -sf http://127.0.0.1:8090/api/health >/dev/null; then
+      return 0
+    fi
+    sleep 1
+  done
+  echo "PocketBase не поднялся"
+  journalctl -u pocketbase -n 40 --no-pager || true
+  return 1
+}
+
+wait_pb
 
 systemctl stop pocketbase
 sudo -u pocketbase "$PB_DIR/pocketbase" --dir="$PB_DIR/pb_data" superuser upsert "$PB_ADMIN_EMAIL" "$PB_ADMIN_PASS"
 systemctl start pocketbase
-
-for i in $(seq 1 40); do
-  if curl -sf http://127.0.0.1:8090/api/health >/dev/null; then
-    break
-  fi
-  sleep 1
-done
+wait_pb
 
 export PB_ADMIN_EMAIL PB_ADMIN_PASS
 python3 - <<'PY'
@@ -148,6 +152,17 @@ except Exception as e:
         print(e.read().decode("utf-8", "replace")[:2000])
     raise
 PY
+
+cat > /etc/systemd/system/pocketbase.service.d/override.conf <<EOF
+[Service]
+Environment=MAX_BOT_TOKEN=${MAX_BOT_TOKEN}
+Environment=MAX_BOT_WEBHOOK_SECRET=${MAX_BOT_WEBHOOK_SECRET}
+Environment=PB_PUBLIC_URL=https://${DOMAIN}
+EOF
+chmod 600 /etc/systemd/system/pocketbase.service.d/override.conf
+systemctl daemon-reload
+systemctl restart pocketbase
+wait_pb
 
 rm -f /etc/nginx/sites-enabled/default
 install -m 644 "$APP_DIR/config/nginx-app.conf" /etc/nginx/sites-available/tennis
