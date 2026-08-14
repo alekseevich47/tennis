@@ -174,10 +174,12 @@
 .nav-item--add {
   /* База = цвет активной вкладки; единый «водяной» перелив: сверху темнее, снизу светлее. */
   --nav-add-base: #007aff;
-  --nav-add-dark: #004eb8;
+  --nav-add-deep: #002866;
   --nav-add-darker: #003d96;
+  --nav-add-dark: #004eb8;
   --nav-add-light: #5cbcff;
   --nav-add-shine: #b6e2ff;
+  --nav-add-bright: #e8f5ff;
 
   flex: 0 0 52px;
   width: 52px;
@@ -214,32 +216,46 @@
   width: 240%;
   height: 190%;
   pointer-events: none;
-  /* Один слой: тёмный верх → база → светлый низ, течёт целиком. */
+  /* Один слой: глубокий верх → база → яркий низ, плавный переход. */
   background:
     radial-gradient(
-      ellipse 70% 55% at 35% 18%,
+      ellipse 65% 48% at 32% 10%,
+      var(--nav-add-deep) 0%,
+      var(--nav-add-darker) 42%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 70% 55% at 40% 22%,
       var(--nav-add-darker) 0%,
-      var(--nav-add-dark) 38%,
+      var(--nav-add-dark) 40%,
       transparent 72%
     ),
     radial-gradient(
-      ellipse 75% 60% at 68% 82%,
+      ellipse 72% 55% at 62% 78%,
       var(--nav-add-shine) 0%,
-      var(--nav-add-light) 42%,
+      var(--nav-add-light) 45%,
       transparent 74%
+    ),
+    radial-gradient(
+      ellipse 68% 50% at 70% 90%,
+      var(--nav-add-bright) 0%,
+      var(--nav-add-shine) 38%,
+      transparent 70%
     ),
     linear-gradient(
       168deg,
-      var(--nav-add-darker) 0%,
-      var(--nav-add-dark) 22%,
+      var(--nav-add-deep) 0%,
+      var(--nav-add-darker) 14%,
+      var(--nav-add-dark) 28%,
       transparent 46%,
       transparent 54%,
-      var(--nav-add-light) 78%,
-      var(--nav-add-shine) 100%
+      var(--nav-add-light) 70%,
+      var(--nav-add-shine) 86%,
+      var(--nav-add-bright) 100%
     );
   filter: blur(14px);
-  opacity: 0.88;
-  animation: nav-add-wave 6.5s ease-in-out infinite;
+  opacity: 0.9;
+  animation: nav-add-wave 4.6s ease-in-out infinite;
   will-change: transform;
 }
 
@@ -257,10 +273,10 @@
 @keyframes nav-add-wave {
   0%,
   100% {
-    transform: translate3d(-12%, 2%, 0) rotate(-2deg);
+    transform: translate3d(-14%, 2%, 0) rotate(-2.5deg);
   }
   50% {
-    transform: translate3d(12%, -2%, 0) rotate(2deg);
+    transform: translate3d(14%, -2%, 0) rotate(2.5deg);
   }
 }
 
