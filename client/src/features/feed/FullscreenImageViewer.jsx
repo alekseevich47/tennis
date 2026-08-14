@@ -98,6 +98,23 @@ function getOriginRect(originKey) {
   return element?.getBoundingClientRect?.() || null;
 }
 
+function itemSlideId(item) {
+  return item?.originKey || item?.filename || item?.url || item?.previewUrl || '';
+}
+
+function carouselSlideKey(item, index, trackItems) {
+  const id = itemSlideId(item) || `slide-${index}`;
+  const first = trackItems.findIndex((other) => itemSlideId(other) === id);
+  return first === index ? id : `${id}__dup`;
+}
+
+function isImagePaintReady(src) {
+  if (!src || typeof Image === 'undefined') return false;
+  const probe = new Image();
+  probe.src = src;
+  return Boolean(probe.complete && probe.naturalWidth > 0);
+}
+
 function FullscreenSlideImage({
   item,
   isActiveSlide,
@@ -108,8 +125,6 @@ function FullscreenSlideImage({
   const placeholder = item.thumbUrl || item.previewUrl || '';
   const fullSrc = item.url || placeholder;
   const distinctFull = Boolean(fullSrc && placeholder && fullSrc !== placeholder);
-  const [fullReady, setFullReady] = useState(false);
-  const [previewRetained, setPreviewRetained] = useState(Boolean(placeholder));
   const yadiskPhoto = Boolean(item.publicUrl) && !item.isVideo;
   const needsPbFetch =
     !yadiskPhoto &&
@@ -122,11 +137,24 @@ function FullscreenSlideImage({
     : fullSrc && (distinctFull || !placeholder)
       ? fullSrc
       : '';
+  const srcEpoch = `${displayFullSrc}\0${placeholder}`;
+  const [fullReady, setFullReady] = useState(() =>
+    Boolean(displayFullSrc && (!distinctFull || isImagePaintReady(displayFullSrc)))
+  );
+  const [previewRetained, setPreviewRetained] = useState(Boolean(placeholder) && !fullReady);
+  const [fadeFull, setFadeFull] = useState(false);
+  const srcEpochRef = useRef(srcEpoch);
 
   useEffect(() => {
-    setFullReady(false);
-    setPreviewRetained(Boolean(placeholder));
-  }, [displayFullSrc, placeholder]);
+    if (srcEpochRef.current === srcEpoch) return;
+    srcEpochRef.current = srcEpoch;
+    const ready = Boolean(
+      displayFullSrc && (!distinctFull || isImagePaintReady(displayFullSrc))
+    );
+    setFullReady(ready);
+    setPreviewRetained(Boolean(placeholder) && !ready);
+    setFadeFull(false);
+  }, [displayFullSrc, distinctFull, placeholder, srcEpoch]);
 
   useEffect(() => {
     if (!fullReady || !distinctFull) return undefined;
@@ -137,7 +165,10 @@ function FullscreenSlideImage({
 
   const markFullReady = useCallback((img) => {
     if (!img || fullReady) return;
-    const finish = () => setFullReady(true);
+    const finish = () => {
+      setFadeFull(true);
+      setFullReady(true);
+    };
     if (typeof img.decode === 'function') {
       img.decode().then(finish).catch(finish);
       return;
@@ -203,7 +234,8 @@ function FullscreenSlideImage({
           className={clsx(
             'fullscreen-target-img',
             'fullscreen-target-img--full',
-            (!distinctFull || fullReady) && 'is-visible'
+            (!distinctFull || fullReady) && 'is-visible',
+            fadeFull && 'is-fading'
           )}
           width="1200"
           height="900"
@@ -681,15 +713,13 @@ function FullscreenImageViewer({
             const imageStyle = {
               transform: isClosing && isActiveSlide && returnTransform
                 ? returnTransform
-                : isActiveSlide
-                ? `translate(${position.x}px, ${position.y}px) scale(${scale})`
-                : undefined
+                : `translate(${isActiveSlide ? position.x : 0}px, ${isActiveSlide ? position.y : 0}px) scale(${isActiveSlide ? scale : 1})`
             };
             return (
               <div
                 className="fullscreen-carousel-slide"
                 data-active={isActiveSlide ? 'true' : undefined}
-                key={`${item.originKey || item.filename}-${index}`}
+                key={carouselSlideKey(item, index, trackItems)}
               >
                 {item.isVideo ? (
                   pendingVideo ? (
