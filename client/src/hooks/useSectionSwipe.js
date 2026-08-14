@@ -1,5 +1,6 @@
 // @ts-check
 import { useEffect, useRef } from 'react';
+import { flushSync } from 'react-dom';
 import { hasBlockingOverlay } from '../lib/overlayStack';
 import {
   ADMIN_TAB_INDEX,
@@ -218,13 +219,16 @@ export function useSectionSwipe({
           viewport.classList.add('section-swipe-viewport--dragging');
           setTrackX(0, { animate: false });
         } else {
+          // Вправо → [prev][current]. Нельзя ставить translate(-width), пока в track
+          // только current: панель уезжает влево и виден белый фон viewport.
+          // flushSync монтирует prev + App useLayoutEffect выставляет -width до paint.
           g.mode = 'horizontal';
           g.direction = -1;
-          onPeekChangeRef.current({ tab: tabs[idx - 1], direction: -1 });
           track.classList.add('section-swipe-track--dragging');
           viewport.classList.add('section-swipe-viewport--dragging');
-          // [prev][current] — сразу показать current (смещение -width).
-          setTrackX(-width, { animate: false });
+          flushSync(() => {
+            onPeekChangeRef.current({ tab: tabs[idx - 1], direction: -1 });
+          });
         }
       }
 

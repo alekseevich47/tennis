@@ -1,7 +1,7 @@
 # Graph Report - tennis  (2026-08-14)
 
 ## Corpus Check
-- 235 files · ~219,611 words
+- 235 files · ~219,640 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `bd757f82`
+- Built from commit: `f770f252`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -106,7 +106,7 @@ Nodes (26): InfoTooltip(), Toggle(), buildSendResultAlert(), formatAdminSaveErro
 
 ### Community 3 - "notifications.js"
 Cohesion: 0.22
-Nodes (10): AppInner(), getInitialFavoriteProductIds(), TAB_TITLES, CloseAppConfirmSheet(), FavoritesContext, FavoritesProvider(), loadFavoriteProducts(), patchProductsFavoritesCount() (+2 more)
+Nodes (10): AppInner(), getInitialFavoriteProductIds(), TAB_TITLES, isProductsKey(), ProductUploadContext, ProductUploadProvider(), CloseAppConfirmSheet(), useSessionResetKey() (+2 more)
 
 ### Community 4 - "Gallery Upload Flow"
 Cohesion: 0.42
@@ -198,7 +198,7 @@ Nodes (8): ADMIN_NAV_ITEM, BottomNav(), GALLERY_NAV_ITEM, NAV_ITEMS, AddActionCo
 
 ### Community 58 - "achievements.js"
 Cohesion: 0.53
-Nodes (5): isProductsKey(), ProductUploadContext, ProductUploadProvider(), createProductWithProgress(), updateProduct()
+Nodes (5): FavoritesContext, FavoritesProvider(), loadFavoriteProducts(), patchProductsFavoritesCount(), adjustProductFavoritesCount()
 
 ### Community 59 - "yadiskAlbumLazy.js"
 Cohesion: 0.06
