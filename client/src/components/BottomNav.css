@@ -1,10 +1,10 @@
 .bottom-nav {
-  --bottom-nav-side: 20px;
+  --bottom-nav-side: 10px;
   --bottom-nav-bottom: 10px;
-  --bottom-nav-height: 72px;
+  --bottom-nav-height: 66px;
 
-  /* Полоса на весь низ экрана (без safe-area) — пилюля внутри с отступами
-     от краёв, чтобы визуально «отлипала» от границ экрана. */
+  /* Полоса на весь низ экрана (без safe-area) — пилюля почти на всю ширину
+     (боковые отступы ~8–12px + safe-area). */
   position: fixed;
   left: 0;
   right: 0;
@@ -30,15 +30,15 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
-  gap: 2px;
+  gap: 1px;
   width: 100%;
   height: var(--bottom-nav-height);
-  padding: 6px;
+  padding: 4px;
   box-sizing: border-box;
-  border-radius: 32px;
+  border-radius: 28px;
   /* blur-радиус тени должен быть меньше бокового отступа (--bottom-nav-side),
      иначе тень «вылезает» до края экрана и читается как серая рамка/полоса. */
-  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.1);
+  box-shadow: 0 4px 8px rgba(15, 23, 42, 0.1);
 }
 
 /*
@@ -53,7 +53,7 @@
   position: absolute;
   inset: 0;
   z-index: 0;
-  border-radius: 32px;
+  border-radius: 28px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.97);
 }
@@ -69,11 +69,11 @@
 
 .bottom-nav__indicator {
   position: absolute;
-  top: 6px;
-  bottom: 6px;
+  top: 4px;
+  bottom: 4px;
   left: 0;
   z-index: 1;
-  border-radius: 22px;
+  border-radius: 20px;
   background: rgba(60, 60, 67, 0.06);
   pointer-events: none;
   opacity: 0;
@@ -96,15 +96,15 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 2px;
   background: none;
   border: none;
   color: #8e8e93;
   cursor: pointer;
-  padding: 4px 4px;
-  min-width: 44px;
-  min-height: 44px;
-  border-radius: 22px;
+  padding: 2px 2px;
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 20px;
   transition: color 0.25s ease, transform 0.2s ease;
 }
 
@@ -114,14 +114,14 @@
 }
 
 .nav-item svg {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
   transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .nav-item__label {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 300;
   line-height: 1.1;
   letter-spacing: -0.02em;
@@ -140,8 +140,8 @@
 }
 
 .nav-item__avatar.ui-avatar--sm {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   box-sizing: border-box;
   overflow: hidden;
@@ -169,12 +169,12 @@
 }
 
 .nav-item--add {
-  flex: 0 0 62px;
-  width: 62px;
-  height: 62px;
-  min-width: 62px;
-  min-height: 62px;
-  margin-top: -16px;
+  flex: 0 0 52px;
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  min-height: 52px;
+  margin-top: -12px;
   padding: 0;
   gap: 0;
   border-radius: 50%;
@@ -183,8 +183,8 @@
   color: #ffffff;
   z-index: 3;
   box-shadow:
-    0 8px 22px rgba(79, 70, 229, 0.38),
-    0 2px 8px rgba(0, 122, 255, 0.28);
+    0 6px 16px rgba(79, 70, 229, 0.34),
+    0 2px 6px rgba(0, 122, 255, 0.24);
 }
 
 .nav-item--add:focus-visible {
@@ -202,6 +202,9 @@
   overflow: hidden;
   border-radius: 50%;
   pointer-events: none;
+  /* Лёгкий блюр смягчает aurora-анимацию, чтобы не «резало» глаз. */
+  filter: blur(2.5px);
+  transform: translateZ(0);
 }
 
 .nav-item--add__wash {
@@ -218,14 +221,14 @@
     #007aff
   );
   animation: nav-add-wash 22s linear infinite;
-  filter: saturate(1.15);
+  filter: saturate(1.1);
 }
 
 .nav-item--add__blob {
   position: absolute;
   border-radius: 50%;
   mix-blend-mode: plus-lighter;
-  filter: blur(10px);
+  filter: blur(12px);
   will-change: transform;
 }
 
@@ -268,7 +271,7 @@
 .nav-item--add__plus {
   position: relative;
   z-index: 1;
-  font-size: 34px;
+  font-size: 28px;
   font-weight: 300;
   line-height: 1;
   color: #ffffff;

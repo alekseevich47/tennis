@@ -67,8 +67,8 @@ body {
 .content {
   flex: 1;
   overflow-y: auto;
-  /* floating BottomNav: 72 height + 6 bottom inset + запас */
-  padding-bottom: 90px;
+  /* floating BottomNav: 66 height + 10 bottom inset + запас */
+  padding-bottom: 86px;
 }
 
 textarea, input[type="text"], input[type="number"], input[type="date"], input[type="time"], input[type="datetime-local"], input[type="email"], input[type="search"], input[type="password"], select {
@@ -87,11 +87,18 @@ input[type="file"] {
 }
 
 .content-with-header {
-  /* 48 header + ~78 floating BottomNav (72 + 6) */
-  height: calc(100vh - 126px);
+  /* 48 header + ~76 floating BottomNav (66 + 10) */
+  height: calc(100vh - 124px);
   min-height: 0;
   overflow-y: auto;
   background: #ffffff;
+  will-change: transform;
+  touch-action: pan-y;
+}
+
+.content-with-header.section-swipe--dragging,
+.content-with-header.section-swipe--animating {
+  pointer-events: none;
 }
 
 .content-with-header--contained {
