@@ -31,40 +31,74 @@ import { error } from '../lib/log';
  * }} YadiskPreviewItem
  */
 
+/** @type {Map<string, YadiskPreviewItem>} */
+const previewCache = new Map();
+
+/** @type {Map<string, Promise<YadiskPreviewItem>>} */
+const previewInflight = new Map();
+
+/**
+ * @param {string} url
+ * @param {string | null | undefined} path
+ */
+function previewCacheKey(url, path) {
+  return `${url}::${path || ''}`;
+}
+
 /**
  * @param {string} url
  * @param {{ signal?: AbortSignal, path?: string | null }} [options]
  * @returns {Promise<YadiskPreviewItem>}
  */
 export async function fetchYadiskPreview(url, { signal, path } = {}) {
-  const res = await fetch(`${PB_URL}/api/yadisk-preview`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(pb.authStore.token ? { Authorization: pb.authStore.token } : {})
-    },
-    body: JSON.stringify({
-      url,
-      ...(path ? { path } : {})
-    }),
-    signal
-  });
+  const key = previewCacheKey(url, path || '');
+  const cached = previewCache.get(key);
+  if (cached) return cached;
 
-  /** @type {{ error?: string } & Partial<YadiskPreviewItem>} */
-  let data = {};
+  const inflight = previewInflight.get(key);
+  if (inflight) return inflight;
+
+  const request = (async () => {
+    const res = await fetch(`${PB_URL}/api/yadisk-preview`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(pb.authStore.token ? { Authorization: pb.authStore.token } : {})
+      },
+      body: JSON.stringify({
+        url,
+        ...(path ? { path } : {})
+      }),
+      signal
+    });
+
+    /** @type {{ error?: string } & Partial<YadiskPreviewItem>} */
+    let data = {};
+    try {
+      data = await res.json();
+    } catch {
+      data = {};
+    }
+
+    if (!res.ok) {
+      const message = data.error || `Ошибка Яндекс.Диска (${res.status})`;
+      error('yadisk preview:', message);
+      throw new Error(message);
+    }
+
+    const item = /** @type {YadiskPreviewItem} */ (data);
+    previewCache.set(key, item);
+    return item;
+  })();
+
+  previewInflight.set(key, request);
   try {
-    data = await res.json();
-  } catch {
-    data = {};
+    return await request;
+  } finally {
+    if (previewInflight.get(key) === request) {
+      previewInflight.delete(key);
+    }
   }
-
-  if (!res.ok) {
-    const message = data.error || `Ошибка Яндекс.Диска (${res.status})`;
-    error('yadisk preview:', message);
-    throw new Error(message);
-  }
-
-  return /** @type {YadiskPreviewItem} */ (data);
 }
 
 /**
