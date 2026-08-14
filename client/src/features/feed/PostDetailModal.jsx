@@ -29,6 +29,7 @@ import {
 } from '../../services/posts';
 import { recordContentView } from '../../services/stats';
 import { error } from '../../lib/log';
+import { useKeepForModalClose } from '../../hooks/useKeepForModalClose';
 
 const SCROLL_INTO_VIEW_DELAY_MS = 200;
 const HIGHLIGHT_MS = 2500;
@@ -55,7 +56,7 @@ const COMMENT_COLLECTION = 'comments';
  */
 function PostDetailModal({
   isOpen,
-  post,
+  post: postProp,
   focusComment = false,
   highlightCommentId = null,
   user,
@@ -70,6 +71,7 @@ function PostDetailModal({
   onTogglePin,
   trackView = true
 }) {
+  const post = useKeepForModalClose(isOpen, postProp);
   const postId = post?.id || null;
   const { data: comments = [], mutate: mutateComments } = useComments(postId);
 

@@ -274,8 +274,28 @@ export function toDisplayHtml(content) {
   return linkifyPlainUrls(html);
 }
 
-/** http(s)://… или www.… */
-const AUTOLINK_RE = /\b(?:https?:\/\/|www\.)[^\s<>"'`]+/gi;
+/**
+ * Известные TLD для bare-доменов без схемы (example.com, site.ru/path).
+ * Без общего `word.word` — иначе ложные срабатывания на «конец предложения».
+ */
+const AUTOLINK_TLDS = [
+  'com', 'ru', 'org', 'net', 'io', 'app', 'dev', 'me', 'info', 'biz', 'xyz',
+  'online', 'site', 'store', 'shop', 'pro', 'tv', 'cc', 'co', 'uk', 'us', 'de',
+  'fr', 'eu', 'ai', 'gg', 'to', 'ly', 'link', 'tech', 'cloud', 'club', 'blog',
+  'space', 'art', 'design', 'media', 'news', 'today', 'live', 'world', 'zone',
+  'email', 'page', 'website', 'su', 'by', 'kz', 'ua', 'рф'
+].join('|');
+
+/** http(s)://… | www.… | domain.tld(/path)? */
+const AUTOLINK_RE = new RegExp(
+  String.raw`\b(?:` +
+    String.raw`(?:https?:\/\/|www\.)[^\s<>"'\`]+` +
+    String.raw`|` +
+    String.raw`(?:[a-z0-9\u0400-\u04ff](?:[a-z0-9\u0400-\u04ff-]*[a-z0-9\u0400-\u04ff])?\.)+(?:${AUTOLINK_TLDS})` +
+    String.raw`(?::\d{2,5})?(?:[/?#][^\s<>"'\`]*)?` +
+    String.raw`)`,
+  'gi'
+);
 
 /**
  * Bare URL / www.… в тексте → кликабельные `<a>` (не трогает уже существующие ссылки).
@@ -311,6 +331,8 @@ export function linkifyPlainUrls(html) {
     while ((match = AUTOLINK_RE.exec(raw)) !== null) {
       const start = match.index;
       const full = match[0];
+      // Не линкуем домен из email (user@example.com).
+      if (start > 0 && raw[start - 1] === '@') continue;
       let urlText = full;
       let trailing = '';
       while (urlText && /[.,;:!?)]+$/.test(urlText)) {

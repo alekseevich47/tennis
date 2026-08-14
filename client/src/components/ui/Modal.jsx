@@ -1,7 +1,14 @@
-import React, { useCallback, useEffect, useId, useLayoutEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import IconButton from './IconButton';
 import { useOverlayClose } from '../../hooks/useOverlayClose';
+import {
+  ensureModalOriginTracking,
+  getLastPointerOrigin,
+  getModalCollapseTransform,
+  MODAL_CLOSE_MS,
+  snapshotOriginRect
+} from '../../lib/modalOrigin';
 import './Modal.css';
 
 const FOCUSABLE_SELECTORS = [
@@ -13,6 +20,8 @@ const FOCUSABLE_SELECTORS = [
   '[contenteditable="true"]',
   '[tabindex]:not([tabindex="-1"])'
 ].join(',');
+
+export { MODAL_CLOSE_MS };
 
 /**
  * Универсальная модалка с focus-trap, ESC handler, scroll-lock и aria-разметкой.
@@ -31,6 +40,8 @@ const FOCUSABLE_SELECTORS = [
  * - `headerActions` (node) — кнопки слева от крестика закрытия
  * - `footer` (node) — sticky-блок под скроллом
  * - `size` ('default' | 'large' | 'tall')
+ * - `originRect` ({ left, top, width, height } | null) — точка появления/схлапывания;
+ *   иначе last pointer / activeElement (до focus-trap)
  */
 function Modal({
   isOpen,
@@ -44,15 +55,66 @@ function Modal({
   showCloseButton = true,
   headerActions,
   footer,
-  size = 'default'
+  size = 'default',
+  originRect = null
 }) {
   const titleId = useId();
   const dialogRef = useRef(null);
   const previousActiveRef = useRef(null);
+  const originRef = useRef(/** @type {import('../../lib/modalOrigin').OriginRect | null} */ (null));
+  const closeTimerRef = useRef(/** @type {ReturnType<typeof setTimeout> | null} */ (null));
+  const wasOpenRef = useRef(false);
+  const [mounted, setMounted] = useState(Boolean(isOpen));
+  const [closing, setClosing] = useState(false);
+
+  useEffect(() => {
+    ensureModalOriginTracking();
+  }, []);
+
+  // Mount / exit-анимация. Origin снимаем в layout до focus-trap.
+  useLayoutEffect(() => {
+    if (isOpen) {
+      if (closeTimerRef.current) {
+        clearTimeout(closeTimerRef.current);
+        closeTimerRef.current = null;
+      }
+      if (!wasOpenRef.current) {
+        originRef.current =
+          originRect ||
+          getLastPointerOrigin() ||
+          snapshotOriginRect(/** @type {Element | null} */ (document.activeElement));
+      }
+      wasOpenRef.current = true;
+      setMounted(true);
+      setClosing(false);
+      return undefined;
+    }
+
+    wasOpenRef.current = false;
+    if (!mounted) return undefined;
+
+    setClosing(true);
+    closeTimerRef.current = setTimeout(() => {
+      closeTimerRef.current = null;
+      setMounted(false);
+      setClosing(false);
+      originRef.current = null;
+      if (dialogRef.current) {
+        dialogRef.current.style.transform = '';
+        dialogRef.current.style.opacity = '';
+      }
+    }, MODAL_CLOSE_MS);
+
+    return () => {
+      if (closeTimerRef.current) {
+        clearTimeout(closeTimerRef.current);
+        closeTimerRef.current = null;
+      }
+    };
+  }, [isOpen, mounted, originRect]);
 
   useOverlayClose(Boolean(isOpen), onClose);
 
-  // ESC handler.
   useEffect(() => {
     if (!isOpen) return undefined;
     const handler = (e) => {
@@ -65,9 +127,8 @@ function Modal({
     return () => document.removeEventListener('keydown', handler);
   }, [isOpen, onClose]);
 
-  // Scroll lock + перевод фокуса (используем layout-effect чтобы не было «вспышки» прокрутки).
   useLayoutEffect(() => {
-    if (!isOpen) return undefined;
+    if (!isOpen || closing) return undefined;
     const { body } = document;
     const previousOverflow = body.style.overflow;
     body.style.overflow = 'hidden';
@@ -86,9 +147,31 @@ function Modal({
       const prev = previousActiveRef.current;
       if (prev && typeof prev.focus === 'function') prev.focus();
     };
-  }, [isOpen]);
+  }, [isOpen, closing]);
 
-  // Focus trap (Tab / Shift+Tab).
+  useLayoutEffect(() => {
+    if (!closing) return undefined;
+    const node = dialogRef.current;
+    if (!node) return undefined;
+
+    const origin = originRect || originRef.current;
+    const reduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+
+    if (reduced) {
+      node.style.opacity = '0';
+      return undefined;
+    }
+
+    void node.offsetWidth;
+    const frame = requestAnimationFrame(() => {
+      node.style.transform = getModalCollapseTransform(node, origin);
+      node.style.opacity = '0';
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [closing, originRect]);
+
   const handleKeyDown = useCallback((e) => {
     if (e.key !== 'Tab') return;
     const node = dialogRef.current;
@@ -113,17 +196,26 @@ function Modal({
     }
   }, []);
 
-  if (!isOpen) return null;
+  if (!mounted) return null;
 
   return (
     <div
-      className={clsx('ui-modal-overlay', overlayClassName)}
-      onClick={closeOnOverlay ? onClose : undefined}
+      className={clsx(
+        'ui-modal-overlay',
+        closing && 'ui-modal-overlay--closing',
+        overlayClassName
+      )}
+      onClick={closing || !closeOnOverlay ? undefined : onClose}
       role="presentation"
     >
       <div
         ref={dialogRef}
-        className={clsx('ui-modal-content', `ui-modal-${size}`, className)}
+        className={clsx(
+          'ui-modal-content',
+          `ui-modal-${size}`,
+          closing && 'ui-modal-content--closing',
+          className
+        )}
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? titleId : undefined}
@@ -141,6 +233,7 @@ function Modal({
                 className="ui-modal-close"
                 ariaLabel="Закрыть"
                 onClick={onClose}
+                disabled={closing}
               >
                 <span aria-hidden="true">✕</span>
               </IconButton>
