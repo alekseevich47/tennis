@@ -13,8 +13,12 @@ const ORIGIN_SELECTOR = [
   '[data-modal-origin]',
   'article',
   '.post-card',
-  '.training-card',
+  '.training-row-card',
   '.product-card',
+  '.player-row',
+  '.comment-author-profile-link',
+  '.training-player-profile-link',
+  '.gallery-comment-item__header',
   '.gallery-item',
   '.gallery-grid-item'
 ].join(', ');

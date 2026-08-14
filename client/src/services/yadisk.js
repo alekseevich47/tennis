@@ -2,6 +2,7 @@
 import { PB_URL } from '../config';
 import pb from './pb';
 import { error } from '../lib/log';
+import { blobFromResponse } from '../lib/fetchBlobProgress';
 
 /**
  * @typedef {{
@@ -106,10 +107,10 @@ export async function fetchYadiskPreview(url, { signal, path } = {}) {
  *
  * @param {string} publicUrl
  * @param {'preview' | 'file'} [kind]
- * @param {{ signal?: AbortSignal, path?: string | null }} [options]
+ * @param {{ signal?: AbortSignal, path?: string | null, onProgress?: (percent: number) => void }} [options]
  * @returns {Promise<string>}
  */
-export async function fetchYadiskObjectUrl(publicUrl, kind = 'preview', { signal, path } = {}) {
+export async function fetchYadiskObjectUrl(publicUrl, kind = 'preview', { signal, path, onProgress } = {}) {
   const qs = new URLSearchParams({
     url: publicUrl,
     kind
@@ -135,7 +136,7 @@ export async function fetchYadiskObjectUrl(publicUrl, kind = 'preview', { signal
     throw new Error(message);
   }
 
-  const blob = await res.blob();
+  const blob = await blobFromResponse(res, kind === 'file' ? onProgress : undefined);
   if (!blob || blob.size === 0) {
     throw new Error('Пустой ответ Яндекс.Диска');
   }

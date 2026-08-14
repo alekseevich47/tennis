@@ -85,10 +85,6 @@
   color: #212529;
 }
 
-.add-training-context-btn {
-  color: #007aff !important;
-}
-
 .selected-day-actions {
   display: flex;
   gap: 8px;

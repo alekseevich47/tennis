@@ -70,9 +70,12 @@
   "68": "GalleryCommentModal.jsx",
   "69": "gestures.js",
   "70": "MembershipOverviewModal.jsx",
+  "71": "useMaxAuth.js",
   "72": "claimlib.js",
   "73": "tournamentComments.js",
   "74": "Avatar.jsx",
   "75": "users_claim.pb.js",
-  "77": "useMaxCloseGuard.js"
+  "76": "server-bootstrap.sh",
+  "77": "useMaxCloseGuard.js",
+  "78": "deploy.sh"
 }
