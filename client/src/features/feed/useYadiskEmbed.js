@@ -213,7 +213,8 @@ export function useYadiskEmbed({
 
       const handler = (index, options) => {
         ctrl.setFocus(index, {
-          radius: typeof options?.radius === 'number' ? options.radius : ALBUM_WINDOW_RADIUS
+          radius: typeof options?.radius === 'number' ? options.radius : ALBUM_WINDOW_RADIUS,
+          preferFull: options?.preferFull === true
         });
       };
       albumControllersRef.current.set(publicUrl, ctrl);

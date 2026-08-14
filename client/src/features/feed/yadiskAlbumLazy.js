@@ -5,6 +5,10 @@
  */
 import { fetchYadiskObjectUrl, fetchYadiskPreview } from '../../services/yadisk';
 import { videoPreviewUrl } from '../../lib/media';
+import {
+  getCachedMemberBytes,
+  setCachedMemberBytes
+} from './yadiskMediaSessionCache';
 
 export const ALBUM_WINDOW_RADIUS = 2;
 export const ALBUM_COVER_RADIUS = 0;
@@ -106,7 +110,42 @@ export function createPriorityQueue(concurrency = ALBUM_FETCH_CONCURRENCY) {
  * @param {string | null | undefined} path
  * @param {{ signal?: AbortSignal, preferFull?: boolean }} [options]
  */
-export async function fetchAlbumMemberBytes(publicUrl, path, { signal, preferFull = true } = {}) {
+/**
+ * @param {CachedMemberBytes} cached
+ * @param {boolean} preferFull
+ */
+function memberBytesForDisplay(cached, preferFull) {
+  if (cached.isVideo) return cached;
+  if (!preferFull || !cached.fileUrl || cached.fileUrl === cached.previewUrl) {
+    return {
+      ...cached,
+      displayUrl: cached.previewUrl
+    };
+  }
+  return {
+    ...cached,
+    displayUrl: cached.fileUrl
+  };
+}
+
+/**
+ * @typedef {import('./yadiskMediaSessionCache').CachedMemberBytes} CachedMemberBytes
+ */
+
+/**
+ * @param {string} publicUrl
+ * @param {string | null | undefined} path
+ * @param {{ signal?: AbortSignal, preferFull?: boolean }} [options]
+ * @returns {Promise<CachedMemberBytes>}
+ */
+export async function fetchAlbumMemberBytes(publicUrl, path, { signal, preferFull = false } = {}) {
+  const cached = getCachedMemberBytes(publicUrl, path);
+  if (cached) {
+    if (!preferFull || cached.isVideo || (cached.fileUrl && cached.fileUrl !== cached.previewUrl)) {
+      return memberBytesForDisplay(cached, preferFull);
+    }
+  }
+
   const resolved = await fetchYadiskPreview(publicUrl, {
     signal,
     path: path || null
@@ -119,51 +158,64 @@ export async function fetchAlbumMemberBytes(publicUrl, path, { signal, preferFul
   const name = resolved.name || 'media';
 
   if (isVideo) {
-    const fileUrl = await fetchYadiskObjectUrl(publicUrl, 'file', {
-      signal,
-      path: path || null
-    });
-    return {
+    const fileUrl =
+      cached?.fileUrl ||
+      (await fetchYadiskObjectUrl(publicUrl, 'file', {
+        signal,
+        path: path || null
+      }));
+    const bytes = {
       isVideo: true,
       name,
       displayUrl: videoPreviewUrl(fileUrl),
       previewUrl: fileUrl,
       fileUrl
     };
+    setCachedMemberBytes(publicUrl, path, bytes);
+    return bytes;
   }
 
-  const previewUrl = await fetchYadiskObjectUrl(publicUrl, 'preview', {
-    signal,
-    path: path || null
-  });
+  const previewUrl =
+    cached?.previewUrl ||
+    (await fetchYadiskObjectUrl(publicUrl, 'preview', {
+      signal,
+      path: path || null
+    }));
 
   if (!preferFull) {
-    return {
+    const bytes = {
       isVideo: false,
       name,
       displayUrl: previewUrl,
       previewUrl,
-      fileUrl: previewUrl
+      fileUrl: cached?.fileUrl || null
     };
+    setCachedMemberBytes(publicUrl, path, bytes);
+    return bytes;
   }
 
-  let fileUrl = previewUrl;
-  try {
-    fileUrl = await fetchYadiskObjectUrl(publicUrl, 'file', {
-      signal,
-      path: path || null
-    });
-  } catch (err) {
-    if (err?.name === 'AbortError') throw err;
+  let fileUrl = cached?.fileUrl || null;
+  if (!fileUrl || fileUrl === previewUrl) {
+    try {
+      fileUrl = await fetchYadiskObjectUrl(publicUrl, 'file', {
+        signal,
+        path: path || null
+      });
+    } catch (err) {
+      if (err?.name === 'AbortError') throw err;
+      fileUrl = previewUrl;
+    }
   }
 
-  return {
+  const bytes = {
     isVideo: false,
     name,
     displayUrl: fileUrl,
     previewUrl,
     fileUrl
   };
+  setCachedMemberBytes(publicUrl, path, bytes);
+  return bytes;
 }
 
 /**
@@ -188,7 +240,7 @@ export function registerAlbumLazyFocus(publicUrl, handler) {
 /**
  * @param {string} publicUrl
  * @param {number} index
- * @param {{ radius?: number }} [options]
+ * @param {{ radius?: number, preferFull?: boolean }} [options]
  */
 export function requestAlbumLazyFocus(publicUrl, index, options) {
   if (!publicUrl) return;
@@ -211,9 +263,10 @@ export function requestAlbumLazyFocus(publicUrl, index, options) {
  *   getMembers: () => Array<{ originKey: string, path?: string | null }>,
  *   concurrency?: number,
  *   signal: AbortSignal,
- *   onResolved: (originKey: string, bytes: Awaited<ReturnType<typeof fetchAlbumMemberBytes>>) => void,
- *   onCleared: (originKey: string) => void,
- *   onError?: (originKey: string, err: unknown) => void
+ *   onResolved: (originKey: string, bytes: CachedMemberBytes) => void,
+ *   onCleared?: (originKey: string) => void,
+ *   onError?: (originKey: string, err: unknown) => void,
+ *   retainLoaded?: boolean
  * }} options
  */
 export function createAlbumWindowController({
@@ -223,7 +276,8 @@ export function createAlbumWindowController({
   signal,
   onResolved,
   onCleared,
-  onError
+  onError,
+  retainLoaded = true
 }) {
   const queue = createPriorityQueue(concurrency);
   /** @type {Map<string, AbortController>} */
@@ -232,6 +286,7 @@ export function createAlbumWindowController({
   const held = new Map();
   let focus = 0;
   let radius = ALBUM_COVER_RADIUS;
+  let preferFull = false;
   let destroyed = false;
 
   const revokeHeld = (originKey) => {
@@ -267,8 +322,12 @@ export function createAlbumWindowController({
     for (const originKey of [...held.keys()]) {
       if (keepKeys.has(originKey)) continue;
       abortJob(originKey);
+      if (retainLoaded) {
+        held.delete(originKey);
+        continue;
+      }
       revokeHeld(originKey);
-      onCleared(originKey);
+      onCleared?.(originKey);
     }
 
     for (const originKey of [...aborts.keys()]) {
@@ -284,9 +343,24 @@ export function createAlbumWindowController({
       const member = members[index];
       if (!member) continue;
       const originKey = member.originKey;
-      if (held.has(originKey) || queue.has(originKey)) continue;
+      const cached = getCachedMemberBytes(publicUrl, member.path);
+      if (cached) {
+        const display = memberBytesForDisplay(cached, preferFull);
+        held.set(originKey, {
+          previewUrl: cached.previewUrl,
+          fileUrl: cached.fileUrl || cached.previewUrl
+        });
+        onResolved(originKey, display);
+        const needsFull =
+          preferFull &&
+          !cached.isVideo &&
+          (!cached.fileUrl || cached.fileUrl === cached.previewUrl);
+        if (!needsFull) continue;
+        abortJob(originKey);
+      } else if (held.has(originKey) || queue.has(originKey)) {
+        continue;
+      }
 
-      const preferFull = true;
       const priority = Math.abs(index - focus);
 
       queue.enqueue(originKey, priority, async () => {
@@ -300,19 +374,13 @@ export function createAlbumWindowController({
             signal: jobController.signal,
             preferFull
           });
-          if (destroyed || jobController.signal.aborted) {
-            if (bytes.previewUrl) URL.revokeObjectURL(bytes.previewUrl);
-            if (bytes.fileUrl && bytes.fileUrl !== bytes.previewUrl) {
-              URL.revokeObjectURL(bytes.fileUrl);
-            }
-            return;
-          }
+          if (destroyed || jobController.signal.aborted) return;
           revokeHeld(originKey);
           held.set(originKey, {
             previewUrl: bytes.previewUrl,
-            fileUrl: bytes.fileUrl
+            fileUrl: bytes.fileUrl || bytes.previewUrl
           });
-          onResolved(originKey, bytes);
+          onResolved(originKey, memberBytesForDisplay(bytes, preferFull));
         } catch (err) {
           if (err?.name === 'AbortError' || destroyed) return;
           onError?.(originKey, err);
@@ -337,6 +405,9 @@ export function createAlbumWindowController({
       } else if (radius < ALBUM_WINDOW_RADIUS && focus !== 0) {
         radius = ALBUM_WINDOW_RADIUS;
       }
+      if (options.preferFull === true) {
+        preferFull = true;
+      }
       sync();
     },
     sync,
@@ -346,9 +417,7 @@ export function createAlbumWindowController({
       for (const originKey of [...aborts.keys()]) {
         abortJob(originKey);
       }
-      for (const originKey of [...held.keys()]) {
-        revokeHeld(originKey);
-      }
+      held.clear();
     }
   };
 }
