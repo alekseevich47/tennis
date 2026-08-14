@@ -150,7 +150,9 @@ export function useYadiskEmbed({
             ?.albumItems || albumItems
           ).map((entry) => ({
             originKey: entry.path || entry.key,
-            path: entry.path
+            path: entry.path,
+            name: entry.name,
+            isVideo: entry.isVideo
           })),
         signal: windowController.signal,
         onResolved: (originKey, bytes) => {
@@ -213,7 +215,8 @@ export function useYadiskEmbed({
 
       const handler = (index, options) => {
         ctrl.setFocus(index, {
-          radius: typeof options?.radius === 'number' ? options.radius : ALBUM_WINDOW_RADIUS
+          radius: typeof options?.radius === 'number' ? options.radius : ALBUM_WINDOW_RADIUS,
+          preferFull: options?.preferFull === true
         });
       };
       albumControllersRef.current.set(publicUrl, ctrl);

@@ -284,7 +284,10 @@ function FeedPage({
   const handleOpenFullscreen = useCallback((items, index = 0, originRect = null, originKey = null, meta = null) => {
     setHiddenMediaKey(null);
     if (meta?.albumPublicUrl) {
-      requestAlbumLazyFocus(meta.albumPublicUrl, index, { radius: ALBUM_WINDOW_RADIUS });
+      requestAlbumLazyFocus(meta.albumPublicUrl, index, {
+        radius: ALBUM_WINDOW_RADIUS,
+        preferFull: true
+      });
     }
     setFullscreenMedia({
       items,
@@ -332,7 +335,10 @@ function FeedPage({
     (index) => {
       const albumPublicUrl = fullscreenMedia?.albumPublicUrl;
       if (!albumPublicUrl) return;
-      requestAlbumLazyFocus(albumPublicUrl, index, { radius: ALBUM_WINDOW_RADIUS });
+      requestAlbumLazyFocus(albumPublicUrl, index, {
+        radius: ALBUM_WINDOW_RADIUS,
+        preferFull: true
+      });
       setFullscreenMedia((prev) => (prev ? { ...prev, index } : prev));
     },
     [fullscreenMedia?.albumPublicUrl]
