@@ -212,6 +212,7 @@ function TournamentPostCard({
           className="tournament-post-media"
           hiddenMediaKey={hiddenMediaKey}
           onOpenFullscreen={onOpenFullscreen}
+          scrollRootRef={scrollRootRef}
         />
 
         {participants.length > 0 ? (

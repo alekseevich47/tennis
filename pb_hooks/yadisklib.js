@@ -93,7 +93,7 @@ function buildMetaUrl(publicUrl, path) {
     PUBLIC_META_URL +
     '?public_key=' +
     encodeURIComponent(publicUrl) +
-    '&preview_size=S';
+    '&preview_size=L';
   var normalizedPath = normalizePath(path || '');
   if (normalizedPath) {
     url += '&path=' + encodeURIComponent(normalizedPath);

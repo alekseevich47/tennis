@@ -12,6 +12,8 @@ import {
 
 export const ALBUM_WINDOW_RADIUS = 2;
 export const ALBUM_COVER_RADIUS = 0;
+/** Все слайды альбома — для L-превью в ленте. */
+export const ALBUM_PREVIEW_ALL_RADIUS = Number.POSITIVE_INFINITY;
 export const ALBUM_FETCH_CONCURRENCY = 6;
 
 /** @type {Map<string, Set<(index: number, options?: { radius?: number }) => void>>} */
@@ -25,6 +27,12 @@ const focusListeners = new Map();
  */
 export function windowIndices(focus, length, radius) {
   if (length <= 0) return [];
+  if (!Number.isFinite(radius) || radius >= length) {
+    /** @type {number[]} */
+    const all = [];
+    for (let i = 0; i < length; i++) all.push(i);
+    return all;
+  }
   const safeFocus = Math.max(0, Math.min(focus, length - 1));
   const lo = Math.max(0, safeFocus - radius);
   const hi = Math.min(length - 1, safeFocus + radius);
@@ -271,7 +279,7 @@ export function requestAlbumLazyFocus(publicUrl, index, options) {
  *
  * @param {{
  *   publicUrl: string,
- *   getMembers: () => Array<{ originKey: string, path?: string | null, name?: string, isVideo?: boolean }>,
+ *   getMembers: () => Array<{ originKey: string, path?: string | null, name?: string, isVideo?: boolean, publicUrl?: string }>,
  *   concurrency?: number,
  *   signal: AbortSignal,
  *   onResolved: (originKey: string, bytes: CachedMemberBytes) => void,
@@ -293,133 +301,138 @@ export function createAlbumWindowController({
   const queue = createPriorityQueue(concurrency);
   /** @type {Map<string, AbortController>} */
   const aborts = new Map();
-  /** @type {Map<string, { previewUrl: string, fileUrl: string }>} */
-  const held = new Map();
+  /** @type {Set<string>} */
+  const held = new Set();
   let focus = 0;
-  let radius = ALBUM_COVER_RADIUS;
+  let radius = ALBUM_PREVIEW_ALL_RADIUS;
   let preferFull = false;
   let destroyed = false;
 
-  const revokeHeld = (originKey) => {
-    const urls = held.get(originKey);
-    if (!urls) return;
-    if (urls.previewUrl) URL.revokeObjectURL(urls.previewUrl);
-    if (urls.fileUrl && urls.fileUrl !== urls.previewUrl) {
-      URL.revokeObjectURL(urls.fileUrl);
-    }
-    held.delete(originKey);
-  };
+  const memberPublicUrl = (member) => member.publicUrl || publicUrl;
 
-  const abortJob = (originKey) => {
-    queue.cancel(originKey);
-    const controller = aborts.get(originKey);
+  const abortJob = (jobKey) => {
+    queue.cancel(jobKey);
+    const controller = aborts.get(jobKey);
     if (controller) {
       controller.abort();
-      aborts.delete(originKey);
+      aborts.delete(jobKey);
     }
   };
+
+  const fullJobKey = (originKey) => `${originKey}::full`;
 
   const sync = () => {
     if (destroyed) return;
     const members = getMembers();
-    const keepIdx = new Set(windowIndices(focus, members.length, radius));
-    /** @type {Set<string>} */
-    const keepKeys = new Set();
-    keepIdx.forEach((index) => {
+    const previewIdx = new Set(windowIndices(focus, members.length, radius));
+    const fullIdx = preferFull
+      ? new Set(windowIndices(focus, members.length, ALBUM_WINDOW_RADIUS))
+      : new Set();
+    const fullKeys = new Set();
+    fullIdx.forEach((index) => {
       const member = members[index];
-      if (member) keepKeys.add(member.originKey);
+      if (member) fullKeys.add(fullJobKey(member.originKey));
     });
 
-    for (const originKey of [...held.keys()]) {
-      if (keepKeys.has(originKey)) continue;
-      abortJob(originKey);
-      if (retainLoaded) {
-        held.delete(originKey);
-        continue;
-      }
-      revokeHeld(originKey);
-      onCleared?.(originKey);
+    for (const jobKey of [...aborts.keys()]) {
+      const isFullJob = jobKey.endsWith('::full');
+      if (isFullJob && !fullKeys.has(jobKey)) abortJob(jobKey);
     }
 
-    for (const originKey of [...aborts.keys()]) {
-      if (keepKeys.has(originKey)) continue;
-      abortJob(originKey);
-    }
-
-    const ordered = [...keepIdx].sort(
+    const orderedPreview = [...previewIdx].sort(
       (a, b) => Math.abs(a - focus) - Math.abs(b - focus) || a - b
     );
 
-    for (const index of ordered) {
+    for (const index of orderedPreview) {
       const member = members[index];
       if (!member) continue;
       const originKey = member.originKey;
-      const cached = getCachedMemberBytes(publicUrl, member.path);
+      const sourceUrl = memberPublicUrl(member);
+      const cached = getCachedMemberBytes(sourceUrl, member.path);
       if (cached) {
-        const display = memberBytesForDisplay(cached, preferFull);
-        held.set(originKey, {
-          previewUrl: cached.previewUrl,
-          fileUrl: cached.fileUrl || cached.previewUrl
-        });
-        onResolved(originKey, display);
-        const needsFull =
-          preferFull &&
-          !cached.isVideo &&
-          (!cached.fileUrl || cached.fileUrl === cached.previewUrl);
-        if (!needsFull) continue;
-        abortJob(originKey);
+        held.add(originKey);
+        onResolved(originKey, memberBytesForDisplay(cached, preferFull));
       } else if (held.has(originKey) || queue.has(originKey)) {
         continue;
+      } else {
+        const priority = Math.abs(index - focus);
+        queue.enqueue(originKey, priority, async () => {
+          if (destroyed || signal.aborted) return;
+          const jobController = new AbortController();
+          aborts.set(originKey, jobController);
+          const onParentAbort = () => jobController.abort();
+          signal.addEventListener('abort', onParentAbort, { once: true });
+          try {
+            const bytes = await fetchAlbumMemberBytes(sourceUrl, member.path, {
+              signal: jobController.signal,
+              preferFull: false,
+              name: member.name,
+              isVideo: member.isVideo
+            });
+            if (destroyed || jobController.signal.aborted) return;
+            held.add(originKey);
+            onResolved(originKey, memberBytesForDisplay(bytes, false));
+          } catch (err) {
+            if (err?.name === 'AbortError' || destroyed) return;
+            onError?.(originKey, err);
+          } finally {
+            signal.removeEventListener('abort', onParentAbort);
+            aborts.delete(originKey);
+            if (!destroyed) sync();
+          }
+        });
       }
 
-      const priority = Math.abs(index - focus);
-
-      queue.enqueue(originKey, priority, async () => {
-        if (destroyed || signal.aborted) return;
-        const jobController = new AbortController();
-        aborts.set(originKey, jobController);
-        const onParentAbort = () => jobController.abort();
-        signal.addEventListener('abort', onParentAbort, { once: true });
-        try {
-          const bytes = await fetchAlbumMemberBytes(publicUrl, member.path, {
-            signal: jobController.signal,
-            preferFull,
-            name: member.name,
-            isVideo: member.isVideo
-          });
-          if (destroyed || jobController.signal.aborted) return;
-          revokeHeld(originKey);
-          held.set(originKey, {
-            previewUrl: bytes.previewUrl,
-            fileUrl: bytes.fileUrl || bytes.previewUrl
-          });
-          onResolved(originKey, memberBytesForDisplay(bytes, preferFull));
-        } catch (err) {
-          if (err?.name === 'AbortError' || destroyed) return;
-          onError?.(originKey, err);
-        } finally {
-          signal.removeEventListener('abort', onParentAbort);
-          aborts.delete(originKey);
-        }
-      });
+      const wantFull = fullKeys.has(fullJobKey(originKey));
+      const hasOriginal =
+        cached && cached.fileUrl && cached.fileUrl !== cached.previewUrl;
+      if (wantFull && cached && !hasOriginal && !cached.isVideo) {
+        const jobKey = fullJobKey(originKey);
+        if (queue.has(jobKey) || aborts.has(jobKey)) continue;
+        const priority = Math.abs(index - focus);
+        queue.enqueue(jobKey, priority, async () => {
+          if (destroyed || signal.aborted || !preferFull) return;
+          const jobController = new AbortController();
+          aborts.set(jobKey, jobController);
+          const onParentAbort = () => jobController.abort();
+          signal.addEventListener('abort', onParentAbort, { once: true });
+          try {
+            const bytes = await fetchAlbumMemberBytes(sourceUrl, member.path, {
+              signal: jobController.signal,
+              preferFull: true,
+              name: member.name,
+              isVideo: member.isVideo
+            });
+            if (destroyed || jobController.signal.aborted) return;
+            held.add(originKey);
+            onResolved(originKey, memberBytesForDisplay(bytes, true));
+          } catch (err) {
+            if (err?.name === 'AbortError' || destroyed) return;
+            onError?.(originKey, err);
+          } finally {
+            signal.removeEventListener('abort', onParentAbort);
+            aborts.delete(jobKey);
+          }
+        });
+      }
     }
   };
 
   return {
     /**
      * @param {number} nextFocus
-     * @param {{ radius?: number }} [options]
+     * @param {{ radius?: number, preferFull?: boolean, keepIndex?: boolean }} [options]
      */
     setFocus(nextFocus, options = {}) {
       if (destroyed) return;
-      focus = Math.max(0, nextFocus | 0);
-      if (typeof options.radius === 'number') {
-        radius = Math.max(0, options.radius);
-      } else if (radius < ALBUM_WINDOW_RADIUS && focus !== 0) {
-        radius = ALBUM_WINDOW_RADIUS;
+      if (!options.keepIndex) {
+        focus = Math.max(0, nextFocus | 0);
       }
-      if (options.preferFull === true) {
-        preferFull = true;
+      if (typeof options.radius === 'number') {
+        radius = options.radius < 0 ? ALBUM_PREVIEW_ALL_RADIUS : options.radius;
+      }
+      if (typeof options.preferFull === 'boolean') {
+        preferFull = options.preferFull;
       }
       sync();
     },
@@ -427,8 +440,8 @@ export function createAlbumWindowController({
     destroy() {
       destroyed = true;
       queue.destroy();
-      for (const originKey of [...aborts.keys()]) {
-        abortJob(originKey);
+      for (const jobKey of [...aborts.keys()]) {
+        abortJob(jobKey);
       }
       held.clear();
     }

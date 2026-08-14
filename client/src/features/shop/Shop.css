@@ -4,6 +4,7 @@
   overflow-y: auto;
   position: relative;
   overscroll-behavior-y: none;
+  touch-action: pan-y;
   background: #f8f9fa;
   box-sizing: border-box;
 }

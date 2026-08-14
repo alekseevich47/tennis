@@ -22,8 +22,10 @@
 
 .bottom-nav__pill {
   /* Только форма + тень. Без overflow/border-radius-обрезки здесь, иначе
-     тень (box-shadow) обрезается вместе со стеклом. */
+     тень (box-shadow) обрезается вместе со стеклом. overflow:visible —
+     чтобы кнопка «+» могла выступать над пилюлей. */
   position: relative;
+  overflow: visible;
   pointer-events: auto;
   display: flex;
   justify-content: space-around;
@@ -164,4 +166,184 @@
 
 .nav-item:active {
   opacity: 0.75;
+}
+
+.nav-item--add {
+  flex: 0 0 62px;
+  width: 62px;
+  height: 62px;
+  min-width: 62px;
+  min-height: 62px;
+  margin-top: -16px;
+  padding: 0;
+  gap: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  isolation: isolate;
+  color: #ffffff;
+  z-index: 3;
+  box-shadow:
+    0 8px 22px rgba(79, 70, 229, 0.38),
+    0 2px 8px rgba(0, 122, 255, 0.28);
+}
+
+.nav-item--add:focus-visible {
+  outline-offset: 2px;
+}
+
+.nav-item--add:active {
+  opacity: 1;
+  transform: scale(0.94);
+}
+
+.nav-item--add__stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.nav-item--add__wash {
+  position: absolute;
+  inset: -55%;
+  background: conic-gradient(
+    from 0deg,
+    #007aff,
+    #4f46e5,
+    #7c3aed,
+    #c084fc,
+    #818cf8,
+    #38bdf8,
+    #007aff
+  );
+  animation: nav-add-wash 22s linear infinite;
+  filter: saturate(1.15);
+}
+
+.nav-item--add__blob {
+  position: absolute;
+  border-radius: 50%;
+  mix-blend-mode: plus-lighter;
+  filter: blur(10px);
+  will-change: transform;
+}
+
+.nav-item--add__blob--a {
+  width: 78%;
+  height: 78%;
+  top: -18%;
+  left: -22%;
+  background: radial-gradient(circle, #5b8cff 0%, rgba(0, 122, 255, 0.15) 70%);
+  animation: nav-add-blob-a 16s ease-in-out infinite;
+}
+
+.nav-item--add__blob--b {
+  width: 86%;
+  height: 86%;
+  top: -8%;
+  right: -28%;
+  background: radial-gradient(circle, #a855f7 0%, rgba(124, 58, 237, 0.12) 72%);
+  animation: nav-add-blob-b 21s ease-in-out infinite;
+}
+
+.nav-item--add__blob--c {
+  width: 72%;
+  height: 72%;
+  bottom: -24%;
+  left: 8%;
+  background: radial-gradient(circle, #e0b3ff 0%, rgba(192, 132, 252, 0.18) 68%);
+  animation: nav-add-blob-c 18s ease-in-out infinite;
+}
+
+.nav-item--add__blob--d {
+  width: 64%;
+  height: 64%;
+  bottom: -6%;
+  right: -10%;
+  background: radial-gradient(circle, #38bdf8 0%, rgba(56, 189, 248, 0.1) 70%);
+  animation: nav-add-blob-d 13s ease-in-out infinite;
+}
+
+.nav-item--add__plus {
+  position: relative;
+  z-index: 1;
+  font-size: 34px;
+  font-weight: 300;
+  line-height: 1;
+  color: #ffffff;
+  text-shadow: 0 1px 6px rgba(40, 20, 90, 0.35);
+  pointer-events: none;
+}
+
+@keyframes nav-add-wash {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes nav-add-blob-a {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  35% {
+    transform: translate3d(28%, 18%, 0) scale(1.18);
+  }
+  70% {
+    transform: translate3d(8%, 34%, 0) scale(0.92);
+  }
+}
+
+@keyframes nav-add-blob-b {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1.05);
+  }
+  40% {
+    transform: translate3d(-32%, 22%, 0) scale(0.88);
+  }
+  75% {
+    transform: translate3d(-12%, -18%, 0) scale(1.22);
+  }
+}
+
+@keyframes nav-add-blob-c {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  30% {
+    transform: translate3d(22%, -26%, 0) scale(1.2);
+  }
+  65% {
+    transform: translate3d(-18%, -8%, 0) scale(0.9);
+  }
+}
+
+@keyframes nav-add-blob-d {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(0.96);
+  }
+  50% {
+    transform: translate3d(-24%, -28%, 0) scale(1.16);
+  }
+}
+
+@supports not (mix-blend-mode: plus-lighter) {
+  .nav-item--add__blob {
+    mix-blend-mode: screen;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-item--add__wash,
+  .nav-item--add__blob {
+    animation: none;
+  }
+
+  .nav-item--add:active {
+    transform: none;
+  }
 }

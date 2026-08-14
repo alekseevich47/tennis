@@ -6,7 +6,6 @@ import { incrementProductViews, restoreProduct, softDeleteProduct } from '../../
 import { useProductUpload } from '../../components/ProductUploadProvider';
 import EmptyState from '../../components/ui/EmptyState';
 import PullToRefresh from '../../components/ui/PullToRefresh';
-import FloatingAddButton from '../../components/ui/FloatingAddButton';
 import { ShopGridSkeleton } from '../../components/ui/Skeleton';
 import ProductCard from './ProductCard';
 import ProductForm from './ProductForm';
@@ -16,11 +15,9 @@ import SearchBar from './SearchBar';
 import FullscreenImageViewer from '../feed/FullscreenImageViewer';
 import { useSectionScroll } from '../../hooks/useSectionScroll';
 import { useOverlayClose } from '../../hooks/useOverlayClose';
+import { useRegisterAddAction } from '../../context/AddActionContext';
 import { error } from '../../lib/log';
 import './Shop.css';
-
-const SCROLL_TOP_THRESHOLD = 8;
-const SCROLL_DELTA_THRESHOLD = 4;
 
 /**
  * @param {{
@@ -45,17 +42,16 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
   const [deletedProductIds, setDeletedProductIds] = useState([]);
   const [fullscreenMedia, setFullscreenMedia] = useState(null);
   const [hiddenMediaKey, setHiddenMediaKey] = useState(null);
-  const [isButtonVisible, setIsButtonVisible] = useState(true);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const containerRef = useRef(null);
-  const lastScrollTopRef = useRef(0);
   const isSearchOpenRef = useRef(isSearchOpen);
   const searchQueryRef = useRef(searchQuery);
 
   useSectionScroll(containerRef);
   useOverlayClose(isSearchOpen, () => setIsSearchOpen(false), 'shop-search');
+  useRegisterAddAction(() => setShowAddModal(true), moderator);
 
   const handleRefresh = useCallback(async () => {
     await mutate();
@@ -97,41 +93,18 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
 
   useEffect(() => {
     const container = containerRef.current;
-    if (!moderator || !container) return undefined;
-
-    const syncVisibility = (scrollTop, delta) => {
-      if (scrollTop <= SCROLL_TOP_THRESHOLD) {
-        setIsButtonVisible(true);
-      } else if (delta < -SCROLL_DELTA_THRESHOLD) {
-        setIsButtonVisible(true);
-      } else if (delta > SCROLL_DELTA_THRESHOLD) {
-        setIsButtonVisible(false);
-      }
-    };
-
-    lastScrollTopRef.current = container.scrollTop;
-    syncVisibility(container.scrollTop, 0);
+    if (!container) return undefined;
 
     const handleScroll = () => {
-      const scrollTop = container.scrollTop;
-      const delta = scrollTop - lastScrollTopRef.current;
       if (isSearchOpenRef.current && !searchQueryRef.current.trim()) {
         setIsSearchOpen(false);
         setIsSearchFocused(false);
       }
-      syncVisibility(scrollTop, delta);
-      lastScrollTopRef.current = scrollTop;
     };
 
     container.addEventListener('scroll', handleScroll, { passive: true });
     return () => container.removeEventListener('scroll', handleScroll);
-  }, [moderator]);
-
-  const showAddButton =
-    isButtonVisible
-    && !isCategoryDropdownOpen
-    && !isSearchFocused
-    && !(isSearchOpen && searchQuery.trim());
+  }, []);
 
   const visibleProducts = useMemo(() => {
     if (!products) return [];
@@ -249,13 +222,6 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
           </div>
         )}
       >
-        {moderator && (
-          <FloatingAddButton
-            visible={showAddButton}
-            onClick={() => setShowAddModal(true)}
-          />
-        )}
-
         {isLoading ? (
           <div className="shop-skeleton-wrap">
             <ShopGridSkeleton />

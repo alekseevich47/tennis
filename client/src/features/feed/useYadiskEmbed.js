@@ -10,8 +10,7 @@ import {
 import { fetchYadiskObjectUrl, fetchYadiskPreview } from '../../services/yadisk';
 import { videoPreviewUrl } from '../../lib/media';
 import {
-  ALBUM_COVER_RADIUS,
-  ALBUM_WINDOW_RADIUS,
+  ALBUM_PREVIEW_ALL_RADIUS,
   createAlbumWindowController,
   registerAlbumLazyFocus,
   requestAlbumLazyFocus
@@ -215,13 +214,15 @@ export function useYadiskEmbed({
 
       const handler = (index, options) => {
         ctrl.setFocus(index, {
-          radius: typeof options?.radius === 'number' ? options.radius : ALBUM_WINDOW_RADIUS,
-          preferFull: options?.preferFull === true
+          radius:
+            typeof options?.radius === 'number' ? options.radius : ALBUM_PREVIEW_ALL_RADIUS,
+          preferFull: options?.preferFull === true,
+          keepIndex: options?.keepIndex === true
         });
       };
       albumControllersRef.current.set(publicUrl, ctrl);
       albumFocusUnsubsRef.current.set(publicUrl, registerAlbumLazyFocus(publicUrl, handler));
-      ctrl.setFocus(0, { radius: ALBUM_COVER_RADIUS });
+      ctrl.setFocus(0, { radius: ALBUM_PREVIEW_ALL_RADIUS });
     },
     [destroyAlbumController, objectKey, revokeObjectUrl]
   );

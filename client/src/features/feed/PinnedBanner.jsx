@@ -1,6 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { getMediaThumbUrl, isVideoMediaName, mediaNames } from '../../lib/media';
+import { normalizeExternalMedia } from '../../lib/yadisk';
+import { fetchYadiskObjectUrl, fetchYadiskPreview } from '../../services/yadisk';
+import { getYadiskAlbumCache } from './yadiskAlbumCache';
+import { getCachedMemberBytes, setCachedMemberBytes } from './yadiskMediaSessionCache';
 import PostContentHtml from './PostContentHtml';
 import { getFirstLine } from './postRichText';
 import './Feed.css';
@@ -8,11 +12,131 @@ import './Feed.css';
 const CROSSFADE_MS = 200;
 
 /**
+ * PB-thumb или первое фото Яндекс.Диска (файл / обложка альбома) в формате плашки.
+ * @param {{ media?: string | string[], external_media?: unknown, id?: string } | null | undefined} post
+ * @param {'posts' | 'tournament_posts'} collection
+ * @returns {string | null}
+ */
+function usePinnedThumbUrl(post, collection) {
+  const mediaName = mediaNames(post?.media).find((name) => !isVideoMediaName(name));
+  const pbUrl =
+    mediaName && post
+      ? getMediaThumbUrl(post, collection, mediaName, '400x0')
+      : null;
+  const [yadiskUrl, setYadiskUrl] = useState(/** @type {string | null} */ (null));
+  const postId = post?.id || '';
+  const externalKey = JSON.stringify(post?.external_media || []);
+
+  useEffect(() => {
+    if (pbUrl) {
+      setYadiskUrl(null);
+      return undefined;
+    }
+
+    const stored = normalizeExternalMedia(post?.external_media);
+    if (!stored.length) {
+      setYadiskUrl(null);
+      return undefined;
+    }
+
+    const ac = new AbortController();
+    let cancelled = false;
+
+    const resolveBlob = async (publicUrl, path, isVideo, name) => {
+      const cached = getCachedMemberBytes(publicUrl, path);
+      if (cached?.previewUrl) return cached.previewUrl;
+      const blobUrl = await fetchYadiskObjectUrl(publicUrl, 'preview', {
+        signal: ac.signal,
+        path
+      });
+      setCachedMemberBytes(publicUrl, path, {
+        previewUrl: blobUrl,
+        fileUrl: null,
+        isVideo: Boolean(isVideo),
+        name: name || 'media',
+        displayUrl: blobUrl
+      });
+      return blobUrl;
+    };
+
+    void (async () => {
+      for (const entry of stored) {
+        if (entry.type === 'album') {
+          const cachedAlbum = getYadiskAlbumCache(entry.publicUrl);
+          const cachedPhoto = cachedAlbum?.find(
+            (item) => !item.isVideo && (item.thumbUrl || item.previewUrl || item.url)
+          );
+          if (cachedPhoto) {
+            const url =
+              getCachedMemberBytes(cachedPhoto.publicUrl || entry.publicUrl, cachedPhoto.path)
+                ?.previewUrl ||
+              cachedPhoto.thumbUrl ||
+              cachedPhoto.previewUrl ||
+              cachedPhoto.url;
+            if (url) {
+              if (!cancelled) setYadiskUrl(url);
+              return;
+            }
+          }
+
+          try {
+            const album = await fetchYadiskPreview(entry.publicUrl, { signal: ac.signal });
+            if (cancelled) return;
+            const members = Array.isArray(album.items) ? album.items : [];
+            const cover =
+              album.cover && album.cover.mediaType !== 'video' ? album.cover : null;
+            const firstPhoto =
+              cover ||
+              members.find((member) => member.mediaType !== 'video') ||
+              null;
+            if (!firstPhoto) continue;
+            const url = await resolveBlob(
+              entry.publicUrl,
+              firstPhoto.path || null,
+              false,
+              firstPhoto.name || entry.name
+            );
+            if (!cancelled) setYadiskUrl(url);
+            return;
+          } catch {
+            continue;
+          }
+        }
+
+        if (entry.mediaType === 'video') continue;
+
+        try {
+          const url = await resolveBlob(
+            entry.publicUrl,
+            entry.path || null,
+            false,
+            entry.name
+          );
+          if (!cancelled) setYadiskUrl(url);
+          return;
+        } catch {
+          continue;
+        }
+      }
+
+      if (!cancelled) setYadiskUrl(null);
+    })();
+
+    return () => {
+      cancelled = true;
+      ac.abort();
+    };
+  }, [pbUrl, postId, externalKey, post?.external_media]);
+
+  return pbUrl || yadiskUrl;
+}
+
+/**
  * Sticky-плашка закреплённых публикаций (Лента / Турнир-Лента).
  * Показывает «следующий» закреп (куда ведёт клик); клик — фокус на него + сдвиг на следующий по кругу.
  *
  * @param {{
- *   pinnedPosts: Array<{ id: string, content?: string, text?: string, media?: string | string[] }>,
+ *   pinnedPosts: Array<{ id: string, content?: string, text?: string, media?: string | string[], external_media?: unknown }>,
  *   collection?: 'posts' | 'tournament_posts',
  *   activeIndex?: number,
  *   onAdvance?: () => void,
@@ -64,16 +188,12 @@ export default function PinnedBanner({
     return () => window.clearTimeout(t);
   }, [safeIndex, shownIndex, count]);
 
-  if (count === 0) return null;
-
-  const displayIndex = shownIndex < count ? shownIndex : safeIndex;
-  const post = pinnedPosts[displayIndex];
-  const mediaName = mediaNames(post?.media)[0];
-  const thumbUrl =
-    mediaName && !isVideoMediaName(mediaName)
-      ? getMediaThumbUrl(post, collection, mediaName, '400x0')
-      : null;
+  const displayIndex = count > 0 ? (shownIndex < count ? shownIndex : safeIndex) : 0;
+  const post = count > 0 ? pinnedPosts[displayIndex] : null;
+  const thumbUrl = usePinnedThumbUrl(post, collection);
   const firstLineHtml = getFirstLine(post?.content || post?.text || '');
+
+  if (count === 0 || !post) return null;
 
   const handleClick = () => {
     const current = pinnedPosts[safeIndex];

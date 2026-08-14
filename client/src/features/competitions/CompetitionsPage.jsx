@@ -12,7 +12,6 @@ import {
 import { flushPendingTournamentCommentDeletes } from '../../services/tournamentComments';
 import EmptyState from '../../components/ui/EmptyState';
 import PullToRefresh from '../../components/ui/PullToRefresh';
-import FloatingAddButton from '../../components/ui/FloatingAddButton';
 import { FeedListSkeleton } from '../../components/ui/Skeleton';
 import CreateTournamentPostModal from './CreateTournamentPostModal';
 import EditTournamentPostModal from './EditTournamentPostModal';
@@ -26,13 +25,18 @@ import ProfileViewModal from '../profile/ProfileViewModal';
 import ScrollToTopButton from '../../components/ui/ScrollToTopButton';
 import { useTournamentPostUpload } from '../../components/TournamentPostUploadProvider';
 import { useSectionScroll } from '../../hooks/useSectionScroll';
+import { useRegisterAddAction } from '../../context/AddActionContext';
 import { error } from '../../lib/log';
 import { parseDateQuery, isDateQueryParsed, matchesDateQuery } from '../../lib/dateSearch';
 import {
   subscribeYadiskAlbumCache,
   toFullscreenAlbumItems
 } from '../feed/yadiskAlbumCache';
-import { ALBUM_WINDOW_RADIUS, requestAlbumLazyFocus } from '../feed/yadiskAlbumLazy';
+import { ALBUM_PREVIEW_ALL_RADIUS, requestAlbumLazyFocus } from '../feed/yadiskAlbumLazy';
+import {
+  applyCachedBytesToViewerItems,
+  subscribeYadiskMediaCache
+} from '../feed/yadiskMediaSessionCache';
 import {
   sortPinnedByCreated,
   usePinnedBannerIndex
@@ -104,6 +108,10 @@ function CompetitionsPage({
   const { startUpload } = useTournamentPostUpload();
 
   useSectionScroll(containerRef, activeTab === 'feed');
+  useRegisterAddAction(
+    () => setShowCreatePost(true),
+    moderator && activeTab === 'feed'
+  );
 
   const handleFeedRefresh = useCallback(async () => {
     await mutateTournamentPosts();
@@ -257,7 +265,7 @@ function CompetitionsPage({
     setHiddenMediaKey(null);
     if (meta?.albumPublicUrl) {
       requestAlbumLazyFocus(meta.albumPublicUrl, index, {
-        radius: ALBUM_WINDOW_RADIUS,
+        radius: ALBUM_PREVIEW_ALL_RADIUS,
         preferFull: true
       });
     }
@@ -303,12 +311,24 @@ function CompetitionsPage({
     });
   }, [fullscreenMedia?.albumPublicUrl]);
 
+  useEffect(() => {
+    if (!fullscreenMedia) return undefined;
+    return subscribeYadiskMediaCache((publicUrl, path, bytes) => {
+      setFullscreenMedia((prev) => {
+        if (!prev) return prev;
+        const nextItems = applyCachedBytesToViewerItems(prev.items, publicUrl, path, bytes);
+        if (nextItems === prev.items) return prev;
+        return { ...prev, items: nextItems };
+      });
+    });
+  }, [Boolean(fullscreenMedia)]);
+
   const handleFullscreenAlbumIndex = useCallback(
     (index) => {
       const albumPublicUrl = fullscreenMedia?.albumPublicUrl;
       if (!albumPublicUrl) return;
       requestAlbumLazyFocus(albumPublicUrl, index, {
-        radius: ALBUM_WINDOW_RADIUS,
+        radius: ALBUM_PREVIEW_ALL_RADIUS,
         preferFull: true
       });
       setFullscreenMedia((prev) => (prev ? { ...prev, index } : prev));
@@ -487,14 +507,6 @@ function CompetitionsPage({
               ) : null
             }
           >
-            {moderator && (
-              <FloatingAddButton
-                variant="liquid"
-                visible={isChromeVisible}
-                onClick={() => setShowCreatePost(true)}
-              />
-            )}
-
             <div className="competitions-feed-list">
               {postsLoading && <FeedListSkeleton />}
 
