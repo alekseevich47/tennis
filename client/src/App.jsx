@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useMaxAuth } from './hooks/useMaxAuth';
 import { useMaxCloseGuard } from './hooks/useMaxCloseGuard';
 import { useSessionResetKey } from './hooks/useSessionResetKey';
@@ -341,11 +341,11 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
   }, [activeTab]);
 
   const headerTitle = TAB_TITLES[activeTab] || TAB_TITLES[0];
-  const contentClassName =
-    activeTab === 1
-      ? 'content-with-header content-with-header--contained'
-      : 'content-with-header';
-  const contentRef = useRef(/** @type {HTMLElement | null} */ (null));
+  const viewportRef = useRef(/** @type {HTMLElement | null} */ (null));
+  const trackRef = useRef(/** @type {HTMLElement | null} */ (null));
+  const [swipePeek, setSwipePeek] = useState(
+    /** @type {{ tab: number, direction: -1 | 1 } | null} */ (null)
+  );
   const sectionSwipeEnabled = Boolean(user?.onboarding_completed);
 
   useSectionSwipe({
@@ -353,8 +353,124 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
     activeTab,
     showAdmin: userIsModerator,
     onTabChange: handleTabChange,
-    containerRef: contentRef
+    viewportRef,
+    trackRef,
+    onPeekChange: setSwipePeek
   });
+
+  // При peek на «Запись» монтируем TrainingsPage сразу (без rAF-задержки).
+  useEffect(() => {
+    if (swipePeek?.tab === 1) setTrainingsReady(true);
+  }, [swipePeek]);
+
+  // Prev-peek: до paint выставить -width, чтобы был виден current, а не prev.
+  useLayoutEffect(() => {
+    const track = trackRef.current;
+    if (!track || swipePeek?.direction !== -1) return;
+    const width = window.innerWidth || document.documentElement.clientWidth || 360;
+    track.style.transition = 'none';
+    track.style.transform = `translate3d(${-width}px, 0, 0)`;
+  }, [swipePeek]);
+
+  const renderTabPage = (tab) => {
+    switch (tab) {
+      case 0:
+        return (
+          <FeedPage
+            user={user}
+            onDeletedIdsChange={setPendingDeletePostIds}
+            searchQuery={feedSearch.query}
+            searchOpen={feedSearch.open}
+            commentTargetToOpen={
+              notificationCommentTarget?.collection === 'comments'
+                ? notificationCommentTarget
+                : null
+            }
+            onCommentTargetOpened={() => setNotificationCommentTarget(null)}
+          />
+        );
+      case 1:
+        return (
+          <>
+            {trainingsReady ? (
+              <TrainingsPage
+                user={user}
+                onDeletedIdsChange={setPendingDeleteTrainingIds}
+                onFlushPendingDeletes={flushPendingDeletes}
+                trainingIdToOpen={notificationTrainingId}
+                onTrainingOpened={() => setNotificationTrainingId(null)}
+              />
+            ) : null}
+            <MembershipOverviewModal
+              key={sessionResetKey}
+              isOpen={membershipOpen}
+              onClose={() => setMembershipOpen(false)}
+              currentUser={user}
+            />
+          </>
+        );
+      case 2:
+        return (
+          <ProductUploadProvider>
+            <ShopPage
+              onDeletedIdsChange={setPendingDeleteProductIds}
+              productToOpen={favoriteProductToOpen}
+              onProductOpened={() => setFavoriteProductToOpen(null)}
+            />
+          </ProductUploadProvider>
+        );
+      case 3:
+        return (
+          <CompetitionsPage
+            user={user}
+            onTabChange={handleTabChange}
+            onSubTabChange={handleCompetitionsSubTabChange}
+            onDeletedIdsChange={setPendingDeleteTournamentPostIds}
+            searchQuery={competitionsSearch.query}
+            searchOpen={competitionsSearch.open}
+            commentTargetToOpen={
+              notificationCommentTarget?.collection === 'tournament_comments'
+                ? notificationCommentTarget
+                : null
+            }
+            onCommentTargetOpened={() => setNotificationCommentTarget(null)}
+          />
+        );
+      case GALLERY_TAB_INDEX:
+        return (
+          <GalleryPage
+            user={user}
+            searchQuery={gallerySearch.query}
+            commentTargetToOpen={
+              notificationCommentTarget?.collection === 'gallery_comments'
+                ? notificationCommentTarget
+                : null
+            }
+            onCommentTargetOpened={() => setNotificationCommentTarget(null)}
+          />
+        );
+      case PROFILE_TAB_INDEX:
+        return (
+          <ProfilePage
+            user={user}
+            onUpdate={handleUserUpdate}
+            onTabChange={handleTabChange}
+            openMembershipFromNotification={notificationMembershipOpen}
+            onMembershipOpened={() => setNotificationMembershipOpen(false)}
+          />
+        );
+      case ADMIN_TAB_INDEX:
+        return userIsModerator ? <AdminPanelPage /> : null;
+      default:
+        return null;
+    }
+  };
+
+  const panelClassForTab = (tab) =>
+    tab === 1 ? 'section-swipe-panel section-swipe-panel--contained' : 'section-swipe-panel';
+
+  const peekPrev = swipePeek?.direction === -1 ? swipePeek.tab : null;
+  const peekNext = swipePeek?.direction === 1 ? swipePeek.tab : null;
 
   const searchConfig =
     activeTab === 0
@@ -468,87 +584,30 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
         searchConfig={searchConfig}
       />
 
-      <main ref={contentRef} className={contentClassName}>
-        {activeTab === 0 && (
-          <FeedPage
-            user={user}
-            onDeletedIdsChange={setPendingDeletePostIds}
-            searchQuery={feedSearch.query}
-            searchOpen={feedSearch.open}
-            commentTargetToOpen={
-              notificationCommentTarget?.collection === 'comments'
-                ? notificationCommentTarget
-                : null
-            }
-            onCommentTargetOpened={() => setNotificationCommentTarget(null)}
-          />
-        )}
-        {activeTab === 1 && (
-          <>
-            {trainingsReady ? (
-              <TrainingsPage
-                user={user}
-                onDeletedIdsChange={setPendingDeleteTrainingIds}
-                onFlushPendingDeletes={flushPendingDeletes}
-                trainingIdToOpen={notificationTrainingId}
-                onTrainingOpened={() => setNotificationTrainingId(null)}
-              />
-            ) : null}
-            <MembershipOverviewModal
-              key={sessionResetKey}
-              isOpen={membershipOpen}
-              onClose={() => setMembershipOpen(false)}
-              currentUser={user}
-            />
-          </>
-        )}
-        {activeTab === 2 && (
-          <ProductUploadProvider>
-            <ShopPage
-              onDeletedIdsChange={setPendingDeleteProductIds}
-              productToOpen={favoriteProductToOpen}
-              onProductOpened={() => setFavoriteProductToOpen(null)}
-            />
-          </ProductUploadProvider>
-        )}
-        {activeTab === 3 && (
-          <CompetitionsPage
-            user={user}
-            onTabChange={handleTabChange}
-            onSubTabChange={handleCompetitionsSubTabChange}
-            onDeletedIdsChange={setPendingDeleteTournamentPostIds}
-            searchQuery={competitionsSearch.query}
-            searchOpen={competitionsSearch.open}
-            commentTargetToOpen={
-              notificationCommentTarget?.collection === 'tournament_comments'
-                ? notificationCommentTarget
-                : null
-            }
-            onCommentTargetOpened={() => setNotificationCommentTarget(null)}
-          />
-        )}
-        {activeTab === GALLERY_TAB_INDEX && (
-          <GalleryPage
-            user={user}
-            searchQuery={gallerySearch.query}
-            commentTargetToOpen={
-              notificationCommentTarget?.collection === 'gallery_comments'
-                ? notificationCommentTarget
-                : null
-            }
-            onCommentTargetOpened={() => setNotificationCommentTarget(null)}
-          />
-        )}
-        {activeTab === PROFILE_TAB_INDEX && (
-          <ProfilePage
-            user={user}
-            onUpdate={handleUserUpdate}
-            onTabChange={handleTabChange}
-            openMembershipFromNotification={notificationMembershipOpen}
-            onMembershipOpened={() => setNotificationMembershipOpen(false)}
-          />
-        )}
-        {activeTab === ADMIN_TAB_INDEX && userIsModerator && <AdminPanelPage />}
+      <main ref={viewportRef} className="section-swipe-viewport">
+        <div ref={trackRef} className="section-swipe-track">
+          {peekPrev != null && (
+            <div
+              key={`section-${peekPrev}`}
+              className={panelClassForTab(peekPrev)}
+              aria-hidden="true"
+            >
+              {renderTabPage(peekPrev)}
+            </div>
+          )}
+          <div key={`section-${activeTab}`} className={panelClassForTab(activeTab)}>
+            {renderTabPage(activeTab)}
+          </div>
+          {peekNext != null && (
+            <div
+              key={`section-${peekNext}`}
+              className={panelClassForTab(peekNext)}
+              aria-hidden="true"
+            >
+              {renderTabPage(peekNext)}
+            </div>
+          )}
+        </div>
       </main>
 
       <BottomNav
