@@ -2,11 +2,15 @@
 // Имя файла раньше users_audit / users_ban_auth / users_default_visible —
 // guard должен выполняться первым и иметь право throw до записи.
 // Логика в users_access_guard_lib.js — require внутри хендлеров (изоляция JSVM).
+// Superuser (Admin UI /_/) и moderator обходят field-level ACL;
+// обычный user — только исключения онбординга в assertPrivilegedUpdateAllowed.
 
 onRecordCreateRequest((e) => {
   var guard = require(__hooks + '/users_access_guard_lib.js');
-  var isModerator = !!(e.auth && e.auth.getString('role') === 'moderator');
-  if (!isModerator) {
+  var isPrivileged =
+    e.hasSuperuserAuth() ||
+    !!(e.auth && e.auth.getString('role') === 'moderator');
+  if (!isPrivileged) {
     guard.applyCreateDefaults(e.record);
   }
   e.next();
@@ -15,8 +19,10 @@ onRecordCreateRequest((e) => {
 onRecordUpdateRequest((e) => {
   try {
     var guard = require(__hooks + '/users_access_guard_lib.js');
-    var isModerator = !!(e.auth && e.auth.getString('role') === 'moderator');
-    if (!isModerator) {
+    var isPrivileged =
+      e.hasSuperuserAuth() ||
+      !!(e.auth && e.auth.getString('role') === 'moderator');
+    if (!isPrivileged) {
       var original = e.record.original();
       if (!original) {
         e.next();
