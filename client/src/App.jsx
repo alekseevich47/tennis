@@ -10,6 +10,8 @@ import AppHeader from './components/AppHeader';
 import BottomNav from './components/BottomNav';
 import Spinner from './components/ui/Spinner';
 import CloseAppConfirmSheet from './components/ui/CloseAppConfirmSheet';
+import ForceUpdateOverlay from './components/ForceUpdateOverlay';
+import { useAppVersionCheck } from './hooks/useAppVersionCheck';
 import { ProductUploadProvider } from './components/ProductUploadProvider';
 import { FavoritesProvider, useFavorites } from './context/FavoritesContext';
 import { AddActionProvider } from './context/AddActionContext';
@@ -628,7 +630,13 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
 }
 
 function App() {
-  return <AppInner />;
+  const needsUpdate = useAppVersionCheck();
+  return (
+    <>
+      <AppInner />
+      <ForceUpdateOverlay open={needsUpdate} />
+    </>
+  );
 }
 
 export default App;
