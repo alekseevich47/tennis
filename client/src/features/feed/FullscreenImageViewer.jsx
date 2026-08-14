@@ -36,13 +36,33 @@ function FullscreenSlideImage({
   const fullSrc = item.url || placeholder;
   const distinctFull = Boolean(fullSrc && placeholder && fullSrc !== placeholder);
   const [fullReady, setFullReady] = useState(false);
+  const [previewRetained, setPreviewRetained] = useState(Boolean(placeholder));
 
   useEffect(() => {
     setFullReady(false);
-  }, [fullSrc]);
+    setPreviewRetained(Boolean(placeholder));
+  }, [fullSrc, placeholder]);
+
+  useEffect(() => {
+    if (!fullReady || !distinctFull) return undefined;
+    // Превью держим под оригиналом до конца fade-in — без «провала» в чёрный.
+    const id = window.setTimeout(() => setPreviewRetained(false), 220);
+    return () => window.clearTimeout(id);
+  }, [distinctFull, fullReady]);
+
+  const markFullReady = useCallback((img) => {
+    if (!img || fullReady) return;
+    const finish = () => setFullReady(true);
+    if (typeof img.decode === 'function') {
+      img.decode().then(finish).catch(finish);
+      return;
+    }
+    finish();
+  }, [fullReady]);
 
   const pending = Boolean(item.isLoading) && !placeholder && !fullSrc;
-  const showSpinner = pending || (distinctFull && !fullReady) || (!fullSrc && !placeholder);
+  const upgrading = distinctFull && !fullReady;
+  const showSpinner = pending || upgrading || (!fullSrc && !placeholder);
 
   if (pending && !placeholder) {
     return (
@@ -54,16 +74,12 @@ function FullscreenSlideImage({
 
   return (
     <span className="fullscreen-image-stack">
-      {placeholder ? (
+      {placeholder && previewRetained ? (
         <img
           src={placeholder}
           alt=""
           aria-hidden="true"
-          className={clsx(
-            'fullscreen-target-img',
-            'fullscreen-target-img--preview',
-            (!distinctFull || !fullReady) && 'is-visible'
-          )}
+          className="fullscreen-target-img fullscreen-target-img--preview is-visible"
           width="1200"
           height="900"
           style={style}
@@ -80,10 +96,10 @@ function FullscreenSlideImage({
           )}
           width="1200"
           height="900"
-          onLoad={() => setFullReady(true)}
+          onLoad={(event) => markFullReady(event.currentTarget)}
           ref={(el) => {
             if (isActiveSlide) mediaRef.current = el;
-            if (el?.complete && el.naturalWidth > 0) setFullReady(true);
+            if (el?.complete && el.naturalWidth > 0) markFullReady(el);
           }}
           style={style}
         />

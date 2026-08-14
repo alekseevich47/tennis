@@ -210,6 +210,7 @@ function PostMedia({
         variant === 'detail' && 'telegram-post-media-grid--detail',
         className
       )}
+      data-section-swipe-ignore={isAlbum ? 'true' : undefined}
     >
       {items.map((item, index) => {
         const alt = `Медиа ${index + 1} к посту от ${post.created}`;
