@@ -1867,11 +1867,14 @@ button.post-card-like:hover:not(:disabled) {
   margin: auto;
   opacity: 0;
   z-index: 1;
-  transition: opacity 0.2s ease;
 }
 
 .fullscreen-image-stack .fullscreen-target-img--full.is-visible {
   opacity: 1;
+}
+
+.fullscreen-image-stack .fullscreen-target-img--full.is-visible.is-fading {
+  transition: opacity 0.2s ease;
 }
 
 .fullscreen-media-upgrade-spinner {
