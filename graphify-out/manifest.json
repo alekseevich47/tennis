@@ -375,8 +375,8 @@
     "semantic_hash": "b34240695cc8997516c3bf980f1c974b"
   },
   "client/src/features/rating/PlayerRow.jsx": {
-    "mtime": 1786729556.459004,
-    "ast_hash": "9da48b93caf65683c73bfc27a6ace662",
+    "mtime": 1786729967.884514,
+    "ast_hash": "0e9278720e91631c612cc958e9f992f6",
     "semantic_hash": ""
   },
   "client/src/features/rating/RatingPage.jsx": {
