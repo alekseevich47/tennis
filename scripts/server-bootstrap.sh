@@ -141,7 +141,7 @@ req = urllib.request.Request(
     "http://127.0.0.1:8090/api/collections/import",
     data=body,
     headers={"Authorization": token, "Content-Type": "application/json"},
-    method="POST",
+    method="PUT",
 )
 try:
     with urllib.request.urlopen(req, timeout=120) as res:
