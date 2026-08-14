@@ -35,6 +35,7 @@ import MembershipIcon from '../../components/ui/MembershipIcon';
 import MembershipModal from './MembershipModal';
 import ProfileSingleDateField from './ProfileSingleDateField';
 import ProfileTrainingsSearch, { filterProfileTrainings } from './ProfileTrainingsSearch';
+import { useKeepForModalClose } from '../../hooks/useKeepForModalClose';
 import './Profile.css';
 
 const DEFAULT_HAND = 'Правая';
@@ -105,7 +106,8 @@ function isModerator(user) {
  *   onMutated?: (user: any) => void
  * }} props
  */
-function ProfileViewModal({ isOpen, onClose, targetUser, currentUser, onTabChange, onMutated }) {
+function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, currentUser, onTabChange, onMutated }) {
+  const targetUser = useKeepForModalClose(isOpen, targetUserProp);
   const { alert, confirm } = useAlertDialog();
   const { data: players } = usePlayers();
   const avatarInputRef = useRef(null);

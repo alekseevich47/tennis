@@ -2,6 +2,7 @@
 import { PB_URL } from '../config';
 import pb from './pb';
 import { error } from '../lib/log';
+import { blobFromResponse } from '../lib/fetchBlobProgress';
 
 /**
  * @typedef {{
@@ -99,40 +100,6 @@ export async function fetchYadiskPreview(url, { signal, path } = {}) {
       previewInflight.delete(key);
     }
   }
-}
-
-/**
- * @param {Response} res
- * @param {(percent: number) => void} [onProgress]
- * @returns {Promise<Blob>}
- */
-async function blobFromResponse(res, onProgress) {
-  if (!onProgress || !res.body) {
-    onProgress?.(0);
-    const blob = await res.blob();
-    onProgress?.(100);
-    return blob;
-  }
-
-  const total = Number(res.headers.get('content-length')) || 0;
-  const reader = res.body.getReader();
-  /** @type {Uint8Array[]} */
-  const chunks = [];
-  let received = 0;
-  onProgress(0);
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    chunks.push(value);
-    received += value.byteLength;
-    if (total > 0) {
-      onProgress(Math.min(99, Math.round((received / total) * 100)));
-    }
-  }
-
-  onProgress(100);
-  return new Blob(chunks, { type: res.headers.get('content-type') || '' });
 }
 
 /**
