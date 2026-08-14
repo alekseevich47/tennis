@@ -10,8 +10,8 @@
     "semantic_hash": "12e2dda29765e3ea83cc6c1501903fe8"
   },
   "client/src/App.jsx": {
-    "mtime": 1786721269.5526345,
-    "ast_hash": "c66a07a1f4d5a2e42055e0599320cecc",
+    "mtime": 1786721879.7056062,
+    "ast_hash": "1a416b44c1b0e0517783120a42b700f1",
     "semantic_hash": ""
   },
   "client/src/components/AchievementsBlock.jsx": {
@@ -1340,8 +1340,8 @@
     "semantic_hash": ""
   },
   "client/src/hooks/useSectionSwipe.js": {
-    "mtime": 1786721425.580848,
-    "ast_hash": "cd5aac42c62f1c45509b01ab70e42b57",
+    "mtime": 1786721872.959712,
+    "ast_hash": "442ba57986550d330efac852ac8fb855",
     "semantic_hash": ""
   }
 }
