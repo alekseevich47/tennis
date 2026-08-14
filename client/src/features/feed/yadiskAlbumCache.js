@@ -63,14 +63,21 @@ export function subscribeYadiskAlbumCache(fn) {
 export function toFullscreenAlbumItems(items, originPrefix) {
   return items
     .filter((entry) => entry.url || entry.thumbUrl || entry.previewUrl || entry.isLoading)
-    .map((entry, index) => ({
-      filename: entry.filename || `media-${index + 1}`,
-      url: entry.url || entry.thumbUrl || entry.previewUrl || '',
-      thumbUrl: entry.thumbUrl || entry.url || entry.previewUrl || '',
-      isVideo: Boolean(entry.isVideo),
-      originKey: originPrefix
-        ? `${originPrefix}-${entry.originKey || index}`
-        : entry.originKey || `album-${index}`,
-      isLoading: Boolean(entry.isLoading) && !entry.url && !entry.thumbUrl && !entry.previewUrl
-    }));
+    .map((entry, index) => {
+      const preview = entry.previewUrl || entry.thumbUrl || '';
+      const full = entry.url || preview;
+      return {
+        filename: entry.filename || `media-${index + 1}`,
+        url: full,
+        thumbUrl: preview || full,
+        previewUrl: preview || full,
+        isVideo: Boolean(entry.isVideo),
+        originKey: originPrefix
+          ? `${originPrefix}-${entry.originKey || index}`
+          : entry.originKey || `album-${index}`,
+        isLoading: Boolean(entry.isLoading) && !full && !preview,
+        publicUrl: entry.publicUrl || '',
+        path: entry.path || null
+      };
+    });
 }

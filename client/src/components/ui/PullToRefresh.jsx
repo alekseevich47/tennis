@@ -1,5 +1,5 @@
 // @ts-check
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import { hasOpenOverlay } from '../../lib/overlayStack';
 import './PullToRefresh.css';
@@ -9,24 +9,15 @@ const PULL_THRESHOLD = 72;
 const PULL_MAX = 120;
 const REFRESH_HOLD = 56;
 const SPRING_MS = 280;
-
-/**
- * @typedef {{ offset: number, refreshing: boolean, springing: boolean }} PullToRefreshState
- */
-
-/** @type {PullToRefreshState} */
-const DEFAULT_PULL_STATE = { offset: 0, refreshing: false, springing: false };
-
-const PullToRefreshStateContext = createContext(DEFAULT_PULL_STATE);
-
-/** @returns {PullToRefreshState} */
-export function usePullToRefreshState() {
-  return useContext(PullToRefreshStateContext);
-}
+const MIN_REFRESH_MS = 420;
+const SPRING_EASING = 'cubic-bezier(0.2, 0.8, 0.2, 1)';
 
 /**
  * iOS-style pull-to-refresh: `header` остаётся на месте, вниз уезжает только
  * `children`; спиннер проявляется в слоте между ними.
+ *
+ * Offset пишется в DOM напрямую (без setState на каждый touchmove), чтобы
+ * лента не ререндерилась на каждый пиксель жеста.
  *
  * Вешать внутрь скролл-контейнера; `scrollRef` — сам контейнер.
  *
@@ -47,12 +38,12 @@ export default function PullToRefresh({
   children,
   className
 }) {
-  const [offset, setOffset] = useState(0);
-  const [refreshing, setRefreshing] = useState(false);
-  const [springing, setSpringing] = useState(false);
   const offsetRef = useRef(0);
   const refreshingRef = useRef(false);
   const springTimerRef = useRef(/** @type {number | null} */ (null));
+  const slotRef = useRef(/** @type {HTMLDivElement | null} */ (null));
+  const indicatorRef = useRef(/** @type {HTMLDivElement | null} */ (null));
+  const spinnerRef = useRef(/** @type {HTMLSpanElement | null} */ (null));
   const gestureRef = useRef(/** @type {null | {
     startY: number,
     startX: number,
@@ -63,37 +54,63 @@ export default function PullToRefresh({
   const onRefreshRef = useRef(onRefresh);
   onRefreshRef.current = onRefresh;
 
-  const setPull = useCallback((value, withSpring = false) => {
+  const applyVisual = useCallback((value, { spring = false, spinning = false } = {}) => {
     offsetRef.current = value;
-    setSpringing(withSpring);
-    setOffset(value);
+    const slot = slotRef.current;
+    const indicator = indicatorRef.current;
+    const spinner = spinnerRef.current;
+    if (!slot || !indicator || !spinner) return;
+
+    slot.style.height = `${value}px`;
+    slot.style.transition = spring ? `height ${SPRING_MS}ms ${SPRING_EASING}` : 'none';
+
+    const progress = Math.min(1, value / (PULL_THRESHOLD * 0.55));
+    const show = value > 4 || spinning;
+    indicator.style.opacity = show ? String(Math.min(1, 0.2 + progress * 0.8)) : '0';
+    indicator.style.transition = spring
+      ? `opacity ${SPRING_MS}ms ease`
+      : 'opacity 0.15s ease';
+
+    if (spinning) {
+      indicator.classList.add('pull-to-refresh__indicator--spinning');
+      spinner.style.transform = '';
+      indicator.setAttribute('aria-label', 'Обновление');
+    } else {
+      indicator.classList.remove('pull-to-refresh__indicator--spinning');
+      spinner.style.transform = `rotate(${progress * 320}deg)`;
+      indicator.removeAttribute('aria-label');
+    }
   }, []);
 
   const springTo = useCallback(
-    (value) => {
-      setPull(value, true);
+    (value, { spinning = false } = {}) => {
+      applyVisual(value, { spring: true, spinning });
       if (springTimerRef.current) window.clearTimeout(springTimerRef.current);
       springTimerRef.current = window.setTimeout(() => {
         springTimerRef.current = null;
-        setSpringing(false);
       }, SPRING_MS);
     },
-    [setPull]
+    [applyVisual]
   );
 
   const runRefresh = useCallback(async () => {
     if (refreshingRef.current) return;
     refreshingRef.current = true;
-    setRefreshing(true);
-    springTo(REFRESH_HOLD);
+    springTo(REFRESH_HOLD, { spinning: true });
+    const startedAt = Date.now();
     try {
       await onRefreshRef.current?.();
     } catch {
       // ignore
     } finally {
+      const elapsed = Date.now() - startedAt;
+      if (elapsed < MIN_REFRESH_MS) {
+        await new Promise((resolve) => {
+          window.setTimeout(resolve, MIN_REFRESH_MS - elapsed);
+        });
+      }
       refreshingRef.current = false;
-      setRefreshing(false);
-      springTo(0);
+      springTo(0, { spinning: false });
     }
   }, [springTo]);
 
@@ -131,7 +148,7 @@ export default function PullToRefresh({
       if (!gesture || !touch || refreshingRef.current) return;
       if (hasOpenOverlay()) {
         gesture.blocked = true;
-        if (offsetRef.current > 0) setPull(0);
+        if (offsetRef.current > 0) applyVisual(0);
         return;
       }
       if (gesture.blocked || gesture.horizontal) return;
@@ -144,24 +161,22 @@ export default function PullToRefresh({
           gesture.horizontal = true;
           return;
         }
+        // Перехватить native overscroll до deadzone, иначе webview съедает жест.
+        if (deltaY > 0 && el.scrollTop <= 1 && event.cancelable) {
+          event.preventDefault();
+        }
         if (deltaY < PULL_DEADZONE) return;
-        if (el.scrollTop > 1) {
+        if (el.scrollTop > 1 && offsetRef.current <= 0) {
           gesture.blocked = true;
           return;
         }
         gesture.active = true;
       }
 
-      if (el.scrollTop > 1) {
-        gesture.blocked = true;
-        setPull(0);
-        return;
-      }
-
       const raw = Math.max(0, deltaY - PULL_DEADZONE);
       const next =
         raw <= PULL_MAX ? raw * 0.55 : PULL_MAX * 0.55 + (raw - PULL_MAX) * 0.12;
-      setPull(next, false);
+      applyVisual(next, { spring: false, spinning: false });
       if (event.cancelable) event.preventDefault();
     };
 
@@ -169,14 +184,16 @@ export default function PullToRefresh({
       const gesture = gestureRef.current;
       gestureRef.current = null;
       if (!gesture || gesture.blocked || gesture.horizontal || !gesture.active) {
-        if (!refreshingRef.current && offsetRef.current > 0) springTo(0);
+        if (!refreshingRef.current && offsetRef.current > 0) {
+          springTo(0, { spinning: false });
+        }
         return;
       }
       if (offsetRef.current >= PULL_THRESHOLD * 0.55) {
         runRefresh();
         return;
       }
-      springTo(0);
+      springTo(0, { spinning: false });
     };
 
     el.addEventListener('touchstart', handleStart, { passive: true });
@@ -190,49 +207,30 @@ export default function PullToRefresh({
       el.removeEventListener('touchend', handleEnd);
       el.removeEventListener('touchcancel', handleEnd);
     };
-  }, [enabled, scrollRef, runRefresh, setPull, springTo]);
-
-  const progress = Math.min(1, offset / (PULL_THRESHOLD * 0.55));
-  const showSpinner = offset > 4 || refreshing;
-  const rotation = refreshing ? undefined : progress * 320;
-
-  const pullState = useMemo(
-    () => ({ offset, refreshing, springing }),
-    [offset, refreshing, springing]
-  );
+  }, [enabled, scrollRef, runRefresh, applyVisual, springTo]);
 
   return (
-    <PullToRefreshStateContext.Provider value={pullState}>
-      <div className={clsx('pull-to-refresh', className)}>
-        {header != null ? (
-          <div className="pull-to-refresh__header">{header}</div>
-        ) : null}
+    <div className={clsx('pull-to-refresh', className)}>
+      {header != null ? (
+        <div className="pull-to-refresh__header">{header}</div>
+      ) : null}
+      <div
+        ref={slotRef}
+        className="pull-to-refresh__slot"
+        style={{ height: 0 }}
+        aria-hidden="true"
+      >
         <div
-          className={clsx(
-            'pull-to-refresh__slot',
-            springing && 'pull-to-refresh__slot--spring'
-          )}
-          style={{ height: offset }}
-          aria-hidden={!showSpinner}
+          ref={indicatorRef}
+          className="pull-to-refresh__indicator"
+          style={{ opacity: 0 }}
+          role="status"
+          aria-live="polite"
         >
-          <div
-            className={clsx(
-              'pull-to-refresh__indicator',
-              refreshing && 'pull-to-refresh__indicator--spinning'
-            )}
-            style={{ opacity: showSpinner ? Math.min(1, 0.2 + progress * 0.8) : 0 }}
-            role="status"
-            aria-live="polite"
-            aria-label={refreshing ? 'Обновление' : undefined}
-          >
-            <span
-              className="pull-to-refresh__spinner"
-              style={rotation != null ? { transform: `rotate(${rotation}deg)` } : undefined}
-            />
-          </div>
+          <span ref={spinnerRef} className="pull-to-refresh__spinner" />
         </div>
-        <div className="pull-to-refresh__content">{children}</div>
       </div>
-    </PullToRefreshStateContext.Provider>
+      <div className="pull-to-refresh__content">{children}</div>
+    </div>
   );
 }

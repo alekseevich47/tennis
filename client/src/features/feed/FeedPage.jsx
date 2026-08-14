@@ -5,7 +5,6 @@ import { isModerator } from '../../services/auth';
 import { usePostUpload } from '../../components/PostUploadProvider';
 import EmptyState from '../../components/ui/EmptyState';
 import PullToRefresh from '../../components/ui/PullToRefresh';
-import FloatingAddButton from '../../components/ui/FloatingAddButton';
 import { FeedListSkeleton } from '../../components/ui/Skeleton';
 import PostCard from './PostCard';
 import PinnedBanner from './PinnedBanner';
@@ -17,15 +16,20 @@ import FullscreenImageViewer from './FullscreenImageViewer';
 import ProfileViewModal from '../profile/ProfileViewModal';
 import ScrollToTopButton from '../../components/ui/ScrollToTopButton';
 import { useSectionScroll } from '../../hooks/useSectionScroll';
+import { useRegisterAddAction } from '../../context/AddActionContext';
 import { error } from '../../lib/log';
 import { parseDateQuery, isDateQueryParsed, matchesDateQuery } from '../../lib/dateSearch';
 import { sortPinnedByCreated, usePinnedBannerIndex } from './usePinnedBannerIndex';
 import { subscribeYadiskAlbumCache, toFullscreenAlbumItems } from './yadiskAlbumCache';
-import { ALBUM_WINDOW_RADIUS, requestAlbumLazyFocus } from './yadiskAlbumLazy';
+import {
+  ALBUM_PREVIEW_ALL_RADIUS,
+  requestAlbumLazyFocus
+} from './yadiskAlbumLazy';
+import {
+  applyCachedBytesToViewerItems,
+  subscribeYadiskMediaCache
+} from './yadiskMediaSessionCache';
 import './Feed.css';
-
-const SCROLL_TOP_THRESHOLD = 8;
-const SCROLL_DELTA_THRESHOLD = 4;
 
 /**
  * @param {{
@@ -57,17 +61,16 @@ function FeedPage({
   const [hiddenMediaKey, setHiddenMediaKey] = useState(null);
   const [deletedPostIds, setDeletedPostIds] = useState([]);
   const [viewingPlayer, setViewingPlayer] = useState(null);
-  const [isButtonVisible, setIsButtonVisible] = useState(true);
   const [contextMenuState, setContextMenuState] = useState(
     /** @type {{ postId: string, anchorPoint: { x: number, y: number } } | null} */ (null)
   );
   const { startUpload } = usePostUpload();
 
   const containerRef = useRef(null);
-  const lastScrollTopRef = useRef(0);
   const cardRefs = useRef(/** @type {Map<string, HTMLElement>} */ (new Map()));
 
   useSectionScroll(containerRef);
+  useRegisterAddAction(() => setShowAddModal(true), userIsModerator);
 
   const handleRefresh = useCallback(async () => {
     await mutate();
@@ -76,34 +79,6 @@ function FeedPage({
   useEffect(() => {
     onDeletedIdsChange?.(deletedPostIds);
   }, [deletedPostIds, onDeletedIdsChange]);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!userIsModerator || !container) return undefined;
-
-    const syncVisibility = (scrollTop, delta) => {
-      if (scrollTop <= SCROLL_TOP_THRESHOLD) {
-        setIsButtonVisible(true);
-      } else if (delta < -SCROLL_DELTA_THRESHOLD) {
-        setIsButtonVisible(true);
-      } else if (delta > SCROLL_DELTA_THRESHOLD) {
-        setIsButtonVisible(false);
-      }
-    };
-
-    lastScrollTopRef.current = container.scrollTop;
-    syncVisibility(container.scrollTop, 0);
-
-    const handleScroll = () => {
-      const scrollTop = container.scrollTop;
-      const delta = scrollTop - lastScrollTopRef.current;
-      syncVisibility(scrollTop, delta);
-      lastScrollTopRef.current = scrollTop;
-    };
-
-    container.addEventListener('scroll', handleScroll, { passive: true });
-    return () => container.removeEventListener('scroll', handleScroll);
-  }, [userIsModerator]);
 
   const visiblePosts = useMemo(() => {
     if (!posts) return [];
@@ -285,7 +260,7 @@ function FeedPage({
     setHiddenMediaKey(null);
     if (meta?.albumPublicUrl) {
       requestAlbumLazyFocus(meta.albumPublicUrl, index, {
-        radius: ALBUM_WINDOW_RADIUS,
+        radius: ALBUM_PREVIEW_ALL_RADIUS,
         preferFull: true
       });
     }
@@ -331,12 +306,24 @@ function FeedPage({
     });
   }, [fullscreenMedia?.albumPublicUrl]);
 
+  useEffect(() => {
+    if (!fullscreenMedia) return undefined;
+    return subscribeYadiskMediaCache((publicUrl, path, bytes) => {
+      setFullscreenMedia((prev) => {
+        if (!prev) return prev;
+        const nextItems = applyCachedBytesToViewerItems(prev.items, publicUrl, path, bytes);
+        if (nextItems === prev.items) return prev;
+        return { ...prev, items: nextItems };
+      });
+    });
+  }, [Boolean(fullscreenMedia)]);
+
   const handleFullscreenAlbumIndex = useCallback(
     (index) => {
       const albumPublicUrl = fullscreenMedia?.albumPublicUrl;
       if (!albumPublicUrl) return;
       requestAlbumLazyFocus(albumPublicUrl, index, {
-        radius: ALBUM_WINDOW_RADIUS,
+        radius: ALBUM_PREVIEW_ALL_RADIUS,
         preferFull: true
       });
       setFullscreenMedia((prev) => (prev ? { ...prev, index } : prev));
@@ -373,13 +360,6 @@ function FeedPage({
           ) : null
         }
       >
-        {userIsModerator && (
-          <FloatingAddButton
-            visible={isButtonVisible}
-            onClick={() => setShowAddModal(true)}
-          />
-        )}
-
         <div className="feed-list">
           {isLoading && <FeedListSkeleton />}
 

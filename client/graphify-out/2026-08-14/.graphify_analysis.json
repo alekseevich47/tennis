@@ -791,6 +791,12 @@
       "src_lib_gestures_swipe_close_threshold"
     ],
     "12": [
+      "src_components_ui_skeleton",
+      "src_components_ui_skeleton_feedlistskeleton",
+      "src_components_ui_skeleton_ratinglistskeleton",
+      "src_components_ui_skeleton_shopgridskeleton",
+      "src_components_ui_skeleton_skeletonbone",
+      "src_components_ui_skeleton_traininglistskeleton",
       "src_features_admin_adminresultalert",
       "src_features_admin_adminresultalert_buildsendresultalert",
       "src_features_admin_adminresultalert_formatadminsaveerror",
@@ -802,6 +808,30 @@
       "src_features_admin_notificationsendmodal_defaultdatetimelocal",
       "src_features_admin_notificationsendmodal_getaudiencelabel",
       "src_features_admin_notificationsendmodal_notificationsendmodal",
+      "src_features_admin_usermultiselect",
+      "src_features_admin_usermultiselect_getcollapsedlabel",
+      "src_features_admin_usermultiselect_isuserchecked",
+      "src_features_admin_usermultiselect_usermultiselect",
+      "src_features_rating_playerform",
+      "src_features_rating_playerform_initial",
+      "src_features_rating_playerform_playerform",
+      "src_features_rating_playerrow",
+      "src_features_rating_playerrow_playerrow",
+      "src_features_rating_playerrow_stopsignicon",
+      "src_features_rating_ratingpage",
+      "src_features_rating_ratingpage_ratingpage",
+      "src_features_trainings_components_membershipoverviewmodal",
+      "src_features_trainings_components_membershipoverviewmodal_calendaricon",
+      "src_features_trainings_components_membershipoverviewmodal_formatdaterangelabel",
+      "src_features_trainings_components_membershipoverviewmodal_membershipoverviewmodal",
+      "src_features_trainings_components_membershipoverviewmodal_trainingcountsasusedsession",
+      "src_hooks_useplayers",
+      "src_hooks_useplayers_useplayers",
+      "src_lib_rating",
+      "src_lib_rating_buildplayerranks",
+      "src_lib_rating_getplayerratingrank",
+      "src_lib_rating_getratingpoints",
+      "src_lib_rating_isratingvisible",
       "src_services_admin",
       "src_services_admin_buildbroadcastrecordpayload",
       "src_services_admin_cancelscheduledbroadcast",
@@ -814,41 +844,13 @@
       "src_services_admin_listschedulednotifications",
       "src_services_admin_todatetimelocalvalue",
       "src_services_admin_updatescheduledbroadcast",
-      "src_services_admin_updateschedulednotification"
-    ],
-    "13": [
-      "src_components_ui_emptystate",
-      "src_components_ui_emptystate_emptystate",
-      "src_components_ui_skeleton",
-      "src_components_ui_skeleton_feedlistskeleton",
-      "src_components_ui_skeleton_ratinglistskeleton",
-      "src_components_ui_skeleton_shopgridskeleton",
-      "src_components_ui_skeleton_skeletonbone",
-      "src_components_ui_skeleton_traininglistskeleton",
-      "src_features_rating_playerform",
-      "src_features_rating_playerform_initial",
-      "src_features_rating_playerform_playerform",
-      "src_features_rating_playerrow",
-      "src_features_rating_playerrow_playerrow",
-      "src_features_rating_playerrow_stopsignicon",
-      "src_features_rating_ratingpage",
-      "src_features_rating_ratingpage_ratingpage",
-      "src_lib_rating",
-      "src_lib_rating_buildplayerranks",
-      "src_lib_rating_getplayerratingrank",
-      "src_lib_rating_getratingpoints",
-      "src_lib_rating_isratingvisible",
+      "src_services_admin_updateschedulednotification",
       "src_services_catalog_buildmanualplayerpayload",
-      "src_services_catalog_createplayer"
+      "src_services_catalog_createplayer",
+      "src_services_catalog_listplayers"
     ],
     "14": [
-      "src_components_tournamentpostuploadprovider",
-      "src_components_tournamentpostuploadprovider_tournamentpostuploadcontext",
-      "src_components_tournamentpostuploadprovider_tournamentpostuploadprovider",
-      "src_components_tournamentpostuploadprovider_usetournamentpostupload",
-      "src_features_competitions_competitionspage",
       "src_features_competitions_competitionspage_competitionspage",
-      "src_features_competitions_competitionspage_tabs",
       "src_hooks_usetournamentposts",
       "src_hooks_usetournamentposts_usetournamentposts",
       "src_services_tournamentposts",
@@ -867,8 +869,6 @@
     ],
     "15": [
       "src_components_postuploadprovider_usepostupload",
-      "src_components_ui_scrolltotopbutton",
-      "src_components_ui_scrolltotopbutton_scrolltotopbutton",
       "src_features_feed_feedpage",
       "src_features_feed_feedpage_feedpage",
       "src_features_feed_postcard_postcardlike",
@@ -927,25 +927,15 @@
       "src_lib_sectionscroll_scrollsectiontotop",
       "src_lib_sectionscroll_setsectionscrollelement"
     ],
-    "18": [
-      "src_features_admin_usermultiselect",
-      "src_features_admin_usermultiselect_getcollapsedlabel",
-      "src_features_admin_usermultiselect_isuserchecked",
-      "src_features_admin_usermultiselect_usermultiselect",
-      "src_features_trainings_components_membershipoverviewmodal",
-      "src_features_trainings_components_membershipoverviewmodal_calendaricon",
-      "src_features_trainings_components_membershipoverviewmodal_formatdaterangelabel",
-      "src_features_trainings_components_membershipoverviewmodal_membershipoverviewmodal",
-      "src_features_trainings_components_membershipoverviewmodal_trainingcountsasusedsession",
-      "src_hooks_useplayers",
-      "src_hooks_useplayers_useplayers",
-      "src_services_catalog_listplayers"
-    ],
     "19": [
       "src_app_app",
       "src_components_postuploadprovider",
       "src_components_postuploadprovider_postuploadcontext",
       "src_components_postuploadprovider_postuploadprovider",
+      "src_components_tournamentpostuploadprovider",
+      "src_components_tournamentpostuploadprovider_tournamentpostuploadcontext",
+      "src_components_tournamentpostuploadprovider_tournamentpostuploadprovider",
+      "src_components_tournamentpostuploadprovider_usetournamentpostupload",
       "src_components_ui_alertdialog_alertdialogprovider",
       "src_components_ui_toastcontext_toastprovider",
       "src_main",
@@ -953,6 +943,8 @@
       "src_services_posts_createpostwithprogress"
     ],
     "20": [
+      "src_components_ui_emptystate",
+      "src_components_ui_emptystate_emptystate",
       "src_components_ui_floatingaddbutton",
       "src_components_ui_floatingaddbutton_floatingaddbutton",
       "src_components_ui_pulltorefresh",
@@ -960,6 +952,10 @@
       "src_components_ui_pulltorefresh_pulltorefresh",
       "src_components_ui_pulltorefresh_pulltorefreshstatecontext",
       "src_components_ui_pulltorefresh_usepulltorefreshstate",
+      "src_components_ui_scrolltotopbutton",
+      "src_components_ui_scrolltotopbutton_scrolltotopbutton",
+      "src_features_competitions_competitionspage",
+      "src_features_competitions_competitionspage_tabs",
       "src_lib_overlaystack_hasopenoverlay"
     ],
     "21": [
@@ -1002,15 +998,13 @@
     "9": 0.09851551956815115,
     "10": 0.1214574898785425,
     "11": 0.15692307692307692,
-    "12": 0.23550724637681159,
-    "13": 0.1422924901185771,
-    "14": 0.2077922077922078,
-    "15": 0.19523809523809524,
+    "12": 0.08020050125313283,
+    "14": 0.25833333333333336,
+    "15": 0.2222222222222222,
     "16": 0.24561403508771928,
     "17": 0.20833333333333334,
-    "18": 0.30303030303030304,
-    "19": 0.2777777777777778,
-    "20": 0.35714285714285715,
+    "19": 0.20512820512820512,
+    "20": 0.23076923076923078,
     "21": 0.32142857142857145,
     "22": 1.0,
     "23": 1.0,
@@ -1072,63 +1066,96 @@
   ],
   "surprises": [
     {
-      "source": "AppInner()",
-      "target": "isUserBotBlocked()",
+      "source": "BroadcastModal()",
+      "target": "useAlertDialog()",
       "source_files": [
-        "src/App.jsx",
-        "src/services/auth.js"
+        "src/features/admin/BroadcastModal.jsx",
+        "src/components/ui/AlertDialog.jsx"
       ],
       "confidence": "EXTRACTED",
       "relation": "calls",
       "why": "bridges separate communities"
     },
     {
-      "source": "BlockedAppShell()",
-      "target": "useMaxCloseGuard()",
+      "source": "NotificationSendModal()",
+      "target": "useAlertDialog()",
       "source_files": [
-        "src/App.jsx",
-        "src/hooks/useMaxCloseGuard.js"
-      ],
-      "confidence": "EXTRACTED",
-      "relation": "calls",
-      "why": "peripheral node `BlockedAppShell()` unexpectedly reaches hub `useMaxCloseGuard()`"
-    },
-    {
-      "source": "AppMain()",
-      "target": "useFavorites()",
-      "source_files": [
-        "src/App.jsx",
-        "src/context/FavoritesContext.jsx"
+        "src/features/admin/NotificationSendModal.jsx",
+        "src/components/ui/AlertDialog.jsx"
       ],
       "confidence": "EXTRACTED",
       "relation": "calls",
       "why": "bridges separate communities"
     },
     {
-      "source": "AppMain()",
-      "target": "useMaxCloseGuard()",
+      "source": "GalleryPage()",
+      "target": "useAlertDialog()",
       "source_files": [
-        "src/App.jsx",
-        "src/hooks/useMaxCloseGuard.js"
+        "src/features/gallery/GalleryPage.jsx",
+        "src/components/ui/AlertDialog.jsx"
       ],
       "confidence": "EXTRACTED",
       "relation": "calls",
       "why": "bridges separate communities"
     },
     {
-      "source": "AppMain()",
-      "target": "useOverlayClose()",
+      "source": "MembershipEditModal()",
+      "target": "useAlertDialog()",
       "source_files": [
-        "src/App.jsx",
-        "src/hooks/useOverlayClose.js"
+        "src/features/profile/MembershipEditModal.jsx",
+        "src/components/ui/AlertDialog.jsx"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "ProfilePage()",
+      "target": "useAlertDialog()",
+      "source_files": [
+        "src/features/profile/ProfilePage.jsx",
+        "src/components/ui/AlertDialog.jsx"
       ],
       "confidence": "EXTRACTED",
       "relation": "calls",
       "why": "bridges separate communities"
     }
   ],
-  "tokens": {
-    "input": 0,
-    "output": 0
-  }
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `error` connect `error` to `Modal.jsx`, `App.jsx`, `PostDetailModal.jsx`, `ProfilePage.jsx`, `StatsReachModal.jsx`, `ProfileViewModal.jsx`, `datePickerUtils.js`, `BroadcastModal.jsx`, `tournamentPosts.js`, `FeedPage.jsx`, `main.jsx`, `CompetitionsPage.jsx`?",
+      "why": "High betweenness centrality (0.147) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `Modal()` connect `Modal.jsx` to `App.jsx`, `PostDetailModal.jsx`, `ProfilePage.jsx`, `StatsReachModal.jsx`, `ProfileViewModal.jsx`, `datePickerUtils.js`, `LogsModal.jsx`, `postRichText.js`, `gestures.js`, `BroadcastModal.jsx`, `ArchiveModal.jsx`?",
+      "why": "High betweenness centrality (0.031) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `pb` connect `ProfilePage.jsx` to `Modal.jsx`, `App.jsx`, `PostDetailModal.jsx`, `error`, `StatsReachModal.jsx`, `ProfileViewModal.jsx`, `datePickerUtils.js`, `LogsModal.jsx`, `BroadcastModal.jsx`, `tournamentPosts.js`, `FeedPage.jsx`, `CompetitionsPage.jsx`?",
+      "why": "High betweenness centrality (0.023) - this node is a cross-community bridge."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `AlertDialogContext`, `INITIAL_STATE`, `FOCUSABLE_SELECTORS` to the rest of the system?",
+      "why": "91 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Modal.jsx` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.05703225806451613 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `App.jsx` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.055964653902798235 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `PostDetailModal.jsx` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.07531645569620253 - nodes in this community are weakly interconnected."
+    }
+  ]
 }

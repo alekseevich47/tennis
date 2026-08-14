@@ -3,6 +3,7 @@
   overflow-y: auto;
   position: relative;
   overscroll-behavior-y: none;
+  touch-action: pan-y;
   /* Верхний зазор до плашки/контента — как margin-bottom у .pinned-banner */
   padding: 4px 16px 16px;
   background: #f8f9fa;
@@ -1834,6 +1835,38 @@ button.post-card-like:hover:not(:disabled) {
   -webkit-user-drag: none;
   cursor: grab;
   will-change: transform;
+}
+
+.fullscreen-image-stack {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  max-height: 100%;
+  width: 100%;
+  height: 100%;
+}
+
+.fullscreen-image-stack .fullscreen-target-img--preview,
+.fullscreen-image-stack .fullscreen-target-img--full {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.fullscreen-image-stack .fullscreen-target-img.is-visible {
+  opacity: 1;
+}
+
+.fullscreen-media-upgrade-spinner {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  z-index: 2;
+  pointer-events: none;
 }
 
 .fullscreen-media-pending {

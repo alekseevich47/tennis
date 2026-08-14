@@ -1,6 +1,7 @@
 import React, { memo, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import Avatar from './ui/Avatar';
+import { useTriggerAddAction } from '../context/AddActionContext';
 import './BottomNav.css';
 
 /** Индекс скрытого раздела «Галерея» — код страницы остаётся, в меню не показываем. */
@@ -90,6 +91,9 @@ function BottomNav({ activeTab, onTabChange, showAdmin = false, user = null }) {
   const navRef = useRef(/** @type {HTMLElement | null} */ (null));
   const itemRefs = useRef(/** @type {Map<number, HTMLButtonElement>} */ (new Map()));
   const [indicator, setIndicator] = useState({ left: 0, width: 0, ready: false });
+  const triggerAdd = useTriggerAddAction();
+  const leadingItems = NAV_ITEMS.slice(0, 3);
+  const trailingItems = NAV_ITEMS.slice(3);
 
   const setItemRef = (index, el) => {
     if (el) itemRefs.current.set(index, el);
@@ -157,7 +161,42 @@ function BottomNav({ activeTab, onTabChange, showAdmin = false, user = null }) {
           }}
           aria-hidden="true"
         />
-        {NAV_ITEMS.map((item) => {
+        {leadingItems.map((item) => {
+          const isActive = activeTab === item.tabIndex;
+          return (
+            <button
+              key={item.label}
+              ref={(el) => setItemRef(item.tabIndex, el)}
+              type="button"
+              className={clsx('nav-item', isActive && 'active')}
+              data-nav-index={item.tabIndex}
+              onClick={() => onTabChange(item.tabIndex)}
+              aria-label={item.label}
+              aria-current={isActive ? 'page' : undefined}
+            >
+              {item.icon}
+              <span className="nav-item__label">{item.label}</span>
+            </button>
+          );
+        })}
+        <button
+          type="button"
+          className="nav-item nav-item--add"
+          aria-label="Добавить"
+          onClick={() => triggerAdd()}
+        >
+          <span className="nav-item--add__stage" aria-hidden="true">
+            <span className="nav-item--add__wash" />
+            <span className="nav-item--add__blob nav-item--add__blob--a" />
+            <span className="nav-item--add__blob nav-item--add__blob--b" />
+            <span className="nav-item--add__blob nav-item--add__blob--c" />
+            <span className="nav-item--add__blob nav-item--add__blob--d" />
+          </span>
+          <span className="nav-item--add__plus" aria-hidden="true">
+            +
+          </span>
+        </button>
+        {trailingItems.map((item) => {
           const isActive = activeTab === item.tabIndex;
           return (
             <button

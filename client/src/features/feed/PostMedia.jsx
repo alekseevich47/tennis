@@ -15,7 +15,8 @@ import MediaSwipeDots from './MediaSwipeDots';
 import { useResolvedExternalMedia } from './useResolvedExternalMedia';
 import { useSwipeGallery } from './useSwipeGallery';
 import { getYadiskAlbumCache, toFullscreenAlbumItems } from './yadiskAlbumCache';
-import { ALBUM_COVER_RADIUS, ALBUM_WINDOW_RADIUS } from './yadiskAlbumLazy';
+import { ALBUM_PREVIEW_ALL_RADIUS } from './yadiskAlbumLazy';
+import { useInFeedViewport } from './useInFeedViewport';
 
 /**
  * @param {{
@@ -30,7 +31,8 @@ import { ALBUM_COVER_RADIUS, ALBUM_WINDOW_RADIUS } from './yadiskAlbumLazy';
  *     originRect?: DOMRect,
  *     originKey?: string,
  *     meta?: { albumPublicUrl?: string }
- *   ) => void
+ *   ) => void,
+ *   scrollRootRef?: React.RefObject<HTMLElement | null> | null
  * }} props
  */
 function PostMedia({
@@ -39,7 +41,8 @@ function PostMedia({
   variant = 'card',
   className,
   hiddenMediaKey = null,
-  onOpenFullscreen
+  onOpenFullscreen,
+  scrollRootRef = null
 }) {
   const fileItems = useMemo(
     () =>
@@ -67,9 +70,14 @@ function PostMedia({
     [post, collection, variant]
   );
 
-  const { items: externalItems, setAlbumFocus } = useResolvedExternalMedia(
+  const { items: externalItems, setAlbumFocus, setPreferFull } = useResolvedExternalMedia(
     post.external_media,
     `${variant}-${post.id}`
+  );
+
+  const { setRef: setViewportRef, focused: mediaFocused } = useInFeedViewport(
+    variant === 'card' ? scrollRootRef : null,
+    { enabled: variant === 'card' }
   );
 
   const albumId = useMemo(
@@ -100,13 +108,17 @@ function PostMedia({
   }, [albumPublicUrl]);
 
   useEffect(() => {
+    setPreferFull(Boolean(mediaFocused));
+  }, [mediaFocused, setPreferFull]);
+
+  useEffect(() => {
     if (!isAlbum || !albumPublicUrl) return;
     if (albumIndex !== 0) albumExpandedRef.current = true;
     setAlbumFocus(albumPublicUrl, albumIndex, {
-      radius: albumExpandedRef.current ? ALBUM_WINDOW_RADIUS : ALBUM_COVER_RADIUS,
-      preferFull: albumExpandedRef.current
+      radius: ALBUM_PREVIEW_ALL_RADIUS,
+      preferFull: Boolean(mediaFocused)
     });
-  }, [isAlbum, albumPublicUrl, albumIndex, setAlbumFocus]);
+  }, [isAlbum, albumPublicUrl, albumIndex, setAlbumFocus, mediaFocused]);
 
   const items = useMemo(() => {
     if (isAlbum) {
@@ -126,7 +138,10 @@ function PostMedia({
     if (consumeSuppressClick()) return;
 
     const item = items[index];
-    if (!item?.url || item.isLoading) return;
+    if (!item) return;
+    if (!item.url && !item.thumbUrl && !item.previewUrl) return;
+
+    setPreferFull(true);
 
     if (isAlbum && albumPublicUrl) {
       const cached = getYadiskAlbumCache(albumPublicUrl);
@@ -148,7 +163,7 @@ function PostMedia({
       const openIndex = foundIndex >= 0 ? foundIndex : albumIndex;
       albumExpandedRef.current = true;
       setAlbumFocus(albumPublicUrl, openIndex, {
-        radius: ALBUM_WINDOW_RADIUS,
+        radius: ALBUM_PREVIEW_ALL_RADIUS,
         preferFull: true
       });
       onOpenFullscreen?.(
@@ -161,7 +176,19 @@ function PostMedia({
       return;
     }
 
-    const readyItems = items.filter((entry) => entry.url && !entry.isLoading);
+    const readyItems = items
+      .filter((entry) => entry.url || entry.thumbUrl || entry.previewUrl)
+      .map((entry) => ({
+        filename: entry.filename,
+        url: entry.url || entry.thumbUrl || entry.previewUrl || '',
+        thumbUrl: entry.thumbUrl || entry.previewUrl || entry.url || '',
+        previewUrl: entry.previewUrl || entry.thumbUrl || '',
+        isVideo: Boolean(entry.isVideo),
+        originKey: entry.originKey,
+        isLoading: Boolean(entry.isLoading) && !entry.url && !entry.thumbUrl,
+        publicUrl: entry.publicUrl || '',
+        path: entry.path || null
+      }));
     const readyIndex = readyItems.findIndex((entry) => entry.originKey === item.originKey);
     if (readyIndex < 0) return;
     onOpenFullscreen?.(
@@ -174,6 +201,7 @@ function PostMedia({
 
   return (
     <div
+      ref={setViewportRef}
       className={clsx(
         'telegram-post-media-grid',
         `telegram-post-media-grid--${count}`,

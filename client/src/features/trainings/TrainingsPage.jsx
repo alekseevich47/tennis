@@ -38,6 +38,7 @@ import {
 } from '../../lib/format';
 import { error } from '../../lib/log';
 import { useSectionScroll } from '../../hooks/useSectionScroll';
+import { useRegisterAddAction } from '../../context/AddActionContext';
 import './Trainings.css';
 
 const DAYS_COUNT = 14;
@@ -92,6 +93,8 @@ function TrainingsPage({
   const [showDeletedTrainings, setShowDeletedTrainings] = useState(() =>
     readShowDeletedTrainingsPreference()
   );
+
+  useRegisterAddAction(() => setShowAddModal(true), userIsModerator);
 
   useEffect(() => {
     onDeletedIdsChange?.(hiddenDeletedTrainingIds);
