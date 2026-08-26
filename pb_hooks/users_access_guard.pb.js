@@ -7,10 +7,7 @@
 
 onRecordCreateRequest((e) => {
   var guard = require(__hooks + '/users_access_guard_lib.js');
-  var isPrivileged =
-    e.hasSuperuserAuth() ||
-    !!(e.auth && e.auth.getString('role') === 'moderator');
-  if (!isPrivileged) {
+  if (!guard.isPrivilegedAuth(e)) {
     guard.applyCreateDefaults(e.record);
   }
   e.next();
@@ -19,10 +16,7 @@ onRecordCreateRequest((e) => {
 onRecordUpdateRequest((e) => {
   try {
     var guard = require(__hooks + '/users_access_guard_lib.js');
-    var isPrivileged =
-      e.hasSuperuserAuth() ||
-      !!(e.auth && e.auth.getString('role') === 'moderator');
-    if (!isPrivileged) {
+    if (!guard.isPrivilegedAuth(e)) {
       var original = e.record.original();
       if (!original) {
         e.next();

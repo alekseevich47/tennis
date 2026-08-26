@@ -1,12 +1,16 @@
 // @ts-check
 import pb from './pb';
 import { error } from '../lib/log';
+import { PB_URL } from '../config';
+
 /**
  * @typedef {Object} TournamentCommentRecord
  * @property {string} id
  * @property {string} post
  * @property {string} author
  * @property {string} text
+ * @property {string | string[]} [media]
+ * @property {boolean} [caption_above]
  * @property {string} [reply_to]
  * @property {boolean} [is_deleted]
  * @property {string} created
@@ -39,21 +43,114 @@ export async function listCommentsForTournamentPost(postId, { signal } = {}) {
  * @param {string} text
  * @param {string} userId
  * @param {string | null} [replyToId]
+ * @param {{ mediaFiles?: File[], captionAbove?: boolean, signal?: AbortSignal, onProgress?: (percent: number) => void }} [options]
  */
-export async function createTournamentComment(postId, text, userId, replyToId = null) {
+export function createTournamentComment(
+  postId,
+  text,
+  userId,
+  replyToId = null,
+  { mediaFiles = [], captionAbove = false, signal, onProgress } = {}
+) {
   if (!userId) throw new Error('Не авторизован: нельзя создать комментарий без author.id');
-  /** @type {Record<string, unknown>} */
-  const payload = {
-    post: postId,
-    author: userId,
-    text
-  };
-  if (replyToId) payload.reply_to = replyToId;
-  return /** @type {TournamentCommentRecord} */ (
-    await pb.collection('tournament_comments').create(payload, {
-      expand: 'author,reply_to,reply_to.author'
-    })
-  );
+
+  const hasMedia = Array.isArray(mediaFiles) && mediaFiles.length > 0;
+  if (!hasMedia) {
+    /** @type {Record<string, unknown>} */
+    const payload = {
+      post: postId,
+      author: userId,
+      text: text || ''
+    };
+    if (replyToId) payload.reply_to = replyToId;
+    if (captionAbove) payload.caption_above = true;
+    return /** @type {Promise<TournamentCommentRecord>} */ (
+      pb.collection('tournament_comments').create(payload, {
+        expand: 'author,reply_to,reply_to.author'
+      })
+    );
+  }
+
+  const formData = new FormData();
+  formData.append('post', postId);
+  formData.append('author', userId);
+  formData.append('text', text || '');
+  if (replyToId) formData.append('reply_to', replyToId);
+  if (captionAbove) formData.append('caption_above', 'true');
+  mediaFiles.forEach((file) => formData.append('media', file));
+
+  return createTournamentCommentWithProgress(formData, { signal, onProgress });
+}
+
+/**
+ * @param {FormData} payload
+ * @param {{ signal?: AbortSignal, onProgress?: (percent: number) => void }} [options]
+ * @returns {Promise<TournamentCommentRecord>}
+ */
+export function createTournamentCommentWithProgress(payload, { signal, onProgress } = {}) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    let settled = false;
+
+    const rejectAbort = () => {
+      if (settled) return;
+      settled = true;
+      reject(new DOMException('Загрузка комментария отменена', 'AbortError'));
+    };
+
+    if (signal?.aborted) {
+      rejectAbort();
+      return;
+    }
+
+    xhr.open(
+      'POST',
+      `${PB_URL}/api/collections/tournament_comments/records?expand=author,reply_to,reply_to.author`
+    );
+    if (pb.authStore.token) {
+      xhr.setRequestHeader('Authorization', pb.authStore.token);
+    }
+
+    xhr.upload.onprogress = (event) => {
+      if (!event.lengthComputable || !onProgress) return;
+      onProgress(Math.min(98, Math.round((event.loaded / event.total) * 100)));
+    };
+
+    xhr.onload = () => {
+      if (settled) return;
+      settled = true;
+      signal?.removeEventListener('abort', abortUpload);
+      if (xhr.status >= 200 && xhr.status < 300) {
+        onProgress?.(100);
+        try {
+          resolve(/** @type {TournamentCommentRecord} */ (JSON.parse(xhr.responseText)));
+        } catch (parseErr) {
+          reject(parseErr);
+        }
+        return;
+      }
+      reject(new Error(`Не удалось отправить комментарий (${xhr.status})`));
+    };
+
+    xhr.onerror = () => {
+      if (settled) return;
+      settled = true;
+      signal?.removeEventListener('abort', abortUpload);
+      reject(new Error('Сеть прервала загрузку комментария'));
+    };
+
+    xhr.onabort = () => {
+      signal?.removeEventListener('abort', abortUpload);
+      rejectAbort();
+    };
+
+    function abortUpload() {
+      xhr.abort();
+    }
+
+    signal?.addEventListener('abort', abortUpload, { once: true });
+    xhr.send(payload);
+  });
 }
 
 /**
