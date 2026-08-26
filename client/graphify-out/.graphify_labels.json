@@ -13,19 +13,12 @@
   "11": "gestures.js",
   "12": "BroadcastModal.jsx",
   "13": "FullscreenImageViewer.jsx",
-  "14": "ShopPage.jsx",
-  "15": "catalog.js",
   "16": "ArchiveModal.jsx",
-  "17": "App.jsx",
   "18": "main.jsx",
   "19": "main.jsx",
   "20": "GalleryPage.jsx",
   "21": "useSectionSwipe.js",
   "22": "sw.js",
-  "23": "useMaxCloseGuard.js",
-  "24": "AddActionContext.jsx",
   "25": "vite-env.d.ts",
-  "26": "vite.config.js",
-  "27": "ProductUploadProvider.jsx",
-  "28": "FavoritesContext.jsx"
+  "26": "vite.config.js"
 }

@@ -142,3 +142,22 @@ input[type="file"] {
 .content-with-header--contained {
   overflow: hidden;
 }
+
+/*
+ * UI-хром: кнопки и названия разделов не копируются (MAX webview long-press).
+ * Поля ввода / contenteditable не трогаем — см. исключения в Feed.css для create/edit.
+ */
+button,
+[type='button'],
+[type='submit'],
+[type='reset'],
+.ui-modal-title,
+.header-title,
+.bottom-nav,
+.section-title-name,
+.competitions-tab {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
