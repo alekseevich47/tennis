@@ -6,7 +6,9 @@ import photoCameraUrl from '../../assets/photo-camera.svg';
 import PostRichTextField from './PostRichTextField';
 import CommentSendButton from './CommentSendButton';
 import SortableMediaPreviewGrid from './SortableMediaPreviewGrid';
+import FullscreenImageViewer from './FullscreenImageViewer';
 import PostContentHtml from './PostContentHtml';
+import { useLocalMediaFullscreen } from './useLocalMediaFullscreen';
 import { compressImage } from '../../lib/compress';
 import { isVideoFile, readSelectedFiles } from '../../lib/media';
 import { hasVisibleText } from './postRichText';
@@ -269,7 +271,7 @@ function CommentComposeForm({
     } finally {
       window.setTimeout(() => {
         setSendPhase((prev) => (prev === 'flying' ? 'idle' : prev));
-      }, 720);
+      }, 1100);
     }
   }, [
     canSend,
@@ -309,13 +311,23 @@ function CommentComposeForm({
     error: item.error
   }));
 
+  const {
+    openItem: openPreviewMedia,
+    fullscreen: previewFullscreen,
+    close: closePreviewFullscreen,
+    onCloseStart: handlePreviewCloseStart,
+    handleActiveIndexChange: handlePreviewIndexChange
+  } = useLocalMediaFullscreen(
+    readyPreviewItems.filter((item) => item.status === 'ready' && item.url),
+    'comment-compose'
+  );
+
   const attachDisabled = busy || mediaItems.length >= MAX_COMMENT_MEDIA_FILES;
 
   const sendButtonProps = {
     disabled: !canSend && sendPhase !== 'flying',
     busy: busy || sendPhase === 'flying',
-    phase: sendPhase,
-    badgeCount: previewOpen ? readyCount : 0
+    phase: sendPhase
   };
 
   const previewOverlay =
@@ -479,6 +491,10 @@ function CommentComposeForm({
                   next.map((item) => byKey.get(item.key)).filter(Boolean)
                 );
               }}
+              onItemClick={(item, index, event) => {
+                if (item.status !== 'ready' || !item.url) return;
+                openPreviewMedia(item, index, event);
+              }}
               className="comment-compose-media-strip"
               getAction={(item) => (
                 <button
@@ -495,6 +511,17 @@ function CommentComposeForm({
         ) : null}
       </form>
       {previewOverlay}
+      {previewFullscreen ? (
+        <FullscreenImageViewer
+          items={previewFullscreen.items}
+          initialIndex={previewFullscreen.index}
+          originRect={previewFullscreen.originRect}
+          originKey={previewFullscreen.originKey}
+          onCloseStart={handlePreviewCloseStart}
+          onActiveIndexChange={handlePreviewIndexChange}
+          onClose={closePreviewFullscreen}
+        />
+      ) : null}
     </div>
   );
 }

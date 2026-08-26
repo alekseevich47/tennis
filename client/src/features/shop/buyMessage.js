@@ -40,18 +40,25 @@ export function isMobileMaxPlatform() {
  */
 export function openSellerChat(url) {
   const webApp = window.WebApp;
+  const target = String(url || '').trim();
+  if (!target) return;
 
-  if (isMobileMaxPlatform() && webApp?.openMaxLink) {
-    webApp.openMaxLink(url);
+  const isMaxHost =
+    /^https?:\/\/(www\.)?max\.ru\//i.test(target) || target.startsWith('max://');
+
+  // Чат продавца/модератора: в Mini App всегда openMaxLink для max.ru / max:// —
+  // openLink может открыть не тот чат в контексте бота.
+  if (isMaxHost && webApp?.openMaxLink) {
+    webApp.openMaxLink(target);
     return;
   }
 
   if (webApp?.openLink) {
-    webApp.openLink(url);
+    webApp.openLink(target);
     return;
   }
 
-  window.open(url, '_blank');
+  window.open(target, '_blank');
 }
 
 /**

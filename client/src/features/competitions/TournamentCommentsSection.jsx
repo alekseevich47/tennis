@@ -38,7 +38,8 @@ const HIGHLIGHT_MS = 2500;
  *   onOpenProfile?: (user: any) => void,
  *   onCommentMutated?: () => void,
  *   highlightCommentId?: string | null,
- *   composeTarget?: HTMLElement | null
+ *   composeTarget?: HTMLElement | null,
+ *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, thumbUrl?: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect | null, originKey?: string) => void
  * }} props
  */
 function TournamentCommentsSection({
@@ -48,7 +49,8 @@ function TournamentCommentsSection({
   onOpenProfile,
   onCommentMutated,
   highlightCommentId = null,
-  composeTarget = null
+  composeTarget = null,
+  onOpenFullscreen
 }) {
   const [commentText, setCommentText] = useState('');
   const [isAddingComment, setIsAddingComment] = useState(false);
@@ -413,7 +415,28 @@ function TournamentCommentsSection({
                               onActivate={() => focusCommentInList(parentComment.id, 'start')}
                             />
                           ) : null}
-                          <CommentMediaBody comment={c} collection="tournament_comments" />
+                          <CommentMediaBody
+                            comment={c}
+                            collection="tournament_comments"
+                            onOpenMedia={(items, index, event) => {
+                              if (!onOpenFullscreen || !items.length) return;
+                              const gallery = items.map((item) => ({
+                                filename: item.name,
+                                url: item.fullUrl || item.url,
+                                thumbUrl: item.url,
+                                isVideo: item.isVideo,
+                                originKey: `t-comment-${c.id}-${item.key}`
+                              }));
+                              const originRect =
+                                event?.currentTarget?.getBoundingClientRect?.() || null;
+                              onOpenFullscreen(
+                                gallery,
+                                index,
+                                originRect,
+                                gallery[index]?.originKey
+                              );
+                            }}
+                          />
                         </div>
                         <div className="comment-footer-row">
                           <div className="comment-footer-actions">
