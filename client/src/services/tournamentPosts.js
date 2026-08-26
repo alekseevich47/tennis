@@ -20,6 +20,9 @@ import { PB_URL } from '../config';
  * @property {number} [post_number]
  * @property {boolean} [is_deleted]
  * @property {boolean} [is_pinned]
+ * @property {boolean} [is_scheduled]
+ * @property {string | null} [scheduled_at]
+ * @property {boolean} [caption_above]
  * @property {string | null} [pinned_at]
  * @property {string} created
  * @property {Record<string, unknown>} [expand]
@@ -58,9 +61,12 @@ function invalidateTournamentCaches() {
  */
 export async function listTournamentPosts({ includeDeleted = false, signal } = {}) {
   try {
+    const base = includeDeleted ? '' : '(is_deleted = false || is_deleted = null)';
+    const scheduled = 'is_scheduled != true';
+    const filter = base ? `(${base}) && (${scheduled})` : scheduled;
     return /** @type {TournamentPostRecord[]} */ (await pb.collection('tournament_posts').getFullList({
       sort: '-created',
-      filter: includeDeleted ? '' : '(is_deleted = false || is_deleted = null)',
+      filter,
       expand: 'tournament_comments(post),tournament_comments(post).author',
       requestKey: null,
       signal
@@ -70,6 +76,61 @@ export async function listTournamentPosts({ includeDeleted = false, signal } = {
     error('Ошибка загрузки турнирных постов:', err);
     throw err;
   }
+}
+
+/**
+ * @param {{ signal?: AbortSignal }} [options]
+ * @returns {Promise<TournamentPostRecord[]>}
+ */
+export async function listScheduledTournamentPosts({ signal } = {}) {
+  try {
+    return /** @type {TournamentPostRecord[]} */ (
+      await pb.collection('tournament_posts').getFullList({
+        sort: 'scheduled_at',
+        filter: 'is_scheduled = true && is_deleted != true',
+        requestKey: null,
+        signal
+      })
+    );
+  } catch (err) {
+    if (err && /** @type {Error} */ (err).name === 'AbortError') return [];
+    error('Ошибка загрузки запланированных турнирных постов:', err);
+    throw err;
+  }
+}
+
+/**
+ * @param {string} id
+ * @param {string} scheduledAtIso
+ */
+export async function rescheduleTournamentPost(id, scheduledAtIso) {
+  return /** @type {TournamentPostRecord} */ (
+    await pb.collection('tournament_posts').update(id, {
+      scheduled_at: scheduledAtIso,
+      is_scheduled: true
+    })
+  );
+}
+
+/**
+ * @param {string} id
+ */
+export async function publishScheduledTournamentPostNow(id) {
+  return /** @type {TournamentPostRecord} */ (
+    await pb.collection('tournament_posts').update(id, { is_scheduled: false })
+  );
+}
+
+/**
+ * @param {string} id
+ */
+export async function deleteScheduledTournamentPost(id) {
+  return /** @type {TournamentPostRecord} */ (
+    await pb.collection('tournament_posts').update(id, {
+      is_deleted: true,
+      is_scheduled: false
+    })
+  );
 }
 
 /**
@@ -143,11 +204,20 @@ export async function purgeAbandonedTournamentPosts({ signal } = {}) {
  *   content: string,
  *   files?: File[],
  *   externalMedia?: unknown,
- *   rawParticipants: Array<{ userId: string, fullName: string, points: number }>
+ *   rawParticipants: Array<{ userId: string, fullName: string, points: number }>,
+ *   scheduledAt?: string | null,
+ *   captionAbove?: boolean
  * }} params
- * @returns {{ formData: FormData, participants: TournamentParticipant[] }}
+ * @returns {{ formData: FormData, participants: TournamentParticipant[], isScheduled: boolean }}
  */
-function buildTournamentPostPayload({ content, files = [], externalMedia, rawParticipants }) {
+function buildTournamentPostPayload({
+  content,
+  files = [],
+  externalMedia,
+  rawParticipants,
+  scheduledAt = null,
+  captionAbove = true
+}) {
   const author = getCurrentUser();
   if (!author?.id) {
     throw new Error('Не авторизован: нельзя опубликовать итоги турнира');
@@ -159,9 +229,15 @@ function buildTournamentPostPayload({ content, files = [], externalMedia, rawPar
   formData.append('author', author.id);
   formData.append('participants', JSON.stringify(participants));
   formData.append('external_media', JSON.stringify(externalMedia || []));
+  formData.append('caption_above', captionAbove ? 'true' : 'false');
+  const isScheduled = Boolean(scheduledAt);
+  if (isScheduled) {
+    formData.append('is_scheduled', 'true');
+    formData.append('scheduled_at', scheduledAt);
+  }
   files.forEach((file) => formData.append('media', file));
 
-  return { formData, participants };
+  return { formData, participants, isScheduled };
 }
 
 /**
@@ -186,11 +262,15 @@ async function applyTournamentPostSideEffects(participants) {
  * @returns {Promise<TournamentPostRecord>}
  */
 export async function publishTournamentPost(params) {
-  const { formData, participants } = buildTournamentPostPayload(params);
+  const { formData, participants, isScheduled } = buildTournamentPostPayload(params);
   const record = /** @type {TournamentPostRecord} */ (
     await pb.collection('tournament_posts').create(formData)
   );
-  await applyTournamentPostSideEffects(participants);
+  if (!isScheduled) {
+    await applyTournamentPostSideEffects(participants);
+  } else {
+    invalidateTournamentCaches();
+  }
   return record;
 }
 
@@ -199,13 +279,15 @@ export async function publishTournamentPost(params) {
  *   content: string,
  *   files?: File[],
  *   externalMedia?: unknown,
- *   rawParticipants: Array<{ userId: string, fullName: string, points: number }>
+ *   rawParticipants: Array<{ userId: string, fullName: string, points: number }>,
+ *   scheduledAt?: string | null,
+ *   captionAbove?: boolean
  * }} params
  * @param {{ signal?: AbortSignal, onProgress?: (percent: number) => void }} [options]
  * @returns {Promise<TournamentPostRecord>}
  */
 export function publishTournamentPostWithProgress(params, { signal, onProgress } = {}) {
-  const { formData, participants } = buildTournamentPostPayload(params);
+  const { formData, participants, isScheduled } = buildTournamentPostPayload(params);
 
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
@@ -240,9 +322,13 @@ export function publishTournamentPostWithProgress(params, { signal, onProgress }
         onProgress?.(100);
         try {
           const record = /** @type {TournamentPostRecord} */ (JSON.parse(xhr.responseText));
-          applyTournamentPostSideEffects(participants)
-            .then(() => resolve(record))
-            .catch(reject);
+          const finish = isScheduled
+            ? Promise.resolve().then(() => {
+                invalidateTournamentCaches();
+                return record;
+              })
+            : applyTournamentPostSideEffects(participants).then(() => record);
+          finish.then(resolve).catch(reject);
         } catch (parseErr) {
           reject(parseErr);
         }

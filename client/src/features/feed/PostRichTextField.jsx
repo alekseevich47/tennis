@@ -10,6 +10,7 @@ import React, {
 } from 'react';
 import { createPortal } from 'react-dom';
 import clsx from 'clsx';
+import gsap from 'gsap';
 import PostFormatToolbar from './PostFormatToolbar';
 import PostLinkModal from './PostLinkModal';
 import FrameColorPicker from './FrameColorPicker';
@@ -25,6 +26,14 @@ import {
   normalizeHexColor,
   readActiveFormats
 } from './postRichText';
+
+const FLOATING_ENTER_MS = 0.28;
+const FLOATING_EXIT_MS = 0.2;
+
+function prefersReducedMotion() {
+  return typeof window !== 'undefined'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
 
 /**
  * Rich-text поле: статичный тулбар + всплывающий при выделении + опциональная анимационная рамка.
@@ -83,12 +92,40 @@ const PostRichTextField = forwardRef(function PostRichTextField(
   const [frameColor, setFrameColor] = useState('#FF4D6D');
   const [linkOpen, setLinkOpen] = useState(false);
   const [linkDraft, setLinkDraft] = useState({ title: '', href: '' });
-  const [selectionToolbar, setSelectionToolbar] = useState(
+  const [floatingPos, setFloatingPos] = useState(
     /** @type {{ top: number, left: number } | null} */ (null)
   );
+  const [floatingOpen, setFloatingOpen] = useState(false);
+  const [floatingMounted, setFloatingMounted] = useState(false);
+  const floatingOpenRef = useRef(false);
+  floatingOpenRef.current = floatingOpen;
+  const hideFloatingTimerRef = useRef(/** @type {ReturnType<typeof setTimeout> | null} */ (null));
   const skipNextSync = useRef(false);
   const lastClearedHtmlRef = useRef(/** @type {string | null} */ (null));
   const showTopToolbar = !revealToolbarOnFocus || focused || frameOpen;
+
+  const hideFloatingToolbar = useCallback((immediate = false) => {
+    if (hideFloatingTimerRef.current) {
+      clearTimeout(hideFloatingTimerRef.current);
+      hideFloatingTimerRef.current = null;
+    }
+    if (immediate) {
+      setFloatingOpen(false);
+      return;
+    }
+    // Короткий debounce: selectionchange часто мигает collapse между кадрами жеста.
+    hideFloatingTimerRef.current = setTimeout(() => {
+      hideFloatingTimerRef.current = null;
+      setFloatingOpen(false);
+    }, 70);
+  }, []);
+
+  useEffect(
+    () => () => {
+      if (hideFloatingTimerRef.current) clearTimeout(hideFloatingTimerRef.current);
+    },
+    []
+  );
 
   const clearEditorDom = useCallback(() => {
     const el = editorRef.current;
@@ -158,13 +195,13 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     const el = editorRef.current;
     const selection = window.getSelection();
     if (!el || !selection || selection.rangeCount === 0 || selection.isCollapsed) {
-      setSelectionToolbar(null);
+      hideFloatingToolbar();
       return;
     }
     const anchor = selection.anchorNode;
     const focus = selection.focusNode;
     if (!anchor || !focus || !el.contains(anchor) || !el.contains(focus)) {
-      setSelectionToolbar(null);
+      hideFloatingToolbar();
       return;
     }
 
@@ -172,7 +209,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     const rects = range.getClientRects();
     const rect = rects.length > 0 ? rects[rects.length - 1] : range.getBoundingClientRect();
     if (!rect || (rect.width === 0 && rect.height === 0)) {
-      setSelectionToolbar(null);
+      hideFloatingToolbar();
       return;
     }
 
@@ -187,13 +224,19 @@ const PostRichTextField = forwardRef(function PostRichTextField(
       top = Math.max(8, rect.top - 44 - gap);
     }
 
-    setSelectionToolbar((prev) => {
+    setFloatingPos((prev) => {
       if (prev && Math.abs(prev.top - top) < 0.5 && Math.abs(prev.left - left) < 0.5) {
         return prev;
       }
       return { top, left };
     });
-  }, []);
+    if (hideFloatingTimerRef.current) {
+      clearTimeout(hideFloatingTimerRef.current);
+      hideFloatingTimerRef.current = null;
+    }
+    setFloatingMounted(true);
+    setFloatingOpen(true);
+  }, [hideFloatingToolbar]);
 
   useEffect(() => {
     const el = editorRef.current;
@@ -219,12 +262,12 @@ const PostRichTextField = forwardRef(function PostRichTextField(
       if (!el) return;
       const sel = document.getSelection();
       if (!sel || sel.rangeCount === 0) {
-        setSelectionToolbar(null);
+        hideFloatingToolbar();
         return;
       }
       const node = sel.anchorNode;
       if (!node || !el.contains(node.nodeType === Node.TEXT_NODE ? node.parentNode : node)) {
-        setSelectionToolbar(null);
+        hideFloatingToolbar();
         return;
       }
       saveSelection();
@@ -233,11 +276,10 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     };
     document.addEventListener('selectionchange', onSelectionChange);
     return () => document.removeEventListener('selectionchange', onSelectionChange);
-  }, [refreshActive, saveSelection, updateSelectionToolbar]);
+  }, [hideFloatingToolbar, refreshActive, saveSelection, updateSelectionToolbar]);
 
-  const selectionToolbarVisible = Boolean(selectionToolbar);
   useLayoutEffect(() => {
-    if (!selectionToolbarVisible) return undefined;
+    if (!floatingOpen) return undefined;
     const onReposition = () => updateSelectionToolbar();
     window.addEventListener('scroll', onReposition, true);
     window.addEventListener('resize', onReposition);
@@ -245,7 +287,51 @@ const PostRichTextField = forwardRef(function PostRichTextField(
       window.removeEventListener('scroll', onReposition, true);
       window.removeEventListener('resize', onReposition);
     };
-  }, [selectionToolbarVisible, updateSelectionToolbar]);
+  }, [floatingOpen, updateSelectionToolbar]);
+
+  useLayoutEffect(() => {
+    if (!floatingMounted) return undefined;
+    const el = floatingRef.current;
+    if (!el) return undefined;
+
+    gsap.killTweensOf(el);
+    const reduced = prefersReducedMotion();
+
+    if (floatingOpen) {
+      gsap.fromTo(
+        el,
+        { opacity: 0, scale: 0.88, y: 12, pointerEvents: 'none' },
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          pointerEvents: 'auto',
+          duration: reduced ? 0.01 : FLOATING_ENTER_MS,
+          ease: 'power3.out'
+        }
+      );
+      return () => {
+        gsap.killTweensOf(el);
+      };
+    }
+
+    const tween = gsap.to(el, {
+      opacity: 0,
+      scale: 0.92,
+      y: 8,
+      pointerEvents: 'none',
+      duration: reduced ? 0.01 : FLOATING_EXIT_MS,
+      ease: 'power2.in',
+      onComplete: () => {
+        if (floatingOpenRef.current) return;
+        setFloatingMounted(false);
+        setFloatingPos(null);
+      }
+    });
+    return () => {
+      tween.kill();
+    };
+  }, [floatingOpen, floatingMounted]);
 
   useEffect(() => {
     if (!frameOpen) return undefined;
@@ -278,7 +364,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
       const draft = getLinkDraftFromSelection(el);
       setLinkDraft({ title: draft.title, href: draft.href });
       setLinkOpen(true);
-      setSelectionToolbar(null);
+      hideFloatingToolbar(true);
       return;
     }
 
@@ -298,7 +384,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     if (!el) return;
     const range = savedRangeRef.current;
     setLinkOpen(false);
-    setSelectionToolbar(null);
+    hideFloatingToolbar(true);
     // После закрытия модалки — следующий кадр: фокус/selection уже не заняты оверлеем.
     requestAnimationFrame(() => {
       applyHyperlink({ title, href }, el, range);
@@ -317,7 +403,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     ensureFrameCarets(el);
     setFrameColor(color);
     setFrameOpen(false);
-    setSelectionToolbar(null);
+    hideFloatingToolbar(true);
     skipNextSync.current = true;
     syncEmptyAndValue();
   };
@@ -363,16 +449,16 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     selection.removeAllRanges();
     selection.addRange(range);
     savedRangeRef.current = range.cloneRange();
-    setSelectionToolbar(null);
+    hideFloatingToolbar(true);
   };
 
   const floatingToolbar =
-    selectionToolbar && typeof document !== 'undefined'
+    floatingMounted && floatingPos && typeof document !== 'undefined'
       ? createPortal(
           <div
             ref={floatingRef}
             className="post-format-toolbar-floating"
-            style={{ top: selectionToolbar.top, left: selectionToolbar.left }}
+            style={{ top: floatingPos.top, left: floatingPos.left }}
             onMouseDown={(e) => e.preventDefault()}
           >
             <PostFormatToolbar
@@ -420,7 +506,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
           trailing={toolbarExtra}
           onCommand={handleCommand}
         />
-        {enableFrame && frameOpen && !selectionToolbar ? (
+        {enableFrame && frameOpen && !floatingOpen ? (
           <FrameColorPicker
             color={frameColor}
             onChange={setFrameColor}
@@ -473,13 +559,13 @@ const PostRichTextField = forwardRef(function PostRichTextField(
               // вернуть старый HTML из DOM через onChange — иначе текст «залипает».
               if (!(valueRef.current || '')) {
                 if (!isEditorEmpty(el)) clearEditorDom();
-                setSelectionToolbar(null);
+                hideFloatingToolbar(true);
                 setFrameOpen(false);
                 setFocused(false);
                 return;
               }
               syncEmptyAndValue();
-              setSelectionToolbar(null);
+              hideFloatingToolbar(true);
               setFrameOpen(false);
               setFocused(false);
             });

@@ -39,13 +39,23 @@ export function PostUploadProvider({ children }) {
       }
     })
       .then((createdPost) => {
-        mutate(
-          (key) => Array.isArray(key) && key[0] === 'posts',
-          (current = []) => [createdPost, ...current],
-          { revalidate: false }
-        );
-        mutate((key) => Array.isArray(key) && key[0] === 'posts');
-        setUploadTask({ progress: 100, status: 'done', message: 'Публикация добавлена' });
+        const scheduled = Boolean(createdPost?.is_scheduled);
+        if (scheduled) {
+          mutate((key) => Array.isArray(key) && key[0] === 'scheduled_posts');
+          setUploadTask({
+            progress: 100,
+            status: 'done',
+            message: 'Публикация запланирована'
+          });
+        } else {
+          mutate(
+            (key) => Array.isArray(key) && key[0] === 'posts',
+            (current = []) => [createdPost, ...current],
+            { revalidate: false }
+          );
+          mutate((key) => Array.isArray(key) && key[0] === 'posts');
+          setUploadTask({ progress: 100, status: 'done', message: 'Публикация добавлена' });
+        }
         window.setTimeout(() => setUploadTask(null), 1400);
       })
       .catch((err) => {

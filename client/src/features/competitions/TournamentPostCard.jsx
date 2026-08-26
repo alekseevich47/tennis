@@ -188,7 +188,7 @@ function TournamentPostCard({
           </div>
         </div>
 
-        {post.content ? (
+        {post.caption_above !== false && post.content ? (
           <PostContentHtml
             as="div"
             role="button"
@@ -214,6 +214,23 @@ function TournamentPostCard({
           onOpenFullscreen={onOpenFullscreen}
           scrollRootRef={scrollRootRef}
         />
+
+        {post.caption_above === false && post.content ? (
+          <PostContentHtml
+            as="div"
+            role="button"
+            tabIndex={0}
+            className="tournament-post-content"
+            onClick={handlePostTextClick}
+            onKeyDown={(event) => {
+              if (event.key !== 'Enter' && event.key !== ' ') return;
+              if (event.target instanceof Element && event.target.closest('a[href]')) return;
+              event.preventDefault();
+              onOpenDetail(post);
+            }}
+            content={post.content}
+          />
+        ) : null}
 
         {participants.length > 0 ? (
           <TournamentPodium

@@ -39,14 +39,28 @@ export function TournamentPostUploadProvider({ children }) {
       }
     })
       .then((createdPost) => {
-        mutate(
-          (key) => Array.isArray(key) && key[0] === 'tournament_posts',
-          (current = []) => [createdPost, ...current],
-          { revalidate: false }
-        );
-        mutate((key) => Array.isArray(key) && key[0] === 'tournament_posts');
-        mutate((key) => Array.isArray(key) && key[0] === 'players');
-        setUploadTask({ progress: 100, status: 'done', message: 'Итоги турнира опубликованы' });
+        const scheduled = Boolean(createdPost?.is_scheduled);
+        if (scheduled) {
+          mutate((key) => Array.isArray(key) && key[0] === 'scheduled_tournament_posts');
+          setUploadTask({
+            progress: 100,
+            status: 'done',
+            message: 'Публикация запланирована'
+          });
+        } else {
+          mutate(
+            (key) => Array.isArray(key) && key[0] === 'tournament_posts',
+            (current = []) => [createdPost, ...current],
+            { revalidate: false }
+          );
+          mutate((key) => Array.isArray(key) && key[0] === 'tournament_posts');
+          mutate((key) => Array.isArray(key) && key[0] === 'players');
+          setUploadTask({
+            progress: 100,
+            status: 'done',
+            message: 'Итоги турнира опубликованы'
+          });
+        }
         window.setTimeout(() => setUploadTask(null), 1400);
       })
       .catch((err) => {
