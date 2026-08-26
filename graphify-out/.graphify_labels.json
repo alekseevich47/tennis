@@ -66,11 +66,16 @@
   "64": "trainings_booking_validate.pb.js",
   "65": "ProfilePage.jsx",
   "66": "media.js",
+  "67": "media.js",
   "68": "GalleryCommentModal.jsx",
   "70": "GalleryPage.jsx",
+  "71": "App.jsx",
   "72": "claimlib.js",
   "73": "tournamentComments.js",
   "74": "Avatar.jsx",
   "75": "users_claim.pb.js",
-  "77": "useMaxCloseGuard.js"
+  "76": "useSectionSwipe.js",
+  "78": "AboutAppModal.jsx",
+  "80": "useMaxCloseGuard.js",
+  "81": "AddActionContext.jsx"
 }

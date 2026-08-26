@@ -6,7 +6,8 @@ import ModalFloatingCloseButton from '../../components/ui/ModalFloatingCloseButt
 import PostMedia from './PostMedia';
 import PostContentHtml from './PostContentHtml';
 import PostRichTextField from './PostRichTextField';
-import CommentSendButton from './CommentSendButton';
+import CommentComposeForm from './CommentComposeForm';
+import CommentMediaBody from './CommentMediaBody';
 import CommentReplyButton from './CommentReplyButton';
 import CommentReplyComposeBar from './CommentReplyComposeBar';
 import CommentReplyQuote from './CommentReplyQuote';
@@ -277,31 +278,32 @@ function PostDetailModal({
     });
   };
 
-  const handleAdd = async (e) => {
-    e.preventDefault();
-    if (!hasVisibleText(commentText) || !postId || isAddingCommentRef.current) return;
+  const handleAdd = async ({ text, mediaFiles, captionAbove }) => {
+    if ((!hasVisibleText(text) && !(mediaFiles?.length > 0)) || !postId || isAddingCommentRef.current) {
+      return;
+    }
     if (!user?.id) {
       error('Нельзя создавать комментарий без авторизации.');
       return;
     }
-    const text = commentText;
     const replyToId = replyTo?.id || null;
     isAddingCommentRef.current = true;
     setIsAddingComment(true);
-    setCommentText('');
     setReplyTo(null);
-    commentFieldRef.current?.clear();
     try {
       await createComment({
         postId,
         authorId: user.id,
         text,
-        replyToId
+        replyToId,
+        mediaFiles,
+        captionAbove
       });
       await mutateComments();
     } catch (err) {
       error('Ошибка добавления комментария:', err);
       setCommentText(text);
+      throw err;
     } finally {
       isAddingCommentRef.current = false;
       setIsAddingComment(false);
@@ -397,28 +399,17 @@ function PostDetailModal({
               {user.comment_restriction_reason || 'не указана'}. Свяжитесь с администратором.
             </div>
           ) : (
-            <div className="modal-comment-footer">
-              <CommentReplyComposeBar comment={replyTo} onCancel={() => setReplyTo(null)} />
-              <form onSubmit={handleAdd} className="modal-comment-form-footer">
-                <label htmlFor="post-detail-comment-input" className="visually-hidden">
-                  Написать комментарий
-                </label>
-                <PostRichTextField
-                  ref={commentFieldRef}
-                  id="post-detail-comment-input"
-                  value={commentText}
-                  onChange={setCommentText}
-                  enableFrame={false}
-                  compact
-                  placeholder="Написать комментарий…"
-                  aria-label="Написать комментарий"
-                />
-                <CommentSendButton
-                  disabled={isAddingComment || !hasVisibleText(commentText)}
-                  busy={isAddingComment}
-                />
-              </form>
-            </div>
+            <CommentComposeForm
+              id="post-detail-comment-input"
+              value={commentText}
+              onChange={setCommentText}
+              fieldRef={commentFieldRef}
+              busy={isAddingComment}
+              onSubmit={handleAdd}
+              replySlot={
+                <CommentReplyComposeBar comment={replyTo} onCancel={() => setReplyTo(null)} />
+              }
+            />
           )
         }
       >
@@ -667,7 +658,7 @@ function PostDetailModal({
                             onActivate={() => focusCommentInList(parentComment.id, 'start')}
                           />
                         ) : null}
-                        <PostContentHtml as="p" className="comment-content-text" content={c.text} />
+                        <CommentMediaBody comment={c} collection="comments" />
                       </div>
                       <div className="comment-footer-row">
                         <div className="comment-footer-actions">

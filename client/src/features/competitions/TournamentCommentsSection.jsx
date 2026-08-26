@@ -2,9 +2,9 @@ import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 're
 import { createPortal } from 'react-dom';
 import IconButton from '../../components/ui/IconButton';
 import Avatar from '../../components/ui/Avatar';
-import PostContentHtml from '../feed/PostContentHtml';
 import PostRichTextField from '../feed/PostRichTextField';
-import CommentSendButton from '../feed/CommentSendButton';
+import CommentComposeForm from '../feed/CommentComposeForm';
+import CommentMediaBody from '../feed/CommentMediaBody';
 import CommentReplyButton from '../feed/CommentReplyButton';
 import CommentReplyComposeBar from '../feed/CommentReplyComposeBar';
 import CommentReplyQuote from '../feed/CommentReplyQuote';
@@ -172,27 +172,29 @@ function TournamentCommentsSection({
     });
   };
 
-  const handleAdd = async (e) => {
-    e.preventDefault();
-    if (!hasVisibleText(commentText) || !postId || isAddingCommentRef.current) return;
+  const handleAdd = async ({ text, mediaFiles, captionAbove }) => {
+    if ((!hasVisibleText(text) && !(mediaFiles?.length > 0)) || !postId || isAddingCommentRef.current) {
+      return;
+    }
     if (!user?.id) {
       error('Нельзя создавать комментарий без авторизации.');
       return;
     }
-    const text = commentText;
     const replyToId = replyTo?.id || null;
     isAddingCommentRef.current = true;
     setIsAddingComment(true);
-    setCommentText('');
     setReplyTo(null);
-    commentFieldRef.current?.clear();
     try {
-      await createTournamentComment(postId, text, user.id, replyToId);
+      await createTournamentComment(postId, text, user.id, replyToId, {
+        mediaFiles,
+        captionAbove
+      });
       await mutateComments();
       onCommentMutated?.();
     } catch (err) {
       error('Ошибка добавления комментария:', err);
       setCommentText(text);
+      throw err;
     } finally {
       isAddingCommentRef.current = false;
       setIsAddingComment(false);
@@ -411,7 +413,7 @@ function TournamentCommentsSection({
                               onActivate={() => focusCommentInList(parentComment.id, 'start')}
                             />
                           ) : null}
-                          <PostContentHtml as="p" className="comment-content-text" content={c.text} />
+                          <CommentMediaBody comment={c} collection="tournament_comments" />
                         </div>
                         <div className="comment-footer-row">
                           <div className="comment-footer-actions">
@@ -453,28 +455,18 @@ function TournamentCommentsSection({
         {user.comment_restriction_reason || 'не указана'}. Свяжитесь с администратором.
       </div>
     ) : (
-      <div className="modal-comment-footer">
-        <CommentReplyComposeBar comment={replyTo} onCancel={() => setReplyTo(null)} />
-        <form onSubmit={handleAdd} className="tournament-comment-form">
-          <label htmlFor={`tournament-comment-input-${postId}`} className="visually-hidden">
-            Написать комментарий
-          </label>
-          <PostRichTextField
-            ref={commentFieldRef}
-            id={`tournament-comment-input-${postId}`}
-            value={commentText}
-            onChange={setCommentText}
-            enableFrame={false}
-            compact
-            placeholder="Написать комментарий…"
-            aria-label="Написать комментарий"
-          />
-          <CommentSendButton
-            disabled={isAddingComment || !hasVisibleText(commentText)}
-            busy={isAddingComment}
-          />
-        </form>
-      </div>
+      <CommentComposeForm
+        id={`tournament-comment-input-${postId}`}
+        value={commentText}
+        onChange={setCommentText}
+        fieldRef={commentFieldRef}
+        busy={isAddingComment}
+        onSubmit={handleAdd}
+        formClassName="tournament-comment-form modal-comment-form-footer"
+        replySlot={
+          <CommentReplyComposeBar comment={replyTo} onCancel={() => setReplyTo(null)} />
+        }
+      />
     );
 
   return (

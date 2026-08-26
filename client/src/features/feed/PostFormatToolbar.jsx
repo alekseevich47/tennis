@@ -6,10 +6,17 @@ import clsx from 'clsx';
  *   active?: { bold?: boolean, italic?: boolean, underline?: boolean, link?: boolean },
  *   frameOpen?: boolean,
  *   enableFrame?: boolean,
+ *   trailing?: React.ReactNode,
  *   onCommand: (command: 'bold' | 'italic' | 'underline' | 'frame' | 'link') => void
  * }} props
  */
-function PostFormatToolbar({ active = {}, frameOpen = false, enableFrame = true, onCommand }) {
+function PostFormatToolbar({
+  active = {},
+  frameOpen = false,
+  enableFrame = true,
+  trailing = null,
+  onCommand
+}) {
   const run = (command) => (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -122,6 +129,7 @@ function PostFormatToolbar({ active = {}, frameOpen = false, enableFrame = true,
           </button>
         </>
       ) : null}
+      {trailing}
     </div>
   );
 }

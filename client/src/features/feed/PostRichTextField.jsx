@@ -41,6 +41,8 @@ import {
  *   compact?: boolean,
  *   revealToolbarOnFocus?: boolean,
  *   singleLine?: boolean,
+ *   toolbarExtra?: React.ReactNode,
+ *   editorEnd?: React.ReactNode,
  *   onFocus?: () => void
  * }} props
  */
@@ -55,6 +57,8 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     compact = false,
     revealToolbarOnFocus = false,
     singleLine = false,
+    toolbarExtra = null,
+    editorEnd = null,
     onFocus
   },
   ref
@@ -396,7 +400,8 @@ const PostRichTextField = forwardRef(function PostRichTextField(
         'post-rich-text',
         compact && 'post-rich-text--compact',
         singleLine && 'post-rich-text--single-line',
-        revealToolbarOnFocus && 'post-rich-text--reveal-toolbar'
+        revealToolbarOnFocus && 'post-rich-text--reveal-toolbar',
+        editorEnd && 'post-rich-text--with-editor-end'
       )}
       ref={rootRef}
     >
@@ -412,6 +417,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
           active={active}
           frameOpen={frameOpen}
           enableFrame={enableFrame}
+          trailing={toolbarExtra}
           onCommand={handleCommand}
         />
         {enableFrame && frameOpen && !selectionToolbar ? (
@@ -499,6 +505,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
             updateSelectionToolbar();
           }}
         />
+        {editorEnd ? <div className="post-rich-text__editor-end">{editorEnd}</div> : null}
       </div>
 
       {floatingToolbar}
