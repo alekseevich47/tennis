@@ -1142,6 +1142,32 @@ button.post-card-like:hover:not(:disabled) {
   overflow: auto;
 }
 
+.create-post-media-strip-wrap,
+.edit-post-media-strip-wrap {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  margin-top: 10px;
+  padding-bottom: 2px;
+  scrollbar-width: thin;
+}
+
+.create-post-media-strip-wrap::-webkit-scrollbar,
+.edit-post-media-strip-wrap::-webkit-scrollbar {
+  height: 4px;
+}
+
+.create-post-preview-strip,
+.edit-post-preview-strip,
+.create-tournament-post-preview-strip,
+.edit-tournament-post-preview-strip {
+  min-width: 100%;
+}
+
 .post-rich-text__editor:focus,
 .post-rich-text__editor:focus-visible {
   outline: none;
@@ -1561,16 +1587,19 @@ button.post-card-like:hover:not(:disabled) {
 .post-mention {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  vertical-align: baseline;
+  gap: 4px;
+  vertical-align: middle;
   max-width: 100%;
-  margin: 0 1px;
-  padding: 1px 2px 1px 1px;
+  margin: 0 2px 0 1px;
+  padding: 0 4px 0 1px;
+  height: 1.35em;
+  box-sizing: border-box;
   border-radius: 999px;
   cursor: pointer;
   color: #007aff;
   font-weight: 600;
-  line-height: 1.2;
+  font-size: inherit;
+  line-height: 1;
   text-decoration: none;
   -webkit-user-select: none;
   user-select: none;
@@ -1584,8 +1613,8 @@ button.post-card-like:hover:not(:disabled) {
 }
 
 .post-mention__avatar {
-  width: 18px;
-  height: 18px;
+  width: 1.15em;
+  height: 1.15em;
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
@@ -1597,7 +1626,7 @@ button.post-card-like:hover:not(:disabled) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: 0.65em;
   font-weight: 700;
   color: #fff;
   background: linear-gradient(135deg, #5ac8fa, #007aff);
@@ -1606,6 +1635,8 @@ button.post-card-like:hover:not(:disabled) {
 .post-mention__label {
   color: #007aff;
   font-weight: 600;
+  font-size: inherit;
+  line-height: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1616,9 +1647,9 @@ button.post-card-like:hover:not(:disabled) {
   display: inline-flex;
   flex-direction: column;
   justify-content: center;
-  gap: 2.5px;
-  width: 14px;
-  height: 14px;
+  gap: 2px;
+  width: 0.95em;
+  height: 0.95em;
   flex-shrink: 0;
   color: #007aff;
 }

@@ -108,12 +108,18 @@ function MentionSuggestPopup({
     Math.max(8, anchorRect.left),
     window.innerWidth - panelWidth - 8
   );
-  // Сверху от каретки / поля.
-  const estimatedHeight = Math.min(280, 48 + items.length * 44);
-  let top = anchorRect.top - estimatedHeight - 8;
-  if (top < 8) {
-    top = Math.min(window.innerHeight - estimatedHeight - 8, anchorRect.bottom + 8);
+  const estimatedHeight = Math.min(280, 48 + Math.max(items.length, 1) * 44 + 28);
+  const gap = 8;
+  const spaceBelow = window.innerHeight - anchorRect.bottom - gap;
+  const spaceAbove = anchorRect.top - gap;
+  // Предпочитаем снизу; сверху — только если снизу не хватает, а сверху места больше.
+  let top;
+  if (spaceBelow >= Math.min(estimatedHeight, 120) || spaceBelow >= spaceAbove) {
+    top = anchorRect.bottom + gap;
+  } else {
+    top = Math.max(8, anchorRect.top - estimatedHeight - gap);
   }
+  top = Math.min(top, window.innerHeight - 48);
 
   let body;
   if (loading) {

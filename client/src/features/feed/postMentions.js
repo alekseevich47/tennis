@@ -257,18 +257,82 @@ export function insertMentionChip(editor, draft, chip) {
   range.deleteContents();
   range.insertNode(chip);
 
-  const space = document.createTextNode('\u00A0');
+  // ZWSP + обычный пробел: каретка после чипа, IME реже включает авто-капитализацию.
+  const tail = document.createTextNode('\u200B ');
   if (chip.nextSibling) {
-    chip.parentNode?.insertBefore(space, chip.nextSibling);
+    chip.parentNode?.insertBefore(tail, chip.nextSibling);
   } else {
-    chip.parentNode?.appendChild(space);
+    chip.parentNode?.appendChild(tail);
   }
 
   const after = document.createRange();
-  after.setStart(space, 1);
+  after.setStart(tail, tail.length);
   after.collapse(true);
   selection.removeAllRanges();
   selection.addRange(after);
+  return true;
+}
+
+/**
+ * Удаляет mention слева (Backspace) или справа (Delete) от каретки.
+ * @param {HTMLElement} editor
+ * @param {'backward' | 'forward'} direction
+ * @returns {boolean}
+ */
+export function deleteAdjacentMention(editor, direction) {
+  const selection = window.getSelection();
+  if (!editor || !selection || !selection.isCollapsed || selection.rangeCount === 0) {
+    return false;
+  }
+  const range = selection.getRangeAt(0);
+  if (!editor.contains(range.commonAncestorContainer)) return false;
+
+  /** @type {Node | null} */
+  let candidate = null;
+
+  if (direction === 'backward') {
+    if (range.startContainer.nodeType === Node.TEXT_NODE) {
+      const text = range.startContainer.textContent || '';
+      const before = text.slice(0, range.startOffset);
+      if (before.replace(/[\u200B\u00A0\s]+$/g, '').length > 0) return false;
+      candidate = range.startContainer.previousSibling;
+    } else if (range.startContainer.nodeType === Node.ELEMENT_NODE) {
+      const el = /** @type {Element} */ (range.startContainer);
+      candidate = el.childNodes[range.startOffset - 1] || null;
+    }
+  } else if (range.startContainer.nodeType === Node.TEXT_NODE) {
+    const text = range.startContainer.textContent || '';
+    const after = text.slice(range.startOffset);
+    if (after.replace(/^[\u200B\u00A0\s]+/g, '').length > 0) return false;
+    candidate = range.startContainer.nextSibling;
+  } else if (range.startContainer.nodeType === Node.ELEMENT_NODE) {
+    const el = /** @type {Element} */ (range.startContainer);
+    candidate = el.childNodes[range.startOffset] || null;
+  }
+
+  while (
+    candidate &&
+    candidate.nodeType === Node.TEXT_NODE &&
+    /^[\u200B\u00A0\s]*$/.test(candidate.textContent || '')
+  ) {
+    candidate =
+      direction === 'backward' ? candidate.previousSibling : candidate.nextSibling;
+  }
+
+  if (!candidate || candidate.nodeType !== Node.ELEMENT_NODE) return false;
+  if (!isMentionEl(/** @type {Element} */ (candidate))) return false;
+
+  const mention = /** @type {HTMLElement} */ (candidate);
+  const afterRange = document.createRange();
+  if (direction === 'backward') {
+    afterRange.setStartBefore(mention);
+  } else {
+    afterRange.setStartAfter(mention);
+  }
+  afterRange.collapse(true);
+  mention.remove();
+  selection.removeAllRanges();
+  selection.addRange(afterRange);
   return true;
 }
 
@@ -342,16 +406,26 @@ export async function searchMentionUsers(query, { signal, limit = 8 } = {}) {
   const q = String(query || '').trim();
   const filterParts = ['is_banned != true', 'is_visible != false'];
   if (q) {
+    // PocketBase `~` — case-insensitive; доп. клиентский фильтр на случай кириллицы.
     filterParts.push(pb.filter('full_name ~ {:q}', { q }));
   }
-  const result = await pb.collection('users').getList(1, limit, {
+  const result = await pb.collection('users').getList(1, Math.max(limit * 2, 16), {
     filter: filterParts.join(' && '),
     fields: 'id,collectionId,collectionName,full_name,avatar,avatar_url',
     sort: 'full_name',
     requestKey: null,
     signal
   });
-  return /** @type {MentionUser[]} */ (result.items || []);
+  const needle = q.toLocaleLowerCase('ru-RU');
+  const items = /** @type {MentionUser[]} */ (result.items || []);
+  const filtered = needle
+    ? items.filter((user) =>
+        String(user.full_name || '')
+          .toLocaleLowerCase('ru-RU')
+          .includes(needle)
+      )
+    : items;
+  return filtered.slice(0, limit);
 }
 
 /**

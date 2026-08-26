@@ -3,7 +3,7 @@ import Modal from '../../components/ui/Modal';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { updateTournamentPost } from '../../services/tournamentPosts';
 import FullscreenImageViewer from '../feed/FullscreenImageViewer';
-import MediaPreviewGrid from '../feed/MediaPreviewGrid';
+import SortableMediaPreviewGrid from '../feed/SortableMediaPreviewGrid';
 import PostAttachButton from '../feed/PostAttachButton';
 import PostRichTextField from '../feed/PostRichTextField';
 import PublishLongPressMenu from '../feed/PublishLongPressMenu';
@@ -37,6 +37,7 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
   const [text, setText] = useState('');
   const [mediaFiles, setMediaFiles] = useState(/** @type {File[]} */ ([]));
   const [removedMediaNames, setRemovedMediaNames] = useState(/** @type {string[]} */ ([]));
+  const [existingOrder, setExistingOrder] = useState(/** @type {string[]} */ ([]));
   const [newPreviewItems, setNewPreviewItems] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const [captionAbove, setCaptionAbove] = useState(true);
@@ -45,8 +46,8 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
 
   const existingMediaNames = useMemo(() => mediaNames(post?.media), [post?.media]);
   const keptExistingMediaNames = useMemo(
-    () => existingMediaNames.filter((filename) => !removedMediaNames.includes(filename)),
-    [existingMediaNames, removedMediaNames]
+    () => existingOrder.filter((filename) => !removedMediaNames.includes(filename)),
+    [existingOrder, removedMediaNames]
   );
   const existingPreviewItems = useMemo(
     () =>
@@ -182,6 +183,7 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
     setText(toDisplayHtml(post.content || ''));
     setMediaFiles([]);
     setRemovedMediaNames([]);
+    setExistingOrder(mediaNames(post.media));
     setCaptionAbove(post.caption_above !== false);
     setPreviewMenuOpen(false);
   }, [isOpen, post]);
@@ -190,6 +192,14 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
   const hasMedia = previewItems.length > 0;
   const canSave = !submitting && !yadisk.hasPending && hasText;
   const canMoveText = hasText && hasMedia;
+
+  const existingOrderChanged = useMemo(() => {
+    const originalKept = existingMediaNames.filter((name) => !removedMediaNames.includes(name));
+    return (
+      keptExistingMediaNames.length === originalKept.length &&
+      keptExistingMediaNames.some((name, i) => name !== originalKept[i])
+    );
+  }, [existingMediaNames, keptExistingMediaNames, removedMediaNames]);
 
   const handleAttachClick = async () => {
     if (yadisk.albumMode) {
@@ -208,7 +218,7 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
     setPreviewMenuOpen(false);
     try {
       const hasFileChanges =
-        removedMediaNames.length > 0 || mediaFiles.length > 0 || yadisk.albumMode;
+        removedMediaNames.length > 0 || mediaFiles.length > 0 || yadisk.albumMode || existingOrderChanged;
       const initialExternal = JSON.stringify(post.external_media || []);
       const nextExternal = JSON.stringify(yadisk.storedMedia);
       const hasExternalChanges = initialExternal !== nextExternal;
@@ -224,6 +234,19 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
         payload.append('caption_above', captionAbove ? 'true' : 'false');
         if (yadisk.albumMode) {
           existingMediaNames.forEach((filename) => payload.append('media-', filename));
+        } else if (existingOrderChanged) {
+          existingMediaNames.forEach((filename) => payload.append('media-', filename));
+          for (const filename of keptExistingMediaNames) {
+            const url = getMediaUrl(post, 'tournament_posts', filename);
+            if (!url) continue;
+            const res = await fetch(url);
+            const blob = await res.blob();
+            payload.append(
+              'media',
+              new File([blob], filename, { type: blob.type || 'application/octet-stream' })
+            );
+          }
+          mediaFiles.forEach((file) => payload.append('media', file));
         } else {
           removedMediaNames.forEach((filename) => payload.append('media-', filename));
           mediaFiles.forEach((file) => payload.append('media', file));
@@ -279,42 +302,57 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
     </>
   );
 
-  const mediaBlock = (
-    <MediaPreviewGrid
-      items={previewItems}
-      className="edit-post-media-preview-grid"
-      originKeyPrefix="edit-tournament-post"
-      hiddenMediaKey={hiddenMediaKey}
-      onItemClick={openPreviewMedia}
-      onAlbumIndexChange={handleAlbumIndexChange}
-      getAction={(item) => (
-        <button
-          type="button"
-          className="media-remove-btn"
-          onClick={(event) => {
-            event.stopPropagation();
-            if (String(item.key).startsWith('yadisk-')) {
-              yadisk.removeItem(item.key);
-              return;
-            }
-            if (item.key.startsWith('existing-')) {
-              const filename = item.key.slice('existing-'.length);
-              setRemovedMediaNames((current) =>
-                current.includes(filename) ? current : [...current, filename]
-              );
-              return;
-            }
-            setMediaFiles((current) =>
-              current.filter((file) => `${file.name}-${file.lastModified}` !== item.key)
+  const mediaBlock =
+    previewItems.length > 0 ? (
+      <div className="edit-post-media-strip-wrap">
+        <SortableMediaPreviewGrid
+          items={previewItems}
+          layout="strip"
+          className="edit-tournament-post-preview-strip"
+          onReorder={(next) => {
+            const fileByKey = new Map(
+              mediaFiles.map((file) => [`${file.name}-${file.lastModified}`, file])
             );
+            setMediaFiles(next.map((item) => fileByKey.get(item.key)).filter(Boolean));
+            const nextExisting = next
+              .filter((item) => String(item.key).startsWith('existing-'))
+              .map((item) => String(item.key).slice('existing-'.length));
+            setExistingOrder((prev) => {
+              const removed = prev.filter((name) => removedMediaNames.includes(name));
+              return [...nextExisting, ...removed];
+            });
           }}
-          aria-label={`Убрать файл ${item.name}`}
-        >
-          <span aria-hidden="true">×</span>
-        </button>
-      )}
-    />
-  );
+          onItemClick={openPreviewMedia}
+          getAction={(item) => (
+            <button
+              type="button"
+              className="media-remove-btn comment-media-remove-btn"
+              onClick={(event) => {
+                event.stopPropagation();
+                if (String(item.key).startsWith('yadisk-')) {
+                  yadisk.removeItem(item.key);
+                  return;
+                }
+                if (item.key.startsWith('existing-')) {
+                  const filename = item.key.slice('existing-'.length);
+                  setRemovedMediaNames((current) =>
+                    current.includes(filename) ? current : [...current, filename]
+                  );
+                  return;
+                }
+                setMediaFiles((current) =>
+                  current.filter((file) => `${file.name}-${file.lastModified}` !== item.key)
+                );
+              }}
+              aria-label={`Убрать файл ${item.name}`}
+            >
+              <span aria-hidden="true">×</span>
+            </button>
+          )}
+        />
+      </div>
+    ) : null;
+
 
   return (
     <>
