@@ -1,8 +1,8 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import gsap from 'gsap';
 import { Flip } from 'gsap/Flip';
-import MediaPreviewGrid from './MediaPreviewGrid';
+import { videoPreviewUrl } from '../../lib/media';
 import MediaProgressRing from './MediaProgressRing';
 
 gsap.registerPlugin(Flip);
@@ -20,25 +20,23 @@ gsap.registerPlugin(Flip);
  */
 
 /**
- * MediaPreviewGrid + pointer drag&drop reorder (FLIP).
+ * Собственная сетка превью с рабочим pointer drag&drop.
  *
  * @param {{
  *   items: SortableMediaItem[],
  *   onReorder: (next: SortableMediaItem[]) => void,
  *   className?: string,
- *   showCaption?: boolean,
- *   originKeyPrefix?: string,
+ *   layout?: 'grid' | 'strip',
  *   enabled?: boolean,
  *   getAction?: (item: SortableMediaItem) => React.ReactNode,
- *   onItemClick?: (item: any, index: number, event: React.MouseEvent) => void
+ *   onItemClick?: (item: SortableMediaItem, index: number, event: React.MouseEvent) => void
  * }} props
  */
 function SortableMediaPreviewGrid({
   items,
   onReorder,
   className,
-  showCaption = false,
-  originKeyPrefix = 'sortable',
+  layout = 'grid',
   enabled = true,
   getAction,
   onItemClick
@@ -48,9 +46,14 @@ function SortableMediaPreviewGrid({
   itemsRef.current = items;
   const [dragKey, setDragKey] = useState(/** @type {string | null} */ (null));
   const dragRef = useRef(
-    /** @type {{ key: string, pointerId: number, startX: number, startY: number, moved: boolean } | null} */ (
-      null
-    )
+    /** @type {{
+     *   key: string,
+     *   pointerId: number,
+     *   startX: number,
+     *   startY: number,
+     *   moved: boolean,
+     *   originIndex: number
+     * } | null} */ (null)
   );
 
   const reorderByKey = useCallback(
@@ -62,7 +65,9 @@ function SortableMediaPreviewGrid({
       if (from < 0 || to < 0 || from === to) return;
 
       const root = rootRef.current;
-      const state = root ? Flip.getState(root.querySelectorAll('.telegram-media-item')) : null;
+      const state = root
+        ? Flip.getState(root.querySelectorAll('.sortable-media-item'))
+        : null;
       const next = current.slice();
       const [moved] = next.splice(from, 1);
       next.splice(to, 0, moved);
@@ -70,10 +75,9 @@ function SortableMediaPreviewGrid({
       if (state) {
         requestAnimationFrame(() => {
           Flip.from(state, {
-            duration: 0.28,
+            duration: 0.24,
             ease: 'power2.out',
-            absolute: true,
-            nested: true
+            absolute: true
           });
         });
       }
@@ -81,11 +85,11 @@ function SortableMediaPreviewGrid({
     [onReorder]
   );
 
-  const findItemKeyAtPoint = useCallback((clientX, clientY) => {
+  const findKeyAtPoint = useCallback((clientX, clientY) => {
     const root = rootRef.current;
     if (!root) return null;
-    const figures = root.querySelectorAll('.telegram-media-item[data-sortable-key]');
-    for (const el of figures) {
+    const nodes = root.querySelectorAll('.sortable-media-item[data-sortable-key]');
+    for (const el of nodes) {
       const rect = el.getBoundingClientRect();
       if (
         clientX >= rect.left &&
@@ -99,28 +103,40 @@ function SortableMediaPreviewGrid({
     return null;
   }, []);
 
-  const onPointerDownCapture = useCallback(
-    (/** @type {React.PointerEvent} */ event) => {
+  const endDrag = useCallback((/** @type {React.PointerEvent} */ event) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    const target = /** @type {HTMLElement | null} */ (event.currentTarget);
+    if (target?.hasPointerCapture?.(event.pointerId)) {
+      try {
+        target.releasePointerCapture(event.pointerId);
+      } catch {
+        /* ignore */
+      }
+    }
+    dragRef.current = null;
+    setDragKey(null);
+  }, []);
+
+  const onItemPointerDown = useCallback(
+    (/** @type {React.PointerEvent<HTMLElement>} */ event, key) => {
       if (!enabled || itemsRef.current.length < 2) return;
       if (event.button != null && event.button !== 0) return;
       const target = /** @type {HTMLElement | null} */ (event.target);
-      if (!target) return;
-      if (target.closest('button.media-remove-btn, .media-remove-btn')) return;
-      const figure = target.closest('.telegram-media-item[data-sortable-key]');
-      if (!figure) return;
-      const key = figure.getAttribute('data-sortable-key');
-      if (!key) return;
+      if (target?.closest?.('.media-remove-btn, button')) return;
 
+      const originIndex = itemsRef.current.findIndex((item) => item.key === key);
       dragRef.current = {
         key,
         pointerId: event.pointerId,
         startX: event.clientX,
         startY: event.clientY,
-        moved: false
+        moved: false,
+        originIndex
       };
       setDragKey(key);
       try {
-        figure.setPointerCapture?.(event.pointerId);
+        event.currentTarget.setPointerCapture(event.pointerId);
       } catch {
         /* ignore */
       }
@@ -128,105 +144,127 @@ function SortableMediaPreviewGrid({
     [enabled]
   );
 
-  const onPointerMoveCapture = useCallback(
+  const onItemPointerMove = useCallback(
     (/** @type {React.PointerEvent} */ event) => {
       const drag = dragRef.current;
       if (!drag || drag.pointerId !== event.pointerId) return;
       const dx = event.clientX - drag.startX;
       const dy = event.clientY - drag.startY;
-      if (!drag.moved && Math.hypot(dx, dy) < 8) return;
-      drag.moved = true;
+      if (!drag.moved && Math.hypot(dx, dy) < 6) return;
+      if (!drag.moved) {
+        drag.moved = true;
+      }
       event.preventDefault();
-      const overKey = findItemKeyAtPoint(event.clientX, event.clientY);
+      const overKey = findKeyAtPoint(event.clientX, event.clientY);
       if (overKey && overKey !== drag.key) {
         reorderByKey(drag.key, overKey);
         drag.key = overKey;
         setDragKey(overKey);
       }
     },
-    [findItemKeyAtPoint, reorderByKey]
+    [findKeyAtPoint, reorderByKey]
   );
 
-  const endDrag = useCallback((/** @type {React.PointerEvent} */ event) => {
-    const drag = dragRef.current;
-    if (!drag || drag.pointerId !== event.pointerId) return;
-    dragRef.current = null;
-    setDragKey(null);
-  }, []);
-
-  const decoratedGetAction = useCallback(
-    (item) => {
-      const action = getAction?.(item);
-      if (item.status === 'loading') {
-        return (
-          <>
-            <span className="sortable-media-loading" aria-hidden="true">
-              <MediaProgressRing progress={item.progress ?? null} />
-            </span>
-            {action}
-          </>
-        );
-      }
-      return action;
-    },
-    [getAction]
-  );
+  useEffect(() => {
+    if (!dragKey) return undefined;
+    const prev = document.body.style.userSelect;
+    document.body.style.userSelect = 'none';
+    return () => {
+      document.body.style.userSelect = prev;
+    };
+  }, [dragKey]);
 
   if (!items.length) return null;
 
   return (
     <div
       ref={rootRef}
-      className={clsx('sortable-media-preview', dragKey && 'sortable-media-preview--dragging')}
-      onPointerDownCapture={onPointerDownCapture}
-      onPointerMoveCapture={onPointerMoveCapture}
-      onPointerUpCapture={endDrag}
-      onPointerCancelCapture={endDrag}
+      className={clsx(
+        'sortable-media-preview',
+        layout === 'strip' && 'sortable-media-preview--strip',
+        layout === 'grid' && 'sortable-media-preview--grid',
+        layout === 'grid' && `telegram-media-grid telegram-media-grid--${Math.min(items.length, 5)}`,
+        dragKey && 'sortable-media-preview--dragging',
+        className
+      )}
     >
-      <MediaPreviewGrid
-        items={items.map((item) => ({
-          ...item,
-          // прокидываем ключ на figure через name-hack нельзя — оборачиваем CSS attribute via className on grid
-        }))}
-        className={clsx(className, 'sortable-media-preview__grid')}
-        showCaption={showCaption}
-        originKeyPrefix={originKeyPrefix}
-        onItemClick={
-          onItemClick
-            ? (item, index, event) => {
-                if (dragRef.current?.moved) {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  return;
-                }
-                onItemClick(item, index, event);
-              }
-            : undefined
+      {items.map((item, index) => {
+        const status = item.status || (item.url ? 'ready' : 'loading');
+        let media = null;
+        if (status === 'loading') {
+          media = (
+            <div className="sortable-media-item__skeleton" aria-label="Загрузка">
+              <MediaProgressRing progress={item.progress ?? null} />
+            </div>
+          );
+        } else if (status === 'error' || !item.url) {
+          media = (
+            <div className="sortable-media-item__error" role="alert">
+              {item.error || 'Ошибка'}
+            </div>
+          );
+        } else if (item.isVideo) {
+          media = (
+            <div className="telegram-video-preview">
+              <video
+                src={videoPreviewUrl(item.url)}
+                preload="metadata"
+                playsInline
+                muted
+                disablePictureInPicture
+                aria-label={item.name}
+              />
+              <span className="post-media-play-badge" aria-hidden="true">
+                ▶
+              </span>
+            </div>
+          );
+        } else {
+          media = <img src={item.url} alt={item.name} draggable={false} />;
         }
-        getAction={decoratedGetAction}
-      />
-      {/* data-sortable-key на figure — через mutation после paint */}
-      <SortableKeyBinder items={items} rootRef={rootRef} dragKey={dragKey} />
+
+        const canOpen = Boolean(onItemClick) && status === 'ready' && Boolean(item.url);
+
+        return (
+          <figure
+            key={item.key}
+            className={clsx(
+              'sortable-media-item',
+              'telegram-media-item',
+              dragKey === item.key && 'is-sortable-dragging'
+            )}
+            data-sortable-key={item.key}
+            onPointerDown={(e) => onItemPointerDown(e, item.key)}
+            onPointerMove={onItemPointerMove}
+            onPointerUp={endDrag}
+            onPointerCancel={endDrag}
+            style={enabled && items.length > 1 ? { touchAction: 'none' } : undefined}
+          >
+            {canOpen ? (
+              <button
+                type="button"
+                className="telegram-media-item__open"
+                onClick={(event) => {
+                  if (dragRef.current?.moved) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return;
+                  }
+                  onItemClick?.(item, index, event);
+                }}
+                aria-label={item.isVideo ? `Открыть видео ${item.name}` : `Открыть фото ${item.name}`}
+              >
+                <div className="media-frame">{media}</div>
+              </button>
+            ) : (
+              <div className="media-frame">{media}</div>
+            )}
+            {getAction?.(item)}
+          </figure>
+        );
+      })}
     </div>
   );
-}
-
-/**
- * Вешает data-sortable-key на figure MediaPreviewGrid без форка сетки.
- */
-function SortableKeyBinder({ items, rootRef, dragKey }) {
-  React.useLayoutEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
-    const figures = root.querySelectorAll('.telegram-media-item');
-    figures.forEach((figure, index) => {
-      const item = items[index];
-      if (!item) return;
-      figure.setAttribute('data-sortable-key', item.key);
-      figure.classList.toggle('is-sortable-dragging', dragKey === item.key);
-    });
-  }, [items, rootRef, dragKey]);
-  return null;
 }
 
 export default SortableMediaPreviewGrid;

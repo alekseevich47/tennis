@@ -260,7 +260,7 @@ erDiagram
 
 ### `products` и `gallery`
 
-**products:** `title`, `description`, `price`, `sizes`, `images` (до 5 файлов).
+**products:** `title`, `description`, `price`, `old_price`, `sizes`, `images` (до 5 файлов).
 
 **gallery:** одно поле `image` (file) на запись.
 

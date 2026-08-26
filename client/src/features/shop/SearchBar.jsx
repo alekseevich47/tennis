@@ -145,7 +145,7 @@ export default function SearchBar({
           onClick={(event) => event.stopPropagation()}
           onFocus={() => onFocusChange?.(true)}
           onBlur={() => onFocusChange?.(false)}
-          aria-label="Поиск по названию или #артикулу"
+          aria-label="Поиск по названию, описанию или #артикулу"
           inputMode="search"
           autoComplete="off"
           autoCorrect="off"

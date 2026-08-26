@@ -5,6 +5,7 @@ import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { useFavorites } from '../../context/FavoritesContext';
 import { useProductCategories } from '../../hooks/useProductCategories';
 import BuyButton from './BuyButton';
+import ProductPrice from './ProductPrice';
 import { getMediaThumbUrl, getMediaUrl, isVideoMediaName, mediaNames, videoPreviewUrl } from '../../lib/media';
 import { useKeepForModalClose } from '../../hooks/useKeepForModalClose';
 
@@ -356,7 +357,13 @@ function ProductDetail({
         )}
 
         {product.sizes && <p className="product-detail-sizes"><strong>Размеры:</strong> {product.sizes}</p>}
-        <p className="product-price">{product.price} ₽</p>
+        <ProductPrice
+          price={product.price}
+          oldPrice={product.old_price}
+          className="product-price"
+          currentClassName="product-price-current"
+          oldClassName="product-price-old"
+        />
         {product.out_of_stock && <p className="product-out-of-stock-text">Нет в наличии</p>}
 
         <BuyButton product={product} />

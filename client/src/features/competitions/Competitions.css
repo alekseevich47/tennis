@@ -584,8 +584,16 @@
 
 .tournament-comment-form {
   display: flex;
+  flex-direction: column;
   gap: 8px;
+  align-items: stretch;
+  width: 100%;
+}
+
+.tournament-comment-form .comment-compose__row {
+  display: flex;
   align-items: flex-end;
+  gap: 8px;
 }
 
 .tournament-comment-form .post-rich-text {

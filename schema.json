@@ -2869,6 +2869,18 @@
         "type": "number"
       },
       {
+        "hidden": false,
+        "id": "number1847203951",
+        "max": null,
+        "min": null,
+        "name": "old_price",
+        "onlyInt": false,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      },
+      {
         "autogeneratePattern": "",
         "hidden": false,
         "id": "text3063842665",

@@ -15,6 +15,7 @@ const INITIAL = {
   title: '',
   description: '',
   price: '',
+  old_price: '',
   sizes: '',
   categories: /** @type {string[]} */ ([]),
   out_of_stock: false
@@ -24,6 +25,14 @@ const MAX_PRODUCT_IMAGES = 5;
 
 function parsePrice(value) {
   return parseFloat(value) || 0;
+}
+
+/** @param {unknown} value @returns {number | null} */
+function parseOptionalOldPrice(value) {
+  const trimmed = String(value ?? '').trim();
+  if (!trimmed) return null;
+  const n = parseFloat(trimmed);
+  return Number.isFinite(n) && n > 0 ? n : null;
 }
 
 function areStringArraysEqual(left, right) {
@@ -61,6 +70,7 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
     title: product?.title || '',
     description: product?.description || '',
     price: product?.price?.toString() || '',
+    old_price: Number(product?.old_price) > 0 ? String(product.old_price) : '',
     sizes: product?.sizes || '',
     categories: Array.isArray(product?.categories) ? product.categories : [],
     out_of_stock: Boolean(product?.out_of_stock)
@@ -117,6 +127,7 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
       title: product?.title || '',
       description: product?.description || '',
       price: product?.price?.toString() || '',
+      old_price: Number(product?.old_price) > 0 ? String(product.old_price) : '',
       sizes: product?.sizes || '',
       categories: Array.isArray(product?.categories) ? product.categories : [],
       out_of_stock: Boolean(product?.out_of_stock)
@@ -179,6 +190,8 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
     const nextTitle = form.title.trim();
     const nextDescription = form.description.trim();
     const nextPrice = parsePrice(form.price);
+    const nextOldPrice = parseOptionalOldPrice(form.old_price);
+    const prevOldPrice = parseOptionalOldPrice(product?.old_price);
     const nextSizes = form.sizes.trim();
     const currentCategories = Array.isArray(product?.categories) ? product.categories : [];
     const hasCategoryChanges = !areStringArraysEqual(form.categories, currentCategories);
@@ -191,6 +204,12 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
     }
     if (!product || nextPrice !== parsePrice(String(product.price ?? ''))) {
       data.append('price', String(nextPrice));
+    }
+    if (!product || nextOldPrice !== prevOldPrice) {
+      // На create пустое old_price не шлём; на edit пустая строка сбрасывает number → null.
+      if (product || nextOldPrice != null) {
+        data.append('old_price', nextOldPrice == null ? '' : String(nextOldPrice));
+      }
     }
     if (!product || nextSizes !== (product.sizes || '')) {
       data.append('sizes', nextSizes);
@@ -287,15 +306,31 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
           />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="product-price">Цена, ₽</label>
-          <input
-            id="product-price"
-            type="number"
-            value={form.price}
-            onChange={(e) => updateField('price')(e.target.value)}
-            required
-          />
+        <div className="product-form-price-row">
+          <div className="form-group">
+            <label htmlFor="product-price">Актуальная цена, ₽</label>
+            <input
+              id="product-price"
+              type="number"
+              min="0"
+              step="any"
+              value={form.price}
+              onChange={(e) => updateField('price')(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="product-old-price">Старая цена, ₽</label>
+            <input
+              id="product-old-price"
+              type="number"
+              min="0"
+              step="any"
+              value={form.old_price}
+              onChange={(e) => updateField('old_price')(e.target.value)}
+              placeholder="Необязательно"
+            />
+          </div>
         </div>
 
         <div className="form-group">
@@ -360,6 +395,7 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
 
         <SortableMediaPreviewGrid
           items={previewItems}
+          layout="grid"
           onReorder={(next) => {
             const byKey = new Map(orderedMedia.map((item) => [item.key, item]));
             setOrderedMedia(
@@ -369,7 +405,6 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
             );
           }}
           className="product-form-preview-grid"
-          showCaption={false}
           getAction={(item) => (
             <button
               type="button"
