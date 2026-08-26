@@ -9,10 +9,12 @@ gsap.registerPlugin(Flip);
 
 const LONG_PRESS_MS = 420;
 const MOVE_CANCEL_PX = 10;
-const EDGE_ZONE_PX = 44;
-const EDGE_MAX_SPEED = 18;
+const LIFT_MOVE_PX = 4;
+const EDGE_ZONE_PX = 56;
+const EDGE_MAX_SPEED = 22;
 const REMOVE_MS = 280;
 const FLIP_MS = 0.28;
+const GHOST_SCALE = 1.08;
 
 /**
  * @typedef {{
@@ -277,14 +279,16 @@ function SortableMediaPreviewGrid({
     let speed = 0;
     if (x < rect.left + EDGE_ZONE_PX) {
       const t = 1 - Math.max(0, (x - rect.left) / EDGE_ZONE_PX);
-      speed = -EDGE_MAX_SPEED * (0.35 + 0.65 * t * t);
+      // ускорение к краю: ease-in quadratic
+      speed = -EDGE_MAX_SPEED * (0.2 + 0.8 * t * t);
     } else if (x > rect.right - EDGE_ZONE_PX) {
       const t = 1 - Math.max(0, (rect.right - x) / EDGE_ZONE_PX);
-      speed = EDGE_MAX_SPEED * (0.35 + 0.65 * t * t);
+      speed = EDGE_MAX_SPEED * (0.2 + 0.8 * t * t);
     }
 
     if (speed !== 0) {
-      scrollEl.scrollLeft += speed;
+      const maxScroll = scrollEl.scrollWidth - scrollEl.clientWidth;
+      scrollEl.scrollLeft = Math.max(0, Math.min(maxScroll, scrollEl.scrollLeft + speed));
       const nextDrop = computeDropIndex(
         session.lastClientX,
         session.lastClientY,
@@ -294,10 +298,10 @@ function SortableMediaPreviewGrid({
       if (nextDrop >= 0) {
         applyLiveOrder(moveKeyToIndex(session.orderKeys, session.key, nextDrop));
       }
-      session.edgeRaf = requestAnimationFrame(tickEdgeScroll);
-    } else {
-      session.edgeRaf = null;
     }
+
+    // RAF крутится всё время lift — иначе edge-scroll «через раз» после выхода из зоны
+    session.edgeRaf = requestAnimationFrame(tickEdgeScroll);
   }, [applyLiveOrder, computeDropIndex, layout, stopEdgeScroll]);
 
   const ensureEdgeScroll = useCallback(() => {
@@ -337,7 +341,6 @@ function SortableMediaPreviewGrid({
       const originKeys = session.originKeys;
       const changed =
         session.dragging &&
-        session.lifted &&
         finalKeys.length === originKeys.length &&
         finalKeys.some((key, i) => key !== originKeys[i]);
 
@@ -365,16 +368,22 @@ function SortableMediaPreviewGrid({
     setLifted(true);
     const item = itemsRef.current.find((entry) => entry.key === session.key);
     if (!item) return;
+    // Компенсация scale: origin center → визуально не «съезжает» вниз-вправо
+    const grow = ((GHOST_SCALE - 1) * session.itemW) / 2;
+    const growY = ((GHOST_SCALE - 1) * session.itemH) / 2;
     setGhost({
       key: session.key,
-      x: clientX - session.grabX,
-      y: clientY - session.grabY,
+      x: clientX - session.grabX - grow,
+      y: clientY - session.grabY - growY,
       w: session.itemW,
       h: session.itemH,
       url: item.url,
       isVideo: item.isVideo
     });
-  }, []);
+    if (layout === 'strip') {
+      ensureEdgeScroll();
+    }
+  }, [ensureEdgeScroll, layout]);
 
   const startDragging = useCallback(
     (key, el) => {
@@ -390,15 +399,13 @@ function SortableMediaPreviewGrid({
       setLifted(false);
       setDragOrder(keys.slice());
       try {
-        // Capture на самом item — иначе до mount window-listener теряются move.
         el.setPointerCapture?.(session.pointerId);
       } catch {
         /* ignore */
       }
-      // Сразу «вытягиваем» в ghost на месте — слот становится hole.
-      liftItem(session.lastClientX, session.lastClientY);
+      // Только armed scale на месте — ghost после движения.
     },
-    [activeKeys, liftItem]
+    [activeKeys]
   );
 
   const onItemPointerDown = useCallback(
@@ -471,15 +478,18 @@ function SortableMediaPreviewGrid({
       event.preventDefault?.();
 
       if (!session.lifted) {
+        if (dist < LIFT_MOVE_PX) return;
         liftItem(event.clientX, event.clientY);
       }
 
+      const grow = ((GHOST_SCALE - 1) * session.itemW) / 2;
+      const growY = ((GHOST_SCALE - 1) * session.itemH) / 2;
       setGhost((prev) =>
         prev
           ? {
               ...prev,
-              x: event.clientX - session.grabX,
-              y: event.clientY - session.grabY
+              x: event.clientX - session.grabX - grow,
+              y: event.clientY - session.grabY - growY
             }
           : prev
       );
@@ -588,10 +598,30 @@ function SortableMediaPreviewGrid({
     document.body.style.overflow = 'hidden';
     const scrollEl = findStripScrollParent(rootRef.current);
     const prevTouchAction = scrollEl?.style.touchAction || '';
-    if (scrollEl) scrollEl.style.touchAction = 'none';
+    const prevOverflowX = scrollEl?.style.overflowX || '';
+    if (scrollEl) {
+      scrollEl.style.touchAction = 'none';
+      // Жестовый pan-x выключаем; программный edge-scroll через scrollLeft остаётся.
+      scrollEl.style.overflowX = 'auto';
+    }
+    const blockWheel = (/** @type {WheelEvent} */ e) => {
+      if (scrollEl?.contains(/** @type {Node} */ (e.target)) || rootRef.current?.contains(/** @type {Node} */ (e.target))) {
+        e.preventDefault();
+      }
+    };
+    const blockTouchScroll = (/** @type {TouchEvent} */ e) => {
+      if (e.cancelable) e.preventDefault();
+    };
+    window.addEventListener('wheel', blockWheel, { passive: false, capture: true });
+    window.addEventListener('touchmove', blockTouchScroll, { passive: false, capture: true });
     return () => {
       document.body.style.overflow = prevOverflow;
-      if (scrollEl) scrollEl.style.touchAction = prevTouchAction;
+      if (scrollEl) {
+        scrollEl.style.touchAction = prevTouchAction;
+        scrollEl.style.overflowX = prevOverflowX;
+      }
+      window.removeEventListener('wheel', blockWheel, true);
+      window.removeEventListener('touchmove', blockTouchScroll, true);
     };
   }, [dragKey]);
 
@@ -741,7 +771,7 @@ function SortableMediaPreviewGrid({
           style={{
             width: ghost.w,
             height: ghost.h,
-            transform: `translate3d(${ghost.x}px, ${ghost.y}px, 0) scale(1.07)`
+            transform: `translate3d(${ghost.x}px, ${ghost.y}px, 0) scale(${GHOST_SCALE})`
           }}
           aria-hidden="true"
         >
