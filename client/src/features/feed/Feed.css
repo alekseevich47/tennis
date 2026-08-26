@@ -966,6 +966,41 @@ button.post-card-like:hover:not(:disabled) {
   margin-top: 16px;
 }
 
+/*
+ * Create/edit публикаций + long-press превью расположения текста:
+ * UI не копируется; редактор текста остаётся selectable.
+ */
+.create-post-modal,
+.edit-post-modal,
+.create-tournament-post-form,
+.publish-longpress-overlay,
+.comment-send-preview-overlay,
+.schedule-sheet,
+.schedule-sheet-root,
+.scheduled-posts-modal,
+.scheduled-post-menu-overlay,
+.scheduled-post-card,
+.edit-post-label,
+.create-tournament-post-participants-title {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.create-post-modal [contenteditable='true'],
+.create-post-modal textarea,
+.create-post-modal input:not([type='button']):not([type='submit']):not([type='reset']):not([type='checkbox']):not([type='radio']):not([type='file']),
+.edit-post-modal [contenteditable='true'],
+.edit-post-modal textarea,
+.edit-post-modal input:not([type='button']):not([type='submit']):not([type='reset']):not([type='checkbox']):not([type='radio']):not([type='file']),
+.create-tournament-post-form [contenteditable='true'],
+.create-tournament-post-form textarea,
+.create-tournament-post-form input:not([type='button']):not([type='submit']):not([type='reset']):not([type='checkbox']):not([type='radio']):not([type='file']) {
+  user-select: text;
+  -webkit-user-select: text;
+  -webkit-touch-callout: default;
+}
+
 .post-link-form {
   display: flex;
   flex-direction: column;
@@ -3305,6 +3340,11 @@ button.post-card-like:hover:not(:disabled) {
   user-select: none;
 }
 
+/* Не мешать GSAP Flip: без CSS transition на transform/размеры во время DnD */
+.sortable-media-preview--dragging .sortable-media-item {
+  transition: box-shadow 0.22s ease;
+}
+
 .sortable-media-preview--dragging .sortable-media-item.is-sortable-armed {
   opacity: 1;
   transform: scale(1.07);
@@ -3313,15 +3353,27 @@ button.post-card-like:hover:not(:disabled) {
 }
 
 .sortable-media-preview--dragging .sortable-media-item.is-sortable-lifted {
-  opacity: 0;
-  transform: scale(1);
-  box-shadow: none;
   pointer-events: none;
+  box-shadow: none;
 }
 
-.sortable-media-preview--dragging .sortable-media-item.is-sortable-drop-target {
-  outline: 2px solid rgba(0, 122, 255, 0.45);
+/* Hole / примерка: слот остаётся в потоке, контент скрыт; соседи сдвигаются через GSAP Flip */
+.sortable-media-preview--lifted .sortable-media-item.is-sortable-placeholder {
+  opacity: 1;
+  transform: none;
+  background: rgba(0, 122, 255, 0.08);
+  outline: 2px dashed rgba(0, 122, 255, 0.4);
   outline-offset: -2px;
+}
+
+.sortable-media-preview--lifted .sortable-media-item.is-sortable-placeholder .media-frame,
+.sortable-media-preview--lifted .sortable-media-item.is-sortable-placeholder .media-remove-btn,
+.sortable-media-preview--lifted .sortable-media-item.is-sortable-placeholder .comment-media-remove-btn {
+  visibility: hidden;
+}
+
+.sortable-media-preview--dragging .sortable-media-item:not(.is-sortable-lifted):not(.is-sortable-exiting) {
+  will-change: transform;
 }
 
 .sortable-media-preview--strip .sortable-media-item.is-sortable-exiting {
@@ -3336,14 +3388,15 @@ button.post-card-like:hover:not(:disabled) {
 
 .sortable-media-ghost {
   position: fixed;
+  left: 0;
+  top: 0;
   z-index: 4200;
   pointer-events: none;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.26);
   opacity: 0.98;
-  transform: scale(1.07);
-  will-change: left, top;
+  will-change: transform;
 }
 
 .sortable-media-ghost img,

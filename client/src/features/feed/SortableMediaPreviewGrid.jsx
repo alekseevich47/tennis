@@ -1,15 +1,18 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
+import gsap from 'gsap';
+import { Flip } from 'gsap/Flip';
 import { videoPreviewUrl } from '../../lib/media';
 import MediaProgressRing from './MediaProgressRing';
 
+gsap.registerPlugin(Flip);
+
 const LONG_PRESS_MS = 420;
 const MOVE_CANCEL_PX = 10;
-const LIFT_PX = 6;
-const DWELL_MS = 260;
 const EDGE_ZONE_PX = 44;
 const EDGE_MAX_SPEED = 18;
 const REMOVE_MS = 280;
+const FLIP_MS = 0.28;
 
 /**
  * @typedef {{
@@ -40,7 +43,29 @@ function findStripScrollParent(el) {
 }
 
 /**
- * Превью: long-press → DnD; tap → onItemClick; strip — edge auto-scroll при drag.
+ * @returns {boolean}
+ */
+function prefersReducedMotion() {
+  return Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches);
+}
+
+/**
+ * @param {string[]} keys
+ * @param {string} key
+ * @param {number} toIndex
+ * @returns {string[]}
+ */
+function moveKeyToIndex(keys, key, toIndex) {
+  const from = keys.indexOf(key);
+  if (from < 0 || toIndex < 0 || toIndex >= keys.length || from === toIndex) return keys;
+  const next = keys.slice();
+  next.splice(from, 1);
+  next.splice(toIndex, 0, key);
+  return next;
+}
+
+/**
+ * Превью: long-press → lift ghost → live примерка слота (Flip) → commit на pointerup.
  *
  * @param {{
  *   items: SortableMediaItem[],
@@ -69,7 +94,7 @@ function SortableMediaPreviewGrid({
 
   const [dragKey, setDragKey] = useState(/** @type {string | null} */ (null));
   const [lifted, setLifted] = useState(false);
-  const [dropIndex, setDropIndex] = useState(/** @type {number | null} */ (null));
+  const [dragOrder, setDragOrder] = useState(/** @type {string[] | null} */ (null));
   const [exitingKeys, setExitingKeys] = useState(/** @type {Record<string, true>} */ ({}));
   const [ghost, setGhost] = useState(
     /** @type {{ key: string, x: number, y: number, w: number, h: number, url: string, isVideo: boolean } | null} */ (
@@ -80,7 +105,6 @@ function SortableMediaPreviewGrid({
   const sessionRef = useRef(
     /** @type {{
      *   key: string,
-     *   fromIndex: number,
      *   pointerId: number,
      *   startX: number,
      *   startY: number,
@@ -89,14 +113,15 @@ function SortableMediaPreviewGrid({
      *   itemW: number,
      *   itemH: number,
      *   longPressTimer: ReturnType<typeof setTimeout> | null,
-     *   dwellTimer: ReturnType<typeof setTimeout> | null,
      *   dragging: boolean,
      *   lifted: boolean,
      *   suppressClick: boolean,
-     *   dropIndex: number,
+     *   orderKeys: string[],
+     *   originKeys: string[],
      *   lastClientX: number,
      *   lastClientY: number,
-     *   edgeRaf: number | null
+     *   edgeRaf: number | null,
+     *   flipState: ReturnType<typeof Flip.getState> | null
      * } | null} */ (null)
   );
 
@@ -117,44 +142,59 @@ function SortableMediaPreviewGrid({
     }
   }, []);
 
-  const applyReorder = useCallback(
-    (fromIndex, toIndex) => {
-      if (fromIndex < 0 || toIndex < 0 || fromIndex === toIndex) return false;
-      const list = itemsRef.current.slice();
-      if (fromIndex >= list.length || toIndex >= list.length) return false;
-      const [moved] = list.splice(fromIndex, 1);
-      list.splice(toIndex, 0, moved);
-      onReorder(list);
-      return true;
-    },
-    [onReorder]
-  );
+  const activeKeys = useCallback(() => {
+    return itemsRef.current.filter((item) => !exitingKeys[item.key]).map((item) => item.key);
+  }, [exitingKeys]);
+
+  const displayItems = useMemo(() => {
+    if (!dragOrder) return items;
+    const byKey = new Map(items.map((item) => [item.key, item]));
+    return dragOrder.map((key) => byKey.get(key)).filter(Boolean);
+  }, [dragOrder, items]);
 
   const computeDropIndex = useCallback(
-    (clientX, clientY, excludeKey) => {
+    (clientX, clientY, orderKeys, activeKey) => {
       const root = rootRef.current;
-      if (!root) return -1;
-      const orderKeys = itemsRef.current
-        .filter((item) => !exitingKeys[item.key])
-        .map((item) => item.key);
-      if (!orderKeys.length) return -1;
+      if (!root || !orderKeys.length) return -1;
 
       const nodes = orderKeys
-        .map((key) => root.querySelector(`.sortable-media-item[data-sortable-key="${CSS.escape(key)}"]`))
+        .map((key) =>
+          root.querySelector(`.sortable-media-item[data-sortable-key="${CSS.escape(key)}"]`)
+        )
         .filter(Boolean);
 
-      if (layout === 'strip') {
-        for (let i = 0; i < nodes.length; i += 1) {
-          const rect = /** @type {HTMLElement} */ (nodes[i]).getBoundingClientRect();
-          if (clientX < rect.left + rect.width / 2) return i;
+      if (!nodes.length) return -1;
+
+      for (let i = 0; i < nodes.length; i += 1) {
+        const rect = /** @type {HTMLElement} */ (nodes[i]).getBoundingClientRect();
+        if (
+          clientX >= rect.left &&
+          clientX <= rect.right &&
+          clientY >= rect.top &&
+          clientY <= rect.bottom
+        ) {
+          return i;
         }
-        return nodes.length - 1;
       }
 
-      let best = orderKeys.indexOf(excludeKey);
+      if (layout === 'strip') {
+        let best = 0;
+        let bestDist = Infinity;
+        nodes.forEach((node, i) => {
+          const rect = /** @type {HTMLElement} */ (node).getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const dist = Math.abs(clientX - cx);
+          if (dist < bestDist) {
+            bestDist = dist;
+            best = i;
+          }
+        });
+        return best;
+      }
+
+      let best = Math.max(0, orderKeys.indexOf(activeKey));
       let bestDist = Infinity;
       nodes.forEach((node, i) => {
-        if (orderKeys[i] === excludeKey) return;
         const rect = /** @type {HTMLElement} */ (node).getBoundingClientRect();
         const cx = rect.left + rect.width / 2;
         const cy = rect.top + rect.height / 2;
@@ -166,36 +206,60 @@ function SortableMediaPreviewGrid({
       });
       return best;
     },
-    [exitingKeys, layout]
+    [layout]
   );
 
-  const commitDwell = useCallback(() => {
+  const captureFlipState = useCallback(() => {
+    const root = rootRef.current;
     const session = sessionRef.current;
-    if (!session?.dragging) return;
-    const from = itemsRef.current.findIndex((item) => item.key === session.key);
-    if (from < 0) return;
-    const to = session.dropIndex;
-    if (to < 0 || to === from) return;
-    if (applyReorder(from, to)) {
-      session.fromIndex = to;
+    if (!root || !session) return;
+    const nodes = root.querySelectorAll(
+      '.sortable-media-item:not(.is-sortable-lifted):not(.is-sortable-exiting)'
+    );
+    if (!nodes.length) {
+      session.flipState = null;
+      return;
     }
-  }, [applyReorder]);
+    session.flipState = Flip.getState(nodes);
+  }, []);
 
-  const scheduleDwell = useCallback(
-    (nextDrop) => {
+  const applyLiveOrder = useCallback(
+    (nextKeys) => {
       const session = sessionRef.current;
       if (!session) return;
-      clearTimer('dwellTimer');
-      session.dropIndex = nextDrop;
-      setDropIndex(nextDrop);
-      const from = itemsRef.current.findIndex((item) => item.key === session.key);
-      if (nextDrop === from || nextDrop < 0) return;
-      session.dwellTimer = setTimeout(() => {
-        commitDwell();
-      }, DWELL_MS);
+      const prev = session.orderKeys;
+      if (
+        prev.length === nextKeys.length &&
+        prev.every((key, i) => key === nextKeys[i])
+      ) {
+        return;
+      }
+      captureFlipState();
+      session.orderKeys = nextKeys;
+      setDragOrder(nextKeys);
     },
-    [clearTimer, commitDwell]
+    [captureFlipState]
   );
+
+  useLayoutEffect(() => {
+    const session = sessionRef.current;
+    const state = session?.flipState;
+    if (!state || !rootRef.current) return;
+    session.flipState = null;
+    const targets = rootRef.current.querySelectorAll(
+      '.sortable-media-item:not(.is-sortable-lifted):not(.is-sortable-exiting)'
+    );
+    gsap.killTweensOf(targets);
+    Flip.from(state, {
+      targets,
+      duration: prefersReducedMotion() ? 0 : FLIP_MS,
+      ease: 'power2.out',
+      // grid с разными span/размерами — absolute стабильнее; strip — transform в потоке
+      absolute: layout === 'grid',
+      nested: true,
+      scale: false
+    });
+  }, [dragOrder, layout]);
 
   const tickEdgeScroll = useCallback(() => {
     const session = sessionRef.current;
@@ -221,15 +285,20 @@ function SortableMediaPreviewGrid({
 
     if (speed !== 0) {
       scrollEl.scrollLeft += speed;
-      const nextDrop = computeDropIndex(session.lastClientX, session.lastClientY, session.key);
-      if (nextDrop >= 0 && nextDrop !== session.dropIndex) {
-        scheduleDwell(nextDrop);
+      const nextDrop = computeDropIndex(
+        session.lastClientX,
+        session.lastClientY,
+        session.orderKeys,
+        session.key
+      );
+      if (nextDrop >= 0) {
+        applyLiveOrder(moveKeyToIndex(session.orderKeys, session.key, nextDrop));
       }
       session.edgeRaf = requestAnimationFrame(tickEdgeScroll);
     } else {
       session.edgeRaf = null;
     }
-  }, [computeDropIndex, layout, scheduleDwell, stopEdgeScroll]);
+  }, [applyLiveOrder, computeDropIndex, layout, stopEdgeScroll]);
 
   const ensureEdgeScroll = useCallback(() => {
     const session = sessionRef.current;
@@ -238,51 +307,56 @@ function SortableMediaPreviewGrid({
   }, [tickEdgeScroll]);
 
   const endSession = useCallback(
-    (/** @type {React.PointerEvent | null} */ event) => {
+    (/** @type {{ pointerId?: number, currentTarget?: EventTarget | null } | null} */ event) => {
       const session = sessionRef.current;
       if (!session) return;
       clearTimer('longPressTimer');
-      clearTimer('dwellTimer');
       stopEdgeScroll();
-      if (event && event.currentTarget?.hasPointerCapture?.(session.pointerId)) {
+
+      const releaseTarget =
+        (event?.currentTarget &&
+        typeof /** @type {HTMLElement} */ (event.currentTarget).releasePointerCapture ===
+          'function'
+          ? /** @type {HTMLElement} */ (event.currentTarget)
+          : null) ||
+        rootRef.current?.querySelector(
+          `.sortable-media-item[data-sortable-key="${CSS.escape(session.key)}"]`
+        );
+
+      if (releaseTarget) {
         try {
-          event.currentTarget.releasePointerCapture(session.pointerId);
+          if (releaseTarget.hasPointerCapture?.(session.pointerId)) {
+            releaseTarget.releasePointerCapture(session.pointerId);
+          }
         } catch {
           /* ignore */
         }
       }
-      // Финальный commit, если dwell ещё не успел
-      if (session.dragging && session.lifted) {
-        const from = itemsRef.current.findIndex((item) => item.key === session.key);
-        if (from >= 0 && session.dropIndex >= 0 && session.dropIndex !== from) {
-          applyReorder(from, session.dropIndex);
+
+      const finalKeys = session.orderKeys;
+      const originKeys = session.originKeys;
+      const changed =
+        session.dragging &&
+        session.lifted &&
+        finalKeys.length === originKeys.length &&
+        finalKeys.some((key, i) => key !== originKeys[i]);
+
+      if (changed) {
+        const byKey = new Map(itemsRef.current.map((item) => [item.key, item]));
+        const nextItems = finalKeys.map((key) => byKey.get(key)).filter(Boolean);
+        if (nextItems.length === finalKeys.length) {
+          onReorder(nextItems);
         }
       }
+
       sessionRef.current = null;
       setDragKey(null);
       setLifted(false);
-      setDropIndex(null);
+      setDragOrder(null);
       setGhost(null);
     },
-    [applyReorder, clearTimer, stopEdgeScroll]
+    [clearTimer, onReorder, stopEdgeScroll]
   );
-
-  const startDragging = useCallback((key, fromIndex, el) => {
-    const session = sessionRef.current;
-    if (!session || session.key !== key) return;
-    session.dragging = true;
-    session.suppressClick = true;
-    session.lifted = false;
-    session.dropIndex = fromIndex;
-    setDragKey(key);
-    setLifted(false);
-    setDropIndex(fromIndex);
-    try {
-      el.setPointerCapture(session.pointerId);
-    } catch {
-      /* ignore */
-    }
-  }, []);
 
   const liftItem = useCallback((clientX, clientY) => {
     const session = sessionRef.current;
@@ -302,23 +376,47 @@ function SortableMediaPreviewGrid({
     });
   }, []);
 
+  const startDragging = useCallback(
+    (key, el) => {
+      const session = sessionRef.current;
+      if (!session || session.key !== key) return;
+      const keys = activeKeys();
+      session.dragging = true;
+      session.suppressClick = true;
+      session.lifted = false;
+      session.orderKeys = keys.slice();
+      session.originKeys = keys.slice();
+      setDragKey(key);
+      setLifted(false);
+      setDragOrder(keys.slice());
+      try {
+        // Capture на самом item — иначе до mount window-listener теряются move.
+        el.setPointerCapture?.(session.pointerId);
+      } catch {
+        /* ignore */
+      }
+      // Сразу «вытягиваем» в ghost на месте — слот становится hole.
+      liftItem(session.lastClientX, session.lastClientY);
+    },
+    [activeKeys, liftItem]
+  );
+
   const onItemPointerDown = useCallback(
-    (/** @type {React.PointerEvent<HTMLElement>} */ event, key, index) => {
+    (/** @type {React.PointerEvent<HTMLElement>} */ event, key) => {
       if (event.button != null && event.button !== 0) return;
       const target = /** @type {HTMLElement | null} */ (event.target);
       if (target?.closest?.('.media-remove-btn')) return;
 
       clearTimer('longPressTimer');
-      clearTimer('dwellTimer');
       stopEdgeScroll();
 
       const el = event.currentTarget;
       const rect = el.getBoundingClientRect();
-      const canSort = enabled && itemsRef.current.filter((i) => !exitingKeys[i.key]).length > 1;
+      const keys = activeKeys();
+      const canSort = enabled && keys.length > 1;
 
       sessionRef.current = {
         key,
-        fromIndex: index,
         pointerId: event.pointerId,
         startX: event.clientX,
         startY: event.clientY,
@@ -328,24 +426,25 @@ function SortableMediaPreviewGrid({
         itemH: rect.height,
         longPressTimer: canSort
           ? setTimeout(() => {
-              startDragging(key, index, el);
+              startDragging(key, el);
             }, LONG_PRESS_MS)
           : null,
-        dwellTimer: null,
         dragging: false,
         lifted: false,
         suppressClick: false,
-        dropIndex: index,
+        orderKeys: keys.slice(),
+        originKeys: keys.slice(),
         lastClientX: event.clientX,
         lastClientY: event.clientY,
-        edgeRaf: null
+        edgeRaf: null,
+        flipState: null
       };
     },
-    [clearTimer, enabled, exitingKeys, startDragging, stopEdgeScroll]
+    [activeKeys, clearTimer, enabled, startDragging, stopEdgeScroll]
   );
 
-  const onItemPointerMove = useCallback(
-    (/** @type {React.PointerEvent} */ event) => {
+  const handlePointerMove = useCallback(
+    (/** @type {{ pointerId: number, clientX: number, clientY: number, preventDefault?: () => void }} */ event) => {
       const session = sessionRef.current;
       if (!session || session.pointerId !== event.pointerId) return;
 
@@ -364,20 +463,15 @@ function SortableMediaPreviewGrid({
         }
         if (dist > MOVE_CANCEL_PX) {
           clearTimer('longPressTimer');
-          // сессию оставляем только для отмены click при скролле? null — иначе ложный click
           sessionRef.current = null;
         }
         return;
       }
 
-      event.preventDefault();
+      event.preventDefault?.();
 
       if (!session.lifted) {
-        if (dist >= LIFT_PX) {
-          liftItem(event.clientX, event.clientY);
-        } else {
-          return;
-        }
+        liftItem(event.clientX, event.clientY);
       }
 
       setGhost((prev) =>
@@ -390,9 +484,14 @@ function SortableMediaPreviewGrid({
           : prev
       );
 
-      const nextDrop = computeDropIndex(event.clientX, event.clientY, session.key);
-      if (nextDrop >= 0 && nextDrop !== session.dropIndex) {
-        scheduleDwell(nextDrop);
+      const nextDrop = computeDropIndex(
+        event.clientX,
+        event.clientY,
+        session.orderKeys,
+        session.key
+      );
+      if (nextDrop >= 0) {
+        applyLiveOrder(moveKeyToIndex(session.orderKeys, session.key, nextDrop));
       }
 
       if (layout === 'strip') {
@@ -400,13 +499,20 @@ function SortableMediaPreviewGrid({
       }
     },
     [
+      applyLiveOrder,
       clearTimer,
       computeDropIndex,
       ensureEdgeScroll,
       layout,
-      liftItem,
-      scheduleDwell
+      liftItem
     ]
+  );
+
+  const onItemPointerMove = useCallback(
+    (/** @type {React.PointerEvent} */ event) => {
+      handlePointerMove(event);
+    },
+    [handlePointerMove]
   );
 
   const onItemPointerUp = useCallback(
@@ -424,6 +530,27 @@ function SortableMediaPreviewGrid({
     },
     [endSession, onItemClick]
   );
+
+  // Window listeners: webview иногда теряет pointermove на элементе после Flip/reorder.
+  useLayoutEffect(() => {
+    if (!dragKey) return undefined;
+    const onMove = (/** @type {PointerEvent} */ event) => {
+      handlePointerMove(event);
+    };
+    const onUp = (/** @type {PointerEvent} */ event) => {
+      const session = sessionRef.current;
+      if (!session || session.pointerId !== event.pointerId) return;
+      endSession(event);
+    };
+    window.addEventListener('pointermove', onMove, { passive: false });
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
+    };
+  }, [dragKey, endSession, handlePointerMove]);
 
   const beginRemove = useCallback(
     (key) => {
@@ -468,9 +595,28 @@ function SortableMediaPreviewGrid({
     };
   }, [dragKey]);
 
+  // Синхронизация dragOrder при изменении items (прогресс загрузки) во время DnD.
+  useEffect(() => {
+    const session = sessionRef.current;
+    if (!session?.dragging || !dragOrder) return;
+    const liveKeys = items.filter((item) => !exitingKeys[item.key]).map((item) => item.key);
+    const stillValid =
+      dragOrder.length === liveKeys.length && dragOrder.every((key) => liveKeys.includes(key));
+    if (!stillValid) {
+      const merged = [
+        ...dragOrder.filter((key) => liveKeys.includes(key)),
+        ...liveKeys.filter((key) => !dragOrder.includes(key))
+      ];
+      session.orderKeys = merged;
+      session.originKeys = session.originKeys.filter((key) => liveKeys.includes(key));
+      setDragOrder(merged);
+    }
+  }, [dragOrder, exitingKeys, items]);
+
   if (!items.length) return null;
 
   const canSort = enabled && items.filter((i) => !exitingKeys[i.key]).length > 1;
+  const renderItems = displayItems;
 
   return (
     <div
@@ -479,13 +625,13 @@ function SortableMediaPreviewGrid({
         'sortable-media-preview',
         layout === 'strip' && 'sortable-media-preview--strip',
         layout === 'grid' && 'sortable-media-preview--grid',
-        layout === 'grid' && `telegram-media-grid telegram-media-grid--${Math.min(items.length, 5)}`,
+        layout === 'grid' && `telegram-media-grid telegram-media-grid--${Math.min(renderItems.length, 5)}`,
         dragKey && 'sortable-media-preview--dragging',
         dragKey && lifted && 'sortable-media-preview--lifted',
         className
       )}
     >
-      {items.map((item, index) => {
+      {renderItems.map((item, index) => {
         const status = item.status || (item.url ? 'ready' : 'loading');
         const isExiting = Boolean(exitingKeys[item.key]);
         const isDragging = dragKey === item.key;
@@ -548,11 +694,11 @@ function SortableMediaPreviewGrid({
               isDragging && 'is-sortable-dragging',
               isDragging && !lifted && 'is-sortable-armed',
               isDragging && lifted && 'is-sortable-lifted',
-              dragKey && dropIndex === index && dragKey !== item.key && 'is-sortable-drop-target',
+              isDragging && lifted && 'is-sortable-placeholder',
               isExiting && 'is-sortable-exiting'
             )}
             data-sortable-key={item.key}
-            onPointerDown={(e) => onItemPointerDown(e, item.key, index)}
+            onPointerDown={(e) => onItemPointerDown(e, item.key)}
             onPointerMove={onItemPointerMove}
             onPointerUp={(e) => onItemPointerUp(e, item, index)}
             onPointerCancel={(e) => endSession(e)}
@@ -593,10 +739,9 @@ function SortableMediaPreviewGrid({
         <div
           className="sortable-media-ghost"
           style={{
-            left: ghost.x,
-            top: ghost.y,
             width: ghost.w,
-            height: ghost.h
+            height: ghost.h,
+            transform: `translate3d(${ghost.x}px, ${ghost.y}px, 0) scale(1.07)`
           }}
           aria-hidden="true"
         >
