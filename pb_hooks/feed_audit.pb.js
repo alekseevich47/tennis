@@ -18,14 +18,14 @@ onRecordCreateRequest((e) => {
 
     audit.logEvent($app, {
       category: 'feed',
-      action: 'feed.post.create',
+      action: record.getBool('is_scheduled') ? 'feed.post.schedule' : 'feed.post.create',
       actionKind: 'create',
       subject: subject,
       objectType: 'post',
       objectId: record.id,
       objectLabel: objectLabel,
-      details: { textPreview: content.slice(0, 120) },
-      summaryRu: name + ' опубликовал(а) пост ' + objectLabel,
+      details: { textPreview: content.slice(0, 120), scheduledAt: record.getString('scheduled_at') || null },
+      summaryRu: name + (record.getBool('is_scheduled') ? ' запланировал(а) пост ' : ' опубликовал(а) пост ') + objectLabel,
       severity: 'info'
     });
   } catch (err) {

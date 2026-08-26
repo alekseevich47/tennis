@@ -217,7 +217,7 @@ function TournamentPostDetailModal({
           onClose={handleClose}
         />
 
-        {post.content ? (
+        {post.caption_above !== false && post.content ? (
           <PostContentHtml as="div" className="tournament-post-content post-text-detail" content={post.content} />
         ) : null}
 
@@ -229,6 +229,10 @@ function TournamentPostDetailModal({
           hiddenMediaKey={hiddenMediaKey}
           onOpenFullscreen={onOpenFullscreen}
         />
+
+        {post.caption_above === false && post.content ? (
+          <PostContentHtml as="div" className="tournament-post-content post-text-detail" content={post.content} />
+        ) : null}
 
         {participants.length > 0 ? (
           <TournamentPodium

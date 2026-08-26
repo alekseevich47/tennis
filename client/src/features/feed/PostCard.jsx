@@ -214,26 +214,44 @@ function PostCard({
         </div>
 
         <div className="feed-card-body">
-          <PostContentHtml
-            as="div"
-            role="button"
-            tabIndex={0}
-            className="post-text"
-            onClick={handlePostTextClick}
-            onKeyDown={(event) => {
-              if (event.key !== 'Enter' && event.key !== ' ') return;
-              if (event.target instanceof Element && event.target.closest('a[href]')) return;
-              event.preventDefault();
-              onOpenDetail(post);
-            }}
-            content={post.content || post.text}
-          />
+          {post.caption_above !== false ? (
+            <PostContentHtml
+              as="div"
+              role="button"
+              tabIndex={0}
+              className="post-text"
+              onClick={handlePostTextClick}
+              onKeyDown={(event) => {
+                if (event.key !== 'Enter' && event.key !== ' ') return;
+                if (event.target instanceof Element && event.target.closest('a[href]')) return;
+                event.preventDefault();
+                onOpenDetail(post);
+              }}
+              content={post.content || post.text}
+            />
+          ) : null}
           <PostMedia
             post={post}
             hiddenMediaKey={hiddenMediaKey}
             onOpenFullscreen={onOpenFullscreen}
             scrollRootRef={scrollRootRef}
           />
+          {post.caption_above === false ? (
+            <PostContentHtml
+              as="div"
+              role="button"
+              tabIndex={0}
+              className="post-text"
+              onClick={handlePostTextClick}
+              onKeyDown={(event) => {
+                if (event.key !== 'Enter' && event.key !== ' ') return;
+                if (event.target instanceof Element && event.target.closest('a[href]')) return;
+                event.preventDefault();
+                onOpenDetail(post);
+              }}
+              content={post.content || post.text}
+            />
+          ) : null}
         </div>
 
         <div className="feed-card-footer feed-card-bottom-bar">

@@ -271,7 +271,7 @@ function CommentComposeForm({
     } finally {
       window.setTimeout(() => {
         setSendPhase((prev) => (prev === 'flying' ? 'idle' : prev));
-      }, 1100);
+      }, 1500);
     }
   }, [
     canSend,
@@ -495,17 +495,8 @@ function CommentComposeForm({
                 if (item.status !== 'ready' || !item.url) return;
                 openPreviewMedia(item, index, event);
               }}
+              onRemove={(key) => removeMedia(key)}
               className="comment-compose-media-strip"
-              getAction={(item) => (
-                <button
-                  type="button"
-                  className="media-remove-btn comment-media-remove-btn"
-                  onClick={() => removeMedia(item.key)}
-                  aria-label={`Убрать ${item.name}`}
-                >
-                  <span aria-hidden="true">×</span>
-                </button>
-              )}
             />
           </div>
         ) : null}

@@ -1141,7 +1141,8 @@ button.post-card-like:hover:not(:disabled) {
 
 /* Всплывающий тулбар под выделением (portal → body).
    Выше `.gallery .ui-modal-overlay` (3200) и confirm (3300), иначе в
-   GalleryCommentModal тулбар оказывается под модалкой и не виден. */
+   GalleryCommentModal тулбар оказывается под модалкой и не виден.
+   Появление/исчезновение — GSAP (opacity + scale + y) в PostRichTextField. */
 .post-format-toolbar-floating {
   position: fixed;
   z-index: 3400;
@@ -1157,6 +1158,10 @@ button.post-card-like:hover:not(:disabled) {
     0 4px 16px rgba(15, 23, 42, 0.14),
     0 0 0 1px rgba(15, 23, 42, 0.06);
   pointer-events: auto;
+  opacity: 0;
+  transform-origin: 50% 0%;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
 }
 
 .post-format-toolbar-floating .post-format-toolbar {
@@ -3222,11 +3227,20 @@ button.post-card-like:hover:not(:disabled) {
   position: relative;
   flex: 0 0 112px;
   width: 112px;
+  max-width: 112px;
   height: 112px;
   margin: 0;
   border-radius: 12px;
   overflow: hidden;
   background: #eef2f7;
+  transition:
+    opacity 0.28s ease,
+    transform 0.28s ease,
+    flex-basis 0.28s ease,
+    width 0.28s ease,
+    max-width 0.28s ease,
+    margin 0.28s ease,
+    box-shadow 0.22s ease;
 }
 
 .sortable-media-preview--strip .media-frame,
@@ -3291,13 +3305,33 @@ button.post-card-like:hover:not(:disabled) {
   user-select: none;
 }
 
-.sortable-media-preview--dragging .sortable-media-item.is-sortable-dragging {
-  opacity: 0.35;
+.sortable-media-preview--dragging .sortable-media-item.is-sortable-armed {
+  opacity: 1;
+  transform: scale(1.07);
+  z-index: 3;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.2);
+}
+
+.sortable-media-preview--dragging .sortable-media-item.is-sortable-lifted {
+  opacity: 0;
+  transform: scale(1);
+  box-shadow: none;
+  pointer-events: none;
 }
 
 .sortable-media-preview--dragging .sortable-media-item.is-sortable-drop-target {
-  outline: 2px solid rgba(0, 122, 255, 0.55);
+  outline: 2px solid rgba(0, 122, 255, 0.45);
   outline-offset: -2px;
+}
+
+.sortable-media-preview--strip .sortable-media-item.is-sortable-exiting {
+  opacity: 0;
+  transform: scale(0.86);
+  flex-basis: 0 !important;
+  width: 0 !important;
+  max-width: 0 !important;
+  margin: 0 !important;
+  pointer-events: none;
 }
 
 .sortable-media-ghost {
@@ -3306,9 +3340,10 @@ button.post-card-like:hover:not(:disabled) {
   pointer-events: none;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.28);
-  opacity: 0.95;
-  transform: scale(1.04);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.26);
+  opacity: 0.98;
+  transform: scale(1.07);
+  will-change: left, top;
 }
 
 .sortable-media-ghost img,
@@ -3491,4 +3526,287 @@ button.post-card-like:hover:not(:disabled) {
     animation: none !important;
   }
 }
+
+/* —— Запланированные публикации / long-press «Опубликовать» —— */
+
+.create-post-schedule-btn {
+  position: relative;
+}
+
+.create-post-schedule-btn__dot {
+  position: absolute;
+  right: 7px;
+  bottom: 7px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff3b30;
+  box-shadow: 0 0 0 1.5px #f8f9fa;
+  pointer-events: none;
+}
+
+.publish-longpress-overlay .publish-longpress-stage {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-end;
+  padding: 16px 16px 12px;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.publish-longpress-card {
+  width: min(92vw, 420px);
+  max-width: 100%;
+  max-height: min(58vh, 520px);
+  margin: 0 auto;
+  align-self: center;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.publish-longpress-publish {
+  width: min(92vw, 420px);
+  margin: 0 auto;
+  flex-shrink: 0;
+}
+
+.publish-longpress-media-grid {
+  margin: 0;
+}
+
+.schedule-sheet-root {
+  position: fixed;
+  inset: 0;
+  z-index: 3800;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+
+.schedule-sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  pointer-events: auto;
+}
+
+.schedule-sheet {
+  position: relative;
+  z-index: 1;
+  pointer-events: auto;
+  background: #fff;
+  border-radius: 18px 18px 0 0;
+  padding: 16px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -12px 40px rgba(15, 23, 42, 0.18);
+  will-change: transform;
+}
+
+.schedule-sheet__header {
+  margin-bottom: 8px;
+}
+
+.schedule-sheet__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.schedule-wheel {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.6fr 0.7fr 0.7fr;
+  gap: 4px;
+  margin: 8px 0 16px;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 18%,
+    #000 82%,
+    transparent 100%
+  );
+}
+
+.schedule-wheel__highlight {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 40px;
+  margin-top: -20px;
+  border-top: 1.5px solid #8774e1;
+  border-bottom: 1.5px solid #8774e1;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.schedule-wheel__col {
+  min-width: 0;
+}
+
+.schedule-wheel__scroller {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.schedule-wheel__scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.schedule-wheel__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  border: none;
+  background: transparent;
+  scroll-snap-align: center;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 500;
+  color: rgba(26, 26, 26, 0.38);
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.schedule-wheel__item.is-selected {
+  color: #1a1a1a;
+  font-weight: 650;
+}
+
+.schedule-sheet__confirm {
+  width: 100%;
+  min-height: 48px;
+  border: none;
+  border-radius: 999px;
+  background: #8774e1;
+  color: #fff;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 650;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.schedule-sheet__confirm:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.schedule-sheet__confirm:active:not(:disabled) {
+  background: #7463d4;
+}
+
+.scheduled-posts-modal .ui-modal-body {
+  padding-top: 8px;
+}
+
+.scheduled-posts-empty {
+  margin: 24px 8px;
+  text-align: center;
+  color: #6c757d;
+  font-size: 15px;
+}
+
+.scheduled-posts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.scheduled-post-card {
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid #e8ecf1;
+  padding: 12px;
+  touch-action: manipulation;
+}
+
+.scheduled-post-card__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.scheduled-post-card__heading {
+  font-size: 14px;
+  font-weight: 600;
+  color: #3a3a3c;
+  text-align: center;
+}
+
+.scheduled-post-card__time {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 22px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #efeafc;
+  color: #5b4bb7;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.scheduled-post-card__preview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.scheduled-post-card__text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.35;
+  color: #1a1a1a;
+  word-break: break-word;
+}
+
+.scheduled-post-card__media {
+  margin: 0;
+}
+
+.scheduled-post-menu-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3900;
+  background: rgba(15, 23, 42, 0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.scheduled-post-menu-overlay.is-visible {
+  opacity: 1;
+}
+
+.scheduled-post-menu {
+  position: absolute;
+  width: min(280px, calc(100vw - 24px));
+  margin: 0;
+}
+
+.comment-send-preview-sheet__action--danger {
+  color: #ff3b30;
+}
+
+.comment-send-preview-sheet__action--danger .comment-send-preview-sheet__icon {
+  color: #ff3b30;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scheduled-post-menu-overlay,
+  .schedule-sheet,
+  .schedule-sheet-backdrop {
+    transition: none !important;
+  }
+}
+
 
