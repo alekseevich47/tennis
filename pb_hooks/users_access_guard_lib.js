@@ -89,7 +89,32 @@ function assertPrivilegedUpdateAllowed(original, record) {
   }
 }
 
+/**
+ * Superuser (Admin UI /_/) или moderator из коллекции users.
+ * @param {{ hasSuperuserAuth?: () => boolean, auth?: any }} e
+ * @returns {boolean}
+ */
+function isPrivilegedAuth(e) {
+  try {
+    if (typeof e.hasSuperuserAuth === 'function' && e.hasSuperuserAuth()) return true;
+  } catch (_) { /* ignore */ }
+
+  var auth = e.auth;
+  if (!auth) return false;
+
+  try {
+    if (typeof auth.isSuperuser === 'function' && auth.isSuperuser()) return true;
+  } catch (_) { /* ignore */ }
+
+  try {
+    if (auth.collection && auth.collection().name === '_superusers') return true;
+  } catch (_) { /* ignore */ }
+
+  return auth.getString('role') === 'moderator';
+}
+
 module.exports = {
   applyCreateDefaults: applyCreateDefaults,
-  assertPrivilegedUpdateAllowed: assertPrivilegedUpdateAllowed
+  assertPrivilegedUpdateAllowed: assertPrivilegedUpdateAllowed,
+  isPrivilegedAuth: isPrivilegedAuth
 };

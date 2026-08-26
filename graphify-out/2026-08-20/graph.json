@@ -325,8 +325,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_package_dependencies_react",
-      "community": 8,
-      "community_name": "NPM Dependencies",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "react"
     },
     {
@@ -336,8 +336,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "react",
-      "community": 8,
-      "community_name": "NPM Dependencies",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "react"
     },
     {
@@ -600,8 +600,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_app",
-      "community": 71,
-      "community_name": "App.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "app.jsx"
     },
     {
@@ -611,8 +611,8 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "client_src_app_tab_titles",
-      "community": 71,
-      "community_name": "App.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "tab_titles"
     },
     {
@@ -622,8 +622,8 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "client_src_app_getinitialfavoriteproductids",
-      "community": 71,
-      "community_name": "App.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "getinitialfavoriteproductids()"
     },
     {
@@ -633,8 +633,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "client_src_app_appinner",
-      "community": 71,
-      "community_name": "App.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "appinner()"
     },
     {
@@ -644,7 +644,7 @@
       "source_location": "L102",
       "_origin": "ast",
       "id": "client_src_app_blockedappshell",
-      "community": 80,
+      "community": 77,
       "community_name": "useMaxCloseGuard.js",
       "norm_label": "blockedappshell()"
     },
@@ -655,8 +655,8 @@
       "source_location": "L123",
       "_origin": "ast",
       "id": "client_src_app_appmain",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "appmain()"
     },
     {
@@ -666,8 +666,8 @@
       "source_location": "L633",
       "_origin": "ast",
       "id": "client_src_app_app",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "app()"
     },
     {
@@ -831,8 +831,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_bottomnav",
-      "community": 81,
-      "community_name": "AddActionContext.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "bottomnav.jsx"
     },
     {
@@ -842,8 +842,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_components_bottomnav_nav_items",
-      "community": 81,
-      "community_name": "AddActionContext.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "nav_items"
     },
     {
@@ -853,8 +853,8 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "client_src_components_bottomnav_gallery_nav_item",
-      "community": 81,
-      "community_name": "AddActionContext.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "gallery_nav_item"
     },
     {
@@ -864,8 +864,8 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "client_src_components_bottomnav_admin_nav_item",
-      "community": 81,
-      "community_name": "AddActionContext.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "admin_nav_item"
     },
     {
@@ -875,8 +875,8 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "client_src_components_bottomnav_bottomnav",
-      "community": 81,
-      "community_name": "AddActionContext.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "bottomnav()"
     },
     {
@@ -941,8 +941,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_forceupdateoverlay",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "forceupdateoverlay.jsx"
     },
     {
@@ -952,8 +952,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_components_forceupdateoverlay_hardreload",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "hardreload()"
     },
     {
@@ -963,8 +963,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_components_forceupdateoverlay_forceupdateoverlay",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "forceupdateoverlay()"
     },
     {
@@ -974,8 +974,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "galleryuploadprovider.jsx"
     },
     {
@@ -985,8 +985,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_galleryuploadcontext",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "galleryuploadcontext"
     },
     {
@@ -996,8 +996,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_isgallerykey",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "isgallerykey()"
     },
     {
@@ -1007,8 +1007,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_creategallerypayload",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "creategallerypayload()"
     },
     {
@@ -1018,8 +1018,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_galleryuploadprovider",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "galleryuploadprovider()"
     },
     {
@@ -1029,8 +1029,8 @@
       "source_location": "L169",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_usegalleryupload",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "usegalleryupload()"
     },
     {
@@ -1084,8 +1084,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_productuploadprovider",
-      "community": 67,
-      "community_name": "media.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "productuploadprovider.jsx"
     },
     {
@@ -1095,8 +1095,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_components_productuploadprovider_productuploadcontext",
-      "community": 67,
-      "community_name": "media.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "productuploadcontext"
     },
     {
@@ -1106,8 +1106,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_components_productuploadprovider_isproductskey",
-      "community": 67,
-      "community_name": "media.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "isproductskey()"
     },
     {
@@ -1117,8 +1117,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_components_productuploadprovider_productuploadprovider",
-      "community": 67,
-      "community_name": "media.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "productuploadprovider()"
     },
     {
@@ -1128,8 +1128,8 @@
       "source_location": "L145",
       "_origin": "ast",
       "id": "client_src_components_productuploadprovider_useproductupload",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "useproductupload()"
     },
     {
@@ -1216,8 +1216,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "client_src_components_ui_alertdialog_alertdialogprovider",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "alertdialogprovider()"
     },
     {
@@ -1260,8 +1260,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_closeappconfirmsheet",
-      "community": 71,
-      "community_name": "App.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "closeappconfirmsheet.jsx"
     },
     {
@@ -1271,8 +1271,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_components_ui_closeappconfirmsheet_closeappconfirmsheet",
-      "community": 71,
-      "community_name": "App.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "closeappconfirmsheet()"
     },
     {
@@ -1282,8 +1282,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_emptystate",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "emptystate.jsx"
     },
     {
@@ -1293,8 +1293,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_components_ui_emptystate_emptystate",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "emptystate()"
     },
     {
@@ -1304,8 +1304,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_iconbutton",
-      "community": 68,
-      "community_name": "GalleryCommentModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "iconbutton.jsx"
     },
     {
@@ -1315,8 +1315,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_components_ui_iconbutton_iconbutton",
-      "community": 68,
-      "community_name": "GalleryCommentModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "iconbutton"
     },
     {
@@ -1557,8 +1557,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_toast",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "toast.jsx"
     },
     {
@@ -1568,8 +1568,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "client_src_components_ui_toast_toast",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "toast()"
     },
     {
@@ -1579,8 +1579,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_toastcontext",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "toastcontext.jsx"
     },
     {
@@ -1590,8 +1590,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_components_ui_toastcontext_toastcontext",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "toastcontext"
     },
     {
@@ -1601,8 +1601,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_components_ui_toastcontext_toastprovider",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "toastprovider()"
     },
     {
@@ -1612,8 +1612,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "client_src_components_ui_toastcontext_usetoast",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "usetoast()"
     },
     {
@@ -1645,8 +1645,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_config",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "config.js"
     },
     {
@@ -1656,8 +1656,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "client_src_config_resolvepburl",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "resolvepburl()"
     },
     {
@@ -1667,8 +1667,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "client_src_config_resolvepublicurl",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "resolvepublicurl()"
     },
     {
@@ -1678,8 +1678,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "client_src_config_pb_url",
-      "community": 58,
-      "community_name": "achievements.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "pb_url"
     },
     {
@@ -1689,8 +1689,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "client_src_config_max_auth_url",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "max_auth_url"
     },
     {
@@ -1700,8 +1700,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_context_addactioncontext",
-      "community": 81,
-      "community_name": "AddActionContext.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "addactioncontext.jsx"
     },
     {
@@ -1711,8 +1711,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_context_addactioncontext_default_api",
-      "community": 81,
-      "community_name": "AddActionContext.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "default_api"
     },
     {
@@ -1722,8 +1722,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_context_addactioncontext_addactioncontext",
-      "community": 81,
-      "community_name": "AddActionContext.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "addactioncontext"
     },
     {
@@ -1733,8 +1733,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "client_src_context_addactioncontext_addactionprovider",
-      "community": 81,
-      "community_name": "AddActionContext.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "addactionprovider()"
     },
     {
@@ -1744,8 +1744,8 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "client_src_context_addactioncontext_usetriggeraddaction",
-      "community": 81,
-      "community_name": "AddActionContext.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "usetriggeraddaction()"
     },
     {
@@ -1755,8 +1755,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "client_src_context_addactioncontext_useregisteraddaction",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "useregisteraddaction()"
     },
     {
@@ -1766,8 +1766,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext",
-      "community": 71,
-      "community_name": "App.jsx",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "favoritescontext.jsx"
     },
     {
@@ -1777,8 +1777,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_favoritescontext",
-      "community": 71,
-      "community_name": "App.jsx",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "favoritescontext"
     },
     {
@@ -1788,8 +1788,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_patchproductsfavoritescount",
-      "community": 71,
-      "community_name": "App.jsx",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "patchproductsfavoritescount()"
     },
     {
@@ -1799,8 +1799,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_loadfavoriteproducts",
-      "community": 71,
-      "community_name": "App.jsx",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "loadfavoriteproducts()"
     },
     {
@@ -1810,8 +1810,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_favoritesprovider",
-      "community": 71,
-      "community_name": "App.jsx",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "favoritesprovider()"
     },
     {
@@ -1843,8 +1843,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_features_admin_adminpanelpage_adminpanelpage",
-      "community": 71,
-      "community_name": "App.jsx",
+      "community": 5,
+      "community_name": "Admin UI Controls",
       "norm_label": "adminpanelpage()"
     },
     {
@@ -2371,8 +2371,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsperiodtoolbar",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "statsperiodtoolbar.jsx"
     },
     {
@@ -2404,8 +2404,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsperiodtoolbar_calendaricon",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "calendaricon()"
     },
     {
@@ -2794,61 +2794,6 @@
       "norm_label": "albumstackbadge()"
     },
     {
-      "label": "CommentComposeForm.jsx",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "client_src_features_feed_commentcomposeform",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
-      "norm_label": "commentcomposeform.jsx"
-    },
-    {
-      "label": "AttachButtons()",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L35",
-      "_origin": "ast",
-      "id": "client_src_features_feed_commentcomposeform_attachbuttons",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
-      "norm_label": "attachbuttons()"
-    },
-    {
-      "label": "CommentComposeForm()",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L96",
-      "_origin": "ast",
-      "id": "client_src_features_feed_commentcomposeform_commentcomposeform",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
-      "norm_label": "commentcomposeform()"
-    },
-    {
-      "label": "CommentMediaBody.jsx",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/CommentMediaBody.jsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "client_src_features_feed_commentmediabody",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
-      "norm_label": "commentmediabody.jsx"
-    },
-    {
-      "label": "CommentMediaBody()",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/CommentMediaBody.jsx",
-      "source_location": "L19",
-      "_origin": "ast",
-      "id": "client_src_features_feed_commentmediabody_commentmediabody",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
-      "norm_label": "commentmediabody()"
-    },
-    {
       "label": "CommentReplyButton.jsx",
       "file_type": "code",
       "source_file": "client/src/features/feed/CommentReplyButton.jsx",
@@ -2929,7 +2874,7 @@
       "label": "CommentSendButton()",
       "file_type": "code",
       "source_file": "client/src/features/feed/CommentSendButton.jsx",
-      "source_location": "L22",
+      "source_location": "L11",
       "_origin": "ast",
       "id": "client_src_features_feed_commentsendbutton_commentsendbutton",
       "community": 68,
@@ -3097,8 +3042,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "fullscreenimageviewer.jsx"
     },
     {
@@ -3108,8 +3053,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer_useyadiskloadprogress",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "useyadiskloadprogress()"
     },
     {
@@ -3119,8 +3064,8 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer_fullscreenloadspinner",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "fullscreenloadspinner()"
     },
     {
@@ -3130,8 +3075,8 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer_getwindowwidth",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "getwindowwidth()"
     },
     {
@@ -3141,8 +3086,8 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer_getoriginrect",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "getoriginrect()"
     },
     {
@@ -3152,8 +3097,8 @@
       "source_location": "L101",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer_itemslideid",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "itemslideid()"
     },
     {
@@ -3163,8 +3108,8 @@
       "source_location": "L105",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer_carouselslidekey",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "carouselslidekey()"
     },
     {
@@ -3174,8 +3119,8 @@
       "source_location": "L111",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer_isimagepaintready",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "isimagepaintready()"
     },
     {
@@ -3185,8 +3130,8 @@
       "source_location": "L118",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer_fullscreenslideimage",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "fullscreenslideimage()"
     },
     {
@@ -3196,8 +3141,8 @@
       "source_location": "L267",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer_fullscreenimageviewer",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "fullscreenimageviewer()"
     },
     {
@@ -3207,8 +3152,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_mediapreviewgrid",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 58,
+      "community_name": "achievements.js",
       "norm_label": "mediapreviewgrid.jsx"
     },
     {
@@ -3218,8 +3163,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "client_src_features_feed_mediapreviewgrid_mediapreviewalbumitem",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 58,
+      "community_name": "achievements.js",
       "norm_label": "mediapreviewalbumitem()"
     },
     {
@@ -3229,31 +3174,9 @@
       "source_location": "L178",
       "_origin": "ast",
       "id": "client_src_features_feed_mediapreviewgrid_mediapreviewgrid",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 58,
+      "community_name": "achievements.js",
       "norm_label": "mediapreviewgrid()"
-    },
-    {
-      "label": "MediaProgressRing.jsx",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/MediaProgressRing.jsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "client_src_features_feed_mediaprogressring",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
-      "norm_label": "mediaprogressring.jsx"
-    },
-    {
-      "label": "MediaProgressRing()",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/MediaProgressRing.jsx",
-      "source_location": "L10",
-      "_origin": "ast",
-      "id": "client_src_features_feed_mediaprogressring_mediaprogressring",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
-      "norm_label": "mediaprogressring()"
     },
     {
       "label": "MediaSwipeDots.jsx",
@@ -3460,8 +3383,8 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "client_src_features_feed_postcontextmenu_postcontextmenu",
-      "community": 13,
-      "community_name": "gestures.js",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "postcontextmenu()"
     },
     {
@@ -3479,7 +3402,7 @@
       "label": "PostDetailModal()",
       "file_type": "code",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L58",
+      "source_location": "L57",
       "_origin": "ast",
       "id": "client_src_features_feed_postdetailmodal_postdetailmodal",
       "community": 68,
@@ -3501,7 +3424,7 @@
       "label": "PostFormatToolbar()",
       "file_type": "code",
       "source_file": "client/src/features/feed/PostFormatToolbar.jsx",
-      "source_location": "L13",
+      "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_features_feed_postformattoolbar_postformattoolbar",
       "community": 56,
@@ -3567,7 +3490,7 @@
       "label": "PostRichTextField",
       "file_type": "code",
       "source_file": "client/src/features/feed/PostRichTextField.jsx",
-      "source_location": "L49",
+      "source_location": "L47",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtextfield_postrichtextfield",
       "community": 59,
@@ -3595,39 +3518,6 @@
       "community": 58,
       "community_name": "achievements.js",
       "norm_label": "progressiveimage()"
-    },
-    {
-      "label": "SortableMediaPreviewGrid.jsx",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/SortableMediaPreviewGrid.jsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "client_src_features_feed_sortablemediapreviewgrid",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
-      "norm_label": "sortablemediapreviewgrid.jsx"
-    },
-    {
-      "label": "SortableMediaPreviewGrid()",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/SortableMediaPreviewGrid.jsx",
-      "source_location": "L36",
-      "_origin": "ast",
-      "id": "client_src_features_feed_sortablemediapreviewgrid_sortablemediapreviewgrid",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
-      "norm_label": "sortablemediapreviewgrid()"
-    },
-    {
-      "label": "SortableKeyBinder()",
-      "file_type": "code",
-      "source_file": "client/src/features/feed/SortableMediaPreviewGrid.jsx",
-      "source_location": "L217",
-      "_origin": "ast",
-      "id": "client_src_features_feed_sortablemediapreviewgrid_sortablekeybinder",
-      "community": 8,
-      "community_name": "NPM Dependencies",
-      "norm_label": "sortablekeybinder()"
     },
     {
       "label": "keepCommentEditInView.js",
@@ -3889,8 +3779,8 @@
       "source_location": "L264",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_todisplayhtml",
-      "community": 68,
-      "community_name": "GalleryCommentModal.jsx",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "todisplayhtml()"
     },
     {
@@ -3933,8 +3823,8 @@
       "source_location": "L376",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_getfirstline",
-      "community": 58,
-      "community_name": "achievements.js",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "getfirstline()"
     },
     {
@@ -4043,8 +3933,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_usefetchedoriginal",
-      "community": 58,
-      "community_name": "achievements.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "usefetchedoriginal.js"
     },
     {
@@ -4054,8 +3944,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_features_feed_usefetchedoriginal_usefetchedoriginal",
-      "community": 58,
-      "community_name": "achievements.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "usefetchedoriginal()"
     },
     {
@@ -4208,8 +4098,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_useswipegallery",
-      "community": 13,
-      "community_name": "gestures.js",
+      "community": 58,
+      "community_name": "achievements.js",
       "norm_label": "useswipegallery.js"
     },
     {
@@ -4219,8 +4109,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_features_feed_useswipegallery_useswipegallery",
-      "community": 13,
-      "community_name": "gestures.js",
+      "community": 58,
+      "community_name": "achievements.js",
       "norm_label": "useswipegallery()"
     },
     {
@@ -4241,8 +4131,8 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "client_src_features_feed_useyadiskembed_useyadiskembed",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 58,
+      "community_name": "achievements.js",
       "norm_label": "useyadiskembed()"
     },
     {
@@ -4571,8 +4461,8 @@
       "source_location": "L144",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskmediasessioncache_getmemberloadprogress",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 58,
+      "community_name": "achievements.js",
       "norm_label": "getmemberloadprogress()"
     },
     {
@@ -4582,8 +4472,8 @@
       "source_location": "L154",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskmediasessioncache_subscribememberloadprogress",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "subscribememberloadprogress()"
     },
     {
@@ -4648,8 +4538,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "client_src_features_gallery_gallerycommentmodal_gallerycommentmodal",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "gallerycommentmodal()"
     },
     {
@@ -4758,8 +4648,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationcard",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "notificationcard.jsx"
     },
     {
@@ -4769,8 +4659,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationcard_click_action_labels",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "click_action_labels"
     },
     {
@@ -4780,8 +4670,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationcard_parsecommentreplyparenttext",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "parsecommentreplyparenttext()"
     },
     {
@@ -4791,8 +4681,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationcard_notificationcard",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "notificationcard()"
     },
     {
@@ -4802,8 +4692,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationsdropdown",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "notificationsdropdown.jsx"
     },
     {
@@ -4813,8 +4703,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationsdropdown_notificationsdropdown",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "notificationsdropdown()"
     },
     {
@@ -4824,8 +4714,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationbadges",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "notificationbadges.js"
     },
     {
@@ -4835,8 +4725,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationbadges_formatcountdownpart",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "formatcountdownpart()"
     },
     {
@@ -4846,8 +4736,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationbadges_isuserbooked",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "isuserbooked()"
     },
     {
@@ -4857,8 +4747,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationbadges_formattrainingcountdownbadge",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "formattrainingcountdownbadge()"
     },
     {
@@ -4978,8 +4868,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_profile_aboutappmodal",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "aboutappmodal.jsx"
     },
     {
@@ -4989,8 +4879,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_features_profile_aboutappmodal_openexternalurl",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "openexternalurl()"
     },
     {
@@ -5000,8 +4890,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "client_src_features_profile_aboutappmodal_aboutappmodal",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "aboutappmodal()"
     },
     {
@@ -5011,8 +4901,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_profile_blockedpage",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "blockedpage.jsx"
     },
     {
@@ -5022,8 +4912,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_features_profile_blockedpage_blockedpage",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "blockedpage()"
     },
     {
@@ -5099,8 +4989,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_profile_membershipmodal",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "membershipmodal.jsx"
     },
     {
@@ -5110,8 +5000,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_features_profile_membershipmodal_formatmembershipdate",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "formatmembershipdate()"
     },
     {
@@ -5121,8 +5011,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "client_src_features_profile_membershipmodal_getmembershiptypelabel",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "getmembershiptypelabel()"
     },
     {
@@ -5132,8 +5022,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "client_src_features_profile_membershipmodal_parsefreezelog",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "parsefreezelog()"
     },
     {
@@ -5143,8 +5033,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "client_src_features_profile_membershipmodal_formatfreezelogentry",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "formatfreezelogentry()"
     },
     {
@@ -5154,8 +5044,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "client_src_features_profile_membershipmodal_membershipmodal",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "membershipmodal()"
     },
     {
@@ -5231,8 +5121,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_profile_profilepage",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "profilepage.jsx"
     },
     {
@@ -5242,8 +5132,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "client_src_features_profile_profilepage_formatdate",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "formatdate()"
     },
     {
@@ -5253,8 +5143,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_features_profile_profilepage_normalizedateinput",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "normalizedateinput()"
     },
     {
@@ -5264,8 +5154,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "client_src_features_profile_profilepage_gettrainingtitle",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "gettrainingtitle()"
     },
     {
@@ -5275,8 +5165,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "client_src_features_profile_profilepage_gettrainingstatusforuser",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "gettrainingstatusforuser()"
     },
     {
@@ -5286,8 +5176,8 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "client_src_features_profile_profilepage_getuserpasttrainings",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "getuserpasttrainings()"
     },
     {
@@ -5297,8 +5187,8 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "client_src_features_profile_profilepage_training_badge",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "training_badge"
     },
     {
@@ -5308,8 +5198,8 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "client_src_features_profile_profilepage_profilepage",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "profilepage()"
     },
     {
@@ -5341,8 +5231,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_profile_profiletrainingssearch",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "profiletrainingssearch.jsx"
     },
     {
@@ -5352,8 +5242,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_features_profile_profiletrainingssearch_formatdaterangelabel",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "formatdaterangelabel()"
     },
     {
@@ -5363,8 +5253,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_features_profile_profiletrainingssearch_calendaricon",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "calendaricon()"
     },
     {
@@ -5374,8 +5264,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "client_src_features_profile_profiletrainingssearch_filterprofiletrainings",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "filterprofiletrainings()"
     },
     {
@@ -5385,8 +5275,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "client_src_features_profile_profiletrainingssearch_profiletrainingssearch",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "profiletrainingssearch()"
     },
     {
@@ -5583,8 +5473,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_shop_buybutton",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "buybutton.jsx"
     },
     {
@@ -5594,8 +5484,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "client_src_features_shop_buybutton_buybutton",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "buybutton()"
     },
     {
@@ -5605,8 +5495,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_shop_categorydropdown",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "categorydropdown.jsx"
     },
     {
@@ -5616,8 +5506,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_features_shop_categorydropdown_categorydropdown",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "categorydropdown()"
     },
     {
@@ -5789,7 +5679,7 @@
       "label": "ProductForm()",
       "file_type": "code",
       "source_file": "client/src/features/shop/ProductForm.jsx",
-      "source_location": "L55",
+      "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_features_shop_productform_productform",
       "community": 59,
@@ -5803,8 +5693,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_shop_searchbar",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "searchbar.jsx"
     },
     {
@@ -5814,8 +5704,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_shop_searchbar_searchbar",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "searchbar()"
     },
     {
@@ -5825,8 +5715,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_shop_shoppage",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "shoppage.jsx"
     },
     {
@@ -5836,8 +5726,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "client_src_features_shop_shoppage_shoppage",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "shoppage()"
     },
     {
@@ -5847,8 +5737,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "buymessage.js"
     },
     {
@@ -5858,8 +5748,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage_formatproductline",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "formatproductline()"
     },
     {
@@ -5869,8 +5759,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage_buildbuymessage",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "buildbuymessage()"
     },
     {
@@ -5880,8 +5770,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage_ismobilemaxplatform",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "ismobilemaxplatform()"
     },
     {
@@ -5891,8 +5781,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage_opensellerchat",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "opensellerchat()"
     },
     {
@@ -5902,8 +5792,8 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage_buildmaxuserchaturl",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "buildmaxuserchaturl()"
     },
     {
@@ -5913,8 +5803,8 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage_openmaxdeeplink",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "openmaxdeeplink()"
     },
     {
@@ -5924,8 +5814,8 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage_openmaxuserchat",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "openmaxuserchat()"
     },
     {
@@ -5957,8 +5847,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_createtrainingmodal",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 59,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "createtrainingmodal.jsx"
     },
     {
@@ -5968,8 +5858,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_features_trainings_createtrainingmodal_initial_form",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 59,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "initial_form"
     },
     {
@@ -6056,8 +5946,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_archivemodal",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "archivemodal.jsx"
     },
     {
@@ -6067,8 +5957,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_archivemodal_formatdaterangelabel",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "formatdaterangelabel()"
     },
     {
@@ -6078,8 +5968,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_archivemodal_calendaricon",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "calendaricon()"
     },
     {
@@ -6089,8 +5979,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_archivemodal_archivemodal",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "archivemodal()"
     },
     {
@@ -6144,8 +6034,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_daterangemodal_getarchivedefaultdaterange",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "getarchivedefaultdaterange()"
     },
     {
@@ -6309,8 +6199,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_membershipoverviewmodal",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "membershipoverviewmodal.jsx"
     },
     {
@@ -6320,8 +6210,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_membershipoverviewmodal_trainingcountsasusedsession",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "trainingcountsasusedsession()"
     },
     {
@@ -6331,8 +6221,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_membershipoverviewmodal_formatdaterangelabel",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "formatdaterangelabel()"
     },
     {
@@ -6342,8 +6232,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_membershipoverviewmodal_calendaricon",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "calendaricon()"
     },
     {
@@ -6353,8 +6243,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_membershipoverviewmodal_membershipoverviewmodal",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "membershipoverviewmodal()"
     },
     {
@@ -6430,8 +6320,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_useappversioncheck",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "useappversioncheck.js"
     },
     {
@@ -6441,8 +6331,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_hooks_useappversioncheck_useappversioncheck",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "useappversioncheck()"
     },
     {
@@ -6540,8 +6430,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usegallerycomments",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "usegallerycomments.js"
     },
     {
@@ -6551,8 +6441,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_hooks_usegallerycomments_usegallerycomments",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "usegallerycomments()"
     },
     {
@@ -6606,8 +6496,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usemaxauth",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "usemaxauth.js"
     },
     {
@@ -6617,8 +6507,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "client_src_hooks_usemaxauth_getinitialuser",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "getinitialuser()"
     },
     {
@@ -6628,8 +6518,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "client_src_hooks_usemaxauth_usemaxauth",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "usemaxauth()"
     },
     {
@@ -6639,7 +6529,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usemaxcloseguard",
-      "community": 80,
+      "community": 77,
       "community_name": "useMaxCloseGuard.js",
       "norm_label": "usemaxcloseguard.js"
     },
@@ -6650,7 +6540,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "client_src_hooks_usemaxcloseguard_iseditablefocus",
-      "community": 80,
+      "community": 77,
       "community_name": "useMaxCloseGuard.js",
       "norm_label": "iseditablefocus()"
     },
@@ -6661,7 +6551,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "client_src_hooks_usemaxcloseguard_disablemaxverticalswipes",
-      "community": 80,
+      "community": 77,
       "community_name": "useMaxCloseGuard.js",
       "norm_label": "disablemaxverticalswipes()"
     },
@@ -6672,7 +6562,7 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "client_src_hooks_usemaxcloseguard_usemaxcloseguard",
-      "community": 80,
+      "community": 77,
       "community_name": "useMaxCloseGuard.js",
       "norm_label": "usemaxcloseguard()"
     },
@@ -6705,8 +6595,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_useoverlayclose",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "useoverlayclose.js"
     },
     {
@@ -6716,8 +6606,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "client_src_hooks_useoverlayclose_useoverlayclose",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "useoverlayclose()"
     },
     {
@@ -6870,8 +6760,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_useproducts",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "useproducts.js"
     },
     {
@@ -6881,8 +6771,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_hooks_useproducts_useproducts",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "useproducts()"
     },
     {
@@ -6914,8 +6804,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usesectionswipe",
-      "community": 76,
-      "community_name": "useSectionSwipe.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "usesectionswipe.js"
     },
     {
@@ -6925,8 +6815,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_hooks_usesectionswipe_swipe_allow_overlay_suffixes",
-      "community": 76,
-      "community_name": "useSectionSwipe.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "swipe_allow_overlay_suffixes"
     },
     {
@@ -6936,8 +6826,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "client_src_hooks_usesectionswipe_ignore_selector",
-      "community": 76,
-      "community_name": "useSectionSwipe.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "ignore_selector"
     },
     {
@@ -6947,8 +6837,8 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "client_src_hooks_usesectionswipe_getswipeabletabs",
-      "community": 76,
-      "community_name": "useSectionSwipe.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "getswipeabletabs()"
     },
     {
@@ -6958,8 +6848,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "client_src_hooks_usesectionswipe_istextfieldfocused",
-      "community": 76,
-      "community_name": "useSectionSwipe.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "istextfieldfocused()"
     },
     {
@@ -6969,8 +6859,8 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "client_src_hooks_usesectionswipe_shouldignoretarget",
-      "community": 76,
-      "community_name": "useSectionSwipe.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "shouldignoretarget()"
     },
     {
@@ -6980,8 +6870,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "client_src_hooks_usesectionswipe_getwindowwidth",
-      "community": 76,
-      "community_name": "useSectionSwipe.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "getwindowwidth()"
     },
     {
@@ -6991,8 +6881,8 @@
       "source_location": "L88",
       "_origin": "ast",
       "id": "client_src_hooks_usesectionswipe_usesectionswipe",
-      "community": 76,
-      "community_name": "useSectionSwipe.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "usesectionswipe()"
     },
     {
@@ -7002,8 +6892,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usesessionresetkey",
-      "community": 71,
-      "community_name": "App.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "usesessionresetkey.js"
     },
     {
@@ -7013,8 +6903,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_hooks_usesessionresetkey_usesessionresetkey",
-      "community": 71,
-      "community_name": "App.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "usesessionresetkey()"
     },
     {
@@ -7090,8 +6980,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_appversion",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "appversion.js"
     },
     {
@@ -7101,8 +6991,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_lib_appversion_app_build",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "app_build"
     },
     {
@@ -7112,8 +7002,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_lib_appversion_app_display_version",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "app_display_version"
     },
     {
@@ -7123,8 +7013,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_lib_appversion_getversionmanifesturl",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "getversionmanifesturl()"
     },
     {
@@ -7134,8 +7024,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "client_src_lib_appversion_fetchremoteappversion",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "fetchremoteappversion()"
     },
     {
@@ -7673,8 +7563,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_fetchblobprogress",
-      "community": 58,
-      "community_name": "achievements.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "fetchblobprogress.js"
     },
     {
@@ -7684,8 +7574,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_lib_fetchblobprogress_bloburlcache",
-      "community": 58,
-      "community_name": "achievements.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "bloburlcache"
     },
     {
@@ -7695,8 +7585,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_lib_fetchblobprogress_inflight",
-      "community": 58,
-      "community_name": "achievements.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "inflight"
     },
     {
@@ -7706,8 +7596,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_lib_fetchblobprogress_blobfromresponse",
-      "community": 58,
-      "community_name": "achievements.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "blobfromresponse()"
     },
     {
@@ -7717,8 +7607,8 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "client_src_lib_fetchblobprogress_getcachedmediabloburl",
-      "community": 58,
-      "community_name": "achievements.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "getcachedmediabloburl()"
     },
     {
@@ -7728,8 +7618,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "client_src_lib_fetchblobprogress_fetchbloburlwithprogress",
-      "community": 58,
-      "community_name": "achievements.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "fetchbloburlwithprogress()"
     },
     {
@@ -7816,8 +7706,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "client_src_lib_format_formatcarddatewithyear",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "formatcarddatewithyear()"
     },
     {
@@ -7904,8 +7794,8 @@
       "source_location": "L130",
       "_origin": "ast",
       "id": "client_src_lib_format_pluralize",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "pluralize()"
     },
     {
@@ -7915,8 +7805,8 @@
       "source_location": "L143",
       "_origin": "ast",
       "id": "client_src_lib_format_formatrelativetime",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "formatrelativetime()"
     },
     {
@@ -7992,8 +7882,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_log",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "log.js"
     },
     {
@@ -8003,8 +7893,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_lib_log_noop",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "noop()"
     },
     {
@@ -8146,8 +8036,8 @@
       "source_location": "L95",
       "_origin": "ast",
       "id": "client_src_lib_media_videopreviewurl",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 58,
+      "community_name": "achievements.js",
       "norm_label": "videopreviewurl()"
     },
     {
@@ -8256,8 +8146,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_overlaystack",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "overlaystack.js"
     },
     {
@@ -8267,8 +8157,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_lib_overlaystack_stack",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "stack"
     },
     {
@@ -8278,8 +8168,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "client_src_lib_overlaystack_registeroverlay",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "registeroverlay()"
     },
     {
@@ -8289,7 +8179,7 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "client_src_lib_overlaystack_closetopoverlay",
-      "community": 80,
+      "community": 77,
       "community_name": "useMaxCloseGuard.js",
       "norm_label": "closetopoverlay()"
     },
@@ -8311,8 +8201,8 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "client_src_lib_overlaystack_hasblockingoverlay",
-      "community": 76,
-      "community_name": "useSectionSwipe.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "hasblockingoverlay()"
     },
     {
@@ -8322,8 +8212,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "client_src_lib_overlaystack_getoverlaydepth",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "getoverlaydepth()"
     },
     {
@@ -8388,7 +8278,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_sectionscroll",
-      "community": 80,
+      "community": 77,
       "community_name": "useMaxCloseGuard.js",
       "norm_label": "sectionscroll.js"
     },
@@ -8410,7 +8300,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "client_src_lib_sectionscroll_getsectionscrollelement",
-      "community": 80,
+      "community": 77,
       "community_name": "useMaxCloseGuard.js",
       "norm_label": "getsectionscrollelement()"
     },
@@ -8421,7 +8311,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "client_src_lib_sectionscroll_issectionscrollattop",
-      "community": 80,
+      "community": 77,
       "community_name": "useMaxCloseGuard.js",
       "norm_label": "issectionscrollattop()"
     },
@@ -8432,7 +8322,7 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "client_src_lib_sectionscroll_scrollsectiontotop",
-      "community": 80,
+      "community": 77,
       "community_name": "useMaxCloseGuard.js",
       "norm_label": "scrollsectiontotop()"
     },
@@ -8520,8 +8410,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_main",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "main.jsx"
     },
     {
@@ -8531,8 +8421,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_main_globalerrorfallback",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "globalerrorfallback()"
     },
     {
@@ -8960,8 +8850,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_services_auth_buildbanneduser",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "buildbanneduser()"
     },
     {
@@ -8971,8 +8861,8 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "client_src_services_auth_savebaninfo",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "savebaninfo()"
     },
     {
@@ -8982,8 +8872,8 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "client_src_services_auth_clearbaninfo",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "clearbaninfo()"
     },
     {
@@ -8993,8 +8883,8 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "client_src_services_auth_loadbaninfo",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "loadbaninfo()"
     },
     {
@@ -9004,8 +8894,8 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "client_src_services_auth_isuserbanned",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "isuserbanned()"
     },
     {
@@ -9015,8 +8905,8 @@
       "source_location": "L85",
       "_origin": "ast",
       "id": "client_src_services_auth_isuserbotblocked",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "isuserbotblocked()"
     },
     {
@@ -9026,8 +8916,8 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "client_src_services_auth_finalizebanneduser",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "finalizebanneduser()"
     },
     {
@@ -9037,8 +8927,8 @@
       "source_location": "L105",
       "_origin": "ast",
       "id": "client_src_services_auth_refreshauthuser",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "refreshauthuser()"
     },
     {
@@ -9048,8 +8938,8 @@
       "source_location": "L121",
       "_origin": "ast",
       "id": "client_src_services_auth_initmaxauth",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "initmaxauth()"
     },
     {
@@ -9059,8 +8949,8 @@
       "source_location": "L173",
       "_origin": "ast",
       "id": "client_src_services_auth_getcurrentuser",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "getcurrentuser()"
     },
     {
@@ -9224,8 +9114,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_catalog",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "catalog.js"
     },
     {
@@ -9246,8 +9136,8 @@
       "source_location": "L104",
       "_origin": "ast",
       "id": "client_src_services_catalog_listproducts",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "listproducts()"
     },
     {
@@ -9257,8 +9147,8 @@
       "source_location": "L124",
       "_origin": "ast",
       "id": "client_src_services_catalog_incrementproductviews",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "incrementproductviews()"
     },
     {
@@ -9268,8 +9158,8 @@
       "source_location": "L135",
       "_origin": "ast",
       "id": "client_src_services_catalog_adjustproductfavoritescount",
-      "community": 71,
-      "community_name": "App.jsx",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "adjustproductfavoritescount()"
     },
     {
@@ -9279,8 +9169,8 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "client_src_services_catalog_createproduct",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "createproduct()"
     },
     {
@@ -9290,8 +9180,8 @@
       "source_location": "L157",
       "_origin": "ast",
       "id": "client_src_services_catalog_createproductwithprogress",
-      "community": 67,
-      "community_name": "media.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "createproductwithprogress()"
     },
     {
@@ -9301,8 +9191,8 @@
       "source_location": "L225",
       "_origin": "ast",
       "id": "client_src_services_catalog_updateproduct",
-      "community": 67,
-      "community_name": "media.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "updateproduct()"
     },
     {
@@ -9312,8 +9202,8 @@
       "source_location": "L232",
       "_origin": "ast",
       "id": "client_src_services_catalog_softdeleteproduct",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "softdeleteproduct()"
     },
     {
@@ -9323,8 +9213,8 @@
       "source_location": "L239",
       "_origin": "ast",
       "id": "client_src_services_catalog_restoreproduct",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "restoreproduct()"
     },
     {
@@ -9334,8 +9224,8 @@
       "source_location": "L246",
       "_origin": "ast",
       "id": "client_src_services_catalog_deleteproduct",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "deleteproduct()"
     },
     {
@@ -9345,8 +9235,8 @@
       "source_location": "L254",
       "_origin": "ast",
       "id": "client_src_services_catalog_purgeabandonedproducts",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "purgeabandonedproducts()"
     },
     {
@@ -9389,8 +9279,8 @@
       "source_location": "L348",
       "_origin": "ast",
       "id": "client_src_services_catalog_updateplayer",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "updateplayer()"
     },
     {
@@ -9411,8 +9301,8 @@
       "source_location": "L373",
       "_origin": "ast",
       "id": "client_src_services_catalog_creategalleryformdata",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "creategalleryformdata()"
     },
     {
@@ -9422,8 +9312,8 @@
       "source_location": "L392",
       "_origin": "ast",
       "id": "client_src_services_catalog_creategalleryitemwithprogress",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "creategalleryitemwithprogress()"
     },
     {
@@ -9433,8 +9323,8 @@
       "source_location": "L458",
       "_origin": "ast",
       "id": "client_src_services_catalog_addgalleryimage",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 70,
+      "community_name": "GalleryPage.jsx",
       "norm_label": "addgalleryimage()"
     },
     {
@@ -9499,8 +9389,8 @@
       "source_location": "L550",
       "_origin": "ast",
       "id": "client_src_services_catalog_listgallerycomments",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "listgallerycomments()"
     },
     {
@@ -9510,8 +9400,8 @@
       "source_location": "L571",
       "_origin": "ast",
       "id": "client_src_services_catalog_creategallerycomment",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "creategallerycomment()"
     },
     {
@@ -9521,8 +9411,8 @@
       "source_location": "L593",
       "_origin": "ast",
       "id": "client_src_services_catalog_deletegallerycomment",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "deletegallerycomment()"
     },
     {
@@ -9532,8 +9422,8 @@
       "source_location": "L602",
       "_origin": "ast",
       "id": "client_src_services_catalog_updategallerycomment",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "updategallerycomment()"
     },
     {
@@ -9543,8 +9433,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_notifications",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "notifications.js"
     },
     {
@@ -9554,8 +9444,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_services_notifications_sessions_left_copy",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "sessions_left_copy"
     },
     {
@@ -9565,8 +9455,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "client_src_services_notifications_listnotifications",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "listnotifications()"
     },
     {
@@ -9576,8 +9466,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_services_notifications_usenotifications",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "usenotifications()"
     },
     {
@@ -9587,8 +9477,8 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "client_src_services_notifications_isdeletablenotification",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "isdeletablenotification()"
     },
     {
@@ -9598,8 +9488,8 @@
       "source_location": "L83",
       "_origin": "ast",
       "id": "client_src_services_notifications_marknotificationread",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "marknotificationread()"
     },
     {
@@ -9609,8 +9499,8 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "client_src_services_notifications_deletenotification",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "deletenotification()"
     },
     {
@@ -9620,8 +9510,8 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "client_src_services_notifications_clearallnotifications",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "clearallnotifications()"
     },
     {
@@ -9642,8 +9532,8 @@
       "source_location": "L142",
       "_origin": "ast",
       "id": "client_src_services_notifications_requestcommentreplynotification",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "requestcommentreplynotification()"
     },
     {
@@ -9653,8 +9543,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_pb",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "pb.js"
     },
     {
@@ -9664,8 +9554,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_services_pb_pb",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "pb"
     },
     {
@@ -9686,26 +9576,26 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_posts",
-      "community": 68,
-      "community_name": "GalleryCommentModal.jsx",
+      "community": 65,
+      "community_name": "ProfilePage.jsx",
       "norm_label": "posts.js"
     },
     {
       "label": "getIsDeletedPatchValue()",
       "file_type": "code",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L53",
+      "source_location": "L51",
       "_origin": "ast",
       "id": "client_src_services_posts_getisdeletedpatchvalue",
-      "community": 68,
-      "community_name": "GalleryCommentModal.jsx",
+      "community": 65,
+      "community_name": "ProfilePage.jsx",
       "norm_label": "getisdeletedpatchvalue()"
     },
     {
       "label": "listPosts()",
       "file_type": "code",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L67",
+      "source_location": "L65",
       "_origin": "ast",
       "id": "client_src_services_posts_listposts",
       "community": 65,
@@ -9716,7 +9606,7 @@
       "label": "listCommentsForPost()",
       "file_type": "code",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L88",
+      "source_location": "L86",
       "_origin": "ast",
       "id": "client_src_services_posts_listcommentsforpost",
       "community": 68,
@@ -9727,7 +9617,7 @@
       "label": "listPostLikes()",
       "file_type": "code",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L109",
+      "source_location": "L107",
       "_origin": "ast",
       "id": "client_src_services_posts_listpostlikes",
       "community": 68,
@@ -9738,7 +9628,7 @@
       "label": "togglePostLike()",
       "file_type": "code",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L131",
+      "source_location": "L129",
       "_origin": "ast",
       "id": "client_src_services_posts_togglepostlike",
       "community": 68,
@@ -9749,18 +9639,18 @@
       "label": "createPost()",
       "file_type": "code",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L154",
+      "source_location": "L152",
       "_origin": "ast",
       "id": "client_src_services_posts_createpost",
-      "community": 68,
-      "community_name": "GalleryCommentModal.jsx",
+      "community": 65,
+      "community_name": "ProfilePage.jsx",
       "norm_label": "createpost()"
     },
     {
       "label": "createPostWithProgress()",
       "file_type": "code",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L168",
+      "source_location": "L166",
       "_origin": "ast",
       "id": "client_src_services_posts_createpostwithprogress",
       "community": 65,
@@ -9771,7 +9661,7 @@
       "label": "updatePost()",
       "file_type": "code",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L236",
+      "source_location": "L234",
       "_origin": "ast",
       "id": "client_src_services_posts_updatepost",
       "community": 65,
@@ -9782,7 +9672,7 @@
       "label": "pinPost()",
       "file_type": "code",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L246",
+      "source_location": "L244",
       "_origin": "ast",
       "id": "client_src_services_posts_pinpost",
       "community": 65,
@@ -9793,7 +9683,7 @@
       "label": "unpinPost()",
       "file_type": "code",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L254",
+      "source_location": "L252",
       "_origin": "ast",
       "id": "client_src_services_posts_unpinpost",
       "community": 65,
@@ -9804,29 +9694,29 @@
       "label": "hardDeletePost()",
       "file_type": "code",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L261",
+      "source_location": "L259",
       "_origin": "ast",
       "id": "client_src_services_posts_harddeletepost",
-      "community": 0,
-      "community_name": "App Shell Navigation",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "harddeletepost()"
     },
     {
       "label": "purgeAbandonedPosts()",
       "file_type": "code",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L270",
+      "source_location": "L268",
       "_origin": "ast",
       "id": "client_src_services_posts_purgeabandonedposts",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "purgeabandonedposts()"
     },
     {
       "label": "createComment()",
       "file_type": "code",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L293",
+      "source_location": "L283",
       "_origin": "ast",
       "id": "client_src_services_posts_createcomment",
       "community": 68,
@@ -9834,21 +9724,10 @@
       "norm_label": "createcomment()"
     },
     {
-      "label": "createCommentWithProgress()",
-      "file_type": "code",
-      "source_file": "client/src/services/posts.js",
-      "source_location": "L336",
-      "_origin": "ast",
-      "id": "client_src_services_posts_createcommentwithprogress",
-      "community": 68,
-      "community_name": "GalleryCommentModal.jsx",
-      "norm_label": "createcommentwithprogress()"
-    },
-    {
       "label": "updateComment()",
       "file_type": "code",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L403",
+      "source_location": "L301",
       "_origin": "ast",
       "id": "client_src_services_posts_updatecomment",
       "community": 68,
@@ -9859,18 +9738,18 @@
       "label": "hardDeleteComment()",
       "file_type": "code",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L413",
+      "source_location": "L311",
       "_origin": "ast",
       "id": "client_src_services_posts_harddeletecomment",
-      "community": 68,
-      "community_name": "GalleryCommentModal.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "harddeletecomment()"
     },
     {
       "label": "listCommentLikes()",
       "file_type": "code",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L432",
+      "source_location": "L330",
       "_origin": "ast",
       "id": "client_src_services_posts_listcommentlikes",
       "community": 68,
@@ -9881,7 +9760,7 @@
       "label": "toggleCommentLike()",
       "file_type": "code",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L457",
+      "source_location": "L355",
       "_origin": "ast",
       "id": "client_src_services_posts_togglecommentlike",
       "community": 68,
@@ -9892,11 +9771,11 @@
       "label": "purgeAbandonedComments()",
       "file_type": "code",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L485",
+      "source_location": "L383",
       "_origin": "ast",
       "id": "client_src_services_posts_purgeabandonedcomments",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "purgeabandonedcomments()"
     },
     {
@@ -10046,7 +9925,7 @@
       "label": "listCommentsForTournamentPost()",
       "file_type": "code",
       "source_file": "client/src/services/tournamentComments.js",
-      "source_location": "L25",
+      "source_location": "L21",
       "_origin": "ast",
       "id": "client_src_services_tournamentcomments_listcommentsfortournamentpost",
       "community": 68,
@@ -10057,7 +9936,7 @@
       "label": "createTournamentComment()",
       "file_type": "code",
       "source_file": "client/src/services/tournamentComments.js",
-      "source_location": "L48",
+      "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_services_tournamentcomments_createtournamentcomment",
       "community": 68,
@@ -10065,21 +9944,10 @@
       "norm_label": "createtournamentcomment()"
     },
     {
-      "label": "createTournamentCommentWithProgress()",
-      "file_type": "code",
-      "source_file": "client/src/services/tournamentComments.js",
-      "source_location": "L90",
-      "_origin": "ast",
-      "id": "client_src_services_tournamentcomments_createtournamentcommentwithprogress",
-      "community": 68,
-      "community_name": "GalleryCommentModal.jsx",
-      "norm_label": "createtournamentcommentwithprogress()"
-    },
-    {
       "label": "updateTournamentComment()",
       "file_type": "code",
       "source_file": "client/src/services/tournamentComments.js",
-      "source_location": "L160",
+      "source_location": "L63",
       "_origin": "ast",
       "id": "client_src_services_tournamentcomments_updatetournamentcomment",
       "community": 68,
@@ -10090,7 +9958,7 @@
       "label": "hardDeleteTournamentComment()",
       "file_type": "code",
       "source_file": "client/src/services/tournamentComments.js",
-      "source_location": "L169",
+      "source_location": "L72",
       "_origin": "ast",
       "id": "client_src_services_tournamentcomments_harddeletetournamentcomment",
       "community": 68,
@@ -10101,7 +9969,7 @@
       "label": "flushPendingTournamentCommentDeletes()",
       "file_type": "code",
       "source_file": "client/src/services/tournamentComments.js",
-      "source_location": "L178",
+      "source_location": "L81",
       "_origin": "ast",
       "id": "client_src_services_tournamentcomments_flushpendingtournamentcommentdeletes",
       "community": 68,
@@ -10203,8 +10071,8 @@
       "source_location": "L115",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_harddeletetournamentpost",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "harddeletetournamentpost()"
     },
     {
@@ -10214,8 +10082,8 @@
       "source_location": "L125",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_purgeabandonedtournamentposts",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 77,
+      "community_name": "useMaxCloseGuard.js",
       "norm_label": "purgeabandonedtournamentposts()"
     },
     {
@@ -10445,8 +10313,8 @@
       "source_location": "L286",
       "_origin": "ast",
       "id": "client_src_services_trainings_listcancelledtrainingsforuser",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 0,
+      "community_name": "App Shell Navigation",
       "norm_label": "listcancelledtrainingsforuser()"
     },
     {
@@ -10698,8 +10566,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_users",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "users.js"
     },
     {
@@ -10709,8 +10577,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_services_users_listusers",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "listusers()"
     },
     {
@@ -10720,8 +10588,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_yadisk",
-      "community": 58,
-      "community_name": "achievements.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "services/yadisk.js"
     },
     {
@@ -10731,8 +10599,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "client_src_services_yadisk_previewcache",
-      "community": 58,
-      "community_name": "achievements.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "previewcache"
     },
     {
@@ -10742,8 +10610,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "client_src_services_yadisk_previewinflight",
-      "community": 58,
-      "community_name": "achievements.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "previewinflight"
     },
     {
@@ -10753,8 +10621,8 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "client_src_services_yadisk_previewcachekey",
-      "community": 58,
-      "community_name": "achievements.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "previewcachekey()"
     },
     {
@@ -12661,17 +12529,6 @@
       "norm_label": "assertprivilegedupdateallowed()"
     },
     {
-      "label": "isPrivilegedAuth()",
-      "file_type": "code",
-      "source_file": "pb_hooks/users_access_guard_lib.js",
-      "source_location": "L97",
-      "_origin": "ast",
-      "id": "pb_hooks_users_access_guard_lib_isprivilegedauth",
-      "community": 1,
-      "community_name": "AvatarCropModal.jsx",
-      "norm_label": "isprivilegedauth()"
-    },
-    {
       "label": "users_audit.pb.js",
       "file_type": "code",
       "source_file": "pb_hooks/users_audit.pb.js",
@@ -14445,18 +14302,6 @@
       "source": "client_package_dependencies_react",
       "target": "react",
       "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "client/src/features/feed/SortableMediaPreviewGrid.jsx",
-      "source_location": "L218",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_sortablemediapreviewgrid_sortablekeybinder",
-      "target": "client_package_dependencies_react"
     },
     {
       "relation": "references",
@@ -21756,18 +21601,6 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "client/src/services/tournamentComments.js",
-      "source_location": "L4",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_tournamentcomments",
-      "target": "client_src_config",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
       "source_file": "client/src/services/tournamentPosts.js",
       "source_location": "L6",
       "weight": 1.0,
@@ -21821,18 +21654,6 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts",
-      "target": "client_src_config_pb_url",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/services/tournamentComments.js",
-      "source_location": "L4",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_tournamentcomments",
       "target": "client_src_config_pb_url",
       "confidence_score": 1.0
     },
@@ -27584,54 +27405,6 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/TournamentCommentsSection.jsx",
-      "source_location": "L6",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_competitions_tournamentcommentssection",
-      "target": "client_src_features_feed_commentcomposeform",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/competitions/TournamentCommentsSection.jsx",
-      "source_location": "L6",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_competitions_tournamentcommentssection",
-      "target": "client_src_features_feed_commentcomposeform_commentcomposeform",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/competitions/TournamentCommentsSection.jsx",
-      "source_location": "L7",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_competitions_tournamentcommentssection",
-      "target": "client_src_features_feed_commentmediabody",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/competitions/TournamentCommentsSection.jsx",
-      "source_location": "L7",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_competitions_tournamentcommentssection",
-      "target": "client_src_features_feed_commentmediabody_commentmediabody",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/competitions/TournamentCommentsSection.jsx",
       "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
@@ -27697,6 +27470,30 @@
       "_origin": "ast",
       "source": "client_src_features_competitions_tournamentcommentssection",
       "target": "client_src_features_feed_commentreplyquote_commentreplyquote",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/competitions/TournamentCommentsSection.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_competitions_tournamentcommentssection",
+      "target": "client_src_features_feed_commentsendbutton",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/competitions/TournamentCommentsSection.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_competitions_tournamentcommentssection",
+      "target": "client_src_features_feed_commentsendbutton_commentsendbutton",
       "confidence_score": 1.0
     },
     {
@@ -27776,6 +27573,30 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/TournamentCommentsSection.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_competitions_tournamentcommentssection",
+      "target": "client_src_features_feed_postcontenthtml",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/competitions/TournamentCommentsSection.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_competitions_tournamentcommentssection",
+      "target": "client_src_features_feed_postcontenthtml_postcontenthtml",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/competitions/TournamentCommentsSection.jsx",
       "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
@@ -27812,7 +27633,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/TournamentCommentsSection.jsx",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_tournamentcommentssection",
@@ -27824,7 +27645,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/TournamentCommentsSection.jsx",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_tournamentcommentssection",
@@ -27980,7 +27801,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/TournamentCommentsSection.jsx",
-      "source_location": "L373",
+      "source_location": "L371",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_tournamentcommentssection_tournamentcommentssection",
@@ -28004,7 +27825,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/TournamentCommentsSection.jsx",
-      "source_location": "L390",
+      "source_location": "L388",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_tournamentcommentssection_tournamentcommentssection",
@@ -28016,7 +27837,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/TournamentCommentsSection.jsx",
-      "source_location": "L176",
+      "source_location": "L177",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_tournamentcommentssection_tournamentcommentssection",
@@ -28028,7 +27849,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/TournamentCommentsSection.jsx",
-      "source_location": "L235",
+      "source_location": "L233",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_tournamentcommentssection_tournamentcommentssection",
@@ -28064,7 +27885,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/TournamentCommentsSection.jsx",
-      "source_location": "L438",
+      "source_location": "L436",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_tournamentcommentssection_tournamentcommentssection",
@@ -28076,7 +27897,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/TournamentCommentsSection.jsx",
-      "source_location": "L180",
+      "source_location": "L179",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_tournamentcommentssection_tournamentcommentssection",
@@ -28088,7 +27909,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/TournamentCommentsSection.jsx",
-      "source_location": "L188",
+      "source_location": "L190",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_tournamentcommentssection_tournamentcommentssection",
@@ -28100,7 +27921,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/TournamentCommentsSection.jsx",
-      "source_location": "L211",
+      "source_location": "L209",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_tournamentcommentssection_tournamentcommentssection",
@@ -28825,543 +28646,6 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L35",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform",
-      "target": "client_src_features_feed_commentcomposeform_attachbuttons",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L96",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform",
-      "target": "client_src_features_feed_commentcomposeform_commentcomposeform",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L9",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform",
-      "target": "client_src_features_feed_commentsendbutton",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L9",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform",
-      "target": "client_src_features_feed_commentsendbutton_commentsendbutton",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L11",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform",
-      "target": "client_src_features_feed_postcontenthtml",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L11",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform",
-      "target": "client_src_features_feed_postcontenthtml_postcontenthtml",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L14",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform",
-      "target": "client_src_features_feed_postrichtext",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L14",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform",
-      "target": "client_src_features_feed_postrichtext_hasvisibletext",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform",
-      "target": "client_src_features_feed_postrichtextfield",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform",
-      "target": "client_src_features_feed_postrichtextfield_postrichtextfield",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L10",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform",
-      "target": "client_src_features_feed_sortablemediapreviewgrid",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L10",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform",
-      "target": "client_src_features_feed_sortablemediapreviewgrid_sortablemediapreviewgrid",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L16",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform",
-      "target": "client_src_hooks_useoverlayclose",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L16",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform",
-      "target": "client_src_hooks_useoverlayclose_useoverlayclose",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L12",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform",
-      "target": "client_src_lib_compress",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L12",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform",
-      "target": "client_src_lib_compress_compressimage",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L15",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform",
-      "target": "client_src_lib_longpress",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L15",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform",
-      "target": "client_src_lib_longpress_longpressring",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L15",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform",
-      "target": "client_src_lib_longpress_uselongpress",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L13",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform",
-      "target": "client_src_lib_media",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L13",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform",
-      "target": "client_src_lib_media_isvideofile",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L13",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform",
-      "target": "client_src_lib_media_readselectedfiles",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L9",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postdetailmodal",
-      "target": "client_src_features_feed_commentcomposeform",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L121",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform_commentcomposeform",
-      "target": "client_src_features_feed_postrichtext_hasvisibletext",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L136",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform_commentcomposeform",
-      "target": "client_src_hooks_useoverlayclose_useoverlayclose",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L206",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform_commentcomposeform",
-      "target": "client_src_lib_compress_compressimage",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L305",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform_commentcomposeform",
-      "target": "client_src_lib_longpress_uselongpress",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L193",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform_commentcomposeform",
-      "target": "client_src_lib_media_isvideofile",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentComposeForm.jsx",
-      "source_location": "L180",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentcomposeform_commentcomposeform",
-      "target": "client_src_lib_media_readselectedfiles",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L9",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postdetailmodal",
-      "target": "client_src_features_feed_commentcomposeform_commentcomposeform",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentMediaBody.jsx",
-      "source_location": "L19",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentmediabody",
-      "target": "client_src_features_feed_commentmediabody_commentmediabody",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentMediaBody.jsx",
-      "source_location": "L2",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentmediabody",
-      "target": "client_src_features_feed_mediapreviewgrid",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentMediaBody.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentmediabody",
-      "target": "client_src_features_feed_postcontenthtml",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentMediaBody.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentmediabody",
-      "target": "client_src_features_feed_postcontenthtml_postcontenthtml",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentMediaBody.jsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentmediabody",
-      "target": "client_src_lib_media",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentMediaBody.jsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentmediabody",
-      "target": "client_src_lib_media_getmediathumburl",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentMediaBody.jsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentmediabody",
-      "target": "client_src_lib_media_getmediaurl",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentMediaBody.jsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentmediabody",
-      "target": "client_src_lib_media_isvideomedianame",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/CommentMediaBody.jsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentmediabody",
-      "target": "client_src_lib_media_medianames",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L10",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postdetailmodal",
-      "target": "client_src_features_feed_commentmediabody",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "client/src/features/feed/CommentMediaBody.jsx",
-      "source_location": "L25",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentmediabody_commentmediabody",
-      "target": "client_src_lib_media_getmediathumburl"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "client/src/features/feed/CommentMediaBody.jsx",
-      "source_location": "L24",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentmediabody_commentmediabody",
-      "target": "client_src_lib_media_getmediaurl"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "client/src/features/feed/CommentMediaBody.jsx",
-      "source_location": "L33",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentmediabody_commentmediabody",
-      "target": "client_src_lib_media_isvideomedianame"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "client/src/features/feed/CommentMediaBody.jsx",
-      "source_location": "L20",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_commentmediabody_commentmediabody",
-      "target": "client_src_lib_media_medianames"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L10",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postdetailmodal",
-      "target": "client_src_features_feed_commentmediabody_commentmediabody",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/CommentReplyButton.jsx",
       "source_location": "L7",
       "weight": 1.0,
@@ -29375,7 +28659,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L11",
+      "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -29399,7 +28683,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L11",
+      "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -29470,7 +28754,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L12",
+      "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -29494,7 +28778,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L12",
+      "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -29553,7 +28837,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L13",
+      "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -29577,7 +28861,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L13",
+      "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -29600,11 +28884,23 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/CommentSendButton.jsx",
-      "source_location": "L22",
+      "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_commentsendbutton",
       "target": "client_src_features_feed_commentsendbutton_commentsendbutton",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/PostDetailModal.jsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postdetailmodal",
+      "target": "client_src_features_feed_commentsendbutton",
       "confidence_score": 1.0
     },
     {
@@ -29617,6 +28913,18 @@
       "_origin": "ast",
       "source": "client_src_features_gallery_gallerycommentmodal",
       "target": "client_src_features_feed_commentsendbutton",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/PostDetailModal.jsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_postdetailmodal",
+      "target": "client_src_features_feed_commentsendbutton_commentsendbutton",
       "confidence_score": 1.0
     },
     {
@@ -29647,7 +28955,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L14",
+      "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -29671,7 +28979,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L14",
+      "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -31922,11 +31230,11 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/SortableMediaPreviewGrid.jsx",
-      "source_location": "L5",
+      "source_file": "client/src/features/shop/ProductForm.jsx",
+      "source_location": "L3",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "client_src_features_feed_sortablemediapreviewgrid",
+      "source": "client_src_features_shop_productform",
       "target": "client_src_features_feed_mediapreviewgrid",
       "confidence_score": 1.0
     },
@@ -31964,41 +31272,6 @@
       "_origin": "ast",
       "source": "client_src_features_feed_mediapreviewgrid_mediapreviewgrid",
       "target": "client_src_lib_media_videopreviewurl",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/MediaProgressRing.jsx",
-      "source_location": "L10",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_mediaprogressring",
-      "target": "client_src_features_feed_mediaprogressring_mediaprogressring",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/SortableMediaPreviewGrid.jsx",
-      "source_location": "L6",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_sortablemediapreviewgrid",
-      "target": "client_src_features_feed_mediaprogressring",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/SortableMediaPreviewGrid.jsx",
-      "source_location": "L6",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_sortablemediapreviewgrid",
-      "target": "client_src_features_feed_mediaprogressring_mediaprogressring",
       "confidence_score": 1.0
     },
     {
@@ -32895,7 +32168,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L15",
+      "source_location": "L14",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -32931,7 +32204,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L15",
+      "source_location": "L14",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -32943,7 +32216,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L17",
+      "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -32955,7 +32228,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L17",
+      "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -32967,7 +32240,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L17",
+      "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -32979,7 +32252,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L17",
+      "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -32990,7 +32263,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L58",
+      "source_location": "L57",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -33014,7 +32287,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L16",
+      "source_location": "L15",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -33026,7 +32299,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L16",
+      "source_location": "L15",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -33038,7 +32311,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L16",
+      "source_location": "L15",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -33074,7 +32347,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L24",
+      "source_location": "L23",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -33086,7 +32359,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L24",
+      "source_location": "L23",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -33098,7 +32371,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L23",
+      "source_location": "L22",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -33110,7 +32383,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L23",
+      "source_location": "L22",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -33122,7 +32395,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L33",
+      "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -33134,7 +32407,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L33",
+      "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -33146,7 +32419,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L25",
+      "source_location": "L24",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -33158,7 +32431,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L25",
+      "source_location": "L24",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -33170,7 +32443,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L32",
+      "source_location": "L31",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -33182,7 +32455,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L32",
+      "source_location": "L31",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -33194,7 +32467,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L26",
+      "source_location": "L25",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -33206,7 +32479,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L26",
+      "source_location": "L25",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -33218,7 +32491,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L26",
+      "source_location": "L25",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -33230,7 +32503,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L26",
+      "source_location": "L25",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -33242,7 +32515,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L31",
+      "source_location": "L30",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -33254,7 +32527,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L31",
+      "source_location": "L30",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
@@ -33266,7 +32539,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L244",
+      "source_location": "L243",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -33278,7 +32551,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L222",
+      "source_location": "L221",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -33290,7 +32563,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L635",
+      "source_location": "L644",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -33314,7 +32587,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L343",
+      "source_location": "L341",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -33326,7 +32599,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L116",
+      "source_location": "L115",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -33338,7 +32611,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L77",
+      "source_location": "L76",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -33350,7 +32623,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L75",
+      "source_location": "L74",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -33362,7 +32635,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L425",
+      "source_location": "L434",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -33374,7 +32647,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L286",
+      "source_location": "L284",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -33386,7 +32659,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L294",
+      "source_location": "L295",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -33398,7 +32671,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L372",
+      "source_location": "L370",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -33410,7 +32683,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L320",
+      "source_location": "L318",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -33422,7 +32695,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailModal.jsx",
-      "source_location": "L143",
+      "source_location": "L142",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal_postdetailmodal",
@@ -33433,7 +32706,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostFormatToolbar.jsx",
-      "source_location": "L13",
+      "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postformattoolbar",
@@ -33995,7 +33268,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostRichTextField.jsx",
-      "source_location": "L49",
+      "source_location": "L47",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postrichtextfield",
@@ -34037,52 +33310,6 @@
       "source": "client_src_features_feed_progressiveimage",
       "target": "client_src_features_feed_progressiveimage_progressiveimage",
       "confidence_score": 0.5
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/SortableMediaPreviewGrid.jsx",
-      "source_location": "L217",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_sortablemediapreviewgrid",
-      "target": "client_src_features_feed_sortablemediapreviewgrid_sortablekeybinder",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/SortableMediaPreviewGrid.jsx",
-      "source_location": "L36",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_sortablemediapreviewgrid",
-      "target": "client_src_features_feed_sortablemediapreviewgrid_sortablemediapreviewgrid",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/shop/ProductForm.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_shop_productform",
-      "target": "client_src_features_feed_sortablemediapreviewgrid",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/shop/ProductForm.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_shop_productform",
-      "target": "client_src_features_feed_sortablemediapreviewgrid_sortablemediapreviewgrid",
-      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -42514,7 +41741,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductForm.jsx",
-      "source_location": "L55",
+      "source_location": "L43",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productform",
@@ -42658,7 +41885,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductForm.jsx",
-      "source_location": "L181",
+      "source_location": "L155",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productform_productform",
@@ -42670,7 +41897,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductForm.jsx",
-      "source_location": "L184",
+      "source_location": "L158",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productform_productform",
@@ -42682,7 +41909,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductForm.jsx",
-      "source_location": "L58",
+      "source_location": "L46",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productform_productform",
@@ -42694,7 +41921,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductForm.jsx",
-      "source_location": "L238",
+      "source_location": "L177",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productform_productform",
@@ -42706,7 +41933,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductForm.jsx",
-      "source_location": "L127",
+      "source_location": "L71",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productform_productform",
@@ -42718,7 +41945,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductForm.jsx",
-      "source_location": "L407",
+      "source_location": "L108",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productform_productform",
@@ -42730,7 +41957,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductForm.jsx",
-      "source_location": "L136",
+      "source_location": "L77",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productform_productform",
@@ -42742,7 +41969,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductForm.jsx",
-      "source_location": "L74",
+      "source_location": "L62",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productform_productform",
@@ -42754,7 +41981,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductForm.jsx",
-      "source_location": "L396",
+      "source_location": "L327",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productform_productform",
@@ -49746,7 +48973,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/services/posts.js",
-      "source_location": "L446",
+      "source_location": "L344",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts_listcommentlikes",
@@ -49758,7 +48985,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/services/posts.js",
-      "source_location": "L99",
+      "source_location": "L97",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts_listcommentsforpost",
@@ -49770,7 +48997,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/services/posts.js",
-      "source_location": "L121",
+      "source_location": "L119",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts_listpostlikes",
@@ -49782,7 +49009,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/services/posts.js",
-      "source_location": "L78",
+      "source_location": "L76",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts_listposts",
@@ -49794,7 +49021,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/services/posts.js",
-      "source_location": "L493",
+      "source_location": "L391",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts_purgeabandonedcomments",
@@ -49806,7 +49033,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/services/posts.js",
-      "source_location": "L277",
+      "source_location": "L275",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts_purgeabandonedposts",
@@ -49830,7 +49057,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/services/tournamentComments.js",
-      "source_location": "L187",
+      "source_location": "L90",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_tournamentcomments_flushpendingtournamentcommentdeletes",
@@ -49842,7 +49069,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/services/tournamentComments.js",
-      "source_location": "L36",
+      "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_tournamentcomments_listcommentsfortournamentpost",
@@ -53293,7 +52520,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L293",
+      "source_location": "L283",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts",
@@ -53304,18 +52531,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L336",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_posts",
-      "target": "client_src_services_posts_createcommentwithprogress",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/services/posts.js",
-      "source_location": "L154",
+      "source_location": "L152",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts",
@@ -53326,7 +52542,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L168",
+      "source_location": "L166",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts",
@@ -53337,7 +52553,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L53",
+      "source_location": "L51",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts",
@@ -53348,7 +52564,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L413",
+      "source_location": "L311",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts",
@@ -53359,7 +52575,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L261",
+      "source_location": "L259",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts",
@@ -53370,7 +52586,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L432",
+      "source_location": "L330",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts",
@@ -53381,7 +52597,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L88",
+      "source_location": "L86",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts",
@@ -53392,7 +52608,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L109",
+      "source_location": "L107",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts",
@@ -53403,7 +52619,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L67",
+      "source_location": "L65",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts",
@@ -53414,7 +52630,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L246",
+      "source_location": "L244",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts",
@@ -53425,7 +52641,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L485",
+      "source_location": "L383",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts",
@@ -53436,7 +52652,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L270",
+      "source_location": "L268",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts",
@@ -53447,7 +52663,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L457",
+      "source_location": "L355",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts",
@@ -53458,7 +52674,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L131",
+      "source_location": "L129",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts",
@@ -53469,7 +52685,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L254",
+      "source_location": "L252",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts",
@@ -53480,7 +52696,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L403",
+      "source_location": "L301",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts",
@@ -53491,7 +52707,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L236",
+      "source_location": "L234",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts",
@@ -53503,7 +52719,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L247",
+      "source_location": "L245",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts_pinpost",
@@ -53515,7 +52731,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L255",
+      "source_location": "L253",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts_unpinpost",
@@ -53527,7 +52743,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L277",
+      "source_location": "L275",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts_purgeabandonedposts",
@@ -53539,19 +52755,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/posts.js",
-      "source_location": "L328",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_posts_createcomment",
-      "target": "client_src_services_posts_createcommentwithprogress",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/services/posts.js",
-      "source_location": "L493",
+      "source_location": "L391",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_posts_purgeabandonedcomments",
@@ -53755,7 +52959,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/tournamentComments.js",
-      "source_location": "L48",
+      "source_location": "L43",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_tournamentcomments",
@@ -53766,18 +52970,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/tournamentComments.js",
-      "source_location": "L90",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_tournamentcomments",
-      "target": "client_src_services_tournamentcomments_createtournamentcommentwithprogress",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/services/tournamentComments.js",
-      "source_location": "L178",
+      "source_location": "L81",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_tournamentcomments",
@@ -53788,7 +52981,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/tournamentComments.js",
-      "source_location": "L169",
+      "source_location": "L72",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_tournamentcomments",
@@ -53799,7 +52992,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/tournamentComments.js",
-      "source_location": "L25",
+      "source_location": "L21",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_tournamentcomments",
@@ -53810,7 +53003,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/tournamentComments.js",
-      "source_location": "L160",
+      "source_location": "L63",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_tournamentcomments",
@@ -53822,19 +53015,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/services/tournamentComments.js",
-      "source_location": "L82",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_services_tournamentcomments_createtournamentcomment",
-      "target": "client_src_services_tournamentcomments_createtournamentcommentwithprogress",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/services/tournamentComments.js",
-      "source_location": "L187",
+      "source_location": "L90",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_services_tournamentcomments_flushpendingtournamentcommentdeletes",
@@ -57987,7 +57168,7 @@
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "pb_hooks/users_access_guard_lib.js",
-      "source_location": "L117",
+      "source_location": "L93",
       "weight": 1.0,
       "_origin": "ast",
       "context": "collection",
@@ -57999,7 +57180,7 @@
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "pb_hooks/users_access_guard_lib.js",
-      "source_location": "L118",
+      "source_location": "L94",
       "weight": 1.0,
       "_origin": "ast",
       "context": "collection",
@@ -58017,18 +57198,6 @@
       "source": "pb_hooks_users_access_guard_lib",
       "target": "pb_hooks_users_access_guard_lib_fieldchanged",
       "confidence_score": 1.0
-    },
-    {
-      "relation": "indirect_call",
-      "confidence": "INFERRED",
-      "source_file": "pb_hooks/users_access_guard_lib.js",
-      "source_location": "L119",
-      "weight": 1.0,
-      "_origin": "ast",
-      "context": "collection",
-      "source": "pb_hooks_users_access_guard_lib",
-      "target": "pb_hooks_users_access_guard_lib_isprivilegedauth",
-      "confidence_score": 0.5
     },
     {
       "relation": "calls",
@@ -59460,5 +58629,5 @@
       "source_file": "client/src/assets/ach/1_1.png"
     }
   ],
-  "built_at_commit": "ff3e2594a0c663b68ab387c232dc96c64180c76d"
+  "built_at_commit": "eff799390288f3b6e05effecd549b6032c2b6bb2"
 }

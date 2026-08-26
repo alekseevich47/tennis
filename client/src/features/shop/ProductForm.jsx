@@ -1,6 +1,6 @@
 import React, { useEffect, useId, useMemo, useState } from 'react';
 import Modal from '../../components/ui/Modal';
-import MediaPreviewGrid from '../feed/MediaPreviewGrid';
+import SortableMediaPreviewGrid from '../feed/SortableMediaPreviewGrid';
 import { useProductCategories } from '../../hooks/useProductCategories';
 import {
   getMediaUrl,
@@ -33,6 +33,18 @@ function areStringArraysEqual(left, right) {
 }
 
 /**
+ * @typedef {{
+ *   key: string,
+ *   kind: 'existing' | 'new',
+ *   filename?: string,
+ *   file?: File,
+ *   url: string,
+ *   name: string,
+ *   isVideo: boolean
+ * }} ProductMediaItem
+ */
+
+/**
  * @param {{
  *   isOpen: boolean,
  *   product?: any,
@@ -53,42 +65,17 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
     categories: Array.isArray(product?.categories) ? product.categories : [],
     out_of_stock: Boolean(product?.out_of_stock)
   }));
-  const [imageFiles, setImageFiles] = useState(/** @type {File[]} */ ([]));
-  const [imagesToDelete, setImagesToDelete] = useState(/** @type {string[]} */ ([]));
-  const [newPreviewItems, setNewPreviewItems] = useState([]);
+  /** @type {[ProductMediaItem[], React.Dispatch<React.SetStateAction<ProductMediaItem[]>>]} */
+  const [orderedMedia, setOrderedMedia] = useState([]);
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
   const [categoryError, setCategoryError] = useState(false);
 
-  const existingImageNames = useMemo(() => mediaNames(product?.images), [product?.images]);
-  const keptExistingImageNames = useMemo(
-    () => existingImageNames.filter((filename) => !imagesToDelete.includes(filename)),
-    [existingImageNames, imagesToDelete]
+  const originalExistingNames = useMemo(
+    () => (product ? mediaNames(product.images) : []),
+    [product]
   );
-  const existingPreviewItems = useMemo(
-    () =>
-      product
-        ? keptExistingImageNames.flatMap((filename) => {
-          const url = getMediaUrl(product, 'products', filename);
-          return url
-            ? [{
-              key: `existing-${filename}`,
-              url,
-              name: filename,
-              isVideo: isVideoMediaName(filename)
-            }]
-            : [];
-        })
-        : [],
-    [product, keptExistingImageNames]
-  );
-  const previewItems = useMemo(
-    () => [...existingPreviewItems, ...newPreviewItems],
-    [existingPreviewItems, newPreviewItems]
-  );
-  const remainingImageSlots = Math.max(
-    0,
-    MAX_PRODUCT_IMAGES - keptExistingImageNames.length - imageFiles.length
-  );
+
+  const remainingImageSlots = Math.max(0, MAX_PRODUCT_IMAGES - orderedMedia.length);
   const categoryLabel = useMemo(() => {
     if (form.categories.length === 0) return 'Категории не выбраны';
     const selectedNames = categories
@@ -100,16 +87,28 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
       : `Выбрано: ${form.categories.length}`;
   }, [categories, form.categories]);
 
+  const previewItems = useMemo(
+    () =>
+      orderedMedia.map((item) => ({
+        key: item.key,
+        url: item.url,
+        name: item.name,
+        isVideo: item.isVideo,
+        status: 'ready'
+      })),
+    [orderedMedia]
+  );
+
   useEffect(() => {
-    const items = imageFiles.map((file) => ({
-      key: `${file.name}-${file.lastModified}`,
-      url: URL.createObjectURL(file),
-      name: file.name,
-      isVideo: isVideoFile(file)
-    }));
-    setNewPreviewItems(items);
-    return () => items.forEach((item) => URL.revokeObjectURL(item.url));
-  }, [imageFiles]);
+    return () => {
+      orderedMedia.forEach((item) => {
+        if (item.kind === 'new' && item.url?.startsWith('blob:')) {
+          URL.revokeObjectURL(item.url);
+        }
+      });
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- revoke on unmount only
+  }, []);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -122,8 +121,25 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
       categories: Array.isArray(product?.categories) ? product.categories : [],
       out_of_stock: Boolean(product?.out_of_stock)
     });
-    setImageFiles([]);
-    setImagesToDelete([]);
+    setOrderedMedia(
+      product
+        ? mediaNames(product.images).flatMap((filename) => {
+            const url = getMediaUrl(product, 'products', filename);
+            return url
+              ? [
+                  {
+                    key: `existing-${filename}`,
+                    kind: /** @type {'existing'} */ ('existing'),
+                    filename,
+                    url,
+                    name: filename,
+                    isVideo: isVideoMediaName(filename)
+                  }
+                ]
+              : [];
+          })
+        : []
+    );
     setIsCategoryMenuOpen(false);
     setCategoryError(false);
   }, [isOpen, product]);
@@ -139,6 +155,16 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
         ? prev.categories.filter((id) => id !== categoryId)
         : [...prev.categories, categoryId]
     }));
+  };
+
+  const removeMedia = (key) => {
+    setOrderedMedia((current) => {
+      const target = current.find((item) => item.key === key);
+      if (target?.kind === 'new' && target.url?.startsWith('blob:')) {
+        URL.revokeObjectURL(target.url);
+      }
+      return current.filter((item) => item.key !== key);
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -172,10 +198,53 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
     if (!product || form.out_of_stock !== Boolean(product.out_of_stock)) {
       data.append('out_of_stock', String(form.out_of_stock));
     }
-    const imageFieldName = product ? 'images+' : 'images';
-    imagesToDelete.forEach((filename) => data.append('images-', filename));
-    const compressedImageFiles = await Promise.all(imageFiles.map((img) => compressImage(img)));
-    compressedImageFiles.forEach((img) => data.append(imageFieldName, img));
+
+    const keptExistingNames = orderedMedia
+      .filter((item) => item.kind === 'existing')
+      .map((item) => item.filename)
+      .filter(Boolean);
+    const deletedNames = originalExistingNames.filter((name) => !keptExistingNames.includes(name));
+    const existingOrderChanged =
+      Boolean(product) &&
+      !areStringArraysEqual(
+        keptExistingNames,
+        originalExistingNames.filter((name) => keptExistingNames.includes(name))
+      );
+    const newFiles = orderedMedia.filter((item) => item.kind === 'new');
+    const needsFullRewrite =
+      Boolean(product) &&
+      orderedMedia.length > 0 &&
+      (existingOrderChanged ||
+        (newFiles.length > 0 &&
+          orderedMedia.some((item, index) => {
+            // new file interleaved before an existing one
+            if (item.kind !== 'new') return false;
+            return orderedMedia.slice(index + 1).some((later) => later.kind === 'existing');
+          })));
+
+    if (needsFullRewrite) {
+      originalExistingNames.forEach((filename) => data.append('images-', filename));
+      for (const item of orderedMedia) {
+        if (item.kind === 'existing' && item.url) {
+          const res = await fetch(item.url);
+          const blob = await res.blob();
+          data.append(
+            'images',
+            new File([blob], item.filename || item.name || 'image.jpg', {
+              type: blob.type || 'image/jpeg'
+            })
+          );
+        } else if (item.file) {
+          data.append('images', await compressImage(item.file));
+        }
+      }
+    } else {
+      deletedNames.forEach((filename) => data.append('images-', filename));
+      const imageFieldName = product ? 'images+' : 'images';
+      const compressed = await Promise.all(newFiles.map((item) => compressImage(/** @type {File} */ (item.file))));
+      compressed.forEach((img) => data.append(imageFieldName, img));
+    }
+
     if (!product || hasCategoryChanges) {
       form.categories.forEach((categoryId) => data.append('categories', categoryId));
     }
@@ -187,6 +256,8 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
     onSubmit(data);
     onClose();
   };
+
+  const newCount = orderedMedia.filter((item) => item.kind === 'new').length;
 
   return (
     <Modal
@@ -287,25 +358,23 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
           <span>Нет в наличии</span>
         </label>
 
-        <MediaPreviewGrid
+        <SortableMediaPreviewGrid
           items={previewItems}
+          onReorder={(next) => {
+            const byKey = new Map(orderedMedia.map((item) => [item.key, item]));
+            setOrderedMedia(
+              next
+                .map((item) => byKey.get(item.key))
+                .filter(Boolean)
+            );
+          }}
           className="product-form-preview-grid"
+          showCaption={false}
           getAction={(item) => (
             <button
               type="button"
               className="media-remove-btn"
-              onClick={() => {
-                if (item.key.startsWith('existing-')) {
-                  const filename = item.key.slice('existing-'.length);
-                  setImagesToDelete((current) =>
-                    current.includes(filename) ? current : [...current, filename]
-                  );
-                  return;
-                }
-                setImageFiles((current) =>
-                  current.filter((file) => `${file.name}-${file.lastModified}` !== item.key)
-                );
-              }}
+              onClick={() => removeMedia(item.key)}
               aria-label={`Убрать файл ${item.name}`}
             >
               <span aria-hidden="true">×</span>
@@ -316,7 +385,7 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
         <div className="media-upload-group">
           <label htmlFor={fileInputId} className="media-input-label">
             <span aria-hidden="true">📎</span>{' '}
-            {imageFiles.length > 0 ? `Выбрано: ${imageFiles.length}` : 'Добавить фото'}
+            {newCount > 0 ? `Выбрано: ${newCount}` : 'Добавить фото'}
             <input
               id={fileInputId}
               type="file"
@@ -325,7 +394,21 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
               disabled={remainingImageSlots === 0}
               onChange={(e) => {
                 const incoming = readSelectedFiles(e.target.files, remainingImageSlots);
-                setImageFiles((current) => [...current, ...incoming].slice(0, MAX_PRODUCT_IMAGES));
+                setOrderedMedia((current) => {
+                  const next = [...current];
+                  for (const file of incoming) {
+                    if (next.length >= MAX_PRODUCT_IMAGES) break;
+                    next.push({
+                      key: `new-${file.name}-${file.lastModified}-${Math.random().toString(36).slice(2, 7)}`,
+                      kind: 'new',
+                      file,
+                      url: URL.createObjectURL(file),
+                      name: file.name,
+                      isVideo: isVideoFile(file)
+                    });
+                  }
+                  return next;
+                });
                 e.currentTarget.value = '';
               }}
               className="visually-hidden"
