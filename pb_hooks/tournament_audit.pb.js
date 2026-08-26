@@ -16,16 +16,17 @@ onRecordCreateRequest((e) => {
       ? (subject.label.indexOf(' (') > -1 ? subject.label.slice(0, subject.label.indexOf(' (')) : subject.label)
       : 'Пользователь';
 
+    var isScheduled = record.getBool('is_scheduled');
     audit.logEvent($app, {
       category: 'tournament_feed',
-      action: 'tournament.post.create',
+      action: isScheduled ? 'tournament.post.schedule' : 'tournament.post.create',
       actionKind: 'create',
       subject: subject,
       objectType: 'tournament_post',
       objectId: record.id,
       objectLabel: objectLabel,
-      details: { textPreview: content.slice(0, 120) },
-      summaryRu: name + ' опубликовал(а) итоги турнира ' + objectLabel,
+      details: { textPreview: content.slice(0, 120), scheduledAt: record.getString('scheduled_at') || null },
+      summaryRu: name + (isScheduled ? ' запланировал(а) итоги турнира ' : ' опубликовал(а) итоги турнира ') + objectLabel,
       severity: 'info'
     });
 
@@ -54,6 +55,8 @@ onRecordCreateRequest((e) => {
         summaryRu: name + ' отметил(а) участника ' + targetLabel + ' в ' + objectLabel,
         severity: 'info'
       });
+
+      if (isScheduled) continue;
 
       audit.logEvent($app, {
         category: 'tournament_feed',

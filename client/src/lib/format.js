@@ -18,6 +18,12 @@ export const MONTHS_GENITIVE = [
   'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
 ];
 
+/** Сокращения месяцев с точкой: «авг.» */
+export const MONTHS_SHORT = [
+  'янв.', 'фев.', 'мар.', 'апр.', 'мая', 'июн.',
+  'июл.', 'авг.', 'сен.', 'окт.', 'ноя.', 'дек.'
+];
+
 /** @param {number} n */
 const pad2 = (n) => String(n).padStart(2, '0');
 
@@ -155,4 +161,47 @@ export function formatRelativeTime(dateLike, now = new Date()) {
   const months = Math.max(1, Math.floor(days / 30));
   if (months < 12) return `${months} мес назад`;
   return `${Math.max(1, Math.floor(days / 365))} г назад`;
+}
+
+/**
+ * Текст кнопки планирования: «сегодня 22:00» / «27 авг. в 22:00».
+ * @param {Date} date
+ * @param {Date} [now]
+ */
+export function formatScheduleSendLabel(date, now = new Date()) {
+  const hhmm = `${pad2(date.getHours())}:${pad2(date.getMinutes())}`;
+  if (isSameDay(date, now)) return `сегодня ${hhmm}`;
+  return `${date.getDate()} ${MONTHS_SHORT[date.getMonth()]} в ${hhmm}`;
+}
+
+/**
+ * Заголовок карточки очереди: «отправка 27 августа».
+ * @param {string | number | Date} dateLike
+ */
+export function formatScheduleDispatchHeading(dateLike) {
+  const d = new Date(dateLike);
+  return `отправка ${d.getDate()} ${MONTHS_GENITIVE[d.getMonth()]}`;
+}
+
+/**
+ * Бейдж времени: «22:00».
+ * @param {string | number | Date} dateLike
+ */
+export function formatScheduleTimeBadge(dateLike) {
+  const d = new Date(dateLike);
+  return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+}
+
+/**
+ * Подпись дня в колесе: «Сегодня» / «Завтра» / «чт, 27 авг.»
+ * @param {Date} date
+ * @param {Date} [now]
+ */
+export function formatScheduleDayWheelLabel(date, now = new Date()) {
+  if (isSameDay(date, now)) return 'Сегодня';
+  const tomorrow = new Date(now);
+  tomorrow.setDate(now.getDate() + 1);
+  if (isSameDay(date, tomorrow)) return 'Завтра';
+  const day = DAYS_SHORT[date.getDay()].toLowerCase();
+  return `${day}, ${date.getDate()} ${MONTHS_SHORT[date.getMonth()]}`;
 }

@@ -56,14 +56,14 @@ export default function CommentSendButton({
         rotate: 48,
         scale: 0.72,
         opacity: 0,
-        duration: 0.58,
+        duration: 0.78,
         ease: 'power1.inOut'
       });
       tl.fromTo(
         arrow,
         { opacity: 0, rotate: 0, scale: 0.82 },
-        { opacity: 1, rotate: 0, scale: 1, duration: 0.48, ease: 'power2.out' },
-        '-=0.12'
+        { opacity: 1, rotate: 0, scale: 1, duration: 0.6, ease: 'power2.out' },
+        '-=0.14'
       );
       tl.set(plane, { opacity: 0, x: 0, y: 0, rotate: 0, scale: 0.6 });
     } else if (phase !== 'flying') {
@@ -71,8 +71,8 @@ export default function CommentSendButton({
         rotate: phase === 'armed' ? 90 : 0,
         opacity: 1,
         scale: 1,
-        duration: 0.4,
-        ease: 'power2.out',
+        duration: 0.55,
+        ease: 'power1.inOut',
         overwrite: true
       });
       gsap.set(plane, { opacity: 0, x: 0, y: 0, scale: 0.6, rotate: 0 });

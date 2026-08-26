@@ -476,17 +476,26 @@ function PostDetailModal({
           onClose={handleClose}
         />
 
-        <PostContentHtml
-          as="p"
-          className="post-text-detail"
-          content={post.content || post.text}
-        />
+        {post.caption_above !== false ? (
+          <PostContentHtml
+            as="p"
+            className="post-text-detail"
+            content={post.content || post.text}
+          />
+        ) : null}
         <PostMedia
           post={post}
           variant="detail"
           hiddenMediaKey={hiddenMediaKey}
           onOpenFullscreen={onOpenFullscreen}
         />
+        {post.caption_above === false ? (
+          <PostContentHtml
+            as="p"
+            className="post-text-detail"
+            content={post.content || post.text}
+          />
+        ) : null}
 
         <div className="modal-comments-section">
           <h3>Комментарии ({comments.length})</h3>

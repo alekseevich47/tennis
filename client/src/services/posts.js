@@ -15,6 +15,9 @@ import { PB_URL } from '../config';
  * @property {string} [author]
  * @property {boolean} [is_deleted]
  * @property {boolean} [is_pinned]
+ * @property {boolean} [is_scheduled]
+ * @property {string | null} [scheduled_at]
+ * @property {boolean} [caption_above]
  * @property {string | null} [pinned_at]
  * @property {number} [likes_count]
  * @property {string} created
@@ -66,9 +69,12 @@ function getIsDeletedPatchValue(patch) {
  */
 export async function listPosts({ includeDeleted = false, signal } = {}) {
   try {
+    const base = includeDeleted ? '' : 'is_deleted = false';
+    const scheduled = 'is_scheduled != true';
+    const filter = base ? `(${base}) && (${scheduled})` : scheduled;
     return /** @type {PostRecord[]} */ (await pb.collection('posts').getFullList({
       sort: '-created',
-      filter: includeDeleted ? '' : 'is_deleted = false',
+      filter,
       expand: 'comments(post).author',
       requestKey: null,
       signal
@@ -78,6 +84,59 @@ export async function listPosts({ includeDeleted = false, signal } = {}) {
     error('Ошибка загрузки ленты:', err);
     throw err;
   }
+}
+
+/**
+ * Очередь запланированных публикаций ленты (сортировка по времени отправки).
+ * @param {{ signal?: AbortSignal }} [options]
+ * @returns {Promise<PostRecord[]>}
+ */
+export async function listScheduledPosts({ signal } = {}) {
+  try {
+    return /** @type {PostRecord[]} */ (await pb.collection('posts').getFullList({
+      sort: 'scheduled_at',
+      filter: 'is_scheduled = true && is_deleted != true',
+      requestKey: null,
+      signal
+    }));
+  } catch (err) {
+    if (err && /** @type {Error} */ (err).name === 'AbortError') return [];
+    error('Ошибка загрузки запланированных публикаций:', err);
+    throw err;
+  }
+}
+
+/**
+ * @param {string} id
+ * @param {string} scheduledAtIso
+ */
+export async function reschedulePost(id, scheduledAtIso) {
+  return /** @type {PostRecord} */ (
+    await pb.collection('posts').update(id, {
+      scheduled_at: scheduledAtIso,
+      is_scheduled: true
+    })
+  );
+}
+
+/**
+ * Немедленная публикация из очереди.
+ * @param {string} id
+ */
+export async function publishScheduledPostNow(id) {
+  return /** @type {PostRecord} */ (
+    await pb.collection('posts').update(id, { is_scheduled: false })
+  );
+}
+
+/**
+ * Удаление из очереди (soft-delete публикации).
+ * @param {string} id
+ */
+export async function deleteScheduledPost(id) {
+  return /** @type {PostRecord} */ (
+    await pb.collection('posts').update(id, { is_deleted: true, is_scheduled: false })
+  );
 }
 
 /**
