@@ -26,6 +26,64 @@ function htmlToMaxMarkdown(html) {
     return decodeEntities(String(value).replace(/<[^>]+>/g, ''));
   }
 
+  /** Вырезает .post-mention узлы (с вложенными span), оставляя читаемый label. */
+  function flattenMentions(input) {
+    var out = '';
+    var i = 0;
+    var lower = input.toLowerCase();
+    while (i < input.length) {
+      var idx = lower.indexOf('<span', i);
+      if (idx === -1) {
+        out += input.slice(i);
+        break;
+      }
+      out += input.slice(i, idx);
+      var tagEnd = input.indexOf('>', idx);
+      if (tagEnd === -1) {
+        out += input.slice(idx);
+        break;
+      }
+      var openTag = input.slice(idx, tagEnd + 1);
+      if (!/\bpost-mention\b/i.test(openTag)) {
+        out += openTag;
+        i = tagEnd + 1;
+        continue;
+      }
+      var nameM = openTag.match(/\bdata-name="([^"]*)"/i);
+      var numM = openTag.match(/\bdata-post-number="([^"]*)"/i);
+      var srcM = openTag.match(/\bdata-post-source="([^"]*)"/i);
+      var label = '';
+      if (nameM) {
+        label = decodeEntities(nameM[1]);
+      } else if (numM) {
+        var src = srcM && String(srcM[1]).toLowerCase() === 'tournament' ? 'Турнир' : 'Лента';
+        label = '#' + numM[1] + ' ' + src;
+      }
+      var depth = 1;
+      var j = tagEnd + 1;
+      while (j < input.length && depth > 0) {
+        var nextOpen = lower.indexOf('<span', j);
+        var nextClose = lower.indexOf('</span>', j);
+        if (nextClose === -1) {
+          j = input.length;
+          break;
+        }
+        if (nextOpen !== -1 && nextOpen < nextClose) {
+          depth += 1;
+          j = nextOpen + 5;
+        } else {
+          depth -= 1;
+          j = nextClose + 7;
+        }
+      }
+      out += label;
+      i = j;
+    }
+    return out;
+  }
+
+  s = flattenMentions(s);
+
   s = s.replace(/<br\s*\/?>/gi, '\n');
   s = s.replace(/<\/(div|p)>/gi, '\n');
   s = s.replace(/<(div|p)(?:\s[^>]*)?>/gi, '');
