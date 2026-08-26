@@ -14,6 +14,7 @@ import gsap from 'gsap';
 import PostFormatToolbar from './PostFormatToolbar';
 import PostLinkModal from './PostLinkModal';
 import FrameColorPicker from './FrameColorPicker';
+import MentionSuggestPopup from './MentionSuggestPopup';
 import {
   FRAME_CLASS,
   applyAnimFrame,
@@ -26,9 +27,19 @@ import {
   normalizeHexColor,
   readActiveFormats
 } from './postRichText';
+import {
+  MENTION_CLASS,
+  buildPostMentionEl,
+  buildUserMentionEl,
+  getMentionDraftAtCaret,
+  insertMentionChip,
+  searchMentionPosts,
+  searchMentionUsers
+} from './postMentions';
 
 const FLOATING_ENTER_MS = 0.28;
 const FLOATING_EXIT_MS = 0.2;
+const MENTION_DEBOUNCE_MS = 160;
 
 function prefersReducedMotion() {
   return typeof window !== 'undefined'
@@ -37,6 +48,7 @@ function prefersReducedMotion() {
 
 /**
  * Rich-text поле: статичный тулбар + всплывающий при выделении + опциональная анимационная рамка.
+ * `@имя` / `@#номер` — mention-саджест участников и публикаций.
  *
  * Imperative handle: `{ focus(), clear() }`.
  *
@@ -47,6 +59,7 @@ function prefersReducedMotion() {
  *   placeholder?: string,
  *   'aria-label'?: string,
  *   enableFrame?: boolean,
+ *   enableMentions?: boolean,
  *   compact?: boolean,
  *   revealToolbarOnFocus?: boolean,
  *   singleLine?: boolean,
@@ -63,6 +76,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     placeholder = 'Что нового в секции?…',
     'aria-label': ariaLabel = 'Текст публикации',
     enableFrame = true,
+    enableMentions = true,
     compact = false,
     revealToolbarOnFocus = false,
     singleLine = false,
@@ -78,6 +92,9 @@ const PostRichTextField = forwardRef(function PostRichTextField(
   const editorRef = useRef(/** @type {HTMLDivElement | null} */ (null));
   const floatingRef = useRef(/** @type {HTMLDivElement | null} */ (null));
   const savedRangeRef = useRef(/** @type {Range | null} */ (null));
+  const mentionDraftRef = useRef(/** @type {import('./postMentions').MentionDraft | null} */ (null));
+  const mentionAbortRef = useRef(/** @type {AbortController | null} */ (null));
+  const mentionTimerRef = useRef(/** @type {ReturnType<typeof setTimeout> | null} */ (null));
   const valueRef = useRef(value);
   valueRef.current = value;
   const [active, setActive] = useState({
@@ -104,6 +121,18 @@ const PostRichTextField = forwardRef(function PostRichTextField(
   const lastClearedHtmlRef = useRef(/** @type {string | null} */ (null));
   const showTopToolbar = !revealToolbarOnFocus || focused || frameOpen;
 
+  const [mentionOpen, setMentionOpen] = useState(false);
+  const [mentionMounted, setMentionMounted] = useState(false);
+  const [mentionKind, setMentionKind] = useState(/** @type {'user' | 'post'} */ ('user'));
+  const [mentionQuery, setMentionQuery] = useState('');
+  const [mentionLoading, setMentionLoading] = useState(false);
+  const [mentionUsers, setMentionUsers] = useState(/** @type {any[]} */ ([]));
+  const [mentionPosts, setMentionPosts] = useState(/** @type {any[]} */ ([]));
+  const [mentionActiveIndex, setMentionActiveIndex] = useState(0);
+  const [mentionAnchor, setMentionAnchor] = useState(
+    /** @type {{ top: number, left: number, bottom: number, width: number } | null} */ (null)
+  );
+
   const hideFloatingToolbar = useCallback((immediate = false) => {
     if (hideFloatingTimerRef.current) {
       clearTimeout(hideFloatingTimerRef.current);
@@ -113,16 +142,39 @@ const PostRichTextField = forwardRef(function PostRichTextField(
       setFloatingOpen(false);
       return;
     }
-    // Короткий debounce: selectionchange часто мигает collapse между кадрами жеста.
     hideFloatingTimerRef.current = setTimeout(() => {
       hideFloatingTimerRef.current = null;
       setFloatingOpen(false);
     }, 70);
   }, []);
 
+  const closeMentionSuggest = useCallback((immediate = false) => {
+    if (mentionTimerRef.current) {
+      clearTimeout(mentionTimerRef.current);
+      mentionTimerRef.current = null;
+    }
+    if (mentionAbortRef.current) {
+      mentionAbortRef.current.abort();
+      mentionAbortRef.current = null;
+    }
+    mentionDraftRef.current = null;
+    if (immediate) {
+      setMentionOpen(false);
+      setMentionMounted(false);
+      setMentionAnchor(null);
+      setMentionUsers([]);
+      setMentionPosts([]);
+      setMentionLoading(false);
+      return;
+    }
+    setMentionOpen(false);
+  }, []);
+
   useEffect(
     () => () => {
       if (hideFloatingTimerRef.current) clearTimeout(hideFloatingTimerRef.current);
+      if (mentionTimerRef.current) clearTimeout(mentionTimerRef.current);
+      if (mentionAbortRef.current) mentionAbortRef.current.abort();
     },
     []
   );
@@ -152,13 +204,13 @@ const PostRichTextField = forwardRef(function PostRichTextField(
       },
       clear: () => {
         const el = editorRef.current;
-        // Запоминаем HTML до очистки — IME/webview иногда вставляет его обратно одним input.
         lastClearedHtmlRef.current = el ? getEditorHtml(el) : '';
         valueRef.current = '';
         clearEditorDom();
+        closeMentionSuggest(true);
       }
     }),
-    [clearEditorDom]
+    [clearEditorDom, closeMentionSuggest]
   );
 
   const syncEmptyAndValue = useCallback(() => {
@@ -190,6 +242,110 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     selection.removeAllRanges();
     selection.addRange(range);
   }, []);
+
+  const updateMentionSuggest = useCallback(() => {
+    if (!enableMentions) {
+      closeMentionSuggest(true);
+      return;
+    }
+    const el = editorRef.current;
+    const draft = getMentionDraftAtCaret(el);
+    if (!draft) {
+      closeMentionSuggest();
+      return;
+    }
+
+    mentionDraftRef.current = draft;
+    setMentionKind(draft.kind);
+    setMentionQuery(draft.query);
+    setMentionActiveIndex(0);
+    hideFloatingToolbar(true);
+
+    try {
+      const rect = draft.range.getBoundingClientRect();
+      if (rect && (rect.width > 0 || rect.height > 0 || rect.top > 0)) {
+        setMentionAnchor({
+          top: rect.top,
+          left: rect.left,
+          bottom: rect.bottom,
+          width: Math.max(rect.width, 8)
+        });
+      } else if (el) {
+        const er = el.getBoundingClientRect();
+        setMentionAnchor({
+          top: er.top,
+          left: er.left,
+          bottom: er.top + 24,
+          width: 8
+        });
+      }
+    } catch {
+      // ignore
+    }
+
+    setMentionMounted(true);
+    setMentionOpen(true);
+
+    if (mentionTimerRef.current) clearTimeout(mentionTimerRef.current);
+    mentionTimerRef.current = setTimeout(async () => {
+      mentionTimerRef.current = null;
+      if (mentionAbortRef.current) mentionAbortRef.current.abort();
+      const ac = new AbortController();
+      mentionAbortRef.current = ac;
+      setMentionLoading(true);
+      try {
+        if (draft.kind === 'user') {
+          const users = await searchMentionUsers(draft.query, { signal: ac.signal });
+          if (ac.signal.aborted) return;
+          setMentionUsers(users);
+          setMentionPosts([]);
+          setMentionActiveIndex(0);
+        } else {
+          const posts = await searchMentionPosts(draft.query, { signal: ac.signal });
+          if (ac.signal.aborted) return;
+          setMentionPosts(posts);
+          setMentionUsers([]);
+          setMentionActiveIndex(0);
+        }
+      } catch {
+        if (ac.signal.aborted) return;
+        setMentionUsers([]);
+        setMentionPosts([]);
+      } finally {
+        if (!ac.signal.aborted) setMentionLoading(false);
+      }
+    }, MENTION_DEBOUNCE_MS);
+  }, [closeMentionSuggest, enableMentions, hideFloatingToolbar]);
+
+  const applyMentionUser = useCallback(
+    (user) => {
+      const el = editorRef.current;
+      const draft = mentionDraftRef.current;
+      if (!el || !draft || draft.kind !== 'user' || !user?.id) return;
+      const chip = buildUserMentionEl(user);
+      insertMentionChip(el, draft, chip);
+      closeMentionSuggest(true);
+      skipNextSync.current = true;
+      syncEmptyAndValue();
+      refreshActive();
+    },
+    [closeMentionSuggest, refreshActive, syncEmptyAndValue]
+  );
+
+  const applyMentionPost = useCallback(
+    (post) => {
+      const el = editorRef.current;
+      const draft = mentionDraftRef.current;
+      if (!el || !draft || draft.kind !== 'post' || !post?.id) return;
+      const chip = buildPostMentionEl(post);
+      insertMentionChip(el, draft, chip);
+      closeMentionSuggest(true);
+      skipNextSync.current = true;
+      syncEmptyAndValue();
+      refreshActive();
+    },
+    [closeMentionSuggest, refreshActive, syncEmptyAndValue]
+  );
 
   const updateSelectionToolbar = useCallback(() => {
     const el = editorRef.current;
@@ -242,9 +398,6 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     const el = editorRef.current;
     if (!el) return;
     const next = value || '';
-    // skipNextSync — не перетирать DOM сразу после onInput/команды форматирования.
-    // Но если value пришёл снаружи (очистка после отправки комментария) и DOM не совпадает —
-    // всё равно синхронизировать: иначе на мобильных текст остаётся в поле при value=''.
     if (skipNextSync.current) {
       skipNextSync.current = false;
       if (getEditorHtml(el) === next || el.innerHTML === next) return;
@@ -273,10 +426,20 @@ const PostRichTextField = forwardRef(function PostRichTextField(
       saveSelection();
       refreshActive();
       updateSelectionToolbar();
+      if (enableMentions && sel.isCollapsed) {
+        updateMentionSuggest();
+      }
     };
     document.addEventListener('selectionchange', onSelectionChange);
     return () => document.removeEventListener('selectionchange', onSelectionChange);
-  }, [hideFloatingToolbar, refreshActive, saveSelection, updateSelectionToolbar]);
+  }, [
+    enableMentions,
+    hideFloatingToolbar,
+    refreshActive,
+    saveSelection,
+    updateMentionSuggest,
+    updateSelectionToolbar
+  ]);
 
   useLayoutEffect(() => {
     if (!floatingOpen) return undefined;
@@ -347,6 +510,20 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     return () => document.removeEventListener('pointerdown', onPointerDown);
   }, [frameOpen]);
 
+  useEffect(() => {
+    if (!mentionOpen) return undefined;
+    const onPointerDown = (e) => {
+      const root = rootRef.current;
+      const popup = document.querySelector('.mention-suggest');
+      if (e.target instanceof Node) {
+        if (root?.contains(e.target) || popup?.contains(e.target)) return;
+      }
+      closeMentionSuggest();
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    return () => document.removeEventListener('pointerdown', onPointerDown);
+  }, [mentionOpen, closeMentionSuggest]);
+
   const handleCommand = (command) => {
     const el = editorRef.current;
     if (!el) return;
@@ -365,6 +542,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
       setLinkDraft({ title: draft.title, href: draft.href });
       setLinkOpen(true);
       hideFloatingToolbar(true);
+      closeMentionSuggest(true);
       return;
     }
 
@@ -385,7 +563,6 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     const range = savedRangeRef.current;
     setLinkOpen(false);
     hideFloatingToolbar(true);
-    // После закрытия модалки — следующий кадр: фокус/selection уже не заняты оверлеем.
     requestAnimationFrame(() => {
       applyHyperlink({ title, href }, el, range);
       skipNextSync.current = true;
@@ -408,49 +585,49 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     syncEmptyAndValue();
   };
 
-  /** Клик справа от рамки → каретка вне чипа (без spacer-символа). */
   const handleEditorMouseDown = (event) => {
     const el = editorRef.current;
     if (!el || !(event.target instanceof Element)) return;
 
-    // Редактирование вариантов внутри рамки — не перехватываем.
     if (event.target.closest(`.${FRAME_CLASS} .post-anim-frame__text`)) return;
 
-    const frames = Array.from(el.querySelectorAll(`.${FRAME_CLASS}`));
-    if (frames.length === 0) return;
+    const chips = Array.from(el.querySelectorAll(`.${FRAME_CLASS}, .${MENTION_CLASS}`));
+    if (chips.length === 0) return;
 
     /** @type {HTMLElement | null} */
-    let afterFrame = null;
-    const clickedFrame = event.target.closest(`.${FRAME_CLASS}`);
+    let afterChip = null;
+    const clickedChip = event.target.closest(`.${FRAME_CLASS}, .${MENTION_CLASS}`);
 
-    if (clickedFrame && el.contains(clickedFrame)) {
-      const rect = clickedFrame.getBoundingClientRect();
-      // Правая четверть чипа / клик правее — каретка после рамки.
+    if (clickedChip && el.contains(clickedChip)) {
+      const rect = clickedChip.getBoundingClientRect();
       if (event.clientX >= rect.left + rect.width * 0.65) {
-        afterFrame = /** @type {HTMLElement} */ (clickedFrame);
+        afterChip = /** @type {HTMLElement} */ (clickedChip);
       }
     } else if (event.target === el) {
-      const last = /** @type {HTMLElement} */ (frames[frames.length - 1]);
+      const last = /** @type {HTMLElement} */ (chips[chips.length - 1]);
       const rect = last.getBoundingClientRect();
       if (event.clientX >= rect.right - 4) {
-        afterFrame = last;
+        afterChip = last;
       }
     }
 
-    if (!afterFrame) return;
+    if (!afterChip) return;
 
     event.preventDefault();
     el.focus({ preventScroll: true });
     const selection = window.getSelection();
     if (!selection) return;
     const range = document.createRange();
-    range.setStartAfter(afterFrame);
+    range.setStartAfter(afterChip);
     range.collapse(true);
     selection.removeAllRanges();
     selection.addRange(range);
     savedRangeRef.current = range.cloneRange();
     hideFloatingToolbar(true);
   };
+
+  const mentionItemCount =
+    mentionKind === 'user' ? mentionUsers.length : mentionPosts.length;
 
   const floatingToolbar =
     floatingMounted && floatingPos && typeof document !== 'undefined'
@@ -535,13 +712,43 @@ const PostRichTextField = forwardRef(function PostRichTextField(
           }}
           onMouseDown={handleEditorMouseDown}
           onClick={(event) => {
-            // В редакторе не уходить по ссылке — только правка.
             const link = event.target instanceof Element ? event.target.closest('a') : null;
             if (link && editorRef.current?.contains(link)) {
               event.preventDefault();
             }
+            const mention =
+              event.target instanceof Element ? event.target.closest(`.${MENTION_CLASS}`) : null;
+            if (mention && editorRef.current?.contains(mention)) {
+              event.preventDefault();
+            }
           }}
           onKeyDown={(event) => {
+            if (mentionOpen) {
+              if (event.key === 'Escape') {
+                event.preventDefault();
+                closeMentionSuggest();
+                return;
+              }
+              if (event.key === 'ArrowDown' && mentionItemCount > 0) {
+                event.preventDefault();
+                setMentionActiveIndex((i) => (i + 1) % mentionItemCount);
+                return;
+              }
+              if (event.key === 'ArrowUp' && mentionItemCount > 0) {
+                event.preventDefault();
+                setMentionActiveIndex((i) => (i - 1 + mentionItemCount) % mentionItemCount);
+                return;
+              }
+              if ((event.key === 'Enter' || event.key === 'Tab') && mentionItemCount > 0) {
+                event.preventDefault();
+                if (mentionKind === 'user') {
+                  applyMentionUser(mentionUsers[mentionActiveIndex]);
+                } else {
+                  applyMentionPost(mentionPosts[mentionActiveIndex]);
+                }
+                return;
+              }
+            }
             if (singleLine && event.key === 'Enter') {
               event.preventDefault();
             }
@@ -552,20 +759,22 @@ const PostRichTextField = forwardRef(function PostRichTextField(
               if (!el) return;
               const root = rootRef.current;
               const floating = floatingRef.current;
+              const mentionPopup = document.querySelector('.mention-suggest');
               const activeEl = document.activeElement;
               if (root && activeEl && root.contains(activeEl)) return;
               if (floating && activeEl && floating.contains(activeEl)) return;
-              // После внешней очистки (отправка комментария) blur не должен
-              // вернуть старый HTML из DOM через onChange — иначе текст «залипает».
+              if (mentionPopup && activeEl && mentionPopup.contains(activeEl)) return;
               if (!(valueRef.current || '')) {
                 if (!isEditorEmpty(el)) clearEditorDom();
                 hideFloatingToolbar(true);
+                closeMentionSuggest(true);
                 setFrameOpen(false);
                 setFocused(false);
                 return;
               }
               syncEmptyAndValue();
               hideFloatingToolbar(true);
+              closeMentionSuggest();
               setFrameOpen(false);
               setFocused(false);
             });
@@ -584,6 +793,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
             syncEmptyAndValue();
             refreshActive();
             updateSelectionToolbar();
+            if (enableMentions) updateMentionSuggest();
           }}
           onKeyUp={refreshActive}
           onMouseUp={() => {
@@ -595,6 +805,31 @@ const PostRichTextField = forwardRef(function PostRichTextField(
       </div>
 
       {floatingToolbar}
+
+      {enableMentions ? (
+        <MentionSuggestPopup
+          open={mentionOpen}
+          mounted={mentionMounted}
+          kind={mentionKind}
+          query={mentionQuery}
+          loading={mentionLoading}
+          users={mentionUsers}
+          posts={mentionPosts}
+          activeIndex={mentionActiveIndex}
+          anchorRect={mentionAnchor}
+          onHoverIndex={setMentionActiveIndex}
+          onSelectUser={applyMentionUser}
+          onSelectPost={applyMentionPost}
+          onClose={() => closeMentionSuggest()}
+          onExitComplete={() => {
+            setMentionMounted(false);
+            setMentionAnchor(null);
+            setMentionUsers([]);
+            setMentionPosts([]);
+            setMentionLoading(false);
+          }}
+        />
+      ) : null}
 
       <PostLinkModal
         isOpen={linkOpen}

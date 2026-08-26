@@ -15,6 +15,7 @@ import { useAppVersionCheck } from './hooks/useAppVersionCheck';
 import { ProductUploadProvider } from './components/ProductUploadProvider';
 import { FavoritesProvider, useFavorites } from './context/FavoritesContext';
 import { AddActionProvider } from './context/AddActionContext';
+import { MentionNavProvider } from './context/MentionNavContext';
 import FeedPage from './features/feed/FeedPage';
 import TrainingsPage from './features/trainings/TrainingsPage';
 import MembershipOverviewModal from './features/trainings/components/MembershipOverviewModal';
@@ -374,7 +375,7 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
     track.style.transform = `translate3d(${-width}px, 0, 0)`;
   }, [swipePeek]);
 
-  const renderTabPage = (tab) => {
+  const renderTabPage = (tab, { isPrimary = false } = {}) => {
     switch (tab) {
       case 0:
         return (
@@ -383,8 +384,9 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
             onDeletedIdsChange={setPendingDeletePostIds}
             searchQuery={feedSearch.query}
             searchOpen={feedSearch.open}
+            captureMentionTargets={isPrimary}
             commentTargetToOpen={
-              notificationCommentTarget?.collection === 'comments'
+              isPrimary && notificationCommentTarget?.collection === 'comments'
                 ? notificationCommentTarget
                 : null
             }
@@ -399,7 +401,7 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
                 user={user}
                 onDeletedIdsChange={setPendingDeleteTrainingIds}
                 onFlushPendingDeletes={flushPendingDeletes}
-                trainingIdToOpen={notificationTrainingId}
+                trainingIdToOpen={isPrimary ? notificationTrainingId : null}
                 onTrainingOpened={() => setNotificationTrainingId(null)}
               />
             ) : null}
@@ -416,7 +418,7 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
           <ProductUploadProvider>
             <ShopPage
               onDeletedIdsChange={setPendingDeleteProductIds}
-              productToOpen={favoriteProductToOpen}
+              productToOpen={isPrimary ? favoriteProductToOpen : null}
               onProductOpened={() => setFavoriteProductToOpen(null)}
             />
           </ProductUploadProvider>
@@ -430,8 +432,9 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
             onDeletedIdsChange={setPendingDeleteTournamentPostIds}
             searchQuery={competitionsSearch.query}
             searchOpen={competitionsSearch.open}
+            captureMentionTargets={isPrimary}
             commentTargetToOpen={
-              notificationCommentTarget?.collection === 'tournament_comments'
+              isPrimary && notificationCommentTarget?.collection === 'tournament_comments'
                 ? notificationCommentTarget
                 : null
             }
@@ -444,7 +447,7 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
             user={user}
             searchQuery={gallerySearch.query}
             commentTargetToOpen={
-              notificationCommentTarget?.collection === 'gallery_comments'
+              isPrimary && notificationCommentTarget?.collection === 'gallery_comments'
                 ? notificationCommentTarget
                 : null
             }
@@ -457,7 +460,7 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
             user={user}
             onUpdate={handleUserUpdate}
             onTabChange={handleTabChange}
-            openMembershipFromNotification={notificationMembershipOpen}
+            openMembershipFromNotification={isPrimary ? notificationMembershipOpen : false}
             onMembershipOpened={() => setNotificationMembershipOpen(false)}
           />
         );
@@ -505,6 +508,16 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
           : undefined;
 
   return (
+    <MentionNavProvider
+      currentUser={user}
+      onOpenFeedPost={() => {
+        setActiveTab(0);
+      }}
+      onOpenTournamentPost={() => {
+        setCompetitionsSubTab('feed');
+        setActiveTab(3);
+      }}
+    >
     <div className={`app${user && !user.onboarding_completed ? ' onboarding-active' : ''}`}>
       {user && !user.onboarding_completed && (
         <OnboardingTutorial
@@ -598,7 +611,7 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
             </div>
           )}
           <div key={`section-${activeTab}`} className={panelClassForTab(activeTab)}>
-            {renderTabPage(activeTab)}
+            {renderTabPage(activeTab, { isPrimary: true })}
           </div>
           {peekNext != null && (
             <div
@@ -627,6 +640,7 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
         onConfirm={confirmCloseApp}
       />
     </div>
+    </MentionNavProvider>
   );
 }
 

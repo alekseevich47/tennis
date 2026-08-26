@@ -17,6 +17,7 @@ import ProfileViewModal from '../profile/ProfileViewModal';
 import ScrollToTopButton from '../../components/ui/ScrollToTopButton';
 import { useSectionScroll } from '../../hooks/useSectionScroll';
 import { useRegisterAddAction } from '../../context/AddActionContext';
+import { useMentionNav } from '../../context/MentionNavContext';
 import { error } from '../../lib/log';
 import { parseDateQuery, isDateQueryParsed, matchesDateQuery } from '../../lib/dateSearch';
 import { sortPinnedByCreated, usePinnedBannerIndex } from './usePinnedBannerIndex';
@@ -38,7 +39,8 @@ import './Feed.css';
  *   searchQuery?: string,
  *   searchOpen?: boolean,
  *   commentTargetToOpen?: { postId?: string, commentId?: string } | null,
- *   onCommentTargetOpened?: () => void
+ *   onCommentTargetOpened?: () => void,
+ *   captureMentionTargets?: boolean
  * }} props
  */
 function FeedPage({
@@ -47,7 +49,8 @@ function FeedPage({
   searchQuery = '',
   searchOpen = false,
   commentTargetToOpen = null,
-  onCommentTargetOpened
+  onCommentTargetOpened,
+  captureMentionTargets = true
 }) {
   const userIsModerator = isModerator();
   const { data: posts, isLoading, mutate } = usePosts({ includeDeleted: userIsModerator });
@@ -172,6 +175,8 @@ function FeedPage({
     setHighlightCommentId(null);
   }, []);
 
+  const mentionNav = useMentionNav();
+
   useEffect(() => {
     if (!commentTargetToOpen?.postId || !posts?.length) return;
     const post = posts.find((item) => item.id === commentTargetToOpen.postId);
@@ -181,6 +186,21 @@ function FeedPage({
     setHighlightCommentId(commentTargetToOpen.commentId || null);
     onCommentTargetOpened?.();
   }, [commentTargetToOpen, posts, onCommentTargetOpened]);
+
+  useEffect(() => {
+    const target = mentionNav?.postTarget;
+    if (!captureMentionTargets) return;
+    if (!target || target.collection !== 'posts' || !posts?.length) return;
+    const post = posts.find((item) => item.id === target.postId);
+    if (!post) {
+      mentionNav.clearPostTarget();
+      return;
+    }
+    setSelectedPost(post);
+    setFocusComment(false);
+    setHighlightCommentId(null);
+    mentionNav.clearPostTarget();
+  }, [mentionNav, posts, captureMentionTargets]);
 
   const handleOpenEdit = useCallback((post) => {
     if (!userIsModerator) return;

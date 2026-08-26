@@ -9,12 +9,18 @@ gsap.registerPlugin(Flip);
 
 const LONG_PRESS_MS = 420;
 const MOVE_CANCEL_PX = 10;
-const LIFT_MOVE_PX = 4;
+const LIFT_MOVE_PX = 6;
 const EDGE_ZONE_PX = 56;
 const EDGE_MAX_SPEED = 22;
 const REMOVE_MS = 280;
-const FLIP_MS = 0.28;
-const GHOST_SCALE = 1.08;
+/** Медленнее раздвижение соседей при примерке слота */
+const FLIP_MS = 0.42;
+/** Доля ширины «чужого» слота: левее — вставить до, правее — после (~шире зоны) */
+const STRIP_SWITCH_RATIO = 0.38;
+/** Гистерезис против дребезга на границе слотов */
+const DROP_HYSTERESIS_PX = 22;
+/** Расширение hit-box сетки (px) */
+const GRID_HIT_PAD = 18;
 
 /**
  * @typedef {{
@@ -64,6 +70,105 @@ function moveKeyToIndex(keys, key, toIndex) {
   next.splice(from, 1);
   next.splice(toIndex, 0, key);
   return next;
+}
+
+/**
+ * Индекс вставки среди «чужих» слотов (без placeholder) — стабилен для 2 элементов и конца ленты.
+ * @param {number} clientX
+ * @param {string[]} orderKeys
+ * @param {string} activeKey
+ * @param {(key: string) => DOMRect | null} getRect
+ * @param {number} currentIndex
+ */
+function computeStripDropIndex(clientX, orderKeys, activeKey, getRect, currentIndex) {
+  /** @type {{ key: string, mid: number, left: number, right: number }[]} */
+  const others = [];
+  for (const key of orderKeys) {
+    if (key === activeKey) continue;
+    const rect = getRect(key);
+    if (!rect) continue;
+    others.push({
+      key,
+      mid: rect.left + rect.width * STRIP_SWITCH_RATIO,
+      left: rect.left,
+      right: rect.right
+    });
+  }
+
+  let insertAmong = others.length;
+  for (let j = 0; j < others.length; j += 1) {
+    if (clientX < others[j].mid) {
+      insertAmong = j;
+      break;
+    }
+  }
+
+  const without = others.map((o) => o.key);
+  without.splice(insertAmong, 0, activeKey);
+  let nextIndex = without.indexOf(activeKey);
+
+  if (nextIndex === currentIndex) return currentIndex;
+
+  // Гистерезис: смена только если ушли за порог + DROP_HYSTERESIS_PX
+  if (nextIndex > currentIndex) {
+    const gateIdx = insertAmong - 1;
+    const gate = gateIdx >= 0 ? others[gateIdx] : null;
+    if (gate && clientX < gate.mid + DROP_HYSTERESIS_PX) {
+      return currentIndex;
+    }
+  } else if (nextIndex < currentIndex) {
+    const gate = others[insertAmong];
+    if (gate && clientX > gate.mid - DROP_HYSTERESIS_PX) {
+      return currentIndex;
+    }
+  }
+
+  return nextIndex;
+}
+
+/**
+ * @param {number} clientX
+ * @param {number} clientY
+ * @param {string[]} orderKeys
+ * @param {string} activeKey
+ * @param {(key: string) => DOMRect | null} getRect
+ * @param {number} currentIndex
+ */
+function computeGridDropIndex(clientX, clientY, orderKeys, activeKey, getRect, currentIndex) {
+  let best = currentIndex;
+  let bestDist = Infinity;
+
+  for (let i = 0; i < orderKeys.length; i += 1) {
+    const key = orderKeys[i];
+    if (key === activeKey) continue;
+    const rect = getRect(key);
+    if (!rect) continue;
+    const pad = GRID_HIT_PAD;
+    const inPad =
+      clientX >= rect.left - pad &&
+      clientX <= rect.right + pad &&
+      clientY >= rect.top - pad &&
+      clientY <= rect.bottom + pad;
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const dist = Math.hypot(clientX - cx, clientY - cy);
+    const score = inPad ? dist * 0.55 : dist;
+    if (score < bestDist) {
+      bestDist = score;
+      best = i;
+    }
+  }
+
+  if (best === currentIndex) return currentIndex;
+
+  const targetRect = getRect(orderKeys[best]);
+  if (!targetRect) return currentIndex;
+  const cx = targetRect.left + targetRect.width / 2;
+  const cy = targetRect.top + targetRect.height / 2;
+  if (Math.hypot(clientX - cx, clientY - cy) > Math.min(targetRect.width, targetRect.height) * 0.72) {
+    return currentIndex;
+  }
+  return best;
 }
 
 /**
@@ -122,6 +227,10 @@ function SortableMediaPreviewGrid({
      *   originKeys: string[],
      *   lastClientX: number,
      *   lastClientY: number,
+     *   liftClientX: number,
+     *   liftClientY: number,
+     *   ghostOriginX: number,
+     *   ghostOriginY: number,
      *   edgeRaf: number | null,
      *   flipState: ReturnType<typeof Flip.getState> | null
      * } | null} */ (null)
@@ -154,61 +263,24 @@ function SortableMediaPreviewGrid({
     return dragOrder.map((key) => byKey.get(key)).filter(Boolean);
   }, [dragOrder, items]);
 
+  const getItemRect = useCallback((key) => {
+    const root = rootRef.current;
+    if (!root) return null;
+    const node = root.querySelector(`.sortable-media-item[data-sortable-key="${CSS.escape(key)}"]`);
+    return node ? /** @type {HTMLElement} */ (node).getBoundingClientRect() : null;
+  }, []);
+
   const computeDropIndex = useCallback(
     (clientX, clientY, orderKeys, activeKey) => {
-      const root = rootRef.current;
-      if (!root || !orderKeys.length) return -1;
-
-      const nodes = orderKeys
-        .map((key) =>
-          root.querySelector(`.sortable-media-item[data-sortable-key="${CSS.escape(key)}"]`)
-        )
-        .filter(Boolean);
-
-      if (!nodes.length) return -1;
-
-      for (let i = 0; i < nodes.length; i += 1) {
-        const rect = /** @type {HTMLElement} */ (nodes[i]).getBoundingClientRect();
-        if (
-          clientX >= rect.left &&
-          clientX <= rect.right &&
-          clientY >= rect.top &&
-          clientY <= rect.bottom
-        ) {
-          return i;
-        }
-      }
+      const currentIndex = orderKeys.indexOf(activeKey);
+      if (currentIndex < 0 || orderKeys.length < 2) return currentIndex;
 
       if (layout === 'strip') {
-        let best = 0;
-        let bestDist = Infinity;
-        nodes.forEach((node, i) => {
-          const rect = /** @type {HTMLElement} */ (node).getBoundingClientRect();
-          const cx = rect.left + rect.width / 2;
-          const dist = Math.abs(clientX - cx);
-          if (dist < bestDist) {
-            bestDist = dist;
-            best = i;
-          }
-        });
-        return best;
+        return computeStripDropIndex(clientX, orderKeys, activeKey, getItemRect, currentIndex);
       }
-
-      let best = Math.max(0, orderKeys.indexOf(activeKey));
-      let bestDist = Infinity;
-      nodes.forEach((node, i) => {
-        const rect = /** @type {HTMLElement} */ (node).getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height / 2;
-        const dist = Math.hypot(clientX - cx, clientY - cy);
-        if (dist < bestDist) {
-          bestDist = dist;
-          best = i;
-        }
-      });
-      return best;
+      return computeGridDropIndex(clientX, clientY, orderKeys, activeKey, getItemRect, currentIndex);
     },
-    [layout]
+    [getItemRect, layout]
   );
 
   const captureFlipState = useCallback(() => {
@@ -230,10 +302,7 @@ function SortableMediaPreviewGrid({
       const session = sessionRef.current;
       if (!session) return;
       const prev = session.orderKeys;
-      if (
-        prev.length === nextKeys.length &&
-        prev.every((key, i) => key === nextKeys[i])
-      ) {
+      if (prev.length === nextKeys.length && prev.every((key, i) => key === nextKeys[i])) {
         return;
       }
       captureFlipState();
@@ -255,8 +324,7 @@ function SortableMediaPreviewGrid({
     Flip.from(state, {
       targets,
       duration: prefersReducedMotion() ? 0 : FLIP_MS,
-      ease: 'power2.out',
-      // grid с разными span/размерами — absolute стабильнее; strip — transform в потоке
+      ease: 'power3.out',
       absolute: layout === 'grid',
       nested: true,
       scale: false
@@ -279,7 +347,6 @@ function SortableMediaPreviewGrid({
     let speed = 0;
     if (x < rect.left + EDGE_ZONE_PX) {
       const t = 1 - Math.max(0, (x - rect.left) / EDGE_ZONE_PX);
-      // ускорение к краю: ease-in quadratic
       speed = -EDGE_MAX_SPEED * (0.2 + 0.8 * t * t);
     } else if (x > rect.right - EDGE_ZONE_PX) {
       const t = 1 - Math.max(0, (rect.right - x) / EDGE_ZONE_PX);
@@ -300,7 +367,6 @@ function SortableMediaPreviewGrid({
       }
     }
 
-    // RAF крутится всё время lift — иначе edge-scroll «через раз» после выхода из зоны
     session.edgeRaf = requestAnimationFrame(tickEdgeScroll);
   }, [applyLiveOrder, computeDropIndex, layout, stopEdgeScroll]);
 
@@ -361,29 +427,41 @@ function SortableMediaPreviewGrid({
     [clearTimer, onReorder, stopEdgeScroll]
   );
 
-  const liftItem = useCallback((clientX, clientY) => {
-    const session = sessionRef.current;
-    if (!session || !session.dragging || session.lifted) return;
-    session.lifted = true;
-    setLifted(true);
-    const item = itemsRef.current.find((entry) => entry.key === session.key);
-    if (!item) return;
-    // Компенсация scale: origin center → визуально не «съезжает» вниз-вправо
-    const grow = ((GHOST_SCALE - 1) * session.itemW) / 2;
-    const growY = ((GHOST_SCALE - 1) * session.itemH) / 2;
-    setGhost({
-      key: session.key,
-      x: clientX - session.grabX - grow,
-      y: clientY - session.grabY - growY,
-      w: session.itemW,
-      h: session.itemH,
-      url: item.url,
-      isVideo: item.isVideo
-    });
-    if (layout === 'strip') {
-      ensureEdgeScroll();
-    }
-  }, [ensureEdgeScroll, layout]);
+  const liftItem = useCallback(
+    (clientX, clientY) => {
+      const session = sessionRef.current;
+      if (!session || !session.dragging || session.lifted) return;
+      const item = itemsRef.current.find((entry) => entry.key === session.key);
+      if (!item) return;
+
+      // Визуальный rect armed (уже со scale) — ghost стартует точно отсюда, без отскока.
+      const visual = getItemRect(session.key);
+      const originX = visual?.left ?? clientX - session.grabX;
+      const originY = visual?.top ?? clientY - session.grabY;
+      const w = visual?.width ?? session.itemW;
+      const h = visual?.height ?? session.itemH;
+
+      session.lifted = true;
+      session.liftClientX = clientX;
+      session.liftClientY = clientY;
+      session.ghostOriginX = originX;
+      session.ghostOriginY = originY;
+      setLifted(true);
+      setGhost({
+        key: session.key,
+        x: originX,
+        y: originY,
+        w,
+        h,
+        url: item.url,
+        isVideo: item.isVideo
+      });
+      if (layout === 'strip') {
+        ensureEdgeScroll();
+      }
+    },
+    [ensureEdgeScroll, getItemRect, layout]
+  );
 
   const startDragging = useCallback(
     (key, el) => {
@@ -403,7 +481,6 @@ function SortableMediaPreviewGrid({
       } catch {
         /* ignore */
       }
-      // Только armed scale на месте — ghost после движения.
     },
     [activeKeys]
   );
@@ -443,6 +520,10 @@ function SortableMediaPreviewGrid({
         originKeys: keys.slice(),
         lastClientX: event.clientX,
         lastClientY: event.clientY,
+        liftClientX: event.clientX,
+        liftClientY: event.clientY,
+        ghostOriginX: rect.left,
+        ghostOriginY: rect.top,
         edgeRaf: null,
         flipState: null
       };
@@ -480,19 +561,13 @@ function SortableMediaPreviewGrid({
       if (!session.lifted) {
         if (dist < LIFT_MOVE_PX) return;
         liftItem(event.clientX, event.clientY);
+        return;
       }
 
-      const grow = ((GHOST_SCALE - 1) * session.itemW) / 2;
-      const growY = ((GHOST_SCALE - 1) * session.itemH) / 2;
-      setGhost((prev) =>
-        prev
-          ? {
-              ...prev,
-              x: event.clientX - session.grabX - grow,
-              y: event.clientY - session.grabY - growY
-            }
-          : prev
-      );
+      // Следование пальцу от точки lift — без пересчёта grab (нет скачка вниз-вправо)
+      const x = session.ghostOriginX + (event.clientX - session.liftClientX);
+      const y = session.ghostOriginY + (event.clientY - session.liftClientY);
+      setGhost((prev) => (prev ? { ...prev, x, y } : prev));
 
       const nextDrop = computeDropIndex(
         event.clientX,
@@ -541,7 +616,6 @@ function SortableMediaPreviewGrid({
     [endSession, onItemClick]
   );
 
-  // Window listeners: webview иногда теряет pointermove на элементе после Flip/reorder.
   useLayoutEffect(() => {
     if (!dragKey) return undefined;
     const onMove = (/** @type {PointerEvent} */ event) => {
@@ -601,11 +675,13 @@ function SortableMediaPreviewGrid({
     const prevOverflowX = scrollEl?.style.overflowX || '';
     if (scrollEl) {
       scrollEl.style.touchAction = 'none';
-      // Жестовый pan-x выключаем; программный edge-scroll через scrollLeft остаётся.
       scrollEl.style.overflowX = 'auto';
     }
     const blockWheel = (/** @type {WheelEvent} */ e) => {
-      if (scrollEl?.contains(/** @type {Node} */ (e.target)) || rootRef.current?.contains(/** @type {Node} */ (e.target))) {
+      if (
+        scrollEl?.contains(/** @type {Node} */ (e.target)) ||
+        rootRef.current?.contains(/** @type {Node} */ (e.target))
+      ) {
         e.preventDefault();
       }
     };
@@ -625,7 +701,6 @@ function SortableMediaPreviewGrid({
     };
   }, [dragKey]);
 
-  // Синхронизация dragOrder при изменении items (прогресс загрузки) во время DnD.
   useEffect(() => {
     const session = sessionRef.current;
     if (!session?.dragging || !dragOrder) return;
@@ -771,7 +846,7 @@ function SortableMediaPreviewGrid({
           style={{
             width: ghost.w,
             height: ghost.h,
-            transform: `translate3d(${ghost.x}px, ${ghost.y}px, 0) scale(${GHOST_SCALE})`
+            transform: `translate3d(${ghost.x}px, ${ghost.y}px, 0)`
           }}
           aria-hidden="true"
         >

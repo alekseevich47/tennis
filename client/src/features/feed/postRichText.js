@@ -1,12 +1,31 @@
+import { isMentionEl, serializeMentionEl } from './postMentions';
+
 const FRAME_CLASS = 'post-anim-frame';
 const FRAME_PRESETS_KEY = 'tennis.postFramePresets';
 
 const DEFAULT_PRESETS = ['#FF4D6D', '#FF9F0A', '#34C759', '#007AFF', '#AF52DE', '#1C1C1E'];
 
-const ALLOWED_TAGS = new Set(['B', 'STRONG', 'I', 'EM', 'U', 'A', 'BR', 'DIV', 'P', 'SPAN']);
+const ALLOWED_TAGS = new Set(['B', 'STRONG', 'I', 'EM', 'U', 'A', 'BR', 'DIV', 'P', 'SPAN', 'IMG']);
 const ALLOWED_ATTRS = {
   A: new Set(['href', 'target', 'rel']),
-  SPAN: new Set(['class', 'data-color', 'data-variants', 'style'])
+  SPAN: new Set([
+    'class',
+    'data-color',
+    'data-variants',
+    'style',
+    'data-mention',
+    'data-user-id',
+    'data-name',
+    'data-avatar',
+    'data-post-id',
+    'data-post-source',
+    'data-post-number',
+    'contenteditable',
+    'role',
+    'tabindex',
+    'aria-label'
+  ]),
+  IMG: new Set(['class', 'src', 'alt', 'draggable'])
 };
 
 /**
@@ -179,7 +198,8 @@ function serializeSanitized(node, prevSibling = null) {
     if (
       prevSibling &&
       prevSibling.nodeType === Node.ELEMENT_NODE &&
-      isAnimFrame(/** @type {Element} */ (prevSibling)) &&
+      (isAnimFrame(/** @type {Element} */ (prevSibling)) ||
+        isMentionEl(/** @type {Element} */ (prevSibling))) &&
       /^[\u00A0\u200B]*$/.test(text)
     ) {
       return '';
@@ -214,6 +234,20 @@ function serializeSanitized(node, prevSibling = null) {
       `<span class="post-anim-frame__text">${escapeHtml(variants)}</span>` +
       `</span>`
     );
+  }
+
+  if (tag === 'SPAN' && isMentionEl(el)) {
+    return serializeMentionEl(el);
+  }
+
+  // IMG только внутри mention-аватара (иначе выкидываем).
+  if (tag === 'IMG') {
+    if (!el.closest?.('.post-mention--user') && !el.classList.contains('post-mention__avatar')) {
+      return '';
+    }
+    const src = (el.getAttribute('src') || '').trim();
+    if (!src || !/^(https?:\/\/|\/|data:image\/)/i.test(src)) return '';
+    return `<img class="post-mention__avatar" src="${escapeHtml(src)}" alt="">`;
   }
 
   if (tag === 'SPAN' || tag === 'DIV' || tag === 'P') {
@@ -320,6 +354,7 @@ export function linkifyPlainUrls(html) {
   for (const textNode of textNodes) {
     if (!textNode.parentElement) continue;
     if (textNode.parentElement.closest('a')) continue;
+    if (textNode.parentElement.closest('.post-mention')) continue;
     const raw = textNode.textContent || '';
     AUTOLINK_RE.lastIndex = 0;
     if (!AUTOLINK_RE.test(raw)) continue;
@@ -624,6 +659,10 @@ export function ensureFrameCarets(editor) {
     ) {
       next.remove();
     }
+  });
+  // Mentions — тоже атомарные чипы.
+  editor.querySelectorAll('.post-mention').forEach((node) => {
+    /** @type {HTMLElement} */ (node).contentEditable = 'false';
   });
 }
 
