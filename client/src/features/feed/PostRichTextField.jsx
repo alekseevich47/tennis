@@ -31,6 +31,7 @@ import {
   MENTION_CLASS,
   buildPostMentionEl,
   buildUserMentionEl,
+  deleteAdjacentMention,
   getMentionDraftAtCaret,
   insertMentionChip,
   searchMentionPosts,
@@ -39,7 +40,10 @@ import {
 
 const FLOATING_ENTER_MS = 0.28;
 const FLOATING_EXIT_MS = 0.2;
-const MENTION_DEBOUNCE_MS = 160;
+/** Фоновый запрос поиска (не показ). */
+const MENTION_FETCH_DEBOUNCE_MS = 120;
+/** Показ результатов после паузы ввода. */
+const MENTION_SHOW_DELAY_MS = 1250;
 
 function prefersReducedMotion() {
   return typeof window !== 'undefined'
@@ -94,7 +98,13 @@ const PostRichTextField = forwardRef(function PostRichTextField(
   const savedRangeRef = useRef(/** @type {Range | null} */ (null));
   const mentionDraftRef = useRef(/** @type {import('./postMentions').MentionDraft | null} */ (null));
   const mentionAbortRef = useRef(/** @type {AbortController | null} */ (null));
-  const mentionTimerRef = useRef(/** @type {ReturnType<typeof setTimeout> | null} */ (null));
+  const mentionFetchTimerRef = useRef(/** @type {ReturnType<typeof setTimeout> | null} */ (null));
+  const mentionShowTimerRef = useRef(/** @type {ReturnType<typeof setTimeout> | null} */ (null));
+  const mentionPendingRef = useRef(
+    /** @type {{ kind: 'user' | 'post', query: string, users: any[], posts: any[], loading: boolean } | null} */ (
+      null
+    )
+  );
   const valueRef = useRef(value);
   valueRef.current = value;
   const [active, setActive] = useState({
@@ -149,15 +159,20 @@ const PostRichTextField = forwardRef(function PostRichTextField(
   }, []);
 
   const closeMentionSuggest = useCallback((immediate = false) => {
-    if (mentionTimerRef.current) {
-      clearTimeout(mentionTimerRef.current);
-      mentionTimerRef.current = null;
+    if (mentionFetchTimerRef.current) {
+      clearTimeout(mentionFetchTimerRef.current);
+      mentionFetchTimerRef.current = null;
+    }
+    if (mentionShowTimerRef.current) {
+      clearTimeout(mentionShowTimerRef.current);
+      mentionShowTimerRef.current = null;
     }
     if (mentionAbortRef.current) {
       mentionAbortRef.current.abort();
       mentionAbortRef.current = null;
     }
     mentionDraftRef.current = null;
+    mentionPendingRef.current = null;
     if (immediate) {
       setMentionOpen(false);
       setMentionMounted(false);
@@ -173,7 +188,8 @@ const PostRichTextField = forwardRef(function PostRichTextField(
   useEffect(
     () => () => {
       if (hideFloatingTimerRef.current) clearTimeout(hideFloatingTimerRef.current);
-      if (mentionTimerRef.current) clearTimeout(mentionTimerRef.current);
+      if (mentionFetchTimerRef.current) clearTimeout(mentionFetchTimerRef.current);
+      if (mentionShowTimerRef.current) clearTimeout(mentionShowTimerRef.current);
       if (mentionAbortRef.current) mentionAbortRef.current.abort();
     },
     []
@@ -243,6 +259,19 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     selection.addRange(range);
   }, []);
 
+  const flushMentionShow = useCallback(() => {
+    const pending = mentionPendingRef.current;
+    if (!pending || !mentionDraftRef.current) return;
+    setMentionKind(pending.kind);
+    setMentionQuery(pending.query);
+    setMentionUsers(pending.users);
+    setMentionPosts(pending.posts);
+    setMentionLoading(pending.loading);
+    setMentionActiveIndex(0);
+    setMentionMounted(true);
+    setMentionOpen(true);
+  }, []);
+
   const updateMentionSuggest = useCallback(() => {
     if (!enableMentions) {
       closeMentionSuggest(true);
@@ -256,9 +285,6 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     }
 
     mentionDraftRef.current = draft;
-    setMentionKind(draft.kind);
-    setMentionQuery(draft.query);
-    setMentionActiveIndex(0);
     hideFloatingToolbar(true);
 
     try {
@@ -283,39 +309,67 @@ const PostRichTextField = forwardRef(function PostRichTextField(
       // ignore
     }
 
-    setMentionMounted(true);
-    setMentionOpen(true);
+    // Показ результата — только после паузы 1–1.5s с последней буквы.
+    if (mentionShowTimerRef.current) clearTimeout(mentionShowTimerRef.current);
+    mentionShowTimerRef.current = setTimeout(() => {
+      mentionShowTimerRef.current = null;
+      flushMentionShow();
+    }, MENTION_SHOW_DELAY_MS);
 
-    if (mentionTimerRef.current) clearTimeout(mentionTimerRef.current);
-    mentionTimerRef.current = setTimeout(async () => {
-      mentionTimerRef.current = null;
+    if (mentionFetchTimerRef.current) clearTimeout(mentionFetchTimerRef.current);
+    mentionFetchTimerRef.current = setTimeout(async () => {
+      mentionFetchTimerRef.current = null;
       if (mentionAbortRef.current) mentionAbortRef.current.abort();
       const ac = new AbortController();
       mentionAbortRef.current = ac;
-      setMentionLoading(true);
+      mentionPendingRef.current = {
+        kind: draft.kind,
+        query: draft.query,
+        users: [],
+        posts: [],
+        loading: true
+      };
       try {
         if (draft.kind === 'user') {
           const users = await searchMentionUsers(draft.query, { signal: ac.signal });
           if (ac.signal.aborted) return;
-          setMentionUsers(users);
-          setMentionPosts([]);
-          setMentionActiveIndex(0);
+          mentionPendingRef.current = {
+            kind: 'user',
+            query: draft.query,
+            users,
+            posts: [],
+            loading: false
+          };
         } else {
           const posts = await searchMentionPosts(draft.query, { signal: ac.signal });
           if (ac.signal.aborted) return;
-          setMentionPosts(posts);
-          setMentionUsers([]);
-          setMentionActiveIndex(0);
+          mentionPendingRef.current = {
+            kind: 'post',
+            query: draft.query,
+            users: [],
+            posts,
+            loading: false
+          };
+        }
+        // Если пауза показа уже прошла — сразу обновить открытый список.
+        if (!mentionShowTimerRef.current && mentionDraftRef.current) {
+          flushMentionShow();
         }
       } catch {
         if (ac.signal.aborted) return;
-        setMentionUsers([]);
-        setMentionPosts([]);
-      } finally {
-        if (!ac.signal.aborted) setMentionLoading(false);
+        mentionPendingRef.current = {
+          kind: draft.kind,
+          query: draft.query,
+          users: [],
+          posts: [],
+          loading: false
+        };
+        if (!mentionShowTimerRef.current && mentionDraftRef.current) {
+          flushMentionShow();
+        }
       }
-    }, MENTION_DEBOUNCE_MS);
-  }, [closeMentionSuggest, enableMentions, hideFloatingToolbar]);
+    }, MENTION_FETCH_DEBOUNCE_MS);
+  }, [closeMentionSuggest, enableMentions, flushMentionShow, hideFloatingToolbar]);
 
   const applyMentionUser = useCallback(
     (user) => {
@@ -704,6 +758,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
           aria-label={ariaLabel}
           data-placeholder={placeholder}
           data-empty={empty ? 'true' : 'false'}
+          autoCapitalize="none"
           suppressContentEditableWarning
           onFocus={() => {
             setFocused(true);
@@ -746,6 +801,19 @@ const PostRichTextField = forwardRef(function PostRichTextField(
                 } else {
                   applyMentionPost(mentionPosts[mentionActiveIndex]);
                 }
+                return;
+              }
+            }
+            if (event.key === 'Backspace' || event.key === 'Delete') {
+              const el = editorRef.current;
+              if (
+                el &&
+                deleteAdjacentMention(el, event.key === 'Backspace' ? 'backward' : 'forward')
+              ) {
+                event.preventDefault();
+                closeMentionSuggest(true);
+                skipNextSync.current = true;
+                syncEmptyAndValue();
                 return;
               }
             }

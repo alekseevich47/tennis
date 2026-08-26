@@ -403,31 +403,32 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
           <span>Нет в наличии</span>
         </label>
 
-        <SortableMediaPreviewGrid
-          items={previewItems}
-          layout="grid"
-          onReorder={(next) => {
-            const byKey = new Map(orderedMedia.map((item) => [item.key, item]));
-            setOrderedMedia(
-              next
-                .map((item) => byKey.get(item.key))
-                .filter(Boolean)
-            );
-          }}
-          onItemClick={(item, index, event) => openPreviewMedia(item, index, event)}
-          className="product-form-preview-grid"
-          getAction={(item) => (
-            <button
-              type="button"
-              className="media-remove-btn"
-              onClick={() => removeMedia(item.key)}
-              aria-label={`Убрать файл ${item.name}`}
-            >
-              <span aria-hidden="true">×</span>
-            </button>
-          )}
-        />
-
+        <div className="product-form-media-strip-wrap">
+          <SortableMediaPreviewGrid
+            items={previewItems}
+            layout="strip"
+            onReorder={(next) => {
+              const byKey = new Map(orderedMedia.map((item) => [item.key, item]));
+              setOrderedMedia(
+                next
+                  .map((item) => byKey.get(item.key))
+                  .filter(Boolean)
+              );
+            }}
+            onItemClick={(item, index, event) => openPreviewMedia(item, index, event)}
+            className="product-form-preview-strip"
+            getAction={(item) => (
+              <button
+                type="button"
+                className="media-remove-btn comment-media-remove-btn"
+                onClick={() => removeMedia(item.key)}
+                aria-label={`Убрать файл ${item.name}`}
+              >
+                <span aria-hidden="true">×</span>
+              </button>
+            )}
+          />
+        </div>
         <div className="media-upload-group">
           <label htmlFor={fileInputId} className="media-input-label">
             <span aria-hidden="true">📎</span>{' '}

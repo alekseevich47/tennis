@@ -434,12 +434,12 @@ function SortableMediaPreviewGrid({
       const item = itemsRef.current.find((entry) => entry.key === session.key);
       if (!item) return;
 
-      // Визуальный rect armed (уже со scale) — ghost стартует точно отсюда, без отскока.
-      const visual = getItemRect(session.key);
-      const originX = visual?.left ?? clientX - session.grabX;
-      const originY = visual?.top ?? clientY - session.grabY;
-      const w = visual?.width ?? session.itemW;
-      const h = visual?.height ?? session.itemH;
+      // Без getBoundingClientRect от scaled-armed: иначе ghost «прыгает» вниз-вправо.
+      // База — layout-rect с pointerdown + уже сделанный сдвиг пальца.
+      const originX = session.ghostOriginX + (clientX - session.startX);
+      const originY = session.ghostOriginY + (clientY - session.startY);
+      const w = session.itemW;
+      const h = session.itemH;
 
       session.lifted = true;
       session.liftClientX = clientX;
@@ -460,7 +460,7 @@ function SortableMediaPreviewGrid({
         ensureEdgeScroll();
       }
     },
-    [ensureEdgeScroll, getItemRect, layout]
+    [ensureEdgeScroll, layout]
   );
 
   const startDragging = useCallback(

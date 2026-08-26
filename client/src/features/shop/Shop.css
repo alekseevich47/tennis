@@ -551,6 +551,19 @@ label.product-category-option {
   margin-top: 2px;
 }
 
+.product-form-media-strip-wrap {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  margin-top: 2px;
+  scrollbar-width: thin;
+}
+
+.product-form-preview-strip {
+  min-width: 100%;
+}
+
 .product-form .media-upload-group {
   margin-top: 0;
   display: flex;

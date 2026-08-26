@@ -4,7 +4,7 @@ import Avatar from '../../components/ui/Avatar';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { useToast } from '../../components/ui/ToastContext';
 import FullscreenImageViewer from '../feed/FullscreenImageViewer';
-import MediaPreviewGrid from '../feed/MediaPreviewGrid';
+import SortableMediaPreviewGrid from '../feed/SortableMediaPreviewGrid';
 import PostAttachButton from '../feed/PostAttachButton';
 import PostScheduleButton from '../feed/PostScheduleButton';
 import PostRichTextField from '../feed/PostRichTextField';
@@ -287,36 +287,44 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
     durationMs: 450
   });
 
-  const mediaBlock = (
-    <MediaPreviewGrid
-      items={allPreviewItems}
-      className="create-tournament-post-preview-grid"
-      showCaption={false}
-      originKeyPrefix="create-tournament-post"
-      hiddenMediaKey={hiddenMediaKey}
-      onItemClick={openPreviewMedia}
-      onAlbumIndexChange={handleAlbumIndexChange}
-      getAction={(item) => (
-        <button
-          type="button"
-          className="media-remove-btn"
-          onClick={(event) => {
-            event.stopPropagation();
-            if (String(item.key).startsWith('yadisk-')) {
-              yadisk.removeItem(item.key);
-              return;
-            }
-            setFiles((current) =>
-              current.filter((file) => `${file.name}-${file.lastModified}` !== item.key)
+  const mediaBlock =
+    allPreviewItems.length > 0 ? (
+      <div className="create-post-media-strip-wrap">
+        <SortableMediaPreviewGrid
+          items={allPreviewItems}
+          layout="strip"
+          className="create-tournament-post-preview-strip"
+          onReorder={(next) => {
+            const fileByKey = new Map(
+              files.map((file) => [`${file.name}-${file.lastModified}`, file])
             );
+            const nextFiles = next.map((item) => fileByKey.get(item.key)).filter(Boolean);
+            if (nextFiles.length > 0) setFiles(nextFiles);
           }}
-          aria-label={`Убрать файл ${item.name}`}
-        >
-          <span aria-hidden="true">×</span>
-        </button>
-      )}
-    />
-  );
+          onItemClick={openPreviewMedia}
+          getAction={(item) => (
+            <button
+              type="button"
+              className="media-remove-btn comment-media-remove-btn"
+              onClick={(event) => {
+                event.stopPropagation();
+                if (String(item.key).startsWith('yadisk-')) {
+                  yadisk.removeItem(item.key);
+                  return;
+                }
+                setFiles((current) =>
+                  current.filter((file) => `${file.name}-${file.lastModified}` !== item.key)
+                );
+              }}
+              aria-label={`Убрать файл ${item.name}`}
+            >
+              <span aria-hidden="true">×</span>
+            </button>
+          )}
+        />
+      </div>
+    ) : null;
+
 
   const textBlock = (
     <>
