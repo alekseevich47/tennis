@@ -26,6 +26,7 @@ import ScrollToTopButton from '../../components/ui/ScrollToTopButton';
 import { useTournamentPostUpload } from '../../components/TournamentPostUploadProvider';
 import { useSectionScroll } from '../../hooks/useSectionScroll';
 import { useRegisterAddAction } from '../../context/AddActionContext';
+import { useMentionNav } from '../../context/MentionNavContext';
 import { error } from '../../lib/log';
 import { parseDateQuery, isDateQueryParsed, matchesDateQuery } from '../../lib/dateSearch';
 import {
@@ -66,7 +67,8 @@ const SCROLL_CHROME_LOCK_MS = 280;
  *   searchQuery?: string,
  *   searchOpen?: boolean,
  *   commentTargetToOpen?: { postId?: string, commentId?: string } | null,
- *   onCommentTargetOpened?: () => void
+ *   onCommentTargetOpened?: () => void,
+ *   captureMentionTargets?: boolean
  * }} props
  */
 function CompetitionsPage({
@@ -77,7 +79,8 @@ function CompetitionsPage({
   searchQuery = '',
   searchOpen = false,
   commentTargetToOpen = null,
-  onCommentTargetOpened
+  onCommentTargetOpened,
+  captureMentionTargets = true
 }) {
   const moderator = isModerator();
   const { data: players } = usePlayers();
@@ -353,6 +356,25 @@ function CompetitionsPage({
     setHighlightCommentId(commentTargetToOpen.commentId || null);
     onCommentTargetOpened?.();
   }, [commentTargetToOpen, posts, onCommentTargetOpened, onSubTabChange]);
+
+  const mentionNav = useMentionNav();
+
+  useEffect(() => {
+    const target = mentionNav?.postTarget;
+    if (!captureMentionTargets) return;
+    if (!target || target.collection !== 'tournament_posts' || !posts?.length) return;
+    const post = posts.find((item) => item.id === target.postId);
+    if (!post) {
+      mentionNav.clearPostTarget();
+      return;
+    }
+    setActiveTab('feed');
+    onSubTabChange?.('feed');
+    setOpenedPost(post);
+    setFocusComment(false);
+    setHighlightCommentId(null);
+    mentionNav.clearPostTarget();
+  }, [mentionNav, posts, onSubTabChange, captureMentionTargets]);
 
   const handleOpenEdit = useCallback((post) => {
     if (!moderator) return;
