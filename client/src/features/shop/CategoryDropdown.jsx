@@ -13,6 +13,7 @@ const CATEGORY_EXPANDED_WIDTH = 200;
  * @param {{
  *   selectedCategoryId: string,
  *   onCategoryChange: (categoryId: string) => void,
+ *   productCount?: number | null,
  *   isSearchOpen?: boolean,
  *   onCloseSearch?: () => void,
  *   onOpenChange?: (open: boolean) => void,
@@ -22,6 +23,7 @@ const CATEGORY_EXPANDED_WIDTH = 200;
 export default function CategoryDropdown({
   selectedCategoryId,
   onCategoryChange,
+  productCount = null,
   isSearchOpen = false,
   onCloseSearch,
   onOpenChange,
@@ -30,6 +32,7 @@ export default function CategoryDropdown({
   const rootRef = useRef(null);
   const triggerRef = useRef(null);
   const labelMeasureRef = useRef(null);
+  const countRef = useRef(null);
   const pendingOpenRef = useRef(false);
   const pendingOpenTimerRef = useRef(null);
   const searchCloseAnimCleanupRef = useRef(null);
@@ -44,6 +47,8 @@ export default function CategoryDropdown({
     if (!selectedCategoryId) return PLACEHOLDER;
     return categories.find((category) => category.id === selectedCategoryId)?.name || 'Категория';
   }, [categories, selectedCategoryId]);
+
+  const showCount = selectedCategoryId && productCount != null;
 
   const cancelSearchCloseAnimation = useCallback(() => {
     searchCloseAnimCleanupRef.current?.();
@@ -170,7 +175,8 @@ export default function CategoryDropdown({
       }
       measure.textContent = selectedCategoryName;
       const textWidth = measure.offsetWidth;
-      const availableWidth = trigger.clientWidth - 52;
+      const countWidth = countRef.current?.offsetWidth || 0;
+      const availableWidth = trigger.clientWidth - 52 - (countWidth ? countWidth + 8 : 0);
       setIsLabelVisible(textWidth <= availableWidth);
     };
 
@@ -179,7 +185,7 @@ export default function CategoryDropdown({
     const observer = new ResizeObserver(checkLabelFit);
     observer.observe(trigger);
     return () => observer.disconnect();
-  }, [isSearchOpen, isExpandingFromSearch, selectedCategoryName]);
+  }, [isSearchOpen, isExpandingFromSearch, selectedCategoryName, showCount, productCount]);
 
   useEffect(() => () => cancelSearchCloseAnimation(), [cancelSearchCloseAnimation]);
 
@@ -225,7 +231,13 @@ export default function CategoryDropdown({
         }}
         aria-haspopup="listbox"
         aria-expanded={isOpen && !isSearchOpen}
-        aria-label={isSearchOpen ? 'Закрыть поиск' : selectedCategoryName}
+        aria-label={
+          isSearchOpen
+            ? 'Закрыть поиск'
+            : showCount
+              ? `${selectedCategoryName}, товаров: ${productCount}`
+              : selectedCategoryName
+        }
       >
         <span
           className={clsx(
@@ -235,6 +247,11 @@ export default function CategoryDropdown({
         >
           {selectedCategoryName}
         </span>
+        {showCount && !isSearchOpen && (
+          <span ref={countRef} className="category-dropdown__count" aria-hidden="true">
+            {productCount}
+          </span>
+        )}
         <span className="category-dropdown__hamburger-mid" aria-hidden="true" />
       </span>
 

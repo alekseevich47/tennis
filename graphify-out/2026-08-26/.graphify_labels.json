@@ -68,18 +68,15 @@
   "66": "media.js",
   "67": "media.js",
   "68": "GalleryCommentModal.jsx",
-  "69": "OnboardingTutorial.jsx",
   "70": "GalleryPage.jsx",
-  "71": "App.jsx",
   "72": "claimlib.js",
   "73": "tournamentComments.js",
   "74": "Avatar.jsx",
   "75": "users_claim.pb.js",
   "76": "useSectionSwipe.js",
-  "77": "useMaxCloseGuard.js",
+  "77": "tournamentPosts.js",
   "78": "AboutAppModal.jsx",
-  "79": "yadiskMediaSessionCache.js",
   "80": "useMaxCloseGuard.js",
-  "81": "AddActionContext.jsx",
-  "82": "MediaPreviewGrid.jsx"
+  "83": "videoPreviewUrl",
+  "85": "yadiskMediaSessionCache.js"
 }
