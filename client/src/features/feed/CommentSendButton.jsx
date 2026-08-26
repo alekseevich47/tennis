@@ -8,7 +8,6 @@ import gsap from 'gsap';
  *   disabled?: boolean,
  *   busy?: boolean,
  *   phase?: 'idle' | 'armed' | 'flying',
- *   badgeCount?: number,
  *   className?: string,
  *   type?: 'submit' | 'button',
  *   onPointerDown?: (e: React.PointerEvent) => void,
@@ -24,7 +23,6 @@ export default function CommentSendButton({
   disabled = false,
   busy = false,
   phase = 'idle',
-  badgeCount = 0,
   className,
   type = 'submit',
   onPointerDown,
@@ -50,21 +48,22 @@ export default function CommentSendButton({
     if (phase === 'flying' && prevPhase.current !== 'flying') {
       const tl = gsap.timeline();
       tlRef.current = tl;
-      gsap.set(plane, { opacity: 1, scale: 0.9, rotate: 35, x: 0, y: 0 });
-      gsap.set(arrow, { opacity: 0, rotate: 0, scale: 0.85 });
+      gsap.set(plane, { opacity: 1, scale: 0.92, rotate: 32, x: 0, y: 0 });
+      gsap.set(arrow, { opacity: 0, rotate: 0, scale: 0.88 });
       tl.to(plane, {
-        x: 18,
-        y: -6,
-        rotate: 42,
-        scale: 0.7,
+        x: 22,
+        y: -8,
+        rotate: 48,
+        scale: 0.72,
         opacity: 0,
-        duration: 0.34,
-        ease: 'power2.in'
+        duration: 0.58,
+        ease: 'power1.inOut'
       });
       tl.fromTo(
         arrow,
-        { opacity: 0, rotate: 0, scale: 0.75 },
-        { opacity: 1, rotate: 0, scale: 1, duration: 0.32, ease: 'power2.out' }
+        { opacity: 0, rotate: 0, scale: 0.82 },
+        { opacity: 1, rotate: 0, scale: 1, duration: 0.48, ease: 'power2.out' },
+        '-=0.12'
       );
       tl.set(plane, { opacity: 0, x: 0, y: 0, rotate: 0, scale: 0.6 });
     } else if (phase !== 'flying') {
@@ -72,7 +71,7 @@ export default function CommentSendButton({
         rotate: phase === 'armed' ? 90 : 0,
         opacity: 1,
         scale: 1,
-        duration: 0.28,
+        duration: 0.4,
         ease: 'power2.out',
         overwrite: true
       });
@@ -105,11 +104,6 @@ export default function CommentSendButton({
       onContextMenu={onContextMenu}
       onClick={onClick}
     >
-      {badgeCount > 0 ? (
-        <span className="comment-send-btn__badge" aria-hidden="true">
-          {badgeCount > 9 ? '9+' : badgeCount}
-        </span>
-      ) : null}
       <span className="comment-send-btn__stage" aria-hidden="true">
         <svg
           ref={arrowRef}

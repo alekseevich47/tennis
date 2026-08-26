@@ -658,7 +658,28 @@ function PostDetailModal({
                             onActivate={() => focusCommentInList(parentComment.id, 'start')}
                           />
                         ) : null}
-                        <CommentMediaBody comment={c} collection="comments" />
+                        <CommentMediaBody
+                          comment={c}
+                          collection="comments"
+                          onOpenMedia={(items, index, event) => {
+                            if (!onOpenFullscreen || !items.length) return;
+                            const gallery = items.map((item) => ({
+                              filename: item.name,
+                              url: item.fullUrl || item.url,
+                              thumbUrl: item.url,
+                              isVideo: item.isVideo,
+                              originKey: `comment-${c.id}-${item.key}`
+                            }));
+                            const originRect =
+                              event?.currentTarget?.getBoundingClientRect?.() || null;
+                            onOpenFullscreen(
+                              gallery,
+                              index,
+                              originRect,
+                              gallery[index]?.originKey
+                            );
+                          }}
+                        />
                       </div>
                       <div className="comment-footer-row">
                         <div className="comment-footer-actions">
