@@ -6,6 +6,7 @@ import FullscreenImageViewer from './FullscreenImageViewer';
 import MediaPreviewGrid from './MediaPreviewGrid';
 import PostAttachButton from './PostAttachButton';
 import PostRichTextField from './PostRichTextField';
+import PublishLongPressMenu from './PublishLongPressMenu';
 import { useLocalMediaFullscreen } from './useLocalMediaFullscreen';
 import { useYadiskEmbed } from './useYadiskEmbed';
 import { ALBUM_COVER_RADIUS, ALBUM_WINDOW_RADIUS } from './yadiskAlbumLazy';
@@ -19,6 +20,7 @@ import {
 } from '../../lib/media';
 import { error } from '../../lib/log';
 import { hasVisibleText, toDisplayHtml } from './postRichText';
+import { useLongPress, LongPressRing } from '../../lib/longPress';
 
 /**
  * @param {{
@@ -37,6 +39,8 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
   const [removedMediaNames, setRemovedMediaNames] = useState(/** @type {string[]} */ ([]));
   const [newPreviewItems, setNewPreviewItems] = useState([]);
   const [submitting, setSubmitting] = useState(false);
+  const [captionAbove, setCaptionAbove] = useState(true);
+  const [previewMenuOpen, setPreviewMenuOpen] = useState(false);
   const { confirm } = useAlertDialog();
 
   const existingMediaNames = useMemo(() => mediaNames(post?.media), [post?.media]);
@@ -178,7 +182,14 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
     setText(toDisplayHtml(post.content || post.text || ''));
     setMediaFiles([]);
     setRemovedMediaNames([]);
+    setCaptionAbove(post.caption_above !== false);
+    setPreviewMenuOpen(false);
   }, [isOpen, post]);
+
+  const hasText = hasVisibleText(text);
+  const hasMedia = previewItems.length > 0;
+  const canSave = !submitting && !yadisk.hasPending && hasText;
+  const canMoveText = hasText && hasMedia;
 
   const handleAttachClick = async () => {
     if (yadisk.albumMode) {
@@ -189,43 +200,42 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
     fileInputRef.current?.click();
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (!post || submitting || yadisk.hasPending) return;
+  const persistSave = async () => {
+    if (!post || !canSave) return;
 
-    if (!hasVisibleText(text)) return;
     const nextContent = text;
-
     setSubmitting(true);
+    setPreviewMenuOpen(false);
     try {
       const hasFileChanges =
         removedMediaNames.length > 0 || mediaFiles.length > 0 || yadisk.albumMode;
       const initialExternal = JSON.stringify(post.external_media || []);
       const nextExternal = JSON.stringify(yadisk.storedMedia);
       const hasExternalChanges = initialExternal !== nextExternal;
+      const captionChanged = (post.caption_above !== false) !== captionAbove;
 
-      let payload = /** @type {FormData | Record<string, unknown>} */ ({
-        content: nextContent,
-        external_media: yadisk.storedMedia
-      });
+      /** @type {FormData | Record<string, unknown>} */
+      let payload;
 
       if (hasFileChanges || yadisk.albumMode) {
         payload = new FormData();
         payload.append('content', nextContent);
         payload.append('external_media', nextExternal);
+        payload.append('caption_above', captionAbove ? 'true' : 'false');
         if (yadisk.albumMode) {
           existingMediaNames.forEach((filename) => payload.append('media-', filename));
         } else {
           removedMediaNames.forEach((filename) => payload.append('media-', filename));
           mediaFiles.forEach((file) => payload.append('media', file));
         }
-      } else if (hasExternalChanges) {
+      } else if (hasExternalChanges || captionChanged) {
         payload = {
           content: nextContent,
-          external_media: yadisk.storedMedia
+          external_media: yadisk.storedMedia,
+          caption_above: captionAbove
         };
       } else {
-        payload = { content: nextContent };
+        payload = { content: nextContent, caption_above: captionAbove };
       }
 
       const updatedPost = await updatePost(post.id, payload);
@@ -237,118 +247,160 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
     }
   };
 
-  return (
-    <Modal
-      isOpen={isOpen}
-      onClose={submitting ? undefined : onClose}
-      title="Редактировать публикацию"
-      className="edit-post-modal"
-      showCloseButton={false}
-    >
-      <form onSubmit={handleSubmit} className="edit-post-form">
-        <label htmlFor={textareaId} className="edit-post-label">
-          Текст поста
-        </label>
-        <div className="edit-post-bubble">
-          <PostRichTextField
-            id={textareaId}
-            value={text}
-            onChange={setText}
-            placeholder="Текст публикации…"
-            compact={false}
-          />
-        </div>
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (previewMenuOpen) {
+      setPreviewMenuOpen(false);
+      return;
+    }
+    await persistSave();
+  };
 
-        <MediaPreviewGrid
-          items={previewItems}
-          className="edit-post-media-preview-grid"
-          originKeyPrefix="edit-post"
-          hiddenMediaKey={hiddenMediaKey}
-          onItemClick={openPreviewMedia}
-          onAlbumIndexChange={handleAlbumIndexChange}
-          getAction={(item) => (
+  const { handlers: longPressHandlers, ringProps } = useLongPress({
+    enabled: canSave && !previewMenuOpen,
+    onLongPress: () => setPreviewMenuOpen(true),
+    durationMs: 450
+  });
+
+  const textBlock = (
+    <>
+      <label htmlFor={textareaId} className="edit-post-label">
+        Текст поста
+      </label>
+      <div className="edit-post-bubble">
+        <PostRichTextField
+          id={textareaId}
+          value={text}
+          onChange={setText}
+          placeholder="Текст публикации…"
+          compact={false}
+        />
+      </div>
+    </>
+  );
+
+  const mediaBlock = (
+    <MediaPreviewGrid
+      items={previewItems}
+      className="edit-post-media-preview-grid"
+      originKeyPrefix="edit-post"
+      hiddenMediaKey={hiddenMediaKey}
+      onItemClick={openPreviewMedia}
+      onAlbumIndexChange={handleAlbumIndexChange}
+      getAction={(item) => (
+        <button
+          type="button"
+          className="media-remove-btn"
+          onClick={(event) => {
+            event.stopPropagation();
+            if (String(item.key).startsWith('yadisk-')) {
+              yadisk.removeItem(item.key);
+              return;
+            }
+            if (item.key.startsWith('existing-')) {
+              const filename = item.key.slice('existing-'.length);
+              setRemovedMediaNames((current) =>
+                current.includes(filename) ? current : [...current, filename]
+              );
+              return;
+            }
+            setMediaFiles((current) =>
+              current.filter((file) => `${file.name}-${file.lastModified}` !== item.key)
+            );
+          }}
+          aria-label={`Убрать файл ${item.name}`}
+        >
+          <span aria-hidden="true">×</span>
+        </button>
+      )}
+    />
+  );
+
+  return (
+    <>
+      <Modal
+        isOpen={isOpen}
+        onClose={submitting ? undefined : onClose}
+        title="Редактировать публикацию"
+        className="edit-post-modal"
+        showCloseButton={false}
+      >
+        <form onSubmit={handleSubmit} className="edit-post-form">
+          {captionAbove ? textBlock : null}
+          {mediaBlock}
+          {!captionAbove ? textBlock : null}
+
+          <input
+            ref={fileInputRef}
+            id={fileInputId}
+            name="edit-post-media"
+            type="file"
+            accept="image/*,video/mp4"
+            multiple
+            disabled={(remainingMediaSlots === 0 && !yadisk.albumMode) || submitting}
+            onChange={(event) => {
+              const incoming = readSelectedFiles(event.target.files, remainingMediaSlots);
+              setMediaFiles((current) => [...current, ...incoming]);
+              event.currentTarget.value = '';
+            }}
+            className="visually-hidden"
+          />
+
+          <div className="modal-actions edit-post-actions">
             <button
               type="button"
-              className="media-remove-btn"
-              onClick={(event) => {
-                event.stopPropagation();
-                if (String(item.key).startsWith('yadisk-')) {
-                  yadisk.removeItem(item.key);
-                  return;
-                }
-                if (item.key.startsWith('existing-')) {
-                  const filename = item.key.slice('existing-'.length);
-                  setRemovedMediaNames((current) =>
-                    current.includes(filename) ? current : [...current, filename]
-                  );
-                  return;
-                }
-                setMediaFiles((current) =>
-                  current.filter((file) => `${file.name}-${file.lastModified}` !== item.key)
-                );
-              }}
-              aria-label={`Убрать файл ${item.name}`}
+              className="edit-post-cancel-btn"
+              onClick={onClose}
+              disabled={submitting}
             >
-              <span aria-hidden="true">×</span>
+              Отмена
             </button>
-          )}
-        />
-
-        <input
-          ref={fileInputRef}
-          id={fileInputId}
-          name="edit-post-media"
-          type="file"
-          accept="image/*,video/mp4"
-          multiple
-          disabled={(remainingMediaSlots === 0 && !yadisk.albumMode) || submitting}
-          onChange={(event) => {
-            const incoming = readSelectedFiles(event.target.files, remainingMediaSlots);
-            setMediaFiles((current) => [...current, ...incoming]);
-            event.currentTarget.value = '';
-          }}
-          className="visually-hidden"
-        />
-
-        <div className="modal-actions edit-post-actions">
-          <button
-            type="button"
-            className="edit-post-cancel-btn"
-            onClick={onClose}
-            disabled={submitting}
-          >
-            Отмена
-          </button>
-          <div className="edit-post-actions__primary create-post-form__actions--with-attach">
-            <PostAttachButton
-              disabled={(remainingMediaSlots === 0 && !yadisk.albumMode) || submitting}
-              onClick={handleAttachClick}
-            />
-            <button
-              type="submit"
-              className="submit-btn-full edit-post-save-btn create-post-form__publish"
-              disabled={submitting || yadisk.hasPending || !hasVisibleText(text)}
-            >
-              {submitting ? 'Сохраняем…' : yadisk.hasPending ? 'Превью…' : 'Сохранить'}
-            </button>
+            <div className="edit-post-actions__primary create-post-form__actions--with-attach">
+              <PostAttachButton
+                disabled={(remainingMediaSlots === 0 && !yadisk.albumMode) || submitting}
+                onClick={handleAttachClick}
+              />
+              <button
+                type="submit"
+                className="submit-btn-full edit-post-save-btn create-post-form__publish"
+                disabled={!canSave}
+                {...(canSave ? longPressHandlers : {})}
+              >
+                {submitting ? 'Сохраняем…' : yadisk.hasPending ? 'Превью…' : 'Сохранить'}
+              </button>
+              <LongPressRing {...ringProps} />
+            </div>
           </div>
-        </div>
-      </form>
+        </form>
 
-      {previewFullscreen ? (
-        <FullscreenImageViewer
-          items={previewFullscreen.items}
-          initialIndex={previewFullscreen.index}
-          originRect={previewFullscreen.originRect}
-          originKey={previewFullscreen.originKey}
-          onCloseStart={handlePreviewCloseStart}
-          onActiveIndexChange={
-            previewFullscreen.isAlbum ? handlePreviewAlbumIndex : undefined
-          }
-          onClose={closePreviewFullscreen}
-        />
-      ) : null}
-    </Modal>
+        {previewFullscreen ? (
+          <FullscreenImageViewer
+            items={previewFullscreen.items}
+            initialIndex={previewFullscreen.index}
+            originRect={previewFullscreen.originRect}
+            originKey={previewFullscreen.originKey}
+            onCloseStart={handlePreviewCloseStart}
+            onActiveIndexChange={
+              previewFullscreen.isAlbum ? handlePreviewAlbumIndex : undefined
+            }
+            onClose={closePreviewFullscreen}
+          />
+        ) : null}
+      </Modal>
+
+      <PublishLongPressMenu
+        isOpen={previewMenuOpen}
+        text={text}
+        previewItems={previewItems}
+        captionAbove={captionAbove}
+        canMoveText={canMoveText}
+        publishLabel="Сохранить"
+        showSendLater={false}
+        onToggleCaption={() => setCaptionAbove((v) => !v)}
+        onPublishNow={() => void persistSave()}
+        onClose={() => setPreviewMenuOpen(false)}
+      />
+    </>
   );
 }
 
