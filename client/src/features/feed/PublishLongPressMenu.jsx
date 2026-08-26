@@ -34,7 +34,7 @@ function MoveTextIcon() {
 }
 
 /**
- * Long-press меню «Опубликовать»: превью + перенос текста + отправить позже.
+ * Long-press меню «Опубликовать» / «Сохранить»: превью + перенос текста (+ опционально отправить позже).
  *
  * @param {{
  *   isOpen: boolean,
@@ -43,8 +43,9 @@ function MoveTextIcon() {
  *   captionAbove: boolean,
  *   canMoveText: boolean,
  *   publishLabel?: string,
+ *   showSendLater?: boolean,
  *   onToggleCaption: () => void,
- *   onSendLater: () => void,
+ *   onSendLater?: () => void,
  *   onPublishNow: () => void,
  *   onClose: () => void
  * }} props
@@ -56,6 +57,7 @@ export default function PublishLongPressMenu({
   captionAbove,
   canMoveText,
   publishLabel = 'Опубликовать',
+  showSendLater = true,
   onToggleCaption,
   onSendLater,
   onPublishNow,
@@ -77,6 +79,7 @@ export default function PublishLongPressMenu({
 
   const showText = hasVisibleText(text);
   const showMedia = previewItems.length > 0;
+  const showSheet = canMoveText || (showSendLater && typeof onSendLater === 'function');
 
   return createPortal(
     <div
@@ -119,30 +122,34 @@ export default function PublishLongPressMenu({
         </button>
       </div>
 
-      <div className="comment-send-preview-sheet" onClick={(e) => e.stopPropagation()}>
-        {canMoveText ? (
-          <button
-            type="button"
-            className="comment-send-preview-sheet__action"
-            onClick={onToggleCaption}
-          >
-            <span className="comment-send-preview-sheet__icon" aria-hidden="true">
-              <MoveTextIcon />
-            </span>
-            <span>{captionAbove ? 'Перенести текст вниз' : 'Перенести текст наверх'}</span>
-          </button>
-        ) : null}
-        <button
-          type="button"
-          className="comment-send-preview-sheet__action"
-          onClick={onSendLater}
-        >
-          <span className="comment-send-preview-sheet__icon" aria-hidden="true">
-            <CalendarIcon />
-          </span>
-          <span>Отправить позже</span>
-        </button>
-      </div>
+      {showSheet ? (
+        <div className="comment-send-preview-sheet" onClick={(e) => e.stopPropagation()}>
+          {canMoveText ? (
+            <button
+              type="button"
+              className="comment-send-preview-sheet__action"
+              onClick={onToggleCaption}
+            >
+              <span className="comment-send-preview-sheet__icon" aria-hidden="true">
+                <MoveTextIcon />
+              </span>
+              <span>{captionAbove ? 'Перенести текст вниз' : 'Перенести текст наверх'}</span>
+            </button>
+          ) : null}
+          {showSendLater && typeof onSendLater === 'function' ? (
+            <button
+              type="button"
+              className="comment-send-preview-sheet__action"
+              onClick={onSendLater}
+            >
+              <span className="comment-send-preview-sheet__icon" aria-hidden="true">
+                <CalendarIcon />
+              </span>
+              <span>Отправить позже</span>
+            </button>
+          ) : null}
+        </div>
+      ) : null}
     </div>,
     document.body
   );

@@ -600,8 +600,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_app",
-      "community": 77,
-      "community_name": "tournamentPosts.js",
+      "community": 81,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "app.jsx"
     },
     {
@@ -611,8 +611,8 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "client_src_app_tab_titles",
-      "community": 77,
-      "community_name": "tournamentPosts.js",
+      "community": 81,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "tab_titles"
     },
     {
@@ -622,8 +622,8 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "client_src_app_getinitialfavoriteproductids",
-      "community": 77,
-      "community_name": "tournamentPosts.js",
+      "community": 81,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "getinitialfavoriteproductids()"
     },
     {
@@ -633,8 +633,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "client_src_app_appinner",
-      "community": 77,
-      "community_name": "tournamentPosts.js",
+      "community": 81,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "appinner()"
     },
     {
@@ -644,8 +644,8 @@
       "source_location": "L102",
       "_origin": "ast",
       "id": "client_src_app_blockedappshell",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 86,
+      "community_name": "overlayStack.js",
       "norm_label": "blockedappshell()"
     },
     {
@@ -655,8 +655,8 @@
       "source_location": "L123",
       "_origin": "ast",
       "id": "client_src_app_appmain",
-      "community": 77,
-      "community_name": "tournamentPosts.js",
+      "community": 81,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "appmain()"
     },
     {
@@ -1172,8 +1172,8 @@
       "source_location": "L107",
       "_origin": "ast",
       "id": "client_src_components_tournamentpostuploadprovider_usetournamentpostupload",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "usetournamentpostupload()"
     },
     {
@@ -1260,8 +1260,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_closeappconfirmsheet",
-      "community": 77,
-      "community_name": "tournamentPosts.js",
+      "community": 81,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "closeappconfirmsheet.jsx"
     },
     {
@@ -1271,8 +1271,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_components_ui_closeappconfirmsheet_closeappconfirmsheet",
-      "community": 77,
-      "community_name": "tournamentPosts.js",
+      "community": 81,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "closeappconfirmsheet()"
     },
     {
@@ -1425,8 +1425,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_pulltorefresh",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 86,
+      "community_name": "overlayStack.js",
       "norm_label": "pulltorefresh.jsx"
     },
     {
@@ -1436,8 +1436,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "client_src_components_ui_pulltorefresh_pulltorefresh",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 86,
+      "community_name": "overlayStack.js",
       "norm_label": "pulltorefresh()"
     },
     {
@@ -2632,7 +2632,7 @@
       "label": "EditTournamentPostModal()",
       "file_type": "code",
       "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
-      "source_location": "L31",
+      "source_location": "L33",
       "_origin": "ast",
       "id": "client_src_features_competitions_edittournamentpostmodal_edittournamentpostmodal",
       "community": 59,
@@ -3028,7 +3028,7 @@
       "label": "EditPostModal()",
       "file_type": "code",
       "source_file": "client/src/features/feed/EditPostModal.jsx",
-      "source_location": "L31",
+      "source_location": "L33",
       "_origin": "ast",
       "id": "client_src_features_feed_editpostmodal_editpostmodal",
       "community": 59,
@@ -3119,8 +3119,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer_useyadiskloadprogress",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 59,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "useyadiskloadprogress()"
     },
     {
@@ -3185,8 +3185,8 @@
       "source_location": "L111",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer_isimagepaintready",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 59,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "isimagepaintready()"
     },
     {
@@ -3196,8 +3196,8 @@
       "source_location": "L118",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer_fullscreenslideimage",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 59,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "fullscreenslideimage()"
     },
     {
@@ -3677,7 +3677,7 @@
       "label": "PublishLongPressMenu()",
       "file_type": "code",
       "source_file": "client/src/features/feed/PublishLongPressMenu.jsx",
-      "source_location": "L52",
+      "source_location": "L53",
       "_origin": "ast",
       "id": "client_src_features_feed_publishlongpressmenu_publishlongpressmenu",
       "community": 59,
@@ -4483,8 +4483,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskalbumcache",
-      "community": 58,
-      "community_name": "achievements.js",
+      "community": 78,
+      "community_name": "AboutAppModal.jsx",
       "norm_label": "yadiskalbumcache.js"
     },
     {
@@ -4494,8 +4494,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskalbumcache_cache",
-      "community": 58,
-      "community_name": "achievements.js",
+      "community": 78,
+      "community_name": "AboutAppModal.jsx",
       "norm_label": "cache"
     },
     {
@@ -4505,8 +4505,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskalbumcache_listeners",
-      "community": 58,
-      "community_name": "achievements.js",
+      "community": 78,
+      "community_name": "AboutAppModal.jsx",
       "norm_label": "listeners"
     },
     {
@@ -4527,8 +4527,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskalbumcache_getyadiskalbumcache",
-      "community": 58,
-      "community_name": "achievements.js",
+      "community": 59,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "getyadiskalbumcache()"
     },
     {
@@ -4560,8 +4560,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskalbumlazy",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 58,
+      "community_name": "achievements.js",
       "norm_label": "yadiskalbumlazy.js"
     },
     {
@@ -4571,8 +4571,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskalbumlazy_focuslisteners",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 58,
+      "community_name": "achievements.js",
       "norm_label": "focuslisteners"
     },
     {
@@ -4582,8 +4582,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskalbumlazy_windowindices",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 58,
+      "community_name": "achievements.js",
       "norm_label": "windowindices()"
     },
     {
@@ -4593,8 +4593,8 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskalbumlazy_createpriorityqueue",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 58,
+      "community_name": "achievements.js",
       "norm_label": "createpriorityqueue()"
     },
     {
@@ -4604,8 +4604,8 @@
       "source_location": "L126",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskalbumlazy_memberbytesfordisplay",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 58,
+      "community_name": "achievements.js",
       "norm_label": "memberbytesfordisplay()"
     },
     {
@@ -4615,8 +4615,8 @@
       "source_location": "L150",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskalbumlazy_fetchalbummemberbytes",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 58,
+      "community_name": "achievements.js",
       "norm_label": "fetchalbummemberbytes()"
     },
     {
@@ -4648,8 +4648,8 @@
       "source_location": "L294",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskalbumlazy_createalbumwindowcontroller",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 58,
+      "community_name": "achievements.js",
       "norm_label": "createalbumwindowcontroller()"
     },
     {
@@ -4736,8 +4736,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskmediasessioncache_membercachekey",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 58,
+      "community_name": "achievements.js",
       "norm_label": "membercachekey()"
     },
     {
@@ -4747,8 +4747,8 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskmediasessioncache_getcachedmemberbytes",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 58,
+      "community_name": "achievements.js",
       "norm_label": "getcachedmemberbytes()"
     },
     {
@@ -4758,8 +4758,8 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskmediasessioncache_setcachedmemberbytes",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 58,
+      "community_name": "achievements.js",
       "norm_label": "setcachedmemberbytes()"
     },
     {
@@ -4813,8 +4813,8 @@
       "source_location": "L154",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskmediasessioncache_subscribememberloadprogress",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 59,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "subscribememberloadprogress()"
     },
     {
@@ -4824,8 +4824,8 @@
       "source_location": "L166",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskmediasessioncache_setmemberloadprogress",
-      "community": 78,
-      "community_name": "AboutAppModal.jsx",
+      "community": 58,
+      "community_name": "achievements.js",
       "norm_label": "setmemberloadprogress()"
     },
     {
@@ -6232,8 +6232,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_createtrainingmodal",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 77,
+      "community_name": "tournamentPosts.js",
       "norm_label": "createtrainingmodal.jsx"
     },
     {
@@ -6243,8 +6243,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_features_trainings_createtrainingmodal_initial_form",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 77,
+      "community_name": "tournamentPosts.js",
       "norm_label": "initial_form"
     },
     {
@@ -6254,8 +6254,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "client_src_features_trainings_createtrainingmodal_createtrainingmodal",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 77,
+      "community_name": "tournamentPosts.js",
       "norm_label": "createtrainingmodal()"
     },
     {
@@ -6914,8 +6914,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usemaxcloseguard",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 86,
+      "community_name": "overlayStack.js",
       "norm_label": "usemaxcloseguard.js"
     },
     {
@@ -6925,8 +6925,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "client_src_hooks_usemaxcloseguard_iseditablefocus",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 86,
+      "community_name": "overlayStack.js",
       "norm_label": "iseditablefocus()"
     },
     {
@@ -6936,8 +6936,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "client_src_hooks_usemaxcloseguard_disablemaxverticalswipes",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 86,
+      "community_name": "overlayStack.js",
       "norm_label": "disablemaxverticalswipes()"
     },
     {
@@ -6947,8 +6947,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "client_src_hooks_usemaxcloseguard_usemaxcloseguard",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 86,
+      "community_name": "overlayStack.js",
       "norm_label": "usemaxcloseguard()"
     },
     {
@@ -7299,8 +7299,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usesessionresetkey",
-      "community": 77,
-      "community_name": "tournamentPosts.js",
+      "community": 81,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "usesessionresetkey.js"
     },
     {
@@ -7310,8 +7310,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_hooks_usesessionresetkey_usesessionresetkey",
-      "community": 77,
-      "community_name": "tournamentPosts.js",
+      "community": 81,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "usesessionresetkey()"
     },
     {
@@ -8608,8 +8608,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_overlaystack",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 86,
+      "community_name": "overlayStack.js",
       "norm_label": "overlaystack.js"
     },
     {
@@ -8619,8 +8619,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_lib_overlaystack_stack",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 86,
+      "community_name": "overlayStack.js",
       "norm_label": "stack"
     },
     {
@@ -8641,8 +8641,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "client_src_lib_overlaystack_closetopoverlay",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 86,
+      "community_name": "overlayStack.js",
       "norm_label": "closetopoverlay()"
     },
     {
@@ -8652,8 +8652,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "client_src_lib_overlaystack_hasopenoverlay",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 86,
+      "community_name": "overlayStack.js",
       "norm_label": "hasopenoverlay()"
     },
     {
@@ -8674,8 +8674,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "client_src_lib_overlaystack_getoverlaydepth",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 86,
+      "community_name": "overlayStack.js",
       "norm_label": "getoverlaydepth()"
     },
     {
@@ -8740,8 +8740,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_sectionscroll",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 86,
+      "community_name": "overlayStack.js",
       "norm_label": "sectionscroll.js"
     },
     {
@@ -8762,8 +8762,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "client_src_lib_sectionscroll_getsectionscrollelement",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 86,
+      "community_name": "overlayStack.js",
       "norm_label": "getsectionscrollelement()"
     },
     {
@@ -8773,8 +8773,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "client_src_lib_sectionscroll_issectionscrollattop",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 86,
+      "community_name": "overlayStack.js",
       "norm_label": "issectionscrollattop()"
     },
     {
@@ -8784,8 +8784,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "client_src_lib_sectionscroll_scrollsectiontotop",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 86,
+      "community_name": "overlayStack.js",
       "norm_label": "scrollsectiontotop()"
     },
     {
@@ -9686,8 +9686,8 @@
       "source_location": "L247",
       "_origin": "ast",
       "id": "client_src_services_catalog_deleteproduct",
-      "community": 77,
-      "community_name": "tournamentPosts.js",
+      "community": 81,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "deleteproduct()"
     },
     {
@@ -10203,8 +10203,8 @@
       "source_location": "L320",
       "_origin": "ast",
       "id": "client_src_services_posts_harddeletepost",
-      "community": 77,
-      "community_name": "tournamentPosts.js",
+      "community": 81,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "harddeletepost()"
     },
     {
@@ -10258,8 +10258,8 @@
       "source_location": "L472",
       "_origin": "ast",
       "id": "client_src_services_posts_harddeletecomment",
-      "community": 77,
-      "community_name": "tournamentPosts.js",
+      "community": 81,
+      "community_name": "OnboardingTutorial.jsx",
       "norm_label": "harddeletecomment()"
     },
     {
@@ -10599,8 +10599,8 @@
       "source_location": "L141",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_updatetournamentpost",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "updatetournamentpost()"
     },
     {
@@ -10610,8 +10610,8 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_pintournamentpost",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "pintournamentpost()"
     },
     {
@@ -10621,8 +10621,8 @@
       "source_location": "L161",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_unpintournamentpost",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "unpintournamentpost()"
     },
     {
@@ -10896,8 +10896,8 @@
       "source_location": "L309",
       "_origin": "ast",
       "id": "client_src_services_trainings_createtraining",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 77,
+      "community_name": "tournamentPosts.js",
       "norm_label": "createtraining()"
     },
     {
@@ -18473,7 +18473,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
-      "source_location": "L40",
+      "source_location": "L44",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal_edittournamentpostmodal",
@@ -18521,7 +18521,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/EditPostModal.jsx",
-      "source_location": "L40",
+      "source_location": "L44",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal_editpostmodal",
@@ -28019,7 +28019,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
-      "source_location": "L31",
+      "source_location": "L33",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal",
@@ -28091,7 +28091,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal",
@@ -28103,7 +28103,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal",
@@ -28115,7 +28115,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal",
@@ -28155,7 +28155,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal",
-      "target": "client_src_features_feed_uselocalmediafullscreen",
+      "target": "client_src_features_feed_publishlongpressmenu",
       "confidence_score": 1.0
     },
     {
@@ -28167,7 +28167,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal",
-      "target": "client_src_features_feed_uselocalmediafullscreen_uselocalmediafullscreen",
+      "target": "client_src_features_feed_publishlongpressmenu_publishlongpressmenu",
       "confidence_score": 1.0
     },
     {
@@ -28179,7 +28179,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal",
-      "target": "client_src_features_feed_useyadiskembed",
+      "target": "client_src_features_feed_uselocalmediafullscreen",
       "confidence_score": 1.0
     },
     {
@@ -28191,7 +28191,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal",
-      "target": "client_src_features_feed_useyadiskembed_useyadiskembed",
+      "target": "client_src_features_feed_uselocalmediafullscreen_uselocalmediafullscreen",
       "confidence_score": 1.0
     },
     {
@@ -28203,6 +28203,30 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal",
+      "target": "client_src_features_feed_useyadiskembed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_competitions_edittournamentpostmodal",
+      "target": "client_src_features_feed_useyadiskembed_useyadiskembed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_competitions_edittournamentpostmodal",
       "target": "client_src_features_feed_yadiskalbumlazy",
       "confidence_score": 1.0
     },
@@ -28211,7 +28235,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
-      "source_location": "L20",
+      "source_location": "L21",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal",
@@ -28223,7 +28247,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
-      "source_location": "L20",
+      "source_location": "L21",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal",
@@ -28235,7 +28259,43 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
-      "source_location": "L12",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_competitions_edittournamentpostmodal",
+      "target": "client_src_lib_longpress",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_competitions_edittournamentpostmodal",
+      "target": "client_src_lib_longpress_longpressring",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_competitions_edittournamentpostmodal",
+      "target": "client_src_lib_longpress_uselongpress",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
+      "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal",
@@ -28247,7 +28307,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal",
@@ -28259,7 +28319,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal",
@@ -28271,7 +28331,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal",
@@ -28283,7 +28343,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal",
@@ -28295,7 +28355,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal",
@@ -28331,7 +28391,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
-      "source_location": "L196",
+      "source_location": "L189",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal_edittournamentpostmodal",
@@ -28343,7 +28403,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
-      "source_location": "L178",
+      "source_location": "L182",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal_edittournamentpostmodal",
@@ -28355,7 +28415,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
-      "source_location": "L143",
+      "source_location": "L147",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal_edittournamentpostmodal",
@@ -28367,7 +28427,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
-      "source_location": "L96",
+      "source_location": "L100",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal_edittournamentpostmodal",
@@ -28379,7 +28439,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
-      "source_location": "L234",
+      "source_location": "L244",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal_edittournamentpostmodal",
@@ -28391,7 +28451,19 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
-      "source_location": "L51",
+      "source_location": "L259",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_competitions_edittournamentpostmodal_edittournamentpostmodal",
+      "target": "client_src_lib_longpress_uselongpress",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
+      "source_location": "L55",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal_edittournamentpostmodal",
@@ -28403,7 +28475,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
-      "source_location": "L168",
+      "source_location": "L172",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal_edittournamentpostmodal",
@@ -28415,7 +28487,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
-      "source_location": "L57",
+      "source_location": "L61",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal_edittournamentpostmodal",
@@ -28427,7 +28499,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
-      "source_location": "L42",
+      "source_location": "L46",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal_edittournamentpostmodal",
@@ -28439,7 +28511,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
-      "source_location": "L306",
+      "source_location": "L342",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal_edittournamentpostmodal",
@@ -28451,7 +28523,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/competitions/EditTournamentPostModal.jsx",
-      "source_location": "L231",
+      "source_location": "L241",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_competitions_edittournamentpostmodal_edittournamentpostmodal",
@@ -31279,7 +31351,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/EditPostModal.jsx",
-      "source_location": "L31",
+      "source_location": "L33",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal",
@@ -31351,7 +31423,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/EditPostModal.jsx",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal",
@@ -31363,7 +31435,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/EditPostModal.jsx",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal",
@@ -31375,7 +31447,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/EditPostModal.jsx",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal",
@@ -31415,7 +31487,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal",
-      "target": "client_src_features_feed_uselocalmediafullscreen",
+      "target": "client_src_features_feed_publishlongpressmenu",
       "confidence_score": 1.0
     },
     {
@@ -31427,7 +31499,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal",
-      "target": "client_src_features_feed_uselocalmediafullscreen_uselocalmediafullscreen",
+      "target": "client_src_features_feed_publishlongpressmenu_publishlongpressmenu",
       "confidence_score": 1.0
     },
     {
@@ -31439,7 +31511,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal",
-      "target": "client_src_features_feed_useyadiskembed",
+      "target": "client_src_features_feed_uselocalmediafullscreen",
       "confidence_score": 1.0
     },
     {
@@ -31451,7 +31523,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal",
-      "target": "client_src_features_feed_useyadiskembed_useyadiskembed",
+      "target": "client_src_features_feed_uselocalmediafullscreen_uselocalmediafullscreen",
       "confidence_score": 1.0
     },
     {
@@ -31463,6 +31535,30 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal",
+      "target": "client_src_features_feed_useyadiskembed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/EditPostModal.jsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_editpostmodal",
+      "target": "client_src_features_feed_useyadiskembed_useyadiskembed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/EditPostModal.jsx",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_editpostmodal",
       "target": "client_src_features_feed_yadiskalbumlazy",
       "confidence_score": 1.0
     },
@@ -31471,7 +31567,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/EditPostModal.jsx",
-      "source_location": "L20",
+      "source_location": "L21",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal",
@@ -31483,7 +31579,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/EditPostModal.jsx",
-      "source_location": "L20",
+      "source_location": "L21",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal",
@@ -31495,7 +31591,43 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/EditPostModal.jsx",
-      "source_location": "L12",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_editpostmodal",
+      "target": "client_src_lib_longpress",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/EditPostModal.jsx",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_editpostmodal",
+      "target": "client_src_lib_longpress_longpressring",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/EditPostModal.jsx",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_editpostmodal",
+      "target": "client_src_lib_longpress_uselongpress",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/EditPostModal.jsx",
+      "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal",
@@ -31507,7 +31639,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/EditPostModal.jsx",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal",
@@ -31519,7 +31651,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/EditPostModal.jsx",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal",
@@ -31531,7 +31663,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/EditPostModal.jsx",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal",
@@ -31543,7 +31675,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/EditPostModal.jsx",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal",
@@ -31555,7 +31687,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/EditPostModal.jsx",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal",
@@ -31603,7 +31735,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/EditPostModal.jsx",
-      "source_location": "L196",
+      "source_location": "L189",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal_editpostmodal",
@@ -31615,7 +31747,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/EditPostModal.jsx",
-      "source_location": "L178",
+      "source_location": "L182",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal_editpostmodal",
@@ -31627,7 +31759,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/EditPostModal.jsx",
-      "source_location": "L143",
+      "source_location": "L147",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal_editpostmodal",
@@ -31639,7 +31771,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/EditPostModal.jsx",
-      "source_location": "L96",
+      "source_location": "L100",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal_editpostmodal",
@@ -31651,7 +31783,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/EditPostModal.jsx",
-      "source_location": "L234",
+      "source_location": "L244",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal_editpostmodal",
@@ -31663,7 +31795,19 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/EditPostModal.jsx",
-      "source_location": "L51",
+      "source_location": "L259",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_feed_editpostmodal_editpostmodal",
+      "target": "client_src_lib_longpress_uselongpress",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/feed/EditPostModal.jsx",
+      "source_location": "L55",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal_editpostmodal",
@@ -31675,7 +31819,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/EditPostModal.jsx",
-      "source_location": "L168",
+      "source_location": "L172",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal_editpostmodal",
@@ -31687,7 +31831,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/EditPostModal.jsx",
-      "source_location": "L57",
+      "source_location": "L61",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal_editpostmodal",
@@ -31699,7 +31843,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/EditPostModal.jsx",
-      "source_location": "L42",
+      "source_location": "L46",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal_editpostmodal",
@@ -31711,7 +31855,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/EditPostModal.jsx",
-      "source_location": "L306",
+      "source_location": "L342",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal_editpostmodal",
@@ -31723,7 +31867,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/EditPostModal.jsx",
-      "source_location": "L231",
+      "source_location": "L241",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_editpostmodal_editpostmodal",
@@ -35396,7 +35540,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PublishLongPressMenu.jsx",
-      "source_location": "L52",
+      "source_location": "L53",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_publishlongpressmenu",
@@ -35433,7 +35577,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/features/feed/PublishLongPressMenu.jsx",
-      "source_location": "L78",
+      "source_location": "L80",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_publishlongpressmenu_publishlongpressmenu",
@@ -35445,7 +35589,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/features/feed/PublishLongPressMenu.jsx",
-      "source_location": "L65",
+      "source_location": "L67",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_publishlongpressmenu_publishlongpressmenu",
@@ -61910,5 +62054,5 @@
       "source_file": "client/src/assets/ach/1_1.png"
     }
   ],
-  "built_at_commit": "7621e014e80350b23794997be501e4e18beac840"
+  "built_at_commit": "93df8d26b97fa64facfdb11911b3e9236bbce731"
 }
