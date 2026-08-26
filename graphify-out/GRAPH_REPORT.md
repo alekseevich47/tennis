@@ -1,16 +1,16 @@
 # Graph Report - tennis  (2026-08-26)
 
 ## Corpus Check
-- 254 files · ~233,014 words
+- 254 files · ~233,337 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1298 nodes · 4021 edges · 86 communities (77 shown, 9 thin omitted)
+- 1298 nodes · 4033 edges · 87 communities (78 shown, 9 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 138 edges (avg confidence: 0.59)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `7621e014`
+- Built from commit: `93df8d26`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -70,6 +70,7 @@
 - MembershipOverviewModal.jsx
 - EditTrainingModal.jsx
 - useFetchedOriginal.js
+- overlayStack.js
 
 ## God Nodes (most connected - your core abstractions)
 1. `error` - 127 edges
@@ -103,15 +104,15 @@
 - **PocketBase collections** — readme_schema_users, readme_schema_posts, readme_schema_comments, readme_schema_trainings, readme_schema_products, readme_schema_championships, readme_schema_matches, readme_schema_gallery [EXTRACTED 1.00]
 - **Achievement badge asset set** — client_src_assets_ach_1_1_png_badge, client_src_assets_ach_1_2_png_badge, client_src_assets_ach_1_3_png_badge, client_src_assets_ach_1_4_png_badge, client_src_assets_ach_1_5_png_badge, client_src_assets_ach_2_1_png_badge, client_src_assets_ach_2_2_png_badge, client_src_assets_ach_2_3_png_badge, client_src_assets_ach_2_4_png_badge, client_src_assets_ach_2_5_png_badge, client_src_assets_ach_3_1_png_badge, client_src_assets_ach_3_2_png_badge, client_src_assets_ach_3_3_png_badge, client_src_assets_ach_3_4_png_badge, client_src_assets_ach_3_5_png_badge, client_src_assets_ach_4_1_png_badge, client_src_assets_ach_4_2_png_badge, client_src_assets_ach_4_3_png_badge, client_src_assets_ach_4_4_png_badge, client_src_assets_ach_4_5_png_badge, client_src_assets_ach_5_1_png_badge, client_src_assets_ach_5_2_png_badge, client_src_assets_ach_5_3_png_badge, client_src_assets_ach_5_4_png_badge, client_src_assets_ach_5_5_png_badge [INFERRED 0.85]
 
-## Communities (86 total, 9 thin omitted)
+## Communities (87 total, 9 thin omitted)
 
 ### Community 0 - "App Shell Navigation"
 Cohesion: 0.11
 Nodes (31): PAD, ScheduleDateTimeSheet(), formatCountdownPart(), formatTrainingCountdownBadge(), isUserBooked(), CLICK_ACTION_LABELS, NotificationCard(), parseCommentReplyParentText() (+23 more)
 
 ### Community 2 - "Post Upload and UI Kit"
-Cohesion: 0.19
-Nodes (16): TournamentPostUploadContext, TournamentPostUploadProvider(), useTournamentPosts(), applyTournamentPostSideEffects(), buildTournamentPostPayload(), deleteScheduledTournamentPost(), hardDeleteTournamentPost(), invalidateTournamentCaches() (+8 more)
+Cohesion: 0.16
+Nodes (20): TournamentPostUploadContext, TournamentPostUploadProvider(), useTournamentPostUpload(), useTournamentPosts(), applyTournamentPostSideEffects(), buildTournamentPostPayload(), deleteScheduledTournamentPost(), hardDeleteTournamentPost() (+12 more)
 
 ### Community 3 - "notifications.js"
 Cohesion: 0.06
@@ -206,12 +207,12 @@ Cohesion: 0.23
 Nodes (17): formatDate(), getTrainingTitle(), isModerator(), normalizeDateInput(), ProfileViewModal(), TRAINING_BADGE, banUser(), claimMaxAccount() (+9 more)
 
 ### Community 58 - "achievements.js"
-Cohesion: 0.18
-Nodes (22): PinnedBanner(), usePinnedThumbUrl(), publishAlbums(), useResolvedExternalMedia(), useYadiskEmbed(), cache, getYadiskAlbumCache(), listeners (+14 more)
+Cohesion: 0.17
+Nodes (29): PinnedBanner(), usePinnedThumbUrl(), publishAlbums(), useResolvedExternalMedia(), useYadiskEmbed(), setYadiskAlbumCache(), createAlbumWindowController(), createPriorityQueue() (+21 more)
 
 ### Community 59 - "yadiskAlbumLazy.js"
 Cohesion: 0.06
-Nodes (67): ForceUpdateOverlay(), AlertDialogContext, INITIAL_STATE, useAlertDialog(), CreateTournamentPostModal(), EditTournamentPostModal(), CommentComposeForm(), CommentMediaBody() (+59 more)
+Nodes (72): ForceUpdateOverlay(), AlertDialogContext, INITIAL_STATE, useAlertDialog(), CreateTournamentPostModal(), EditTournamentPostModal(), CommentComposeForm(), CommentMediaBody() (+64 more)
 
 ### Community 60 - "maxauthlib.js"
 Cohesion: 0.43
@@ -222,12 +223,12 @@ Cohesion: 0.28
 Nodes (17): buildDownloadUrl(), buildFileItem(), buildMetaUrl(), collectAlbumItems(), detectMediaKind(), fetchContentFile(), fetchDownloadHref(), fetchPublicResource() (+9 more)
 
 ### Community 63 - "catalog.js"
-Cohesion: 0.15
-Nodes (28): usePostUpload(), useTournamentPostUpload(), ScrollToTopButton(), FeedListSkeleton(), useRegisterAddAction(), CompetitionsPage(), TABS, FeedPage() (+20 more)
+Cohesion: 0.17
+Nodes (24): usePostUpload(), ScrollToTopButton(), FeedListSkeleton(), useRegisterAddAction(), CompetitionsPage(), TABS, FeedPage(), PostContextMenu() (+16 more)
 
 ### Community 65 - "ProfilePage.jsx"
-Cohesion: 0.15
-Nodes (33): CreateTrainingModal(), INITIAL_FORM, TrainingsPage(), canCancelBooking(), addPendingDeleteTrainingId(), assertMembershipSessionAvailable(), assertNotBotBlocked(), bookTraining() (+25 more)
+Cohesion: 0.17
+Nodes (30): TrainingsPage(), canCancelBooking(), addPendingDeleteTrainingId(), assertMembershipSessionAvailable(), assertNotBotBlocked(), bookTraining(), bookUsersToTraining(), bookUserToTraining() (+22 more)
 
 ### Community 67 - "media.js"
 Cohesion: 0.10
@@ -254,24 +255,24 @@ Cohesion: 0.15
 Nodes (24): AchievementRow(), AchievementsBlock(), clampProgress(), getCurrentLevelTitle(), getProgressBarColorClass(), getTooltipKey(), getTooltipText(), clampPercent() (+16 more)
 
 ### Community 77 - "tournamentPosts.js"
-Cohesion: 0.18
-Nodes (23): AppInner(), AppMain(), getInitialFavoriteProductIds(), TAB_TITLES, CloseAppConfirmSheet(), getInitialUser(), useMaxAuth(), useSessionResetKey() (+15 more)
+Cohesion: 0.25
+Nodes (17): CreateTrainingModal(), INITIAL_FORM, getInitialUser(), useMaxAuth(), error, buildBannedUser(), clearBanInfo(), finalizeBannedUser() (+9 more)
 
 ### Community 78 - "AboutAppModal.jsx"
-Cohesion: 0.16
-Nodes (22): FullscreenSlideImage(), isImagePaintReady(), useYadiskLoadProgress(), createAlbumWindowController(), createPriorityQueue(), fetchAlbumMemberBytes(), focusListeners, memberBytesForDisplay() (+14 more)
+Cohesion: 0.18
+Nodes (10): cache, listeners, cache, getMemberLoadProgress(), isYadiskOriginalPending(), listeners, loadProgress, notify() (+2 more)
 
 ### Community 79 - "isModerator"
 Cohesion: 0.29
 Nodes (9): Spinner(), formatDayTitle(), StatsTrainingsCountModal(), TrainingCard(), formatCardDate(), formatTimeRange(), getCurrentUser(), isModerator() (+1 more)
 
 ### Community 80 - "useMaxCloseGuard.js"
-Cohesion: 0.09
-Nodes (26): BlockedAppShell(), ADMIN_NAV_ITEM, BottomNav(), GALLERY_NAV_ITEM, NAV_ITEMS, PullToRefresh(), AddActionContext, AddActionProvider() (+18 more)
+Cohesion: 0.15
+Nodes (16): ADMIN_NAV_ITEM, BottomNav(), GALLERY_NAV_ITEM, NAV_ITEMS, AddActionContext, AddActionProvider(), DEFAULT_API, useTriggerAddAction() (+8 more)
 
 ### Community 81 - "OnboardingTutorial.jsx"
-Cohesion: 0.27
-Nodes (12): CARD_STEPS, getStepSelectors(), getTooltipStyle(), NAV_STEPS, normalizeDateInput(), OnboardingTutorial(), padHighlightRect(), scrollTargetIntoView() (+4 more)
+Cohesion: 0.14
+Nodes (21): AppInner(), AppMain(), getInitialFavoriteProductIds(), TAB_TITLES, CloseAppConfirmSheet(), CARD_STEPS, getStepSelectors(), getTooltipStyle() (+13 more)
 
 ### Community 82 - "pocketbase.js"
 Cohesion: 0.32
@@ -289,6 +290,10 @@ Nodes (10): buildTrainingPatch(), EditTrainingModal(), getFormFromTraining(), ge
 Cohesion: 0.43
 Nodes (6): useFetchedOriginal(), blobFromResponse(), blobUrlCache, fetchBlobUrlWithProgress(), getCachedMediaBlobUrl(), inflight
 
+### Community 86 - "overlayStack.js"
+Cohesion: 0.21
+Nodes (10): BlockedAppShell(), PullToRefresh(), disableMaxVerticalSwipes(), isEditableFocus(), useMaxCloseGuard(), closeTopOverlay(), hasOpenOverlay(), stack (+2 more)
+
 ## Knowledge Gaps
 - **134 isolated node(s):** `name`, `version`, `description`, `private`, `dev` (+129 more)
   These have ≤1 connection - possible missing edges or undocumented components.
@@ -298,7 +303,7 @@ Nodes (6): useFetchedOriginal(), blobFromResponse(), blobUrlCache, fetchBlobUrlW
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `error` connect `tournamentPosts.js` to `App Shell Navigation`, `ProfilePage.jsx`, `Post Upload and UI Kit`, `media.js`, `GalleryCommentModal.jsx`, `Admin UI Controls`, `GalleryPage.jsx`, `notifications.js`, `useSectionSwipe.js`, `datePickerUtils.js`, `OnboardingTutorial.jsx`, `pocketbase.js`, `MembershipOverviewModal.jsx`, `EditTrainingModal.jsx`, `log.js`, `achievements.js`, `yadiskAlbumLazy.js`, `catalog.js`?**
-  _High betweenness centrality (0.097) - this node is a cross-community bridge._
+  _High betweenness centrality (0.099) - this node is a cross-community bridge._
 - **Why does `LongPressRing()` connect `yadiskAlbumLazy.js` to `NPM Dependencies`, `GalleryCommentModal.jsx`?**
   _High betweenness centrality (0.035) - this node is a cross-community bridge._
 - **Why does `react` connect `NPM Dependencies` to `yadiskAlbumLazy.js`?**

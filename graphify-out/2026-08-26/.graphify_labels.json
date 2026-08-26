@@ -78,5 +78,11 @@
   "76": "useSectionSwipe.js",
   "77": "tournamentPosts.js",
   "78": "AboutAppModal.jsx",
-  "80": "useMaxCloseGuard.js"
+  "79": "isModerator",
+  "80": "useMaxCloseGuard.js",
+  "81": "OnboardingTutorial.jsx",
+  "82": "pocketbase.js",
+  "83": "MembershipOverviewModal.jsx",
+  "84": "EditTrainingModal.jsx",
+  "85": "useFetchedOriginal.js"
 }

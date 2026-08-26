@@ -1,7 +1,7 @@
 {
   "client/package.json": {
-    "mtime": 1787748431.0338514,
-    "ast_hash": "0b6ff052c1214631b7ce49d40ddeaf91",
+    "mtime": 1787759937.7922115,
+    "ast_hash": "6e7da0e2e9f40a60c81b3ac7376bb97f",
     "semantic_hash": ""
   },
   "client/public/sw.js": {
@@ -1050,8 +1050,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostRichTextField.jsx": {
-    "mtime": 1787744920.3086503,
-    "ast_hash": "460479694b8538f49da1344a0a12d561",
+    "mtime": 1787760633.720448,
+    "ast_hash": "45148528c116a180a1dcaf53b9102006",
     "semantic_hash": ""
   },
   "client/src/features/feed/postRichText.js": {
