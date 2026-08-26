@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import FullscreenImageViewer from './FullscreenImageViewer';
-import MediaPreviewGrid from './MediaPreviewGrid';
+import SortableMediaPreviewGrid from './SortableMediaPreviewGrid';
 import PostAttachButton from './PostAttachButton';
 import PostScheduleButton from './PostScheduleButton';
 import PostRichTextField from './PostRichTextField';
@@ -267,33 +267,44 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
             className="visually-hidden"
           />
 
-          <MediaPreviewGrid
-            items={allPreviewItems}
-            className="create-post-preview-grid"
-            originKeyPrefix="create-post"
-            hiddenMediaKey={hiddenMediaKey}
-            onItemClick={openPreviewMedia}
-            onAlbumIndexChange={handleAlbumIndexChange}
-            getAction={(item) => (
-              <button
-                type="button"
-                className="media-remove-btn"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  if (String(item.key).startsWith('yadisk-')) {
-                    yadisk.removeItem(item.key);
-                    return;
-                  }
-                  setFiles((current) =>
-                    current.filter((file) => `${file.name}-${file.lastModified}` !== item.key)
+          {allPreviewItems.length > 0 ? (
+            <div className="create-post-media-strip-wrap">
+              <SortableMediaPreviewGrid
+                items={allPreviewItems}
+                layout="strip"
+                className="create-post-preview-strip"
+                onReorder={(next) => {
+                  const fileByKey = new Map(
+                    files.map((file) => [`${file.name}-${file.lastModified}`, file])
                   );
+                  const nextFiles = next
+                    .map((item) => fileByKey.get(item.key))
+                    .filter(Boolean);
+                  if (nextFiles.length > 0) setFiles(nextFiles);
                 }}
-                aria-label={`Убрать файл ${item.name}`}
-              >
-                <span aria-hidden="true">×</span>
-              </button>
-            )}
-          />
+                onItemClick={openPreviewMedia}
+                getAction={(item) => (
+                  <button
+                    type="button"
+                    className="media-remove-btn comment-media-remove-btn"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      if (String(item.key).startsWith('yadisk-')) {
+                        yadisk.removeItem(item.key);
+                        return;
+                      }
+                      setFiles((current) =>
+                        current.filter((file) => `${file.name}-${file.lastModified}` !== item.key)
+                      );
+                    }}
+                    aria-label={`Убрать файл ${item.name}`}
+                  >
+                    <span aria-hidden="true">×</span>
+                  </button>
+                )}
+              />
+            </div>
+          ) : null}
 
           {!captionAbove ? (
             <PostRichTextField
