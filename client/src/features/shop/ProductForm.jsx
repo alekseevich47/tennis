@@ -1,6 +1,8 @@
 import React, { useEffect, useId, useMemo, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import SortableMediaPreviewGrid from '../feed/SortableMediaPreviewGrid';
+import FullscreenImageViewer from '../feed/FullscreenImageViewer';
+import { useLocalMediaFullscreen } from '../feed/useLocalMediaFullscreen';
 import { useProductCategories } from '../../hooks/useProductCategories';
 import {
   getMediaUrl,
@@ -108,6 +110,14 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
       })),
     [orderedMedia]
   );
+
+  const {
+    openItem: openPreviewMedia,
+    fullscreen: previewFullscreen,
+    close: closePreviewFullscreen,
+    onCloseStart: handlePreviewCloseStart,
+    handleActiveIndexChange: handlePreviewIndexChange
+  } = useLocalMediaFullscreen(previewItems, 'product-form');
 
   useEffect(() => {
     return () => {
@@ -404,6 +414,7 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
                 .filter(Boolean)
             );
           }}
+          onItemClick={(item, index, event) => openPreviewMedia(item, index, event)}
           className="product-form-preview-grid"
           getAction={(item) => (
             <button
@@ -455,6 +466,17 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
           Подтвердить
         </button>
       </form>
+      {previewFullscreen ? (
+        <FullscreenImageViewer
+          items={previewFullscreen.items}
+          initialIndex={previewFullscreen.index}
+          originRect={previewFullscreen.originRect}
+          originKey={previewFullscreen.originKey}
+          onCloseStart={handlePreviewCloseStart}
+          onActiveIndexChange={handlePreviewIndexChange}
+          onClose={closePreviewFullscreen}
+        />
+      ) : null}
     </Modal>
   );
 }

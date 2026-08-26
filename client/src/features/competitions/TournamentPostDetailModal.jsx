@@ -280,6 +280,7 @@ function TournamentPostDetailModal({
           onCommentMutated={onCommentMutated}
           highlightCommentId={highlightCommentId}
           composeTarget={composeTarget}
+          onOpenFullscreen={onOpenFullscreen}
         />
       </Modal>
 

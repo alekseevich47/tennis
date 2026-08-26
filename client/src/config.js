@@ -50,7 +50,16 @@ const MEDIA_BASE_URL = `${PB_URL}/api/files`;
 
 const MAX_APP_ID = import.meta.env.VITE_MAX_APP_ID || 'id420550689204_bot';
 
-const MAX_SELLER_URL = import.meta.env.VITE_MAX_SELLER_URL || 'https://max.ru/u/f9LHodD0cOKkZw87t6_Jy_PkELAZf1_Ycj-oyk_dnoGOBlY27GSpxl1YrZU';
+/** Канонический чат продавца/модератора в MAX (не личный чат разработчика). */
+const DEFAULT_MAX_SELLER_URL =
+  'https://max.ru/u/f9LHodD0cOKkZw87t6_Jy_PkELAZf1_Ycj-oyk_dnoGOBlY27GSpxl1YrZU';
+
+const MAX_SELLER_URL = (() => {
+  const fromEnv = String(import.meta.env.VITE_MAX_SELLER_URL || '').trim();
+  // Пустой / устаревший env не должен уводить в другой чат.
+  if (fromEnv && /max\.ru\/u\//i.test(fromEnv)) return fromEnv;
+  return DEFAULT_MAX_SELLER_URL;
+})();
 
 const IS_DEV = import.meta.env.DEV;
 
