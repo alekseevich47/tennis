@@ -54,5 +54,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 );
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/tt-api/sw.js', { scope: '/' });
+  const base = import.meta.env.BASE_URL || '/';
+  const swUrl = new URL('sw.js', window.location.origin + base).pathname;
+  navigator.serviceWorker.register(swUrl, { scope: base }).catch(() => {
+    /* prod/dev base отличаются; ошибка регистрации не должна валить приложение */
+  });
 }
