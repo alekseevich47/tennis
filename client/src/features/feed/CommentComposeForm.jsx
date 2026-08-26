@@ -1,8 +1,6 @@
-import React, { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import clsx from 'clsx';
-import gsap from 'gsap';
-import { Flip } from 'gsap/Flip';
 import paperClipUrl from '../../assets/paper-clip.svg';
 import photoCameraUrl from '../../assets/photo-camera.svg';
 import PostRichTextField from './PostRichTextField';
@@ -14,8 +12,6 @@ import { isVideoFile, readSelectedFiles } from '../../lib/media';
 import { hasVisibleText } from './postRichText';
 import { useLongPress, LongPressRing } from '../../lib/longPress';
 import { useOverlayClose } from '../../hooks/useOverlayClose';
-
-gsap.registerPlugin(Flip);
 
 export const MAX_COMMENT_MEDIA_FILES = 5;
 
@@ -32,14 +28,7 @@ export const MAX_COMMENT_MEDIA_FILES = 5;
  * }} CommentMediaDraft
  */
 
-function AttachButtons({
-  variant,
-  visible,
-  disabled,
-  onGallery,
-  onCamera,
-  flipGroup
-}) {
+function AttachButtons({ variant, visible, disabled, onGallery, onCamera }) {
   return (
     <div
       className={clsx(
@@ -47,7 +36,6 @@ function AttachButtons({
         `comment-attach-pair--${variant}`,
         visible ? 'is-visible' : 'is-hidden'
       )}
-      data-flip-group={flipGroup}
       aria-hidden={!visible}
     >
       <button
@@ -59,7 +47,14 @@ function AttachButtons({
         onMouseDown={(e) => e.preventDefault()}
         onClick={onGallery}
       >
-        <img src={paperClipUrl} alt="" className="comment-attach-btn__img" width="20" height="20" draggable={false} />
+        <img
+          src={paperClipUrl}
+          alt=""
+          className="comment-attach-btn__img"
+          width="20"
+          height="20"
+          draggable={false}
+        />
       </button>
       <button
         type="button"
@@ -70,7 +65,14 @@ function AttachButtons({
         onMouseDown={(e) => e.preventDefault()}
         onClick={onCamera}
       >
-        <img src={photoCameraUrl} alt="" className="comment-attach-btn__img" width="20" height="20" draggable={false} />
+        <img
+          src={photoCameraUrl}
+          alt=""
+          className="comment-attach-btn__img"
+          width="20"
+          height="20"
+          draggable={false}
+        />
       </button>
     </div>
   );
@@ -108,8 +110,6 @@ function CommentComposeForm({
   const inputId = id || autoId;
   const galleryInputRef = useRef(/** @type {HTMLInputElement | null} */ (null));
   const cameraInputRef = useRef(/** @type {HTMLInputElement | null} */ (null));
-  const rootRef = useRef(/** @type {HTMLDivElement | null} */ (null));
-  const prevAttachSlot = useRef(/** @type {'field' | 'toolbar'} */ ('field'));
 
   /** @type {[CommentMediaDraft[], React.Dispatch<React.SetStateAction<CommentMediaDraft[]>>]} */
   const [mediaItems, setMediaItems] = useState([]);
@@ -127,6 +127,7 @@ function CommentComposeForm({
     sendPhase !== 'flying' &&
     (hasVisibleText(value) || hasMedia);
   const longPressEnabled = hasVisibleText(value) && hasMedia && canSend && !previewOpen;
+  const readyCount = mediaItems.filter((i) => i.status === 'ready').length;
 
   const closePreview = useCallback(() => {
     setPreviewVisible(false);
@@ -145,25 +146,6 @@ function CommentComposeForm({
     const next = hasVisibleText(value) || hasMedia ? 'armed' : 'idle';
     setSendPhase((prev) => (prev === 'flying' ? prev : next));
   }, [value, hasMedia]);
-
-  useLayoutEffect(() => {
-    const nextSlot = attachInToolbar ? 'toolbar' : 'field';
-    if (prevAttachSlot.current === nextSlot) return;
-    const root = rootRef.current;
-    if (!root) {
-      prevAttachSlot.current = nextSlot;
-      return;
-    }
-    const state = Flip.getState(root.querySelectorAll('[data-flip-group="comment-attach"] .comment-attach-btn'));
-    prevAttachSlot.current = nextSlot;
-    Flip.from(state, {
-      duration: 0.34,
-      ease: 'power2.inOut',
-      absolute: true,
-      nested: true,
-      targets: root.querySelectorAll('.comment-attach-pair.is-visible .comment-attach-btn')
-    });
-  }, [attachInToolbar]);
 
   useEffect(() => {
     return () => {
@@ -287,7 +269,7 @@ function CommentComposeForm({
     } finally {
       window.setTimeout(() => {
         setSendPhase((prev) => (prev === 'flying' ? 'idle' : prev));
-      }, 420);
+      }, 720);
     }
   }, [
     canSend,
@@ -310,7 +292,10 @@ function CommentComposeForm({
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    if (previewOpen) closePreview();
+    if (previewOpen) {
+      closePreview();
+      return;
+    }
     void runSend();
   };
 
@@ -326,20 +311,26 @@ function CommentComposeForm({
 
   const attachDisabled = busy || mediaItems.length >= MAX_COMMENT_MEDIA_FILES;
 
+  const sendButtonProps = {
+    disabled: !canSend && sendPhase !== 'flying',
+    busy: busy || sendPhase === 'flying',
+    phase: sendPhase,
+    badgeCount: previewOpen ? readyCount : 0
+  };
+
   const previewOverlay =
     previewOpen && typeof document !== 'undefined'
       ? createPortal(
           <div
             className={clsx('comment-send-preview-overlay', previewVisible && 'is-visible')}
             role="presentation"
-            onClick={(e) => {
-              if (e.target === e.currentTarget) closePreview();
-            }}
+            onClick={closePreview}
           >
             <div
               className="comment-send-preview-stage"
               role="dialog"
               aria-label="Предпросмотр комментария"
+              onClick={(e) => e.stopPropagation()}
             >
               <div className="comment-send-preview-card">
                 {captionAbove ? (
@@ -349,13 +340,13 @@ function CommentComposeForm({
                     content={value}
                   />
                 ) : null}
-                {readyPreviewItems.filter((i) => i.status === 'ready').length > 0 ? (
+                {readyCount > 0 ? (
                   <div className="comment-send-preview-card__media">
                     <SortableMediaPreviewGrid
                       items={readyPreviewItems.filter((i) => i.status === 'ready')}
                       onReorder={() => {}}
                       enabled={false}
-                      showCaption={false}
+                      layout="grid"
                       className="comment-send-preview-grid"
                     />
                   </div>
@@ -368,8 +359,20 @@ function CommentComposeForm({
                   />
                 ) : null}
               </div>
+              <CommentSendButton
+                {...sendButtonProps}
+                type="button"
+                className="comment-send-btn--preview"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  void runSend();
+                }}
+              />
             </div>
-            <div className="comment-send-preview-sheet">
+            <div
+              className="comment-send-preview-sheet"
+              onClick={(e) => e.stopPropagation()}
+            >
               <button
                 type="button"
                 className="comment-send-preview-sheet__action"
@@ -394,9 +397,9 @@ function CommentComposeForm({
       : null;
 
   return (
-    <div className="comment-compose modal-comment-footer" ref={rootRef}>
+    <div className="comment-compose modal-comment-footer">
       {replySlot}
-      <form onSubmit={handleFormSubmit} className={formClassName}>
+      <form onSubmit={handleFormSubmit} className={clsx(formClassName, 'comment-compose__form')}>
         <input
           ref={galleryInputRef}
           type="file"
@@ -422,47 +425,61 @@ function CommentComposeForm({
           }}
         />
 
-        <div className="comment-compose__field-col">
-          <PostRichTextField
-            ref={fieldRef}
-            id={inputId}
-            value={value}
-            onChange={onChange}
-            enableFrame={false}
-            compact
-            placeholder={placeholder}
-            aria-label={placeholder}
-            toolbarExtra={
-              <AttachButtons
-                variant="toolbar"
-                visible={attachInToolbar}
-                disabled={attachDisabled}
-                flipGroup="comment-attach"
-                onGallery={() => galleryInputRef.current?.click()}
-                onCamera={() => cameraInputRef.current?.click()}
-              />
-            }
-            editorEnd={
-              <AttachButtons
-                variant="field"
-                visible={!attachInToolbar}
-                disabled={attachDisabled}
-                flipGroup="comment-attach"
-                onGallery={() => galleryInputRef.current?.click()}
-                onCamera={() => cameraInputRef.current?.click()}
-              />
-            }
-          />
+        <div className="comment-compose__row">
+          <div className="comment-compose__field-col">
+            <PostRichTextField
+              ref={fieldRef}
+              id={inputId}
+              value={value}
+              onChange={onChange}
+              enableFrame={false}
+              compact
+              placeholder={placeholder}
+              aria-label={placeholder}
+              toolbarExtra={
+                <AttachButtons
+                  variant="toolbar"
+                  visible={attachInToolbar}
+                  disabled={attachDisabled}
+                  onGallery={() => galleryInputRef.current?.click()}
+                  onCamera={() => cameraInputRef.current?.click()}
+                />
+              }
+              editorEnd={
+                <AttachButtons
+                  variant="field"
+                  visible={!attachInToolbar}
+                  disabled={attachDisabled}
+                  onGallery={() => galleryInputRef.current?.click()}
+                  onCamera={() => cameraInputRef.current?.click()}
+                />
+              }
+            />
+          </div>
 
-          {readyPreviewItems.length > 0 ? (
+          {!previewOpen ? (
+            <CommentSendButton
+              {...sendButtonProps}
+              {...(longPressEnabled ? longPressHandlers : {})}
+            />
+          ) : (
+            <span className="comment-send-btn comment-send-btn--spacer" aria-hidden="true" />
+          )}
+          <LongPressRing {...ringProps} />
+        </div>
+
+        {readyPreviewItems.length > 0 ? (
+          <div className="comment-compose__media">
             <SortableMediaPreviewGrid
               items={readyPreviewItems}
+              layout="strip"
               onReorder={(next) => {
                 const byKey = new Map(mediaItems.map((item) => [item.key, item]));
-                setMediaItems(next.map((item) => byKey.get(item.key)).filter(Boolean));
+                setMediaItems(
+                  next.map((item) => byKey.get(item.key)).filter(Boolean)
+                );
               }}
-              className="comment-compose-media-grid"
-              showCaption={false}
+              className="comment-compose-media-strip"
               getAction={(item) => (
                 <button
                   type="button"
@@ -474,26 +491,8 @@ function CommentComposeForm({
                 </button>
               )}
             />
-          ) : null}
-        </div>
-
-        <CommentSendButton
-          disabled={!canSend && sendPhase !== 'flying'}
-          busy={busy || sendPhase === 'flying'}
-          phase={sendPhase}
-          badgeCount={previewOpen ? mediaItems.filter((i) => i.status === 'ready').length : 0}
-          className={previewOpen ? 'comment-send-btn--elevated' : undefined}
-          {...(longPressEnabled ? longPressHandlers : {})}
-          {...(previewOpen
-            ? {
-                onClick: (e) => {
-                  e.preventDefault();
-                  void runSend();
-                }
-              }
-            : {})}
-        />
-        <LongPressRing {...ringProps} />
+          </div>
+        ) : null}
       </form>
       {previewOverlay}
     </div>

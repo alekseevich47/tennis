@@ -339,6 +339,28 @@ label.product-category-option {
   margin: 0;
 }
 
+.product-price-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0 8px;
+  margin: 0;
+}
+
+.product-price-current {
+  color: #007aff;
+  font-weight: inherit;
+  font-size: inherit;
+}
+
+.product-price-old {
+  color: #9ca3af;
+  font-weight: 500;
+  font-size: 0.85em;
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+}
+
 .product-card-category-chips {
   display: flex;
   flex-wrap: wrap;
@@ -613,7 +635,8 @@ label.product-category-option {
   grid-column: span 2;
 }
 
-.product-form .telegram-media-item {
+.product-form .telegram-media-item,
+.product-form .sortable-media-item {
   position: relative;
   min-height: 110px;
   margin: 0;
@@ -623,6 +646,8 @@ label.product-category-option {
 
 .product-form .telegram-media-item img,
 .product-form .telegram-media-item video,
+.product-form .sortable-media-item img,
+.product-form .sortable-media-item video,
 .product-form .telegram-video-preview {
   display: block;
   width: 100%;
@@ -912,6 +937,21 @@ label.product-category-option {
   margin: 2px 0 0;
 }
 
+.product-price .product-price-old {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.product-form-price-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.product-form-price-row > .form-group {
+  margin: 0;
+}
+
 .product-out-of-stock-text {
   margin: -6px 0 0;
   color: #ff3b30;
@@ -932,6 +972,10 @@ label.product-category-option {
 
   .product-info {
     padding: 10px;
+  }
+
+  .product-form-price-row {
+    grid-template-columns: 1fr;
   }
 
   .product-gallery-nav {

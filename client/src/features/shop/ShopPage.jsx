@@ -121,10 +121,20 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
       );
     }
 
-    return baseProducts.filter((product) =>
-      String(product.title || '').toLowerCase().includes(normalizedSearchQuery)
-    );
+    return baseProducts.filter((product) => {
+      const title = String(product.title || '').toLowerCase();
+      const description = String(product.description || '').toLowerCase();
+      return (
+        title.includes(normalizedSearchQuery)
+        || description.includes(normalizedSearchQuery)
+      );
+    });
   }, [products, deletedProductIds, searchQuery]);
+
+  const categoryProductCount = useMemo(() => {
+    if (!selectedCategoryId || !products) return null;
+    return products.filter((product) => !product.is_deleted).length;
+  }, [selectedCategoryId, products]);
 
   const handleCloseSearchUI = useCallback(() => {
     setIsSearchOpen(false);
@@ -207,6 +217,7 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
             <CategoryDropdown
               selectedCategoryId={selectedCategoryId}
               onCategoryChange={setSelectedCategoryId}
+              productCount={categoryProductCount}
               isSearchOpen={isSearchOpen}
               onCloseSearch={handleCloseSearchUI}
               onOpenChange={setIsCategoryDropdownOpen}

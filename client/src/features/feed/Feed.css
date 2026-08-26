@@ -3038,12 +3038,41 @@ button.post-card-like:hover:not(:disabled) {
   background: #fff;
 }
 
-.comment-compose__field-col {
-  flex: 1;
-  min-width: 0;
+.modal-comment-footer .comment-compose__form.modal-comment-form-footer,
+.comment-compose__form {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  align-items: stretch;
+  width: 100%;
+}
+
+.comment-compose__row {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  width: 100%;
+}
+
+.comment-compose__field-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.comment-compose__media {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.comment-compose__media::-webkit-scrollbar {
+  display: none;
 }
 
 .post-rich-text--with-editor-end .post-rich-text__editor {
@@ -3063,23 +3092,29 @@ button.post-card-like:hover:not(:disabled) {
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  transition: opacity 0.28s ease, transform 0.28s ease;
+  transition: opacity 0.28s ease;
 }
 
 .comment-attach-pair.is-hidden {
   opacity: 0;
-  transform: scale(0.72);
   pointer-events: none;
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
 }
 
 .comment-attach-pair.is-visible {
   opacity: 1;
-  transform: scale(1);
   pointer-events: auto;
+}
+
+.comment-attach-pair--toolbar.is-hidden {
+  max-width: 0;
+  margin: 0;
+  overflow: hidden;
+  transition: opacity 0.28s ease, max-width 0.28s ease;
+}
+
+.comment-attach-pair--toolbar.is-visible {
+  max-width: 72px;
+  transition: opacity 0.28s ease, max-width 0.28s ease;
 }
 
 .comment-attach-btn {
@@ -3124,7 +3159,6 @@ button.post-card-like:hover:not(:disabled) {
   height: 20px;
   display: block;
   pointer-events: none;
-  /* SVG uses currentColor via CSS filter for field grey */
 }
 
 .comment-attach-pair--field .comment-attach-btn__img {
@@ -3137,11 +3171,26 @@ button.post-card-like:hover:not(:disabled) {
 
 .comment-send-btn {
   position: relative;
-  overflow: visible;
+  overflow: hidden;
+}
+
+.comment-send-btn__stage {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  display: block;
+  overflow: hidden;
+}
+
+.comment-send-btn__icon--arrow,
+.comment-send-btn__icon--plane {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  display: block;
 }
 
 .comment-send-btn__icon--plane {
-  position: absolute;
   opacity: 0;
   pointer-events: none;
 }
@@ -3164,33 +3213,76 @@ button.post-card-like:hover:not(:disabled) {
   z-index: 2;
 }
 
-.comment-send-btn--elevated {
-  position: fixed;
+.comment-send-btn--spacer {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.comment-send-btn--preview {
+  position: absolute;
   right: 16px;
-  bottom: calc(96px + env(safe-area-inset-bottom, 0px));
-  z-index: 3700;
+  bottom: 0;
+  z-index: 2;
   box-shadow: 0 8px 24px rgba(0, 122, 255, 0.35);
 }
 
-.comment-compose-media-grid,
-.comment-media-grid {
-  margin: 0;
+.sortable-media-preview--strip {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 8px;
+  width: max-content;
+  min-width: 100%;
+  padding: 2px 0 4px;
 }
 
-.comment-compose-media-grid .telegram-media-item,
-.comment-media-grid .telegram-media-item {
+.sortable-media-preview--strip .sortable-media-item {
   position: relative;
-  min-height: 72px;
+  flex: 0 0 112px;
+  width: 112px;
+  height: 112px;
+  margin: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #eef2f7;
 }
 
-.comment-compose-media-grid .telegram-media-item img,
-.comment-compose-media-grid .telegram-media-item video,
-.comment-media-grid .telegram-media-item img,
-.comment-media-grid .telegram-media-item video {
+.sortable-media-preview--strip .media-frame,
+.sortable-media-preview--strip img,
+.sortable-media-preview--strip video,
+.sortable-media-preview--strip .telegram-video-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.sortable-media-preview--grid {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #dfe6ee;
+}
+
+.sortable-media-item {
+  position: relative;
+  margin: 0;
+  min-height: 0;
+}
+
+.sortable-media-item__skeleton,
+.sortable-media-item__error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
   min-height: 72px;
-  object-fit: cover;
+  background: rgba(15, 23, 42, 0.12);
+  color: #fff;
+  font-size: 12px;
 }
 
 .comment-media-remove-btn {
@@ -3214,13 +3306,11 @@ button.post-card-like:hover:not(:disabled) {
 }
 
 .sortable-media-preview--dragging {
-  touch-action: none;
   user-select: none;
 }
 
-.sortable-media-preview--dragging .telegram-media-item.is-sortable-dragging {
+.sortable-media-preview--dragging .sortable-media-item.is-sortable-dragging {
   opacity: 0.92;
-  transform: scale(1.03);
   z-index: 4;
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
 }
@@ -3293,6 +3383,10 @@ button.post-card-like:hover:not(:disabled) {
   gap: 8px;
 }
 
+.comment-media-grid {
+  margin: 0;
+}
+
 .comment-send-preview-overlay {
   position: fixed;
   inset: 0;
@@ -3314,12 +3408,19 @@ button.post-card-like:hover:not(:disabled) {
 }
 
 .comment-send-preview-stage {
+  position: relative;
   flex: 1;
   display: flex;
   align-items: flex-end;
   justify-content: flex-start;
   padding: 16px 72px 12px 16px;
   min-height: 0;
+  pointer-events: none;
+}
+
+.comment-send-preview-stage .comment-send-preview-card,
+.comment-send-preview-stage .comment-send-btn--preview {
+  pointer-events: auto;
 }
 
 .comment-send-preview-card {
@@ -3343,9 +3444,8 @@ button.post-card-like:hover:not(:disabled) {
   word-break: break-word;
 }
 
-.comment-send-preview-card__media .telegram-media-grid {
+.comment-send-preview-card__media .sortable-media-preview--grid {
   border-radius: 12px;
-  overflow: hidden;
 }
 
 .comment-send-preview-sheet {
@@ -3354,6 +3454,7 @@ button.post-card-like:hover:not(:disabled) {
   border-radius: 16px;
   box-shadow: 0 8px 28px rgba(15, 23, 42, 0.14);
   overflow: hidden;
+  pointer-events: auto;
 }
 
 .comment-send-preview-sheet__action {

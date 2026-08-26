@@ -5,6 +5,7 @@ import { useProductCategories } from '../../hooks/useProductCategories';
 import { clamp } from '../../lib/gestures';
 import { getMediaThumbUrl, getMediaUrl, isVideoMediaName, mediaNames, videoPreviewUrl } from '../../lib/media';
 import BuyButton from './BuyButton';
+import ProductPrice from './ProductPrice';
 
 const SWIPE_THRESHOLD_PX = 36;
 
@@ -264,7 +265,13 @@ function ProductCard({
             ))}
           </div>
         )}
-        <p className="price">{product.price} ₽</p>
+        <ProductPrice
+          price={product.price}
+          oldPrice={product.old_price}
+          className="price"
+          currentClassName="product-price-current"
+          oldClassName="product-price-old"
+        />
         {product.out_of_stock && (
           <span className="product-out-of-stock-badge">Нет в наличии</span>
         )}
