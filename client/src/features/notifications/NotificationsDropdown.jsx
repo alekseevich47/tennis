@@ -21,7 +21,8 @@ const BROW_CLOSE_MS = 200;
  *   onOpenTraining?: (trainingId: string) => void,
  *   onOpenMembership?: () => void,
  *   onOpenBooking?: () => void,
- *   onOpenComment?: (meta: Record<string, unknown>) => void
+ *   onOpenComment?: (meta: Record<string, unknown>) => void,
+ *   onOpenSellerChat?: () => void
  * }} props
  */
 export default function NotificationsDropdown({
@@ -34,7 +35,8 @@ export default function NotificationsDropdown({
   onOpenTraining,
   onOpenMembership,
   onOpenBooking,
-  onOpenComment
+  onOpenComment,
+  onOpenSellerChat
 }) {
   const dropdownRef = useRef(null);
   const listRef = useRef(null);
@@ -292,6 +294,11 @@ export default function NotificationsDropdown({
     [onClose, onOpenComment]
   );
 
+  const handleOpenSellerChat = useCallback(() => {
+    onOpenSellerChat?.();
+    onClose();
+  }, [onClose, onOpenSellerChat]);
+
   if (!mounted) return null;
 
   return (
@@ -327,6 +334,7 @@ export default function NotificationsDropdown({
                 onOpenMembership={handleOpenMembership}
                 onOpenBooking={handleOpenBooking}
                 onOpenComment={handleOpenComment}
+                onOpenSellerChat={handleOpenSellerChat}
               />
             );
           })}

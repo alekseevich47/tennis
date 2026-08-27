@@ -459,6 +459,18 @@
       },
       {
         "hidden": false,
+        "id": "number_unpaid_sessions_01",
+        "max": null,
+        "min": 0,
+        "name": "unpaid_sessions",
+        "onlyInt": false,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      },
+      {
+        "hidden": false,
         "id": "date3845444698",
         "max": "",
         "min": "",
@@ -558,6 +570,48 @@
         "required": false,
         "system": false,
         "type": "json"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text_membership_expiry_warn_for_01",
+        "max": 0,
+        "min": 0,
+        "name": "membership_expiry_warn_for",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text_membership_expired_notified_for_01",
+        "max": 0,
+        "min": 0,
+        "name": "membership_expired_notified_for",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text_freeze_expiry_warn_for_01",
+        "max": 0,
+        "min": 0,
+        "name": "freeze_expiry_warn_for",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
       },
       {
         "hidden": false,
@@ -2448,7 +2502,8 @@
           "open_comment",
           "open_training",
           "open_membership",
-          "open_booking"
+          "open_booking",
+          "open_seller_chat"
         ]
       },
       {
@@ -3796,6 +3851,19 @@
         "cascadeDelete": false,
         "collectionId": "_pb_users_auth_",
         "hidden": false,
+        "id": "relation_unpaid_booked_users_01",
+        "maxSelect": 999,
+        "minSelect": 0,
+        "name": "unpaid_booked_users",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "relation"
+      },
+      {
+        "cascadeDelete": false,
+        "collectionId": "_pb_users_auth_",
+        "hidden": false,
         "id": "relation1563450213",
         "maxSelect": 999,
         "minSelect": 0,
@@ -3869,6 +3937,171 @@
       }
     ],
     "indexes": [],
+    "system": false
+  },
+  {
+    "id": "pbc_system_message_templates_01",
+    "listRule": "@request.auth.role = \"moderator\"",
+    "viewRule": "@request.auth.role = \"moderator\"",
+    "createRule": null,
+    "updateRule": "@request.auth.role = \"moderator\"",
+    "deleteRule": null,
+    "name": "system_message_templates",
+    "type": "base",
+    "fields": [
+      {
+        "autogeneratePattern": "[a-z0-9]{15}",
+        "hidden": false,
+        "id": "text_smt_id",
+        "max": 15,
+        "min": 15,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text_smt_key",
+        "max": 0,
+        "min": 0,
+        "name": "key",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": true,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "select_smt_channel",
+        "maxSelect": 1,
+        "name": "channel",
+        "presentable": false,
+        "required": true,
+        "system": false,
+        "type": "select",
+        "values": ["bot", "app"]
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text_smt_name",
+        "max": 0,
+        "min": 0,
+        "name": "name",
+        "pattern": "",
+        "presentable": true,
+        "primaryKey": false,
+        "required": true,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text_smt_description",
+        "max": 0,
+        "min": 0,
+        "name": "description",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text_smt_title",
+        "max": 0,
+        "min": 0,
+        "name": "title",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text_smt_body",
+        "max": 0,
+        "min": 0,
+        "name": "body",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text_smt_action_label",
+        "max": 0,
+        "min": 0,
+        "name": "action_label",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "select_smt_audience",
+        "maxSelect": 1,
+        "name": "audience",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "select",
+        "values": ["user", "moderator", "both"]
+      },
+      {
+        "hidden": false,
+        "id": "bool_smt_enabled",
+        "name": "enabled",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "hidden": false,
+        "id": "autodate_smt_created",
+        "name": "created",
+        "onCreate": true,
+        "onUpdate": false,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      },
+      {
+        "hidden": false,
+        "id": "autodate_smt_updated",
+        "name": "updated",
+        "onCreate": true,
+        "onUpdate": true,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      }
+    ],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_smt_key` ON `system_message_templates` (`key`)"
+    ],
     "system": false
   }
 ]

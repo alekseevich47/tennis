@@ -5,6 +5,11 @@ import { getUserAvatarData } from '../../lib/avatar';
 export const MENTION_CLASS = 'post-mention';
 export const MENTION_USER_CLASS = 'post-mention--user';
 export const MENTION_POST_CLASS = 'post-mention--post';
+export const MENTION_REMOVE_CLASS = 'post-mention__remove';
+export const MENTION_CARET_NEAR_CLASS = 'post-mention--caret-near';
+
+/** Пробелы / ZWSP / NBSP между кареткой и чипом — «вплотную». */
+const IGNORABLE_TEXT_RE = /^[\u200B\u00A0\s]*$/;
 
 /**
  * @param {string} value
@@ -236,7 +241,201 @@ export function buildPostMentionEl(post) {
 }
 
 /**
- * Вставляет mention-чип вместо draft-range, ставит каретку после + пробел.
+ * @param {Node | null | undefined} node
+ * @returns {boolean}
+ */
+function isIgnorableTextNode(node) {
+  return Boolean(
+    node &&
+      node.nodeType === Node.TEXT_NODE &&
+      IGNORABLE_TEXT_RE.test(node.textContent || '')
+  );
+}
+
+/**
+ * Удаляет ignorable-хвост сразу после mention (один пробел / legacy ZWSP).
+ * @param {HTMLElement} mention
+ */
+function removeIgnorableTailAfter(mention) {
+  let tail = mention.nextSibling;
+  while (isIgnorableTextNode(tail)) {
+    const next = tail?.nextSibling || null;
+    tail?.parentNode?.removeChild(tail);
+    tail = next;
+  }
+}
+
+/**
+ * Физически удаляет чип + ignorable tail, ставит каретку.
+ * @param {HTMLElement} editor
+ * @param {HTMLElement} mention
+ * @param {'before' | 'after'} [caret='before']
+ * @returns {boolean}
+ */
+export function removeMentionEl(editor, mention, caret = 'before') {
+  if (!editor || !mention || !editor.contains(mention)) return false;
+  const parent = mention.parentNode;
+  if (!parent) return false;
+  const selection = window.getSelection();
+
+  const beforeNode = mention.previousSibling;
+  let afterNode = mention.nextSibling;
+  while (isIgnorableTextNode(afterNode)) {
+    afterNode = afterNode?.nextSibling || null;
+  }
+
+  removeIgnorableTailAfter(mention);
+  mention.remove();
+
+  const afterRange = document.createRange();
+  if (caret === 'after') {
+    if (afterNode && parent.contains(afterNode)) {
+      if (afterNode.nodeType === Node.TEXT_NODE) {
+        afterRange.setStart(afterNode, 0);
+      } else {
+        afterRange.setStartBefore(afterNode);
+      }
+    } else if (beforeNode && parent.contains(beforeNode)) {
+      if (beforeNode.nodeType === Node.TEXT_NODE) {
+        afterRange.setStart(beforeNode, beforeNode.textContent?.length || 0);
+      } else {
+        afterRange.setStartAfter(beforeNode);
+      }
+    } else {
+      afterRange.setStart(parent, 0);
+    }
+  } else if (beforeNode && parent.contains(beforeNode)) {
+    if (beforeNode.nodeType === Node.TEXT_NODE) {
+      afterRange.setStart(beforeNode, beforeNode.textContent?.length || 0);
+    } else {
+      afterRange.setStartAfter(beforeNode);
+    }
+  } else if (afterNode && parent.contains(afterNode)) {
+    if (afterNode.nodeType === Node.TEXT_NODE) {
+      afterRange.setStart(afterNode, 0);
+    } else {
+      afterRange.setStartBefore(afterNode);
+    }
+  } else {
+    afterRange.setStart(parent, 0);
+  }
+  afterRange.collapse(true);
+
+  if (selection) {
+    selection.removeAllRanges();
+    selection.addRange(afterRange);
+  }
+  return true;
+}
+
+/**
+ * Ищет mention «вплотную» к каретке (только ignorable между ними).
+ * @param {HTMLElement} editor
+ * @param {Range} range
+ * @param {'backward' | 'forward'} direction
+ * @returns {HTMLElement | null}
+ */
+export function findAdjacentMention(editor, range, direction) {
+  if (!editor || !range) return null;
+
+  /** @type {Node | null} */
+  let node = range.startContainer;
+  let offset = range.startOffset;
+
+  if (direction === 'backward') {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const text = node.textContent || '';
+      const before = text.slice(0, offset);
+      if (before.replace(/[\u200B\u00A0\s]+$/g, '').length > 0) return null;
+      node = node.previousSibling;
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      const el = /** @type {Element} */ (node);
+      if (isMentionEl(el) && editor.contains(el)) {
+        return /** @type {HTMLElement} */ (el);
+      }
+      if (offset > 0) {
+        node = el.childNodes[offset - 1] || null;
+      } else {
+        node = el.previousSibling;
+      }
+    } else {
+      return null;
+    }
+
+    while (isIgnorableTextNode(node)) {
+      node = node?.previousSibling || null;
+    }
+
+    if (node?.nodeType === Node.ELEMENT_NODE && isMentionEl(/** @type {Element} */ (node))) {
+      return /** @type {HTMLElement} */ (node);
+    }
+    return null;
+  }
+
+  if (node.nodeType === Node.TEXT_NODE) {
+    const text = node.textContent || '';
+    const after = text.slice(offset);
+    if (after.replace(/^[\u200B\u00A0\s]+/g, '').length > 0) return null;
+    node = node.nextSibling;
+  } else if (node.nodeType === Node.ELEMENT_NODE) {
+    const el = /** @type {Element} */ (node);
+    if (isMentionEl(el) && editor.contains(el)) {
+      return /** @type {HTMLElement} */ (el);
+    }
+    node = el.childNodes[offset] || null;
+  } else {
+    return null;
+  }
+
+  while (isIgnorableTextNode(node)) {
+    node = node?.nextSibling || null;
+  }
+
+  if (node?.nodeType === Node.ELEMENT_NODE && isMentionEl(/** @type {Element} */ (node))) {
+    return /** @type {HTMLElement} */ (node);
+  }
+  return null;
+}
+
+/**
+ * Mention внутри/пересекающий selection (Chrome часто сначала «выделяет» atomic-чип).
+ * @param {HTMLElement} editor
+ * @param {Range} range
+ * @returns {HTMLElement | null}
+ */
+function findMentionInSelectionRange(editor, range) {
+  const startEl =
+    range.startContainer.nodeType === Node.ELEMENT_NODE
+      ? /** @type {Element} */ (range.startContainer)
+      : range.startContainer.parentElement;
+  const endEl =
+    range.endContainer.nodeType === Node.ELEMENT_NODE
+      ? /** @type {Element} */ (range.endContainer)
+      : range.endContainer.parentElement;
+
+  const startMention = startEl?.closest?.(`.${MENTION_CLASS}`);
+  if (startMention && editor.contains(startMention)) {
+    return /** @type {HTMLElement} */ (startMention);
+  }
+  const endMention = endEl?.closest?.(`.${MENTION_CLASS}`);
+  if (endMention && editor.contains(endMention)) {
+    return /** @type {HTMLElement} */ (endMention);
+  }
+
+  const mentions = editor.querySelectorAll(`.${MENTION_CLASS}`);
+  for (let i = 0; i < mentions.length; i += 1) {
+    const mention = /** @type {HTMLElement} */ (mentions[i]);
+    try {
+      if (range.intersectsNode(mention)) return mention;
+    } catch {
+      /* ignore detached */
+    }
+  }
+  return null;
+}
+
+/**
+ * Вставляет mention-чип вместо draft-range, ставит каретку после + один пробел.
  * @param {HTMLElement} editor
  * @param {MentionDraft} draft
  * @param {HTMLElement} chip
@@ -256,9 +455,10 @@ export function insertMentionChip(editor, draft, chip) {
 
   range.deleteContents();
   range.insertNode(chip);
+  ensureMentionEditorChrome(chip);
 
-  // ZWSP + обычный пробел: каретка после чипа, IME реже включает авто-капитализацию.
-  const tail = document.createTextNode('\u200B ');
+  // Ровно один обычный пробел после чипа (без ZWSP).
+  const tail = document.createTextNode(' ');
   if (chip.nextSibling) {
     chip.parentNode?.insertBefore(tail, chip.nextSibling);
   } else {
@@ -266,7 +466,7 @@ export function insertMentionChip(editor, draft, chip) {
   }
 
   const after = document.createRange();
-  after.setStart(tail, tail.length);
+  after.setStart(tail, 1);
   after.collapse(true);
   selection.removeAllRanges();
   selection.addRange(after);
@@ -274,116 +474,121 @@ export function insertMentionChip(editor, draft, chip) {
 }
 
 /**
- * Удаляет mention слева (Backspace) или справа (Delete) от каретки.
+ * Удаляет mention слева (Backspace) / справа (Delete) или выделенный atomic-чип — одним нажатием.
  * @param {HTMLElement} editor
  * @param {'backward' | 'forward'} direction
  * @returns {boolean}
  */
 export function deleteAdjacentMention(editor, direction) {
   const selection = window.getSelection();
-  if (!editor || !selection || !selection.isCollapsed || selection.rangeCount === 0) {
-    return false;
-  }
+  if (!editor || !selection || selection.rangeCount === 0) return false;
   const range = selection.getRangeAt(0);
   if (!editor.contains(range.commonAncestorContainer)) return false;
 
-  /** @param {Node | null} node */
-  const isIgnorableText = (node) =>
-    node?.nodeType === Node.TEXT_NODE &&
-    /^[\u200B\u00A0\s]*$/.test(node.textContent || '');
+  // Chrome/WebKit: первый Backspace часто выделяет contenteditable=false чип.
+  if (!selection.isCollapsed) {
+    const selected = findMentionInSelectionRange(editor, range);
+    if (!selected) return false;
+    return removeMentionEl(editor, selected, direction === 'forward' ? 'after' : 'before');
+  }
 
-  /** @returns {HTMLElement | null} */
-  const findMention = () => {
-    /** @type {Node | null} */
-    let node = range.startContainer;
-    let offset = range.startOffset;
+  const caretEl =
+    range.startContainer.nodeType === Node.ELEMENT_NODE
+      ? /** @type {Element} */ (range.startContainer)
+      : range.startContainer.parentElement;
+  const inside = caretEl?.closest?.(`.${MENTION_CLASS}`);
+  if (inside && editor.contains(inside) && !caretEl?.closest?.(`.${MENTION_REMOVE_CLASS}`)) {
+    return removeMentionEl(
+      editor,
+      /** @type {HTMLElement} */ (inside),
+      direction === 'forward' ? 'after' : 'before'
+    );
+  }
 
-    if (direction === 'backward') {
-      if (node.nodeType === Node.TEXT_NODE) {
-        const text = node.textContent || '';
-        const before = text.slice(0, offset);
-        if (before.replace(/[\u200B\u00A0\s]+$/g, '').length > 0) return null;
-        node = node.previousSibling;
-      } else if (node.nodeType === Node.ELEMENT_NODE) {
-        const el = /** @type {Element} */ (node);
-        if (offset > 0) {
-          node = el.childNodes[offset - 1] || null;
-        } else {
-          node = el.previousSibling;
-        }
-      }
-
-      while (isIgnorableText(node)) {
-        node = node?.previousSibling || null;
-      }
-
-      if (node?.nodeType === Node.ELEMENT_NODE && isMentionEl(/** @type {Element} */ (node))) {
-        return /** @type {HTMLElement} */ (node);
-      }
-      return null;
-    }
-
-    if (node.nodeType === Node.TEXT_NODE) {
-      const text = node.textContent || '';
-      const after = text.slice(offset);
-      if (after.replace(/^[\u200B\u00A0\s]+/g, '').length > 0) return null;
-      node = node.nextSibling;
-    } else if (node.nodeType === Node.ELEMENT_NODE) {
-      const el = /** @type {Element} */ (node);
-      node = el.childNodes[offset] || null;
-    }
-
-    while (isIgnorableText(node)) {
-      node = node?.nextSibling || null;
-    }
-
-    if (node?.nodeType === Node.ELEMENT_NODE && isMentionEl(/** @type {Element} */ (node))) {
-      return /** @type {HTMLElement} */ (node);
-    }
-    return null;
-  };
-
-  const mention = findMention();
+  const mention = findAdjacentMention(editor, range, direction);
   if (!mention || !editor.contains(mention)) return false;
+  return removeMentionEl(editor, mention, direction === 'forward' ? 'after' : 'before');
+}
 
-  const afterRange = document.createRange();
-  if (direction === 'backward') {
-    afterRange.setStartBefore(mention);
+/**
+ * Кнопка × внутри чипа (только в редакторе; sanitize/serialize отбрасывает).
+ * @param {HTMLElement | Element} chip
+ */
+function ensureMentionRemoveButton(chip) {
+  const el = /** @type {HTMLElement} */ (chip);
+  if (el.querySelector(`.${MENTION_REMOVE_CLASS}`)) return;
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = MENTION_REMOVE_CLASS;
+  btn.setAttribute('contenteditable', 'false');
+  btn.setAttribute('aria-label', 'Удалить прикрепление');
+  btn.tabIndex = -1;
+  btn.textContent = '×';
+  el.appendChild(btn);
+}
+
+/**
+ * Atomic-чипы + кнопка удаления в contenteditable.
+ * @param {HTMLElement | Element | null} root
+ */
+export function ensureMentionEditorChrome(root) {
+  if (!root) return;
+  if (root instanceof Element && root.classList?.contains(MENTION_CLASS)) {
+    /** @type {HTMLElement} */ (root).contentEditable = 'false';
+    ensureMentionRemoveButton(root);
+    return;
+  }
+  const editor = /** @type {HTMLElement} */ (root);
+  editor.querySelectorAll(`.${MENTION_CLASS}`).forEach((node) => {
+    const el = /** @type {HTMLElement} */ (node);
+    el.contentEditable = 'false';
+    ensureMentionRemoveButton(el);
+  });
+}
+
+/**
+ * Подсветка «каретка вплотную» → показать ×.
+ * @param {HTMLElement | null} editor
+ */
+export function updateMentionCaretProximity(editor) {
+  if (!editor) return;
+  editor.querySelectorAll(`.${MENTION_CLASS}.${MENTION_CARET_NEAR_CLASS}`).forEach((node) => {
+    node.classList.remove(MENTION_CARET_NEAR_CLASS);
+  });
+
+  const selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0) return;
+  const range = selection.getRangeAt(0);
+  if (!editor.contains(range.commonAncestorContainer)) return;
+
+  /** @type {HTMLElement | null} */
+  let near = null;
+  if (!selection.isCollapsed) {
+    near = findMentionInSelectionRange(editor, range);
   } else {
-    let tail = mention.nextSibling;
-    while (isIgnorableText(tail)) {
-      tail = tail?.nextSibling || null;
-    }
-    if (tail?.nodeType === Node.TEXT_NODE) {
-      afterRange.setStart(tail, 0);
-    } else {
-      afterRange.setStartAfter(mention);
+    near =
+      findAdjacentMention(editor, range, 'backward') ||
+      findAdjacentMention(editor, range, 'forward');
+    if (!near) {
+      const caretEl =
+        range.startContainer.nodeType === Node.ELEMENT_NODE
+          ? /** @type {Element} */ (range.startContainer)
+          : range.startContainer.parentElement;
+      const inside = caretEl?.closest?.(`.${MENTION_CLASS}`);
+      if (inside && editor.contains(inside)) {
+        near = /** @type {HTMLElement} */ (inside);
+      }
     }
   }
-  afterRange.collapse(true);
-
-  let tail = mention.nextSibling;
-  while (isIgnorableText(tail)) {
-    const next = tail?.nextSibling || null;
-    tail?.parentNode?.removeChild(tail);
-    tail = next;
-  }
-
-  mention.remove();
-  selection.removeAllRanges();
-  selection.addRange(afterRange);
-  return true;
+  if (near) near.classList.add(MENTION_CARET_NEAR_CLASS);
 }
 
 /**
  * @param {HTMLElement | null} editor
+ * @deprecated используйте ensureMentionEditorChrome
  */
 export function ensureMentionCarets(editor) {
-  if (!editor) return;
-  editor.querySelectorAll(`.${MENTION_CLASS}`).forEach((node) => {
-    const el = /** @type {HTMLElement} */ (node);
-    el.contentEditable = 'false';
-  });
+  ensureMentionEditorChrome(editor);
 }
 
 /**

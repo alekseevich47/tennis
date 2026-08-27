@@ -79,10 +79,21 @@ function findTrainingNotification(userId, trainingId) {
 }
 
 function getStateFields(targetState) {
+  var tpl;
+  try {
+    tpl = require(__hooks + '/templatelib.js');
+  } catch (_) {
+    tpl = null;
+  }
+
   if (targetState === 'countdown') {
+    var countdown = tpl ? tpl.resolve($app, 'app.training_countdown', {}) : null;
+    if (countdown === null && tpl) {
+      return null;
+    }
     return {
-      title: TRAINING_COUNTDOWN_TITLE,
-      body: TRAINING_COUNTDOWN_BODY,
+      title: (countdown && countdown.title) || TRAINING_COUNTDOWN_TITLE,
+      body: (countdown && countdown.body) || TRAINING_COUNTDOWN_BODY,
       badge_dynamic_type: 'training_countdown',
       badge_text: '',
       click_action: 'open_training',
@@ -90,20 +101,28 @@ function getStateFields(targetState) {
     };
   }
   if (targetState === 'farewell') {
+    var farewell = tpl ? tpl.resolve($app, 'app.training_farewell', {}) : null;
+    if (farewell === null && tpl) {
+      return null;
+    }
     return {
-      title: TRAINING_FAREWELL_TITLE,
-      body: TRAINING_FAREWELL_BODY,
+      title: (farewell && farewell.title) || TRAINING_FAREWELL_TITLE,
+      body: (farewell && farewell.body) || TRAINING_FAREWELL_BODY,
       badge_dynamic_type: '',
-      badge_text: TRAINING_FAREWELL_BADGE,
+      badge_text: (farewell && farewell.action_label) || TRAINING_FAREWELL_BADGE,
       click_action: 'open_booking',
       training_state: 'farewell'
     };
   }
+  var completed = tpl ? tpl.resolve($app, 'app.training_completed', {}) : null;
+  if (completed === null && tpl) {
+    return null;
+  }
   return {
-    title: TRAINING_COMPLETED_TITLE,
-    body: TRAINING_COMPLETED_BODY,
+    title: (completed && completed.title) || TRAINING_COMPLETED_TITLE,
+    body: (completed && completed.body) || TRAINING_COMPLETED_BODY,
     badge_dynamic_type: '',
-    badge_text: TRAINING_COMPLETED_BADGE,
+    badge_text: (completed && completed.action_label) || TRAINING_COMPLETED_BADGE,
     click_action: 'open_booking',
     training_state: 'completed'
   };
@@ -132,6 +151,7 @@ function upsertTrainingNotification(userId, trainingId, targetState) {
 
   var existing = findTrainingNotification(userId, trainingId);
   var fields = getStateFields(targetState);
+  if (!fields) return false;
 
   if (existing) {
     if (targetState === 'completed' && existing.getString('training_state') === 'farewell') {
@@ -217,7 +237,7 @@ var SESSIONS_LEFT_COPY = {
  * @param {string} [membershipType]
  */
 function maybeNotifySessionsLeft(app, userId, previousAvailable, newAvailable, membershipType) {
-  if (membershipType !== 'regular') return;
+  if (membershipType !== 'regular' && membershipType !== 'one_time') return;
   if (previousAvailable === newAvailable) return;
   if ([0, 1, 2, 3].indexOf(newAvailable) === -1) return;
 
@@ -225,6 +245,17 @@ function maybeNotifySessionsLeft(app, userId, previousAvailable, newAvailable, m
   if (!copy) return;
 
   try {
+    var tpl = require(__hooks + '/templatelib.js');
+    var resolved = tpl.resolve(app, 'app.sessions_left_' + newAvailable, {});
+    if (resolved === null) return;
+    if (resolved) {
+      copy = {
+        title: resolved.title || copy.title,
+        body: resolved.body || copy.body,
+        badge_text: resolved.action_label || copy.badge_text
+      };
+    }
+
     var notificationsCollection = app.findCollectionByNameOrId('notifications');
     var notification = new Record(notificationsCollection);
     notification.set('recipient', userId);

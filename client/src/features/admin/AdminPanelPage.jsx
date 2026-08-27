@@ -3,6 +3,7 @@ import BroadcastModal from './BroadcastModal';
 import LogsModal from './LogsModal';
 import NotificationSendModal from './NotificationSendModal';
 import NotificationSettingsModal from './NotificationSettingsModal';
+import SystemTemplatesModal from './SystemTemplatesModal';
 import StatisticsHubModal from './StatisticsHubModal';
 import StatsGrowthModal from './stats/StatsGrowthModal';
 import StatsReachModal from './stats/StatsReachModal';
@@ -16,7 +17,9 @@ import './AdminPanelPage.css';
  */
 export default function AdminPanelPage() {
   const [broadcastOpen, setBroadcastOpen] = useState(false);
+  const [editBroadcastsOpen, setEditBroadcastsOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
+  const [editNotificationsOpen, setEditNotificationsOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [logsOpen, setLogsOpen] = useState(false);
   const [statsHubOpen, setStatsHubOpen] = useState(false);
@@ -60,9 +63,27 @@ export default function AdminPanelPage() {
           <button
             type="button"
             className="admin-panel__item"
+            onClick={() => setEditBroadcastsOpen(true)}
+          >
+            Редактировать рассылки
+          </button>
+        </li>
+        <li>
+          <button
+            type="button"
+            className="admin-panel__item"
             onClick={() => setNotificationOpen(true)}
           >
             Отправить уведомление
+          </button>
+        </li>
+        <li>
+          <button
+            type="button"
+            className="admin-panel__item"
+            onClick={() => setEditNotificationsOpen(true)}
+          >
+            Редактировать уведомления
           </button>
         </li>
         <li>
@@ -116,9 +137,21 @@ export default function AdminPanelPage() {
         onBack={handleStatsBack}
       />
       <BroadcastModal isOpen={broadcastOpen} onClose={() => setBroadcastOpen(false)} />
+      <SystemTemplatesModal
+        isOpen={editBroadcastsOpen}
+        onClose={() => setEditBroadcastsOpen(false)}
+        channel="bot"
+        title="Редактировать рассылки"
+      />
       <NotificationSendModal
         isOpen={notificationOpen}
         onClose={() => setNotificationOpen(false)}
+      />
+      <SystemTemplatesModal
+        isOpen={editNotificationsOpen}
+        onClose={() => setEditNotificationsOpen(false)}
+        channel="app"
+        title="Редактировать уведомления"
       />
       <NotificationSettingsModal
         isOpen={settingsOpen}

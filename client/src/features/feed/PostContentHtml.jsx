@@ -1,7 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import { startAnimFrames, toDisplayHtml } from './postRichText';
 import { MENTION_CLASS } from './postMentions';
+import { applyMentionMissingStatuses, MENTION_MISSING_CLASS } from './mentionStatus';
 import { useMentionNav } from '../../context/MentionNavContext';
+import { usePlayers } from '../../hooks/usePlayers';
 
 /**
  * @param {{
@@ -17,6 +19,7 @@ function PostContentHtml({ content, className, as = 'div', onClick, type = 'butt
   const Tag = as;
   const ref = useRef(/** @type {HTMLElement | null} */ (null));
   const mentionNav = useMentionNav();
+  const { data: players } = usePlayers();
 
   useEffect(() => {
     let stop = () => {};
@@ -29,6 +32,21 @@ function PostContentHtml({ content, className, as = 'div', onClick, type = 'butt
     };
   }, [html]);
 
+  useEffect(() => {
+    let cancelled = false;
+    const run = async () => {
+      await applyMentionMissingStatuses(ref.current, { players });
+      if (cancelled) return;
+    };
+    const raf = requestAnimationFrame(() => {
+      run();
+    });
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(raf);
+    };
+  }, [html, players]);
+
   /**
    * @param {React.MouseEvent} e
    */
@@ -38,6 +56,9 @@ function PostContentHtml({ content, className, as = 'div', onClick, type = 'butt
     if (mention && ref.current?.contains(mention)) {
       e.preventDefault();
       e.stopPropagation();
+      if (mention.classList.contains(MENTION_MISSING_CLASS)) {
+        return;
+      }
       const kind = mention.getAttribute('data-mention');
       if (kind === 'user') {
         const id = mention.getAttribute('data-user-id') || '';

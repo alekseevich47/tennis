@@ -25,6 +25,7 @@ function formatMembershipDate(dateStr) {
 function getMembershipTypeLabel(type) {
   if (type === 'corporate') return 'Корпоративный';
   if (type === 'annual') return 'Годовой';
+  if (type === 'one_time') return 'Разовый';
   return 'Обычный';
 }
 
@@ -66,6 +67,7 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
   const moderator = isModerator();
   const [availableSessions, setAvailableSessions] = useState(0);
   const [usedSessions, setUsedSessions] = useState(0);
+  const [unpaidSessions, setUnpaidSessions] = useState(0);
   const [membershipType, setMembershipType] = useState('regular');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -86,6 +88,7 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
       const fields = [
         'available_sessions',
         'used_sessions',
+        'unpaid_sessions',
         'membership_type',
         'membership_start_date',
         'membership_end_date',
@@ -103,6 +106,7 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
 
       setAvailableSessions(Number(fresh.available_sessions ?? 0));
       setUsedSessions(Number(fresh.used_sessions ?? 0));
+      setUnpaidSessions(Number(fresh.unpaid_sessions ?? 0));
       setMembershipType(fresh.membership_type || 'regular');
       setStartDate(fresh.membership_start_date || '');
       setEndDate(fresh.membership_end_date || '');
@@ -125,6 +129,7 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
 
     setAvailableSessions(Number(user?.available_sessions ?? 0));
     setUsedSessions(Number(user?.used_sessions ?? 0));
+    setUnpaidSessions(Number(user?.unpaid_sessions ?? 0));
     setMembershipType(user?.membership_type || 'regular');
     setStartDate(user?.membership_start_date || '');
     setEndDate(user?.membership_end_date || '');
@@ -140,6 +145,7 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
     fetchMembership,
     user?.available_sessions,
     user?.used_sessions,
+    user?.unpaid_sessions,
     user?.membership_type,
     user?.membership_start_date,
     user?.membership_end_date,
@@ -154,6 +160,7 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
     if (!record) return;
     setAvailableSessions(Number(record.available_sessions ?? 0));
     setUsedSessions(Number(record.used_sessions ?? 0));
+    setUnpaidSessions(Number(record.unpaid_sessions ?? 0));
     setMembershipType(record.membership_type || 'regular');
     setStartDate(record.membership_start_date || '');
     setEndDate(record.membership_end_date || '');
@@ -228,6 +235,14 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
           membership_frozen_at: newEntry.frozen_at,
           membership_freeze_log: updatedLog
         });
+        try {
+          await pb.send('/api/bot-notify-membership-frozen', {
+            method: 'POST',
+            body: { userId: user.id }
+          });
+        } catch (notifyErr) {
+          error('notify membership freeze:', notifyErr);
+        }
       }
 
       applyMembership(updated);
@@ -242,6 +257,9 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
 
   const isCorporate = membershipType === 'corporate';
   const isAnnual = membershipType === 'annual';
+  const isOneTime = membershipType === 'one_time';
+  const isUnlimitedDaily = isCorporate || isAnnual;
+  const showPeriod = !isOneTime && (startDate || endDate);
 
   return (
     <>
@@ -312,10 +330,15 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
           <p><strong>Тип абонемента:</strong> {getMembershipTypeLabel(membershipType)}</p>
           <p>
             <strong>Доступно:</strong>{' '}
-            {isCorporate ? '∞' : isAnnual ? '∞ (1 в день)' : availableSessions}
+            {isUnlimitedDaily ? '∞ (1 в день)' : availableSessions}
           </p>
           <p><strong>Использовано:</strong> {usedSessions}</p>
-          {!isCorporate && (startDate || endDate) && (
+          {unpaidSessions > 0 && (
+            <p className="membership-unpaid-notice">
+              <strong>Неоплачено:</strong> {unpaidSessions}
+            </p>
+          )}
+          {showPeriod && (
             <p>
               <strong>Период:</strong>{' '}
               {formatMembershipDate(startDate)} — {formatMembershipDate(endDate)}

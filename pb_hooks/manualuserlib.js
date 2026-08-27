@@ -54,6 +54,7 @@ function createManualUser(app, input) {
   user.set('name_set_in_onboarding', true);
   user.set('available_sessions', 0);
   user.set('used_sessions', 0);
+  user.set('unpaid_sessions', 0);
   user.set('attendance_count', 0);
   user.set('is_banned', false);
   user.set('membership_type', 'regular');

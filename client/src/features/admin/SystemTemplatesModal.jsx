@@ -1,0 +1,286 @@
+import React, { useCallback, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
+import Modal from '../../components/ui/Modal';
+import { useAlertDialog } from '../../components/ui/AlertDialog';
+import { useLongPress, LongPressRing } from '../../lib/longPress';
+import { listSystemTemplates, updateSystemTemplate } from '../../services/systemTemplates';
+import { error } from '../../lib/log';
+import './AdminPanelPage.css';
+import './SystemTemplatesModal.css';
+
+function PencilIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+      <path d="M4 20h4.2L19.3 8.9a2 2 0 0 0 0-2.8l-1.4-1.4a2 2 0 0 0-2.8 0L4 15.8V20Z" />
+      <path d="m13.7 6.1 4.2 4.2" />
+    </svg>
+  );
+}
+
+function PowerIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+      <path d="M12 2v10" strokeLinecap="round" />
+      <path d="M6.3 6.3a8 8 0 1 0 11.4 0" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/**
+ * @param {{
+ *   item: Record<string, unknown>,
+ *   onTap: () => void,
+ *   onLongPress: (point: { x: number, y: number }) => void
+ * }} props
+ */
+function TemplateListButton({ item, onTap, onLongPress }) {
+  const enabled = item.enabled !== false;
+  const { handlers, ringProps } = useLongPress({
+    onLongPress: (point) => onLongPress(point)
+  });
+
+  return (
+    <>
+      <button
+        type="button"
+        className={`admin-panel__item system-templates__item${enabled ? '' : ' system-templates__item--disabled'}`}
+        {...handlers}
+        onClick={(e) => {
+          handlers.onClick?.(e);
+          if (e.defaultPrevented) return;
+          onTap();
+        }}
+      >
+        {String(item.name || item.key || 'Шаблон')}
+      </button>
+      <LongPressRing {...ringProps} />
+    </>
+  );
+}
+
+/**
+ * @param {{
+ *   isOpen: boolean,
+ *   onClose: () => void,
+ *   channel: 'bot' | 'app',
+ *   title: string
+ * }} props
+ */
+export default function SystemTemplatesModal({ isOpen, onClose, channel, title }) {
+  const { alert } = useAlertDialog();
+  const [items, setItems] = useState(/** @type {Record<string, unknown>[]} */ ([]));
+  const [loading, setLoading] = useState(false);
+  const [menu, setMenu] = useState(/** @type {null | { item: Record<string, unknown>, x: number, y: number }} */ (null));
+  const [infoItem, setInfoItem] = useState(/** @type {Record<string, unknown> | null} */ (null));
+  const [editItem, setEditItem] = useState(/** @type {Record<string, unknown> | null} */ (null));
+  const [editTitle, setEditTitle] = useState('');
+  const [editBody, setEditBody] = useState('');
+  const [editAction, setEditAction] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const list = await listSystemTemplates(channel);
+      setItems(list);
+    } catch (err) {
+      error('list system templates:', err);
+      await alert({ title: 'Ошибка', message: 'Не удалось загрузить шаблоны.' });
+    } finally {
+      setLoading(false);
+    }
+  }, [alert, channel]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setMenu(null);
+      setInfoItem(null);
+      setEditItem(null);
+      return;
+    }
+    load();
+  }, [isOpen, load]);
+
+  const handleToggleEnabled = async (item) => {
+    setMenu(null);
+    const next = item.enabled === false;
+    try {
+      const updated = await updateSystemTemplate({
+        id: String(item.id),
+        enabled: next
+      });
+      setItems((prev) =>
+        prev.map((row) => (row.id === updated.id ? { ...row, ...updated } : row))
+      );
+    } catch (err) {
+      error('toggle template:', err);
+      await alert({ title: 'Ошибка', message: 'Не удалось изменить статус.' });
+    }
+  };
+
+  const openEdit = (item) => {
+    setMenu(null);
+    setEditItem(item);
+    setEditTitle(String(item.title || ''));
+    setEditBody(String(item.body || ''));
+    setEditAction(String(item.action_label || ''));
+  };
+
+  const saveEdit = async (e) => {
+    e.preventDefault();
+    if (!editItem?.id || saving) return;
+    setSaving(true);
+    try {
+      /** @type {{ id: string, title?: string, body?: string, action_label?: string }} */
+      const patch = {
+        id: String(editItem.id),
+        body: editBody
+      };
+      if (channel === 'app') {
+        patch.title = editTitle;
+        patch.action_label = editAction;
+      }
+      const updated = await updateSystemTemplate(patch);
+      setItems((prev) =>
+        prev.map((row) => (row.id === updated.id ? { ...row, ...updated } : row))
+      );
+      setEditItem(null);
+    } catch (err) {
+      error('save template:', err);
+      await alert({ title: 'Ошибка', message: 'Не удалось сохранить.' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <>
+      <Modal isOpen={isOpen} onClose={onClose} title={title}>
+        <div className="system-templates">
+          {loading ? (
+            <p className="system-templates__status">Загрузка…</p>
+          ) : items.length === 0 ? (
+            <p className="system-templates__status">Шаблоны не найдены. Перезапустите PocketBase после обновления схемы.</p>
+          ) : (
+            <ul className="admin-panel__list system-templates__list">
+              {items.map((item) => (
+                <li key={String(item.id || item.key)}>
+                  <TemplateListButton
+                    item={item}
+                    onTap={() => setInfoItem(item)}
+                    onLongPress={(point) => setMenu({ item, x: point.x, y: point.y })}
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </Modal>
+
+      {menu &&
+        createPortal(
+          <div className="system-templates-menu-root">
+            <button
+              type="button"
+              className="system-templates-menu-backdrop"
+              aria-label="Закрыть меню"
+              onClick={() => setMenu(null)}
+            />
+            <div
+              className="system-templates-menu"
+              style={{ left: Math.min(menu.x, window.innerWidth - 200), top: Math.min(menu.y, window.innerHeight - 120) }}
+              role="menu"
+            >
+              <button type="button" className="system-templates-menu__btn" onClick={() => openEdit(menu.item)}>
+                <PencilIcon />
+                Редактировать
+              </button>
+              <button
+                type="button"
+                className="system-templates-menu__btn"
+                onClick={() => handleToggleEnabled(menu.item)}
+              >
+                <PowerIcon />
+                {menu.item.enabled === false ? 'Включить' : 'Отключить'}
+              </button>
+            </div>
+          </div>,
+          document.body
+        )}
+
+      <Modal
+        isOpen={Boolean(infoItem)}
+        onClose={() => setInfoItem(null)}
+        title={String(infoItem?.name || 'Информация')}
+      >
+        {infoItem && (
+          <div className="system-templates-info">
+            <p className="system-templates-info__label">Когда отправляется</p>
+            <p>{String(infoItem.description || '—')}</p>
+            {channel === 'app' && infoItem.title ? (
+              <>
+                <p className="system-templates-info__label">Заголовок</p>
+                <p>{String(infoItem.title)}</p>
+              </>
+            ) : null}
+            <p className="system-templates-info__label">Текст</p>
+            <p className="system-templates-info__body">{String(infoItem.body || '—')}</p>
+            {infoItem.action_label ? (
+              <>
+                <p className="system-templates-info__label">Кнопка / бейдж</p>
+                <p>{String(infoItem.action_label)}</p>
+              </>
+            ) : null}
+            <p className="system-templates-info__meta">
+              Статус: {infoItem.enabled === false ? 'отключено' : 'включено'}
+            </p>
+          </div>
+        )}
+      </Modal>
+
+      <Modal
+        isOpen={Boolean(editItem)}
+        onClose={() => setEditItem(null)}
+        title="Редактировать шаблон"
+      >
+        {editItem && (
+          <form className="profile-edit-form" onSubmit={saveEdit}>
+            {channel === 'app' && (
+              <div className="form-group">
+                <label htmlFor="tpl-title">Заголовок</label>
+                <input
+                  id="tpl-title"
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                />
+              </div>
+            )}
+            <div className="form-group">
+              <label htmlFor="tpl-body">Текст</label>
+              <textarea
+                id="tpl-body"
+                className="profile-reason-textarea"
+                rows={5}
+                value={editBody}
+                onChange={(e) => setEditBody(e.target.value)}
+              />
+            </div>
+            {channel === 'app' && (
+              <div className="form-group">
+                <label htmlFor="tpl-action">Текст кнопки / бейджа</label>
+                <input
+                  id="tpl-action"
+                  value={editAction}
+                  onChange={(e) => setEditAction(e.target.value)}
+                />
+              </div>
+            )}
+            <button type="submit" className="save-profile-btn" disabled={saving}>
+              {saving ? 'Сохраняем…' : 'Сохранить'}
+            </button>
+          </form>
+        )}
+      </Modal>
+    </>
+  );
+}
