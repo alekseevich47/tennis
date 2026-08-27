@@ -12,11 +12,20 @@ import ProductForm from './ProductForm';
 import ProductDetail from './ProductDetail';
 import CategoryDropdown from './CategoryDropdown';
 import SearchBar from './SearchBar';
+import ShopFilterButton from './ShopFilterButton';
+import ShopFiltersSheet from './ShopFiltersSheet';
 import FullscreenImageViewer from '../feed/FullscreenImageViewer';
 import { useSectionScroll } from '../../hooks/useSectionScroll';
 import { useOverlayClose } from '../../hooks/useOverlayClose';
 import { useRegisterAddAction } from '../../context/AddActionContext';
 import { error } from '../../lib/log';
+import {
+  countActiveShopFilters,
+  DEFAULT_SHOP_FILTERS,
+  getPriceBounds,
+  productMatchesFilters,
+  sortProducts
+} from './shopFilters';
 import './Shop.css';
 
 /**
@@ -27,12 +36,11 @@ import './Shop.css';
  * }} props
  */
 function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } = {}) {
-  const [selectedCategoryId, setSelectedCategoryId] = useState('');
+  const [filters, setFilters] = useState(DEFAULT_SHOP_FILTERS);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const { data: products, isLoading, mutate } = useProducts({
-    categoryId: selectedCategoryId || undefined
-  });
+  const { data: products, isLoading, mutate } = useProducts();
   const moderator = isModerator();
   const { startUpload } = useProductUpload();
 
@@ -106,38 +114,66 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
     return () => container.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const visibleProducts = useMemo(() => {
+  const baseProducts = useMemo(() => {
     if (!products) return [];
-    const baseProducts = products.filter(
+    return products.filter(
       (product) => !product.is_deleted || deletedProductIds.includes(product.id)
     );
-    const normalizedSearchQuery = searchQuery.trim().toLowerCase();
-    if (!normalizedSearchQuery) return baseProducts;
+  }, [products, deletedProductIds]);
 
-    if (normalizedSearchQuery.startsWith('#')) {
-      const idQuery = normalizedSearchQuery.slice(1);
-      return baseProducts.filter((product) =>
-        String(product.id || '').toLowerCase().includes(idQuery)
-      );
-    }
+  const priceBounds = useMemo(() => getPriceBounds(baseProducts), [baseProducts]);
 
-    return baseProducts.filter((product) => {
-      const title = String(product.title || '').toLowerCase();
-      const description = String(product.description || '').toLowerCase();
-      return (
-        title.includes(normalizedSearchQuery)
-        || description.includes(normalizedSearchQuery)
-      );
-    });
-  }, [products, deletedProductIds, searchQuery]);
+  const activeFilterCount = useMemo(
+    () => countActiveShopFilters(filters, priceBounds),
+    [filters, priceBounds]
+  );
 
   const categoryProductCount = useMemo(() => {
-    if (!selectedCategoryId || !products) return null;
-    return products.filter((product) => !product.is_deleted).length;
-  }, [selectedCategoryId, products]);
+    if (!filters.categoryId) return null;
+    return baseProducts.filter((product) => {
+      if (product.is_deleted && !deletedProductIds.includes(product.id)) return false;
+      return productMatchesFilters(
+        product,
+        { ...DEFAULT_SHOP_FILTERS, categoryId: filters.categoryId },
+        priceBounds
+      );
+    }).length;
+  }, [baseProducts, deletedProductIds, filters.categoryId, priceBounds]);
+
+  const visibleProducts = useMemo(() => {
+    const filtered = baseProducts.filter((product) =>
+      productMatchesFilters(product, filters, priceBounds)
+    );
+
+    const normalizedSearchQuery = searchQuery.trim().toLowerCase();
+    const searched = !normalizedSearchQuery
+      ? filtered
+      : normalizedSearchQuery.startsWith('#')
+        ? filtered.filter((product) =>
+            String(product.id || '').toLowerCase().includes(normalizedSearchQuery.slice(1))
+          )
+        : filtered.filter((product) => {
+            const title = String(product.title || '').toLowerCase();
+            const description = String(product.description || '').toLowerCase();
+            return (
+              title.includes(normalizedSearchQuery)
+              || description.includes(normalizedSearchQuery)
+            );
+          });
+
+    return sortProducts(searched, filters.sort);
+  }, [baseProducts, filters, priceBounds, searchQuery]);
 
   const handleCloseSearchUI = useCallback(() => {
     setIsSearchOpen(false);
+  }, []);
+
+  const handleCategoryChange = useCallback((categoryId) => {
+    setFilters((prev) => ({ ...prev, categoryId: categoryId || '' }));
+  }, []);
+
+  const handleApplyFilters = useCallback((next) => {
+    setFilters(next);
   }, []);
 
   const handleCreate = useCallback(
@@ -215,21 +251,32 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
         header={(
           <div className={clsx('shop-header-bar-new', isSearchOpen && 'search-open')}>
             <CategoryDropdown
-              selectedCategoryId={selectedCategoryId}
-              onCategoryChange={setSelectedCategoryId}
+              selectedCategoryId={filters.categoryId}
+              onCategoryChange={handleCategoryChange}
               productCount={categoryProductCount}
               isSearchOpen={isSearchOpen}
               onCloseSearch={handleCloseSearchUI}
               onOpenChange={setIsCategoryDropdownOpen}
             />
-            <SearchBar
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              isOpen={isSearchOpen}
-              onOpenChange={setIsSearchOpen}
-              onSearchToggle={setIsSearchOpen}
-              onFocusChange={setIsSearchFocused}
-            />
+            <div className="shop-header-actions">
+              <ShopFilterButton
+                activeCount={activeFilterCount}
+                onClick={() => {
+                  if (isSearchOpen && !searchQuery.trim()) {
+                    setIsSearchOpen(false);
+                  }
+                  setIsFiltersOpen(true);
+                }}
+              />
+              <SearchBar
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                isOpen={isSearchOpen}
+                onOpenChange={setIsSearchOpen}
+                onSearchToggle={setIsSearchOpen}
+                onFocusChange={setIsSearchFocused}
+              />
+            </div>
           </div>
         )}
       >
@@ -283,6 +330,14 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
         product={selectedProduct}
         onClose={() => setShowEditModal(false)}
         onSubmit={handleEdit}
+      />
+
+      <ShopFiltersSheet
+        isOpen={isFiltersOpen}
+        onClose={() => setIsFiltersOpen(false)}
+        filters={filters}
+        onApply={handleApplyFilters}
+        products={baseProducts.filter((p) => !p.is_deleted)}
       />
 
       {fullscreenMedia && (

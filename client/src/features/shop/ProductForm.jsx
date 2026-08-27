@@ -13,6 +13,7 @@ import {
   readSelectedFiles
 } from '../../lib/media';
 import { compressImage } from '../../lib/compress';
+import { normalizeProductCategoryIds } from './productCategories';
 
 const INITIAL = {
   title: '',
@@ -36,13 +37,6 @@ function parseOptionalOldPrice(value) {
   if (!trimmed) return null;
   const n = parseFloat(trimmed);
   return Number.isFinite(n) && n > 0 ? n : null;
-}
-
-/** @param {unknown} raw @returns {string[]} */
-function normalizeCategoryIds(raw) {
-  if (!Array.isArray(raw) || raw.length === 0) return [];
-  const first = raw[0];
-  return first ? [String(first)] : [];
 }
 
 /** Порядок не важен (категории). */
@@ -90,7 +84,7 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
     price: product?.price?.toString() || '',
     old_price: Number(product?.old_price) > 0 ? String(product.old_price) : '',
     sizes: product?.sizes || '',
-    categories: normalizeCategoryIds(product?.categories),
+    categories: normalizeProductCategoryIds(product?.categories),
     out_of_stock: Boolean(product?.out_of_stock)
   }));
   /** @type {[ProductMediaItem[], React.Dispatch<React.SetStateAction<ProductMediaItem[]>>]} */
@@ -150,7 +144,7 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
       price: product?.price?.toString() || '',
       old_price: Number(product?.old_price) > 0 ? String(product.old_price) : '',
       sizes: product?.sizes || '',
-      categories: normalizeCategoryIds(product?.categories),
+      categories: normalizeProductCategoryIds(product?.categories),
       out_of_stock: Boolean(product?.out_of_stock)
     });
     setOrderedMedia(
@@ -199,7 +193,7 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
   };
 
   const isDirty = useCallback(() => {
-    const currentCategories = normalizeCategoryIds(product?.categories);
+    const currentCategories = normalizeProductCategoryIds(product?.categories);
     if (!product) {
       return (
         Boolean(form.title.trim()) ||
@@ -259,7 +253,7 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
     const nextOldPrice = parseOptionalOldPrice(form.old_price);
     const prevOldPrice = parseOptionalOldPrice(product?.old_price);
     const nextSizes = form.sizes.trim();
-    const currentCategories = normalizeCategoryIds(product?.categories);
+    const currentCategories = normalizeProductCategoryIds(product?.categories);
     const hasCategoryChanges = !areStringSetsEqual(form.categories, currentCategories);
 
     if (!product || nextTitle !== (product.title || '')) {
