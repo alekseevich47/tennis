@@ -194,6 +194,14 @@
   color: #1971c2;
 }
 
+.membership-unpaid-notice {
+  color: #e53935;
+}
+
+.membership-unpaid-notice strong {
+  color: #e53935;
+}
+
 .membership-freeze-history {
   margin-top: 4px;
 }

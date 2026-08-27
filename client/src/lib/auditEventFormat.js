@@ -1,6 +1,7 @@
 // @ts-check
 import { formatDateTimeShort } from './format';
 import { AUDIT_EVENT_CATEGORIES, AUDIT_OBJECT_TYPES } from '../services/auditLog';
+import { htmlToReadableText, looksLikeRichHtml } from '../features/feed/postRichText';
 
 /** @type {Record<string, { label: string, color: string }>} */
 const CATEGORY_STYLES = Object.fromEntries(
@@ -95,7 +96,11 @@ function formatDetailValue(value) {
       return String(value);
     }
   }
-  return String(value);
+  const str = String(value);
+  if (looksLikeRichHtml(str) || /<\/?[a-z][\s\S]*>/i.test(str)) {
+    return htmlToReadableText(str);
+  }
+  return str;
 }
 
 /**
@@ -104,9 +109,10 @@ function formatDetailValue(value) {
 export function formatAuditEventPreview(entry) {
   const style = CATEGORY_STYLES[entry.category] || { label: entry.category, color: '#868e96' };
   const subject = resolveSubjectName(entry);
+  const rawTitle = entry.summary_ru || entry.action || 'Событие';
 
   return {
-    title: entry.summary_ru || entry.action || 'Событие',
+    title: htmlToReadableText(String(rawTitle)),
     meta: `${formatDateTimeShort(entry.created)} · ${subject}`,
     color: style.color,
     categoryLabel: style.label
@@ -177,7 +183,7 @@ function resolveCommentMeta(entry) {
     commentId: details.commentId ? String(details.commentId) : entry.object_id ? String(entry.object_id) : null,
     publicationLabel,
     publicationId,
-    text: details.text != null ? String(details.text) : null,
+    text: details.text != null ? htmlToReadableText(String(details.text)) : null,
     authorName: details.authorName ? String(details.authorName) : null,
     authorId: details.authorId ? String(details.authorId) : null
   };

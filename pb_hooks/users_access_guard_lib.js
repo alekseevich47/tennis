@@ -4,10 +4,11 @@
 
 var PRIVILEGED_FIELDS = [
   'role', 'is_banned', 'ban_reason', 'banned_at',
-  'comment_restriction_reason', 'available_sessions', 'used_sessions',
+  'comment_restriction_reason', 'available_sessions', 'used_sessions', 'unpaid_sessions',
   'attendance_count', 'membership_type', 'membership_start_date',
   'membership_end_date', 'membership_comment', 'membership_frozen',
   'membership_frozen_at', 'membership_freeze_log', 'bot_blocked', 'bot_blocked_at',
+  'membership_expiry_warn_for', 'membership_expired_notified_for', 'freeze_expiry_warn_for',
   'max_id', 'rating_points', 'wins', 'losses', 'birth_date', 'section_start_date',
   'email', 'full_name', 'is_visible', 'can_comment'
 ];
@@ -23,6 +24,7 @@ var BOOL_FIELDS = {
 var NUMBER_FIELDS = {
   available_sessions: true,
   used_sessions: true,
+  unpaid_sessions: true,
   attendance_count: true,
   rating_points: true,
   wins: true,
@@ -58,6 +60,7 @@ function applyCreateDefaults(record) {
   record.set('banned_at', '');
   record.set('available_sessions', 0);
   record.set('used_sessions', 0);
+  record.set('unpaid_sessions', 0);
   record.set('attendance_count', 0);
   record.set('rating_points', 0);
   record.set('membership_type', 'regular');

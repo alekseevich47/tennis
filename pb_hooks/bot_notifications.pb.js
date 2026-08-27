@@ -4,11 +4,15 @@
 // 10.1a — новый пользователь → модераторам (в т.ч. при создании через max-auth)
 onRecordAfterCreateSuccess((e) => {
   const bot = require(__hooks + '/botlib.js');
+  const tpl = require(__hooks + '/templatelib.js');
   try {
     const user = e.record;
     const name = user.getString('full_name') || 'Игрок';
     const time = bot.formatDateTimeGmt7(user.getString('created') || new Date().toISOString());
-    bot.notifyModerators('*' + name + '* зарегистрировался в приложении ' + time);
+    const resolved = tpl.resolve($app, 'bot.user_registered', { name: name, time: time });
+    if (resolved && resolved.body) {
+      bot.notifyModerators(resolved.body);
+    }
   } catch (err) {
     console.log('[bot] users create: ' + err);
   }
@@ -130,10 +134,18 @@ routerAdd('POST', '/api/bot-notify-training-status', (c) => {
   const typeAcc = training.getString('type') === 'tournament' ? 'турнир' : 'тренировку';
   const dateFormatted = bot.formatDateTimeGmt7(training.getString('date'));
   const statusWord = isClosed ? 'закрыта' : 'открыта';
-  const text = 'Уважаемые участники, запись на ' + typeAcc + ' ' + dateFormatted + ' ' + statusWord + '.';
+  const tpl = require(__hooks + '/templatelib.js');
+  const resolved = tpl.resolve($app, 'bot.training_status', {
+    type: typeAcc,
+    date: dateFormatted,
+    status: statusWord
+  });
+  if (!resolved || !resolved.body) {
+    return c.json(200, { success: true, skipped: true });
+  }
 
   try {
-    bot.broadcastToAllUsers(text);
+    bot.broadcastToAllUsers(resolved.body);
   } catch (err) {
     console.log('[bot] training status notify: ' + err);
   }
@@ -259,19 +271,21 @@ routerAdd('POST', '/api/bot-notify-training-create', (c) => {
   const isTournament = training.getString('type') === 'tournament';
   const addedPhrase = isTournament ? 'добавлен турнир' : 'добавлена тренировка';
   const dateFormatted = bot.formatDateTimeGmt7(training.getString('date'));
-  const text =
-    'Уважаемые участники, в расписание ' +
-    addedPhrase +
-    ' на *' +
-    dateFormatted +
-    '*. Вы можете произвести запись в приложении.';
+  const tpl = require(__hooks + '/templatelib.js');
+  const resolved = tpl.resolve($app, 'bot.training_created', {
+    added: addedPhrase,
+    date: dateFormatted
+  });
+  if (!resolved || !resolved.body) {
+    return c.json(200, { success: true, skipped: true });
+  }
 
   try {
     const settings = $app.findFirstRecordByFilter('notification_settings', '');
     if (settings && !settings.getBool('training_created_enabled')) {
       return c.json(200, { success: true, skipped: true });
     }
-    bot.broadcastToAllUsers(text);
+    bot.broadcastToAllUsers(resolved.body);
   } catch (err) {
     console.log('[bot] training create notify: ' + err);
   }
@@ -305,19 +319,21 @@ routerAdd('POST', '/api/bot-notify-training-cancelled', (c) => {
 
   const typeWord = training.getString('type') === 'tournament' ? 'турнир' : 'тренировка';
   const dateFormatted = bot.formatDateTimeGmt7(training.getString('date'));
-  const text =
-    'Уважаемые участники, ' +
-    typeWord +
-    ' *' +
-    dateFormatted +
-    '* по техническим причинам не состоится. Количество доступных посещений будет восстановлено.';
+  const tpl = require(__hooks + '/templatelib.js');
+  const resolved = tpl.resolve($app, 'bot.training_cancelled', {
+    type: typeWord,
+    date: dateFormatted
+  });
+  if (!resolved || !resolved.body) {
+    return c.json(200, { success: true, skipped: true });
+  }
 
   try {
     const settings = $app.findFirstRecordByFilter('notification_settings', '');
     if (settings && !settings.getBool('training_deleted_enabled')) {
       return c.json(200, { success: true, skipped: true });
     }
-    bot.broadcastToAllUsers(text);
+    bot.broadcastToAllUsers(resolved.body);
   } catch (err) {
     console.log('[bot] training cancelled notify: ' + err);
   }
@@ -351,15 +367,17 @@ routerAdd('POST', '/api/bot-notify-training-restored', (c) => {
 
   const typeWord = training.getString('type') === 'tournament' ? 'турнир' : 'тренировку';
   const dateFormatted = bot.formatDateTimeGmt7(training.getString('date'));
-  const text =
-    'Уважаемые участники, запись на *' +
-    typeWord +
-    '* *' +
-    dateFormatted +
-    '* восстановлена.';
+  const tpl = require(__hooks + '/templatelib.js');
+  const resolved = tpl.resolve($app, 'bot.training_restored', {
+    type: typeWord,
+    date: dateFormatted
+  });
+  if (!resolved || !resolved.body) {
+    return c.json(200, { success: true, skipped: true });
+  }
 
   try {
-    bot.broadcastToAllUsers(text);
+    bot.broadcastToAllUsers(resolved.body);
   } catch (err) {
     console.log('[bot] training restored notify: ' + err);
   }
@@ -369,8 +387,9 @@ routerAdd('POST', '/api/bot-notify-training-restored', (c) => {
 // Webhook MAX: bot_started (приветствие + снятие bot_blocked) / bot_stopped (неактивный аккаунт)
 routerAdd('POST', '/api/max-bot-webhook', (c) => {
   const bot = require(__hooks + '/botlib.js');
-  const WELCOME_TEXT =
-    'Добро пожаловать в Секцию Миленьких! Для использования нашего приложения нажмите кнопку «Открыть»';
+  const tpl = require(__hooks + '/templatelib.js');
+  const welcomeResolved = tpl.resolve($app, 'bot.welcome', {});
+  const WELCOME_TEXT = welcomeResolved ? welcomeResolved.body : '';
 
   try {
     const info = c.requestInfo();
@@ -404,7 +423,9 @@ routerAdd('POST', '/api/max-bot-webhook', (c) => {
 
     if (updateType === 'bot_started') {
       if (maxUserId) {
-        bot.sendBotMessage(maxUserId, WELCOME_TEXT);
+        if (WELCOME_TEXT) {
+          bot.sendBotMessage(maxUserId, WELCOME_TEXT);
+        }
         try {
           const user = $app.findFirstRecordByFilter(
             'users',

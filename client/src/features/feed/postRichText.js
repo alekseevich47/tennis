@@ -1,4 +1,9 @@
-import { isMentionEl, serializeMentionEl } from './postMentions';
+import {
+  isMentionEl,
+  serializeMentionEl,
+  ensureMentionEditorChrome,
+  MENTION_CLASS
+} from './postMentions';
 
 const FRAME_CLASS = 'post-anim-frame';
 const FRAME_PRESETS_KEY = 'tennis.postFramePresets';
@@ -122,6 +127,75 @@ export function toPlainText(html) {
   if (!looksLikeRichHtml(html)) return String(html).replace(/[\u200B\u00A0]/g, '').trim();
   const doc = new DOMParser().parseFromString(html, 'text/html');
   return (doc.body.textContent || '').replace(/[\u200B\u00A0]/g, '').replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * Читаемый plain-text для логов/аудита (отображение):
+ * mentions → `Имя` / `#N Лента|Турнир`, рамки → варианты через ` / `,
+ * `<br>`/`</p>` → переносы, теги форматирования снимаются без markdown-маркеров.
+ * @param {string} html
+ * @returns {string}
+ */
+export function htmlToReadableText(html) {
+  if (!html) return '';
+  const raw = String(html);
+  if (!looksLikeRichHtml(raw) && raw.indexOf('<') === -1) {
+    return raw.replace(/[\u200B\u00A0]/g, '').trim();
+  }
+
+  const doc = new DOMParser().parseFromString(
+    `<div id="__readable_root">${raw}</div>`,
+    'text/html'
+  );
+  const root = doc.getElementById('__readable_root');
+  if (!root) return toPlainText(raw);
+
+  root.querySelectorAll(`.${MENTION_CLASS}`).forEach((node) => {
+    const el = /** @type {HTMLElement} */ (node);
+    const type = el.getAttribute('data-mention') || '';
+    let label = '';
+    if (type === 'user') {
+      label = (el.getAttribute('data-name') || el.textContent || '').replace(/\s+/g, ' ').trim();
+    } else if (type === 'post') {
+      const num = el.getAttribute('data-post-number') || '';
+      const src =
+        String(el.getAttribute('data-post-source') || '').toLowerCase() === 'tournament'
+          ? 'Турнир'
+          : 'Лента';
+      label = num ? `#${num} ${src}` : (el.textContent || '').replace(/\s+/g, ' ').trim();
+    } else {
+      label = (el.textContent || '').replace(/\s+/g, ' ').trim();
+    }
+    el.replaceWith(doc.createTextNode(label));
+  });
+
+  root.querySelectorAll(`.${FRAME_CLASS}`).forEach((node) => {
+    const el = /** @type {HTMLElement} */ (node);
+    const variants = String(el.getAttribute('data-variants') || '')
+      .split('|')
+      .map((part) => part.trim())
+      .filter(Boolean);
+    const label =
+      variants.length > 0
+        ? variants.join(' / ')
+        : (el.textContent || '').replace(/\s+/g, ' ').trim();
+    el.replaceWith(doc.createTextNode(label));
+  });
+
+  root.querySelectorAll('br').forEach((br) => {
+    br.replaceWith(doc.createTextNode('\n'));
+  });
+
+  root.querySelectorAll('div, p').forEach((block) => {
+    block.appendChild(doc.createTextNode('\n'));
+  });
+
+  return (root.textContent || '')
+    .replace(/[\u200B\u00A0]/g, ' ')
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .replace(/[ \t]{2,}/g, ' ')
+    .trim();
 }
 
 /**
@@ -660,10 +734,8 @@ export function ensureFrameCarets(editor) {
       next.remove();
     }
   });
-  // Mentions — тоже атомарные чипы.
-  editor.querySelectorAll('.post-mention').forEach((node) => {
-    /** @type {HTMLElement} */ (node).contentEditable = 'false';
-  });
+  // Mentions — атомарные чипы + кнопка × в редакторе.
+  ensureMentionEditorChrome(editor);
 }
 
 /**

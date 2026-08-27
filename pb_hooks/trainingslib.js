@@ -19,20 +19,33 @@ function isUnlimitedMembership(membershipType) {
   return membershipType === 'annual' || membershipType === 'corporate';
 }
 
+function isDailyLimitedMembership(membershipType) {
+  return membershipType === 'annual' || membershipType === 'corporate';
+}
+
+/**
+ * @param {core.App} app
+ * @param {string} userId
+ * @param {{ skipNotify?: boolean, wasUnpaid?: boolean }} [options]
+ */
 function restoreMembershipSession(app, userId, options) {
   var skipNotify = options && options.skipNotify;
+  var wasUnpaid = options && options.wasUnpaid;
   var user;
   try {
     user = app.findRecordById('users', userId);
   } catch (_) {
     return;
   }
-  var membershipType = user.getString('membership_type');
+  var membershipType = user.getString('membership_type') || 'regular';
   var usedSessions = user.getFloat('used_sessions') || 0;
   var previousAvailable = user.getFloat('available_sessions') || 0;
+  var unpaidSessions = user.getFloat('unpaid_sessions') || 0;
   user.set('used_sessions', Math.max(0, usedSessions - 1));
   var newAvailable = previousAvailable;
-  if (!isUnlimitedMembership(membershipType)) {
+  if (wasUnpaid) {
+    user.set('unpaid_sessions', Math.max(0, unpaidSessions - 1));
+  } else if (!isUnlimitedMembership(membershipType)) {
     newAvailable = previousAvailable + 1;
     user.set('available_sessions', newAvailable);
   }
@@ -46,16 +59,16 @@ function restoreMembershipSession(app, userId, options) {
 }
 
 function notifyTrainingCancelled(training) {
+  var tpl = require(__hooks + '/templatelib.js');
   var bot = require(__hooks + '/botlib.js');
   var typeWord = training.getString('type') === 'tournament' ? 'турнир' : 'тренировка';
   var dateFormatted = bot.formatDateTimeGmt7(training.getString('date'));
-  var text =
-    'Уважаемые участники, ' +
-    typeWord +
-    ' *' +
-    dateFormatted +
-    '* по техническим причинам не состоится. Количество доступных посещений будет восстановлено.';
-  bot.broadcastToAllUsers(text);
+  var resolved = tpl.resolve($app, 'bot.training_cancelled', {
+    type: typeWord,
+    date: dateFormatted
+  });
+  if (!resolved || !resolved.body) return;
+  bot.broadcastToAllUsers(resolved.body);
 }
 
 /**
@@ -72,16 +85,25 @@ function finalizeCancelledTrainingRecord(training) {
   if (!ended) {
     var bookedUsers = training.get('booked_users') || [];
     var attendedUsers = training.get('attended_users') || [];
+    var unpaidUsers = training.get('unpaid_booked_users') || [];
     var attendedSet = {};
+    var unpaidSet = {};
     var i;
     for (i = 0; i < attendedUsers.length; i++) {
-      attendedSet[attendedUsers[i]] = true;
+      attendedSet[String(attendedUsers[i])] = true;
+    }
+    for (i = 0; i < unpaidUsers.length; i++) {
+      unpaidSet[String(unpaidUsers[i])] = true;
     }
     for (i = 0; i < bookedUsers.length; i++) {
-      restoreMembershipSession($app, bookedUsers[i], { skipNotify: true });
-      if (attendedSet[bookedUsers[i]]) {
+      var uid = String(bookedUsers[i]);
+      restoreMembershipSession($app, uid, {
+        skipNotify: true,
+        wasUnpaid: !!unpaidSet[uid]
+      });
+      if (attendedSet[uid]) {
         try {
-          var u = $app.findRecordById('users', bookedUsers[i]);
+          var u = $app.findRecordById('users', uid);
           var cnt = u.getFloat('attendance_count') || 0;
           u.set('attendance_count', Math.max(0, cnt - 1));
           $app.save(u);
@@ -160,7 +182,7 @@ function dayBoundsIso(dateStr) {
  * @param {string} trainingDate
  * @param {string} trainingId
  */
-function hasAnnualBookingSameDay(app, userId, trainingDate, trainingId) {
+function hasDailyBookingSameDay(app, userId, trainingDate, trainingId) {
   var bounds = dayBoundsIso(trainingDate);
   if (!bounds) return false;
   var filter =
@@ -183,7 +205,8 @@ function hasAnnualBookingSameDay(app, userId, trainingDate, trainingId) {
  * @param {boolean} isModerator
  * @param {string} trainingDate
  * @param {string} trainingId
- * @param {{ skipEligibilityChecks?: boolean }} [options] — restore: только баланс сессий
+ * @param {{ skipEligibilityChecks?: boolean }} [options]
+ * @returns {boolean} true — запись ушла в unpaid_sessions
  */
 function consumeMembershipSessionTx(app, userId, isModerator, trainingDate, trainingId, options) {
   var skipEligibility = options && options.skipEligibilityChecks;
@@ -206,32 +229,33 @@ function consumeMembershipSessionTx(app, userId, isModerator, trainingDate, trai
   var membershipType = user.getString('membership_type') || 'regular';
   var unlimited = isUnlimitedMembership(membershipType);
   var previousAvailable = user.getFloat('available_sessions') || 0;
+  var unpaidSessions = user.getFloat('unpaid_sessions') || 0;
+  var wasUnpaid = false;
+  var newAvailable = previousAvailable;
 
-  if (!unlimited) {
-    if (previousAvailable <= 0) {
-      throw new BadRequestError('Нет доступных посещений');
+  if (unlimited) {
+    if (isDailyLimitedMembership(membershipType) && hasDailyBookingSameDay(app, userId, trainingDate, trainingId)) {
+      wasUnpaid = true;
+      user.set('unpaid_sessions', unpaidSessions + 1);
     }
-  }
-
-  if (!skipEligibility && membershipType === 'annual' && !isModerator) {
-    if (hasAnnualBookingSameDay(app, userId, trainingDate, trainingId)) {
-      throw new BadRequestError('ANNUAL_DAILY_LIMIT');
-    }
+  } else if (previousAvailable > 0) {
+    newAvailable = previousAvailable - 1;
+    user.set('available_sessions', newAvailable);
+  } else {
+    wasUnpaid = true;
+    user.set('unpaid_sessions', unpaidSessions + 1);
   }
 
   var usedSessions = user.getFloat('used_sessions') || 0;
   user.set('used_sessions', usedSessions + 1);
-  var newAvailable = previousAvailable;
-  if (!unlimited) {
-    newAvailable = previousAvailable - 1;
-    user.set('available_sessions', newAvailable);
-  }
   app.save(user);
 
   try {
     var nlib = require(__hooks + '/notificationslib.js');
     nlib.maybeNotifySessionsLeft(app, userId, previousAvailable, newAvailable, membershipType);
   } catch (_) {}
+
+  return wasUnpaid;
 }
 
 /**
@@ -333,9 +357,14 @@ function applyBookingSideEffects(original, record, auth) {
     attendedRemoved.length;
   if (!hasWork) return;
 
+  var unpaidOriginal = audit.newlyAdded([], original.get('unpaid_booked_users') || []);
+  var unpaidSet = {};
+  for (i = 0; i < unpaidOriginal.length; i++) {
+    unpaidSet[String(unpaidOriginal[i])] = true;
+  }
+
   $app.runInTransaction(function (txApp) {
     if (isCancelTransition) {
-      // Симметрия finalizeCancelledTrainingRecord, но для API-пути (клиентский flush).
       if (!ended) {
         var cancelBooked = audit.newlyAdded([], original.get('booked_users'));
         var cancelAttended = audit.newlyAdded([], original.get('attended_users'));
@@ -344,7 +373,11 @@ function applyBookingSideEffects(original, record, auth) {
           cancelAttendedSet[cancelAttended[i]] = true;
         }
         for (i = 0; i < cancelBooked.length; i++) {
-          restoreMembershipSession(txApp, cancelBooked[i], { skipNotify: true });
+          var cancelUid = String(cancelBooked[i]);
+          restoreMembershipSession(txApp, cancelUid, {
+            skipNotify: true,
+            wasUnpaid: !!unpaidSet[cancelUid]
+          });
           if (cancelAttendedSet[cancelBooked[i]]) {
             adjustAttendanceCountTx(txApp, cancelBooked[i], -1);
           }
@@ -354,16 +387,22 @@ function applyBookingSideEffects(original, record, auth) {
     }
 
     if (isRestoreTransition) {
-      // Сессии уже возвращены при cancel; повторно списываем только оставшихся в booked_users.
-      // Diff booked/attended НЕ применяем — снятые «insufficient» уже с восстановленными сессиями.
       if (!ended) {
         var restoreBooked = audit.newlyAdded([], record.get('booked_users'));
         var restoreAttended = audit.newlyAdded([], record.get('attended_users'));
+        var restoreUnpaid = [];
         for (i = 0; i < restoreBooked.length; i++) {
-          consumeMembershipSessionTx(txApp, restoreBooked[i], true, trainingDate, trainingId, {
-            skipEligibilityChecks: true
-          });
+          var restoreWasUnpaid = consumeMembershipSessionTx(
+            txApp,
+            restoreBooked[i],
+            true,
+            trainingDate,
+            trainingId,
+            { skipEligibilityChecks: true }
+          );
+          if (restoreWasUnpaid) restoreUnpaid.push(String(restoreBooked[i]));
         }
+        record.set('unpaid_booked_users', restoreUnpaid);
         for (i = 0; i < restoreAttended.length; i++) {
           adjustAttendanceCountTx(txApp, restoreAttended[i], 1);
         }
@@ -371,12 +410,28 @@ function applyBookingSideEffects(original, record, auth) {
       return;
     }
 
+    var nextUnpaid = unpaidOriginal.slice();
     for (i = 0; i < added.length; i++) {
-      consumeMembershipSessionTx(txApp, added[i], isModerator, trainingDate, trainingId);
+      var addUid = String(added[i]);
+      var addedUnpaid = consumeMembershipSessionTx(
+        txApp,
+        addUid,
+        isModerator,
+        trainingDate,
+        trainingId
+      );
+      if (addedUnpaid && nextUnpaid.indexOf(addUid) < 0) {
+        nextUnpaid.push(addUid);
+      }
     }
     for (i = 0; i < removed.length; i++) {
-      restoreMembershipSession(txApp, removed[i]);
+      var remUid = String(removed[i]);
+      restoreMembershipSession(txApp, remUid, { wasUnpaid: !!unpaidSet[remUid] });
+      nextUnpaid = nextUnpaid.filter(function (id) {
+        return String(id) !== remUid;
+      });
     }
+    record.set('unpaid_booked_users', nextUnpaid);
     for (i = 0; i < attendedAdded.length; i++) {
       adjustAttendanceCountTx(txApp, attendedAdded[i], 1);
     }

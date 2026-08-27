@@ -289,7 +289,14 @@ function buildPublicFileAttachments(collectionName, recordId, filenames) {
 }
 
 function broadcastNewPublication() {
-  broadcastToAllUsers('Появилось что-то новенькое! Зайдите в приложение 🏓');
+  try {
+    var tpl = require(__hooks + '/templatelib.js');
+    var resolved = tpl.resolve($app, 'bot.new_publication', {});
+    if (!resolved || !resolved.body) return;
+    broadcastToAllUsers(resolved.body);
+  } catch (_) {
+    broadcastToAllUsers('Появилось что-то новенькое! Зайдите в приложение 🏓');
+  }
 }
 
 module.exports = {

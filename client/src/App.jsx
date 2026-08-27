@@ -25,6 +25,8 @@ import GalleryPage from './features/gallery/GalleryPage';
 import ProfilePage from './features/profile/ProfilePage';
 import BlockedPage from './features/profile/BlockedPage';
 import AdminPanelPage from './features/admin/AdminPanelPage';
+import { MAX_SELLER_URL } from './config';
+import { openSellerChat } from './features/shop/buyMessage';
 import {
   ADMIN_TAB_INDEX,
   GALLERY_TAB_INDEX,
@@ -565,6 +567,9 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
           setNotificationMembershipOpen(true);
         }}
         onOpenBookingFromNotification={() => setActiveTab(1)}
+        onOpenSellerChatFromNotification={() => {
+          openSellerChat(MAX_SELLER_URL);
+        }}
         onOpenCommentFromNotification={(meta) => {
           const collection = String(meta?.collection || '');
           const commentId = meta?.commentId ? String(meta.commentId) : undefined;

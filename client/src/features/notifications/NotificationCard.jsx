@@ -11,7 +11,8 @@ import './NotificationCard.css';
 
 const CLICK_ACTION_LABELS = {
   open_training: 'Перейти к тренировке',
-  open_membership: 'Перейти к абонементу'
+  open_membership: 'Перейти к абонементу',
+  open_seller_chat: 'Продлить абонемент'
 };
 
 const READ_VISIBLE_DELAY_MS = 1200;
@@ -37,7 +38,8 @@ function parseCommentReplyParentText(body) {
  *   onOpenTraining?: (trainingId: string) => void,
  *   onOpenMembership?: () => void,
  *   onOpenBooking?: () => void,
- *   onOpenComment?: (meta: Record<string, unknown>) => void
+ *   onOpenComment?: (meta: Record<string, unknown>) => void,
+ *   onOpenSellerChat?: () => void
  * }} props
  */
 export default function NotificationCard({
@@ -50,7 +52,8 @@ export default function NotificationCard({
   onOpenTraining,
   onOpenMembership,
   onOpenBooking,
-  onOpenComment
+  onOpenComment,
+  onOpenSellerChat
 }) {
   const cardRef = useRef(null);
   const markedRef = useRef(false);
@@ -228,6 +231,13 @@ export default function NotificationCard({
 
   const trainingState = notification.training_state;
   const clickLabel = (() => {
+    if (clickAction === 'open_seller_chat') {
+      const metaLabel =
+        meta && typeof meta === 'object' && meta.action_label != null
+          ? String(meta.action_label)
+          : '';
+      return metaLabel || CLICK_ACTION_LABELS.open_seller_chat;
+    }
     if (clickAction === 'open_booking') {
       if (trainingState === 'farewell') return 'Записаться на тренировку';
       if (trainingState === 'completed') return 'Записаться ещё';
@@ -249,10 +259,14 @@ export default function NotificationCard({
       onOpenBooking?.();
       return;
     }
+    if (clickAction === 'open_seller_chat') {
+      onOpenSellerChat?.();
+      return;
+    }
     if ((clickAction === 'open_comment' || (meta && meta.kind === 'comment_reply')) && meta) {
       onOpenComment?.(meta);
     }
-  }, [clickAction, meta, onOpenBooking, onOpenComment, onOpenMembership, onOpenTraining]);
+  }, [clickAction, meta, onOpenBooking, onOpenComment, onOpenMembership, onOpenSellerChat, onOpenTraining]);
 
   const handleDelete = useCallback(
     (event) => {

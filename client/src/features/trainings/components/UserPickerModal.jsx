@@ -5,14 +5,7 @@ import pb from '../../../services/pb';
 import { error } from '../../../lib/log';
 
 function isUserBookingDisabled(user) {
-  const membershipType = user.membership_type || 'regular';
-  const noSessions =
-    membershipType === 'regular' && (user.available_sessions ?? 0) <= 0;
-  return (
-    user.bot_blocked === true ||
-    user.membership_frozen === true ||
-    noSessions
-  );
+  return user.bot_blocked === true || user.membership_frozen === true;
 }
 
 /**
@@ -184,9 +177,6 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
             <p className="user-picker-status">Подходящих игроков нет.</p>
           ) : (
             filteredUsers.map((user) => {
-              const membershipType = user.membership_type || 'regular';
-              const noSessions =
-                membershipType === 'regular' && (user.available_sessions ?? 0) <= 0;
               const isFrozen = user.membership_frozen === true;
               const isBotBlocked = user.bot_blocked === true;
               const isDisabled = isUserBookingDisabled(user);
@@ -211,7 +201,6 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
                 <span>
                   {user.full_name || 'Теннисист'}
                   {isBotBlocked ? ' — заблокировал бота' : ''}
-                  {!isBotBlocked && noSessions ? ' — нет посещений' : ''}
                   {!isBotBlocked && isFrozen ? ' — абонемент заморожен' : ''}
                 </span>
               </label>

@@ -29,14 +29,19 @@ import {
 } from './postRichText';
 import {
   MENTION_CLASS,
+  MENTION_REMOVE_CLASS,
   buildPostMentionEl,
   buildUserMentionEl,
   deleteAdjacentMention,
   getMentionDraftAtCaret,
   insertMentionChip,
+  removeMentionEl,
   searchMentionPosts,
-  searchMentionUsers
+  searchMentionUsers,
+  updateMentionCaretProximity
 } from './postMentions';
+import { applyMentionMissingStatuses } from './mentionStatus';
+import { usePlayers } from '../../hooks/usePlayers';
 
 const FLOATING_ENTER_MS = 0.28;
 const FLOATING_EXIT_MS = 0.2;
@@ -98,6 +103,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
   const savedRangeRef = useRef(/** @type {Range | null} */ (null));
   const mentionDraftRef = useRef(/** @type {import('./postMentions').MentionDraft | null} */ (null));
   const mentionAbortRef = useRef(/** @type {AbortController | null} */ (null));
+  const { data: players } = usePlayers();
   const mentionFetchTimerRef = useRef(/** @type {ReturnType<typeof setTimeout> | null} */ (null));
   const mentionShowTimerRef = useRef(/** @type {ReturnType<typeof setTimeout> | null} */ (null));
   const mentionPendingRef = useRef(
@@ -461,14 +467,63 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     const next = value || '';
     if (skipNextSync.current) {
       skipNextSync.current = false;
-      if (getEditorHtml(el) === next || el.innerHTML === next) return;
+      if (getEditorHtml(el) === next || el.innerHTML === next) {
+        ensureFrameCarets(el);
+        updateMentionCaretProximity(el);
+        void applyMentionMissingStatuses(el, { players });
+        return;
+      }
     }
     if (el.innerHTML !== next) {
       el.innerHTML = next;
       ensureFrameCarets(el);
       setEmpty(isEditorEmpty(el));
+    } else {
+      ensureFrameCarets(el);
     }
-  }, [value]);
+    updateMentionCaretProximity(el);
+    void applyMentionMissingStatuses(el, { players });
+  }, [value, players]);
+
+  useEffect(() => {
+    const el = editorRef.current;
+    if (!el || !enableMentions) return undefined;
+
+    /**
+     * Capture: одно нажатие Backspace/Delete удаляет чип «вплотную»
+     * (в т.ч. когда браузер сначала выделяет atomic contenteditable=false).
+     * @param {KeyboardEvent | InputEvent} event
+     */
+    const handleDeleteGesture = (event) => {
+      let direction = /** @type {'backward' | 'forward' | null} */ (null);
+      if (event.type === 'keydown') {
+        const key = /** @type {KeyboardEvent} */ (event).key;
+        if (key === 'Backspace') direction = 'backward';
+        else if (key === 'Delete') direction = 'forward';
+      } else if (event.type === 'beforeinput') {
+        const inputType = /** @type {InputEvent} */ (event).inputType;
+        if (inputType === 'deleteContentBackward') direction = 'backward';
+        else if (inputType === 'deleteContentForward') direction = 'forward';
+      }
+      if (!direction) return;
+      if (!deleteAdjacentMention(el, direction)) return;
+      event.preventDefault();
+      if ('stopImmediatePropagation' in event) {
+        event.stopImmediatePropagation();
+      }
+      closeMentionSuggest(true);
+      skipNextSync.current = true;
+      syncEmptyAndValue();
+      updateMentionCaretProximity(el);
+    };
+
+    el.addEventListener('keydown', /** @type {EventListener} */ (handleDeleteGesture), true);
+    el.addEventListener('beforeinput', /** @type {EventListener} */ (handleDeleteGesture), true);
+    return () => {
+      el.removeEventListener('keydown', /** @type {EventListener} */ (handleDeleteGesture), true);
+      el.removeEventListener('beforeinput', /** @type {EventListener} */ (handleDeleteGesture), true);
+    };
+  }, [closeMentionSuggest, enableMentions, syncEmptyAndValue]);
 
   useEffect(() => {
     const onSelectionChange = () => {
@@ -477,16 +532,19 @@ const PostRichTextField = forwardRef(function PostRichTextField(
       const sel = document.getSelection();
       if (!sel || sel.rangeCount === 0) {
         hideFloatingToolbar();
+        updateMentionCaretProximity(el);
         return;
       }
       const node = sel.anchorNode;
       if (!node || !el.contains(node.nodeType === Node.TEXT_NODE ? node.parentNode : node)) {
         hideFloatingToolbar();
+        updateMentionCaretProximity(el);
         return;
       }
       saveSelection();
       refreshActive();
       updateSelectionToolbar();
+      updateMentionCaretProximity(el);
       if (enableMentions && sel.isCollapsed) {
         updateMentionSuggest();
       }
@@ -650,6 +708,13 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     const el = editorRef.current;
     if (!el || !(event.target instanceof Element)) return;
 
+    const removeBtn = event.target.closest(`.${MENTION_REMOVE_CLASS}`);
+    if (removeBtn && el.contains(removeBtn)) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+
     if (event.target.closest(`.${FRAME_CLASS} .post-anim-frame__text`)) return;
 
     const chips = Array.from(el.querySelectorAll(`.${FRAME_CLASS}, .${MENTION_CLASS}`));
@@ -685,6 +750,45 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     selection.addRange(range);
     savedRangeRef.current = range.cloneRange();
     hideFloatingToolbar(true);
+    updateMentionCaretProximity(el);
+  };
+
+  const handleMentionRemoveClick = (event) => {
+    const el = editorRef.current;
+    if (!el || !(event.target instanceof Element)) return false;
+    const removeBtn = event.target.closest(`.${MENTION_REMOVE_CLASS}`);
+    if (!removeBtn || !el.contains(removeBtn)) return false;
+    event.preventDefault();
+    event.stopPropagation();
+    const mention = removeBtn.closest(`.${MENTION_CLASS}`);
+    if (!(mention instanceof HTMLElement) || !el.contains(mention)) return true;
+    if (mention.dataset.removing === '1') return true;
+    mention.dataset.removing = '1';
+
+    const finish = () => {
+      if (!el.contains(mention)) return;
+      removeMentionEl(el, mention, 'before');
+      closeMentionSuggest(true);
+      skipNextSync.current = true;
+      syncEmptyAndValue();
+      updateMentionCaretProximity(el);
+      el.focus({ preventScroll: true });
+    };
+
+    if (prefersReducedMotion()) {
+      finish();
+      return true;
+    }
+
+    gsap.to(mention, {
+      opacity: 0,
+      scale: 0.86,
+      duration: 0.16,
+      ease: 'power2.in',
+      transformOrigin: '50% 50%',
+      onComplete: finish
+    });
+    return true;
   };
 
   const mentionItemCount =
@@ -774,14 +878,28 @@ const PostRichTextField = forwardRef(function PostRichTextField(
           }}
           onMouseDown={handleEditorMouseDown}
           onClick={(event) => {
+            if (handleMentionRemoveClick(event)) return;
             const link = event.target instanceof Element ? event.target.closest('a') : null;
             if (link && editorRef.current?.contains(link)) {
               event.preventDefault();
             }
+            const el = editorRef.current;
             const mention =
               event.target instanceof Element ? event.target.closest(`.${MENTION_CLASS}`) : null;
-            if (mention && editorRef.current?.contains(mention)) {
+            if (mention && el?.contains(mention)) {
               event.preventDefault();
+              // Клик по чипу → каретка сразу после → × видна («вплотную»).
+              el.focus({ preventScroll: true });
+              const selection = window.getSelection();
+              if (selection) {
+                const range = document.createRange();
+                range.setStartAfter(mention);
+                range.collapse(true);
+                selection.removeAllRanges();
+                selection.addRange(range);
+                savedRangeRef.current = range.cloneRange();
+              }
+              updateMentionCaretProximity(el);
             }
           }}
           onKeyDown={(event) => {
@@ -811,42 +929,9 @@ const PostRichTextField = forwardRef(function PostRichTextField(
                 return;
               }
             }
-            if (event.key === 'Backspace' || event.key === 'Delete') {
-              const el = editorRef.current;
-              if (
-                el &&
-                deleteAdjacentMention(el, event.key === 'Backspace' ? 'backward' : 'forward')
-              ) {
-                event.preventDefault();
-                closeMentionSuggest(true);
-                skipNextSync.current = true;
-                syncEmptyAndValue();
-                return;
-              }
-            }
+            // Backspace/Delete mention — capture listener (см. useEffect выше).
             if (singleLine && event.key === 'Enter') {
               event.preventDefault();
-            }
-          }}
-          onBeforeInput={(event) => {
-            if (
-              event.inputType !== 'deleteContentBackward' &&
-              event.inputType !== 'deleteContentForward'
-            ) {
-              return;
-            }
-            const el = editorRef.current;
-            if (
-              el &&
-              deleteAdjacentMention(
-                el,
-                event.inputType === 'deleteContentBackward' ? 'backward' : 'forward'
-              )
-            ) {
-              event.preventDefault();
-              closeMentionSuggest(true);
-              skipNextSync.current = true;
-              syncEmptyAndValue();
             }
           }}
           onBlur={() => {

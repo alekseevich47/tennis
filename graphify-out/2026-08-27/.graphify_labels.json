@@ -76,11 +76,18 @@
   "74": "Avatar.jsx",
   "75": "users_claim.pb.js",
   "76": "useSectionSwipe.js",
-  "78": "AboutAppModal.jsx",
+  "77": "AboutAppModal.jsx",
+  "78": "tournamentPosts.js",
   "79": "isModerator",
   "80": "useMaxCloseGuard.js",
+  "81": "GalleryPage.jsx",
+  "82": "main.jsx",
+  "83": "error",
+  "84": "RatingPage.jsx",
+  "85": "FavoritesContext.jsx",
   "86": "overlayStack.js",
-  "87": "ArchiveModal.jsx",
-  "88": "App.jsx",
-  "89": "BottomNav.jsx"
+  "87": "buyMessage.js",
+  "89": "BottomNav.jsx",
+  "91": "gestures.js",
+  "99": "App.jsx"
 }

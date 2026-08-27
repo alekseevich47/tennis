@@ -63,9 +63,8 @@ function TrainingsPage({
   const canSelfBook = useMemo(() => {
     if (!user) return false;
     if (user.bot_blocked === true) return false;
-    const membershipType = user.membership_type || 'regular';
-    if (membershipType === 'corporate' || membershipType === 'annual') return true;
-    return (user.available_sessions ?? 0) > 0;
+    if (user.membership_frozen === true) return false;
+    return true;
   }, [user]);
   const { data: trainings, isLoading, mutate } = useTrainings();
   const { alert, confirm } = useAlertDialog();
@@ -190,14 +189,6 @@ function TrainingsPage({
         });
         return;
       }
-      const membershipType = user?.membership_type || 'regular';
-      if (
-        membershipType === 'regular' &&
-        (user?.available_sessions ?? 0) <= 0
-      ) {
-        showToast({ text: 'Нет доступных посещений.' });
-        return;
-      }
       try {
         await bookTraining(training, user?.id);
         mutate();
@@ -209,14 +200,6 @@ function TrainingsPage({
           showToast({ text: BOT_BLOCKED_BOOKING_MESSAGE });
           return;
         }
-        if (/** @type {{ code?: string }} */ (err).code === 'ANNUAL_DAILY_LIMIT') {
-          showToast({ text: 'Годовой абонемент: только одна тренировка в день.' });
-          return;
-        }
-        if (/** @type {{ code?: string }} */ (err).code === 'NO_AVAILABLE_SESSIONS') {
-          showToast({ text: 'Нет доступных посещений.' });
-          return;
-        }
         error('book training:', err);
         await alert({
           title: 'Ошибка',
@@ -224,7 +207,7 @@ function TrainingsPage({
         });
       }
     },
-    [user?.id, user?.bot_blocked, user?.membership_frozen, user?.membership_type, user?.available_sessions, mutate, alert, showToast]
+    [user?.id, user?.bot_blocked, user?.membership_frozen, mutate, alert, showToast]
   );
 
   const handleCancelBooking = useCallback(
@@ -393,23 +376,6 @@ function TrainingsPage({
         }
         if (/** @type {{ code?: string }} */ (err).code === 'MEMBERSHIP_FROZEN') {
           await alert({ title: 'Запись невозможна', message: /** @type {Error} */ (err).message });
-          return;
-        }
-        if (/** @type {{ code?: string }} */ (err).code === 'NO_AVAILABLE_SESSIONS') {
-          await alert({ title: 'Запись невозможна', message: 'Нет доступных посещений.' });
-          return;
-        }
-        if (/** @type {{ code?: string }} */ (err).code === 'ANNUAL_DAILY_LIMIT') {
-          const ok = await confirm({
-            title: 'Годовой абонемент',
-            message: 'Один или несколько игроков уже записаны на тренировку в этот день (лимит: 1 в день). Записать принудительно?',
-            confirmText: 'Записать',
-            cancelText: 'Отмена'
-          });
-          if (!ok) return;
-          await bookUsersToTraining(bookingTraining, userIds, selectedUsers, { overrideAnnualLimit: true });
-          mutate();
-          setBookingTraining(null);
           return;
         }
         error('book users to training:', err);
