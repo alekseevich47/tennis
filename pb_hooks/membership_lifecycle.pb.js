@@ -64,12 +64,13 @@ routerAdd('GET', '/api/system-templates', (c) => {
   if (!auth || auth.getString('role') !== 'moderator') {
     return c.json(403, { error: 'Forbidden' });
   }
-  const channel = c.queryParam('channel') || 'bot';
+  const channel = (info.query && info.query.channel) || 'bot';
   try {
     const tpl = require(__hooks + '/templatelib.js');
     tpl.ensureSystemTemplates($app);
     return c.json(200, { items: tpl.listByChannel($app, channel) });
   } catch (err) {
+    console.log('[system-templates] list: ' + err);
     return c.json(500, { error: String(err) });
   }
 });
