@@ -1584,22 +1584,24 @@ button.post-card-like:hover:not(:disabled) {
 }
 
 /* ——— @-упоминания (участник / публикация) ——— */
+/* inline-flex + baseline даёт разный сдвиг: аватар (replaced) vs doc-icon.
+   Одинаковая высота 1em + vertical-align: middle — оба чипа на уровне текста. */
 .post-mention {
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  vertical-align: baseline;
+  vertical-align: middle;
   max-width: 100%;
   margin: 0 1px;
-  padding: 0 2px;
-  height: auto;
+  padding: 0 2px 0 1px;
+  height: 1em;
   box-sizing: border-box;
   border-radius: 999px;
   cursor: pointer;
   color: #007aff;
   font-weight: 600;
   font-size: inherit;
-  line-height: inherit;
+  line-height: 1;
   text-decoration: none;
   -webkit-user-select: none;
   user-select: none;
@@ -1613,21 +1615,20 @@ button.post-card-like:hover:not(:disabled) {
 }
 
 .post-mention__avatar {
-  width: 1em;
-  height: 1em;
+  width: 0.95em;
+  height: 0.95em;
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
   display: block;
   background: #e8eef5;
-  vertical-align: baseline;
 }
 
 .post-mention__avatar--fallback {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.65em;
+  font-size: 0.62em;
   font-weight: 700;
   color: #fff;
   background: linear-gradient(135deg, #5ac8fa, #007aff);
@@ -1637,7 +1638,7 @@ button.post-card-like:hover:not(:disabled) {
   color: #007aff;
   font-weight: 600;
   font-size: inherit;
-  line-height: inherit;
+  line-height: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1648,12 +1649,11 @@ button.post-card-like:hover:not(:disabled) {
   display: inline-flex;
   flex-direction: column;
   justify-content: center;
-  gap: 2px;
-  width: 0.9em;
-  height: 0.9em;
+  gap: 1.5px;
+  width: 0.85em;
+  height: 0.85em;
   flex-shrink: 0;
   color: #007aff;
-  vertical-align: baseline;
 }
 
 .post-mention__doc-line {
