@@ -276,10 +276,15 @@ function collectionExists(app) {
 
 function ensureSystemTemplates(app) {
   if (!collectionExists(app)) return;
-  var col = app.findCollectionByNameOrId('system_message_templates');
+  var col;
+  try {
+    col = app.findCollectionByNameOrId('system_message_templates');
+  } catch (_) {
+    return;
+  }
   for (var i = 0; i < DEFAULTS.length; i++) {
     var d = DEFAULTS[i];
-    var existing;
+    var existing = null;
     try {
       existing = app.findFirstRecordByFilter(
         'system_message_templates',
@@ -289,17 +294,21 @@ function ensureSystemTemplates(app) {
       existing = null;
     }
     if (existing) continue;
-    var rec = new Record(col);
-    rec.set('key', d.key);
-    rec.set('channel', d.channel);
-    rec.set('name', d.name);
-    rec.set('description', d.description || '');
-    rec.set('title', d.title || '');
-    rec.set('body', d.body || '');
-    rec.set('action_label', d.action_label || '');
-    rec.set('audience', d.audience || 'user');
-    rec.set('enabled', d.enabled !== false);
-    app.save(rec);
+    try {
+      var rec = new Record(col);
+      rec.set('key', d.key);
+      rec.set('channel', d.channel);
+      rec.set('name', d.name);
+      rec.set('description', d.description || '');
+      rec.set('title', d.title || '');
+      rec.set('body', d.body || '');
+      rec.set('action_label', d.action_label || '');
+      rec.set('audience', d.audience || 'user');
+      rec.set('enabled', d.enabled !== false);
+      app.save(rec);
+    } catch (saveErr) {
+      console.log('[templatelib] seed skip ' + d.key + ': ' + saveErr);
+    }
   }
 }
 
