@@ -20,6 +20,7 @@ function formatRub(n) {
 }
 
 /**
+ * Segment с анимированным thumb (slide left↔right).
  * @param {{
  *   left: string,
  *   right: string,
@@ -30,7 +31,17 @@ function formatRub(n) {
  */
 function SegmentToggle({ left, right, value, onChange, ariaLabel }) {
   return (
-    <div className="shop-filters-segment" role="group" aria-label={ariaLabel}>
+    <div
+      className={clsx(
+        'shop-filters-segment',
+        value === 'left' && 'is-left',
+        value === 'right' && 'is-right',
+        value && 'has-value'
+      )}
+      role="group"
+      aria-label={ariaLabel}
+    >
+      <span className="shop-filters-segment__thumb" aria-hidden="true" />
       <button
         type="button"
         className={clsx(
@@ -140,9 +151,9 @@ export default function ShopFiltersSheet({
   };
 
   const nameToggleValue =
-    draft.sort === 'name_asc' ? 'left' : draft.sort === 'name_desc' ? 'right' : null;
+    draft.nameDir === 'asc' ? 'left' : draft.nameDir === 'desc' ? 'right' : null;
   const priceToggleValue =
-    draft.sort === 'price_asc' ? 'left' : draft.sort === 'price_desc' ? 'right' : null;
+    draft.priceDir === 'asc' ? 'left' : draft.priceDir === 'desc' ? 'right' : null;
 
   const showLabel = `Показать ${previewCount} ${pluralize(previewCount, 'товар', 'товара', 'товаров')}`;
 
@@ -263,7 +274,7 @@ export default function ShopFiltersSheet({
         ) : null}
       </section>
 
-      <section className="shop-filters-section">
+      <section className="shop-filters-section shop-filters-section--sort">
         <h3 className="shop-filters-section__title">Сортировка</h3>
 
         <div className="shop-filters-sort-row">
@@ -277,7 +288,7 @@ export default function ShopFiltersSheet({
             value={nameToggleValue}
             ariaLabel="Сортировка по названию"
             onChange={(side) => {
-              patchDraft({ sort: side === 'left' ? 'name_asc' : 'name_desc' });
+              patchDraft({ nameDir: side === 'left' ? 'asc' : 'desc' });
             }}
           />
         </div>
@@ -293,7 +304,7 @@ export default function ShopFiltersSheet({
             value={priceToggleValue}
             ariaLabel="Сортировка по цене"
             onChange={(side) => {
-              patchDraft({ sort: side === 'left' ? 'price_asc' : 'price_desc' });
+              patchDraft({ priceDir: side === 'left' ? 'asc' : 'desc' });
             }}
           />
         </div>
@@ -312,12 +323,12 @@ export default function ShopFiltersSheet({
             type="button"
             className={clsx(
               'shop-filters-chip',
-              draft.sort === 'newest' && 'is-active'
+              draft.featured === 'newest' && 'is-active'
             )}
-            aria-pressed={draft.sort === 'newest'}
+            aria-pressed={draft.featured === 'newest'}
             onClick={() => {
               patchDraft({
-                sort: draft.sort === 'newest' ? DEFAULT_SHOP_FILTERS.sort : 'newest'
+                featured: draft.featured === 'newest' ? null : 'newest'
               });
             }}
           >
@@ -344,10 +355,14 @@ export default function ShopFiltersSheet({
             type="button"
             className={clsx(
               'shop-filters-chip',
-              draft.sort === 'popular' && 'is-active'
+              draft.featured === 'popular' && 'is-active'
             )}
-            aria-pressed={draft.sort === 'popular'}
-            onClick={() => patchDraft({ sort: 'popular' })}
+            aria-pressed={draft.featured === 'popular'}
+            onClick={() => {
+              patchDraft({
+                featured: draft.featured === 'popular' ? null : 'popular'
+              });
+            }}
           >
             Популярное
           </button>
