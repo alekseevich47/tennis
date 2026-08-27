@@ -2,23 +2,22 @@ import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 're
 import { createPortal } from 'react-dom';
 import IconButton from '../../components/ui/IconButton';
 import Avatar from '../../components/ui/Avatar';
-import PostRichTextField from '../feed/PostRichTextField';
+import CommentEditInlineForm from '../feed/CommentEditInlineForm';
 import CommentComposeForm from '../feed/CommentComposeForm';
 import CommentMediaBody from '../feed/CommentMediaBody';
 import CommentReplyButton from '../feed/CommentReplyButton';
 import CommentReplyComposeBar from '../feed/CommentReplyComposeBar';
 import CommentReplyQuote from '../feed/CommentReplyQuote';
 import CommentSwipeReply from '../feed/CommentSwipeReply';
-import { hasVisibleText, toDisplayHtml } from '../feed/postRichText';
+import { hasVisibleText } from '../feed/postRichText';
 import {
-  findScrollParent,
-  keepCommentEditInView,
-  restoreAndKeepCommentEditInView
+  keepCommentEditInView
 } from '../feed/keepCommentEditInView';
 import '../feed/Feed.css';
 import { useTournamentComments } from '../../hooks/useTournamentComments';
 import { useCommentLikes } from '../../hooks/useCommentLikes';
 import {
+  buildTournamentCommentMediaReorderFormData,
   createTournamentComment,
   updateTournamentComment,
   PENDING_DELETE_TOURNAMENT_COMMENTS_KEY
@@ -55,7 +54,6 @@ function TournamentCommentsSection({
   const [commentText, setCommentText] = useState('');
   const [isAddingComment, setIsAddingComment] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [editingText, setEditingText] = useState('');
   const [replyTo, setReplyTo] = useState(/** @type {any | null} */ (null));
   const [softDeletedIds, setSoftDeletedIds] = useState([]);
   const [highlightedId, setHighlightedId] = useState(/** @type {string | null} */ (null));
@@ -64,7 +62,6 @@ function TournamentCommentsSection({
   const commentFieldRef = useRef(/** @type {{ focus: () => void, clear: () => void } | null} */ (null));
   const editFieldRef = useRef(/** @type {{ focus: () => void, clear: () => void } | null} */ (null));
   const editFormRef = useRef(/** @type {HTMLFormElement | null} */ (null));
-  const editScrollTopBeforeFocusRef = useRef(/** @type {number | null} */ (null));
   const commentItemRefs = useRef(/** @type {Map<string, HTMLElement>} */ (new Map()));
   const commentsBottomRef = useRef(/** @type {HTMLDivElement | null} */ (null));
   const scrollTimerRef = useRef(/** @type {ReturnType<typeof setTimeout> | null} */ (null));
@@ -89,7 +86,6 @@ function TournamentCommentsSection({
 
   useEffect(() => {
     setEditingId(null);
-    setEditingText('');
     setIsAddingComment(false);
     isAddingCommentRef.current = false;
     setSoftDeletedIds([]);
@@ -234,15 +230,23 @@ function TournamentCommentsSection({
 
   const handleStartEdit = (comment) => {
     setEditingId(comment.id);
-    setEditingText(toDisplayHtml(comment.text || ''));
     setReplyTo(null);
   };
 
-  const handleSaveEdit = async (commentId, e) => {
-    e.preventDefault();
-    if (!hasVisibleText(editingText)) return;
+  const handleSaveEdit = async ({ text, orderedMedia, orderChanged, originalNames }) => {
+    if (!editingId) return;
+    if (!hasVisibleText(text) && orderedMedia.length === 0) return;
     try {
-      await updateTournamentComment(commentId, { text: editingText });
+      if (orderChanged && orderedMedia.length > 0) {
+        const formData = await buildTournamentCommentMediaReorderFormData(
+          text,
+          originalNames,
+          orderedMedia
+        );
+        await updateTournamentComment(editingId, formData);
+      } else {
+        await updateTournamentComment(editingId, { text });
+      }
       setEditingId(null);
       await mutateComments();
     } catch (err) {
@@ -367,43 +371,14 @@ function TournamentCommentsSection({
                     </div>
 
                     {editingId === c.id ? (
-                      <form
-                        ref={editFormRef}
-                        onSubmit={(e) => handleSaveEdit(c.id, e)}
-                        className="comment-edit-inline-form"
-                        onPointerDownCapture={() => {
-                          const sp = findScrollParent(editFormRef.current);
-                          editScrollTopBeforeFocusRef.current = sp?.scrollTop ?? null;
-                        }}
-                      >
-                        <label htmlFor={`edit-tournament-comment-${c.id}`} className="visually-hidden">
-                          Редактирование комментария
-                        </label>
-                        <PostRichTextField
-                          ref={editFieldRef}
-                          id={`edit-tournament-comment-${c.id}`}
-                          value={editingText}
-                          onChange={setEditingText}
-                          enableFrame={false}
-                          compact
-                          placeholder="Текст комментария…"
-                          aria-label="Редактирование комментария"
-                          onFocus={() => {
-                            restoreAndKeepCommentEditInView(
-                              editFormRef.current,
-                              editScrollTopBeforeFocusRef.current
-                            );
-                          }}
-                        />
-                        <div className="comment-edit-inline-form__actions">
-                          <button type="submit" disabled={!hasVisibleText(editingText)}>
-                            Изменить
-                          </button>
-                          <button type="button" onClick={() => setEditingId(null)}>
-                            Отмена
-                          </button>
-                        </div>
-                      </form>
+                      <CommentEditInlineForm
+                        comment={c}
+                        collection={COMMENT_COLLECTION}
+                        formRef={editFormRef}
+                        fieldRef={editFieldRef}
+                        onSave={handleSaveEdit}
+                        onCancel={() => setEditingId(null)}
+                      />
                     ) : (
                       <>
                         <div className="comment-body-indent">

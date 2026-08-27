@@ -287,49 +287,88 @@ export function deleteAdjacentMention(editor, direction) {
   const range = selection.getRangeAt(0);
   if (!editor.contains(range.commonAncestorContainer)) return false;
 
-  /** @type {Node | null} */
-  let candidate = null;
+  /** @param {Node | null} node */
+  const isIgnorableText = (node) =>
+    node?.nodeType === Node.TEXT_NODE &&
+    /^[\u200B\u00A0\s]*$/.test(node.textContent || '');
 
-  if (direction === 'backward') {
-    if (range.startContainer.nodeType === Node.TEXT_NODE) {
-      const text = range.startContainer.textContent || '';
-      const before = text.slice(0, range.startOffset);
-      if (before.replace(/[\u200B\u00A0\s]+$/g, '').length > 0) return false;
-      candidate = range.startContainer.previousSibling;
-    } else if (range.startContainer.nodeType === Node.ELEMENT_NODE) {
-      const el = /** @type {Element} */ (range.startContainer);
-      candidate = el.childNodes[range.startOffset - 1] || null;
+  /** @returns {HTMLElement | null} */
+  const findMention = () => {
+    /** @type {Node | null} */
+    let node = range.startContainer;
+    let offset = range.startOffset;
+
+    if (direction === 'backward') {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const text = node.textContent || '';
+        const before = text.slice(0, offset);
+        if (before.replace(/[\u200B\u00A0\s]+$/g, '').length > 0) return null;
+        node = node.previousSibling;
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        const el = /** @type {Element} */ (node);
+        if (offset > 0) {
+          node = el.childNodes[offset - 1] || null;
+        } else {
+          node = el.previousSibling;
+        }
+      }
+
+      while (isIgnorableText(node)) {
+        node = node?.previousSibling || null;
+      }
+
+      if (node?.nodeType === Node.ELEMENT_NODE && isMentionEl(/** @type {Element} */ (node))) {
+        return /** @type {HTMLElement} */ (node);
+      }
+      return null;
     }
-  } else if (range.startContainer.nodeType === Node.TEXT_NODE) {
-    const text = range.startContainer.textContent || '';
-    const after = text.slice(range.startOffset);
-    if (after.replace(/^[\u200B\u00A0\s]+/g, '').length > 0) return false;
-    candidate = range.startContainer.nextSibling;
-  } else if (range.startContainer.nodeType === Node.ELEMENT_NODE) {
-    const el = /** @type {Element} */ (range.startContainer);
-    candidate = el.childNodes[range.startOffset] || null;
-  }
 
-  while (
-    candidate &&
-    candidate.nodeType === Node.TEXT_NODE &&
-    /^[\u200B\u00A0\s]*$/.test(candidate.textContent || '')
-  ) {
-    candidate =
-      direction === 'backward' ? candidate.previousSibling : candidate.nextSibling;
-  }
+    if (node.nodeType === Node.TEXT_NODE) {
+      const text = node.textContent || '';
+      const after = text.slice(offset);
+      if (after.replace(/^[\u200B\u00A0\s]+/g, '').length > 0) return null;
+      node = node.nextSibling;
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      const el = /** @type {Element} */ (node);
+      node = el.childNodes[offset] || null;
+    }
 
-  if (!candidate || candidate.nodeType !== Node.ELEMENT_NODE) return false;
-  if (!isMentionEl(/** @type {Element} */ (candidate))) return false;
+    while (isIgnorableText(node)) {
+      node = node?.nextSibling || null;
+    }
 
-  const mention = /** @type {HTMLElement} */ (candidate);
+    if (node?.nodeType === Node.ELEMENT_NODE && isMentionEl(/** @type {Element} */ (node))) {
+      return /** @type {HTMLElement} */ (node);
+    }
+    return null;
+  };
+
+  const mention = findMention();
+  if (!mention || !editor.contains(mention)) return false;
+
   const afterRange = document.createRange();
   if (direction === 'backward') {
     afterRange.setStartBefore(mention);
   } else {
-    afterRange.setStartAfter(mention);
+    let tail = mention.nextSibling;
+    while (isIgnorableText(tail)) {
+      tail = tail?.nextSibling || null;
+    }
+    if (tail?.nodeType === Node.TEXT_NODE) {
+      afterRange.setStart(tail, 0);
+    } else {
+      afterRange.setStartAfter(mention);
+    }
   }
   afterRange.collapse(true);
+
+  let tail = mention.nextSibling;
+  while (isIgnorableText(tail)) {
+    const next = tail?.nextSibling || null;
+    tail?.parentNode?.removeChild(tail);
+    tail = next;
+  }
+
   mention.remove();
   selection.removeAllRanges();
   selection.addRange(afterRange);
@@ -405,11 +444,7 @@ export function serializeMentionEl(el) {
 export async function searchMentionUsers(query, { signal, limit = 8 } = {}) {
   const q = String(query || '').trim();
   const filterParts = ['is_banned != true', 'is_visible != false'];
-  if (q) {
-    // PocketBase `~` — case-insensitive; доп. клиентский фильтр на случай кириллицы.
-    filterParts.push(pb.filter('full_name ~ {:q}', { q }));
-  }
-  const result = await pb.collection('users').getList(1, Math.max(limit * 2, 16), {
+  const result = await pb.collection('users').getList(1, 200, {
     filter: filterParts.join(' && '),
     fields: 'id,collectionId,collectionName,full_name,avatar,avatar_url',
     sort: 'full_name',
@@ -419,11 +454,10 @@ export async function searchMentionUsers(query, { signal, limit = 8 } = {}) {
   const needle = q.toLocaleLowerCase('ru-RU');
   const items = /** @type {MentionUser[]} */ (result.items || []);
   const filtered = needle
-    ? items.filter((user) =>
-        String(user.full_name || '')
-          .toLocaleLowerCase('ru-RU')
-          .includes(needle)
-      )
+    ? items.filter((user) => {
+        const name = String(user.full_name || '').toLocaleLowerCase('ru-RU');
+        return name.includes(needle);
+      })
     : items;
   return filtered.slice(0, limit);
 }

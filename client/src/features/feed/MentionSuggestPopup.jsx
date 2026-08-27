@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import clsx from 'clsx';
 import gsap from 'gsap';
 import Avatar from '../../components/ui/Avatar';
+import Spinner from '../../components/ui/Spinner';
 import { registerOverlay } from '../../lib/overlayStack';
 
 const ENTER_MS = 0.22;
@@ -50,7 +51,16 @@ function MentionSuggestPopup({
   const listId = useId();
   const rootRef = useRef(/** @type {HTMLDivElement | null} */ (null));
   const openRef = useRef(open);
+  const enteredRef = useRef(false);
+  const placementRef = useRef(/** @type {'below' | 'above' | null} */ (null));
   openRef.current = open;
+
+  useEffect(() => {
+    if (!mounted) {
+      enteredRef.current = false;
+      placementRef.current = null;
+    }
+  }, [mounted]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -66,23 +76,29 @@ function MentionSuggestPopup({
     const reduced = prefersReducedMotion();
 
     if (open) {
-      gsap.fromTo(
-        el,
-        { opacity: 0, y: 8, scale: 0.96, pointerEvents: 'none' },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          pointerEvents: 'auto',
-          duration: reduced ? 0.01 : ENTER_MS,
-          ease: 'power3.out'
-        }
-      );
+      if (!enteredRef.current) {
+        enteredRef.current = true;
+        gsap.fromTo(
+          el,
+          { opacity: 0, y: 8, scale: 0.96, pointerEvents: 'none' },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            pointerEvents: 'auto',
+            duration: reduced ? 0.01 : ENTER_MS,
+            ease: 'power3.out'
+          }
+        );
+      } else {
+        gsap.set(el, { opacity: 1, y: 0, scale: 1, pointerEvents: 'auto' });
+      }
       return () => {
         gsap.killTweensOf(el);
       };
     }
 
+    enteredRef.current = false;
     const tween = gsap.to(el, {
       opacity: 0,
       y: 6,
@@ -104,7 +120,7 @@ function MentionSuggestPopup({
 
   const items = kind === 'user' ? users : posts;
   const panelWidth = Math.min(320, Math.max(220, window.innerWidth - 16));
-  let left = Math.min(
+  const left = Math.min(
     Math.max(8, anchorRect.left),
     window.innerWidth - panelWidth - 8
   );
@@ -112,9 +128,16 @@ function MentionSuggestPopup({
   const gap = 8;
   const spaceBelow = window.innerHeight - anchorRect.bottom - gap;
   const spaceAbove = anchorRect.top - gap;
-  // Предпочитаем снизу; сверху — только если снизу не хватает, а сверху места больше.
+
+  if (!placementRef.current) {
+    placementRef.current =
+      spaceBelow >= Math.min(estimatedHeight, 120) || spaceBelow >= spaceAbove
+        ? 'below'
+        : 'above';
+  }
+
   let top;
-  if (spaceBelow >= Math.min(estimatedHeight, 120) || spaceBelow >= spaceAbove) {
+  if (placementRef.current === 'below') {
     top = anchorRect.bottom + gap;
   } else {
     top = Math.max(8, anchorRect.top - estimatedHeight - gap);
@@ -123,7 +146,11 @@ function MentionSuggestPopup({
 
   let body;
   if (loading) {
-    body = <div className="mention-suggest__empty">Поиск…</div>;
+    body = (
+      <div className="mention-suggest__loading">
+        <Spinner label="Поиск…" inline />
+      </div>
+    );
   } else if (kind === 'user' && users.length === 0) {
     body = (
       <div className="mention-suggest__empty">
@@ -199,6 +226,7 @@ function MentionSuggestPopup({
       style={{ top, left, width: panelWidth }}
       role="listbox"
       aria-label={kind === 'user' ? 'Упоминание участника' : 'Упоминание публикации'}
+      aria-busy={loading ? 'true' : undefined}
     >
       <div className="mention-suggest__hint">
         {kind === 'user' ? '@ участник' : '@# публикация'}

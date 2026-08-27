@@ -154,8 +154,29 @@ export function createTournamentCommentWithProgress(payload, { signal, onProgres
 }
 
 /**
+ * @param {string} text
+ * @param {string[]} originalNames
+ * @param {Array<{ filename: string, url: string }>} orderedMedia
+ * @returns {Promise<FormData>}
+ */
+export async function buildTournamentCommentMediaReorderFormData(text, originalNames, orderedMedia) {
+  const formData = new FormData();
+  formData.append('text', text);
+  originalNames.forEach((name) => formData.append('media-', name));
+  for (const item of orderedMedia) {
+    const res = await fetch(item.url);
+    const blob = await res.blob();
+    formData.append(
+      'media',
+      new File([blob], item.filename, { type: blob.type || 'application/octet-stream' })
+    );
+  }
+  return formData;
+}
+
+/**
  * @param {string} commentId
- * @param {Partial<TournamentCommentRecord>} patch
+ * @param {Partial<TournamentCommentRecord> | FormData} patch
  */
 export async function updateTournamentComment(commentId, patch) {
   return /** @type {TournamentCommentRecord} */ (

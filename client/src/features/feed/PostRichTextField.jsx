@@ -43,7 +43,7 @@ const FLOATING_EXIT_MS = 0.2;
 /** Фоновый запрос поиска (не показ). */
 const MENTION_FETCH_DEBOUNCE_MS = 120;
 /** Показ результатов после паузы ввода. */
-const MENTION_SHOW_DELAY_MS = 1250;
+const MENTION_SHOW_DELAY_MS = 500;
 
 function prefersReducedMotion() {
   return typeof window !== 'undefined'
@@ -267,7 +267,11 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     setMentionUsers(pending.users);
     setMentionPosts(pending.posts);
     setMentionLoading(pending.loading);
-    setMentionActiveIndex(0);
+    setMentionActiveIndex((prev) => {
+      const count = pending.kind === 'user' ? pending.users.length : pending.posts.length;
+      if (count <= 0) return 0;
+      return Math.min(prev, count - 1);
+    });
     setMentionMounted(true);
     setMentionOpen(true);
   }, []);
@@ -309,7 +313,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
       // ignore
     }
 
-    // Показ результата — только после паузы 1–1.5s с последней буквы.
+    // Показ — после паузы 0.5s с последней буквы; данные подгружаются параллельно.
     if (mentionShowTimerRef.current) clearTimeout(mentionShowTimerRef.current);
     mentionShowTimerRef.current = setTimeout(() => {
       mentionShowTimerRef.current = null;
@@ -329,6 +333,9 @@ const PostRichTextField = forwardRef(function PostRichTextField(
         posts: [],
         loading: true
       };
+      if (!mentionShowTimerRef.current && mentionDraftRef.current) {
+        flushMentionShow();
+      }
       try {
         if (draft.kind === 'user') {
           const users = await searchMentionUsers(draft.query, { signal: ac.signal });
@@ -819,6 +826,27 @@ const PostRichTextField = forwardRef(function PostRichTextField(
             }
             if (singleLine && event.key === 'Enter') {
               event.preventDefault();
+            }
+          }}
+          onBeforeInput={(event) => {
+            if (
+              event.inputType !== 'deleteContentBackward' &&
+              event.inputType !== 'deleteContentForward'
+            ) {
+              return;
+            }
+            const el = editorRef.current;
+            if (
+              el &&
+              deleteAdjacentMention(
+                el,
+                event.inputType === 'deleteContentBackward' ? 'backward' : 'forward'
+              )
+            ) {
+              event.preventDefault();
+              closeMentionSuggest(true);
+              skipNextSync.current = true;
+              syncEmptyAndValue();
             }
           }}
           onBlur={() => {
