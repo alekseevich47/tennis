@@ -72,6 +72,7 @@ export default function SearchBar({
     const handlePointerDown = (event) => {
       if (rootRef.current?.contains(event.target)) return;
       if (event.target instanceof Element && event.target.closest('.category-dropdown')) return;
+      if (event.target instanceof Element && event.target.closest('.shop-filter-btn')) return;
       if (searchQuery.trim()) return;
       closeSearchUI();
     };

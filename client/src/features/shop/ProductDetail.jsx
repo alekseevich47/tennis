@@ -8,12 +8,9 @@ import BuyButton from './BuyButton';
 import ProductPrice from './ProductPrice';
 import { getMediaThumbUrl, getMediaUrl, isVideoMediaName, mediaNames, videoPreviewUrl } from '../../lib/media';
 import { useKeepForModalClose } from '../../hooks/useKeepForModalClose';
+import { normalizeProductCategoryIds } from './productCategories';
 
 const SWIPE_THRESHOLD_PX = 36;
-
-function getProductCategoryIds(product) {
-  return Array.isArray(product?.categories) ? product.categories : [];
-}
 
 /**
  * @param {{
@@ -66,7 +63,7 @@ function ProductDetail({
   }, [product]);
 
   const selectedCategoryNames = useMemo(() => {
-    const categoryIds = getProductCategoryIds(product);
+    const categoryIds = normalizeProductCategoryIds(product?.categories);
     if (categoryIds.length === 0) return [];
 
     const expandedCategories = product?.expand?.categories;
@@ -75,6 +72,12 @@ function ProductDetail({
         .filter((category) => categoryIds.includes(category.id))
         .map((category) => category.name)
         .filter(Boolean);
+    }
+
+    if (expandedCategories && typeof expandedCategories === 'object' && expandedCategories.id) {
+      return categoryIds.includes(expandedCategories.id) && expandedCategories.name
+        ? [expandedCategories.name]
+        : [];
     }
 
     return categories

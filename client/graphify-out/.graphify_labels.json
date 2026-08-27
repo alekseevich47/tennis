@@ -14,11 +14,19 @@
   "12": "BroadcastModal.jsx",
   "13": "FullscreenImageViewer.jsx",
   "14": "PostRichTextField.jsx",
+  "15": "ShopPage.jsx",
   "16": "ArchiveModal.jsx",
+  "17": "App.jsx",
+  "18": "useMaxAuth.js",
   "19": "main.jsx",
   "20": "GalleryPage.jsx",
   "21": "useSectionSwipe.js",
   "22": "sw.js",
+  "23": "useMaxCloseGuard.js",
+  "24": "AddActionContext.jsx",
   "25": "vite-env.d.ts",
-  "26": "vite.config.js"
+  "26": "vite.config.js",
+  "27": "useSectionSwipe.js",
+  "28": "overlayStack.js",
+  "29": "ProductUploadProvider.jsx"
 }

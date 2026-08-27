@@ -33,6 +33,18 @@
   gap: 8px;
 }
 
+.shop-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.shop-header-bar-new.search-open .shop-filter-btn {
+  display: none;
+}
+
 .product-category-multiselect {
   position: relative;
   min-width: 0;

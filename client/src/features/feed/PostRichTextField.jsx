@@ -772,15 +772,19 @@ const PostRichTextField = forwardRef(function PostRichTextField(
         rootRef.current?.closest('.comment-compose__field-col') || rootRef.current;
       const sendBtn =
         row instanceof Element ? row.querySelector('.comment-send-btn') : null;
+      const toolbarRow = rootRef.current?.querySelector('.post-rich-text__toolbar-row');
       const fr = fieldCol?.getBoundingClientRect();
       const sr = sendBtn?.getBoundingClientRect();
+      const tr = toolbarRow?.getBoundingClientRect();
       const left = Math.round(fr?.left ?? er.left);
       const right = Math.round(sr?.right ?? fr?.right ?? er.right);
       const width = Math.max(200, right - left);
       const height = Math.min(280, Math.max(220, Math.round(vw * 0.72)));
+      // Нижняя граница панели = верх строки форматирования (панель выше тулбара).
+      const bottom = Math.round(tr?.top ?? rootRef.current?.getBoundingClientRect().top ?? er.top);
       setEmojiMode('comment');
       setEmojiLayout({
-        bottom: er.top,
+        bottom,
         left,
         width,
         height
