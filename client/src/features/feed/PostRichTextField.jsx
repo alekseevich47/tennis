@@ -15,7 +15,7 @@ import PostFormatToolbar from './PostFormatToolbar';
 import PostLinkModal from './PostLinkModal';
 import FrameColorPicker from './FrameColorPicker';
 import MentionSuggestPopup from './MentionSuggestPopup';
-import EmojiPicker from './emoji/EmojiPicker';
+import EmojiPicker, { EMOJI_ATTACH_SWAP_MS } from './emoji/EmojiPicker';
 import {
   FRAME_CLASS,
   applyAnimFrame,
@@ -24,6 +24,7 @@ import {
   ensureFrameCarets,
   getEditorHtml,
   getLinkDraftFromSelection,
+  hasVisibleText,
   isEditorEmpty,
   normalizeHexColor,
   readActiveFormats
@@ -75,6 +76,7 @@ function prefersReducedMotion() {
  *   singleLine?: boolean,
  *   toolbarExtra?: React.ReactNode,
  *   editorEnd?: React.ReactNode,
+ *   fieldEmojiMode?: 'always' | 'after-text',
  *   onFocus?: () => void
  * }} props
  */
@@ -92,6 +94,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     singleLine = false,
     toolbarExtra = null,
     editorEnd = null,
+    fieldEmojiMode = 'always',
     onFocus
   },
   ref
@@ -128,9 +131,11 @@ const PostRichTextField = forwardRef(function PostRichTextField(
   const [linkDraft, setLinkDraft] = useState({ title: '', href: '' });
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [emojiMode, setEmojiMode] = useState(/** @type {'field' | 'toolbar'} */ ('field'));
-  const [emojiAnchor, setEmojiAnchor] = useState(/** @type {DOMRect | null} */ (null));
-  const [emojiModalRect, setEmojiModalRect] = useState(/** @type {DOMRect | null} */ (null));
+  const [emojiLayout, setEmojiLayout] = useState(
+    /** @type {{ bottom: number, left: number, width: number, height: number } | null} */ (null)
+  );
   const fieldEmojiBtnRef = useRef(/** @type {HTMLButtonElement | null} */ (null));
+  const [fieldEmojiVisible, setFieldEmojiVisible] = useState(fieldEmojiMode === 'always');
   const [floatingPos, setFloatingPos] = useState(
     /** @type {{ top: number, left: number } | null} */ (null)
   );
@@ -729,19 +734,70 @@ const PostRichTextField = forwardRef(function PostRichTextField(
   }, [mentionOpen, closeMentionSuggest]);
 
   const openEmojiPicker = useCallback((mode, triggerEl) => {
+    if (emojiOpen) {
+      setEmojiOpen(false);
+      return;
+    }
+
     saveSelection();
-    const rect = triggerEl?.getBoundingClientRect?.() || null;
-    setEmojiMode(mode);
-    setEmojiAnchor(rect);
-    const modalEl = rootRef.current?.closest('.ui-modal-content');
-    setEmojiModalRect(modalEl ? modalEl.getBoundingClientRect() : null);
-    setEmojiOpen(true);
     setFrameOpen(false);
     hideFloatingToolbar(true);
     closeMentionSuggest(true);
-    const active = /** @type {HTMLElement | null} */ (document.activeElement);
-    if (active && typeof active.blur === 'function') active.blur();
-  }, [closeMentionSuggest, hideFloatingToolbar, saveSelection]);
+
+    const modalEl = rootRef.current?.closest('.ui-modal-content');
+    const modalRect = modalEl?.getBoundingClientRect() || null;
+    const vw = window.innerWidth;
+
+    if (mode === 'field') {
+      const editor = editorRef.current;
+      const er = editor?.getBoundingClientRect();
+      if (!er) return;
+      const size = Math.min(280, Math.max(220, Math.round(vw * 0.72)));
+      setEmojiMode('field');
+      setEmojiLayout({
+        bottom: er.top,
+        left: Math.max(8, er.right - size),
+        width: size,
+        height: size
+      });
+    } else {
+      const toolbarEl =
+        (triggerEl instanceof Element && triggerEl.closest('.post-format-toolbar')) ||
+        floatingRef.current?.querySelector('.post-format-toolbar') ||
+        rootRef.current?.querySelector('.post-rich-text__toolbar-row .post-format-toolbar') ||
+        rootRef.current?.querySelector('.post-rich-text__toolbar-row');
+      const tr = toolbarEl?.getBoundingClientRect();
+      if (!tr) return;
+      const width = modalRect ? Math.round(modalRect.width) : Math.max(200, vw - 16);
+      const height = modalRect
+        ? Math.max(180, Math.round(modalRect.height / 3))
+        : Math.max(180, Math.round(window.innerHeight / 3));
+      const left = modalRect ? Math.round(modalRect.left) : 8;
+      setEmojiMode('toolbar');
+      setEmojiLayout({
+        bottom: tr.top,
+        left,
+        width,
+        height
+      });
+    }
+
+    setEmojiOpen(true);
+  }, [closeMentionSuggest, emojiOpen, hideFloatingToolbar, saveSelection]);
+
+  useEffect(() => {
+    if (fieldEmojiMode === 'always') {
+      setFieldEmojiVisible(true);
+      return undefined;
+    }
+    const hasText = hasVisibleText(value);
+    if (hasText) {
+      const timer = window.setTimeout(() => setFieldEmojiVisible(true), EMOJI_ATTACH_SWAP_MS);
+      return () => window.clearTimeout(timer);
+    }
+    setFieldEmojiVisible(false);
+    return undefined;
+  }, [fieldEmojiMode, value]);
 
   const insertEmojiAtCaret = useCallback(
     (emoji) => {
@@ -1005,8 +1061,13 @@ const PostRichTextField = forwardRef(function PostRichTextField(
         <button
           ref={fieldEmojiBtnRef}
           type="button"
-          className="post-rich-text__emoji-field-btn"
+          className={clsx(
+            'post-rich-text__emoji-field-btn',
+            fieldEmojiVisible && 'is-visible'
+          )}
           aria-label="Эмодзи"
+          aria-hidden={!fieldEmojiVisible}
+          tabIndex={fieldEmojiVisible ? 0 : -1}
           data-emoji-trigger="true"
           data-emoji-source="field"
           onMouseDown={(e) => e.preventDefault()}
@@ -1192,11 +1253,19 @@ const PostRichTextField = forwardRef(function PostRichTextField(
       <EmojiPicker
         open={emojiOpen}
         mode={emojiMode}
-        anchorRect={emojiAnchor}
-        modalRect={emojiModalRect}
+        bottom={emojiLayout?.bottom ?? null}
+        left={emojiLayout?.left ?? null}
+        width={emojiLayout?.width ?? null}
+        height={emojiLayout?.height ?? null}
         onClose={() => {
           setEmojiOpen(false);
-          setEmojiAnchor(null);
+          setEmojiLayout(null);
+        }}
+        shouldIgnoreClose={(target) => {
+          if (!(target instanceof Element)) return false;
+          if (target.closest('.post-rich-text__editor')) return true;
+          if (editorRef.current?.contains(target)) return true;
+          return false;
         }}
         onPick={(emoji) => {
           insertEmojiAtCaret(emoji);

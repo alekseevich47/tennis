@@ -106,7 +106,7 @@
   position: absolute;
   top: 6px;
   right: 6px;
-  z-index: 3;
+  z-index: 5;
   width: 28px;
   height: 28px;
   display: inline-flex;
@@ -116,13 +116,20 @@
   border-radius: 8px;
   background: transparent;
   color: #6b7785;
-  opacity: 0.45;
+  opacity: 0;
+  pointer-events: none;
   cursor: pointer;
   padding: 0;
+  transition: opacity 0.28s ease;
 }
 
-.post-rich-text__emoji-field-btn:hover,
-.post-rich-text__emoji-field-btn:focus-visible {
+.post-rich-text__emoji-field-btn.is-visible {
+  opacity: 0.45;
+  pointer-events: auto;
+}
+
+.post-rich-text__emoji-field-btn.is-visible:hover,
+.post-rich-text__emoji-field-btn.is-visible:focus-visible {
   opacity: 0.85;
   outline: none;
   background: rgba(0, 122, 255, 0.08);
@@ -133,16 +140,13 @@
   height: 18px;
 }
 
+/* Поверх текста; скрепка в поле при after-text уже скрыта — smile справа. */
 .post-rich-text--with-editor-end .post-rich-text__emoji-field-btn {
-  right: 48px;
+  right: 6px;
 }
 
 .post-rich-text--compact .post-rich-text__editor {
   padding-right: 40px;
-}
-
-.post-rich-text--with-editor-end.post-rich-text--compact .post-rich-text__editor {
-  padding-right: 84px;
 }
 
 .post-rich-text:not(.post-rich-text--compact) .post-rich-text__editor {

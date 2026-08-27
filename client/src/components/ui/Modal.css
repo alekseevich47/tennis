@@ -41,9 +41,14 @@
   pointer-events: none;
 }
 
+.ui-modal-overlay:has(.ui-modal-large) {
+  padding: 8px 12px;
+}
+
 .ui-modal-large {
   max-width: 520px;
-  height: 80vh;
+  height: 88vh;
+  max-height: 96vh;
   padding: 0;
 }
 
