@@ -1,17 +1,14 @@
 // @ts-check
 import { normalizeProductCategoryIds } from './productCategories';
 
-/** @typedef {'asc' | 'desc'} ShopSortDir */
-/** @typedef {'newest' | 'popular' | null} ShopFeaturedSort */
+/** @typedef {'name_asc' | 'name_desc' | 'price_asc' | 'price_desc' | 'newest' | 'popular'} ShopSortMode */
 
 /**
  * @typedef {{
  *   categoryId: string,
  *   priceMin: number | null,
  *   priceMax: number | null,
- *   nameDir: ShopSortDir | null,
- *   priceDir: ShopSortDir | null,
- *   featured: ShopFeaturedSort
+ *   sort: ShopSortMode
  * }} ShopFiltersState
  */
 
@@ -20,9 +17,7 @@ export const DEFAULT_SHOP_FILTERS = {
   categoryId: '',
   priceMin: null,
   priceMax: null,
-  nameDir: null,
-  priceDir: null,
-  featured: 'popular'
+  sort: 'popular'
 };
 
 /**
@@ -66,7 +61,7 @@ export function resolvePriceRange(filters, bounds) {
  */
 export function countActiveShopFilters(filters, bounds) {
   let count = 0;
-  if (filters.categoryId) count += 1;
+  // categoryId — только через CategoryDropdown в шапке, в badge шторки не входит
 
   const range = resolvePriceRange(filters, bounds);
   const priceNarrowed =
@@ -74,9 +69,7 @@ export function countActiveShopFilters(filters, bounds) {
     (range.min > bounds.min || range.max < bounds.max);
   if (priceNarrowed) count += 1;
 
-  if (filters.nameDir) count += 1;
-  if (filters.priceDir) count += 1;
-  if (filters.featured && filters.featured !== DEFAULT_SHOP_FILTERS.featured) count += 1;
+  if (filters.sort && filters.sort !== DEFAULT_SHOP_FILTERS.sort) count += 1;
   return count;
 }
 
@@ -98,17 +91,17 @@ export function productMatchesFilters(product, filters, bounds) {
 }
 
 /**
- * Сортировка: featured (newest|popular) → nameDir → priceDir.
- * Name и price могут быть активны одновременно; newest/popular — взаимоисключающие.
+ * Один режим сортировки: название XOR цена XOR новизна XOR популярность.
  * @param {import('../../services/catalog').ProductRecord[]} products
- * @param {Pick<ShopFiltersState, 'nameDir' | 'priceDir' | 'featured'>} sort
+ * @param {ShopSortMode | Pick<ShopFiltersState, 'sort'>} sortOrFilters
  */
-export function sortProducts(products, sort) {
-  const nameDir = sort?.nameDir ?? null;
-  const priceDir = sort?.priceDir ?? null;
-  const featured = sort?.featured ?? null;
-  const hasAny = Boolean(featured || nameDir || priceDir);
+export function sortProducts(products, sortOrFilters) {
+  const sort =
+    typeof sortOrFilters === 'string'
+      ? sortOrFilters
+      : sortOrFilters?.sort || DEFAULT_SHOP_FILTERS.sort;
 
+  const next = [...products];
   const byTitle = (a, b) =>
     String(a.title || '').localeCompare(String(b.title || ''), 'ru', {
       sensitivity: 'base',
@@ -123,32 +116,26 @@ export function sortProducts(products, sort) {
     return byCreated(a, b);
   };
 
-  return [...products].sort((a, b) => {
-    if (featured === 'newest') {
-      const d = byCreated(a, b);
-      if (d !== 0) return d;
-    } else if (featured === 'popular') {
-      const d = byViews(a, b);
-      if (d !== 0) return d;
-    }
-
-    if (nameDir === 'asc') {
-      const d = byTitle(a, b);
-      if (d !== 0) return d;
-    } else if (nameDir === 'desc') {
-      const d = byTitle(b, a);
-      if (d !== 0) return d;
-    }
-
-    if (priceDir === 'asc') {
-      const d = byPrice(a, b);
-      if (d !== 0) return d;
-    } else if (priceDir === 'desc') {
-      const d = byPrice(b, a);
-      if (d !== 0) return d;
-    }
-
-    if (!hasAny) return byViews(a, b);
-    return 0;
-  });
+  switch (sort) {
+    case 'name_asc':
+      next.sort(byTitle);
+      break;
+    case 'name_desc':
+      next.sort((a, b) => byTitle(b, a));
+      break;
+    case 'price_asc':
+      next.sort(byPrice);
+      break;
+    case 'price_desc':
+      next.sort((a, b) => byPrice(b, a));
+      break;
+    case 'newest':
+      next.sort(byCreated);
+      break;
+    case 'popular':
+    default:
+      next.sort(byViews);
+      break;
+  }
+  return next;
 }

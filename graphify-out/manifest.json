@@ -1,6 +1,6 @@
 {
   "client/package.json": {
-    "mtime": 1787833585.6347394,
+    "mtime": 1787834207.791266,
     "ast_hash": "b2bbc11b80fbf9131d9ebf6c43dac691",
     "semantic_hash": ""
   },
@@ -425,7 +425,7 @@
     "semantic_hash": ""
   },
   "client/src/features/shop/ShopPage.jsx": {
-    "mtime": 1787833593.9724765,
+    "mtime": 1787834207.7922652,
     "ast_hash": "7ae946fe5405b545464eb22708543c74",
     "semantic_hash": ""
   },
@@ -1565,8 +1565,8 @@
     "semantic_hash": ""
   },
   "client/src/features/shop/ShopFiltersSheet.jsx": {
-    "mtime": 1787833580.6779883,
-    "ast_hash": "9de0c8261f0c7c6e60e05ecd3e9f9369",
+    "mtime": 1787836765.9847708,
+    "ast_hash": "fbdcc1a478e1a17d8cb1d6d5aaf6b4c3",
     "semantic_hash": ""
   },
   "client/src/features/shop/productCategories.js": {
@@ -1575,8 +1575,8 @@
     "semantic_hash": ""
   },
   "client/src/features/shop/shopFilters.js": {
-    "mtime": 1787833550.9001634,
-    "ast_hash": "0ebfe024a2d2723c7eb7f6f6d1129a84",
+    "mtime": 1787836722.212986,
+    "ast_hash": "58e622efc4bf212a4fa0dda14112938c",
     "semantic_hash": ""
   }
 }
