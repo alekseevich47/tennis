@@ -7,6 +7,9 @@ import { pushRecentEmoji, readRecentEmojis } from './emojiRecent';
 import { registerOverlay } from '../../../lib/overlayStack';
 import './EmojiPicker.css';
 
+/** Длительность fade скрепки/камеры и smile в комментариях. */
+export const EMOJI_ATTACH_SWAP_MS = 280;
+
 function prefersReducedMotion() {
   return (
     typeof window !== 'undefined' &&
@@ -34,13 +37,26 @@ function EmptyClockIcon() {
  * @param {{
  *   open: boolean,
  *   mode: 'field' | 'toolbar',
- *   anchorRect: DOMRect | null,
- *   modalRect?: DOMRect | null,
+ *   bottom: number | null,
+ *   left?: number | null,
+ *   width?: number | null,
+ *   height?: number | null,
  *   onClose: () => void,
- *   onPick: (emoji: string) => void
+ *   onPick: (emoji: string) => void,
+ *   shouldIgnoreClose?: (target: EventTarget | null) => boolean
  * }} props
  */
-function EmojiPicker({ open, mode, anchorRect, modalRect = null, onClose, onPick }) {
+function EmojiPicker({
+  open,
+  mode,
+  bottom,
+  left = null,
+  width = null,
+  height = null,
+  onClose,
+  onPick,
+  shouldIgnoreClose
+}) {
   const panelRef = useRef(/** @type {HTMLDivElement | null} */ (null));
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -48,6 +64,10 @@ function EmojiPicker({ open, mode, anchorRect, modalRect = null, onClose, onPick
   const [activeCategory, setActiveCategory] = useState('recent');
   const titleId = useId();
   const closingRef = useRef(false);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+  const shouldIgnoreRef = useRef(shouldIgnoreClose);
+  shouldIgnoreRef.current = shouldIgnoreClose;
 
   const categories = useMemo(
     () => [{ id: 'recent', label: 'Недавние', icon: '🕒', emojis: recent }, ...EMOJI_CATEGORIES],
@@ -60,34 +80,38 @@ function EmojiPicker({ open, mode, anchorRect, modalRect = null, onClose, onPick
   }, [activeCategory, categories]);
 
   const layout = useMemo(() => {
-    if (!anchorRect) return null;
+    if (bottom == null || !Number.isFinite(bottom)) return null;
+    const vw = typeof window !== 'undefined' ? window.innerWidth : 360;
+    const vh = typeof window !== 'undefined' ? window.innerHeight : 640;
+
     if (mode === 'field') {
-      const size = Math.min(280, Math.max(220, Math.round(window.innerWidth * 0.72)));
-      const top = Math.round(anchorRect.top);
-      const left = Math.round(anchorRect.right - size);
+      const size = Math.min(280, Math.max(220, Math.round(vw * 0.72)));
+      const resolvedWidth = width ?? size;
+      const resolvedHeight = height ?? size;
+      const resolvedLeft =
+        left != null ? left : Math.max(8, vw - resolvedWidth - 8);
+      const top = Math.max(8, Math.round(bottom - resolvedHeight));
       return {
-        top: Math.max(8, top),
-        left: Math.max(8, left),
-        width: size,
-        height: size,
-        transformOrigin: '100% 0%'
+        top,
+        left: Math.max(8, Math.round(resolvedLeft)),
+        width: resolvedWidth,
+        height: Math.min(resolvedHeight, Math.max(120, bottom - 8)),
+        transformOrigin: '100% 100%'
       };
     }
-    const shell = modalRect;
-    const width = shell ? Math.round(shell.width) : Math.round(window.innerWidth - 16);
-    const height = shell
-      ? Math.round(shell.height / 3)
-      : Math.round(Math.min(window.innerHeight * 0.33, 280));
-    const left = shell ? Math.round(shell.left) : 8;
-    const top = Math.round(anchorRect.top);
+
+    const resolvedWidth = width ?? Math.max(200, vw - 16);
+    const resolvedHeight = height ?? Math.max(180, Math.round(vh / 3));
+    const resolvedLeft = left != null ? left : 8;
+    const top = Math.max(8, Math.round(bottom - resolvedHeight));
     return {
-      top: Math.max(8, top),
-      left,
-      width,
-      height: Math.max(180, height),
-      transformOrigin: '50% 0%'
+      top,
+      left: Math.max(8, Math.round(resolvedLeft)),
+      width: resolvedWidth,
+      height: Math.min(resolvedHeight, Math.max(120, bottom - 8)),
+      transformOrigin: '50% 100%'
     };
-  }, [anchorRect, modalRect, mode]);
+  }, [bottom, height, left, mode, width]);
 
   const animateClose = useCallback(() => {
     if (closingRef.current) return;
@@ -98,23 +122,23 @@ function EmojiPicker({ open, mode, anchorRect, modalRect = null, onClose, onPick
       setVisible(false);
       setMounted(false);
       closingRef.current = false;
-      onClose();
+      onCloseRef.current();
       return;
     }
     gsap.to(node, {
       opacity: 0,
       scale: 0.92,
-      y: -8,
+      y: 10,
       duration: 0.18,
       ease: 'power2.in',
       onComplete: () => {
         setVisible(false);
         setMounted(false);
         closingRef.current = false;
-        onClose();
+        onCloseRef.current();
       }
     });
-  }, [onClose]);
+  }, []);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -123,8 +147,7 @@ function EmojiPicker({ open, mode, anchorRect, modalRect = null, onClose, onPick
     setMounted(true);
     setVisible(true);
     closingRef.current = false;
-    const active = /** @type {HTMLElement | null} */ (document.activeElement);
-    if (active && typeof active.blur === 'function') active.blur();
+    // Клавиатуру не закрываем — без blur.
     return undefined;
   }, [open]);
 
@@ -139,11 +162,11 @@ function EmojiPicker({ open, mode, anchorRect, modalRect = null, onClose, onPick
     }
     gsap.fromTo(
       node,
-      { opacity: 0, scale: 0.88, y: -10 },
+      { opacity: 0, scale: 0.88, y: 12 },
       { opacity: 1, scale: 1, y: 0, duration: 0.28, ease: 'power3.out' }
     );
     return undefined;
-  }, [mounted, visible, mode, layout?.width, layout?.height]);
+  }, [mounted, visible, mode, layout?.width, layout?.height, layout?.top]);
 
   useEffect(() => {
     if (!mounted || !visible) return undefined;
@@ -155,8 +178,11 @@ function EmojiPicker({ open, mode, anchorRect, modalRect = null, onClose, onPick
   useEffect(() => {
     if (!mounted || !visible) return undefined;
     const onPointerDown = (event) => {
-      const target = /** @type {Node | null} */ (event.target);
-      if (panelRef.current?.contains(target)) return;
+      const target = event.target;
+      if (panelRef.current && target instanceof Node && panelRef.current.contains(target)) {
+        return;
+      }
+      if (shouldIgnoreRef.current?.(target)) return;
       if (target instanceof Element && target.closest('[data-emoji-trigger="true"]')) return;
       animateClose();
     };

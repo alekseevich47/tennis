@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import paperClipUrl from '../../assets/paper-clip.svg';
 import photoCameraUrl from '../../assets/photo-camera.svg';
 import PostRichTextField from './PostRichTextField';
+import { EMOJI_ATTACH_SWAP_MS } from './emoji/EmojiPicker';
 import CommentSendButton from './CommentSendButton';
 import SortableMediaPreviewGrid from './SortableMediaPreviewGrid';
 import FullscreenImageViewer from './FullscreenImageViewer';
@@ -124,15 +125,29 @@ function CommentComposeForm({
   const [previewVisible, setPreviewVisible] = useState(false);
   const [sendPhase, setSendPhase] = useState(/** @type {'idle' | 'armed' | 'flying'} */ ('idle'));
 
-  const attachInToolbar = hasVisibleText(value);
+  const hasText = hasVisibleText(value);
+  const [toolbarAttachVisible, setToolbarAttachVisible] = useState(() => hasText);
+  const [fieldAttachVisible, setFieldAttachVisible] = useState(() => !hasText);
+
+  useEffect(() => {
+    if (hasText) {
+      setFieldAttachVisible(false);
+      setToolbarAttachVisible(true);
+      return undefined;
+    }
+    setToolbarAttachVisible(false);
+    const timer = window.setTimeout(() => setFieldAttachVisible(true), EMOJI_ATTACH_SWAP_MS);
+    return () => window.clearTimeout(timer);
+  }, [hasText]);
+
   const hasMedia = mediaItems.some((item) => item.status === 'ready' && item.file);
   const hasPendingMedia = mediaItems.some((item) => item.status === 'loading');
   const canSend =
     !busy &&
     !hasPendingMedia &&
     sendPhase !== 'flying' &&
-    (hasVisibleText(value) || hasMedia);
-  const longPressEnabled = hasVisibleText(value) && hasMedia && canSend && !previewOpen;
+    (hasText || hasMedia);
+  const longPressEnabled = hasText && hasMedia && canSend && !previewOpen;
   const readyCount = mediaItems.filter((i) => i.status === 'ready').length;
 
   const closePreview = useCallback(() => {
@@ -486,12 +501,13 @@ function CommentComposeForm({
               onChange={onChange}
               enableFrame={false}
               compact
+              fieldEmojiMode="after-text"
               placeholder={placeholder}
               aria-label={placeholder}
               toolbarExtra={
                 <AttachButtons
                   variant="toolbar"
-                  visible={attachInToolbar}
+                  visible={toolbarAttachVisible}
                   disabled={attachDisabled}
                   onGallery={openGallery}
                   onCamera={openCamera}
@@ -500,7 +516,7 @@ function CommentComposeForm({
               editorEnd={
                 <AttachButtons
                   variant="field"
-                  visible={!attachInToolbar}
+                  visible={fieldAttachVisible}
                   disabled={attachDisabled}
                   onGallery={openGallery}
                   onCamera={openCamera}

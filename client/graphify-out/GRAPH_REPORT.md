@@ -1,16 +1,16 @@
 # Graph Report - client  (2026-08-27)
 
 ## Corpus Check
-- 219 files · ~202,912 words
+- 219 files · ~203,276 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1101 nodes · 3912 edges · 36 communities (34 shown, 2 thin omitted)
+- 1101 nodes · 3915 edges · 32 communities (30 shown, 2 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 32 edges (avg confidence: 0.57)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `1b4655da`
+- Built from commit: `cad880ff`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -25,14 +25,12 @@
 - datePickerUtils.js
 - dependencies
 - LogsModal.jsx
-- postRichText.js
 - gestures.js
 - BroadcastModal.jsx
 - FullscreenImageViewer.jsx
 - PostRichTextField.jsx
 - GalleryPage.jsx
 - ArchiveModal.jsx
-- LogsModal.jsx
 - main.jsx
 - main.jsx
 - GalleryPage.jsx
@@ -41,12 +39,10 @@
 - error
 - vite.config.js
 - tournamentPosts.js
-- EmojiPicker.jsx
 - App.jsx
 - EditTrainingModal.jsx
 - useMaxCloseGuard.js
 - AddActionContext.jsx
-- normalizeHexColor
 - main.jsx
 - GalleryUploadProvider.jsx
 
@@ -57,8 +53,8 @@
 4. `ProfileViewModal()` - 38 edges
 5. `pb` - 35 edges
 6. `isModerator()` - 33 edges
-7. `TrainingsPage()` - 27 edges
-8. `hasVisibleText()` - 26 edges
+7. `hasVisibleText()` - 27 edges
+8. `TrainingsPage()` - 27 edges
 9. `getMediaUrl()` - 26 edges
 10. `CompetitionsPage()` - 25 edges
 
@@ -77,7 +73,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (36 total, 2 thin omitted)
+## Communities (32 total, 2 thin omitted)
 
 ### Community 0 - "Modal.jsx"
 Cohesion: 0.06
@@ -116,12 +112,8 @@ Cohesion: 0.05
 Nodes (42): clsx, date-fns, @daypicker/react, @fontsource-variable/nunito, gsap, dependencies, clsx, date-fns (+34 more)
 
 ### Community 9 - "LogsModal.jsx"
-Cohesion: 0.16
-Nodes (18): AuditEventRow(), CATEGORY_STYLES, COMMENT_OBJECT_TYPES, COMMENT_SECTION_LABELS, COMMENT_TYPE_LABELS, formatAuditEventDetails(), formatAuditEventPreview(), OBJECT_TYPE_LABELS (+10 more)
-
-### Community 10 - "postRichText.js"
-Cohesion: 0.15
-Nodes (24): PostLinkModal(), ALLOWED_ATTRS, ALLOWED_TAGS, applyHyperlink(), AUTOLINK_RE, AUTOLINK_TLDS, DEFAULT_PRESETS, escapeHtml() (+16 more)
+Cohesion: 0.10
+Nodes (35): ALL_CATEGORY_VALUES, AuditEventRow(), formatDateRangeLabel(), getLogsDefaultDateRange(), LogsModal(), toDateInputValue(), htmlToReadableText(), looksLikeRichHtml() (+27 more)
 
 ### Community 11 - "gestures.js"
 Cohesion: 0.13
@@ -132,8 +124,8 @@ Cohesion: 0.07
 Nodes (47): clampPercent(), computeGridLayout(), FloatingAchievements(), hashUnit(), FavoritesContext, FavoritesProvider(), loadFavoriteProducts(), patchProductsFavoritesCount() (+39 more)
 
 ### Community 14 - "PostRichTextField.jsx"
-Cohesion: 0.12
-Nodes (28): Avatar(), PostFormatToolbar(), buildPostMentionEl(), buildUserMentionEl(), deleteAdjacentMention(), ensureMentionCarets(), ensureMentionEditorChrome(), ensureMentionRemoveButton() (+20 more)
+Cohesion: 0.06
+Nodes (63): Avatar(), EMOJI_CATEGORIES, EmojiPicker(), prefersReducedMotion(), pushRecentEmoji(), readRecentEmojis(), FrameColorPicker(), hexToHsv() (+55 more)
 
 ### Community 15 - "GalleryPage.jsx"
 Cohesion: 0.21
@@ -142,10 +134,6 @@ Nodes (15): GalleryMediaOverlay(), createGalleryUploadItem(), GalleryItemLike(),
 ### Community 16 - "ArchiveModal.jsx"
 Cohesion: 0.06
 Nodes (78): PostUploadContext, PostUploadProvider(), usePostUpload(), useTournamentPostUpload(), PullToRefresh(), ScrollToTopButton(), FeedListSkeleton(), useRegisterAddAction() (+70 more)
-
-### Community 17 - "LogsModal.jsx"
-Cohesion: 0.22
-Nodes (13): ALL_CATEGORY_VALUES, formatDateRangeLabel(), getLogsDefaultDateRange(), LogsModal(), toDateInputValue(), useAuditEvents(), addDaysToDateInput(), auditEventToCsvRow() (+5 more)
 
 ### Community 18 - "main.jsx"
 Cohesion: 0.33
@@ -175,10 +163,6 @@ Nodes (11): isUserBookingDisabled(), UserPickerModal(), CreateTrainingModal(), I
 Cohesion: 0.27
 Nodes (13): applyTournamentPostSideEffects(), buildTournamentPostPayload(), deleteScheduledTournamentPost(), invalidateTournamentCaches(), pinTournamentPost(), publishScheduledTournamentPostNow(), publishTournamentPost(), publishTournamentPostWithProgress() (+5 more)
 
-### Community 28 - "EmojiPicker.jsx"
-Cohesion: 0.28
-Nodes (8): EMOJI_CATEGORIES, EmojiPicker(), prefersReducedMotion(), pushRecentEmoji(), readRecentEmojis(), MentionSuggestPopup(), prefersReducedMotion(), registerOverlay()
-
 ### Community 29 - "App.jsx"
 Cohesion: 0.27
 Nodes (9): AppInner(), AppMain(), getInitialFavoriteProductIds(), TAB_TITLES, CloseAppConfirmSheet(), useSessionResetKey(), deleteProduct(), hardDeletePost() (+1 more)
@@ -194,10 +178,6 @@ Nodes (7): BlockedAppShell(), disableMaxVerticalSwipes(), isEditableFocus(), use
 ### Community 32 - "AddActionContext.jsx"
 Cohesion: 0.27
 Nodes (8): ADMIN_NAV_ITEM, BottomNav(), GALLERY_NAV_ITEM, NAV_ITEMS, AddActionContext, AddActionProvider(), DEFAULT_API, useTriggerAddAction()
-
-### Community 33 - "normalizeHexColor"
-Cohesion: 0.54
-Nodes (7): FrameColorPicker(), hexToHsv(), hsvToHex(), applyAnimFrame(), loadFramePresets(), normalizeHexColor(), saveFramePresets()
 
 ### Community 34 - "main.jsx"
 Cohesion: 0.33

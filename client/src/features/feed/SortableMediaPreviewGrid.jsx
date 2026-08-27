@@ -10,6 +10,8 @@ gsap.registerPlugin(Flip);
 const LONG_PRESS_MS = 420;
 const MOVE_CANCEL_PX = 10;
 const LIFT_MOVE_PX = 6;
+/** ПК / pen: старт DnD после малого сдвига (без long-press — иначе move срывает таймер) */
+const MOUSE_ACTIVATE_PX = 4;
 const EDGE_ZONE_PX = 56;
 const EDGE_MAX_SPEED = 22;
 const REMOVE_MS = 280;
@@ -21,6 +23,15 @@ const STRIP_SWITCH_RATIO = 0.38;
 const DROP_HYSTERESIS_PX = 22;
 /** Расширение hit-box сетки (px) */
 const GRID_HIT_PAD = 18;
+
+/**
+ * Touch → long-press (не конфликтовать со scroll strip).
+ * Mouse/pen → distance activation (native DnD UX на ПК).
+ * @param {string | undefined} pointerType
+ */
+function isTouchPointer(pointerType) {
+  return pointerType === 'touch';
+}
 
 /**
  * @typedef {{
@@ -172,7 +183,7 @@ function computeGridDropIndex(clientX, clientY, orderKeys, activeKey, getRect, c
 }
 
 /**
- * Превью: long-press → lift ghost → live примерка слота (Flip) → commit на pointerup.
+ * Превью: touch long-press / mouse·pen distance → lift ghost → Flip live-слот → commit на pointerup.
  *
  * @param {{
  *   items: SortableMediaItem[],
@@ -213,6 +224,8 @@ function SortableMediaPreviewGrid({
     /** @type {{
      *   key: string,
      *   pointerId: number,
+     *   pointerType: string,
+     *   targetEl: HTMLElement,
      *   startX: number,
      *   startY: number,
      *   grabX: number,
@@ -244,6 +257,29 @@ function SortableMediaPreviewGrid({
       session[field] = null;
     }
   }, []);
+
+  const releaseSessionCapture = useCallback((session) => {
+    if (!session) return;
+    const releaseTarget = session.targetEl || rootRef.current?.querySelector(
+      `.sortable-media-item[data-sortable-key="${CSS.escape(session.key)}"]`
+    );
+    if (!releaseTarget) return;
+    try {
+      if (releaseTarget.hasPointerCapture?.(session.pointerId)) {
+        releaseTarget.releasePointerCapture(session.pointerId);
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  const cancelArm = useCallback(() => {
+    const session = sessionRef.current;
+    if (!session) return;
+    clearTimer('longPressTimer');
+    releaseSessionCapture(session);
+    sessionRef.current = null;
+  }, [clearTimer, releaseSessionCapture]);
 
   const stopEdgeScroll = useCallback(() => {
     const session = sessionRef.current;
@@ -389,6 +425,7 @@ function SortableMediaPreviewGrid({
           'function'
           ? /** @type {HTMLElement} */ (event.currentTarget)
           : null) ||
+        session.targetEl ||
         rootRef.current?.querySelector(
           `.sortable-media-item[data-sortable-key="${CSS.escape(session.key)}"]`
         );
@@ -498,21 +535,34 @@ function SortableMediaPreviewGrid({
       const rect = el.getBoundingClientRect();
       const keys = activeKeys();
       const canSort = enabled && keys.length > 1;
+      const touch = isTouchPointer(event.pointerType);
+
+      if (canSort) {
+        try {
+          el.setPointerCapture?.(event.pointerId);
+        } catch {
+          /* ignore */
+        }
+      }
 
       sessionRef.current = {
         key,
         pointerId: event.pointerId,
+        pointerType: event.pointerType || 'mouse',
+        targetEl: el,
         startX: event.clientX,
         startY: event.clientY,
         grabX: event.clientX - rect.left,
         grabY: event.clientY - rect.top,
         itemW: rect.width,
         itemH: rect.height,
-        longPressTimer: canSort
-          ? setTimeout(() => {
-              startDragging(key, el);
-            }, LONG_PRESS_MS)
-          : null,
+        // Touch: long-press. Mouse/pen: distance activation in pointermove.
+        longPressTimer:
+          canSort && touch
+            ? setTimeout(() => {
+                startDragging(key, el);
+              }, LONG_PRESS_MS)
+            : null,
         dragging: false,
         lifted: false,
         suppressClick: false,
@@ -542,29 +592,41 @@ function SortableMediaPreviewGrid({
       const dx = event.clientX - session.startX;
       const dy = event.clientY - session.startY;
       const dist = Math.hypot(dx, dy);
+      const touch = isTouchPointer(session.pointerType);
 
       if (!session.dragging) {
-        if (layout === 'strip' && Math.abs(dx) > MOVE_CANCEL_PX && Math.abs(dx) > Math.abs(dy) * 1.1) {
-          clearTimer('longPressTimer');
-          sessionRef.current = null;
+        if (touch) {
+          // Горизонтальный свайп strip → отдать скроллу, не ждать long-press
+          if (layout === 'strip' && Math.abs(dx) > MOVE_CANCEL_PX && Math.abs(dx) > Math.abs(dy) * 1.1) {
+            cancelArm();
+            return;
+          }
+          if (dist > MOVE_CANCEL_PX) {
+            cancelArm();
+          }
           return;
         }
-        if (dist > MOVE_CANCEL_PX) {
-          clearTimer('longPressTimer');
-          sessionRef.current = null;
-        }
-        return;
+
+        // Mouse/pen: старт DnD после малого сдвига (клик без движения остаётся click)
+        if (dist < MOUSE_ACTIVATE_PX) return;
+        if (!enabled || activeKeys().length < 2) return;
+        startDragging(session.key, session.targetEl);
+        // session.dragging уже true — ниже lift в том же кадре
       }
+
+      if (!session.dragging) return;
 
       event.preventDefault?.();
 
       if (!session.lifted) {
-        if (dist < LIFT_MOVE_PX) return;
+        // Touch после arm — чуть сдвинуть; mouse — lift сразу при активации
+        const liftThreshold = touch ? LIFT_MOVE_PX : 0;
+        if (dist < liftThreshold) return;
         liftItem(event.clientX, event.clientY);
         return;
       }
 
-      // Следование пальцу от точки lift — без пересчёта grab (нет скачка вниз-вправо)
+      // Следование пальцу/курсору от точки lift — без пересчёта grab (нет скачка вниз-вправо)
       const x = session.ghostOriginX + (event.clientX - session.liftClientX);
       const y = session.ghostOriginY + (event.clientY - session.liftClientY);
       setGhost((prev) => (prev ? { ...prev, x, y } : prev));
@@ -584,12 +646,15 @@ function SortableMediaPreviewGrid({
       }
     },
     [
+      activeKeys,
       applyLiveOrder,
-      clearTimer,
+      cancelArm,
       computeDropIndex,
+      enabled,
       ensureEdgeScroll,
       layout,
-      liftItem
+      liftItem,
+      startDragging
     ]
   );
 
@@ -635,6 +700,21 @@ function SortableMediaPreviewGrid({
       window.removeEventListener('pointercancel', onUp);
     };
   }, [dragKey, endSession, handlePointerMove]);
+
+  /** Mouse/pen: move до dragKey (пока armed только sessionRef) — window safety-net + capture на figure */
+  useLayoutEffect(() => {
+    const onMove = (/** @type {PointerEvent} */ event) => {
+      const session = sessionRef.current;
+      if (!session || session.dragging) return;
+      if (isTouchPointer(session.pointerType)) return;
+      if (session.pointerId !== event.pointerId) return;
+      handlePointerMove(event);
+    };
+    window.addEventListener('pointermove', onMove, { passive: false });
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+    };
+  }, [handlePointerMove]);
 
   const beginRemove = useCallback(
     (key) => {
@@ -796,6 +876,7 @@ function SortableMediaPreviewGrid({
             className={clsx(
               'sortable-media-item',
               'telegram-media-item',
+              canSort && 'is-sortable-enabled',
               isDragging && 'is-sortable-dragging',
               isDragging && !lifted && 'is-sortable-armed',
               isDragging && lifted && 'is-sortable-lifted',
@@ -807,6 +888,12 @@ function SortableMediaPreviewGrid({
             onPointerMove={onItemPointerMove}
             onPointerUp={(e) => onItemPointerUp(e, item, index)}
             onPointerCancel={(e) => endSession(e)}
+            onContextMenu={(e) => {
+              if (canSort) e.preventDefault();
+            }}
+            onDragStart={(e) => {
+              e.preventDefault();
+            }}
             onTransitionEnd={(e) => {
               if (!isExiting) return;
               if (e.target !== e.currentTarget) return;
