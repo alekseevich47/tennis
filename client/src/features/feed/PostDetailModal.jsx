@@ -5,7 +5,7 @@ import Avatar from '../../components/ui/Avatar';
 import ModalFloatingCloseButton from '../../components/ui/ModalFloatingCloseButton';
 import PostMedia from './PostMedia';
 import PostContentHtml from './PostContentHtml';
-import PostRichTextField from './PostRichTextField';
+import CommentEditInlineForm from './CommentEditInlineForm';
 import CommentComposeForm from './CommentComposeForm';
 import CommentMediaBody from './CommentMediaBody';
 import CommentReplyButton from './CommentReplyButton';
@@ -13,17 +13,17 @@ import CommentReplyComposeBar from './CommentReplyComposeBar';
 import CommentReplyQuote from './CommentReplyQuote';
 import CommentSwipeReply from './CommentSwipeReply';
 import PostContextMenu from './PostContextMenu';
-import { hasVisibleText, toDisplayHtml } from './postRichText';
+import { hasVisibleText } from './postRichText';
 import {
   findScrollParent,
-  keepCommentEditInView,
-  restoreAndKeepCommentEditInView
+  keepCommentEditInView
 } from './keepCommentEditInView';
 import sectionAvatarUrl from '../../assets/sm-avatar.png';
 import { useComments } from '../../hooks/useComments';
 import { useCommentLikes } from '../../hooks/useCommentLikes';
 import { formatPostDate } from '../../lib/format';
 import {
+  buildCommentMediaReorderFormData,
   createComment,
   hardDeleteComment,
   updateComment
@@ -80,7 +80,6 @@ function PostDetailModal({
   const [commentText, setCommentText] = useState('');
   const [isAddingComment, setIsAddingComment] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [editingText, setEditingText] = useState('');
   const [replyTo, setReplyTo] = useState(/** @type {any | null} */ (null));
   // Soft-удалённые в рамках текущей сессии модалки. Стираются в БД при закрытии.
   const [softDeletedIds, setSoftDeletedIds] = useState([]);
@@ -95,7 +94,6 @@ function PostDetailModal({
   const commentFieldRef = useRef(/** @type {{ focus: () => void, clear: () => void } | null} */ (null));
   const editFieldRef = useRef(/** @type {{ focus: () => void, clear: () => void } | null} */ (null));
   const editFormRef = useRef(/** @type {HTMLFormElement | null} */ (null));
-  const editScrollTopBeforeFocusRef = useRef(/** @type {number | null} */ (null));
   const isAddingCommentRef = useRef(false);
   const scrollTimerRef = useRef(null);
   const highlightClearRef = useRef(/** @type {ReturnType<typeof setTimeout> | null} */ (null));
@@ -123,7 +121,6 @@ function PostDetailModal({
     if (!isOpen) return;
     setShowAll(false);
     setEditingId(null);
-    setEditingText('');
     setIsAddingComment(false);
     isAddingCommentRef.current = false;
     setSoftDeletedIds([]);
@@ -340,15 +337,19 @@ function PostDetailModal({
 
   const handleStartEdit = (comment) => {
     setEditingId(comment.id);
-    setEditingText(toDisplayHtml(comment.text || ''));
     setReplyTo(null);
   };
 
-  const handleSaveEdit = async (commentId, e) => {
-    e.preventDefault();
-    if (!hasVisibleText(editingText)) return;
+  const handleSaveEdit = async ({ text, orderedMedia, orderChanged, originalNames }) => {
+    if (!editingId) return;
+    if (!hasVisibleText(text) && orderedMedia.length === 0) return;
     try {
-      await updateComment(commentId, { text: editingText });
+      if (orderChanged && orderedMedia.length > 0) {
+        const formData = await buildCommentMediaReorderFormData(text, originalNames, orderedMedia);
+        await updateComment(editingId, formData);
+      } else {
+        await updateComment(editingId, { text });
+      }
       setEditingId(null);
       await mutateComments();
     } catch (err) {
@@ -616,46 +617,14 @@ function PostDetailModal({
                   </div>
 
                   {editingId === c.id ? (
-                    <form
-                      ref={editFormRef}
-                      onSubmit={(e) => handleSaveEdit(c.id, e)}
-                      className="comment-edit-inline-form"
-                      onPointerDownCapture={() => {
-                        const sp = findScrollParent(editFormRef.current);
-                        editScrollTopBeforeFocusRef.current = sp?.scrollTop ?? null;
-                      }}
-                    >
-                      <label
-                        htmlFor={`edit-comment-${c.id}`}
-                        className="visually-hidden"
-                      >
-                        Редактирование комментария
-                      </label>
-                      <PostRichTextField
-                        ref={editFieldRef}
-                        id={`edit-comment-${c.id}`}
-                        value={editingText}
-                        onChange={setEditingText}
-                        enableFrame={false}
-                        compact
-                        placeholder="Текст комментария…"
-                        aria-label="Редактирование комментария"
-                        onFocus={() => {
-                          restoreAndKeepCommentEditInView(
-                            editFormRef.current,
-                            editScrollTopBeforeFocusRef.current
-                          );
-                        }}
-                      />
-                      <div className="comment-edit-inline-form__actions">
-                        <button type="submit" disabled={!hasVisibleText(editingText)}>
-                          Изменить
-                        </button>
-                        <button type="button" onClick={() => setEditingId(null)}>
-                          Отмена
-                        </button>
-                      </div>
-                    </form>
+                    <CommentEditInlineForm
+                      comment={c}
+                      collection={COMMENT_COLLECTION}
+                      formRef={editFormRef}
+                      fieldRef={editFieldRef}
+                      onSave={handleSaveEdit}
+                      onCancel={() => setEditingId(null)}
+                    />
                   ) : (
                     <>
                       <div className="comment-body-indent">

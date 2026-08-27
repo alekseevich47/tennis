@@ -190,7 +190,7 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
 
   const hasText = hasVisibleText(text);
   const hasMedia = previewItems.length > 0;
-  const canSave = !submitting && !yadisk.hasPending && hasText;
+  const canSave = !submitting && !yadisk.hasPending && (hasText || hasMedia);
   const canMoveText = hasText && hasMedia;
 
   const existingOrderChanged = useMemo(() => {

@@ -277,7 +277,7 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
     if (!product || hasCategoryChanges) {
       form.categories.forEach((categoryId) => data.append('categories', categoryId));
     }
-    if (product && Array.from(data.keys()).length === 0) {
+    if (product && Array.from(data.keys()).length === 0 && !existingOrderChanged && deletedNames.length === 0 && newFiles.length === 0) {
       onClose();
       return;
     }
