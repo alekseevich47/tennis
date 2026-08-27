@@ -119,23 +119,6 @@ function TrainingDetailModal({
         await alert({ title: 'Запись невозможна', message: /** @type {Error} */ (err).message });
         return;
       }
-      if (/** @type {{ code?: string }} */ (err).code === 'NO_AVAILABLE_SESSIONS') {
-        await alert({ title: 'Запись невозможна', message: 'Нет доступных посещений.' });
-        return;
-      }
-      if (/** @type {{ code?: string }} */ (err).code === 'ANNUAL_DAILY_LIMIT') {
-        const ok = await confirm({
-          title: 'Годовой абонемент',
-          message: 'Один или несколько игроков уже записаны на тренировку в этот день (лимит: 1 в день). Записать принудительно?',
-          confirmText: 'Записать',
-          cancelText: 'Отмена'
-        });
-        if (!ok) return;
-        await bookUsersToTraining(training, selectedUserIds, selectedUsers, { overrideAnnualLimit: true });
-        onMutated();
-        setIsUserPickerOpen(false);
-        return;
-      }
       error('book users to training:', err);
       await alert({
         title: 'Ошибка',

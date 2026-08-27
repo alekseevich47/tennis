@@ -69,6 +69,7 @@
   font-size: 14px;
   line-height: 1.45;
   color: #1f2937;
+  white-space: pre-wrap;
 }
 
 .logs-modal__row-meta {
@@ -204,6 +205,7 @@
   margin: 0;
   color: #1f2937;
   word-break: break-word;
+  white-space: pre-wrap;
 }
 
 .logs-modal__copyable {
