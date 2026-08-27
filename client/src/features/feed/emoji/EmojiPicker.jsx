@@ -33,15 +33,6 @@ function EmptyClockIcon() {
   );
 }
 
-function SearchIcon() {
-  return (
-    <svg className="emoji-picker__search-icon" viewBox="0 0 24 24" aria-hidden="true">
-      <circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" strokeWidth="1.8" />
-      <path d="M16.2 16.2 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 function BackspaceIcon() {
   return (
     <svg className="emoji-picker__backspace-icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -206,12 +197,10 @@ function EmojiPicker({
   shouldIgnoreClose
 }) {
   const panelRef = useRef(/** @type {HTMLDivElement | null} */ (null));
-  const searchRef = useRef(/** @type {HTMLInputElement | null} */ (null));
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
   const [recent, setRecent] = useState(() => readRecentEmojis());
   const [activeCategory, setActiveCategory] = useState('smileys');
-  const [query, setQuery] = useState('');
   const titleId = useId();
   const closingRef = useRef(false);
   const onCloseRef = useRef(onClose);
@@ -228,25 +217,6 @@ function EmojiPicker({
     () => [{ id: 'recent', label: 'Часто используемые', emojis: frequent }, ...EMOJI_CATEGORIES],
     [frequent]
   );
-
-  const searchResults = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return null;
-    /** @type {string[]} */
-    const out = [];
-    const seen = new Set();
-    for (const cat of categories) {
-      const labelHit = cat.label.toLowerCase().includes(q);
-      for (const emoji of cat.emojis) {
-        if (seen.has(emoji)) continue;
-        if (labelHit || emoji.includes(q) || q.includes(emoji)) {
-          seen.add(emoji);
-          out.push(emoji);
-        }
-      }
-    }
-    return out;
-  }, [categories, query]);
 
   const activeCategoryMeta = useMemo(
     () => categories.find((c) => c.id === activeCategory) || categories[0],
@@ -329,7 +299,6 @@ function EmojiPicker({
     if (!open) return undefined;
     setRecent(readRecentEmojis());
     setActiveCategory('smileys');
-    setQuery('');
     setMounted(true);
     setVisible(true);
     closingRef.current = false;
@@ -389,9 +358,7 @@ function EmojiPicker({
 
   if (!mounted || !layout || typeof document === 'undefined') return null;
 
-  const showSearchResults = searchResults != null;
-  const showFrequentBlock =
-    !showSearchResults && activeCategory !== 'recent' && frequent.length > 0;
+  const showFrequentBlock = activeCategory !== 'recent' && frequent.length > 0;
 
   return createPortal(
     <div
@@ -412,25 +379,11 @@ function EmojiPicker({
         Выбор эмодзи
       </h2>
 
-      <div className="emoji-picker__search">
-        <SearchIcon />
-        <input
-          ref={searchRef}
-          type="search"
-          className="emoji-picker__search-input"
-          placeholder="Поиск эмодзи"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          enterKeyHint="search"
-          autoComplete="off"
-        />
-      </div>
-
       <div className="emoji-picker__cats" role="tablist" aria-label="Категории эмодзи">
         <div className="emoji-picker__cats-scroll">
           {categories.map((cat) => {
             const Icon = CATEGORY_ICONS[cat.id];
-            const active = !showSearchResults && activeCategory === cat.id;
+            const active = activeCategory === cat.id;
             return (
               <button
                 key={cat.id}
@@ -438,10 +391,7 @@ function EmojiPicker({
                 role="tab"
                 aria-selected={active}
                 className={clsx('emoji-picker__cat', active && 'is-active')}
-                onClick={() => {
-                  setQuery('');
-                  setActiveCategory(cat.id);
-                }}
+                onClick={() => setActiveCategory(cat.id)}
                 title={cat.label}
               >
                 {Icon ? <Icon className="emoji-picker__cat-icon" /> : <span aria-hidden="true">{cat.icon}</span>}
@@ -464,31 +414,7 @@ function EmojiPicker({
       </div>
 
       <div className="emoji-picker__body" role="tabpanel">
-        {showSearchResults ? (
-          searchResults.length === 0 ? (
-            <div className="emoji-picker__empty">
-              <EmptyClockIcon />
-              <p>Ничего не найдено</p>
-            </div>
-          ) : (
-            <section className="emoji-picker__section">
-              <h3 className="emoji-picker__section-title">Результаты</h3>
-              <div className="emoji-picker__grid">
-                {searchResults.map((emoji) => (
-                  <button
-                    key={`search-${emoji}`}
-                    type="button"
-                    className="emoji-picker__emoji"
-                    onMouseDown={(e) => e.preventDefault()}
-                    onClick={() => handlePick(emoji)}
-                  >
-                    {emoji}
-                  </button>
-                ))}
-              </div>
-            </section>
-          )
-        ) : activeCategory === 'recent' && frequent.length === 0 ? (
+        {activeCategory === 'recent' && frequent.length === 0 ? (
           <div className="emoji-picker__empty">
             <EmptyClockIcon />
             <p>Тут пока еще ничего нет</p>

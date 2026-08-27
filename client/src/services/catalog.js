@@ -14,7 +14,7 @@ import { PB_URL } from '../config';
  * @property {number} [old_price]
  * @property {string} [sizes]
  * @property {string[]} [images]
- * @property {string[]} [categories]
+ * @property {string | string[]} [categories]
  * @property {boolean} [out_of_stock]
  * @property {boolean} [is_deleted]
  * @property {number} [views]
