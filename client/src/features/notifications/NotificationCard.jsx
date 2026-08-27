@@ -6,6 +6,7 @@ import { markNotificationRead, isDeletableNotification } from '../../services/no
 import PostContentHtml from '../feed/PostContentHtml';
 import Avatar from '../../components/ui/Avatar';
 import { formatTrainingCountdownBadge } from './notificationBadges';
+import sectionAvatarUrl from '../../assets/sm-avatar.png';
 import '../feed/Feed.css';
 import './NotificationCard.css';
 
@@ -25,6 +26,64 @@ function parseCommentReplyParentText(body) {
   const legacyMatch = text.match(/^ответил(?:\(а\))? на ваш комментарий [«"](.+)[»"]$/i);
   if (legacyMatch) return legacyMatch[1];
   return text;
+}
+
+/**
+ * @param {unknown} meta
+ * @returns {meta is Record<string, unknown>}
+ */
+function isMetaObject(meta) {
+  return Boolean(meta && typeof meta === 'object');
+}
+
+/**
+ * @param {Record<string, unknown> | undefined} meta
+ * @param {unknown} clickAction
+ */
+function getNotificationKind(meta, clickAction) {
+  if (isMetaObject(meta) && typeof meta.kind === 'string') {
+    return meta.kind;
+  }
+  if (clickAction === 'open_comment') return 'comment_reply';
+  return '';
+}
+
+/**
+ * Анимированный чип публикации (#N Лента|Турнир) внутри уведомления.
+ * @param {{
+ *   postId?: string,
+ *   postSource?: string,
+ *   postNumber?: number | string,
+ *   onOpen: () => void
+ * }} props
+ */
+function NotificationPostChip({ postId, postSource, postNumber, onOpen }) {
+  if (!postId) return null;
+  const source = postSource === 'tournament' ? 'tournament' : 'feed';
+  const sourceLabel = source === 'tournament' ? 'Турнир' : 'Лента';
+  const num = Number(postNumber) || 0;
+  if (!num) return null;
+
+  return (
+    <button
+      type="button"
+      className="post-mention post-mention--post notification-card__post-chip"
+      aria-label={`Публикация #${num} · ${sourceLabel}`}
+      onClick={(event) => {
+        event.stopPropagation();
+        onOpen();
+      }}
+    >
+      <span className="post-mention__doc-icon" aria-hidden="true">
+        <span className="post-mention__doc-line" />
+        <span className="post-mention__doc-line" />
+        <span className="post-mention__doc-line" />
+      </span>
+      <span className="post-mention__label">
+        #{num} {sourceLabel}
+      </span>
+    </button>
+  );
 }
 
 /**
@@ -78,9 +137,11 @@ export default function NotificationCard({
   const clickAction = notification.click_action;
   const badgeDynamicType = notification.badge_dynamic_type;
   const meta = /** @type {Record<string, unknown> | undefined} */ (notification.meta);
-  const isCommentReply =
-    clickAction === 'open_comment' ||
-    (meta && typeof meta === 'object' && meta.kind === 'comment_reply');
+  const kind = getNotificationKind(meta, clickAction);
+  const isCommentReply = kind === 'comment_reply';
+  const isMentionComment = kind === 'mention_comment';
+  const isMentionPost = kind === 'mention_post';
+  const isSocialCard = isCommentReply || isMentionComment || isMentionPost;
   const canDelete = isDeletableNotification(notification);
 
   useEffect(() => {
@@ -246,6 +307,11 @@ export default function NotificationCard({
     return clickAction && CLICK_ACTION_LABELS[clickAction] ? CLICK_ACTION_LABELS[clickAction] : null;
   })();
 
+  const openLinkedContent = useCallback(() => {
+    if (!meta) return;
+    onOpenComment?.(meta);
+  }, [meta, onOpenComment]);
+
   const handleActionClick = useCallback(() => {
     if (clickAction === 'open_training' && meta?.trainingId) {
       onOpenTraining?.(String(meta.trainingId));
@@ -263,10 +329,24 @@ export default function NotificationCard({
       onOpenSellerChat?.();
       return;
     }
-    if ((clickAction === 'open_comment' || (meta && meta.kind === 'comment_reply')) && meta) {
-      onOpenComment?.(meta);
+    if (
+      clickAction === 'open_comment' ||
+      kind === 'comment_reply' ||
+      kind === 'mention_comment' ||
+      kind === 'mention_post'
+    ) {
+      openLinkedContent();
     }
-  }, [clickAction, meta, onOpenBooking, onOpenComment, onOpenMembership, onOpenSellerChat, onOpenTraining]);
+  }, [
+    clickAction,
+    kind,
+    meta,
+    onOpenBooking,
+    onOpenMembership,
+    onOpenSellerChat,
+    onOpenTraining,
+    openLinkedContent
+  ]);
 
   const handleDelete = useCallback(
     (event) => {
@@ -281,12 +361,13 @@ export default function NotificationCard({
       suppressClickRef.current = false;
       return;
     }
-    if (isCommentReply) handleActionClick();
-  }, [exiting, handleActionClick, isCommentReply]);
+    if (isSocialCard) handleActionClick();
+  }, [exiting, handleActionClick, isSocialCard]);
 
   const cardClassName = clsx(
     'notification-card',
-    isCommentReply && 'notification-card--comment-reply',
+    isSocialCard && 'notification-card--comment-reply',
+    isMentionPost && 'notification-card--mention-post',
     showUnreadDot && 'notification-card--unread',
     dragging && 'notification-card--dragging',
     exiting && 'notification-card--exiting'
@@ -300,6 +381,91 @@ export default function NotificationCard({
         onTouchCancel: handleTouchEnd
       }
     : {};
+
+  if (isMentionComment || isMentionPost) {
+    const actor = /** @type {import('../../lib/avatar').UserAvatarLike | undefined} */ (
+      isMetaObject(meta) ? meta.actor : undefined
+    );
+    const displayName = String(
+      notification.title ||
+        (isMentionPost ? 'Секция Миленьких' : actor?.full_name) ||
+        'Игрок секции'
+    );
+    const phrase = String(
+      notification.body ||
+        (isMentionPost ? 'упомянула Вас в посте' : 'упомянул Вас в комментариях')
+    );
+
+    return (
+      <article
+        ref={cardRef}
+        className={cardClassName}
+        onClick={handleCardClick}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            handleCardClick();
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        {...swipeHandlers}
+      >
+        {showUnreadDot ? (
+          <span className="notification-card__unread-dot" aria-hidden="true" />
+        ) : null}
+
+        <div className="notification-card__reply-layout">
+          {isMentionPost ? (
+            <div className="notification-card__section-avatar" aria-hidden="true">
+              <img src={sectionAvatarUrl} alt="" decoding="async" />
+            </div>
+          ) : (
+            <Avatar
+              user={actor || { full_name: displayName }}
+              size="sm"
+              className="notification-card__reply-avatar"
+            />
+          )}
+          <div className="notification-card__reply-content">
+            <div className="notification-card__reply-header">
+              <time
+                className="notification-card__time notification-card__time--reply"
+                dateTime={String(notification.created || '')}
+              >
+                {notification.created ? formatRelativeTime(notification.created, now) : ''}
+              </time>
+              <p className="notification-card__reply-sentence">
+                <span className="notification-card__reply-name">{displayName}</span>
+                {' '}
+                {phrase}
+                {' '}
+                <NotificationPostChip
+                  postId={isMetaObject(meta) ? String(meta.postId || '') : ''}
+                  postSource={isMetaObject(meta) ? String(meta.postSource || '') : ''}
+                  postNumber={isMetaObject(meta) ? /** @type {number|string} */ (meta.postNumber) : 0}
+                  onOpen={openLinkedContent}
+                />
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {canDelete ? (
+          <button
+            type="button"
+            className="notification-card__delete"
+            aria-label="Удалить уведомление"
+            onClick={handleDelete}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+        ) : null}
+      </article>
+    );
+  }
 
   if (isCommentReply) {
     const actor = /** @type {import('../../lib/avatar').UserAvatarLike | undefined} */ (

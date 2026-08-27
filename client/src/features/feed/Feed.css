@@ -1626,7 +1626,6 @@ button.post-card-like:hover:not(:disabled) {
 
 .post-mention--missing .post-mention__label {
   color: #8e8e93;
-  text-decoration: line-through;
 }
 
 .post-mention--missing .post-mention__avatar {
