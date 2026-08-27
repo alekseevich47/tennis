@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import Modal from '../../components/ui/Modal';
 import { pluralize } from '../../lib/format';
-import { useProductCategories } from '../../hooks/useProductCategories';
 import PriceRangeSlider from './PriceRangeSlider';
 import {
   DEFAULT_SHOP_FILTERS,
@@ -84,16 +83,13 @@ export default function ShopFiltersSheet({
   onApply,
   products
 }) {
-  const { data: categories = [] } = useProductCategories();
   const [draft, setDraft] = useState(filters);
-  const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
 
   const bounds = useMemo(() => getPriceBounds(products), [products]);
 
   useEffect(() => {
     if (!isOpen) return;
     setDraft(filters);
-    setCategoryMenuOpen(false);
   }, [isOpen, filters]);
 
   const range = resolvePriceRange(draft, bounds);
@@ -101,11 +97,6 @@ export default function ShopFiltersSheet({
   const previewCount = useMemo(() => {
     return products.filter((product) => productMatchesFilters(product, draft, bounds)).length;
   }, [products, draft, bounds]);
-
-  const categoryLabel = useMemo(() => {
-    if (!draft.categoryId) return 'Все категории';
-    return categories.find((c) => c.id === draft.categoryId)?.name || 'Категория';
-  }, [categories, draft.categoryId]);
 
   const patchDraft = useCallback((patch) => {
     setDraft((prev) => ({ ...prev, ...patch }));
@@ -130,10 +121,10 @@ export default function ShopFiltersSheet({
   const handleReset = () => {
     setDraft({
       ...DEFAULT_SHOP_FILTERS,
+      categoryId: filters.categoryId,
       priceMin: null,
       priceMax: null
     });
-    setCategoryMenuOpen(false);
   };
 
   const handleApply = () => {
@@ -144,6 +135,7 @@ export default function ShopFiltersSheet({
       nextRange.max >= bounds.max ? null : nextRange.max;
     onApply({
       ...draft,
+      categoryId: filters.categoryId,
       priceMin,
       priceMax
     });
@@ -151,9 +143,9 @@ export default function ShopFiltersSheet({
   };
 
   const nameToggleValue =
-    draft.nameDir === 'asc' ? 'left' : draft.nameDir === 'desc' ? 'right' : null;
+    draft.sort === 'name_asc' ? 'left' : draft.sort === 'name_desc' ? 'right' : null;
   const priceToggleValue =
-    draft.priceDir === 'asc' ? 'left' : draft.priceDir === 'desc' ? 'right' : null;
+    draft.sort === 'price_asc' ? 'left' : draft.sort === 'price_desc' ? 'right' : null;
 
   const showLabel = `Показать ${previewCount} ${pluralize(previewCount, 'товар', 'товара', 'товаров')}`;
 
@@ -221,59 +213,6 @@ export default function ShopFiltersSheet({
         />
       </section>
 
-      <section className="shop-filters-section">
-        <h3 className="shop-filters-section__title">Категория</h3>
-        <button
-          type="button"
-          className="shop-filters-row-btn"
-          aria-expanded={categoryMenuOpen}
-          onClick={() => setCategoryMenuOpen((v) => !v)}
-        >
-          <span>{categoryLabel}</span>
-          <span
-            className={clsx(
-              'shop-filters-row-btn__chevron',
-              categoryMenuOpen && 'is-open'
-            )}
-            aria-hidden="true"
-          />
-        </button>
-        {categoryMenuOpen ? (
-          <ul className="shop-filters-category-list" role="listbox" aria-label="Категории">
-            <li>
-              <button
-                type="button"
-                role="option"
-                aria-selected={!draft.categoryId}
-                className={clsx(!draft.categoryId && 'is-active')}
-                onClick={() => {
-                  patchDraft({ categoryId: '' });
-                  setCategoryMenuOpen(false);
-                }}
-              >
-                Все категории
-              </button>
-            </li>
-            {categories.map((category) => (
-              <li key={category.id}>
-                <button
-                  type="button"
-                  role="option"
-                  aria-selected={draft.categoryId === category.id}
-                  className={clsx(draft.categoryId === category.id && 'is-active')}
-                  onClick={() => {
-                    patchDraft({ categoryId: category.id });
-                    setCategoryMenuOpen(false);
-                  }}
-                >
-                  {category.name}
-                </button>
-              </li>
-            ))}
-          </ul>
-        ) : null}
-      </section>
-
       <section className="shop-filters-section shop-filters-section--sort">
         <h3 className="shop-filters-section__title">Сортировка</h3>
 
@@ -288,7 +227,7 @@ export default function ShopFiltersSheet({
             value={nameToggleValue}
             ariaLabel="Сортировка по названию"
             onChange={(side) => {
-              patchDraft({ nameDir: side === 'left' ? 'asc' : 'desc' });
+              patchDraft({ sort: side === 'left' ? 'name_asc' : 'name_desc' });
             }}
           />
         </div>
@@ -304,7 +243,7 @@ export default function ShopFiltersSheet({
             value={priceToggleValue}
             ariaLabel="Сортировка по цене"
             onChange={(side) => {
-              patchDraft({ priceDir: side === 'left' ? 'asc' : 'desc' });
+              patchDraft({ sort: side === 'left' ? 'price_asc' : 'price_desc' });
             }}
           />
         </div>
@@ -323,12 +262,12 @@ export default function ShopFiltersSheet({
             type="button"
             className={clsx(
               'shop-filters-chip',
-              draft.featured === 'newest' && 'is-active'
+              draft.sort === 'newest' && 'is-active'
             )}
-            aria-pressed={draft.featured === 'newest'}
+            aria-pressed={draft.sort === 'newest'}
             onClick={() => {
               patchDraft({
-                featured: draft.featured === 'newest' ? null : 'newest'
+                sort: draft.sort === 'newest' ? DEFAULT_SHOP_FILTERS.sort : 'newest'
               });
             }}
           >
@@ -355,14 +294,10 @@ export default function ShopFiltersSheet({
             type="button"
             className={clsx(
               'shop-filters-chip',
-              draft.featured === 'popular' && 'is-active'
+              draft.sort === 'popular' && 'is-active'
             )}
-            aria-pressed={draft.featured === 'popular'}
-            onClick={() => {
-              patchDraft({
-                featured: draft.featured === 'popular' ? null : 'popular'
-              });
-            }}
+            aria-pressed={draft.sort === 'popular'}
+            onClick={() => patchDraft({ sort: 'popular' })}
           >
             Популярное
           </button>
