@@ -9,10 +9,13 @@
   position: relative;
   width: 100%;
   max-width: 100%;
-  max-height: min(88vh, 720px);
+  height: min(92vh, 780px);
+  max-height: min(92vh, 780px);
   margin: 0;
   border-radius: 20px 20px 0 0;
-  padding: 18px 20px calc(12px + env(safe-area-inset-bottom, 0px));
+  padding: 18px 20px calc(4px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
   animation: shop-filters-sheet-up 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -35,6 +38,7 @@
   text-align: left;
   font-size: 20px;
   font-weight: 800;
+  flex-shrink: 0;
 }
 
 .shop-filters-sheet .ui-modal-header-actions {
@@ -45,11 +49,15 @@
 }
 
 .shop-filters-sheet .ui-modal-body {
-  padding-bottom: 8px;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding-bottom: 12px;
 }
 
 .shop-filters-sheet .ui-modal-footer {
-  padding-top: 8px;
+  flex-shrink: 0;
+  margin-top: auto;
+  padding: 8px 0 0;
   border-top: none;
   background: transparent;
 }
@@ -74,6 +82,10 @@
 
 .shop-filters-section {
   margin-bottom: 18px;
+}
+
+.shop-filters-section--sort {
+  margin-bottom: 4px;
 }
 
 .shop-filters-section__title {
@@ -220,16 +232,53 @@
 }
 
 .shop-filters-segment {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px;
+  --segment-pad: 3px;
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+  padding: var(--segment-pad);
   border-radius: 999px;
   background: #f3f5f8;
   border: 1px solid #e5ebf3;
   flex-shrink: 0;
+  isolation: isolate;
+}
+
+.shop-filters-segment__thumb {
+  position: absolute;
+  top: var(--segment-pad);
+  bottom: var(--segment-pad);
+  left: var(--segment-pad);
+  width: calc((100% - var(--segment-pad) * 2) / 2);
+  border-radius: 999px;
+  background: #007aff;
+  box-shadow: 0 4px 10px rgba(0, 122, 255, 0.28);
+  transform: translate3d(0, 0, 0);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+  transition:
+    transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.2s ease;
+  will-change: transform, opacity;
+}
+
+.shop-filters-segment.has-value .shop-filters-segment__thumb {
+  opacity: 1;
+}
+
+.shop-filters-segment.is-left .shop-filters-segment__thumb {
+  transform: translate3d(0, 0, 0);
+}
+
+.shop-filters-segment.is-right .shop-filters-segment__thumb {
+  transform: translate3d(100%, 0, 0);
 }
 
 .shop-filters-segment__btn {
+  position: relative;
+  z-index: 1;
   min-width: 44px;
   min-height: 32px;
   padding: 6px 12px;
@@ -242,13 +291,11 @@
   font-weight: 750;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease;
+  transition: color 0.2s ease;
 }
 
 .shop-filters-segment__btn.is-active {
-  background: #007aff;
   color: #ffffff;
-  box-shadow: 0 4px 10px rgba(0, 122, 255, 0.28);
 }
 
 .shop-filters-segment__btn:focus-visible {
@@ -321,6 +368,10 @@
 @media (prefers-reduced-motion: reduce) {
   .shop-filters-sheet {
     animation: none;
+  }
+
+  .shop-filters-segment__thumb {
+    transition: none;
   }
 
   .shop-filters-segment__btn,
