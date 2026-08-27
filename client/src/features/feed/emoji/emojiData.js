@@ -2,11 +2,31 @@
 
 /** @typedef {{ id: string, label: string, icon: string, emojis: string[] }} EmojiCategory */
 
+/** Часто используемые по умолчанию (пока нет recent в localStorage). */
+export const DEFAULT_FREQUENT_EMOJIS = [
+  '😂',
+  '👍',
+  '❤️',
+  '😊',
+  '🔥',
+  '🙏',
+  '😍',
+  '😢',
+  '👏',
+  '🎉',
+  '😅',
+  '✨',
+  '💪',
+  '😎',
+  '🤔',
+  '🥰'
+];
+
 /** @type {EmojiCategory[]} */
 export const EMOJI_CATEGORIES = [
   {
     id: 'smileys',
-    label: 'Смайлы',
+    label: 'Смайлики и люди',
     icon: '😀',
     emojis: [
       '😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '😇',

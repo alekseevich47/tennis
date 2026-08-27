@@ -3,7 +3,7 @@
   z-index: 4200;
   display: flex;
   flex-direction: column;
-  background: #ffffff;
+  background: #f7f8fa;
   border: 1px solid #dce6f2;
   border-radius: 14px;
   box-shadow: 0 12px 32px rgba(15, 23, 42, 0.16);
@@ -11,46 +11,165 @@
   will-change: transform, opacity;
 }
 
+.emoji-picker--post {
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.emoji-picker__search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  margin: 10px 10px 0;
+  padding: 0 12px;
+  min-height: 36px;
+  border-radius: 999px;
+  background: #eceff3;
+  color: #8a96a3;
+}
+
+.emoji-picker__search-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.emoji-picker__search-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  outline: none;
+  font: inherit;
+  font-size: 14px;
+  color: #1c2430;
+  padding: 8px 0;
+}
+
+.emoji-picker__search-input::placeholder {
+  color: #8a96a3;
+}
+
 .emoji-picker__cats {
   display: flex;
+  align-items: stretch;
   flex-shrink: 0;
   gap: 2px;
-  padding: 8px 8px 6px;
+  padding: 6px 6px 0;
+  border-bottom: 1px solid #e4e9f0;
+  background: #fff;
+}
+
+.emoji-picker__cats-scroll {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  gap: 0;
   overflow-x: auto;
   overflow-y: hidden;
-  border-bottom: 1px solid #e8eef5;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
 }
 
-.emoji-picker__cats::-webkit-scrollbar {
+.emoji-picker__cats-scroll::-webkit-scrollbar {
   display: none;
 }
 
 .emoji-picker__cat {
+  position: relative;
   flex: 0 0 auto;
   width: 36px;
   height: 36px;
   border: none;
-  border-radius: 10px;
+  border-radius: 0;
   background: transparent;
-  font-size: 18px;
-  line-height: 1;
+  color: #8a96a3;
   cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emoji-picker__cat-icon {
+  width: 20px;
+  height: 20px;
 }
 
 .emoji-picker__cat.is-active {
-  background: #eef5ff;
+  color: #1c2430;
+}
+
+.emoji-picker__cat.is-active::after {
+  content: '';
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+  background: #1c2430;
+}
+
+.emoji-picker__backspace {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #6b7785;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.emoji-picker__backspace:hover,
+.emoji-picker__backspace:focus-visible {
+  background: #f0f5fb;
+  outline: none;
+  color: #1c2430;
+}
+
+.emoji-picker__backspace-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.emoji-picker__body {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 8px 10px 12px;
+  -webkit-overflow-scrolling: touch;
+  background: #f7f8fa;
+}
+
+.emoji-picker--post .emoji-picker__body {
+  background: #fff;
+}
+
+.emoji-picker__section + .emoji-picker__section {
+  margin-top: 10px;
+}
+
+.emoji-picker__section-title {
+  margin: 0 0 6px;
+  padding: 0 2px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #8a96a3;
 }
 
 .emoji-picker__grid {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(34px, 1fr));
   gap: 2px;
-  padding: 8px;
   align-content: start;
 }
 
@@ -68,12 +187,11 @@
 
 .emoji-picker__emoji:hover,
 .emoji-picker__emoji:focus-visible {
-  background: #f0f5fb;
+  background: #e8eef5;
   outline: none;
 }
 
 .emoji-picker__empty {
-  grid-column: 1 / -1;
   min-height: 140px;
   display: flex;
   flex-direction: column;
@@ -140,15 +258,19 @@
   height: 18px;
 }
 
-/* Поверх текста; скрепка в поле при after-text уже скрыта — smile справа. */
 .post-rich-text--with-editor-end .post-rich-text__emoji-field-btn {
   right: 6px;
 }
 
 .post-rich-text--compact .post-rich-text__editor {
-  padding-right: 40px;
+  padding-right: 12px;
 }
 
 .post-rich-text:not(.post-rich-text--compact) .post-rich-text__editor {
+  padding-right: 12px;
+}
+
+.post-rich-text--emoji-enabled.post-rich-text--compact .post-rich-text__editor,
+.post-rich-text--emoji-enabled:not(.post-rich-text--compact) .post-rich-text__editor {
   padding-right: 40px;
 }
