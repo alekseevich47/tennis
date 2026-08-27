@@ -245,6 +245,36 @@ var DEFAULTS = [
     body: 'Вам было начислено {{count}} посещений. Мм, кажется, мы скоро Вас увидим! 🙏',
     audience: 'user',
     enabled: true
+  },
+  {
+    key: 'app.comment_reply',
+    channel: 'app',
+    name: 'Ответ на комментарий',
+    description: 'In-app автору комментария при ответе (reply_to) в ленте, турнире или галерее.',
+    title: '{{actor}}',
+    body: 'ответил(а) на Ваш комментарий',
+    audience: 'user',
+    enabled: true
+  },
+  {
+    key: 'app.mention_comment',
+    channel: 'app',
+    name: 'Упоминание в комментариях',
+    description: 'In-app участнику при @-упоминании в комментарии ленты или турнира.',
+    title: '{{actor}}',
+    body: 'упомянул Вас в комментариях',
+    audience: 'user',
+    enabled: true
+  },
+  {
+    key: 'app.mention_post',
+    channel: 'app',
+    name: 'Упоминание в постах',
+    description: 'In-app участнику при @-упоминании в публикации ленты или турнира.',
+    title: 'Секция Миленьких',
+    body: 'упомянула Вас в посте',
+    audience: 'user',
+    enabled: true
   }
 ];
 
