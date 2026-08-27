@@ -6,6 +6,7 @@ import clsx from 'clsx';
  *   active?: { bold?: boolean, italic?: boolean, underline?: boolean, link?: boolean },
  *   frameOpen?: boolean,
  *   enableFrame?: boolean,
+ *   enableEmoji?: boolean,
  *   emojiOpen?: boolean,
  *   trailing?: React.ReactNode,
  *   onCommand: (command: 'bold' | 'italic' | 'underline' | 'frame' | 'link' | 'emoji') => void
@@ -15,6 +16,7 @@ function PostFormatToolbar({
   active = {},
   frameOpen = false,
   enableFrame = true,
+  enableEmoji = true,
   emojiOpen = false,
   trailing = null,
   onCommand
@@ -65,32 +67,34 @@ function PostFormatToolbar({
           Ч
         </span>
       </button>
-      <button
-        type="button"
-        className={clsx(
-          'post-format-toolbar__btn',
-          'post-format-toolbar__btn--emoji',
-          emojiOpen && 'is-active'
-        )}
-        aria-label="Эмодзи"
-        aria-pressed={Boolean(emojiOpen)}
-        data-emoji-trigger="true"
-        data-emoji-source="toolbar"
-        onClick={run('emoji')}
-      >
-        <svg className="post-format-toolbar__icon" viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="1.8" />
-          <circle cx="9" cy="10" r="1.15" fill="currentColor" />
-          <circle cx="15" cy="10" r="1.15" fill="currentColor" />
-          <path
-            d="M8.5 14.2c1.1 1.3 2.2 1.9 3.5 1.9s2.4-.6 3.5-1.9"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-          />
-        </svg>
-      </button>
+      {enableEmoji ? (
+        <button
+          type="button"
+          className={clsx(
+            'post-format-toolbar__btn',
+            'post-format-toolbar__btn--emoji',
+            emojiOpen && 'is-active'
+          )}
+          aria-label="Эмодзи"
+          aria-pressed={Boolean(emojiOpen)}
+          data-emoji-trigger="true"
+          data-emoji-source="toolbar"
+          onClick={run('emoji')}
+        >
+          <svg className="post-format-toolbar__icon" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="1.8" />
+            <circle cx="9" cy="10" r="1.15" fill="currentColor" />
+            <circle cx="15" cy="10" r="1.15" fill="currentColor" />
+            <path
+              d="M8.5 14.2c1.1 1.3 2.2 1.9 3.5 1.9s2.4-.6 3.5-1.9"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+            />
+          </svg>
+        </button>
+      ) : null}
       <button
         type="button"
         className={clsx('post-format-toolbar__btn', active.link && 'is-active')}

@@ -16,6 +16,7 @@ import PostLinkModal from './PostLinkModal';
 import FrameColorPicker from './FrameColorPicker';
 import MentionSuggestPopup from './MentionSuggestPopup';
 import EmojiPicker, { EMOJI_ATTACH_SWAP_MS } from './emoji/EmojiPicker';
+import { isMobileMaxPlatform } from '../shop/buyMessage';
 import {
   FRAME_CLASS,
   applyAnimFrame,
@@ -130,12 +131,19 @@ const PostRichTextField = forwardRef(function PostRichTextField(
   const [linkOpen, setLinkOpen] = useState(false);
   const [linkDraft, setLinkDraft] = useState({ title: '', href: '' });
   const [emojiOpen, setEmojiOpen] = useState(false);
-  const [emojiMode, setEmojiMode] = useState(/** @type {'field' | 'toolbar'} */ ('field'));
-  const [emojiLayout, setEmojiLayout] = useState(
-    /** @type {{ bottom: number, left: number, width: number, height: number } | null} */ (null)
+  const [emojiMode, setEmojiMode] = useState(
+    /** @type {'comment' | 'post' | 'field' | 'toolbar'} */ ('comment')
   );
+  const [emojiLayout, setEmojiLayout] = useState(
+    /** @type {{ top?: number, bottom?: number, left: number, width: number, height: number } | null} */ (
+      null
+    )
+  );
+  const emojiEnabled = !isMobileMaxPlatform();
   const fieldEmojiBtnRef = useRef(/** @type {HTMLButtonElement | null} */ (null));
-  const [fieldEmojiVisible, setFieldEmojiVisible] = useState(fieldEmojiMode === 'always');
+  const [fieldEmojiVisible, setFieldEmojiVisible] = useState(
+    fieldEmojiMode === 'always' && emojiEnabled
+  );
   const [floatingPos, setFloatingPos] = useState(
     /** @type {{ top: number, left: number } | null} */ (null)
   );
@@ -733,7 +741,8 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     return () => document.removeEventListener('pointerdown', onPointerDown);
   }, [mentionOpen, closeMentionSuggest]);
 
-  const openEmojiPicker = useCallback((mode, triggerEl) => {
+  const openEmojiPicker = useCallback((_mode, _triggerEl) => {
+    if (!emojiEnabled) return;
     if (emojiOpen) {
       setEmojiOpen(false);
       return;
@@ -744,38 +753,56 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     hideFloatingToolbar(true);
     closeMentionSuggest(true);
 
-    const modalEl = rootRef.current?.closest('.ui-modal-content');
+    const modalEl =
+      rootRef.current?.closest('.ui-modal-content') ||
+      rootRef.current?.closest('.ui-modal');
     const modalRect = modalEl?.getBoundingClientRect() || null;
     const vw = window.innerWidth;
+    const placement = compact ? 'comment' : 'post';
+    const editor = editorRef.current;
+    const er = editor?.getBoundingClientRect();
+    if (!er) return;
 
-    if (mode === 'field') {
-      const editor = editorRef.current;
-      const er = editor?.getBoundingClientRect();
-      if (!er) return;
-      const size = Math.min(280, Math.max(220, Math.round(vw * 0.72)));
-      setEmojiMode('field');
+    if (placement === 'comment') {
+      const row =
+        rootRef.current?.closest('.comment-compose__row') ||
+        rootRef.current?.closest('.comment-edit-inline-form') ||
+        rootRef.current;
+      const fieldCol =
+        rootRef.current?.closest('.comment-compose__field-col') || rootRef.current;
+      const sendBtn =
+        row instanceof Element ? row.querySelector('.comment-send-btn') : null;
+      const fr = fieldCol?.getBoundingClientRect();
+      const sr = sendBtn?.getBoundingClientRect();
+      const left = Math.round(fr?.left ?? er.left);
+      const right = Math.round(sr?.right ?? fr?.right ?? er.right);
+      const width = Math.max(200, right - left);
+      const height = Math.min(280, Math.max(220, Math.round(vw * 0.72)));
+      setEmojiMode('comment');
       setEmojiLayout({
         bottom: er.top,
-        left: Math.max(8, er.right - size),
-        width: size,
-        height: size
+        left,
+        width,
+        height
       });
     } else {
-      const toolbarEl =
-        (triggerEl instanceof Element && triggerEl.closest('.post-format-toolbar')) ||
-        floatingRef.current?.querySelector('.post-format-toolbar') ||
-        rootRef.current?.querySelector('.post-rich-text__toolbar-row .post-format-toolbar') ||
-        rootRef.current?.querySelector('.post-rich-text__toolbar-row');
-      const tr = toolbarEl?.getBoundingClientRect();
-      if (!tr) return;
-      const width = modalRect ? Math.round(modalRect.width) : Math.max(200, vw - 16);
-      const height = modalRect
-        ? Math.max(180, Math.round(modalRect.height / 3))
-        : Math.max(180, Math.round(window.innerHeight / 3));
-      const left = modalRect ? Math.round(modalRect.left) : 8;
-      setEmojiMode('toolbar');
+      const inset = 10;
+      const gap = 6;
+      const bottomPad = 10;
+      const left = modalRect
+        ? Math.round(modalRect.left + inset)
+        : Math.round(er.left);
+      const width = modalRect
+        ? Math.max(200, Math.round(modalRect.width - inset * 2))
+        : Math.max(200, Math.round(er.width));
+      const top = Math.round(er.bottom + gap);
+      const bottomEdge = modalRect
+        ? Math.round(modalRect.bottom - bottomPad)
+        : Math.round(window.innerHeight - bottomPad);
+      const height = Math.max(160, bottomEdge - top);
+      setEmojiMode('post');
       setEmojiLayout({
-        bottom: tr.top,
+        top,
         left,
         width,
         height
@@ -783,9 +810,21 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     }
 
     setEmojiOpen(true);
-  }, [closeMentionSuggest, emojiOpen, hideFloatingToolbar, saveSelection]);
+  }, [
+    closeMentionSuggest,
+    compact,
+    emojiEnabled,
+    emojiOpen,
+    hideFloatingToolbar,
+    saveSelection
+  ]);
 
   useEffect(() => {
+    if (!emojiEnabled) {
+      setFieldEmojiVisible(false);
+      if (emojiOpen) setEmojiOpen(false);
+      return undefined;
+    }
     if (fieldEmojiMode === 'always') {
       setFieldEmojiVisible(true);
       return undefined;
@@ -797,7 +836,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     }
     setFieldEmojiVisible(false);
     return undefined;
-  }, [fieldEmojiMode, value]);
+  }, [emojiEnabled, emojiOpen, fieldEmojiMode, value]);
 
   const insertEmojiAtCaret = useCallback(
     (emoji) => {
@@ -832,6 +871,28 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     },
     [syncEmptyAndValue]
   );
+
+  const deleteEmojiBackspace = useCallback(() => {
+    const el = editorRef.current;
+    if (!el) return;
+    el.focus({ preventScroll: true });
+    const selection = window.getSelection();
+    let range = savedRangeRef.current;
+    if (selection && selection.rangeCount > 0) {
+      const live = selection.getRangeAt(0);
+      if (el.contains(live.commonAncestorContainer)) {
+        range = live;
+      }
+    }
+    if (range && selection) {
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+    document.execCommand('delete');
+    saveSelection();
+    skipNextSync.current = true;
+    syncEmptyAndValue();
+  }, [saveSelection, syncEmptyAndValue]);
 
   const handleCommand = (command) => {
     const el = editorRef.current;
@@ -1004,7 +1065,8 @@ const PostRichTextField = forwardRef(function PostRichTextField(
               active={active}
               frameOpen={frameOpen}
               enableFrame={enableFrame}
-              emojiOpen={emojiOpen && emojiMode === 'toolbar'}
+              enableEmoji={emojiEnabled}
+              emojiOpen={emojiOpen && emojiMode !== 'field'}
               onCommand={handleCommand}
             />
             {enableFrame && frameOpen ? (
@@ -1027,7 +1089,8 @@ const PostRichTextField = forwardRef(function PostRichTextField(
         compact && 'post-rich-text--compact',
         singleLine && 'post-rich-text--single-line',
         revealToolbarOnFocus && 'post-rich-text--reveal-toolbar',
-        editorEnd && 'post-rich-text--with-editor-end'
+        editorEnd && 'post-rich-text--with-editor-end',
+        emojiEnabled && 'post-rich-text--emoji-enabled'
       )}
       ref={rootRef}
     >
@@ -1043,7 +1106,8 @@ const PostRichTextField = forwardRef(function PostRichTextField(
           active={active}
           frameOpen={frameOpen}
           enableFrame={enableFrame}
-          emojiOpen={emojiOpen && emojiMode === 'toolbar'}
+          enableEmoji={emojiEnabled}
+          emojiOpen={emojiOpen}
           trailing={toolbarExtra}
           onCommand={handleCommand}
         />
@@ -1058,37 +1122,39 @@ const PostRichTextField = forwardRef(function PostRichTextField(
       </div>
 
       <div className="post-rich-text__editor-wrap">
-        <button
-          ref={fieldEmojiBtnRef}
-          type="button"
-          className={clsx(
-            'post-rich-text__emoji-field-btn',
-            fieldEmojiVisible && 'is-visible'
-          )}
-          aria-label="Эмодзи"
-          aria-hidden={!fieldEmojiVisible}
-          tabIndex={fieldEmojiVisible ? 0 : -1}
-          data-emoji-trigger="true"
-          data-emoji-source="field"
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={(e) => {
-            e.preventDefault();
-            openEmojiPicker('field', e.currentTarget);
-          }}
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="1.8" />
-            <circle cx="9" cy="10" r="1.15" fill="currentColor" />
-            <circle cx="15" cy="10" r="1.15" fill="currentColor" />
-            <path
-              d="M8.5 14.2c1.1 1.3 2.2 1.9 3.5 1.9s2.4-.6 3.5-1.9"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-            />
-          </svg>
-        </button>
+        {emojiEnabled ? (
+          <button
+            ref={fieldEmojiBtnRef}
+            type="button"
+            className={clsx(
+              'post-rich-text__emoji-field-btn',
+              fieldEmojiVisible && 'is-visible'
+            )}
+            aria-label="Эмодзи"
+            aria-hidden={!fieldEmojiVisible}
+            tabIndex={fieldEmojiVisible ? 0 : -1}
+            data-emoji-trigger="true"
+            data-emoji-source="field"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={(e) => {
+              e.preventDefault();
+              openEmojiPicker('field', e.currentTarget);
+            }}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="1.8" />
+              <circle cx="9" cy="10" r="1.15" fill="currentColor" />
+              <circle cx="15" cy="10" r="1.15" fill="currentColor" />
+              <path
+                d="M8.5 14.2c1.1 1.3 2.2 1.9 3.5 1.9s2.4-.6 3.5-1.9"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+              />
+            </svg>
+          </button>
+        ) : null}
         <div
           id={id}
           ref={editorRef}
@@ -1251,8 +1317,9 @@ const PostRichTextField = forwardRef(function PostRichTextField(
       />
 
       <EmojiPicker
-        open={emojiOpen}
+        open={emojiOpen && emojiEnabled}
         mode={emojiMode}
+        top={emojiLayout?.top ?? null}
         bottom={emojiLayout?.bottom ?? null}
         left={emojiLayout?.left ?? null}
         width={emojiLayout?.width ?? null}
@@ -1270,6 +1337,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
         onPick={(emoji) => {
           insertEmojiAtCaret(emoji);
         }}
+        onBackspace={deleteEmojiBackspace}
       />
     </div>
   );
