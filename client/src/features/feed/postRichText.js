@@ -638,6 +638,11 @@ export function applyHyperlink(payload, editor, preferredRange = null) {
     a.target = '_blank';
     a.rel = 'noopener noreferrer';
     a.textContent = title;
+    if (/disk\.yandex\.|yadi\.sk/i.test(href)) {
+      a.setAttribute('data-yadisk-as-link', '1');
+    } else {
+      a.removeAttribute('data-yadisk-as-link');
+    }
     range = document.createRange();
     range.setStartAfter(a);
     range.collapse(true);
@@ -651,6 +656,14 @@ export function applyHyperlink(payload, editor, preferredRange = null) {
   a.target = '_blank';
   a.rel = 'noopener noreferrer';
   a.textContent = title;
+  try {
+    // Кнопка «Ссылка»: альбомы/папки Яндекс.Диска остаются обычной ссылкой, без превью.
+    if (/disk\.yandex\.|yadi\.sk/i.test(href)) {
+      a.setAttribute('data-yadisk-as-link', '1');
+    }
+  } catch {
+    // ignore
+  }
 
   range.deleteContents();
   range.insertNode(a);

@@ -64,6 +64,8 @@ function Modal({
   const originRef = useRef(/** @type {import('../../lib/modalOrigin').OriginRect | null} */ (null));
   const closeTimerRef = useRef(/** @type {ReturnType<typeof setTimeout> | null} */ (null));
   const wasOpenRef = useRef(false);
+  /** Overlay close only if pointerdown+up both on overlay (not text-select drag). */
+  const overlayPointerDownRef = useRef(false);
   const [mounted, setMounted] = useState(Boolean(isOpen));
   const [closing, setClosing] = useState(false);
 
@@ -196,6 +198,21 @@ function Modal({
     }
   }, []);
 
+  const handleOverlayPointerDown = useCallback((e) => {
+    overlayPointerDownRef.current = e.target === e.currentTarget;
+  }, []);
+
+  const handleOverlayClick = useCallback(
+    (e) => {
+      if (closing || !closeOnOverlay || !onClose) return;
+      if (e.target !== e.currentTarget) return;
+      if (!overlayPointerDownRef.current) return;
+      overlayPointerDownRef.current = false;
+      onClose();
+    },
+    [closing, closeOnOverlay, onClose]
+  );
+
   if (!mounted) return null;
 
   return (
@@ -205,7 +222,8 @@ function Modal({
         closing && 'ui-modal-overlay--closing',
         overlayClassName
       )}
-      onClick={closing || !closeOnOverlay ? undefined : onClose}
+      onPointerDown={handleOverlayPointerDown}
+      onClick={handleOverlayClick}
       role="presentation"
     >
       <div
@@ -221,6 +239,9 @@ function Modal({
         aria-labelledby={title ? titleId : undefined}
         aria-label={!title ? ariaLabel : undefined}
         tabIndex={-1}
+        onPointerDown={() => {
+          overlayPointerDownRef.current = false;
+        }}
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleKeyDown}
       >

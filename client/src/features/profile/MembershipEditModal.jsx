@@ -279,7 +279,7 @@ function MembershipEditModal({ isOpen, onClose, user, mode = 'add', onMutated })
 
   if (mode === 'full') {
     return (
-      <Modal isOpen={isOpen} onClose={onClose} title={copy.title}>
+      <Modal isOpen={isOpen} onClose={onClose} title={copy.title} className="membership-edit-modal">
         <form onSubmit={handleFullSubmit} className="profile-edit-form">
           <div className="form-group">
             <span className="form-group-label">Тип абонемента</span>

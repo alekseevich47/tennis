@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { startAnimFrames, toDisplayHtml } from './postRichText';
 import { MENTION_CLASS } from './postMentions';
 import { applyMentionMissingStatuses, MENTION_MISSING_CLASS } from './mentionStatus';
+import { handleContentCopy } from './copyPlainText';
 import { useMentionNav } from '../../context/MentionNavContext';
 import { usePlayers } from '../../hooks/usePlayers';
 
@@ -93,6 +94,7 @@ function PostContentHtml({ content, className, as = 'div', onClick, type = 'butt
         type={type}
         className={className}
         onClick={handleClick}
+        onCopy={(e) => handleContentCopy(e.nativeEvent, ref.current)}
         dangerouslySetInnerHTML={{ __html: html }}
         {...rest}
       />
@@ -104,6 +106,7 @@ function PostContentHtml({ content, className, as = 'div', onClick, type = 'butt
       ref={/** @type {any} */ (ref)}
       className={className}
       onClick={handleClick}
+      onCopy={(e) => handleContentCopy(e.nativeEvent, ref.current)}
       dangerouslySetInnerHTML={{ __html: html }}
       {...rest}
     />

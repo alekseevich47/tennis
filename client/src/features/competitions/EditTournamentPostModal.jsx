@@ -286,20 +286,15 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
   });
 
   const textBlock = (
-    <>
-      <label htmlFor={textareaId} className="edit-post-label">
-        Текст поста
-      </label>
-      <div className="edit-post-bubble">
-        <PostRichTextField
-          id={textareaId}
-          value={text}
-          onChange={setText}
-          placeholder="Текст публикации…"
-          compact={false}
-        />
-      </div>
-    </>
+    <div className="edit-post-editor">
+      <PostRichTextField
+        id={textareaId}
+        value={text}
+        onChange={setText}
+        placeholder="Текст публикации…"
+        compact={false}
+      />
+    </div>
   );
 
   const mediaBlock =
@@ -353,6 +348,34 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
       </div>
     ) : null;
 
+  const actionsFooter = (
+    <div className="modal-actions edit-post-actions">
+      <button
+        type="button"
+        className="edit-post-cancel-btn"
+        onClick={onClose}
+        disabled={submitting}
+      >
+        Отмена
+      </button>
+      <div className="edit-post-actions__primary create-post-form__actions--with-attach">
+        <PostAttachButton
+          disabled={(remainingMediaSlots === 0 && !yadisk.albumMode) || submitting}
+          onClick={handleAttachClick}
+        />
+        <button
+          type="submit"
+          form="edit-tournament-post-form"
+          className="submit-btn-full edit-post-save-btn create-post-form__publish"
+          disabled={!canSave}
+          {...(canSave ? longPressHandlers : {})}
+        >
+          {submitting ? 'Сохраняем…' : yadisk.hasPending ? 'Превью…' : 'Сохранить'}
+        </button>
+        <LongPressRing {...ringProps} />
+      </div>
+    </div>
+  );
 
   return (
     <>
@@ -362,8 +385,9 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
         title="Редактировать публикацию"
         className="edit-post-modal"
         showCloseButton={false}
+        footer={actionsFooter}
       >
-        <form onSubmit={handleSubmit} className="edit-post-form">
+        <form id="edit-tournament-post-form" onSubmit={handleSubmit} className="edit-post-form">
           {captionAbove ? textBlock : null}
           {mediaBlock}
           {!captionAbove ? textBlock : null}
@@ -383,32 +407,6 @@ function EditTournamentPostModal({ isOpen, post, onClose, onSaved }) {
             }}
             className="visually-hidden"
           />
-
-          <div className="modal-actions edit-post-actions">
-            <button
-              type="button"
-              className="edit-post-cancel-btn"
-              onClick={onClose}
-              disabled={submitting}
-            >
-              Отмена
-            </button>
-            <div className="edit-post-actions__primary create-post-form__actions--with-attach">
-              <PostAttachButton
-                disabled={(remainingMediaSlots === 0 && !yadisk.albumMode) || submitting}
-                onClick={handleAttachClick}
-              />
-              <button
-                type="submit"
-                className="submit-btn-full edit-post-save-btn create-post-form__publish"
-                disabled={!canSave}
-                {...(canSave ? longPressHandlers : {})}
-              >
-                {submitting ? 'Сохраняем…' : yadisk.hasPending ? 'Превью…' : 'Сохранить'}
-              </button>
-              <LongPressRing {...ringProps} />
-            </div>
-          </div>
         </form>
 
         {previewFullscreen ? (

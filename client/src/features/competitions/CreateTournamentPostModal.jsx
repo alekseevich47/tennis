@@ -342,7 +342,13 @@ function CreateTournamentPostModal({ isOpen, onClose, players, onCreated }) {
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={handleClose} title="Итоги турнира" size="tall">
+      <Modal
+        isOpen={isOpen}
+        onClose={handleClose}
+        title="Итоги турнира"
+        className="create-post-modal"
+        overlayClassName="create-post-modal-overlay"
+      >
         <form onSubmit={handleSubmit} className="create-tournament-post-form">
           <input
             ref={fileInputRef}

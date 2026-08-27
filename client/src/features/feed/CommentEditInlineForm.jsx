@@ -1,9 +1,19 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useId, useMemo, useRef, useState } from 'react';
+import { AttachButtons, MAX_COMMENT_MEDIA_FILES } from './CommentComposeForm';
 import PostRichTextField from './PostRichTextField';
 import SortableMediaPreviewGrid from './SortableMediaPreviewGrid';
+import FullscreenImageViewer from './FullscreenImageViewer';
+import { useLocalMediaFullscreen } from './useLocalMediaFullscreen';
 import { findScrollParent, restoreAndKeepCommentEditInView } from './keepCommentEditInView';
 import { hasVisibleText, toDisplayHtml } from './postRichText';
-import { getMediaUrl, isVideoMediaName, mediaNames } from '../../lib/media';
+import { compressImage } from '../../lib/compress';
+import {
+  getMediaUrl,
+  isVideoFile,
+  isVideoMediaName,
+  mediaNames,
+  readSelectedFiles
+} from '../../lib/media';
 
 /**
  * @param {string[]} left
@@ -24,10 +34,13 @@ function buildEditMediaItems(comment, collection) {
     if (!url) return [];
     return [{
       key: `existing-${filename}`,
+      kind: /** @type {'existing'} */ ('existing'),
       filename,
+      file: null,
       url,
       name: filename,
-      isVideo: isVideoMediaName(filename)
+      isVideo: isVideoMediaName(filename),
+      status: /** @type {'ready'} */ ('ready')
     }];
   });
 }
@@ -40,8 +53,15 @@ function buildEditMediaItems(comment, collection) {
  *   fieldRef?: React.Ref<{ focus: () => void, clear: () => void }>,
  *   onSave: (payload: {
  *     text: string,
- *     orderedMedia: Array<{ filename: string, url: string }>,
+ *     orderedMedia: Array<{
+ *       filename?: string,
+ *       url?: string,
+ *       name?: string,
+ *       kind?: 'existing' | 'new',
+ *       file?: File | null
+ *     }>,
  *     orderChanged: boolean,
+ *     mediaChanged: boolean,
  *     originalNames: string[]
  *   }) => void | Promise<void>,
  *   onCancel: () => void
@@ -57,40 +77,166 @@ function CommentEditInlineForm({
 }) {
   const originalHtml = useMemo(() => toDisplayHtml(comment?.text || ''), [comment]);
   const originalNames = useMemo(() => mediaNames(comment?.media), [comment]);
+  const galleryInputRef = useRef(/** @type {HTMLInputElement | null} */ (null));
+  const cameraInputRef = useRef(/** @type {HTMLInputElement | null} */ (null));
+  const internalFieldRef = useRef(null);
+  const resolvedFieldRef = fieldRef || internalFieldRef;
+  const galleryInputId = useId();
+  const cameraInputId = useId();
 
   const [text, setText] = useState(originalHtml);
   const [orderedMedia, setOrderedMedia] = useState(() => buildEditMediaItems(comment, collection));
   const scrollTopBeforeFocusRef = React.useRef(/** @type {number | null} */ (null));
 
-  const currentNames = useMemo(
-    () => orderedMedia.map((item) => item.filename),
+  const currentExistingNames = useMemo(
+    () =>
+      orderedMedia
+        .filter((item) => item.kind === 'existing')
+        .map((item) => item.filename)
+        .filter(Boolean),
     [orderedMedia]
   );
-  const orderChanged = !areStringArraysEqual(currentNames, originalNames);
+  const hasNewMedia = orderedMedia.some((item) => item.kind === 'new');
+  const orderChanged =
+    !areStringArraysEqual(currentExistingNames, originalNames.filter((n) => currentExistingNames.includes(n))) ||
+    currentExistingNames.length !== originalNames.length ||
+    hasNewMedia;
+  const mediaChanged = orderChanged || hasNewMedia;
   const textChanged = text !== originalHtml;
-  const hasChanges = textChanged || orderChanged;
+  const hasChanges = textChanged || mediaChanged;
   const canSave =
-    hasChanges && (hasVisibleText(text) || orderedMedia.length > 0);
+    hasChanges && (hasVisibleText(text) || orderedMedia.some((item) => item.status === 'ready'));
+  const attachInToolbar = hasVisibleText(text);
+  const remainingSlots = Math.max(0, MAX_COMMENT_MEDIA_FILES - orderedMedia.length);
+  const attachDisabled = remainingSlots === 0;
 
   const previewItems = useMemo(
     () =>
-      orderedMedia.map((item) => ({
-        key: item.key,
-        url: item.url,
-        name: item.name,
-        isVideo: item.isVideo,
-        status: 'ready'
-      })),
+      orderedMedia
+        .filter((item) => item.status === 'ready' && item.url)
+        .map((item) => ({
+          key: item.key,
+          url: item.url,
+          name: item.name,
+          isVideo: item.isVideo,
+          status: 'ready'
+        })),
     [orderedMedia]
   );
+
+  const {
+    openItem: openPreviewMedia,
+    fullscreen: previewFullscreen,
+    close: closePreviewFullscreen,
+    onCloseStart: handlePreviewCloseStart,
+    handleActiveIndexChange: handlePreviewIndexChange
+  } = useLocalMediaFullscreen(previewItems, 'comment-edit');
+
+  const openGallery = useCallback(() => {
+    const field = /** @type {{ saveSelection?: () => void } | null} */ (resolvedFieldRef.current);
+    field?.saveSelection?.();
+    galleryInputRef.current?.click();
+  }, [resolvedFieldRef]);
+
+  const openCamera = useCallback(() => {
+    const field = /** @type {{ saveSelection?: () => void } | null} */ (resolvedFieldRef.current);
+    field?.saveSelection?.();
+    cameraInputRef.current?.click();
+  }, [resolvedFieldRef]);
+
+  const ingestFiles = useCallback(
+    async (fileList) => {
+      const field = /** @type {{
+        saveSelection?: () => void,
+        restoreSelection?: () => void,
+        focus?: (o?: any) => void
+      } | null} */ (resolvedFieldRef.current);
+      field?.saveSelection?.();
+
+      const slots = Math.max(0, MAX_COMMENT_MEDIA_FILES - orderedMedia.length);
+      const incoming = readSelectedFiles(fileList, slots).filter(
+        (file) =>
+          file.type.startsWith('image/') ||
+          file.type.startsWith('video/') ||
+          /\.gif$/i.test(file.name)
+      );
+      if (!incoming.length) {
+        requestAnimationFrame(() => field?.restoreSelection?.());
+        return;
+      }
+
+      for (const file of incoming) {
+        const key = `new-${file.name}-${file.lastModified}-${Math.random().toString(36).slice(2, 8)}`;
+        setOrderedMedia((cur) => [
+          ...cur,
+          {
+            key,
+            kind: /** @type {'new'} */ ('new'),
+            filename: undefined,
+            file: null,
+            url: '',
+            name: file.name,
+            isVideo: isVideoFile(file),
+            status: /** @type {'loading'} */ ('loading')
+          }
+        ]);
+        try {
+          const prepared = file.type.startsWith('image/') ? await compressImage(file) : file;
+          const url = URL.createObjectURL(prepared);
+          setOrderedMedia((cur) =>
+            cur.map((item) =>
+              item.key === key
+                ? {
+                    key,
+                    kind: 'new',
+                    filename: undefined,
+                    file: prepared,
+                    url,
+                    name: prepared.name,
+                    isVideo: isVideoFile(prepared),
+                    status: 'ready'
+                  }
+                : item
+            )
+          );
+        } catch {
+          setOrderedMedia((cur) => cur.filter((item) => item.key !== key));
+        }
+      }
+      requestAnimationFrame(() => {
+        field?.focus?.({ restoreSaved: true });
+        field?.restoreSelection?.();
+      });
+    },
+    [orderedMedia.length, resolvedFieldRef]
+  );
+
+  const removeMedia = useCallback((key) => {
+    setOrderedMedia((prev) => {
+      const target = prev.find((item) => item.key === key);
+      if (target?.kind === 'new' && target.url?.startsWith('blob:')) {
+        URL.revokeObjectURL(target.url);
+      }
+      return prev.filter((item) => item.key !== key);
+    });
+  }, []);
 
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!canSave) return;
     void onSave({
       text,
-      orderedMedia,
+      orderedMedia: orderedMedia
+        .filter((item) => item.status === 'ready')
+        .map((item) => ({
+          filename: item.filename,
+          url: item.url,
+          name: item.name,
+          kind: item.kind,
+          file: item.file
+        })),
       orderChanged,
+      mediaChanged,
       originalNames
     });
   };
@@ -111,8 +257,34 @@ function CommentEditInlineForm({
       <label htmlFor={`edit-comment-${comment.id}`} className="visually-hidden">
         Редактирование комментария
       </label>
+      <input
+        id={galleryInputId}
+        ref={galleryInputRef}
+        type="file"
+        accept="image/*,video/*,.gif"
+        multiple
+        className="visually-hidden"
+        tabIndex={-1}
+        onChange={(e) => {
+          void ingestFiles(e.target.files);
+          e.currentTarget.value = '';
+        }}
+      />
+      <input
+        id={cameraInputId}
+        ref={cameraInputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        className="visually-hidden"
+        tabIndex={-1}
+        onChange={(e) => {
+          void ingestFiles(e.target.files);
+          e.currentTarget.value = '';
+        }}
+      />
       <PostRichTextField
-        ref={fieldRef}
+        ref={resolvedFieldRef}
         id={`edit-comment-${comment.id}`}
         value={text}
         onChange={setText}
@@ -120,6 +292,24 @@ function CommentEditInlineForm({
         compact
         placeholder="Текст комментария…"
         aria-label="Редактирование комментария"
+        toolbarExtra={
+          <AttachButtons
+            variant="toolbar"
+            visible={attachInToolbar}
+            disabled={attachDisabled}
+            onGallery={openGallery}
+            onCamera={openCamera}
+          />
+        }
+        editorEnd={
+          <AttachButtons
+            variant="field"
+            visible={!attachInToolbar}
+            disabled={attachDisabled}
+            onGallery={openGallery}
+            onCamera={openCamera}
+          />
+        }
         onFocus={() => {
           const formEl = /** @type {HTMLFormElement | null} */ (
             formRef && typeof formRef === 'object' && 'current' in formRef ? formRef.current : null
@@ -127,7 +317,7 @@ function CommentEditInlineForm({
           restoreAndKeepCommentEditInView(formEl, scrollTopBeforeFocusRef.current);
         }}
       />
-      {previewItems.length > 1 ? (
+      {previewItems.length > 0 ? (
         <div className="comment-edit-inline-form__media">
           <SortableMediaPreviewGrid
             items={previewItems}
@@ -139,6 +329,8 @@ function CommentEditInlineForm({
                 next.map((item) => byKey.get(item.key)).filter(Boolean)
               );
             }}
+            onItemClick={(item, index, event) => openPreviewMedia(item, index, event)}
+            onRemove={(key) => removeMedia(key)}
           />
         </div>
       ) : null}
@@ -150,6 +342,17 @@ function CommentEditInlineForm({
           Отмена
         </button>
       </div>
+      {previewFullscreen ? (
+        <FullscreenImageViewer
+          items={previewFullscreen.items}
+          initialIndex={previewFullscreen.index}
+          originRect={previewFullscreen.originRect}
+          originKey={previewFullscreen.originKey}
+          onCloseStart={handlePreviewCloseStart}
+          onActiveIndexChange={handlePreviewIndexChange}
+          onClose={closePreviewFullscreen}
+        />
+      ) : null}
     </form>
   );
 }

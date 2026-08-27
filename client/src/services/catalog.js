@@ -28,6 +28,7 @@ import { PB_URL } from '../config';
  * @property {string} collectionId
  * @property {string} collectionName
  * @property {string} name
+ * @property {number} [sort_order]
  */
 
 /**
@@ -90,7 +91,7 @@ import { PB_URL } from '../config';
 export async function listProductCategories({ signal } = {}) {
   try {
     return /** @type {ProductCategoryRecord[]} */ (await pb.collection('product_categories').getFullList({
-      sort: 'name',
+      sort: 'sort_order,name',
       requestKey: null,
       signal
     }));

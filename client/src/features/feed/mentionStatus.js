@@ -61,6 +61,15 @@ async function resolveUserMissing(userId, players) {
  * @param {'feed' | 'tournament'} source
  * @returns {Promise<boolean>}
  */
+export async function isPostMissing(postId, source) {
+  return resolvePostMissing(postId, source === 'tournament' ? 'tournament' : 'feed');
+}
+
+/**
+ * @param {string} postId
+ * @param {'feed' | 'tournament'} source
+ * @returns {Promise<boolean>}
+ */
 async function resolvePostMissing(postId, source) {
   if (!postId) return true;
   const cacheKey = `${source}:${postId}`;

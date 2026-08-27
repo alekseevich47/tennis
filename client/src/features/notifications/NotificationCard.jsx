@@ -4,6 +4,7 @@ import { formatRelativeTime } from '../../lib/format';
 import { SWIPE_CLOSE_THRESHOLD } from '../../lib/gestures';
 import { markNotificationRead, isDeletableNotification } from '../../services/notifications';
 import PostContentHtml from '../feed/PostContentHtml';
+import { isPostMissing, MENTION_MISSING_CLASS } from '../feed/mentionStatus';
 import Avatar from '../../components/ui/Avatar';
 import { formatTrainingCountdownBadge } from './notificationBadges';
 import sectionAvatarUrl from '../../assets/sm-avatar.png';
@@ -58,6 +59,20 @@ function getNotificationKind(meta, clickAction) {
  * }} props
  */
 function NotificationPostChip({ postId, postSource, postNumber, onOpen }) {
+  const [missing, setMissing] = useState(false);
+
+  useEffect(() => {
+    if (!postId) return undefined;
+    let cancelled = false;
+    const source = postSource === 'tournament' ? 'tournament' : 'feed';
+    void isPostMissing(postId, source).then((value) => {
+      if (!cancelled) setMissing(value);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [postId, postSource]);
+
   if (!postId) return null;
   const source = postSource === 'tournament' ? 'tournament' : 'feed';
   const sourceLabel = source === 'tournament' ? 'Турнир' : 'Лента';
@@ -67,10 +82,18 @@ function NotificationPostChip({ postId, postSource, postNumber, onOpen }) {
   return (
     <button
       type="button"
-      className="post-mention post-mention--post notification-card__post-chip"
+      className={clsx(
+        'post-mention',
+        'post-mention--post',
+        'notification-card__post-chip',
+        missing && MENTION_MISSING_CLASS
+      )}
       aria-label={`Публикация #${num} · ${sourceLabel}`}
+      aria-disabled={missing || undefined}
+      disabled={missing}
       onClick={(event) => {
         event.stopPropagation();
+        if (missing) return;
         onOpen();
       }}
     >
