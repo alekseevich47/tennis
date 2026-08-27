@@ -148,6 +148,20 @@ label.product-category-option {
   flex: 0 0 auto;
 }
 
+.product-category-option__mark {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #c5ced8;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+}
+
+.product-category-option__mark.is-selected {
+  border-color: #007aff;
+  background: radial-gradient(circle at center, #007aff 0 45%, transparent 48%);
+}
+
 .product-category-empty {
   margin: 4px;
   padding: 10px;

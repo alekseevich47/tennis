@@ -154,9 +154,16 @@ export function createTournamentCommentWithProgress(payload, { signal, onProgres
 }
 
 /**
+ * Полная перезапись media турнирного комментария.
  * @param {string} text
  * @param {string[]} originalNames
- * @param {Array<{ filename: string, url: string }>} orderedMedia
+ * @param {Array<{
+ *   filename?: string,
+ *   url?: string,
+ *   name?: string,
+ *   kind?: 'existing' | 'new',
+ *   file?: File | null
+ * }>} orderedMedia
  * @returns {Promise<FormData>}
  */
 export async function buildTournamentCommentMediaReorderFormData(text, originalNames, orderedMedia) {
@@ -164,11 +171,18 @@ export async function buildTournamentCommentMediaReorderFormData(text, originalN
   formData.append('text', text);
   originalNames.forEach((name) => formData.append('media-', name));
   for (const item of orderedMedia) {
+    if (item.kind === 'new' && item.file instanceof File) {
+      formData.append('media', item.file, item.file.name || item.name || 'file');
+      continue;
+    }
+    if (!item.url) continue;
     const res = await fetch(item.url);
     const blob = await res.blob();
     formData.append(
       'media',
-      new File([blob], item.filename, { type: blob.type || 'application/octet-stream' })
+      new File([blob], item.filename || item.name || 'file', {
+        type: blob.type || 'application/octet-stream'
+      })
     );
   }
   return formData;

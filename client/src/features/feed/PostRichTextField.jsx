@@ -15,6 +15,7 @@ import PostFormatToolbar from './PostFormatToolbar';
 import PostLinkModal from './PostLinkModal';
 import FrameColorPicker from './FrameColorPicker';
 import MentionSuggestPopup from './MentionSuggestPopup';
+import EmojiPicker from './emoji/EmojiPicker';
 import {
   FRAME_CLASS,
   applyAnimFrame,
@@ -125,6 +126,11 @@ const PostRichTextField = forwardRef(function PostRichTextField(
   const [frameColor, setFrameColor] = useState('#FF4D6D');
   const [linkOpen, setLinkOpen] = useState(false);
   const [linkDraft, setLinkDraft] = useState({ title: '', href: '' });
+  const [emojiOpen, setEmojiOpen] = useState(false);
+  const [emojiMode, setEmojiMode] = useState(/** @type {'field' | 'toolbar'} */ ('field'));
+  const [emojiAnchor, setEmojiAnchor] = useState(/** @type {DOMRect | null} */ (null));
+  const [emojiModalRect, setEmojiModalRect] = useState(/** @type {DOMRect | null} */ (null));
+  const fieldEmojiBtnRef = useRef(/** @type {HTMLButtonElement | null} */ (null));
   const [floatingPos, setFloatingPos] = useState(
     /** @type {{ top: number, left: number } | null} */ (null)
   );
@@ -209,32 +215,6 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     skipNextSync.current = true;
   }, []);
 
-  useImperativeHandle(
-    ref,
-    () => ({
-      focus: () => {
-        const el = editorRef.current;
-        if (!el) return;
-        el.focus({ preventScroll: true });
-        const selection = window.getSelection();
-        if (!selection) return;
-        const range = document.createRange();
-        range.selectNodeContents(el);
-        range.collapse(false);
-        selection.removeAllRanges();
-        selection.addRange(range);
-      },
-      clear: () => {
-        const el = editorRef.current;
-        lastClearedHtmlRef.current = el ? getEditorHtml(el) : '';
-        valueRef.current = '';
-        clearEditorDom();
-        closeMentionSuggest(true);
-      }
-    }),
-    [clearEditorDom, closeMentionSuggest]
-  );
-
   const syncEmptyAndValue = useCallback(() => {
     const el = editorRef.current;
     if (!el) return;
@@ -242,6 +222,92 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     onChange(getEditorHtml(el));
   }, [onChange]);
 
+  useImperativeHandle(
+    ref,
+    () => ({
+      focus: (opts) => {
+        const el = editorRef.current;
+        if (!el) return;
+        el.focus({ preventScroll: true });
+        const selection = window.getSelection();
+        if (!selection) return;
+        if (opts?.restoreSaved && savedRangeRef.current) {
+          try {
+            selection.removeAllRanges();
+            selection.addRange(savedRangeRef.current);
+            return;
+          } catch {
+            // fall through to end
+          }
+        }
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        range.collapse(false);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      },
+      saveSelection: () => {
+        const el = editorRef.current;
+        const selection = window.getSelection();
+        if (!el || !selection || selection.rangeCount === 0) return;
+        const range = selection.getRangeAt(0);
+        if (!el.contains(range.commonAncestorContainer)) return;
+        savedRangeRef.current = range.cloneRange();
+      },
+      restoreSelection: () => {
+        const el = editorRef.current;
+        const range = savedRangeRef.current;
+        const selection = window.getSelection();
+        if (!el || !range || !selection) return;
+        el.focus({ preventScroll: true });
+        try {
+          selection.removeAllRanges();
+          selection.addRange(range);
+        } catch {
+          // ignore stale range
+        }
+      },
+      insertTextAtCaret: (text) => {
+        const el = editorRef.current;
+        if (!el || !text) return;
+        el.focus({ preventScroll: true });
+        const selection = window.getSelection();
+        let range = savedRangeRef.current;
+        if (selection && selection.rangeCount > 0) {
+          const live = selection.getRangeAt(0);
+          if (el.contains(live.commonAncestorContainer)) {
+            range = live;
+          }
+        }
+        if (!range || !el.contains(range.commonAncestorContainer)) {
+          range = document.createRange();
+          range.selectNodeContents(el);
+          range.collapse(false);
+        }
+        range.deleteContents();
+        const node = document.createTextNode(text);
+        range.insertNode(node);
+        range.setStartAfter(node);
+        range.collapse(true);
+        if (selection) {
+          selection.removeAllRanges();
+          selection.addRange(range);
+        }
+        savedRangeRef.current = range.cloneRange();
+        skipNextSync.current = true;
+        syncEmptyAndValue();
+      },
+      clear: () => {
+        const el = editorRef.current;
+        lastClearedHtmlRef.current = el ? getEditorHtml(el) : '';
+        valueRef.current = '';
+        clearEditorDom();
+        closeMentionSuggest(true);
+      },
+      getEditorElement: () => editorRef.current
+    }),
+    [clearEditorDom, closeMentionSuggest, syncEmptyAndValue]
+  );
   const refreshActive = useCallback(() => {
     setActive(readActiveFormats());
   }, []);
@@ -475,9 +541,28 @@ const PostRichTextField = forwardRef(function PostRichTextField(
       }
     }
     if (el.innerHTML !== next) {
+      const hadFocus = document.activeElement === el;
+      const selection = window.getSelection();
+      let saved = savedRangeRef.current;
+      if (hadFocus && selection && selection.rangeCount > 0) {
+        const live = selection.getRangeAt(0);
+        if (el.contains(live.commonAncestorContainer)) {
+          saved = live.cloneRange();
+          savedRangeRef.current = saved;
+        }
+      }
       el.innerHTML = next;
       ensureFrameCarets(el);
       setEmpty(isEditorEmpty(el));
+      if (hadFocus && saved) {
+        try {
+          el.focus({ preventScroll: true });
+          selection?.removeAllRanges();
+          selection?.addRange(saved);
+        } catch {
+          // stale range after DOM rewrite — leave caret
+        }
+      }
     } else {
       ensureFrameCarets(el);
     }
@@ -643,9 +728,65 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     return () => document.removeEventListener('pointerdown', onPointerDown);
   }, [mentionOpen, closeMentionSuggest]);
 
+  const openEmojiPicker = useCallback((mode, triggerEl) => {
+    saveSelection();
+    const rect = triggerEl?.getBoundingClientRect?.() || null;
+    setEmojiMode(mode);
+    setEmojiAnchor(rect);
+    const modalEl = rootRef.current?.closest('.ui-modal-content');
+    setEmojiModalRect(modalEl ? modalEl.getBoundingClientRect() : null);
+    setEmojiOpen(true);
+    setFrameOpen(false);
+    hideFloatingToolbar(true);
+    closeMentionSuggest(true);
+    const active = /** @type {HTMLElement | null} */ (document.activeElement);
+    if (active && typeof active.blur === 'function') active.blur();
+  }, [closeMentionSuggest, hideFloatingToolbar, saveSelection]);
+
+  const insertEmojiAtCaret = useCallback(
+    (emoji) => {
+      const el = editorRef.current;
+      if (!el || !emoji) return;
+      el.focus({ preventScroll: true });
+      const selection = window.getSelection();
+      let range = savedRangeRef.current;
+      if (selection && selection.rangeCount > 0) {
+        const live = selection.getRangeAt(0);
+        if (el.contains(live.commonAncestorContainer)) {
+          range = live;
+        }
+      }
+      if (!range || !el.contains(range.commonAncestorContainer)) {
+        range = document.createRange();
+        range.selectNodeContents(el);
+        range.collapse(false);
+      }
+      range.deleteContents();
+      const node = document.createTextNode(emoji);
+      range.insertNode(node);
+      range.setStartAfter(node);
+      range.collapse(true);
+      if (selection) {
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+      savedRangeRef.current = range.cloneRange();
+      skipNextSync.current = true;
+      syncEmptyAndValue();
+    },
+    [syncEmptyAndValue]
+  );
+
   const handleCommand = (command) => {
     const el = editorRef.current;
     if (!el) return;
+
+    if (command === 'emoji') {
+      const fromFloating = floatingRef.current?.querySelector('[data-emoji-source="toolbar"]');
+      const fromRoot = rootRef.current?.querySelector('[data-emoji-source="toolbar"]');
+      openEmojiPicker('toolbar', /** @type {Element | null} */ (fromFloating || fromRoot));
+      return;
+    }
 
     if (command === 'frame') {
       if (!enableFrame) return;
@@ -807,6 +948,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
               active={active}
               frameOpen={frameOpen}
               enableFrame={enableFrame}
+              emojiOpen={emojiOpen && emojiMode === 'toolbar'}
               onCommand={handleCommand}
             />
             {enableFrame && frameOpen ? (
@@ -845,6 +987,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
           active={active}
           frameOpen={frameOpen}
           enableFrame={enableFrame}
+          emojiOpen={emojiOpen && emojiMode === 'toolbar'}
           trailing={toolbarExtra}
           onCommand={handleCommand}
         />
@@ -859,6 +1002,32 @@ const PostRichTextField = forwardRef(function PostRichTextField(
       </div>
 
       <div className="post-rich-text__editor-wrap">
+        <button
+          ref={fieldEmojiBtnRef}
+          type="button"
+          className="post-rich-text__emoji-field-btn"
+          aria-label="Эмодзи"
+          data-emoji-trigger="true"
+          data-emoji-source="field"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={(e) => {
+            e.preventDefault();
+            openEmojiPicker('field', e.currentTarget);
+          }}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="1.8" />
+            <circle cx="9" cy="10" r="1.15" fill="currentColor" />
+            <circle cx="15" cy="10" r="1.15" fill="currentColor" />
+            <path
+              d="M8.5 14.2c1.1 1.3 2.2 1.9 3.5 1.9s2.4-.6 3.5-1.9"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+            />
+          </svg>
+        </button>
         <div
           id={id}
           ref={editorRef}
@@ -1018,6 +1187,20 @@ const PostRichTextField = forwardRef(function PostRichTextField(
         initialHref={linkDraft.href}
         onClose={() => setLinkOpen(false)}
         onSubmit={handleApplyLink}
+      />
+
+      <EmojiPicker
+        open={emojiOpen}
+        mode={emojiMode}
+        anchorRect={emojiAnchor}
+        modalRect={emojiModalRect}
+        onClose={() => {
+          setEmojiOpen(false);
+          setEmojiAnchor(null);
+        }}
+        onPick={(emoji) => {
+          insertEmojiAtCaret(emoji);
+        }}
       />
     </div>
   );

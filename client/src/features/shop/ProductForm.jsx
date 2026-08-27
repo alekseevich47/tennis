@@ -1,5 +1,6 @@
-import React, { useEffect, useId, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import Modal from '../../components/ui/Modal';
+import { useAlertDialog } from '../../components/ui/AlertDialog';
 import SortableMediaPreviewGrid from '../feed/SortableMediaPreviewGrid';
 import FullscreenImageViewer from '../feed/FullscreenImageViewer';
 import { useLocalMediaFullscreen } from '../feed/useLocalMediaFullscreen';
@@ -35,6 +36,13 @@ function parseOptionalOldPrice(value) {
   if (!trimmed) return null;
   const n = parseFloat(trimmed);
   return Number.isFinite(n) && n > 0 ? n : null;
+}
+
+/** @param {unknown} raw @returns {string[]} */
+function normalizeCategoryIds(raw) {
+  if (!Array.isArray(raw) || raw.length === 0) return [];
+  const first = raw[0];
+  return first ? [String(first)] : [];
 }
 
 /** Порядок не важен (категории). */
@@ -73,6 +81,7 @@ function areStringArraysEqual(left, right) {
 function ProductForm({ isOpen, product, onClose, onSubmit }) {
   const fileInputId = useId();
   const categoryButtonId = useId();
+  const { confirm } = useAlertDialog();
   const { data: categories = [] } = useProductCategories();
   const [form, setForm] = useState(() => ({
     ...INITIAL,
@@ -81,7 +90,7 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
     price: product?.price?.toString() || '',
     old_price: Number(product?.old_price) > 0 ? String(product.old_price) : '',
     sizes: product?.sizes || '',
-    categories: Array.isArray(product?.categories) ? product.categories : [],
+    categories: normalizeCategoryIds(product?.categories),
     out_of_stock: Boolean(product?.out_of_stock)
   }));
   /** @type {[ProductMediaItem[], React.Dispatch<React.SetStateAction<ProductMediaItem[]>>]} */
@@ -96,14 +105,9 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
 
   const remainingImageSlots = Math.max(0, MAX_PRODUCT_IMAGES - orderedMedia.length);
   const categoryLabel = useMemo(() => {
-    if (form.categories.length === 0) return 'Категории не выбраны';
-    const selectedNames = categories
-      .filter((category) => form.categories.includes(category.id))
-      .map((category) => category.name);
-
-    return selectedNames.length > 0
-      ? selectedNames.join(', ')
-      : `Выбрано: ${form.categories.length}`;
+    if (form.categories.length === 0) return 'Категория не выбрана';
+    const selected = categories.find((category) => category.id === form.categories[0]);
+    return selected?.name ? `Выбрано: ${selected.name}` : 'Категория не выбрана';
   }, [categories, form.categories]);
 
   const previewItems = useMemo(
@@ -146,7 +150,7 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
       price: product?.price?.toString() || '',
       old_price: Number(product?.old_price) > 0 ? String(product.old_price) : '',
       sizes: product?.sizes || '',
-      categories: Array.isArray(product?.categories) ? product.categories : [],
+      categories: normalizeCategoryIds(product?.categories),
       out_of_stock: Boolean(product?.out_of_stock)
     });
     setOrderedMedia(
@@ -175,14 +179,13 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
   const updateField = (key) => (value) =>
     setForm((prev) => ({ ...prev, [key]: value }));
 
-  const toggleCategory = (categoryId) => {
+  const selectCategory = (categoryId) => {
     setCategoryError(false);
     setForm((prev) => ({
       ...prev,
-      categories: prev.categories.includes(categoryId)
-        ? prev.categories.filter((id) => id !== categoryId)
-        : [...prev.categories, categoryId]
+      categories: [categoryId]
     }));
+    setIsCategoryMenuOpen(false);
   };
 
   const removeMedia = (key) => {
@@ -194,6 +197,52 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
       return current.filter((item) => item.key !== key);
     });
   };
+
+  const isDirty = useCallback(() => {
+    const currentCategories = normalizeCategoryIds(product?.categories);
+    if (!product) {
+      return (
+        Boolean(form.title.trim()) ||
+        Boolean(form.description.trim()) ||
+        Boolean(form.price.trim()) ||
+        Boolean(form.old_price.trim()) ||
+        Boolean(form.sizes.trim()) ||
+        form.categories.length > 0 ||
+        form.out_of_stock ||
+        orderedMedia.length > 0
+      );
+    }
+    if (form.title !== (product.title || '')) return true;
+    if (form.description !== (product.description || '')) return true;
+    if (parsePrice(form.price) !== parsePrice(String(product.price ?? ''))) return true;
+    if (parseOptionalOldPrice(form.old_price) !== parseOptionalOldPrice(product?.old_price)) {
+      return true;
+    }
+    if (form.sizes !== (product.sizes || '')) return true;
+    if (form.out_of_stock !== Boolean(product.out_of_stock)) return true;
+    if (!areStringSetsEqual(form.categories, currentCategories)) return true;
+    const keptExistingNames = orderedMedia
+      .filter((item) => item.kind === 'existing')
+      .map((item) => item.filename)
+      .filter(Boolean);
+    if (!areStringArraysEqual(keptExistingNames, originalExistingNames)) return true;
+    if (orderedMedia.some((item) => item.kind === 'new')) return true;
+    return false;
+  }, [form, orderedMedia, originalExistingNames, product]);
+
+  const handleClose = useCallback(async () => {
+    if (isDirty()) {
+      const ok = await confirm({
+        title: product ? 'Выйти из редактирования?' : 'Отменить создание товара?',
+        message: 'Несохранённые изменения будут потеряны.',
+        confirmText: 'Выйти',
+        cancelText: 'Продолжить',
+        confirmVariant: 'danger'
+      });
+      if (!ok) return;
+    }
+    onClose();
+  }, [confirm, isDirty, onClose, product]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -210,7 +259,7 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
     const nextOldPrice = parseOptionalOldPrice(form.old_price);
     const prevOldPrice = parseOptionalOldPrice(product?.old_price);
     const nextSizes = form.sizes.trim();
-    const currentCategories = Array.isArray(product?.categories) ? product.categories : [];
+    const currentCategories = normalizeCategoryIds(product?.categories);
     const hasCategoryChanges = !areStringSetsEqual(form.categories, currentCategories);
 
     if (!product || nextTitle !== (product.title || '')) {
@@ -223,7 +272,6 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
       data.append('price', String(nextPrice));
     }
     if (!product || nextOldPrice !== prevOldPrice) {
-      // На create пустое old_price не шлём; на edit пустая строка сбрасывает number → null.
       if (product || nextOldPrice != null) {
         data.append('old_price', nextOldPrice == null ? '' : String(nextOldPrice));
       }
@@ -253,7 +301,6 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
       (existingOrderChanged ||
         (newFiles.length > 0 &&
           orderedMedia.some((item, index) => {
-            // new file interleaved before an existing one
             if (item.kind !== 'new') return false;
             return orderedMedia.slice(index + 1).some((later) => later.kind === 'existing');
           })));
@@ -298,7 +345,7 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       title={product ? 'Редактировать товар' : 'Новый товар'}
     >
       <form onSubmit={handleSubmit} className="product-form">
@@ -361,7 +408,7 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
         </div>
 
         <div className="form-group" aria-invalid={categoryError}>
-          <span className="product-form-label">Категории</span>
+          <span className="product-form-label">Категория</span>
           <div className="product-category-multiselect">
             <button
               id={categoryButtonId}
@@ -383,21 +430,31 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
                   <p className="product-category-empty">Категории не найдены</p>
                 ) : (
                   categories.map((category) => (
-                    <label key={category.id} className="product-category-option">
-                      <input
-                        type="checkbox"
-                        checked={form.categories.includes(category.id)}
-                        onChange={() => toggleCategory(category.id)}
+                    <button
+                      key={category.id}
+                      type="button"
+                      role="option"
+                      aria-selected={form.categories[0] === category.id}
+                      className="product-category-option"
+                      onClick={() => selectCategory(category.id)}
+                    >
+                      <span
+                        className={
+                          form.categories[0] === category.id
+                            ? 'product-category-option__mark is-selected'
+                            : 'product-category-option__mark'
+                        }
+                        aria-hidden="true"
                       />
                       <span>{category.name}</span>
-                    </label>
+                    </button>
                   ))
                 )}
               </div>
             )}
           </div>
           {categoryError && (
-            <span className="form-error" role="alert">Выберите хотя бы одну категорию</span>
+            <span className="form-error" role="alert">Выберите категорию</span>
           )}
         </div>
 

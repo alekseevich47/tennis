@@ -1,7 +1,7 @@
 // @ts-check
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  extractYadiskUrls,
+  extractYadiskUrlsForEmbed,
   hasYadiskAlbum,
   normalizeExternalMedia,
   stripYadiskUrlsFromHtml,
@@ -497,7 +497,7 @@ export function useYadiskEmbed({
     if (!enabled) return undefined;
 
     const timer = window.setTimeout(() => {
-      const urls = extractYadiskUrls(text);
+      const urls = extractYadiskUrlsForEmbed(text);
       if (!urls.length) return;
 
       void (async () => {

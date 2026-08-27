@@ -80,6 +80,8 @@ function AttachButtons({ variant, visible, disabled, onGallery, onCamera }) {
   );
 }
 
+export { AttachButtons };
+
 /**
  * @param {{
  *   id?: string,
@@ -112,6 +114,8 @@ function CommentComposeForm({
   const inputId = id || autoId;
   const galleryInputRef = useRef(/** @type {HTMLInputElement | null} */ (null));
   const cameraInputRef = useRef(/** @type {HTMLInputElement | null} */ (null));
+  const internalFieldRef = useRef(null);
+  const resolvedFieldRef = fieldRef || internalFieldRef;
 
   /** @type {[CommentMediaDraft[], React.Dispatch<React.SetStateAction<CommentMediaDraft[]>>]} */
   const [mediaItems, setMediaItems] = useState([]);
@@ -159,6 +163,13 @@ function CommentComposeForm({
   }, []);
 
   const ingestFiles = useCallback(async (fileList) => {
+    const field = /** @type {{ saveSelection?: () => void, restoreSelection?: () => void, focus?: (o?: any) => void } | null} */ (
+      resolvedFieldRef && typeof resolvedFieldRef === 'object' && 'current' in resolvedFieldRef
+        ? resolvedFieldRef.current
+        : null
+    );
+    field?.saveSelection?.();
+
     setMediaItems((prev) => {
       const slots = Math.max(0, MAX_COMMENT_MEDIA_FILES - prev.length);
       const incoming = readSelectedFiles(fileList, slots).filter(
@@ -167,7 +178,12 @@ function CommentComposeForm({
           file.type.startsWith('video/') ||
           /\.gif$/i.test(file.name)
       );
-      if (!incoming.length) return prev;
+      if (!incoming.length) {
+        requestAnimationFrame(() => {
+          field?.restoreSelection?.();
+        });
+        return prev;
+      }
 
       const drafts = incoming.map((file) => ({
         key: `m-${file.name}-${file.lastModified}-${Math.random().toString(36).slice(2, 8)}`,
@@ -226,11 +242,35 @@ function CommentComposeForm({
             );
           }
         }
+        requestAnimationFrame(() => {
+          field?.focus?.({ restoreSaved: true });
+          field?.restoreSelection?.();
+        });
       })();
 
       return [...prev, ...drafts].slice(0, MAX_COMMENT_MEDIA_FILES);
     });
-  }, []);
+  }, [resolvedFieldRef]);
+
+  const openGallery = useCallback(() => {
+    const field = /** @type {{ saveSelection?: () => void } | null} */ (
+      resolvedFieldRef && typeof resolvedFieldRef === 'object' && 'current' in resolvedFieldRef
+        ? resolvedFieldRef.current
+        : null
+    );
+    field?.saveSelection?.();
+    galleryInputRef.current?.click();
+  }, [resolvedFieldRef]);
+
+  const openCamera = useCallback(() => {
+    const field = /** @type {{ saveSelection?: () => void } | null} */ (
+      resolvedFieldRef && typeof resolvedFieldRef === 'object' && 'current' in resolvedFieldRef
+        ? resolvedFieldRef.current
+        : null
+    );
+    field?.saveSelection?.();
+    cameraInputRef.current?.click();
+  }, [resolvedFieldRef]);
 
   const removeMedia = useCallback((key) => {
     setMediaItems((prev) => {
@@ -440,7 +480,7 @@ function CommentComposeForm({
         <div className="comment-compose__row">
           <div className="comment-compose__field-col">
             <PostRichTextField
-              ref={fieldRef}
+              ref={resolvedFieldRef}
               id={inputId}
               value={value}
               onChange={onChange}
@@ -453,8 +493,8 @@ function CommentComposeForm({
                   variant="toolbar"
                   visible={attachInToolbar}
                   disabled={attachDisabled}
-                  onGallery={() => galleryInputRef.current?.click()}
-                  onCamera={() => cameraInputRef.current?.click()}
+                  onGallery={openGallery}
+                  onCamera={openCamera}
                 />
               }
               editorEnd={
@@ -462,8 +502,8 @@ function CommentComposeForm({
                   variant="field"
                   visible={!attachInToolbar}
                   disabled={attachDisabled}
-                  onGallery={() => galleryInputRef.current?.click()}
-                  onCamera={() => cameraInputRef.current?.click()}
+                  onGallery={openGallery}
+                  onCamera={openCamera}
                 />
               }
             />

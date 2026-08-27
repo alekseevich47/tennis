@@ -340,11 +340,11 @@ function PostDetailModal({
     setReplyTo(null);
   };
 
-  const handleSaveEdit = async ({ text, orderedMedia, orderChanged, originalNames }) => {
+  const handleSaveEdit = async ({ text, orderedMedia, orderChanged, mediaChanged, originalNames }) => {
     if (!editingId) return;
     if (!hasVisibleText(text) && orderedMedia.length === 0) return;
     try {
-      if (orderChanged && orderedMedia.length > 0) {
+      if (mediaChanged ?? orderChanged) {
         const formData = await buildCommentMediaReorderFormData(text, originalNames, orderedMedia);
         await updateComment(editingId, formData);
       } else {
