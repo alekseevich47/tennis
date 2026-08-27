@@ -37,10 +37,17 @@ function parseOptionalOldPrice(value) {
   return Number.isFinite(n) && n > 0 ? n : null;
 }
 
-function areStringArraysEqual(left, right) {
+/** Порядок не важен (категории). */
+function areStringSetsEqual(left, right) {
   if (left.length !== right.length) return false;
   const leftSet = new Set(left);
   return right.every((value) => leftSet.has(value));
+}
+
+/** Порядок важен (имена медиа). */
+function areStringArraysEqual(left, right) {
+  if (left.length !== right.length) return false;
+  return left.every((value, index) => value === right[index]);
 }
 
 /**
@@ -204,7 +211,7 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
     const prevOldPrice = parseOptionalOldPrice(product?.old_price);
     const nextSizes = form.sizes.trim();
     const currentCategories = Array.isArray(product?.categories) ? product.categories : [];
-    const hasCategoryChanges = !areStringArraysEqual(form.categories, currentCategories);
+    const hasCategoryChanges = !areStringSetsEqual(form.categories, currentCategories);
 
     if (!product || nextTitle !== (product.title || '')) {
       data.append('title', nextTitle);
@@ -277,7 +284,7 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
     if (!product || hasCategoryChanges) {
       form.categories.forEach((categoryId) => data.append('categories', categoryId));
     }
-    if (product && Array.from(data.keys()).length === 0 && !existingOrderChanged && deletedNames.length === 0 && newFiles.length === 0) {
+    if (product && Array.from(data.keys()).length === 0) {
       onClose();
       return;
     }
