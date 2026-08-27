@@ -132,6 +132,24 @@ function notifyCommentReply(collectionName, reply) {
   var parentPlain = truncatePlain(stripHtmlToPlain(parent.getString('text')), 100);
   var replyPlain = truncatePlain(stripHtmlToPlain(reply.getString('text')), 80);
 
+  var tpl;
+  try {
+    tpl = require(__hooks + '/templatelib.js');
+  } catch (_) {
+    tpl = null;
+  }
+  var resolved = tpl
+    ? tpl.resolve($app, 'app.comment_reply', {
+        actor: actorName,
+        reply: replyPlain,
+        parent: parentPlain
+      })
+    : { title: actorName, body: parentPlain };
+  if (resolved === null) {
+    console.log('[comment_replies] app.comment_reply disabled');
+    return false;
+  }
+
   var actorAvatar = '';
   try {
     actorAvatar = actor.getString('avatar') || '';
@@ -165,7 +183,7 @@ function notifyCommentReply(collectionName, reply) {
   var notificationsCollection = $app.findCollectionByNameOrId('notifications');
   var notification = new Record(notificationsCollection);
   notification.set('recipient', parentAuthorId);
-  notification.set('title', actorName);
+  notification.set('title', resolved.title || actorName);
   notification.set('body', parentPlain);
   notification.set('badge_text', replyPlain);
   notification.set('meta', meta);
