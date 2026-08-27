@@ -76,11 +76,15 @@
   "74": "Avatar.jsx",
   "75": "users_claim.pb.js",
   "76": "useSectionSwipe.js",
+  "77": "AboutAppModal.jsx",
   "78": "AboutAppModal.jsx",
   "79": "isModerator",
   "80": "useMaxCloseGuard.js",
+  "81": "ProfilePage.jsx",
+  "82": "overlayStack.js",
+  "83": "buyMessage.js",
+  "84": "RatingPage.jsx",
+  "85": "ProductUploadProvider.jsx",
   "86": "overlayStack.js",
-  "87": "ArchiveModal.jsx",
-  "88": "App.jsx",
   "89": "BottomNav.jsx"
 }

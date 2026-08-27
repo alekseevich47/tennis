@@ -1587,19 +1587,19 @@ button.post-card-like:hover:not(:disabled) {
 .post-mention {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  vertical-align: middle;
+  gap: 3px;
+  vertical-align: baseline;
   max-width: 100%;
-  margin: 0 2px 0 1px;
-  padding: 0 4px 0 1px;
-  height: 1.35em;
+  margin: 0 1px;
+  padding: 0 2px;
+  height: auto;
   box-sizing: border-box;
   border-radius: 999px;
   cursor: pointer;
   color: #007aff;
   font-weight: 600;
   font-size: inherit;
-  line-height: 1;
+  line-height: inherit;
   text-decoration: none;
   -webkit-user-select: none;
   user-select: none;
@@ -1613,13 +1613,14 @@ button.post-card-like:hover:not(:disabled) {
 }
 
 .post-mention__avatar {
-  width: 1.15em;
-  height: 1.15em;
+  width: 1em;
+  height: 1em;
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
   display: block;
   background: #e8eef5;
+  vertical-align: baseline;
 }
 
 .post-mention__avatar--fallback {
@@ -1636,7 +1637,7 @@ button.post-card-like:hover:not(:disabled) {
   color: #007aff;
   font-weight: 600;
   font-size: inherit;
-  line-height: 1;
+  line-height: inherit;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1648,10 +1649,11 @@ button.post-card-like:hover:not(:disabled) {
   flex-direction: column;
   justify-content: center;
   gap: 2px;
-  width: 0.95em;
-  height: 0.95em;
+  width: 0.9em;
+  height: 0.9em;
   flex-shrink: 0;
   color: #007aff;
+  vertical-align: baseline;
 }
 
 .post-mention__doc-line {
@@ -1821,6 +1823,23 @@ button.post-card-like:hover:not(:disabled) {
   font-size: 13px;
   color: #8a94a6;
   text-align: center;
+}
+
+.mention-suggest__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 72px;
+  padding: 12px;
+}
+
+.mention-suggest__loading .ui-spinner-wrap {
+  gap: 10px;
+}
+
+.mention-suggest__loading .ui-spinner-label {
+  font-size: 13px;
+  color: #8a94a6;
 }
 
 .post-text a,
@@ -2934,6 +2953,14 @@ button.post-card-like:hover:not(:disabled) {
 .comment-edit-inline-form__actions button[type='button'] {
   background: #f1f3f5;
   color: #495057;
+}
+
+.comment-edit-inline-form__media {
+  margin-left: 0;
+}
+
+.comment-edit-media-strip {
+  width: 100%;
 }
 
 .preview-comment-row {

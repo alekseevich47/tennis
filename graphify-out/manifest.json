@@ -1,6 +1,6 @@
 {
   "client/package.json": {
-    "mtime": 1787770797.0111704,
+    "mtime": 1787771257.5608943,
     "ast_hash": "4b3b7d2b0c726762efe0ae70feed5459",
     "semantic_hash": ""
   },
@@ -205,18 +205,18 @@
     "semantic_hash": ""
   },
   "client/src/features/competitions/CreateTournamentPostModal.jsx": {
-    "mtime": 1787770765.5222588,
+    "mtime": 1787771257.5618923,
     "ast_hash": "aa057ac10287eb004d1584b4c5a8f42a",
     "semantic_hash": ""
   },
   "client/src/features/competitions/EditTournamentPostModal.jsx": {
-    "mtime": 1787770765.5237522,
-    "ast_hash": "bafd5aba93f23bd744c8b876608156a0",
+    "mtime": 1787791079.406222,
+    "ast_hash": "142f9a38deed1e8b8b4ae0b02deef3ae",
     "semantic_hash": ""
   },
   "client/src/features/competitions/TournamentCommentsSection.jsx": {
-    "mtime": 1787748431.0358577,
-    "ast_hash": "00537d5318aaf5d26471d4723f66c275",
+    "mtime": 1787791068.4652097,
+    "ast_hash": "ea0a3964ff07f43c468f011ec500dbe0",
     "semantic_hash": ""
   },
   "client/src/features/competitions/TournamentPodium.jsx": {
@@ -245,13 +245,13 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/CreatePostModal.jsx": {
-    "mtime": 1787770599.8336995,
+    "mtime": 1787771257.5643835,
     "ast_hash": "e9eedf1c9c3c2de8feeb78bb09a0754a",
     "semantic_hash": ""
   },
   "client/src/features/feed/EditPostModal.jsx": {
-    "mtime": 1787770702.178331,
-    "ast_hash": "f0266af5fb419778bc4336e0f6441edc",
+    "mtime": 1787791075.9588833,
+    "ast_hash": "bf3d0b117dad88cfffe734971052cc01",
     "semantic_hash": ""
   },
   "client/src/features/feed/FeedPage.jsx": {
@@ -275,8 +275,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostDetailModal.jsx": {
-    "mtime": 1787760790.834301,
-    "ast_hash": "033108842fc6d33bb2b85b9763e94e4e",
+    "mtime": 1787791062.562701,
+    "ast_hash": "32e91c98894a4a4e7ce4030bcdab9d32",
     "semantic_hash": ""
   },
   "client/src/features/feed/PostMedia.jsx": {
@@ -415,8 +415,8 @@
     "semantic_hash": ""
   },
   "client/src/features/shop/ProductForm.jsx": {
-    "mtime": 1787770634.929412,
-    "ast_hash": "ca1ef59a5251fccb5a2267c8273df53a",
+    "mtime": 1787791075.950979,
+    "ast_hash": "a0db36451d66e831731f6694ead24c4f",
     "semantic_hash": ""
   },
   "client/src/features/shop/SearchBar.jsx": {
@@ -690,8 +690,8 @@
     "semantic_hash": "9525072dec67d8b780296ec1c25bc852"
   },
   "client/src/services/posts.js": {
-    "mtime": 1787760790.8403745,
-    "ast_hash": "a03b02c241a609a757269eb701e9a439",
+    "mtime": 1787791047.521196,
+    "ast_hash": "4c554bb28b827651a8a5170ef61b739d",
     "semantic_hash": ""
   },
   "client/src/services/stats.js": {
@@ -700,8 +700,8 @@
     "semantic_hash": ""
   },
   "client/src/services/tournamentComments.js": {
-    "mtime": 1787744920.3116498,
-    "ast_hash": "0a86e796350c7119373d7a998534c865",
+    "mtime": 1787791048.1539567,
+    "ast_hash": "be27388f65daf6bbd38a89e9708eaef2",
     "semantic_hash": ""
   },
   "client/src/services/tournamentPosts.js": {
@@ -1050,8 +1050,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostRichTextField.jsx": {
-    "mtime": 1787770593.773933,
-    "ast_hash": "abeedfb82f5124dd6cb122754ae98589",
+    "mtime": 1787791084.0701911,
+    "ast_hash": "8b976c7d0c7a4d1066a878ae70c8dc71",
     "semantic_hash": ""
   },
   "client/src/features/feed/postRichText.js": {
@@ -1405,7 +1405,7 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/SortableMediaPreviewGrid.jsx": {
-    "mtime": 1787770500.614942,
+    "mtime": 1787771257.567382,
     "ast_hash": "6ee2865e7ea14b1429ef72cf40e23a5d",
     "semantic_hash": ""
   },
@@ -1475,13 +1475,18 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/MentionSuggestPopup.jsx": {
-    "mtime": 1787770570.8680315,
-    "ast_hash": "1937cf128216da50a34df3cfdb26d839",
+    "mtime": 1787791101.4672842,
+    "ast_hash": "b83845ce220903e151d4bba2dfa831ab",
     "semantic_hash": ""
   },
   "client/src/features/feed/postMentions.js": {
-    "mtime": 1787770570.9693873,
-    "ast_hash": "199be70b3d248718e757ed882f1dd418",
+    "mtime": 1787791094.3684886,
+    "ast_hash": "7092696047752f04139942a2185b959b",
+    "semantic_hash": ""
+  },
+  "client/src/features/feed/CommentEditInlineForm.jsx": {
+    "mtime": 1787791049.6527567,
+    "ast_hash": "6a5a6823a33847d79d32b7e671871c51",
     "semantic_hash": ""
   }
 }
