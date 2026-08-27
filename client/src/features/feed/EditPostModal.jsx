@@ -393,9 +393,8 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
         footer={actionsFooter}
       >
         <form id="edit-post-form" onSubmit={handleSubmit} className="edit-post-form">
-          {captionAbove ? textBlock : null}
+          {textBlock}
           {mediaBlock}
-          {!captionAbove ? textBlock : null}
 
           <input
             ref={fileInputRef}

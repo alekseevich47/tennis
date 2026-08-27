@@ -1,6 +1,7 @@
 import React, { useCallback, useId, useMemo, useRef, useState } from 'react';
 import { AttachButtons, MAX_COMMENT_MEDIA_FILES } from './CommentComposeForm';
 import PostRichTextField from './PostRichTextField';
+import { EMOJI_ATTACH_SWAP_MS } from './emoji/EmojiPicker';
 import SortableMediaPreviewGrid from './SortableMediaPreviewGrid';
 import FullscreenImageViewer from './FullscreenImageViewer';
 import { useLocalMediaFullscreen } from './useLocalMediaFullscreen';
@@ -106,8 +107,22 @@ function CommentEditInlineForm({
   const hasChanges = textChanged || mediaChanged;
   const canSave =
     hasChanges && (hasVisibleText(text) || orderedMedia.some((item) => item.status === 'ready'));
-  const attachInToolbar = hasVisibleText(text);
   const remainingSlots = Math.max(0, MAX_COMMENT_MEDIA_FILES - orderedMedia.length);
+  const hasText = hasVisibleText(text);
+  const [toolbarAttachVisible, setToolbarAttachVisible] = useState(() => hasText);
+  const [fieldAttachVisible, setFieldAttachVisible] = useState(() => !hasText);
+
+  React.useEffect(() => {
+    if (hasText) {
+      setFieldAttachVisible(false);
+      setToolbarAttachVisible(true);
+      return undefined;
+    }
+    setToolbarAttachVisible(false);
+    const timer = window.setTimeout(() => setFieldAttachVisible(true), EMOJI_ATTACH_SWAP_MS);
+    return () => window.clearTimeout(timer);
+  }, [hasText]);
+
   const attachDisabled = remainingSlots === 0;
 
   const previewItems = useMemo(
@@ -290,12 +305,13 @@ function CommentEditInlineForm({
         onChange={setText}
         enableFrame={false}
         compact
+        fieldEmojiMode="after-text"
         placeholder="Текст комментария…"
         aria-label="Редактирование комментария"
         toolbarExtra={
           <AttachButtons
             variant="toolbar"
-            visible={attachInToolbar}
+            visible={toolbarAttachVisible}
             disabled={attachDisabled}
             onGallery={openGallery}
             onCamera={openCamera}
@@ -304,7 +320,7 @@ function CommentEditInlineForm({
         editorEnd={
           <AttachButtons
             variant="field"
-            visible={!attachInToolbar}
+            visible={fieldAttachVisible}
             disabled={attachDisabled}
             onGallery={openGallery}
             onCamera={openCamera}
