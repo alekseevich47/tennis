@@ -180,6 +180,8 @@
   width: 100%;
   cursor: pointer;
   font: inherit;
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 .post-text:focus-visible {
@@ -1608,6 +1610,11 @@ button.post-card-like:hover:not(:disabled) {
   touch-action: manipulation;
 }
 
+.post-mention .post-mention__label {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
 .post-mention:hover,
 .post-mention:focus-visible {
   background: rgba(0, 122, 255, 0.08);
@@ -2037,12 +2044,79 @@ button.post-card-like:hover:not(:disabled) {
 
 .edit-post-modal {
   background: #f4f7fb;
+  display: flex;
+  flex-direction: column;
+  max-height: min(92vh, 860px);
+  height: min(92vh, 860px);
+  width: min(100%, 560px);
+  padding: 16px 0 0;
+}
+
+.edit-post-modal .ui-modal-title {
+  margin: 0 0 8px;
+  padding: 0 16px;
+  flex-shrink: 0;
+}
+
+.edit-post-modal .ui-modal-body {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0;
+  flex: 1;
+  min-height: 0;
+}
+
+.edit-post-modal .ui-modal-footer {
+  flex-shrink: 0;
+  padding: 8px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid rgba(220, 230, 242, 0.9);
+  background: #f4f7fb;
 }
 
 .edit-post-form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  flex: 1;
+  min-height: 0;
+  gap: 6px;
+  height: 100%;
+}
+
+.edit-post-editor {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+}
+
+.edit-post-editor .post-rich-text {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 100%;
+}
+
+.edit-post-editor .post-rich-text__editor {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  overflow-y: auto;
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  background: #fff;
+}
+
+.edit-post-modal .edit-post-media-strip-wrap {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0 12px;
+  margin-top: 0;
 }
 
 .edit-post-label {
@@ -2129,9 +2203,11 @@ button.post-card-like:hover:not(:disabled) {
 }
 
 .edit-post-actions {
+  display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+  margin: 0;
 }
 
 .edit-post-actions__primary {
@@ -2592,6 +2668,8 @@ button.post-card-like:hover:not(:disabled) {
   line-height: 1.5;
   margin: 14px 0;
   white-space: pre-wrap;
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 .post-media-img-detail {
@@ -2790,6 +2868,8 @@ button.post-card-like:hover:not(:disabled) {
   margin: 0;
   font-size: 14px;
   color: #444;
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 .comment-body-indent {

@@ -273,9 +273,20 @@
   background: #0a0a0c;
 }
 
+.membership-edit-modal .ui-modal-body {
+  overflow-x: hidden;
+}
+
 .membership-type-options {
   display: flex;
+  flex-wrap: nowrap;
   gap: 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  max-width: 100%;
+  padding-bottom: 4px;
 }
 
 .membership-type-option {

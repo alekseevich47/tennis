@@ -33,19 +33,44 @@ export function extractYadiskUrls(text) {
 }
 
 /**
+ * URL Яндекс.Диска для авто-превью (без hyperlink через кнопку «Ссылка»).
+ * @param {string | null | undefined} html
+ * @returns {string[]}
+ */
+export function extractYadiskUrlsForEmbed(html) {
+  if (!html) return [];
+  const withoutProtected = String(html).replace(
+    /<a\b[^>]*\bdata-yadisk-as-link=(["']?)1\1[^>]*>[\s\S]*?<\/a>/gi,
+    ''
+  );
+  return extractYadiskUrls(withoutProtected);
+}
+
+/**
  * Убирает URL Яндекс.Диска из HTML/plain текста (как в Telegram).
+ * Не трогает `<a data-yadisk-as-link="1">…</a>`.
  * @param {string} html
  * @param {string[]} urls
  * @returns {string}
  */
 export function stripYadiskUrlsFromHtml(html, urls) {
   if (!html || !urls?.length) return html || '';
-  let next = html;
+  /** @type {string[]} */
+  const protectedChunks = [];
+  let next = String(html).replace(
+    /<a\b[^>]*\bdata-yadisk-as-link=(["']?)1\1[^>]*>[\s\S]*?<\/a>/gi,
+    (match) => {
+      const idx = protectedChunks.length;
+      protectedChunks.push(match);
+      return `\u0000YADISKLINK${idx}\u0000`;
+    }
+  );
   for (const url of urls) {
     const escaped = url.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     next = next.replace(new RegExp(`<a\\b[^>]*href=["']${escaped}["'][^>]*>[\\s\\S]*?<\\/a>`, 'gi'), '');
     next = next.split(url).join('');
   }
+  next = next.replace(/\u0000YADISKLINK(\d+)\u0000/g, (_, idx) => protectedChunks[Number(idx)] || '');
   return next
     .replace(/(?:<br\s*\/?>\s*){2,}/gi, '<br>')
     .replace(/^(?:<br\s*\/?>|\s)+|(?:<br\s*\/?>|\s)+$/gi, '')
