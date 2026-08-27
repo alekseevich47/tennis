@@ -1,14 +1,17 @@
 // @ts-check
 import { normalizeProductCategoryIds } from './productCategories';
 
-/** @typedef {'name_asc' | 'name_desc' | 'price_asc' | 'price_desc' | 'newest' | 'popular'} ShopSortMode */
+/** @typedef {'asc' | 'desc'} ShopSortDir */
+/** @typedef {'newest' | 'popular' | null} ShopFeaturedSort */
 
 /**
  * @typedef {{
  *   categoryId: string,
  *   priceMin: number | null,
  *   priceMax: number | null,
- *   sort: ShopSortMode
+ *   nameDir: ShopSortDir | null,
+ *   priceDir: ShopSortDir | null,
+ *   featured: ShopFeaturedSort
  * }} ShopFiltersState
  */
 
@@ -17,7 +20,9 @@ export const DEFAULT_SHOP_FILTERS = {
   categoryId: '',
   priceMin: null,
   priceMax: null,
-  sort: 'popular'
+  nameDir: null,
+  priceDir: null,
+  featured: 'popular'
 };
 
 /**
@@ -69,7 +74,9 @@ export function countActiveShopFilters(filters, bounds) {
     (range.min > bounds.min || range.max < bounds.max);
   if (priceNarrowed) count += 1;
 
-  if (filters.sort && filters.sort !== DEFAULT_SHOP_FILTERS.sort) count += 1;
+  if (filters.nameDir) count += 1;
+  if (filters.priceDir) count += 1;
+  if (filters.featured && filters.featured !== DEFAULT_SHOP_FILTERS.featured) count += 1;
   return count;
 }
 
@@ -91,11 +98,17 @@ export function productMatchesFilters(product, filters, bounds) {
 }
 
 /**
+ * Сортировка: featured (newest|popular) → nameDir → priceDir.
+ * Name и price могут быть активны одновременно; newest/popular — взаимоисключающие.
  * @param {import('../../services/catalog').ProductRecord[]} products
- * @param {ShopSortMode} sort
+ * @param {Pick<ShopFiltersState, 'nameDir' | 'priceDir' | 'featured'>} sort
  */
 export function sortProducts(products, sort) {
-  const next = [...products];
+  const nameDir = sort?.nameDir ?? null;
+  const priceDir = sort?.priceDir ?? null;
+  const featured = sort?.featured ?? null;
+  const hasAny = Boolean(featured || nameDir || priceDir);
+
   const byTitle = (a, b) =>
     String(a.title || '').localeCompare(String(b.title || ''), 'ru', {
       sensitivity: 'base',
@@ -110,26 +123,32 @@ export function sortProducts(products, sort) {
     return byCreated(a, b);
   };
 
-  switch (sort) {
-    case 'name_asc':
-      next.sort(byTitle);
-      break;
-    case 'name_desc':
-      next.sort((a, b) => byTitle(b, a));
-      break;
-    case 'price_asc':
-      next.sort(byPrice);
-      break;
-    case 'price_desc':
-      next.sort((a, b) => byPrice(b, a));
-      break;
-    case 'newest':
-      next.sort(byCreated);
-      break;
-    case 'popular':
-    default:
-      next.sort(byViews);
-      break;
-  }
-  return next;
+  return [...products].sort((a, b) => {
+    if (featured === 'newest') {
+      const d = byCreated(a, b);
+      if (d !== 0) return d;
+    } else if (featured === 'popular') {
+      const d = byViews(a, b);
+      if (d !== 0) return d;
+    }
+
+    if (nameDir === 'asc') {
+      const d = byTitle(a, b);
+      if (d !== 0) return d;
+    } else if (nameDir === 'desc') {
+      const d = byTitle(b, a);
+      if (d !== 0) return d;
+    }
+
+    if (priceDir === 'asc') {
+      const d = byPrice(a, b);
+      if (d !== 0) return d;
+    } else if (priceDir === 'desc') {
+      const d = byPrice(b, a);
+      if (d !== 0) return d;
+    }
+
+    if (!hasAny) return byViews(a, b);
+    return 0;
+  });
 }

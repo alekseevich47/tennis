@@ -161,7 +161,7 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
             );
           });
 
-    return sortProducts(searched, filters.sort);
+    return sortProducts(searched, filters);
   }, [baseProducts, filters, priceBounds, searchQuery]);
 
   const handleCloseSearchUI = useCallback(() => {
