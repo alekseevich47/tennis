@@ -8,8 +8,7 @@ import ProductGallery from './ProductGallery';
 import ProductPrice from './ProductPrice';
 import {
   normalizeVariantMode,
-  parseProductColors,
-  parseProductParameters
+  parseProductColors
 } from './productParameters';
 import { normalizeProductCategoryIds } from './productCategories';
 
@@ -199,20 +198,22 @@ function ProductCard({
             )}
           </div>
         )}
-        <ProductPrice
-          price={product.price}
-          oldPrice={product.old_price}
-          className="price"
-          currentClassName="product-price-current"
-          oldClassName="product-price-old"
-        />
         {product.out_of_stock && (
           <span className="product-out-of-stock-badge">Нет в наличии</span>
         )}
       </div>
 
       {!isSoftDeleted && (
-        <BuyButton product={product} />
+        <div className="product-card-footer">
+          <ProductPrice
+            price={product.price}
+            oldPrice={product.old_price}
+            className="price"
+            currentClassName="product-price-current"
+            oldClassName="product-price-old"
+          />
+          <BuyButton product={product} />
+        </div>
       )}
 
       {isSoftDeleted && (
