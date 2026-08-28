@@ -1,14 +1,17 @@
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import clsx from 'clsx';
 import { useFavorites } from '../../context/FavoritesContext';
 import { useProductCategories } from '../../hooks/useProductCategories';
-import { clamp } from '../../lib/gestures';
-import { getMediaThumbUrl, getMediaUrl, isVideoMediaName, mediaNames, videoPreviewUrl } from '../../lib/media';
+import { getMediaThumbUrl, getMediaUrl, isVideoMediaName, mediaNames } from '../../lib/media';
 import BuyButton from './BuyButton';
+import ProductGallery from './ProductGallery';
 import ProductPrice from './ProductPrice';
+import {
+  normalizeVariantMode,
+  parseProductColors,
+  parseProductParameters
+} from './productParameters';
 import { normalizeProductCategoryIds } from './productCategories';
-
-const SWIPE_THRESHOLD_PX = 36;
 
 /**
  * @param {{
@@ -35,10 +38,6 @@ function ProductCard({
   const { data: categories = [] } = useProductCategories();
   const { isFavorite, addItem, removeItem } = useFavorites();
   const favorited = isFavorite(product.id);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const touchStartRef = useRef({ x: 0, y: 0 });
-  const suppressClickRef = useRef(false);
-  const suppressClickTimerRef = useRef(null);
 
   const galleryItems = useMemo(() => (
     mediaNames(product.images).flatMap((filename, index) => {
@@ -80,67 +79,24 @@ function ProductCard({
       .filter(Boolean);
   }, [categories, product]);
 
-  const safeImageIndex = clamp(currentImageIndex, 0, Math.max(galleryItems.length - 1, 0));
-  const activeItem = galleryItems[safeImageIndex] || null;
-  const hasMultipleImages = galleryItems.length > 1;
-
-  useEffect(() => {
-    setCurrentImageIndex(0);
-  }, [product.id, product.images]);
-
-  useEffect(() => () => {
-    window.clearTimeout(suppressClickTimerRef.current);
-  }, []);
+  const productColors = useMemo(() => parseProductColors(product?.colors), [product?.colors]);
+  const variantMode = normalizeVariantMode(product?.variant_mode);
 
   const openProduct = useCallback(() => onOpen(product), [onOpen, product]);
 
-  const goToImage = useCallback((direction) => {
-    if (galleryItems.length <= 1) return;
-    setCurrentImageIndex((current) =>
-      (current + direction + galleryItems.length) % galleryItems.length
-    );
-  }, [galleryItems.length]);
-
-  const handleTouchStart = useCallback((event) => {
-    const touch = event.touches[0];
-    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
-  }, []);
-
-  const handleTouchEnd = useCallback((event) => {
-    if (galleryItems.length <= 1) return;
-
-    const touch = event.changedTouches[0];
-    const dx = touch.clientX - touchStartRef.current.x;
-    const dy = touch.clientY - touchStartRef.current.y;
-
-    if (Math.abs(dx) <= SWIPE_THRESHOLD_PX || Math.abs(dx) <= Math.abs(dy) * 1.2) return;
-
-    suppressClickRef.current = true;
-    window.clearTimeout(suppressClickTimerRef.current);
-    suppressClickTimerRef.current = window.setTimeout(() => {
-      suppressClickRef.current = false;
-    }, 350);
-    goToImage(dx < 0 ? 1 : -1);
-  }, [galleryItems.length, goToImage]);
-
-  const handleOpenFullscreen = useCallback((event) => {
-    if (suppressClickRef.current) {
-      suppressClickRef.current = false;
-      return;
-    }
-
-    if (!activeItem || !onOpenFullscreen) {
+  const handleOpenFullscreen = useCallback((event, index) => {
+    if (!onOpenFullscreen || galleryItems.length === 0) {
       openProduct();
       return;
     }
-
+    const activeItem = galleryItems[index];
     onOpenFullscreen(
       galleryItems,
-      safeImageIndex,
+      index,
       event.currentTarget.getBoundingClientRect(),
       activeItem.originKey
     );
-  }, [activeItem, galleryItems, onOpenFullscreen, openProduct, safeImageIndex]);
+  }, [galleryItems, onOpenFullscreen, openProduct]);
 
   const handleDelete = useCallback(() => {
     onDelete?.(product.id);
@@ -198,55 +154,15 @@ function ProductCard({
           </button>
         )}
 
-        {activeItem ? (
-          <button
-            type="button"
-            className={clsx(
-              'product-card-image-btn',
-              hiddenMediaKey === activeItem.originKey && 'is-returning-origin'
-            )}
-            onClick={handleOpenFullscreen}
-            onTouchStart={handleTouchStart}
-            onTouchEnd={handleTouchEnd}
-            data-media-origin-key={activeItem.originKey}
-            data-section-swipe-ignore="true"
-            aria-label="Открыть фото товара на весь экран"
-          >
-            {activeItem.isVideo ? (
-              <>
-                <video
-                  src={videoPreviewUrl(activeItem.url)}
-                  muted
-                  playsInline
-                  preload="metadata"
-                  aria-label={`Видео товара ${product.title || ''}`}
-                />
-                <span className="product-card-video-badge" aria-hidden="true">▶</span>
-              </>
-            ) : (
-              <img src={activeItem.thumbUrl} alt={`Фото товара ${product.title || 'без названия'}`} />
-            )}
-          </button>
-        ) : (
-          <button type="button" className="no-image" onClick={openProduct}>
-            Нет фото
-          </button>
-        )}
-
-        {hasMultipleImages && (
-          <div className="product-card-dots" aria-label="Фото товара">
-            {galleryItems.map((item, index) => (
-              <button
-                key={item.filename}
-                type="button"
-                className={index === safeImageIndex ? 'is-active' : ''}
-                onClick={() => setCurrentImageIndex(index)}
-                aria-label={`Показать фото ${index + 1}`}
-                aria-current={index === safeImageIndex ? 'true' : undefined}
-              />
-            ))}
-          </div>
-        )}
+        <ProductGallery
+          items={galleryItems}
+          resetKey={product.id}
+          variant="card"
+          hiddenMediaKey={hiddenMediaKey}
+          onOpenFullscreen={handleOpenFullscreen}
+          onCenterClick={openProduct}
+          imageAlt={`Фото товара ${product.title || 'без названия'}`}
+        />
       </div>
 
       <div
@@ -261,11 +177,26 @@ function ProductCard({
             {product.title}
           </span>
         </h3>
-        {categoryNames.length > 0 && (
-          <div className="product-card-category-chips" aria-label="Категории товара">
-            {categoryNames.slice(0, 3).map((name) => (
+        {(categoryNames.length > 0 || variantMode === 'color' || variantMode === 'size') && (
+          <div className="product-card-meta-row" aria-label="Категория и варианты">
+            {categoryNames.slice(0, 1).map((name) => (
               <span key={name} className="product-category-chip">{name}</span>
             ))}
+            {variantMode === 'color' && productColors.length > 0 && (
+              <div className="product-card-color-dots" aria-label="Цвета">
+                {productColors.map((color) => (
+                  <span
+                    key={color}
+                    className="product-color-dot product-color-dot--filled"
+                    style={{ background: color, borderColor: color }}
+                    title={color}
+                  />
+                ))}
+              </div>
+            )}
+            {variantMode === 'size' && product.sizes && (
+              <span className="product-card-sizes-badge">{product.sizes}</span>
+            )}
           </div>
         )}
         <ProductPrice
