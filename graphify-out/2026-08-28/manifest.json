@@ -415,8 +415,8 @@
     "semantic_hash": ""
   },
   "client/src/features/shop/ProductForm.jsx": {
-    "mtime": 1787906429.3045752,
-    "ast_hash": "b60e0a37cac8bd869308d70fbd097a45",
+    "mtime": 1787907262.8172643,
+    "ast_hash": "6f738e971a4ab22a5deec254bead150f",
     "semantic_hash": ""
   },
   "client/src/features/shop/SearchBar.jsx": {
@@ -1590,8 +1590,8 @@
     "semantic_hash": ""
   },
   "client/src/features/shop/ProductParametersEditor.jsx": {
-    "mtime": 1787906429.3060367,
-    "ast_hash": "25f94b539d711bc91d138b85156db135",
+    "mtime": 1787907243.17999,
+    "ast_hash": "577eff3fdf42cf6883304d610034a342",
     "semantic_hash": ""
   },
   "client/src/features/shop/ProductVariantFields.jsx": {

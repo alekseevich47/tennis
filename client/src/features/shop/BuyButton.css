@@ -29,11 +29,8 @@
 .product-card .buy-button {
   flex-shrink: 0;
   height: 32px;
-  margin-top: auto;
-  margin-left: 12px;
-  margin-right: 12px;
-  margin-bottom: 12px;
-  width: calc(100% - 24px);
+  margin: 0;
+  width: 100%;
   font-size: 13px;
 }
 
