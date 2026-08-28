@@ -982,7 +982,16 @@ label.product-category-option {
 }
 
 .product-color-dot--filled {
-  border-width: 1.5px;
+  border-color: #d1d5db;
+}
+
+.product-color-dot--editable {
+  cursor: pointer;
+  padding: 0;
+}
+
+.product-color-dot--editable:hover {
+  border-color: #9ca3af;
 }
 
 .product-color-dot--add {

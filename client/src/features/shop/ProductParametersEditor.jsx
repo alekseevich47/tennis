@@ -11,19 +11,24 @@ import clsx from 'clsx';
 export function ProductParametersEditor({ items, onChange, templateNames }) {
   const baseId = useId();
 
+  const resolveRows = () => (items.length > 0 ? items : [{ name: '', value: '' }]);
+
   const updateRow = (rowIndex, patch) => {
-    onChange(items.map((item, index) => (index === rowIndex ? { ...item, ...patch } : item)));
+    onChange(
+      resolveRows().map((item, index) => (index === rowIndex ? { ...item, ...patch } : item))
+    );
   };
 
   const addRow = () => {
-    onChange([...items, { name: '', value: '' }]);
+    onChange([...resolveRows(), { name: '', value: '' }]);
   };
 
   const removeRow = (rowIndex) => {
-    onChange(items.filter((_, index) => index !== rowIndex));
+    const next = resolveRows().filter((_, index) => index !== rowIndex);
+    onChange(next);
   };
 
-  const rows = items.length > 0 ? items : [{ name: '', value: '' }];
+  const rows = resolveRows();
 
   return (
     <div className="product-parameters-editor">
