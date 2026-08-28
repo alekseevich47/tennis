@@ -60,10 +60,11 @@ function hexToHsv(hex) {
  *   color: string,
  *   onChange: (hex: string) => void,
  *   onApply: (hex: string) => void,
- *   onClose: () => void
+ *   onClose: () => void,
+ *   applyLabel?: string
  * }} props
  */
-function FrameColorPicker({ color, onChange, onApply, onClose }) {
+function FrameColorPicker({ color, onChange, onApply, onClose, applyLabel = 'Вставить рамку' }) {
   const wheelRef = useRef(/** @type {HTMLDivElement | null} */ (null));
   const [hexInput, setHexInput] = useState(color);
   const [presets, setPresets] = useState(() => loadFramePresets());
@@ -266,7 +267,7 @@ function FrameColorPicker({ color, onChange, onApply, onClose }) {
             onApply(next);
           }}
         >
-          Вставить рамку
+          {applyLabel}
         </button>
       </div>
     </div>
