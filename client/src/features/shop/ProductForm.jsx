@@ -237,7 +237,7 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
     const currentCategories = normalizeProductCategoryIds(product?.categories);
     const currentParameters = parseProductParameters(product?.parameters);
     const currentColors = parseProductColors(product?.colors);
-    const currentVariantMode = normalizeVariantMode(product?.variant_mode) || 'color';
+    const currentVariantMode = normalizeVariantMode(product?.variant_mode);
 
     if (!product) {
       return (
@@ -260,7 +260,12 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
       return true;
     }
     if (form.sizes !== (product.sizes || '')) return true;
-    if (form.variant_mode !== currentVariantMode) return true;
+    if (
+      form.variant_mode !== currentVariantMode
+      && !(currentVariantMode === '' && form.variant_mode === 'color')
+    ) {
+      return true;
+    }
     if (!areProductColorsEqual(form.colors, currentColors)) return true;
     if (!areProductParametersEqual(form.parameters, currentParameters)) return true;
     if (form.out_of_stock !== Boolean(product.out_of_stock)) return true;
@@ -310,7 +315,7 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
     const hasCategoryChanges = !areStringSetsEqual(form.categories, currentCategories);
     const currentParameters = parseProductParameters(product?.parameters);
     const currentColors = parseProductColors(product?.colors);
-    const currentVariantMode = normalizeVariantMode(product?.variant_mode) || 'color';
+    const currentVariantMode = normalizeVariantMode(product?.variant_mode);
 
     if (!product || nextTitle !== (product.title || '')) {
       data.append('title', nextTitle);
