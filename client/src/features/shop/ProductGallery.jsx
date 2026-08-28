@@ -13,6 +13,22 @@ import { useGalleryNavigation } from './useGalleryNavigation';
  * }} ProductGalleryItem
  */
 
+/** @param {ProductGalleryItem} item */
+function slideId(item) {
+  return item.originKey || item.filename;
+}
+
+/**
+ * @param {ProductGalleryItem} item
+ * @param {number} slideIndex
+ * @param {ProductGalleryItem[]} trackItems
+ */
+function carouselSlideKey(item, slideIndex, trackItems) {
+  const id = slideId(item);
+  const first = trackItems.findIndex((other) => slideId(other) === id);
+  return `${id}-${slideIndex - first}`;
+}
+
 /**
  * @param {{
  *   items: ProductGalleryItem[],
@@ -45,7 +61,11 @@ function ProductGallery({
     index,
     setIndex,
     hasMultiple,
+    isSliding,
+    trackTranslate,
+    galleryRef,
     handleTouchStart,
+    handleTouchMove,
     handleTouchEnd,
     handlePointerDown,
     handlePointerMove,
@@ -59,6 +79,9 @@ function ProductGallery({
 
   const activeItem = items[index] || null;
   const isDetail = variant === 'detail';
+  const prevItem = hasMultiple ? items[(index - 1 + items.length) % items.length] : null;
+  const nextItem = hasMultiple ? items[(index + 1) % items.length] : null;
+  const trackItems = hasMultiple && activeItem ? [prevItem, activeItem, nextItem] : activeItem ? [activeItem] : [];
 
   const handleCenterClick = useCallback(
     (event) => {
@@ -92,61 +115,112 @@ function ProductGallery({
     [hasMultiple, items.length, setIndex]
   );
 
+  const renderMedia = useCallback(
+    (item, { isCenter = false } = {}) => {
+      if (!item) return null;
+
+      const btnClass = isDetail ? 'product-detail-image-btn' : 'product-card-image-btn';
+      const media = item.isVideo ? (
+        <>
+          <video
+            src={videoPreviewUrl(item.url)}
+            muted
+            playsInline
+            preload="metadata"
+            aria-label={`Видео ${imageAlt}`}
+          />
+          {!isDetail && isCenter && (
+            <span className="product-card-video-badge" aria-hidden="true">▶</span>
+          )}
+        </>
+      ) : (
+        <img
+          src={isDetail ? item.url : (item.thumbUrl || item.url)}
+          alt={isCenter ? imageAlt : ''}
+          aria-hidden={isCenter ? undefined : 'true'}
+        />
+      );
+
+      if (isCenter) {
+        return (
+          <button
+            type="button"
+            className={clsx(
+              btnClass,
+              hiddenMediaKey === item.originKey && 'is-returning-origin'
+            )}
+            onClick={handleCenterClick}
+            disabled={disabled && !onCenterClick}
+            aria-label={onOpenFullscreen ? 'Открыть фото товара на весь экран' : undefined}
+            data-media-origin-key={item.originKey}
+            data-section-swipe-ignore="true"
+          >
+            {media}
+          </button>
+        );
+      }
+
+      return (
+        <div className={btnClass} aria-hidden="true">
+          {media}
+        </div>
+      );
+    },
+    [
+      disabled,
+      handleCenterClick,
+      hiddenMediaKey,
+      imageAlt,
+      isDetail,
+      onCenterClick,
+      onOpenFullscreen
+    ]
+  );
+
   return (
     <div
-      className={clsx('product-gallery', isDetail ? 'product-gallery--detail' : 'product-gallery--card')}
+      ref={galleryRef}
+      className={clsx(
+        'product-gallery',
+        isDetail ? 'product-gallery--detail' : 'product-gallery--card',
+        isSliding && 'is-sliding'
+      )}
       onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerCancel}
     >
-      {activeItem ? (
+      {trackItems.length > 0 ? (
+        hasMultiple ? (
+          <div
+            className={clsx('product-gallery-track', isSliding && 'is-sliding')}
+            style={{ transform: `translate3d(${trackTranslate}, 0, 0)` }}
+          >
+            {trackItems.map((item, slideIndex) => (
+              <div
+                key={carouselSlideKey(item, slideIndex, trackItems)}
+                className="product-gallery-slide"
+              >
+                {renderMedia(item, { isCenter: slideIndex === 1 })}
+              </div>
+            ))}
+          </div>
+        ) : (
+          renderMedia(activeItem, { isCenter: true })
+        )
+      ) : onCenterClick || onOpenFullscreen ? (
         <button
           type="button"
-          className={clsx(
-            isDetail ? 'product-detail-image-btn' : 'product-card-image-btn',
-            hiddenMediaKey === activeItem.originKey && 'is-returning-origin'
-          )}
+          className={isDetail ? 'product-detail-no-image' : 'no-image'}
           onClick={handleCenterClick}
-          disabled={disabled && !onCenterClick}
-          aria-label={onOpenFullscreen ? 'Открыть фото товара на весь экран' : undefined}
-          data-media-origin-key={activeItem.originKey}
-          data-section-swipe-ignore="true"
         >
-          {activeItem.isVideo ? (
-            <>
-              <video
-                src={videoPreviewUrl(activeItem.url)}
-                muted
-                playsInline
-                preload="metadata"
-                aria-label={`Видео ${imageAlt}`}
-              />
-              {!isDetail && (
-                <span className="product-card-video-badge" aria-hidden="true">▶</span>
-              )}
-            </>
-          ) : (
-            <img
-              src={isDetail ? activeItem.url : (activeItem.thumbUrl || activeItem.url)}
-              alt={imageAlt}
-            />
-          )}
+          {emptyLabel}
         </button>
       ) : (
-        onCenterClick || onOpenFullscreen ? (
-          <button
-            type="button"
-            className={isDetail ? 'product-detail-no-image' : 'no-image'}
-            onClick={handleCenterClick}
-          >
-            {emptyLabel}
-          </button>
-        ) : (
-          <div className={isDetail ? 'product-detail-no-image' : 'no-image'}>{emptyLabel}</div>
-        )
+        <div className={isDetail ? 'product-detail-no-image' : 'no-image'}>{emptyLabel}</div>
       )}
 
       {hasMultiple && isDetail && (

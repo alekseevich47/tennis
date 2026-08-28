@@ -2,9 +2,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { clamp } from '../../lib/gestures';
 
 const SWIPE_THRESHOLD_PX = 36;
+const GESTURE_LOCK_PX = 8;
+const SLIDE_ANIMATION_MS = 240;
 
 /**
- * Touch + pointer drag gallery navigation (ProductCard / ProductDetail).
+ * Touch + pointer drag gallery navigation with live offset (ProductCard / ProductDetail).
  *
  * @param {number} length
  * @param {string | number} [resetKey]
@@ -12,9 +14,14 @@ const SWIPE_THRESHOLD_PX = 36;
  */
 export function useGalleryNavigation(length, resetKey, { index: controlledIndex, onIndexChange } = {}) {
   const [internalIndex, setInternalIndex] = useState(0);
+  const [swipeOffset, setSwipeOffset] = useState(0);
+  const [isSliding, setIsSliding] = useState(false);
   const index = controlledIndex ?? internalIndex;
   const touchStartRef = useRef({ x: 0, y: 0 });
-  const pointerStartRef = useRef({ x: 0, y: 0, active: false, dragging: false });
+  const pointerStartRef = useRef({ x: 0, y: 0 });
+  const gestureModeRef = useRef('idle');
+  const galleryRef = useRef(/** @type {HTMLDivElement | null} */ (null));
+  const slideTimerRef = useRef(/** @type {number | null} */ (null));
   const suppressClickRef = useRef(false);
   const suppressClickTimerRef = useRef(/** @type {number | null} */ (null));
 
@@ -31,9 +38,21 @@ export function useGalleryNavigation(length, resetKey, { index: controlledIndex,
     [length, onIndexChange, safeIndex]
   );
 
+  const getWidth = useCallback(
+    () => galleryRef.current?.offsetWidth || window.innerWidth || 1,
+    []
+  );
+
   useEffect(() => {
     if (onIndexChange) onIndexChange(0);
     else setInternalIndex(0);
+    setSwipeOffset(0);
+    setIsSliding(false);
+    gestureModeRef.current = 'idle';
+    if (slideTimerRef.current != null) {
+      window.clearTimeout(slideTimerRef.current);
+      slideTimerRef.current = null;
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- reset on product change only
   }, [resetKey]);
 
@@ -41,6 +60,9 @@ export function useGalleryNavigation(length, resetKey, { index: controlledIndex,
     () => () => {
       if (suppressClickTimerRef.current != null) {
         window.clearTimeout(suppressClickTimerRef.current);
+      }
+      if (slideTimerRef.current != null) {
+        window.clearTimeout(slideTimerRef.current);
       }
     },
     []
@@ -56,19 +78,83 @@ export function useGalleryNavigation(length, resetKey, { index: controlledIndex,
     }, 350);
   }, []);
 
-  const goTo = useCallback(
+  const snapBack = useCallback(() => {
+    setIsSliding(true);
+    setSwipeOffset(0);
+    window.clearTimeout(slideTimerRef.current);
+    slideTimerRef.current = window.setTimeout(() => {
+      setIsSliding(false);
+    }, SLIDE_ANIMATION_MS);
+  }, []);
+
+  const completeSlide = useCallback(
     (direction) => {
       if (length <= 1) return;
-      setIndex((current) => (current + direction + length) % length);
+      const width = getWidth();
+      window.clearTimeout(slideTimerRef.current);
+      setIsSliding(true);
+      setSwipeOffset(direction > 0 ? -width : width);
+      slideTimerRef.current = window.setTimeout(() => {
+        setIndex((current) => (current + direction + length) % length);
+        setIsSliding(false);
+        setSwipeOffset(0);
+      }, SLIDE_ANIMATION_MS);
     },
-    [length, setIndex]
+    [getWidth, length, setIndex]
   );
 
+  const finishHorizontalDrag = useCallback(
+    (dx) => {
+      if (length <= 1) {
+        setSwipeOffset(0);
+        gestureModeRef.current = 'idle';
+        return;
+      }
+
+      if (Math.abs(dx) > SWIPE_THRESHOLD_PX) {
+        suppressClick();
+        completeSlide(dx < 0 ? 1 : -1);
+      } else {
+        snapBack();
+      }
+      gestureModeRef.current = 'idle';
+    },
+    [completeSlide, length, snapBack, suppressClick]
+  );
+
+  const tryLockHorizontal = useCallback((dx, dy) => {
+    if (gestureModeRef.current !== 'pending') return;
+    if (Math.abs(dx) > GESTURE_LOCK_PX && Math.abs(dx) > Math.abs(dy) * 1.2) {
+      gestureModeRef.current = 'horizontal';
+    }
+  }, []);
+
   const handleTouchStart = useCallback((event) => {
+    if (length <= 1) return;
     const touch = event.touches[0];
     if (!touch) return;
+    window.clearTimeout(slideTimerRef.current);
+    setIsSliding(false);
     touchStartRef.current = { x: touch.clientX, y: touch.clientY };
-  }, []);
+    gestureModeRef.current = 'pending';
+  }, [length]);
+
+  const handleTouchMove = useCallback(
+    (event) => {
+      if (length <= 1 || gestureModeRef.current === 'idle') return;
+      const touch = event.touches[0];
+      if (!touch) return;
+      const dx = touch.clientX - touchStartRef.current.x;
+      const dy = touch.clientY - touchStartRef.current.y;
+
+      tryLockHorizontal(dx, dy);
+      if (gestureModeRef.current === 'horizontal') {
+        event.preventDefault();
+        setSwipeOffset(dx);
+      }
+    },
+    [length, tryLockHorizontal]
+  );
 
   const handleTouchEnd = useCallback(
     (event) => {
@@ -76,55 +162,68 @@ export function useGalleryNavigation(length, resetKey, { index: controlledIndex,
       const touch = event.changedTouches[0];
       if (!touch) return;
       const dx = touch.clientX - touchStartRef.current.x;
-      const dy = touch.clientY - touchStartRef.current.y;
-      if (Math.abs(dx) <= SWIPE_THRESHOLD_PX || Math.abs(dx) <= Math.abs(dy) * 1.2) return;
 
-      suppressClick();
-      goTo(dx < 0 ? 1 : -1);
+      if (gestureModeRef.current === 'horizontal') {
+        finishHorizontalDrag(dx);
+        return;
+      }
+      gestureModeRef.current = 'idle';
     },
-    [goTo, length, suppressClick]
+    [finishHorizontalDrag, length]
   );
 
-  const handlePointerDown = useCallback((event) => {
-    if (event.pointerType === 'touch') return;
-    pointerStartRef.current = {
-      x: event.clientX,
-      y: event.clientY,
-      active: true,
-      dragging: false
-    };
-  }, []);
+  const handlePointerDown = useCallback(
+    (event) => {
+      if (event.pointerType === 'touch' || length <= 1) return;
+      if (event.target instanceof Element && event.target.closest('.product-gallery-zone, .product-gallery-dots, .product-card-dots')) {
+        return;
+      }
+      window.clearTimeout(slideTimerRef.current);
+      setIsSliding(false);
+      pointerStartRef.current = { x: event.clientX, y: event.clientY };
+      gestureModeRef.current = 'pending';
+      event.currentTarget.setPointerCapture?.(event.pointerId);
+    },
+    [length]
+  );
 
-  const handlePointerMove = useCallback((event) => {
-    const state = pointerStartRef.current;
-    if (!state.active || event.pointerType === 'touch') return;
-    const dx = event.clientX - state.x;
-    const dy = event.clientY - state.y;
-    if (!state.dragging && Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy) * 1.2) {
-      pointerStartRef.current = { ...state, dragging: true };
-    }
-  }, []);
+  const handlePointerMove = useCallback(
+    (event) => {
+      if (event.pointerType === 'touch' || length <= 1 || gestureModeRef.current === 'idle') return;
+      const dx = event.clientX - pointerStartRef.current.x;
+      const dy = event.clientY - pointerStartRef.current.y;
+
+      tryLockHorizontal(dx, dy);
+      if (gestureModeRef.current === 'horizontal') {
+        event.preventDefault();
+        setSwipeOffset(dx);
+      }
+    },
+    [length, tryLockHorizontal]
+  );
 
   const handlePointerUp = useCallback(
     (event) => {
-      const state = pointerStartRef.current;
-      if (!state.active || event.pointerType === 'touch') return;
-      pointerStartRef.current = { x: 0, y: 0, active: false, dragging: false };
+      if (event.pointerType === 'touch') return;
+      event.currentTarget.releasePointerCapture?.(event.pointerId);
 
-      if (!state.dragging || length <= 1) return;
-      const dx = event.clientX - state.x;
-      const dy = event.clientY - state.y;
-      if (Math.abs(dx) <= SWIPE_THRESHOLD_PX || Math.abs(dx) <= Math.abs(dy) * 1.2) return;
-
-      suppressClick();
-      goTo(dx < 0 ? 1 : -1);
+      if (gestureModeRef.current === 'horizontal') {
+        const dx = event.clientX - pointerStartRef.current.x;
+        finishHorizontalDrag(dx);
+        return;
+      }
+      gestureModeRef.current = 'idle';
     },
-    [goTo, length, suppressClick]
+    [finishHorizontalDrag]
   );
 
-  const handlePointerCancel = useCallback(() => {
-    pointerStartRef.current = { x: 0, y: 0, active: false, dragging: false };
-  }, []);
+  const handlePointerCancel = useCallback((event) => {
+    if (gestureModeRef.current === 'horizontal') {
+      snapBack();
+    }
+    gestureModeRef.current = 'idle';
+    event.currentTarget.releasePointerCapture?.(event.pointerId);
+  }, [snapBack]);
 
   const consumeSuppressClick = useCallback(() => {
     if (!suppressClickRef.current) return false;
@@ -132,11 +231,18 @@ export function useGalleryNavigation(length, resetKey, { index: controlledIndex,
     return true;
   }, []);
 
+  const trackTranslate = hasMultiple ? `calc(-100% + ${swipeOffset}px)` : `${swipeOffset}px`;
+
   return {
     index: safeIndex,
     setIndex,
     hasMultiple,
+    swipeOffset,
+    isSliding,
+    trackTranslate,
+    galleryRef,
     handleTouchStart,
+    handleTouchMove,
     handleTouchEnd,
     handlePointerDown,
     handlePointerMove,
