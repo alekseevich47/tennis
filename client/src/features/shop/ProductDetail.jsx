@@ -318,7 +318,7 @@ function ProductDetail({
                   <span
                     key={color}
                     className="product-color-dot product-color-dot--filled"
-                    style={{ background: color, borderColor: color }}
+                    style={{ background: color }}
                     title={color}
                   />
                 ))}

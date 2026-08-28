@@ -66,11 +66,14 @@ function ProductVariantFields({
       {mode === 'color' ? (
         <div className="product-color-picker-row" aria-label="Цвета товара">
           {colors.map((color) => (
-            <span
+            <button
               key={color}
-              className="product-color-dot product-color-dot--filled"
-              style={{ background: color, borderColor: color }}
-              title={color}
+              type="button"
+              className="product-color-dot product-color-dot--filled product-color-dot--editable"
+              style={{ background: color }}
+              onClick={() => onColorsChange(colors.filter((item) => item !== color))}
+              aria-label={`Удалить цвет ${color}`}
+              title={`${color} — нажмите, чтобы удалить`}
             />
           ))}
           <button
