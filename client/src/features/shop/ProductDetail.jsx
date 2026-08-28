@@ -19,7 +19,7 @@ import { normalizeProductCategoryIds } from './productCategories';
 
 function CopyIcon() {
   return (
-    <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
       <rect x="8" y="8" width="11" height="11" rx="2" fill="none" stroke="currentColor" strokeWidth="1.5" />
       <rect x="5" y="5" width="11" height="11" rx="2" fill="none" stroke="currentColor" strokeWidth="1.5" />
     </svg>
@@ -48,7 +48,7 @@ function EyeIcon() {
  *   moderator: boolean,
  *   onClose: () => void,
  *   onEdit: () => void,
- *   onDelete: () => Promise<void> | void,
+ *   onDelete?: () => Promise<void> | void,
  *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void
  * }} props
  */
@@ -58,7 +58,6 @@ function ProductDetail({
   moderator,
   onClose,
   onEdit,
-  onDelete,
   onOpenFullscreen
 }) {
   const product = useKeepForModalClose(isOpen, productProp);
@@ -168,11 +167,6 @@ function ProductDetail({
     );
   };
 
-  const handleDelete = () => {
-    onDelete();
-    onClose();
-  };
-
   return (
     <Modal
       isOpen={isOpen}
@@ -200,13 +194,13 @@ function ProductDetail({
       <div className="product-detail-scroll">
         <div className="feed-card-header product-detail-header">
           <div className="section-meta product-detail-meta">
-            <span className="section-title-name">{product.title}</span>
+            <span className="section-title-name product-detail-title">{product.title}</span>
             <button
               type="button"
               className="product-article"
               onClick={handleCopyArticle}
             >
-              <span>Артикул: #{product.id}</span>
+              Артикул: #{product.id}
               <span className="product-article-copy" aria-hidden="true">
                 <CopyIcon />
               </span>
@@ -235,53 +229,20 @@ function ProductDetail({
               </span>
             </div>
           </div>
-          <div className="post-card-actions" role="group" aria-label="Действия с товаром">
-            {moderator && (
-              <>
-                <IconButton
-                  ariaLabel="Редактировать товар"
-                  variant="ghost"
-                  size="sm"
-                  className="edit-post-btn"
-                  onClick={onEdit}
-                >
-                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                    <path d="M4 20h4.2L19.3 8.9a2 2 0 0 0 0-2.8l-1.4-1.4a2 2 0 0 0-2.8 0L4 15.8V20Z" />
-                    <path d="m13.7 6.1 4.2 4.2" />
-                  </svg>
-                </IconButton>
-                <IconButton
-                  ariaLabel="Удалить товар"
-                  variant="danger"
-                  size="sm"
-                  className="delete-post-btn"
-                  onClick={handleDelete}
-                >
-                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                    <path d="M4 7h16" />
-                    <path d="M10 11v6" />
-                    <path d="M14 11v6" />
-                    <path d="M6 7l1 13h10l1-13" />
-                    <path d="M9 7V4h6v3" />
-                  </svg>
-                </IconButton>
-              </>
-            )}
-            <IconButton
-              ariaLabel="Закрыть карточку товара"
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-            >
-              <span aria-hidden="true">✕</span>
-            </IconButton>
-          </div>
+          <IconButton
+            ariaLabel="Закрыть карточку товара"
+            variant="ghost"
+            size="sm"
+            onClick={onClose}
+          >
+            <span aria-hidden="true">✕</span>
+          </IconButton>
         </div>
 
         <div className="product-detail-gallery">
           <button
             type="button"
-            className="product-card-favorite-btn"
+            className="product-detail-gallery-btn product-detail-favorite-btn"
             onClick={handleFavoriteClick}
             aria-label={favorited ? 'Убрать из избранного' : 'Добавить в избранное'}
           >
@@ -295,6 +256,20 @@ function ProductDetail({
               </svg>
             )}
           </button>
+
+          {moderator && (
+            <button
+              type="button"
+              className="product-detail-gallery-btn product-detail-edit-btn"
+              onClick={onEdit}
+              aria-label="Редактировать товар"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="20" height="20" aria-hidden="true">
+                <path d="M4 20h4.2L19.3 8.9a2 2 0 0 0 0-2.8l-1.4-1.4a2 2 0 0 0-2.8 0L4 15.8V20Z" />
+                <path d="m13.7 6.1 4.2 4.2" />
+              </svg>
+            </button>
+          )}
 
           <ProductGallery
             items={galleryItems}
