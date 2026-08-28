@@ -1,7 +1,7 @@
 {
   "client/package.json": {
-    "mtime": 1787907687.2074327,
-    "ast_hash": "29275088adbe3eb8d85d986e6a69b834",
+    "mtime": 1787908390.0535433,
+    "ast_hash": "7c11e3d4f1fedf14de0a1f64bc93ccd1",
     "semantic_hash": ""
   },
   "client/public/sw.js": {
@@ -410,8 +410,8 @@
     "semantic_hash": ""
   },
   "client/src/features/shop/ProductDetail.jsx": {
-    "mtime": 1787907687.2089942,
-    "ast_hash": "5e7240676a7ae2cd23f1a631a5f3a66c",
+    "mtime": 1787908636.233438,
+    "ast_hash": "1654799cc2a1642d2a6441c41654334e",
     "semantic_hash": ""
   },
   "client/src/features/shop/ProductForm.jsx": {
@@ -1580,8 +1580,8 @@
     "semantic_hash": ""
   },
   "client/src/features/shop/ProductGallery.jsx": {
-    "mtime": 1787906429.3045752,
-    "ast_hash": "94ffceab2a730e31851751a0b2581c22",
+    "mtime": 1787908900.2268562,
+    "ast_hash": "2099063d2c097a924584521369bb6286",
     "semantic_hash": ""
   },
   "client/src/features/shop/ProductParamTemplatesModal.jsx": {
@@ -1605,8 +1605,8 @@
     "semantic_hash": ""
   },
   "client/src/features/shop/useGalleryNavigation.js": {
-    "mtime": 1787906429.30727,
-    "ast_hash": "d356a620d3e01534f18d471ff922fd50",
+    "mtime": 1787908891.6981015,
+    "ast_hash": "6df4e4cba3b769f10a33d4e3a35c5066",
     "semantic_hash": ""
   },
   "client/src/hooks/useProductParamTemplates.js": {
