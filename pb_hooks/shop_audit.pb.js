@@ -88,7 +88,8 @@ onRecordUpdateRequest((e) => {
     }
 
     var diff = audit.diffFields(original, record, [
-      'title', 'price', 'sizes', 'categories', 'out_of_stock', 'images'
+      'title', 'price', 'old_price', 'description', 'sizes', 'colors', 'variant_mode',
+      'parameters', 'categories', 'out_of_stock', 'images'
     ]);
     if (diff.length) {
       audit.logEvent($app, {

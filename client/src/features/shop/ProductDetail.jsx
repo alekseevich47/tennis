@@ -1,16 +1,45 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { useFavorites } from '../../context/FavoritesContext';
 import { useProductCategories } from '../../hooks/useProductCategories';
+import PostContentHtml from '../feed/PostContentHtml';
 import BuyButton from './BuyButton';
+import ProductGallery from './ProductGallery';
 import ProductPrice from './ProductPrice';
-import { getMediaThumbUrl, getMediaUrl, isVideoMediaName, mediaNames, videoPreviewUrl } from '../../lib/media';
+import {
+  normalizeVariantMode,
+  parseProductColors,
+  parseProductParameters
+} from './productParameters';
+import { getMediaThumbUrl, getMediaUrl, isVideoMediaName, mediaNames } from '../../lib/media';
 import { useKeepForModalClose } from '../../hooks/useKeepForModalClose';
 import { normalizeProductCategoryIds } from './productCategories';
 
-const SWIPE_THRESHOLD_PX = 36;
+function CopyIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false">
+      <rect x="8" y="8" width="11" height="11" rx="2" fill="none" stroke="currentColor" strokeWidth="1.5" />
+      <rect x="5" y="5" width="11" height="11" rx="2" fill="none" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
+function EyeIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false">
+      <path
+        d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <circle cx="12" cy="12" r="2.75" fill="none" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+  );
+}
 
 /**
  * @param {{
@@ -39,9 +68,7 @@ function ProductDetail({
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [favoritesCount, setFavoritesCount] = useState(0);
   const [viewsCount, setViewsCount] = useState(0);
-  const touchStartRef = useRef({ x: 0, y: 0 });
-  const suppressClickRef = useRef(false);
-  const suppressClickTimerRef = useRef(null);
+  const [descriptionExpanded, setDescriptionExpanded] = useState(false);
 
   const galleryItems = useMemo(() => {
     if (!product) return [];
@@ -86,19 +113,24 @@ function ProductDetail({
       .filter(Boolean);
   }, [categories, product]);
 
+  const productColors = useMemo(() => parseProductColors(product?.colors), [product?.colors]);
+  const productParameters = useMemo(
+    () => parseProductParameters(product?.parameters),
+    [product?.parameters]
+  );
+  const variantMode = normalizeVariantMode(product?.variant_mode);
+  const hasDescription = Boolean(product?.description?.trim());
+
   useEffect(() => {
     if (!isOpen) return;
     setCurrentImageIndex(0);
+    setDescriptionExpanded(false);
   }, [isOpen, product?.id]);
 
   useEffect(() => {
     setViewsCount(Number(product?.views) || 0);
     setFavoritesCount(Math.max(0, Number(product?.favorites_count) || 0));
   }, [product?.id, product?.views, product?.favorites_count]);
-
-  useEffect(() => () => {
-    window.clearTimeout(suppressClickTimerRef.current);
-  }, []);
 
   const handleFavoriteClick = useCallback((event) => {
     event.stopPropagation();
@@ -125,44 +157,12 @@ function ProductDetail({
     }
   };
 
-  const goToImage = (direction) => {
-    if (galleryItems.length <= 1) return;
-    setCurrentImageIndex((current) =>
-      (current + direction + galleryItems.length) % galleryItems.length
-    );
-  };
-
-  const handleGalleryTouchStart = (event) => {
-    const touch = event.touches[0];
-    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
-  };
-
-  const handleGalleryTouchEnd = (event) => {
-    const touch = event.changedTouches[0];
-    const dx = touch.clientX - touchStartRef.current.x;
-    const dy = touch.clientY - touchStartRef.current.y;
-
-    if (Math.abs(dx) <= SWIPE_THRESHOLD_PX || Math.abs(dx) <= Math.abs(dy) * 1.2) return;
-
-    suppressClickRef.current = true;
-    window.clearTimeout(suppressClickTimerRef.current);
-    suppressClickTimerRef.current = window.setTimeout(() => {
-      suppressClickRef.current = false;
-    }, 350);
-    goToImage(dx < 0 ? 1 : -1);
-  };
-
-  const handleOpenFullscreen = (event) => {
-    if (suppressClickRef.current) {
-      suppressClickRef.current = false;
-      return;
-    }
+  const handleOpenFullscreen = (event, index) => {
     if (!onOpenFullscreen || galleryItems.length === 0) return;
-
-    const activeItem = galleryItems[currentImageIndex];
+    const activeItem = galleryItems[index];
     onOpenFullscreen(
       galleryItems,
-      currentImageIndex,
+      index,
       event.currentTarget.getBoundingClientRect(),
       activeItem.originKey
     );
@@ -173,10 +173,6 @@ function ProductDetail({
     onClose();
   };
 
-  const activeImage = galleryItems[currentImageIndex] || null;
-  const hasMultipleImages = galleryItems.length > 1;
-  const hasDescription = Boolean(product.description?.trim());
-
   return (
     <Modal
       isOpen={isOpen}
@@ -185,191 +181,186 @@ function ProductDetail({
       size="large"
       showCloseButton={false}
       className="product-detail"
+      footer={(
+        <div className="product-detail-footer">
+          <ProductPrice
+            price={product.price}
+            oldPrice={product.old_price}
+            className="product-price"
+            currentClassName="product-price-current"
+            oldClassName="product-price-old"
+          />
+          {product.out_of_stock && (
+            <p className="product-out-of-stock-text">Нет в наличии</p>
+          )}
+          <BuyButton product={product} />
+        </div>
+      )}
     >
-      <div className="feed-card-header product-detail-header">
-        <div className="section-avatar" aria-hidden="true">🛍</div>
-        <div className="section-meta">
-          <span className="section-title-name">{product.title}</span>
-          <button
-            type="button"
-            className="product-article"
-            onClick={handleCopyArticle}
-          >
-            Артикул: #{product.id} <span aria-hidden="true">📋</span>
-          </button>
-          <div className="product-detail-stats" aria-label="Статистика товара">
-            <span className="product-detail-stat">
-              <span aria-hidden="true">👁</span>
-              <span>{viewsCount}</span>
-            </span>
-            <span className="product-detail-stat">
-              <svg
-                className="product-detail-stat-heart"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                width="14"
-                height="14"
-                aria-hidden="true"
-              >
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-              </svg>
-              <span>{favoritesCount}</span>
-            </span>
+      <div className="product-detail-scroll">
+        <div className="feed-card-header product-detail-header">
+          <div className="section-meta product-detail-meta">
+            <span className="section-title-name">{product.title}</span>
+            <button
+              type="button"
+              className="product-article"
+              onClick={handleCopyArticle}
+            >
+              <span>Артикул: #{product.id}</span>
+              <span className="product-article-copy" aria-hidden="true">
+                <CopyIcon />
+              </span>
+            </button>
+            <div className="product-detail-stats" aria-label="Статистика товара">
+              <span className="product-detail-stat">
+                <EyeIcon />
+                <span>{viewsCount}</span>
+              </span>
+              <span className="product-detail-stat">
+                <svg
+                  className="product-detail-stat-heart"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  width="14"
+                  height="14"
+                  aria-hidden="true"
+                >
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+                <span>{favoritesCount}</span>
+              </span>
+            </div>
+          </div>
+          <div className="post-card-actions" role="group" aria-label="Действия с товаром">
+            {moderator && (
+              <>
+                <IconButton
+                  ariaLabel="Редактировать товар"
+                  variant="ghost"
+                  size="sm"
+                  className="edit-post-btn"
+                  onClick={onEdit}
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M4 20h4.2L19.3 8.9a2 2 0 0 0 0-2.8l-1.4-1.4a2 2 0 0 0-2.8 0L4 15.8V20Z" />
+                    <path d="m13.7 6.1 4.2 4.2" />
+                  </svg>
+                </IconButton>
+                <IconButton
+                  ariaLabel="Удалить товар"
+                  variant="danger"
+                  size="sm"
+                  className="delete-post-btn"
+                  onClick={handleDelete}
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M4 7h16" />
+                    <path d="M10 11v6" />
+                    <path d="M14 11v6" />
+                    <path d="M6 7l1 13h10l1-13" />
+                    <path d="M9 7V4h6v3" />
+                  </svg>
+                </IconButton>
+              </>
+            )}
+            <IconButton
+              ariaLabel="Закрыть карточку товара"
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+            >
+              <span aria-hidden="true">✕</span>
+            </IconButton>
           </div>
         </div>
-        <div className="post-card-actions" role="group" aria-label="Действия с товаром">
-          {moderator && (
-            <>
-              <IconButton
-                ariaLabel="Редактировать товар"
-                variant="ghost"
-                size="sm"
-                className="edit-post-btn"
-                onClick={onEdit}
-              >
-              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path d="M4 20h4.2L19.3 8.9a2 2 0 0 0 0-2.8l-1.4-1.4a2 2 0 0 0-2.8 0L4 15.8V20Z" />
-                <path d="m13.7 6.1 4.2 4.2" />
-              </svg>
-              </IconButton>
-              <IconButton
-                ariaLabel="Удалить товар"
-                variant="danger"
-                size="sm"
-                className="delete-post-btn"
-                onClick={handleDelete}
-              >
-              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path d="M4 7h16" />
-                <path d="M10 11v6" />
-                <path d="M14 11v6" />
-                <path d="M6 7l1 13h10l1-13" />
-                <path d="M9 7V4h6v3" />
-              </svg>
-              </IconButton>
-            </>
-          )}
-          <IconButton
-            ariaLabel="Закрыть карточку товара"
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
-          >
-            <span aria-hidden="true">✕</span>
-          </IconButton>
-        </div>
-      </div>
 
-      <div
-        className="product-detail-gallery"
-        onTouchStart={handleGalleryTouchStart}
-        onTouchEnd={handleGalleryTouchEnd}
-      >
-        <button
-          type="button"
-          className="product-card-favorite-btn"
-          onClick={handleFavoriteClick}
-          aria-label={favorited ? 'Убрать из избранного' : 'Добавить в избранное'}
-        >
-          {favorited ? (
-            <svg viewBox="0 0 24 24" fill="#ff3b30" stroke="#ff3b30" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="20" height="20" aria-hidden="true">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-            </svg>
-          ) : (
-            <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="20" height="20" aria-hidden="true">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-            </svg>
-          )}
-        </button>
-
-        {activeImage ? (
+        <div className="product-detail-gallery">
           <button
             type="button"
-            className="product-detail-image-btn"
-            onClick={handleOpenFullscreen}
-            disabled={!onOpenFullscreen}
-            aria-label="Открыть фото товара на весь экран"
-            data-media-origin-key={activeImage.originKey}
+            className="product-card-favorite-btn"
+            onClick={handleFavoriteClick}
+            aria-label={favorited ? 'Убрать из избранного' : 'Добавить в избранное'}
           >
-            {activeImage.isVideo ? (
-              <video
-                src={videoPreviewUrl(activeImage.url)}
-                muted
-                playsInline
-                preload="metadata"
-                aria-label={`Видео товара ${product.title || ''}`}
-              />
+            {favorited ? (
+              <svg viewBox="0 0 24 24" fill="#ff3b30" stroke="#ff3b30" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="20" height="20" aria-hidden="true">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
             ) : (
-              <img
-                src={activeImage.url}
-                alt={`Фото товара ${product.title || 'без названия'}`}
-              />
+              <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="20" height="20" aria-hidden="true">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
             )}
           </button>
-        ) : (
-          <div className="product-detail-no-image">Нет фото</div>
-        )}
 
-        {hasMultipleImages && (
-          <>
-            <button
-              type="button"
-              className="product-gallery-nav product-gallery-nav--prev"
-              onClick={() => goToImage(-1)}
-              aria-label="Предыдущее фото"
-            >
-              ‹
-            </button>
-            <button
-              type="button"
-              className="product-gallery-nav product-gallery-nav--next"
-              onClick={() => goToImage(1)}
-              aria-label="Следующее фото"
-            >
-              ›
-            </button>
-            <div className="product-gallery-dots" aria-label="Фото товара">
-              {galleryItems.map((item, index) => (
-                <button
-                  key={item.filename}
-                  type="button"
-                  className={index === currentImageIndex ? 'is-active' : ''}
-                  onClick={() => setCurrentImageIndex(index)}
-                  aria-label={`Показать фото ${index + 1}`}
-                  aria-current={index === currentImageIndex ? 'true' : undefined}
-                />
-              ))}
-            </div>
-          </>
-        )}
-      </div>
+          <ProductGallery
+            items={galleryItems}
+            resetKey={product.id}
+            index={currentImageIndex}
+            onIndexChange={setCurrentImageIndex}
+            variant="detail"
+            onOpenFullscreen={onOpenFullscreen ? handleOpenFullscreen : undefined}
+            imageAlt={`Фото товара ${product.title || 'без названия'}`}
+          />
+        </div>
 
-      <div className="product-detail-content">
-        {hasDescription && <p className="product-description">{product.description}</p>}
-
-        {selectedCategoryNames.length > 0 && (
-          <div className="product-category-chips" aria-label="Категории товара">
+        {(selectedCategoryNames.length > 0 || variantMode === 'color' || variantMode === 'size') && (
+          <div className="product-detail-badges" aria-label="Категория и варианты">
             {selectedCategoryNames.map((name) => (
               <span key={name} className="product-category-chip">{name}</span>
             ))}
+            {variantMode === 'color' && productColors.length > 0 && (
+              <div className="product-detail-color-dots" aria-label="Цвета">
+                {productColors.map((color) => (
+                  <span
+                    key={color}
+                    className="product-color-dot product-color-dot--filled"
+                    style={{ background: color, borderColor: color }}
+                    title={color}
+                  />
+                ))}
+              </div>
+            )}
+            {variantMode === 'size' && product.sizes && (
+              <span className="product-detail-sizes-badge">{product.sizes}</span>
+            )}
           </div>
         )}
 
-        {product.sizes && <p className="product-detail-sizes"><strong>Размеры:</strong> {product.sizes}</p>}
-        <ProductPrice
-          price={product.price}
-          oldPrice={product.old_price}
-          className="product-price"
-          currentClassName="product-price-current"
-          oldClassName="product-price-old"
-        />
-        {product.out_of_stock && <p className="product-out-of-stock-text">Нет в наличии</p>}
+        {productParameters.length > 0 && (
+          <ul className="product-detail-params">
+            {productParameters.map((item) => (
+              <li key={`${item.name}-${item.value}`} className="product-detail-params__row">
+                <span className="product-detail-params__name">{item.name}:</span>
+                <span className="product-detail-params__value">{item.value}</span>
+              </li>
+            ))}
+          </ul>
+        )}
 
-        <BuyButton product={product} />
+        {hasDescription && (
+          <div className="product-detail-description-block">
+            <button
+              type="button"
+              className={descriptionExpanded ? 'product-detail-more-link is-expanded' : 'product-detail-more-link'}
+              onClick={() => setDescriptionExpanded((value) => !value)}
+              aria-expanded={descriptionExpanded}
+            >
+              <span>Ещё характеристики</span>
+              <span className="product-detail-more-chevron" aria-hidden="true">›</span>
+            </button>
+            {descriptionExpanded && (
+              <PostContentHtml
+                content={product.description}
+                className="product-description"
+                as="div"
+              />
+            )}
+          </div>
+        )}
       </div>
     </Modal>
   );

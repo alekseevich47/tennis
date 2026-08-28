@@ -13,6 +13,9 @@ import { PB_URL } from '../config';
  * @property {number} [price]
  * @property {number} [old_price]
  * @property {string} [sizes]
+ * @property {string[]} [colors]
+ * @property {'' | 'color' | 'size'} [variant_mode]
+ * @property {Array<{ name: string, value: string }>} [parameters]
  * @property {string[]} [images]
  * @property {string | string[]} [categories]
  * @property {boolean} [out_of_stock]
@@ -24,6 +27,15 @@ import { PB_URL } from '../config';
 
 /**
  * @typedef {Object} ProductCategoryRecord
+ * @property {string} id
+ * @property {string} collectionId
+ * @property {string} collectionName
+ * @property {string} name
+ * @property {number} [sort_order]
+ */
+
+/**
+ * @typedef {Object} ProductParamTemplateRecord
  * @property {string} id
  * @property {string} collectionId
  * @property {string} collectionName
@@ -100,6 +112,40 @@ export async function listProductCategories({ signal } = {}) {
     error('Ошибка получения категорий товаров:', err);
     throw err;
   }
+}
+
+/** @param {{ signal?: AbortSignal }} [options] */
+export async function listProductParamTemplates({ signal } = {}) {
+  try {
+    return /** @type {ProductParamTemplateRecord[]} */ (await pb.collection('product_param_templates').getFullList({
+      sort: 'sort_order,name',
+      requestKey: null,
+      signal
+    }));
+  } catch (err) {
+    if (err && /** @type {Error} */ (err).name === 'AbortError') return [];
+    error('Ошибка получения шаблонов параметров:', err);
+    throw err;
+  }
+}
+
+/** @param {{ name: string, sort_order?: number }} payload */
+export async function createProductParamTemplate(payload) {
+  return /** @type {ProductParamTemplateRecord} */ (
+    await pb.collection('product_param_templates').create(payload)
+  );
+}
+
+/** @param {string} id @param {{ name?: string, sort_order?: number }} payload */
+export async function updateProductParamTemplate(id, payload) {
+  return /** @type {ProductParamTemplateRecord} */ (
+    await pb.collection('product_param_templates').update(id, payload)
+  );
+}
+
+/** @param {string} id */
+export async function deleteProductParamTemplate(id) {
+  return pb.collection('product_param_templates').delete(id);
 }
 
 /** @param {{ categoryId?: string, signal?: AbortSignal }} [options] */
