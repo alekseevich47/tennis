@@ -345,8 +345,23 @@ label.product-category-option {
 }
 
 .product-info {
+  flex: 1;
+  min-height: 0;
   cursor: pointer;
-  padding: 12px;
+  padding: 12px 12px 8px;
+}
+
+.product-card-footer {
+  flex-shrink: 0;
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 12px 12px;
+}
+
+.product-card-footer .price {
+  margin: 0;
 }
 
 .product-info:focus-visible {
@@ -1057,13 +1072,20 @@ label.product-category-option {
   transform: rotate(-90deg);
 }
 
+.product-detail .ui-modal-footer {
+  border-top: none;
+  background: transparent;
+  box-shadow: none;
+  padding: 0 20px max(6px, env(safe-area-inset-bottom, 0px));
+}
+
 .product-detail-footer {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background: #ffffff;
-  box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.06);
-  padding-bottom: max(4px, env(safe-area-inset-bottom, 0px));
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
 }
 
 .product-detail-footer .product-price {
@@ -1517,7 +1539,11 @@ label.product-category-option {
   }
 
   .product-info {
-    padding: 10px;
+    padding: 10px 10px 6px;
+  }
+
+  .product-card-footer {
+    padding: 0 10px 10px;
   }
 
   .product-form-price-row {
