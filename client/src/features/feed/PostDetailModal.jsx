@@ -10,6 +10,7 @@ import CommentListItem from './CommentListItem';
 import CommentMediaBody from './CommentMediaBody';
 import CommentReplyComposeBar from './CommentReplyComposeBar';
 import { mapCommentsWithDaySeparators } from './commentListLayout';
+import DaySeparator from './DaySeparator';
 import PostContextMenu from './PostContextMenu';
 import { hasVisibleText } from './postRichText';
 import {
@@ -519,11 +520,7 @@ function PostDetailModal({
 
               return (
                 <React.Fragment key={c.id}>
-                  {showDateSeparator ? (
-                    <div className="comment-day-separator" role="separator">
-                      {dateLabel}
-                    </div>
-                  ) : null}
+                  {showDateSeparator ? <DaySeparator label={dateLabel} /> : null}
 
                   {isSoftDeleted ? (
                     isOwner || userIsModerator ? (

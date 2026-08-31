@@ -6,6 +6,7 @@ import CommentListItem from '../feed/CommentListItem';
 import CommentMediaBody from '../feed/CommentMediaBody';
 import CommentReplyComposeBar from '../feed/CommentReplyComposeBar';
 import { mapCommentsWithDaySeparators } from '../feed/commentListLayout';
+import DaySeparator from '../feed/DaySeparator';
 import { hasVisibleText } from '../feed/postRichText';
 import {
   keepCommentEditInView
@@ -268,11 +269,7 @@ function TournamentCommentsSection({
 
                 return (
                   <React.Fragment key={c.id}>
-                    {showDateSeparator ? (
-                      <div className="comment-day-separator" role="separator">
-                        {dateLabel}
-                      </div>
-                    ) : null}
+                    {showDateSeparator ? <DaySeparator label={dateLabel} /> : null}
 
                     {isSoftDeleted ? (
                       isOwner || userIsModerator ? (

@@ -6,6 +6,7 @@ import CommentSendButton from '../feed/CommentSendButton';
 import CommentListItem from '../feed/CommentListItem';
 import CommentReplyComposeBar from '../feed/CommentReplyComposeBar';
 import { mapCommentsWithDaySeparators } from '../feed/commentListLayout';
+import DaySeparator from '../feed/DaySeparator';
 import { hasVisibleText, toDisplayHtml } from '../feed/postRichText';
 import { useGalleryComments } from '../../hooks/useGalleryComments';
 import { useCommentLikes } from '../../hooks/useCommentLikes';
@@ -250,11 +251,7 @@ function GalleryCommentModal({
 
               return (
                 <React.Fragment key={comment.id}>
-                  {showDateSeparator ? (
-                    <div className="comment-day-separator" role="separator">
-                      {dateLabel}
-                    </div>
-                  ) : null}
+                  {showDateSeparator ? <DaySeparator label={dateLabel} /> : null}
 
                   <CommentListItem
                     comment={comment}

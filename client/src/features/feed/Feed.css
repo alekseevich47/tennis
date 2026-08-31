@@ -169,33 +169,47 @@
   pointer-events: none;
 }
 
-.feed-day-separator {
+.feed-day-separator,
+.day-separator {
   position: sticky;
-  top: var(--feed-day-sticky-top, 0px);
+  top: var(--day-separator-sticky-top, var(--feed-day-sticky-top, 0px));
   z-index: 40;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: -10px -16px -10px;
-  padding: 5px 16px;
+  margin: -10px 0;
+  padding: 4px 0 12px;
   pointer-events: none;
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(16px) saturate(1.35);
-  -webkit-backdrop-filter: blur(16px) saturate(1.35);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.55);
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
 }
 
 .feed-list--has-pinned,
 .competitions-feed-list--has-pinned {
   --feed-day-sticky-top: 68px;
+  --day-separator-sticky-top: 68px;
 }
 
-.feed-day-separator__label {
+.feed-day-separator__pill,
+.day-separator__pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: calc(100% - 32px);
+  padding: 5px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px) saturate(1.35);
+  -webkit-backdrop-filter: blur(16px) saturate(1.35);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+}
+
+.feed-day-separator__label,
+.day-separator__label {
   font-size: 13px;
   font-weight: 500;
   color: #000;
   line-height: 1.2;
+  white-space: nowrap;
 }
 
 .post-number::before {
@@ -2850,15 +2864,8 @@ button.post-card-like:hover:not(:disabled) {
   display: flex;
   flex-direction: column;
   gap: 4px;
-}
-
-.comment-day-separator {
-  align-self: center;
-  margin: 10px 0 4px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #000;
-  text-align: center;
+  padding-right: 6px;
+  box-sizing: border-box;
 }
 
 .comment-row.comment-swipe {
@@ -2879,7 +2886,9 @@ button.post-card-like:hover:not(:disabled) {
 
 .comment-row--own .comment-row__layout {
   margin-left: auto;
+  margin-right: 8px;
   justify-content: flex-end;
+  max-width: calc(100% - 8px);
 }
 
 .comment-row__avatar {
@@ -2931,7 +2940,7 @@ button.post-card-like:hover:not(:disabled) {
 .comment-bubble--own::after {
   content: '';
   position: absolute;
-  right: -6px;
+  right: 2px;
   bottom: 0;
   width: 12px;
   height: 12px;

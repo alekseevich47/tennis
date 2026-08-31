@@ -32,6 +32,7 @@ import {
   subscribeYadiskMediaCache
 } from './yadiskMediaSessionCache';
 import { mapPostsWithDaySeparators } from './commentListLayout';
+import DaySeparator from './DaySeparator';
 import './Feed.css';
 
 /**
@@ -406,11 +407,7 @@ function FeedPage({
               deletedPostIds.includes(post.id) || post.is_deleted === true;
             return (
               <React.Fragment key={post.id}>
-                {showDateSeparator ? (
-                  <div className="feed-day-separator" role="separator">
-                    <span className="feed-day-separator__label">{dateLabel}</span>
-                  </div>
-                ) : null}
+                {showDateSeparator ? <DaySeparator label={dateLabel} /> : null}
                 <PostCard
                   post={post}
                   user={user}
