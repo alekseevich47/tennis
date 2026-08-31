@@ -6,9 +6,9 @@ import {
   isVideoMediaName,
   MEDIA_CARD_THUMB,
   MEDIA_LQIP_THUMB,
-  mediaNames,
-  videoPreviewUrl
+  mediaNames
 } from '../../lib/media';
+import FeedVideoPreview from './FeedVideoPreview';
 import ProgressiveImage from './ProgressiveImage';
 import AlbumStackBadge from './AlbumStackBadge';
 import MediaSwipeDots from './MediaSwipeDots';
@@ -129,6 +129,8 @@ function PostMedia({
   }, [isAlbum, albumItems, albumIndex, fileItems, externalItems]);
 
   if (items.length === 0) return null;
+
+  const canOpenFullscreen = Boolean(onOpenFullscreen) && variant === 'detail';
 
   const count = Math.min(items.length, 5);
   const singleNativeAspect = count === 1 && !items[0]?.isVideo && !isAlbum;
@@ -259,29 +261,26 @@ function PostMedia({
           }
 
           const video = (
-            <video
-              src={videoPreviewUrl(item.url)}
+            <FeedVideoPreview
+              src={item.url}
               className="telegram-post-media-item"
-              preload="metadata"
-              playsInline
-              muted
-              disablePictureInPicture
-              aria-label={alt}
+              alt={alt}
+              inViewport={variant === 'card' && mediaFocused}
+              showPlayBadge={variant === 'card'}
               width="800"
               height="600"
             />
           );
 
-          if (!onOpenFullscreen) {
+          if (!canOpenFullscreen) {
             return (
               <div
                 key={item.originKey || item.filename}
-                className="post-media-static"
+                className="post-media-static post-media-static--video"
                 {...swipeProps}
               >
                 <div className="media-frame">
                   {video}
-                  <span className="post-media-play-badge" aria-hidden="true">▶</span>
                   {showAlbumBadge ? <AlbumStackBadge /> : null}
                   {isAlbum ? (
                     <MediaSwipeDots
@@ -314,7 +313,6 @@ function PostMedia({
             >
               <div className="media-frame">
                 {video}
-                <span className="post-media-play-badge" aria-hidden="true">▶</span>
                 {showAlbumBadge ? <AlbumStackBadge /> : null}
                 {isAlbum ? (
                   <MediaSwipeDots
@@ -342,7 +340,7 @@ function PostMedia({
           />
         );
 
-        if (pending || !onOpenFullscreen) {
+        if (pending || !canOpenFullscreen) {
           return (
             <div
               key={item.originKey || item.filename}

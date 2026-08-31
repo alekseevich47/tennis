@@ -560,7 +560,6 @@ function CompetitionsPage({
                       onLongPress={handleLongPress}
                       cardRef={handleRegisterCardRef(post.id)}
                       hiddenMediaKey={hiddenMediaKey}
-                      onOpenFullscreen={handleOpenFullscreen}
                       onOpenProfile={setViewingPlayer}
                       scrollRootRef={containerRef}
                     />

@@ -1,13 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Modal from '../../components/ui/Modal';
-import Avatar from '../../components/ui/Avatar';
 import PostContentHtml from '../feed/PostContentHtml';
 import PostRichTextField from '../feed/PostRichTextField';
 import CommentSendButton from '../feed/CommentSendButton';
-import CommentReplyButton from '../feed/CommentReplyButton';
+import CommentListItem from '../feed/CommentListItem';
 import CommentReplyComposeBar from '../feed/CommentReplyComposeBar';
-import CommentReplyQuote from '../feed/CommentReplyQuote';
-import CommentSwipeReply from '../feed/CommentSwipeReply';
+import { mapCommentsWithDaySeparators } from '../feed/commentListLayout';
 import { hasVisibleText, toDisplayHtml } from '../feed/postRichText';
 import { useGalleryComments } from '../../hooks/useGalleryComments';
 import { useCommentLikes } from '../../hooks/useCommentLikes';
@@ -16,7 +14,6 @@ import {
   deleteGalleryComment,
   updateGalleryComment
 } from '../../services/catalog';
-import { formatPostDate } from '../../lib/format';
 import { getMediaUrl, videoPreviewUrl } from '../../lib/media';
 import { error } from '../../lib/log';
 import { useKeepForModalClose } from '../../hooks/useKeepForModalClose';
@@ -246,159 +243,82 @@ function GalleryCommentModal({
         ) : comments.length === 0 ? (
           <p className="gallery-comments-empty">Комментариев пока нет.</p>
         ) : (
-          <div className="gallery-comments-list">
-            {comments.map((comment) => {
+          <div className="gallery-comments-list modal-comments-list">
+            {mapCommentsWithDaySeparators(comments).map(({ comment, showDateSeparator, dateLabel }) => {
               const isAuthor = comment.author === user?.id;
-              const canEdit = isAuthor || userIsModerator;
-              const likeCount = countsByComment[comment.id] || 0;
-              const isLiked = userLikedSet.has(comment.id);
-              const parentComment = comment.expand?.reply_to;
               const canReply = user?.can_comment !== false;
-              const swipeEnabled = canReply && editingId !== comment.id;
 
               return (
-                <CommentSwipeReply
-                  key={comment.id}
-                  className={`gallery-comment-item${highlightedId === comment.id ? ' modal-comment-item--highlight' : ''}`}
-                  enabled={swipeEnabled}
-                  onReply={() => handleReply(comment)}
-                  innerRef={(node) => {
-                    if (node) commentItemRefs.current.set(comment.id, node);
-                    else commentItemRefs.current.delete(comment.id);
-                  }}
-                >
-                  {canEdit && (
-                    <div
-                      className="gallery-comment-item__actions"
-                      role="group"
-                      aria-label="Действия с комментарием"
-                    >
-                      <button
-                        type="button"
-                        className="gallery-comment-icon-button gallery-comment-icon-button--edit"
-                        onClick={() => handleStartEdit(comment)}
-                        disabled={editingId === comment.id}
-                        aria-label="Редактировать комментарий"
-                      >
-                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                          <path d="M4 20h4.2L19.3 8.9a2 2 0 0 0 0-2.8l-1.4-1.4a2 2 0 0 0-2.8 0L4 15.8V20Z" />
-                          <path d="m13.7 6.1 4.2 4.2" />
-                        </svg>
-                      </button>
-                      {userIsModerator && (
-                        <button
-                          type="button"
-                          className="gallery-comment-icon-button gallery-comment-icon-button--delete"
-                          onClick={() => handleDelete(comment.id)}
-                          disabled={deletingId === comment.id}
-                          aria-label="Удалить комментарий"
-                        >
-                          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                            <path d="M4 7h16" />
-                            <path d="M10 11v6" />
-                            <path d="M14 11v6" />
-                            <path d="M6 7l1 13h10l1-13" />
-                            <path d="M9 7V4h6v3" />
-                          </svg>
-                        </button>
-                      )}
+                <React.Fragment key={comment.id}>
+                  {showDateSeparator ? (
+                    <div className="comment-day-separator" role="separator">
+                      {dateLabel}
                     </div>
-                  )}
+                  ) : null}
 
-                  <div
-                    className="gallery-comment-item__header"
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => onOpenProfile?.(comment.expand?.author)}
-                    onKeyDown={(event) => {
-                      if (event.key === 'Enter' || event.key === ' ') {
-                        event.preventDefault();
-                        onOpenProfile?.(comment.expand?.author);
-                      }
+                  <CommentListItem
+                    comment={comment}
+                    isOwner={isAuthor}
+                    isHighlighted={highlightedId === comment.id}
+                    isEditing={editingId === comment.id}
+                    swipeEnabled={canReply && editingId !== comment.id}
+                    canReply={canReply}
+                    canDelete={userIsModerator}
+                    canEdit={(isAuthor || userIsModerator) && editingId !== comment.id}
+                    likeCount={countsByComment[comment.id] || 0}
+                    isLiked={userLikedSet.has(comment.id)}
+                    parentComment={comment.expand?.reply_to}
+                    userId={user?.id}
+                    onReply={() => handleReply(comment)}
+                    onToggleLike={() => handleToggleLike(comment.id)}
+                    onStartEdit={() => handleStartEdit(comment)}
+                    onDelete={() => handleDelete(comment.id)}
+                    onOpenProfile={onOpenProfile}
+                    onFocusParent={() => focusCommentInList(comment.expand?.reply_to?.id, 'start')}
+                    innerRef={(node) => {
+                      if (node) commentItemRefs.current.set(comment.id, node);
+                      else commentItemRefs.current.delete(comment.id);
                     }}
-                    aria-label={`Открыть профиль ${comment.expand?.author?.full_name || 'игрока'}`}
-                  >
-                    <Avatar
-                      user={comment.expand?.author}
-                      size="sm"
-                      className="gallery-comment-item__avatar"
-                    />
-                    <span className="gallery-comment-item__author">
-                      {comment.expand?.author?.full_name || 'Игрок секции'}
-                    </span>
-                  </div>
-
-                  {editingId === comment.id ? (
-                    <form
-                      className="gallery-comment-edit-form"
-                      onSubmit={(event) => handleSaveEdit(event, comment.id)}
-                    >
-                      <label htmlFor={`gallery-comment-edit-${comment.id}`} className="visually-hidden">
-                        Редактирование комментария
-                      </label>
-                      <PostRichTextField
-                        id={`gallery-comment-edit-${comment.id}`}
-                        value={editText}
-                        onChange={setEditText}
-                        enableFrame={false}
-                        compact
-                        placeholder="Текст комментария…"
-                        aria-label="Редактирование комментария"
-                      />
-                      <div className="gallery-comment-edit-form__actions">
-                        <button type="submit" disabled={!hasVisibleText(editText)}>
-                          Сохранить
-                        </button>
-                        <button type="button" onClick={handleCancelEdit}>
-                          Отмена
-                        </button>
-                      </div>
-                    </form>
-                  ) : (
-                    <div className="comment-body-indent">
-                      {parentComment ? (
-                        <CommentReplyQuote
-                          author={parentComment.expand?.author || null}
-                          text={parentComment.text}
-                          onOpenProfile={onOpenProfile}
-                          onActivate={() => focusCommentInList(parentComment.id, 'start')}
+                    editForm={
+                      <form
+                        className="gallery-comment-edit-form"
+                        onSubmit={(event) => handleSaveEdit(event, comment.id)}
+                      >
+                        <label htmlFor={`gallery-comment-edit-${comment.id}`} className="visually-hidden">
+                          Редактирование комментария
+                        </label>
+                        <PostRichTextField
+                          id={`gallery-comment-edit-${comment.id}`}
+                          value={editText}
+                          onChange={setEditText}
+                          enableFrame={false}
+                          compact
+                          placeholder="Текст комментария…"
+                          aria-label="Редактирование комментария"
                         />
-                      ) : null}
-                      <PostContentHtml
-                        as="p"
-                        className="gallery-comment-item__text"
-                        content={comment.text}
-                      />
-                    </div>
-                  )}
-
-                  {editingId !== comment.id && (
-                    <div className="comment-footer-row gallery-comment-item__footer">
-                      <div className="comment-footer-actions">
-                        <button
-                          type="button"
-                          className={`comment-like-btn${isLiked ? ' comment-like-btn--active' : ''}`}
-                          onClick={() => handleToggleLike(comment.id)}
-                          disabled={!user?.id}
-                          aria-label={isLiked ? 'Убрать лайк' : 'Поставить лайк'}
-                        >
-                          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                          </svg>
-                          {likeCount > 0 && (
-                            <span className="comment-like-count">{likeCount}</span>
-                          )}
-                        </button>
-                        {canReply ? (
-                          <CommentReplyButton onClick={() => handleReply(comment)} />
-                        ) : null}
-                      </div>
-                      <span className="comment-timestamp-text gallery-comment-item__date">
-                        {formatPostDate(comment.created)}
-                      </span>
-                    </div>
-                  )}
-                </CommentSwipeReply>
+                        <div className="gallery-comment-edit-form__actions">
+                          <button type="submit" disabled={!hasVisibleText(editText)}>
+                            Сохранить
+                          </button>
+                          <button type="button" onClick={handleCancelEdit}>
+                            Отмена
+                          </button>
+                        </div>
+                      </form>
+                    }
+                  >
+                    <PostContentHtml
+                      as="p"
+                      className={[
+                        'comment-content-text',
+                        isAuthor ? 'comment-content-text--own' : ''
+                      ]
+                        .filter(Boolean)
+                        .join(' ')}
+                      content={comment.text}
+                    />
+                  </CommentListItem>
+                </React.Fragment>
               );
             })}
           </div>

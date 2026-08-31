@@ -301,7 +301,6 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
                   onOpen={openProduct}
                   onDelete={handleDelete}
                   onRestore={handleRestore}
-                  onOpenFullscreen={handleOpenFullscreen}
                 />
               );
             })}

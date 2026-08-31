@@ -1,0 +1,193 @@
+import React from 'react';
+import Avatar from '../../components/ui/Avatar';
+import IconButton from '../../components/ui/IconButton';
+import CommentReplyButton from './CommentReplyButton';
+import CommentReplyQuote from './CommentReplyQuote';
+import CommentSwipeReply from './CommentSwipeReply';
+import { formatCommentTime } from '../../lib/format';
+
+/**
+ * Пузырёк комментария в стиле мессенджера (Telegram-like).
+ * @param {{
+ *   comment: any,
+ *   isOwner: boolean,
+ *   isHighlighted?: boolean,
+ *   isEditing?: boolean,
+ *   swipeEnabled?: boolean,
+ *   canReply?: boolean,
+ *   canDelete?: boolean,
+ *   canEdit?: boolean,
+ *   likeCount?: number,
+ *   isLiked?: boolean,
+ *   parentComment?: any,
+ *   userId?: string,
+ *   className?: string,
+ *   onReply?: () => void,
+ *   onToggleLike?: () => void,
+ *   onStartEdit?: () => void,
+ *   onDelete?: () => void,
+ *   onOpenProfile?: (user: any) => void,
+ *   onFocusParent?: () => void,
+ *   innerRef?: (node: HTMLElement | null) => void,
+ *   editForm?: React.ReactNode,
+ *   children?: React.ReactNode
+ * }} props
+ */
+function CommentListItem({
+  comment,
+  isOwner,
+  isHighlighted = false,
+  isEditing = false,
+  swipeEnabled = true,
+  canReply = true,
+  canDelete = false,
+  canEdit = false,
+  likeCount = 0,
+  isLiked = false,
+  parentComment = null,
+  userId = null,
+  className = '',
+  onReply,
+  onToggleLike,
+  onStartEdit,
+  onDelete,
+  onOpenProfile,
+  onFocusParent,
+  innerRef,
+  editForm = null,
+  children
+}) {
+  const author = comment.expand?.author;
+  const authorName = author?.full_name || 'Игрок секции';
+  const bubbleVariant = isOwner ? 'own' : 'other';
+  const rowClass = [
+    'comment-row',
+    isOwner ? 'comment-row--own' : 'comment-row--other',
+    isHighlighted ? 'comment-row--highlight' : '',
+    className
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  return (
+    <CommentSwipeReply
+      className={rowClass}
+      enabled={swipeEnabled && !isEditing}
+      onReply={onReply}
+      innerRef={innerRef}
+    >
+      <div className="comment-row__layout">
+        {!isOwner ? (
+          <button
+            type="button"
+            className="comment-row__avatar comment-author-profile-link"
+            onClick={() => onOpenProfile?.(author)}
+            aria-label={`Открыть профиль ${authorName}`}
+          >
+            <Avatar user={author} size="sm" />
+          </button>
+        ) : null}
+
+        <div className={`comment-bubble comment-bubble--${bubbleVariant}`}>
+          {(canEdit || canDelete) && !isEditing ? (
+            <div className="comment-bubble__actions" aria-label="Действия с комментарием">
+              {canEdit ? (
+                <IconButton
+                  ariaLabel="Редактировать комментарий"
+                  size="sm"
+                  variant="ghost"
+                  className="post-comment-icon-button post-comment-icon-button--edit"
+                  onClick={onStartEdit}
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    focusable="false"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M4 20h4.2L19.3 8.9a2 2 0 0 0 0-2.8l-1.4-1.4a2 2 0 0 0-2.8 0L4 15.8V20Z" />
+                    <path d="m13.7 6.1 4.2 4.2" />
+                  </svg>
+                </IconButton>
+              ) : null}
+              {canDelete ? (
+                <IconButton
+                  ariaLabel="Удалить комментарий"
+                  size="sm"
+                  variant="danger"
+                  className="post-comment-icon-button post-comment-icon-button--delete"
+                  onClick={onDelete}
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    focusable="false"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M4 7h16" />
+                    <path d="M10 11v6" />
+                    <path d="M14 11v6" />
+                    <path d="M6 7l1 13h10l1-13" />
+                    <path d="M9 7V4h6v3" />
+                  </svg>
+                </IconButton>
+              ) : null}
+            </div>
+          ) : null}
+
+          {isEditing ? (
+            editForm
+          ) : (
+            <>
+              {parentComment ? (
+                <CommentReplyQuote
+                  author={parentComment.expand?.author || null}
+                  text={parentComment.text}
+                  variant={bubbleVariant}
+                  inBubble
+                  onOpenProfile={onOpenProfile}
+                  onActivate={onFocusParent}
+                />
+              ) : null}
+
+              <div className="comment-bubble__body">{children}</div>
+
+              <div className="comment-bubble__meta">
+                <div className="comment-footer-actions">
+                  <button
+                    type="button"
+                    className={`comment-like-btn${isLiked ? ' comment-like-btn--active' : ''}`}
+                    onClick={onToggleLike}
+                    disabled={!userId}
+                    aria-label={isLiked ? 'Убрать лайк' : 'Поставить лайк'}
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                    </svg>
+                    {likeCount > 0 ? (
+                      <span className="comment-like-count">{likeCount}</span>
+                    ) : null}
+                  </button>
+                  {canReply ? <CommentReplyButton onClick={onReply} /> : null}
+                </div>
+                <time className="comment-bubble__time" dateTime={comment.created}>
+                  {formatCommentTime(comment.created)}
+                </time>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </CommentSwipeReply>
+  );
+}
+
+export default CommentListItem;

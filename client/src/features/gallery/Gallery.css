@@ -378,7 +378,7 @@ button.gallery-item-like:hover:not(:disabled) {
 .gallery-comments-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
 }
 
 .gallery-comment-item {

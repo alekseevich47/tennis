@@ -1,6 +1,6 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import clsx from 'clsx';
-import { videoPreviewUrl } from '../../lib/media';
+import FeedVideoPreview from '../feed/FeedVideoPreview';
 import { useGalleryNavigation } from './useGalleryNavigation';
 
 /**
@@ -79,6 +79,25 @@ function ProductGallery({
 
   const activeItem = items[index] || null;
   const isDetail = variant === 'detail';
+  const [cardInViewport, setCardInViewport] = useState(false);
+
+  useEffect(() => {
+    if (isDetail) {
+      setCardInViewport(false);
+      return undefined;
+    }
+    const node = galleryRef.current;
+    if (!node) return undefined;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        setCardInViewport(Boolean(entry?.isIntersecting) && (entry?.intersectionRatio ?? 0) >= 0.35);
+      },
+      { threshold: [0, 0.35, 0.6, 1] }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [galleryRef, isDetail, items.length, resetKey]);
   const prevItem = hasMultiple ? items[(index - 1 + items.length) % items.length] : null;
   const nextItem = hasMultiple ? items[(index + 1) % items.length] : null;
   const trackItems = hasMultiple && activeItem ? [prevItem, activeItem, nextItem] : activeItem ? [activeItem] : [];
@@ -122,16 +141,12 @@ function ProductGallery({
       const btnClass = isDetail ? 'product-detail-image-btn' : 'product-card-image-btn';
       const media = item.isVideo ? (
         <>
-          <video
-            src={videoPreviewUrl(item.url)}
-            muted
-            playsInline
-            preload="metadata"
-            aria-label={`Видео ${imageAlt}`}
+          <FeedVideoPreview
+            src={item.url}
+            alt={`Видео ${imageAlt}`}
+            inViewport={!isDetail && isCenter && cardInViewport}
+            showPlayBadge={!isDetail && isCenter}
           />
-          {!isDetail && isCenter && (
-            <span className="product-card-video-badge" aria-hidden="true">▶</span>
-          )}
         </>
       ) : (
         <img
@@ -172,6 +187,7 @@ function ProductGallery({
       hiddenMediaKey,
       imageAlt,
       isDetail,
+      cardInViewport,
       onCenterClick,
       onOpenFullscreen
     ]

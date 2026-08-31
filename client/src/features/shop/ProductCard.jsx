@@ -20,8 +20,7 @@ import { normalizeProductCategoryIds } from './productCategories';
  *   hiddenMediaKey?: string | null,
  *   onOpen: (product: any) => void,
  *   onDelete?: (productId: string) => void,
- *   onRestore?: (productId: string) => void,
- *   onOpenFullscreen?: (items: Array<{ filename: string, url: string, thumbUrl: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void
+ *   onRestore?: (productId: string) => void
  * }} props
  */
 function ProductCard({
@@ -31,8 +30,7 @@ function ProductCard({
   hiddenMediaKey = null,
   onOpen,
   onDelete,
-  onRestore,
-  onOpenFullscreen
+  onRestore
 }) {
   const { data: categories = [] } = useProductCategories();
   const { isFavorite, addItem, removeItem } = useFavorites();
@@ -82,20 +80,6 @@ function ProductCard({
   const variantMode = normalizeVariantMode(product?.variant_mode);
 
   const openProduct = useCallback(() => onOpen(product), [onOpen, product]);
-
-  const handleOpenFullscreen = useCallback((event, index) => {
-    if (!onOpenFullscreen || galleryItems.length === 0) {
-      openProduct();
-      return;
-    }
-    const activeItem = galleryItems[index];
-    onOpenFullscreen(
-      galleryItems,
-      index,
-      event.currentTarget.getBoundingClientRect(),
-      activeItem.originKey
-    );
-  }, [galleryItems, onOpenFullscreen, openProduct]);
 
   const handleDelete = useCallback(() => {
     onDelete?.(product.id);
@@ -158,7 +142,6 @@ function ProductCard({
           resetKey={product.id}
           variant="card"
           hiddenMediaKey={hiddenMediaKey}
-          onOpenFullscreen={handleOpenFullscreen}
           onCenterClick={openProduct}
           imageAlt={`Фото товара ${product.title || 'без названия'}`}
         />

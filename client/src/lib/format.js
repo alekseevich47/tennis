@@ -37,6 +37,26 @@ export function formatPostDate(dateLike) {
 }
 
 /**
+ * Только время комментария: `16:31`.
+ * @param {string | number | Date} dateLike
+ */
+export function formatCommentTime(dateLike) {
+  const d = new Date(dateLike);
+  return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+}
+
+/**
+ * Разделитель дня в ленте комментариев: `31 августа` или `15 января 2025`.
+ * @param {string | number | Date} dateLike
+ * @param {number} [currentYear]
+ */
+export function formatCommentDaySeparator(dateLike, currentYear = new Date().getFullYear()) {
+  const d = new Date(dateLike);
+  const yearSuffix = d.getFullYear() !== currentYear ? ` ${d.getFullYear()}` : '';
+  return `${d.getDate()} ${MONTHS_GENITIVE[d.getMonth()]}${yearSuffix}`;
+}
+
+/**
  * `Понедельник, 5 ноября` — заголовок карточки тренировки.
  * @param {string | number | Date} dateLike
  */
