@@ -5,8 +5,8 @@ import PostRichTextField from '../feed/PostRichTextField';
 import CommentSendButton from '../feed/CommentSendButton';
 import CommentListItem from '../feed/CommentListItem';
 import CommentReplyComposeBar from '../feed/CommentReplyComposeBar';
-import { mapCommentsWithDaySeparators } from '../feed/commentListLayout';
-import DaySeparator from '../feed/DaySeparator';
+import { groupCommentsByDay } from '../feed/commentListLayout';
+import DayGroup from '../feed/DayGroup';
 import { hasVisibleText, toDisplayHtml } from '../feed/postRichText';
 import { useGalleryComments } from '../../hooks/useGalleryComments';
 import { useCommentLikes } from '../../hooks/useCommentLikes';
@@ -245,79 +245,80 @@ function GalleryCommentModal({
           <p className="gallery-comments-empty">Комментариев пока нет.</p>
         ) : (
           <div className="gallery-comments-list modal-comments-list">
-            {mapCommentsWithDaySeparators(comments).map(({ comment, showDateSeparator, dateLabel }) => {
-              const isAuthor = comment.author === user?.id;
-              const canReply = user?.can_comment !== false;
+            {groupCommentsByDay(comments).map((group) => (
+              <DayGroup key={group.dayKey} label={group.dateLabel} variant="comments">
+                {group.items.map((comment) => {
+                  const isAuthor = comment.author === user?.id;
+                  const canReply = user?.can_comment !== false;
 
-              return (
-                <React.Fragment key={comment.id}>
-                  {showDateSeparator ? <DaySeparator label={dateLabel} /> : null}
-
-                  <CommentListItem
-                    comment={comment}
-                    isOwner={isAuthor}
-                    isHighlighted={highlightedId === comment.id}
-                    isEditing={editingId === comment.id}
-                    swipeEnabled={canReply && editingId !== comment.id}
-                    canReply={canReply}
-                    canDelete={userIsModerator}
-                    canEdit={(isAuthor || userIsModerator) && editingId !== comment.id}
-                    likeCount={countsByComment[comment.id] || 0}
-                    isLiked={userLikedSet.has(comment.id)}
-                    parentComment={comment.expand?.reply_to}
-                    userId={user?.id}
-                    onReply={() => handleReply(comment)}
-                    onToggleLike={() => handleToggleLike(comment.id)}
-                    onStartEdit={() => handleStartEdit(comment)}
-                    onDelete={() => handleDelete(comment.id)}
-                    onOpenProfile={onOpenProfile}
-                    onFocusParent={() => focusCommentInList(comment.expand?.reply_to?.id, 'start')}
-                    innerRef={(node) => {
-                      if (node) commentItemRefs.current.set(comment.id, node);
-                      else commentItemRefs.current.delete(comment.id);
-                    }}
-                    editForm={
-                      <form
-                        className="gallery-comment-edit-form"
-                        onSubmit={(event) => handleSaveEdit(event, comment.id)}
-                      >
-                        <label htmlFor={`gallery-comment-edit-${comment.id}`} className="visually-hidden">
-                          Редактирование комментария
-                        </label>
-                        <PostRichTextField
-                          id={`gallery-comment-edit-${comment.id}`}
-                          value={editText}
-                          onChange={setEditText}
-                          enableFrame={false}
-                          compact
-                          placeholder="Текст комментария…"
-                          aria-label="Редактирование комментария"
-                        />
-                        <div className="gallery-comment-edit-form__actions">
-                          <button type="submit" disabled={!hasVisibleText(editText)}>
-                            Сохранить
-                          </button>
-                          <button type="button" onClick={handleCancelEdit}>
-                            Отмена
-                          </button>
-                        </div>
-                      </form>
-                    }
-                  >
-                    <PostContentHtml
-                      as="p"
-                      className={[
-                        'comment-content-text',
-                        isAuthor ? 'comment-content-text--own' : ''
-                      ]
-                        .filter(Boolean)
-                        .join(' ')}
-                      content={comment.text}
-                    />
-                  </CommentListItem>
-                </React.Fragment>
-              );
-            })}
+                  return (
+                    <CommentListItem
+                      key={comment.id}
+                      comment={comment}
+                      isOwner={isAuthor}
+                      isHighlighted={highlightedId === comment.id}
+                      isEditing={editingId === comment.id}
+                      swipeEnabled={canReply && editingId !== comment.id}
+                      canReply={canReply}
+                      canDelete={userIsModerator}
+                      canEdit={(isAuthor || userIsModerator) && editingId !== comment.id}
+                      likeCount={countsByComment[comment.id] || 0}
+                      isLiked={userLikedSet.has(comment.id)}
+                      parentComment={comment.expand?.reply_to}
+                      userId={user?.id}
+                      onReply={() => handleReply(comment)}
+                      onToggleLike={() => handleToggleLike(comment.id)}
+                      onStartEdit={() => handleStartEdit(comment)}
+                      onDelete={() => handleDelete(comment.id)}
+                      onOpenProfile={onOpenProfile}
+                      onFocusParent={() => focusCommentInList(comment.expand?.reply_to?.id, 'start')}
+                      innerRef={(node) => {
+                        if (node) commentItemRefs.current.set(comment.id, node);
+                        else commentItemRefs.current.delete(comment.id);
+                      }}
+                      editForm={
+                        <form
+                          className="gallery-comment-edit-form"
+                          onSubmit={(event) => handleSaveEdit(event, comment.id)}
+                        >
+                          <label htmlFor={`gallery-comment-edit-${comment.id}`} className="visually-hidden">
+                            Редактирование комментария
+                          </label>
+                          <PostRichTextField
+                            id={`gallery-comment-edit-${comment.id}`}
+                            value={editText}
+                            onChange={setEditText}
+                            enableFrame={false}
+                            compact
+                            placeholder="Текст комментария…"
+                            aria-label="Редактирование комментария"
+                          />
+                          <div className="gallery-comment-edit-form__actions">
+                            <button type="submit" disabled={!hasVisibleText(editText)}>
+                              Сохранить
+                            </button>
+                            <button type="button" onClick={handleCancelEdit}>
+                              Отмена
+                            </button>
+                          </div>
+                        </form>
+                      }
+                    >
+                      <PostContentHtml
+                        as="p"
+                        className={[
+                          'comment-content-text',
+                          isAuthor ? 'comment-content-text--own' : ''
+                        ]
+                          .filter(Boolean)
+                          .join(' ')}
+                        content={comment.text}
+                      />
+                    </CommentListItem>
+                  );
+                })}
+              </DayGroup>
+            ))}
           </div>
         )}
       </div>

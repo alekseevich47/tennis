@@ -59,10 +59,13 @@ function TournamentPostCard({
   }, [players]);
 
   const comments = useMemo(
-    () => readTournamentComments(post).filter((c) => c.is_deleted !== true),
+    () =>
+      readTournamentComments(post)
+        .filter((c) => c.is_deleted !== true)
+        .sort((a, b) => new Date(b.created).getTime() - new Date(a.created).getTime()),
     [post]
   );
-  const previewComments = comments.slice(-2);
+  const previewComments = comments.slice(0, 2);
   const commentCount = comments.length;
 
   const trackViews = Boolean(user?.id) && !isSoftDeleted && post?.is_deleted !== true;

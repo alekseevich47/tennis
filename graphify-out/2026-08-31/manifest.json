@@ -1,7 +1,7 @@
 {
   "client/package.json": {
-    "mtime": 1788182252.1939645,
-    "ast_hash": "e19e467d86d272d2b74d157309963e21",
+    "mtime": 1788183203.7567992,
+    "ast_hash": "82031d238527bd31fff094884261104e",
     "semantic_hash": ""
   },
   "client/public/sw.js": {
@@ -200,8 +200,8 @@
     "semantic_hash": ""
   },
   "client/src/features/competitions/CompetitionsPage.jsx": {
-    "mtime": 1788176239.8835344,
-    "ast_hash": "2eba1fc5af7504a77ee9af698f3ec32b",
+    "mtime": 1788183194.9096186,
+    "ast_hash": "aead6e381f79040512519186e837d15d",
     "semantic_hash": ""
   },
   "client/src/features/competitions/CreateTournamentPostModal.jsx": {
@@ -215,8 +215,8 @@
     "semantic_hash": ""
   },
   "client/src/features/competitions/TournamentCommentsSection.jsx": {
-    "mtime": 1788176224.2844496,
-    "ast_hash": "e5d44c313659530c517bce04fd9a526b",
+    "mtime": 1788183201.220644,
+    "ast_hash": "3ee44740e07ad2471cf90a2c261b3354",
     "semantic_hash": ""
   },
   "client/src/features/competitions/TournamentPodium.jsx": {
@@ -225,7 +225,7 @@
     "semantic_hash": "c828242f0ee5d611583665cf8b6d5cde"
   },
   "client/src/features/competitions/TournamentPostCard.jsx": {
-    "mtime": 1788176229.5526042,
+    "mtime": 1788182361.121017,
     "ast_hash": "e042963a1686bb2e1d8f8e62f32a40b5",
     "semantic_hash": ""
   },
@@ -255,8 +255,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/FeedPage.jsx": {
-    "mtime": 1788176222.362375,
-    "ast_hash": "ce57f10866bc4ef2258eae2ec515d00b",
+    "mtime": 1788183190.3974757,
+    "ast_hash": "47406a5c2c559737377ecfa9c5e5bd24",
     "semantic_hash": ""
   },
   "client/src/features/feed/FullscreenImageViewer.jsx": {
@@ -270,13 +270,13 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostCard.jsx": {
-    "mtime": 1788176226.1377468,
+    "mtime": 1788182361.1253617,
     "ast_hash": "1b208867cada6c6719623f4d44757256",
     "semantic_hash": ""
   },
   "client/src/features/feed/PostDetailModal.jsx": {
-    "mtime": 1788176223.0590417,
-    "ast_hash": "5dcaa51109232b9761f10704cbd09fa6",
+    "mtime": 1788183196.6480389,
+    "ast_hash": "463aef1fa777330d34c3d3a87369e337",
     "semantic_hash": ""
   },
   "client/src/features/feed/PostMedia.jsx": {
@@ -290,8 +290,8 @@
     "semantic_hash": "06d70b8a0c04a44b3f6903e1312b89d2"
   },
   "client/src/features/gallery/GalleryCommentModal.jsx": {
-    "mtime": 1788171837.7168787,
-    "ast_hash": "8b7374b94e57280bad6c55c72040bbf0",
+    "mtime": 1788183203.1236818,
+    "ast_hash": "f8c19f6bbf06d6f66f07cebb9f940092",
     "semantic_hash": ""
   },
   "client/src/features/gallery/GalleryMediaOverlay.jsx": {
@@ -1635,8 +1635,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/CommentListItem.jsx": {
-    "mtime": 1788176213.882086,
-    "ast_hash": "7ce97ae577269ca693191ace3cdeb528",
+    "mtime": 1788183185.4124527,
+    "ast_hash": "5390d56e71ff3a0279af417af9ee52a4",
     "semantic_hash": ""
   },
   "client/src/features/feed/commentListLayout.js": {
@@ -1650,8 +1650,18 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/CommentContextMenu.jsx": {
-    "mtime": 1788176193.4425888,
+    "mtime": 1788182361.1223612,
     "ast_hash": "05e0566f6f4b2afd3285ec02a089f1cd",
+    "semantic_hash": ""
+  },
+  "client/src/features/feed/DaySeparator.jsx": {
+    "mtime": 1788183126.153993,
+    "ast_hash": "b3629d94ad13ec29b51945e1eb9d463d",
+    "semantic_hash": ""
+  },
+  "client/src/features/feed/useCommentTapCopy.js": {
+    "mtime": 1788183130.6024058,
+    "ast_hash": "65b37f33b70e8d64781efacbf8b1134f",
     "semantic_hash": ""
   }
 }

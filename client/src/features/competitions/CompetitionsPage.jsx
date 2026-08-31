@@ -42,8 +42,8 @@ import {
   sortPinnedByCreated,
   usePinnedBannerIndex
 } from '../feed/usePinnedBannerIndex';
-import { mapPostsWithDaySeparators } from '../feed/commentListLayout';
-import DaySeparator from '../feed/DaySeparator';
+import { groupPostsByDay } from '../feed/commentListLayout';
+import DayGroup from '../feed/DayGroup';
 import '../feed/Feed.css';
 import './Competitions.css';
 
@@ -551,29 +551,31 @@ function CompetitionsPage({
               )}
 
               {!postsLoading &&
-                mapPostsWithDaySeparators(filteredPosts).map(({ post, showDateSeparator, dateLabel }) => {
-                  const isSoftDeleted =
-                    deletedPostIds.includes(post.id) || post.is_deleted === true;
-                  return (
-                    <React.Fragment key={post.id}>
-                      {showDateSeparator ? <DaySeparator label={dateLabel} /> : null}
-                      <TournamentPostCard
-                        post={post}
-                        players={players || []}
-                        user={user}
-                        userIsModerator={moderator}
-                        isSoftDeleted={isSoftDeleted}
-                        onOpenDetail={handleOpenDetail}
-                        onRestore={handleRestorePost}
-                        onLongPress={handleLongPress}
-                        cardRef={handleRegisterCardRef(post.id)}
-                        hiddenMediaKey={hiddenMediaKey}
-                        onOpenProfile={setViewingPlayer}
-                        scrollRootRef={containerRef}
-                      />
-                    </React.Fragment>
-                  );
-                })}
+                groupPostsByDay(filteredPosts).map((group) => (
+                  <DayGroup key={group.dayKey} label={group.dateLabel} variant="feed">
+                    {group.items.map((post) => {
+                      const isSoftDeleted =
+                        deletedPostIds.includes(post.id) || post.is_deleted === true;
+                      return (
+                        <TournamentPostCard
+                          key={post.id}
+                          post={post}
+                          players={players || []}
+                          user={user}
+                          userIsModerator={moderator}
+                          isSoftDeleted={isSoftDeleted}
+                          onOpenDetail={handleOpenDetail}
+                          onRestore={handleRestorePost}
+                          onLongPress={handleLongPress}
+                          cardRef={handleRegisterCardRef(post.id)}
+                          hiddenMediaKey={hiddenMediaKey}
+                          onOpenProfile={setViewingPlayer}
+                          scrollRootRef={containerRef}
+                        />
+                      );
+                    })}
+                  </DayGroup>
+                ))}
             </div>
           </PullToRefresh>
         </div>

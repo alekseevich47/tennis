@@ -31,8 +31,8 @@ import {
   applyCachedBytesToViewerItems,
   subscribeYadiskMediaCache
 } from './yadiskMediaSessionCache';
-import { mapPostsWithDaySeparators } from './commentListLayout';
-import DaySeparator from './DaySeparator';
+import { groupPostsByDay } from './commentListLayout';
+import DayGroup from './DayGroup';
 import './Feed.css';
 
 /**
@@ -402,27 +402,29 @@ function FeedPage({
             />
           )}
 
-          {mapPostsWithDaySeparators(filteredPosts).map(({ post, showDateSeparator, dateLabel }) => {
-            const isSoftDeleted =
-              deletedPostIds.includes(post.id) || post.is_deleted === true;
-            return (
-              <React.Fragment key={post.id}>
-                {showDateSeparator ? <DaySeparator label={dateLabel} /> : null}
-                <PostCard
-                  post={post}
-                  user={user}
-                  isSoftDeleted={isSoftDeleted}
-                  userIsModerator={userIsModerator}
-                  onOpenDetail={handleOpenDetail}
-                  onRestore={handleRestorePost}
-                  onLongPress={handleLongPress}
-                  cardRef={handleRegisterCardRef(post.id)}
-                  hiddenMediaKey={hiddenMediaKey}
-                  scrollRootRef={containerRef}
-                />
-              </React.Fragment>
-            );
-          })}
+          {groupPostsByDay(filteredPosts).map((group) => (
+            <DayGroup key={group.dayKey} label={group.dateLabel} variant="feed">
+              {group.items.map((post) => {
+                const isSoftDeleted =
+                  deletedPostIds.includes(post.id) || post.is_deleted === true;
+                return (
+                  <PostCard
+                    key={post.id}
+                    post={post}
+                    user={user}
+                    isSoftDeleted={isSoftDeleted}
+                    userIsModerator={userIsModerator}
+                    onOpenDetail={handleOpenDetail}
+                    onRestore={handleRestorePost}
+                    onLongPress={handleLongPress}
+                    cardRef={handleRegisterCardRef(post.id)}
+                    hiddenMediaKey={hiddenMediaKey}
+                    scrollRootRef={containerRef}
+                  />
+                );
+              })}
+            </DayGroup>
+          ))}
         </div>
       </PullToRefresh>
 
