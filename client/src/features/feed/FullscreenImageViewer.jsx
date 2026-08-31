@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import clsx from 'clsx';
 import { usePinchZoom } from '../../hooks/usePinchZoom';
 import { useOverlayClose } from '../../hooks/useOverlayClose';
@@ -637,7 +638,7 @@ function FullscreenImageViewer({
 
   if (!activeItem) return null;
 
-  return (
+  return createPortal(
     <div
       className="fullscreen-overlay"
       role="dialog"
@@ -762,7 +763,8 @@ function FullscreenImageViewer({
           })}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

@@ -34,7 +34,8 @@ import { useInFeedViewport } from './useInFeedViewport';
  *     meta?: { albumPublicUrl?: string }
  *   ) => void,
  *   scrollRootRef?: React.RefObject<HTMLElement | null> | null,
- *   detailScrollRootRef?: React.RefObject<HTMLElement | null> | null
+ *   detailScrollRootRef?: React.RefObject<HTMLElement | null> | null,
+ *   deferVideoLoad?: boolean
  * }} props
  */
 function PostMedia({
@@ -45,7 +46,8 @@ function PostMedia({
   hiddenMediaKey = null,
   onOpenFullscreen,
   scrollRootRef = null,
-  detailScrollRootRef = null
+  detailScrollRootRef = null,
+  deferVideoLoad = false
 }) {
   const fileItems = useMemo(
     () =>
@@ -276,6 +278,8 @@ function PostMedia({
             ) : (
               <FeedVideoPreview
                 src={item.url}
+                poster={item.thumbUrl || item.previewUrl}
+                active={mediaFocused && !deferVideoLoad}
                 className="telegram-post-media-item"
                 alt={alt}
                 width="800"

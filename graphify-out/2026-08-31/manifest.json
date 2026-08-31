@@ -1,7 +1,7 @@
 {
   "client/package.json": {
-    "mtime": 1788187699.4446588,
-    "ast_hash": "dac28808554981841c04816275453366",
+    "mtime": 1788188583.5739307,
+    "ast_hash": "87c05d3efac0a1ab06c770bfe7526d22",
     "semantic_hash": ""
   },
   "client/public/sw.js": {
@@ -1580,8 +1580,8 @@
     "semantic_hash": ""
   },
   "client/src/features/shop/ProductGallery.jsx": {
-    "mtime": 1788175454.1922834,
-    "ast_hash": "458a4ab2d37bdf1b6faa5ed444ddb161",
+    "mtime": 1788188583.2332819,
+    "ast_hash": "a599d95626938fc65df5a5f8931d3e75",
     "semantic_hash": ""
   },
   "client/src/features/shop/ProductParamTemplatesModal.jsx": {
@@ -1660,8 +1660,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/useCommentTapCopy.js": {
-    "mtime": 1788184539.4970503,
-    "ast_hash": "65b37f33b70e8d64781efacbf8b1134f",
+    "mtime": 1788188559.134523,
+    "ast_hash": "0720f9593ee25147d5375e163608fa71",
     "semantic_hash": ""
   },
   "client/src/features/feed/DayGroup.jsx": {

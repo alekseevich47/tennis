@@ -34,15 +34,16 @@ function PostDetailVideoPreview({
   const videoRef = useRef(/** @type {HTMLVideoElement | null} */ (null));
   const [loaded, setLoaded] = useState(false);
   const [remaining, setRemaining] = useState(0);
+  const shouldLoad = inViewport && Boolean(src);
 
   useEffect(() => {
     setLoaded(false);
     setRemaining(0);
-  }, [src]);
+  }, [src, shouldLoad]);
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return undefined;
+    if (!video || !shouldLoad) return undefined;
 
     const syncRemaining = () => {
       const duration = Number.isFinite(video.duration) ? video.duration : 0;
@@ -60,11 +61,18 @@ function PostDetailVideoPreview({
       video.removeEventListener('durationchange', syncRemaining);
       video.removeEventListener('timeupdate', syncRemaining);
     };
-  }, [src, loaded]);
+  }, [src, loaded, shouldLoad]);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
+
+    if (!shouldLoad) {
+      video.pause();
+      video.removeAttribute('src');
+      video.load();
+      return;
+    }
 
     if (inViewport) {
       video.muted = true;
@@ -75,26 +83,28 @@ function PostDetailVideoPreview({
     } else {
       video.pause();
     }
-  }, [inViewport, src]);
+  }, [inViewport, shouldLoad, src]);
 
   return (
     <div className={['post-detail-video-preview', loaded ? 'is-loaded' : ''].filter(Boolean).join(' ')}>
       {!loaded ? <span className="post-media-skeleton post-detail-video-preview__skeleton" aria-hidden="true" /> : null}
-      <video
-        ref={videoRef}
-        src={videoPreviewUrl(src)}
-        className={className}
-        preload="metadata"
-        playsInline
-        muted
-        loop
-        disablePictureInPicture
-        aria-label={alt}
-        width={width}
-        height={height}
-        onLoadedData={() => setLoaded(true)}
-        onCanPlay={() => setLoaded(true)}
-      />
+      {shouldLoad ? (
+        <video
+          ref={videoRef}
+          src={videoPreviewUrl(src)}
+          className={className}
+          preload="metadata"
+          playsInline
+          muted
+          loop
+          disablePictureInPicture
+          aria-label={alt}
+          width={width}
+          height={height}
+          onLoadedData={() => setLoaded(true)}
+          onCanPlay={() => setLoaded(true)}
+        />
+      ) : null}
       {loaded && remaining > 0 ? (
         <span className="post-detail-video-preview__time" aria-hidden="true">
           {formatRemainingTime(remaining)}
