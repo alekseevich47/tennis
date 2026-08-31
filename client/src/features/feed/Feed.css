@@ -33,14 +33,13 @@
 .day-group--comments {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding-bottom: 12px;
+  gap: 8px;
+  padding-bottom: 10px;
 }
 
 .day-group--comments .day-separator {
   margin: 0;
-  padding-top: 88px;
-  padding-bottom: 88px;
+  padding: 6px 0 6px;
 }
 
 .visually-hidden {
