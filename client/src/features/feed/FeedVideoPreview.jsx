@@ -2,6 +2,16 @@ import React, { useEffect, useRef, useState } from 'react';
 import { videoPreviewUrl } from '../../lib/media';
 
 /**
+ * @param {number} seconds
+ */
+function formatRemainingTime(seconds) {
+  const total = Math.max(0, Math.floor(seconds));
+  const m = Math.floor(total / 60);
+  const s = total % 60;
+  return `${m}:${String(s).padStart(2, '0')}`;
+}
+
+/**
  * Видео в карточке ленты: без autoplay, значок ▶ по центру, скелетон до загрузки.
  *
  * @param {{
@@ -28,13 +38,11 @@ function FeedVideoPreview({
   const shouldLoad = active && Boolean(src);
 
   useEffect(() => {
-    setLoaded(false);
     const video = videoRef.current;
     if (!video) return;
-    video.pause();
     if (!shouldLoad) {
-      video.removeAttribute('src');
-      video.load();
+      video.pause();
+      setLoaded(false);
       return;
     }
     try {
@@ -44,28 +52,36 @@ function FeedVideoPreview({
     }
   }, [shouldLoad, src]);
 
+  if (!shouldLoad) {
+    return (
+      <div className="feed-video-preview">
+        {poster ? (
+          <img src={poster} alt="" className={className} aria-hidden="true" />
+        ) : (
+          <span className="post-media-skeleton feed-video-preview__skeleton" aria-hidden="true" />
+        )}
+        <span className="post-media-play-badge" aria-hidden="true">▶</span>
+      </div>
+    );
+  }
+
   return (
     <div className={['feed-video-preview', loaded ? 'is-loaded' : ''].filter(Boolean).join(' ')}>
       {!loaded ? <span className="post-media-skeleton feed-video-preview__skeleton" aria-hidden="true" /> : null}
-      {!shouldLoad && poster ? (
-        <img src={poster} alt="" className={className} aria-hidden="true" />
-      ) : null}
-      {shouldLoad ? (
-        <video
-          ref={videoRef}
-          src={videoPreviewUrl(src)}
-          className={className}
-          preload="metadata"
-          playsInline
-          muted
-          disablePictureInPicture
-          aria-label={alt}
-          width={width}
-          height={height}
-          onLoadedData={() => setLoaded(true)}
-          onCanPlay={() => setLoaded(true)}
-        />
-      ) : null}
+      <video
+        ref={videoRef}
+        src={videoPreviewUrl(src)}
+        className={className}
+        preload="metadata"
+        playsInline
+        muted
+        disablePictureInPicture
+        aria-label={alt}
+        width={width}
+        height={height}
+        onLoadedData={() => setLoaded(true)}
+        onCanPlay={() => setLoaded(true)}
+      />
       <span className="post-media-play-badge" aria-hidden="true">▶</span>
     </div>
   );

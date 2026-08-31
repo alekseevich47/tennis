@@ -46,10 +46,13 @@ function DeleteIcon() {
 
 /**
  * Контекстное меню комментария (long-press, модератор).
+ * Edit — только свой; на чужом — только Удалить.
  *
  * @param {{
  *   isOpen: boolean,
  *   anchorPoint?: { x: number, y: number } | null,
+ *   canEdit?: boolean,
+ *   canDelete?: boolean,
  *   onEdit?: () => void,
  *   onDelete?: () => void,
  *   onClose: () => void
@@ -58,6 +61,8 @@ function DeleteIcon() {
 export default function CommentContextMenu({
   isOpen,
   anchorPoint = null,
+  canEdit = false,
+  canDelete = true,
   onEdit,
   onDelete,
   onClose
@@ -157,24 +162,28 @@ export default function CommentContextMenu({
         aria-hidden={!isOpen}
         onTransitionEnd={handleTransitionEnd}
       >
-        <button
-          type="button"
-          role="menuitem"
-          className="post-context-menu__item"
-          onClick={() => runAndClose(onEdit)}
-        >
-          <EditIcon />
-          Редактировать
-        </button>
-        <button
-          type="button"
-          role="menuitem"
-          className="post-context-menu__item post-context-menu__item--danger"
-          onClick={() => runAndClose(onDelete)}
-        >
-          <DeleteIcon />
-          Удалить
-        </button>
+        {canEdit ? (
+          <button
+            type="button"
+            role="menuitem"
+            className="post-context-menu__item"
+            onClick={() => runAndClose(onEdit)}
+          >
+            <EditIcon />
+            Редактировать
+          </button>
+        ) : null}
+        {canDelete ? (
+          <button
+            type="button"
+            role="menuitem"
+            className="post-context-menu__item post-context-menu__item--danger"
+            onClick={() => runAndClose(onDelete)}
+          >
+            <DeleteIcon />
+            Удалить
+          </button>
+        ) : null}
       </div>
     </>,
     document.body

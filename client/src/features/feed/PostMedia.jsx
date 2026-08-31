@@ -113,17 +113,23 @@ function PostMedia({
   }, [albumPublicUrl]);
 
   useEffect(() => {
+    // В деталке не сбрасываем preferFull при уходе из viewport —
+    // иначе смена preview↔оригинал ломает обратный скролл к медиа.
+    if (variant === 'detail') {
+      setPreferFull(true);
+      return;
+    }
     setPreferFull(Boolean(mediaFocused));
-  }, [mediaFocused, setPreferFull]);
+  }, [mediaFocused, setPreferFull, variant]);
 
   useEffect(() => {
     if (!isAlbum || !albumPublicUrl) return;
     if (albumIndex !== 0) albumExpandedRef.current = true;
     setAlbumFocus(albumPublicUrl, albumIndex, {
       radius: ALBUM_PREVIEW_ALL_RADIUS,
-      preferFull: Boolean(mediaFocused)
+      preferFull: variant === 'detail' ? true : Boolean(mediaFocused)
     });
-  }, [isAlbum, albumPublicUrl, albumIndex, setAlbumFocus, mediaFocused]);
+  }, [isAlbum, albumPublicUrl, albumIndex, setAlbumFocus, mediaFocused, variant]);
 
   const items = useMemo(() => {
     if (isAlbum) {
