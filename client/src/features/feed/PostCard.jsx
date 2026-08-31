@@ -231,7 +231,6 @@ function PostCard({
           <PostMedia
             post={post}
             hiddenMediaKey={hiddenMediaKey}
-            onOpenFullscreen={onOpenFullscreen}
             scrollRootRef={scrollRootRef}
           />
           {post.caption_above === false ? (
