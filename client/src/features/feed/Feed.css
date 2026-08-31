@@ -2960,7 +2960,7 @@ button.post-card-like:hover:not(:disabled) {
 }
 
 .comment-bubble--own {
-  background: #2f89f2;
+  background: #59a8ff;
   color: #fff;
   border-radius: 14px 14px 4px 14px;
 }
@@ -2972,7 +2972,7 @@ button.post-card-like:hover:not(:disabled) {
   bottom: 0;
   width: 12px;
   height: 12px;
-  background: #2f89f2;
+  background: #59a8ff;
   clip-path: polygon(0 0, 0 100%, 100% 100%);
   z-index: 0;
 }
@@ -2995,6 +2995,25 @@ button.post-card-like:hover:not(:disabled) {
 
 .comment-bubble__body {
   min-width: 0;
+}
+
+.comment-bubble__author {
+  display: block;
+  margin: 0 0 2px;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #007aff;
+  text-align: left;
+  cursor: pointer;
+}
+
+.comment-bubble__author:hover {
+  text-decoration: underline;
 }
 
 .comment-bubble__meta {
@@ -3451,13 +3470,13 @@ button.post-card-like:hover:not(:disabled) {
 
 .modal-comment-item--highlight .comment-bubble--own,
 .comment-row--highlight .comment-bubble--own {
-  background: #2578d9;
+  background: #4b98f0;
   outline: none;
 }
 
 .modal-comment-item--highlight .comment-bubble--own::after,
 .comment-row--highlight .comment-bubble--own::after {
-  background: #2578d9;
+  background: #4b98f0;
 }
 
 .modal-comment-form-footer {

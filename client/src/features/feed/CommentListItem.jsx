@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import Avatar from '../../components/ui/Avatar';
-import IconButton from '../../components/ui/IconButton';
 import CommentReplyButton from './CommentReplyButton';
 import CommentReplyQuote from './CommentReplyQuote';
 import CommentSwipeReply from './CommentSwipeReply';
@@ -65,7 +64,8 @@ function CommentListItem({
 }) {
   const { showToast } = useToast();
   const [menuAnchor, setMenuAnchor] = useState(/** @type {{ x: number, y: number } | null} */ (null));
-  const showIconActions = !userIsModerator && (canEdit || canDelete);
+  // Long-press: свой — edit/delete любому автору; чужой — delete только модератору (canDelete).
+  const longPressEnabled = !isEditing && (canEdit || canDelete);
 
   const tapCopy = useCommentTapCopy({
     enabled: !isEditing,
@@ -79,13 +79,13 @@ function CommentListItem({
   }, [tapCopy]);
 
   const { handlers: longPressHandlers, cardStyle, ringProps } = useLongPress({
-    enabled: userIsModerator && !isEditing,
+    enabled: longPressEnabled,
     onLongPress: handleLongPress
   });
 
   const bubbleHandlers = useMemo(() => {
     const merge = (longHandler, tapHandler) => (/** @type {any} */ event) => {
-      if (userIsModerator && !isEditing) longHandler?.(event);
+      if (longPressEnabled) longHandler?.(event);
       if (!isEditing) tapHandler?.(event);
     };
 
@@ -94,11 +94,11 @@ function CommentListItem({
       onPointerMove: merge(longPressHandlers.onPointerMove, tapCopy.handlers.onPointerMove),
       onPointerUp: merge(longPressHandlers.onPointerUp, tapCopy.handlers.onPointerUp),
       onPointerCancel: merge(longPressHandlers.onPointerCancel, tapCopy.handlers.onPointerCancel),
-      onPointerLeave: userIsModerator && !isEditing ? longPressHandlers.onPointerLeave : undefined,
-      onContextMenu: userIsModerator && !isEditing ? longPressHandlers.onContextMenu : undefined,
+      onPointerLeave: longPressEnabled ? longPressHandlers.onPointerLeave : undefined,
+      onContextMenu: longPressEnabled ? longPressHandlers.onContextMenu : undefined,
       onClick: merge(longPressHandlers.onClick, tapCopy.handlers.onClick)
     };
-  }, [isEditing, longPressHandlers, tapCopy.handlers, userIsModerator]);
+  }, [isEditing, longPressEnabled, longPressHandlers, tapCopy.handlers]);
 
   const author = comment.expand?.author;
   const authorName = author?.full_name || 'Игрок секции';
@@ -134,63 +134,9 @@ function CommentListItem({
 
           <div
             className={`comment-bubble comment-bubble--${bubbleVariant}`}
-            style={userIsModerator ? cardStyle : undefined}
+            style={longPressEnabled ? cardStyle : undefined}
             {...(!isEditing ? bubbleHandlers : {})}
           >
-            {showIconActions && !isEditing ? (
-              <div className="comment-bubble__actions" aria-label="Действия с комментарием">
-                {canEdit ? (
-                  <IconButton
-                    ariaLabel="Редактировать комментарий"
-                    size="sm"
-                    variant="ghost"
-                    className="post-comment-icon-button post-comment-icon-button--edit"
-                    onClick={onStartEdit}
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      focusable="false"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M4 20h4.2L19.3 8.9a2 2 0 0 0 0-2.8l-1.4-1.4a2 2 0 0 0-2.8 0L4 15.8V20Z" />
-                      <path d="m13.7 6.1 4.2 4.2" />
-                    </svg>
-                  </IconButton>
-                ) : null}
-                {canDelete ? (
-                  <IconButton
-                    ariaLabel="Удалить комментарий"
-                    size="sm"
-                    variant="danger"
-                    className="post-comment-icon-button post-comment-icon-button--delete"
-                    onClick={onDelete}
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      focusable="false"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M4 7h16" />
-                      <path d="M10 11v6" />
-                      <path d="M14 11v6" />
-                      <path d="M6 7l1 13h10l1-13" />
-                      <path d="M9 7V4h6v3" />
-                    </svg>
-                  </IconButton>
-                ) : null}
-              </div>
-            ) : null}
-
             {isEditing ? (
               editForm
             ) : (
@@ -204,6 +150,19 @@ function CommentListItem({
                     onOpenProfile={onOpenProfile}
                     onActivate={onFocusParent}
                   />
+                ) : null}
+
+                {!isOwner ? (
+                  <button
+                    type="button"
+                    className="comment-bubble__author"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      onOpenProfile?.(author);
+                    }}
+                  >
+                    {authorName}
+                  </button>
                 ) : null}
 
                 <div className="comment-bubble__body">{children}</div>
@@ -236,11 +195,13 @@ function CommentListItem({
         </div>
       </CommentSwipeReply>
 
-      {userIsModerator ? <LongPressRing {...ringProps} /> : null}
+      {longPressEnabled ? <LongPressRing {...ringProps} /> : null}
 
       <CommentContextMenu
         isOpen={Boolean(menuAnchor)}
         anchorPoint={menuAnchor}
+        canEdit={canEdit}
+        canDelete={canDelete}
         onEdit={onStartEdit}
         onDelete={onDelete}
         onClose={() => setMenuAnchor(null)}

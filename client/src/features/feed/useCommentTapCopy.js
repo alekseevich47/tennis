@@ -11,7 +11,7 @@ function isInteractiveTapTarget(target) {
   if (!(target instanceof Element)) return false;
   return Boolean(
     target.closest(
-      'button, a, [role="button"], .comment-reply-quote, .comment-like-btn, .comment-reply-btn, .comment-media-grid, .media-preview-grid, .post-mention'
+      'button, a, [role="button"], .comment-reply-quote, .comment-like-btn, .comment-reply-btn, .comment-bubble__author, .comment-media-grid, .media-preview-grid, .post-mention'
     )
   );
 }
