@@ -530,7 +530,12 @@ function CompetitionsPage({
               ) : null
             }
           >
-            <div className="competitions-feed-list">
+            <div
+              className={clsx(
+                'competitions-feed-list',
+                pinnedPosts.length > 0 && !searchOpen && 'competitions-feed-list--has-pinned'
+              )}
+            >
               {postsLoading && <FeedListSkeleton />}
 
               {!postsLoading && filteredPosts.length === 0 && (

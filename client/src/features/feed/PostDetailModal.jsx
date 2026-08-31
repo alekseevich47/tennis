@@ -542,6 +542,7 @@ function PostDetailModal({
                     <CommentListItem
                       comment={c}
                       isOwner={isOwner}
+                      userIsModerator={userIsModerator}
                       isHighlighted={highlightedId === c.id}
                       isEditing={editingId === c.id}
                       swipeEnabled={canReply && editingId !== c.id}
