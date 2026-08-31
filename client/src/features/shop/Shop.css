@@ -287,6 +287,10 @@ label.product-category-option {
   cursor: pointer;
 }
 
+.product-gallery--card {
+  cursor: pointer;
+}
+
 .product-card-image-btn,
 .no-image {
   display: block;
@@ -296,7 +300,7 @@ label.product-category-option {
   border: none;
   background: transparent;
   color: inherit;
-  cursor: zoom-in;
+  cursor: pointer;
   font: inherit;
   touch-action: pan-y;
 }
@@ -1185,6 +1189,12 @@ label.product-category-option {
   background: transparent;
   cursor: zoom-in;
   touch-action: pan-y;
+}
+
+@media (pointer: fine) {
+  .product-detail-image-btn:not(:disabled) {
+    cursor: var(--cursor-zoom-custom);
+  }
 }
 
 .product-detail-image-btn:disabled {

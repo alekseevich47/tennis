@@ -102,6 +102,16 @@ function ProductGallery({
   const nextItem = hasMultiple ? items[(index + 1) % items.length] : null;
   const trackItems = hasMultiple && activeItem ? [prevItem, activeItem, nextItem] : activeItem ? [activeItem] : [];
 
+  const handleCardGalleryClick = useCallback(
+    (event) => {
+      if (isDetail || !onCenterClick) return;
+      if (consumeSuppressClick()) return;
+      if (event.target.closest('.product-card-dots button')) return;
+      onCenterClick();
+    },
+    [consumeSuppressClick, isDetail, onCenterClick]
+  );
+
   const handleCenterClick = useCallback(
     (event) => {
       if (consumeSuppressClick()) return;
@@ -110,6 +120,7 @@ function ProductGallery({
         return;
       }
       onCenterClick?.();
+      if (!isDetail) event.stopPropagation();
     },
     [consumeSuppressClick, index, onCenterClick, onOpenFullscreen]
   );
@@ -199,6 +210,7 @@ function ProductGallery({
         isDetail ? 'product-gallery--detail' : 'product-gallery--card',
         isSliding && 'is-sliding'
       )}
+      onClick={!isDetail && onCenterClick ? handleCardGalleryClick : undefined}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
