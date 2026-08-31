@@ -26,7 +26,7 @@ export async function listCommentsForTournamentPost(postId, { signal } = {}) {
   try {
     return /** @type {TournamentCommentRecord[]} */ (await pb.collection('tournament_comments').getFullList({
       filter: pb.filter('post = {:postId}', { postId }),
-      sort: 'created',
+      sort: '-created',
       expand: 'author,reply_to,reply_to.author',
       requestKey: null,
       signal

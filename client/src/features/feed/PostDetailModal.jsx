@@ -9,8 +9,8 @@ import CommentComposeForm from './CommentComposeForm';
 import CommentListItem from './CommentListItem';
 import CommentMediaBody from './CommentMediaBody';
 import CommentReplyComposeBar from './CommentReplyComposeBar';
-import { mapCommentsWithDaySeparators } from './commentListLayout';
-import DaySeparator from './DaySeparator';
+import { groupCommentsByDay } from './commentListLayout';
+import DayGroup from './DayGroup';
 import PostContextMenu from './PostContextMenu';
 import { hasVisibleText } from './postRichText';
 import {
@@ -88,7 +88,7 @@ function PostDetailModal({
   );
   const [highlightedId, setHighlightedId] = useState(/** @type {string | null} */ (null));
 
-  const commentsBottomRef = useRef(null);
+  const commentsTopRef = useRef(null);
   const commentItemRefs = useRef(/** @type {Map<string, HTMLElement>} */ (new Map()));
   const commentFieldRef = useRef(/** @type {{ focus: () => void, clear: () => void } | null} */ (null));
   const editFieldRef = useRef(/** @type {{ focus: () => void, clear: () => void } | null} */ (null));
@@ -182,7 +182,7 @@ function PostDetailModal({
   useEffect(() => {
     if (!isOpen || !focusComment || highlightCommentId) return undefined;
     const timer = window.setTimeout(() => {
-      commentsBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+      commentsTopRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, SCROLL_INTO_VIEW_DELAY_MS);
     return () => clearTimeout(timer);
   }, [isOpen, focusComment, highlightCommentId, postId]);
@@ -193,7 +193,7 @@ function PostDetailModal({
       return undefined;
     }
     scrollTimerRef.current = window.setTimeout(() => {
-      commentsBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+      commentsTopRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, SCROLL_INTO_VIEW_DELAY_MS);
     return () => {
       if (scrollTimerRef.current) {
@@ -235,7 +235,7 @@ function PostDetailModal({
   };
 
   const handleShowMore = () => {
-    const firstVisible = (showAll || highlightCommentId ? comments : comments.slice(-2))[0];
+    const firstVisible = (showAll || highlightCommentId ? comments : comments.slice(0, 2))[0];
     if (firstVisible) {
       const el = commentItemRefs.current.get(firstVisible.id);
       const scrollParent = findScrollParent(el);
@@ -382,7 +382,7 @@ function PostDetailModal({
 
   if (!post) return null;
 
-  const displayed = showAll || highlightCommentId ? comments : comments.slice(-2);
+  const displayed = showAll || highlightCommentId ? comments : comments.slice(0, 2);
   const canReply = user?.can_comment !== false;
 
   return (
@@ -513,18 +513,17 @@ function PostDetailModal({
             </button>
           )}
 
-          <div className="modal-comments-list">
-            {mapCommentsWithDaySeparators(displayed).map(({ comment: c, showDateSeparator, dateLabel }) => {
-              const isOwner = c.author === user?.id;
-              const isSoftDeleted = softDeletedIds.includes(c.id) || c.is_deleted === true;
+          <div className="modal-comments-list" ref={commentsTopRef}>
+            {groupCommentsByDay(displayed).map((group) => (
+              <DayGroup key={group.dayKey} label={group.dateLabel} variant="comments">
+                {group.items.map((c) => {
+                  const isOwner = c.author === user?.id;
+                  const isSoftDeleted = softDeletedIds.includes(c.id) || c.is_deleted === true;
 
-              return (
-                <React.Fragment key={c.id}>
-                  {showDateSeparator ? <DaySeparator label={dateLabel} /> : null}
-
-                  {isSoftDeleted ? (
-                    isOwner || userIsModerator ? (
-                      <div className="modal-comment-item comment-soft-deleted">
+                  if (isSoftDeleted) {
+                    if (!isOwner && !userIsModerator) return null;
+                    return (
+                      <div key={c.id} className="modal-comment-item comment-soft-deleted">
                         <span className="soft-del-msg">Вы удалили комментарий. </span>
                         <button
                           type="button"
@@ -534,9 +533,12 @@ function PostDetailModal({
                           Восстановить
                         </button>
                       </div>
-                    ) : null
-                  ) : (
+                    );
+                  }
+
+                  return (
                     <CommentListItem
+                      key={c.id}
                       comment={c}
                       isOwner={isOwner}
                       userIsModerator={userIsModerator}
@@ -595,12 +597,11 @@ function PostDetailModal({
                         }}
                       />
                     </CommentListItem>
-                  )}
-                </React.Fragment>
-              );
-            })}
+                  );
+                })}
+              </DayGroup>
+            ))}
           </div>
-          <div ref={commentsBottomRef} />
         </div>
       </Modal>
 

@@ -601,7 +601,7 @@ export async function listGalleryComments(mediaId, { signal } = {}) {
   try {
     return /** @type {GalleryCommentRecord[]} */ (await pb.collection('gallery_comments').getFullList({
       filter: pb.filter('media_id = {:mediaId} && is_deleted = false', { mediaId }),
-      sort: 'created',
+      sort: '-created',
       expand: 'author,reply_to,reply_to.author',
       requestKey: null,
       signal

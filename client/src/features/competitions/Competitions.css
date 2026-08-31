@@ -80,7 +80,7 @@
 .competitions-feed-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 0;
   margin-top: 0;
   padding-bottom: 25px;
 }

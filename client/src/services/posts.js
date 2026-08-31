@@ -148,7 +148,7 @@ export async function listCommentsForPost(postId, { signal } = {}) {
   try {
     return /** @type {CommentRecord[]} */ (await pb.collection('comments').getFullList({
       filter: pb.filter('post = {:postId}', { postId }),
-      sort: 'created',
+      sort: '-created',
       expand: 'author,reply_to,reply_to.author',
       requestKey: null,
       signal
