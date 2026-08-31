@@ -72,7 +72,8 @@ function PostCardLike({ postId, user }) {
  *   onLongPress?: (post: any, point: { x: number, y: number }) => void,
  *   cardRef?: (el: HTMLElement | null) => void,
  *   hiddenMediaKey?: string | null,
- *   scrollRootRef?: React.RefObject<HTMLElement | null>
+ *   scrollRootRef?: React.RefObject<HTMLElement | null>,
+ *   deferVideoLoad?: boolean
  * }} props
  */
 function PostCard({
@@ -85,7 +86,8 @@ function PostCard({
   onLongPress,
   cardRef,
   hiddenMediaKey,
-  scrollRootRef
+  scrollRootRef,
+  deferVideoLoad = false
 }) {
   const comments = useMemo(() => {
     return readComments(post)
@@ -234,6 +236,7 @@ function PostCard({
             post={post}
             hiddenMediaKey={hiddenMediaKey}
             scrollRootRef={scrollRootRef}
+            deferVideoLoad={deferVideoLoad}
           />
           {post.caption_above === false ? (
             <PostContentHtml

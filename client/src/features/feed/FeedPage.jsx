@@ -420,6 +420,7 @@ function FeedPage({
                     cardRef={handleRegisterCardRef(post.id)}
                     hiddenMediaKey={hiddenMediaKey}
                     scrollRootRef={containerRef}
+                    deferVideoLoad={selectedPost?.id === post.id}
                   />
                 );
               })}

@@ -131,6 +131,12 @@ export function useGalleryNavigation(length, resetKey, { index: controlledIndex,
 
   const handleTouchStart = useCallback((event) => {
     if (length <= 1) return;
+    if (
+      event.target instanceof Element &&
+      event.target.closest('.product-detail-image-btn, .product-card-image-btn')
+    ) {
+      return;
+    }
     const touch = event.touches[0];
     if (!touch) return;
     window.clearTimeout(slideTimerRef.current);
@@ -175,7 +181,12 @@ export function useGalleryNavigation(length, resetKey, { index: controlledIndex,
   const handlePointerDown = useCallback(
     (event) => {
       if (event.pointerType === 'touch' || length <= 1) return;
-      if (event.target instanceof Element && event.target.closest('.product-gallery-zone, .product-gallery-dots, .product-card-dots')) {
+      if (
+        event.target instanceof Element &&
+        event.target.closest(
+          '.product-gallery-zone, .product-gallery-dots, .product-card-dots, .product-detail-image-btn, .product-card-image-btn'
+        )
+      ) {
         return;
       }
       window.clearTimeout(slideTimerRef.current);

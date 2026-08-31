@@ -1191,12 +1191,6 @@ label.product-category-option {
   touch-action: pan-y;
 }
 
-@media (pointer: fine) {
-  .product-detail-image-btn:not(:disabled) {
-    cursor: var(--cursor-zoom-custom);
-  }
-}
-
 .product-detail-image-btn:disabled {
   cursor: default;
 }
