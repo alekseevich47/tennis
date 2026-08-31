@@ -72,7 +72,6 @@ function PostCardLike({ postId, user }) {
  *   onLongPress?: (post: any, point: { x: number, y: number }) => void,
  *   cardRef?: (el: HTMLElement | null) => void,
  *   hiddenMediaKey?: string | null,
- *   onOpenFullscreen: (items: Array<{ filename: string, url: string, isVideo: boolean, originKey: string }>, index: number, originRect?: DOMRect, originKey?: string) => void,
  *   scrollRootRef?: React.RefObject<HTMLElement | null>
  * }} props
  */
@@ -86,7 +85,6 @@ function PostCard({
   onLongPress,
   cardRef,
   hiddenMediaKey,
-  onOpenFullscreen,
   scrollRootRef
 }) {
   const comments = useMemo(() => {
@@ -125,7 +123,7 @@ function PostCard({
     if (
       event.target instanceof Element &&
       event.target.closest(
-        'button, a, input, textarea, [role="button"], .post-card-like, .post-card-comment-btn, .comments-preview-trigger, .telegram-post-media-grid'
+        'button, a, input, textarea, [role="button"], .post-card-like, .post-card-comment-btn, .comments-preview-trigger'
       )
     ) {
       return;

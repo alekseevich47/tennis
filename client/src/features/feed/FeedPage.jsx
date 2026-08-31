@@ -408,10 +408,9 @@ function FeedPage({
                 onRestore={handleRestorePost}
                 onLongPress={handleLongPress}
                 cardRef={handleRegisterCardRef(post.id)}
-                hiddenMediaKey={hiddenMediaKey}
-                onOpenFullscreen={handleOpenFullscreen}
-                scrollRootRef={containerRef}
-              />
+            hiddenMediaKey={hiddenMediaKey}
+            scrollRootRef={containerRef}
+          />
             );
           })}
         </div>
