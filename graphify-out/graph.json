@@ -4527,8 +4527,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_keepcommenteditinview",
-      "community": 78,
-      "community_name": "tournamentPosts.js",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "keepcommenteditinview.js"
     },
     {
@@ -4538,8 +4538,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_features_feed_keepcommenteditinview_findscrollparent",
-      "community": 78,
-      "community_name": "tournamentPosts.js",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "findscrollparent()"
     },
     {
@@ -4549,8 +4549,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "client_src_features_feed_keepcommenteditinview_keepcommenteditinview",
-      "community": 78,
-      "community_name": "tournamentPosts.js",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "keepcommenteditinview()"
     },
     {
@@ -4560,8 +4560,8 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "client_src_features_feed_keepcommenteditinview_restoreandkeepcommenteditinview",
-      "community": 78,
-      "community_name": "tournamentPosts.js",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "restoreandkeepcommenteditinview()"
     },
     {
@@ -8608,8 +8608,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usepostlikes",
-      "community": 101,
-      "community_name": "GalleryUploadProvider.jsx",
+      "community": 78,
+      "community_name": "tournamentPosts.js",
       "norm_label": "usepostlikes.js"
     },
     {
@@ -8619,8 +8619,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "client_src_hooks_usepostlikes_usepostlikes",
-      "community": 101,
-      "community_name": "GalleryUploadProvider.jsx",
+      "community": 78,
+      "community_name": "tournamentPosts.js",
       "norm_label": "usepostlikes()"
     },
     {
@@ -8630,8 +8630,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usepostviewtracker",
-      "community": 3,
-      "community_name": "notifications.js",
+      "community": 101,
+      "community_name": "GalleryUploadProvider.jsx",
       "norm_label": "usepostviewtracker.js"
     },
     {
@@ -8641,8 +8641,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "client_src_hooks_usepostviewtracker_usepostviewtracker",
-      "community": 3,
-      "community_name": "notifications.js",
+      "community": 101,
+      "community_name": "GalleryUploadProvider.jsx",
       "norm_label": "usepostviewtracker()"
     },
     {
@@ -11820,8 +11820,8 @@
       "source_location": "L168",
       "_origin": "ast",
       "id": "client_src_services_posts_listpostlikes",
-      "community": 101,
-      "community_name": "GalleryUploadProvider.jsx",
+      "community": 78,
+      "community_name": "tournamentPosts.js",
       "norm_label": "listpostlikes()"
     },
     {
@@ -11831,8 +11831,8 @@
       "source_location": "L190",
       "_origin": "ast",
       "id": "client_src_services_posts_togglepostlike",
-      "community": 101,
-      "community_name": "GalleryUploadProvider.jsx",
+      "community": 78,
+      "community_name": "tournamentPosts.js",
       "norm_label": "togglepostlike()"
     },
     {
@@ -12128,8 +12128,8 @@
       "source_location": "L218",
       "_origin": "ast",
       "id": "client_src_services_stats_recordcontentview",
-      "community": 3,
-      "community_name": "notifications.js",
+      "community": 101,
+      "community_name": "GalleryUploadProvider.jsx",
       "norm_label": "recordcontentview()"
     },
     {
@@ -43063,7 +43063,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/features/feed/useCommentTapCopy.js",
-      "source_location": "L69",
+      "source_location": "L91",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_usecommenttapcopy_usecommenttapcopy",
@@ -43336,7 +43336,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/useCommentTapCopy.js",
-      "source_location": "L40",
+      "source_location": "L43",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_usecommenttapcopy_usecommenttapcopy",
@@ -52108,7 +52108,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductGallery.jsx",
-      "source_location": "L218",
+      "source_location": "L230",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productgallery_productgallery",
@@ -71244,5 +71244,5 @@
       "source_file": "client/src/assets/ach/1_1.png"
     }
   ],
-  "built_at_commit": "04aadc4224625858f786b993bc34795bcacf43e2"
+  "built_at_commit": "e8efb9c51b22f247292e0fb4a473062210f637d9"
 }

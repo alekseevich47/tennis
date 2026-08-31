@@ -3,7 +3,6 @@ import { useCallback, useRef } from 'react';
 import { toPlainText } from './postRichText';
 
 const TAP_MOVE_CANCEL_PX = 10;
-const TAP_MAX_DURATION_MS = 400;
 
 /**
  * @param {EventTarget | null} target
@@ -18,7 +17,7 @@ function isInteractiveTapTarget(target) {
 }
 
 /**
- * Одиночный тап по пузырьку — копирование plain-text комментария.
+ * Одиночный тап/клик по пузырьку — копирование plain-text комментария (все пользователи).
  * @param {{
  *   text?: string,
  *   enabled?: boolean,
@@ -27,10 +26,12 @@ function isInteractiveTapTarget(target) {
  */
 export function useCommentTapCopy({ text = '', enabled = true, onCopied } = {}) {
   const startRef = useRef(/** @type {{ x: number, y: number, time: number } | null} */ (null));
+  const tapValidRef = useRef(false);
   const suppressRef = useRef(false);
 
   const suppressNextTap = useCallback(() => {
     suppressRef.current = true;
+    tapValidRef.current = false;
     startRef.current = null;
   }, []);
 
@@ -40,6 +41,7 @@ export function useCommentTapCopy({ text = '', enabled = true, onCopied } = {}) 
     if (isInteractiveTapTarget(event.target)) return;
 
     suppressRef.current = false;
+    tapValidRef.current = true;
     startRef.current = {
       x: event.clientX,
       y: event.clientY,
@@ -53,18 +55,32 @@ export function useCommentTapCopy({ text = '', enabled = true, onCopied } = {}) 
     const dx = event.clientX - start.x;
     const dy = event.clientY - start.y;
     if (Math.hypot(dx, dy) > TAP_MOVE_CANCEL_PX) {
+      tapValidRef.current = false;
       startRef.current = null;
     }
   }, []);
 
-  const onPointerUp = useCallback(async (/** @type {React.PointerEvent} */ event) => {
-    const start = startRef.current;
+  const onPointerUp = useCallback(() => {
     startRef.current = null;
-    if (!enabled || !start || suppressRef.current) return;
-    if (isInteractiveTapTarget(event.target)) return;
+  }, []);
 
-    const elapsed = performance.now() - start.time;
-    if (elapsed > TAP_MAX_DURATION_MS) return;
+  const onPointerCancel = useCallback(() => {
+    tapValidRef.current = false;
+    startRef.current = null;
+  }, []);
+
+  const onClick = useCallback(async (/** @type {React.MouseEvent} */ event) => {
+    if (suppressRef.current) {
+      event.preventDefault();
+      event.stopPropagation();
+      suppressRef.current = false;
+      tapValidRef.current = false;
+      return;
+    }
+
+    if (!enabled || !tapValidRef.current) return;
+    tapValidRef.current = false;
+    if (isInteractiveTapTarget(event.target)) return;
 
     const plain = toPlainText(text);
     if (!plain) return;
@@ -76,17 +92,6 @@ export function useCommentTapCopy({ text = '', enabled = true, onCopied } = {}) 
       /* clipboard может быть недоступен */
     }
   }, [enabled, onCopied, text]);
-
-  const onPointerCancel = useCallback(() => {
-    startRef.current = null;
-  }, []);
-
-  const onClick = useCallback((/** @type {React.MouseEvent} */ event) => {
-    if (!suppressRef.current) return;
-    event.preventDefault();
-    event.stopPropagation();
-    suppressRef.current = false;
-  }, []);
 
   return {
     handlers: {
