@@ -1,6 +1,6 @@
 {
   "name": "tabletennis-miniapp",
-  "version": "1.0.7.5",
+  "version": "1.0.7.6",
   "description": "Мини-приложение для секции настольного тенниса в мессенджере MAX",
   "private": true,
   "scripts": {
