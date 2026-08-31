@@ -5,8 +5,8 @@ import CommentComposeForm from '../feed/CommentComposeForm';
 import CommentListItem from '../feed/CommentListItem';
 import CommentMediaBody from '../feed/CommentMediaBody';
 import CommentReplyComposeBar from '../feed/CommentReplyComposeBar';
-import { mapCommentsWithDaySeparators } from '../feed/commentListLayout';
-import DaySeparator from '../feed/DaySeparator';
+import { groupCommentsByDay } from '../feed/commentListLayout';
+import DayGroup from '../feed/DayGroup';
 import { hasVisibleText } from '../feed/postRichText';
 import {
   keepCommentEditInView
@@ -60,7 +60,7 @@ function TournamentCommentsSection({
   const editFieldRef = useRef(/** @type {{ focus: () => void, clear: () => void } | null} */ (null));
   const editFormRef = useRef(/** @type {HTMLFormElement | null} */ (null));
   const commentItemRefs = useRef(/** @type {Map<string, HTMLElement>} */ (new Map()));
-  const commentsBottomRef = useRef(/** @type {HTMLDivElement | null} */ (null));
+  const commentsTopRef = useRef(/** @type {HTMLDivElement | null} */ (null));
   const scrollTimerRef = useRef(/** @type {ReturnType<typeof setTimeout> | null} */ (null));
   const highlightClearRef = useRef(/** @type {ReturnType<typeof setTimeout> | null} */ (null));
   const skipInitialScrollRef = useRef(true);
@@ -100,7 +100,7 @@ function TournamentCommentsSection({
     }
     if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
     scrollTimerRef.current = window.setTimeout(() => {
-      commentsBottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      commentsTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, SCROLL_INTO_VIEW_DELAY_MS);
     return () => {
       if (scrollTimerRef.current) {
@@ -258,22 +258,21 @@ function TournamentCommentsSection({
 
   const listNode = (
     <div className="tournament-comments">
-      <div className="tournament-comments-list modal-comments-list">
+      <div className="tournament-comments-list modal-comments-list" ref={commentsTopRef}>
         {comments.length === 0 ? (
               <p className="tournament-comments-empty">Пока нет комментариев</p>
             ) : (
-              mapCommentsWithDaySeparators(comments).map(({ comment: c, showDateSeparator, dateLabel }) => {
-                const isOwner = c.author === user?.id;
-                const isSoftDeleted = softDeletedIds.includes(c.id) || c.is_deleted === true;
-                const canReply = user?.can_comment !== false;
+              groupCommentsByDay(comments).map((group) => (
+                <DayGroup key={group.dayKey} label={group.dateLabel} variant="comments">
+                  {group.items.map((c) => {
+                    const isOwner = c.author === user?.id;
+                    const isSoftDeleted = softDeletedIds.includes(c.id) || c.is_deleted === true;
+                    const canReply = user?.can_comment !== false;
 
-                return (
-                  <React.Fragment key={c.id}>
-                    {showDateSeparator ? <DaySeparator label={dateLabel} /> : null}
-
-                    {isSoftDeleted ? (
-                      isOwner || userIsModerator ? (
-                        <div className="modal-comment-item comment-soft-deleted">
+                    if (isSoftDeleted) {
+                      if (!isOwner && !userIsModerator) return null;
+                      return (
+                        <div key={c.id} className="modal-comment-item comment-soft-deleted">
                           <span className="soft-del-msg">Вы удалили комментарий. </span>
                           <button
                             type="button"
@@ -283,9 +282,12 @@ function TournamentCommentsSection({
                             Восстановить
                           </button>
                         </div>
-                      ) : null
-                    ) : (
+                      );
+                    }
+
+                    return (
                       <CommentListItem
+                        key={c.id}
                         comment={c}
                         isOwner={isOwner}
                         userIsModerator={userIsModerator}
@@ -344,12 +346,11 @@ function TournamentCommentsSection({
                           }}
                         />
                       </CommentListItem>
-                    )}
-                  </React.Fragment>
-                );
-              })
+                    );
+                  })}
+                </DayGroup>
+              ))
             )}
-        <div ref={commentsBottomRef} />
       </div>
     </div>
   );

@@ -13,9 +13,34 @@
 .feed-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 0;
   margin-top: 0;
   padding-bottom: 25px;
+}
+
+.day-group--feed {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 10px;
+}
+
+.day-group--feed .day-separator {
+  margin: 0;
+  padding: 4px 0 6px;
+}
+
+.day-group--comments {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 12px;
+}
+
+.day-group--comments .day-separator {
+  margin: 0;
+  padding-top: 88px;
+  padding-bottom: 88px;
 }
 
 .visually-hidden {
@@ -180,6 +205,10 @@
   margin: -10px 0;
   padding: 4px 0 12px;
   pointer-events: none;
+}
+
+.day-group .day-separator {
+  margin: 0;
 }
 
 .feed-list--has-pinned,
@@ -2863,7 +2892,7 @@ button.post-card-like:hover:not(:disabled) {
 .modal-comments-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0;
   padding-right: 6px;
   box-sizing: border-box;
 }
@@ -2940,7 +2969,7 @@ button.post-card-like:hover:not(:disabled) {
 .comment-bubble--own::after {
   content: '';
   position: absolute;
-  right: 2px;
+  right: -6px;
   bottom: 0;
   width: 12px;
   height: 12px;

@@ -25,6 +25,46 @@ export function mapItemsWithDaySeparators(items, getCreated) {
   });
 }
 
+export function groupItemsByDay(items, getCreated) {
+  const currentYear = new Date().getFullYear();
+  /** @type {Array<{ dayKey: string, dateLabel: string, items: T[] }>} */
+  const groups = [];
+
+  for (const item of items) {
+    const created = getCreated(item);
+    const day = created ? dayKey(created) : '';
+    const last = groups[groups.length - 1];
+
+    if (!last || last.dayKey !== day) {
+      groups.push({
+        dayKey: day || `unknown-${groups.length}`,
+        dateLabel: created ? formatCommentDaySeparator(created, currentYear) : '',
+        items: [item]
+      });
+    } else {
+      last.items.push(item);
+    }
+  }
+
+  return groups;
+}
+
+/**
+ * @template T
+ * @param {T[]} comments
+ */
+export function groupCommentsByDay(comments) {
+  return groupItemsByDay(comments, (comment) => comment?.created);
+}
+
+/**
+ * @template T
+ * @param {T[]} posts
+ */
+export function groupPostsByDay(posts) {
+  return groupItemsByDay(posts, (post) => post?.created);
+}
+
 /**
  * Добавляет флаги разделителя дня для списка комментариев.
  * @template T
