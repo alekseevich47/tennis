@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import clsx from 'clsx';
 import { usePosts } from '../../hooks/usePosts';
 import { pinPost, unpinPost, updatePost } from '../../services/posts';
 import { isModerator } from '../../services/auth';
@@ -381,7 +382,12 @@ function FeedPage({
           ) : null
         }
       >
-        <div className="feed-list">
+        <div
+          className={clsx(
+            'feed-list',
+            pinnedPosts.length > 0 && !searchOpen && 'feed-list--has-pinned'
+          )}
+        >
           {isLoading && <FeedListSkeleton />}
 
           {!isLoading && filteredPosts.length === 0 && (
