@@ -30,6 +30,7 @@ import {
   applyCachedBytesToViewerItems,
   subscribeYadiskMediaCache
 } from './yadiskMediaSessionCache';
+import { mapPostsWithDaySeparators } from './commentListLayout';
 import './Feed.css';
 
 /**
@@ -394,23 +395,29 @@ function FeedPage({
             />
           )}
 
-          {filteredPosts.map((post) => {
+          {mapPostsWithDaySeparators(filteredPosts).map(({ post, showDateSeparator, dateLabel }) => {
             const isSoftDeleted =
               deletedPostIds.includes(post.id) || post.is_deleted === true;
             return (
-              <PostCard
-                key={post.id}
-                post={post}
-                user={user}
-                isSoftDeleted={isSoftDeleted}
-                userIsModerator={userIsModerator}
-                onOpenDetail={handleOpenDetail}
-                onRestore={handleRestorePost}
-                onLongPress={handleLongPress}
-                cardRef={handleRegisterCardRef(post.id)}
-            hiddenMediaKey={hiddenMediaKey}
-            scrollRootRef={containerRef}
-          />
+              <React.Fragment key={post.id}>
+                {showDateSeparator ? (
+                  <div className="feed-day-separator" role="separator">
+                    <span className="feed-day-separator__label">{dateLabel}</span>
+                  </div>
+                ) : null}
+                <PostCard
+                  post={post}
+                  user={user}
+                  isSoftDeleted={isSoftDeleted}
+                  userIsModerator={userIsModerator}
+                  onOpenDetail={handleOpenDetail}
+                  onRestore={handleRestorePost}
+                  onLongPress={handleLongPress}
+                  cardRef={handleRegisterCardRef(post.id)}
+                  hiddenMediaKey={hiddenMediaKey}
+                  scrollRootRef={containerRef}
+                />
+              </React.Fragment>
             );
           })}
         </div>

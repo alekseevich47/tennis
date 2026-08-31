@@ -42,6 +42,7 @@ import {
   sortPinnedByCreated,
   usePinnedBannerIndex
 } from '../feed/usePinnedBannerIndex';
+import { mapPostsWithDaySeparators } from '../feed/commentListLayout';
 import '../feed/Feed.css';
 import './Competitions.css';
 
@@ -544,25 +545,31 @@ function CompetitionsPage({
               )}
 
               {!postsLoading &&
-                filteredPosts.map((post) => {
+                mapPostsWithDaySeparators(filteredPosts).map(({ post, showDateSeparator, dateLabel }) => {
                   const isSoftDeleted =
                     deletedPostIds.includes(post.id) || post.is_deleted === true;
                   return (
-                    <TournamentPostCard
-                      key={post.id}
-                      post={post}
-                      players={players || []}
-                      user={user}
-                      userIsModerator={moderator}
-                      isSoftDeleted={isSoftDeleted}
-                      onOpenDetail={handleOpenDetail}
-                      onRestore={handleRestorePost}
-                      onLongPress={handleLongPress}
-                      cardRef={handleRegisterCardRef(post.id)}
-                      hiddenMediaKey={hiddenMediaKey}
-                      onOpenProfile={setViewingPlayer}
-                      scrollRootRef={containerRef}
-                    />
+                    <React.Fragment key={post.id}>
+                      {showDateSeparator ? (
+                        <div className="feed-day-separator" role="separator">
+                          <span className="feed-day-separator__label">{dateLabel}</span>
+                        </div>
+                      ) : null}
+                      <TournamentPostCard
+                        post={post}
+                        players={players || []}
+                        user={user}
+                        userIsModerator={moderator}
+                        isSoftDeleted={isSoftDeleted}
+                        onOpenDetail={handleOpenDetail}
+                        onRestore={handleRestorePost}
+                        onLongPress={handleLongPress}
+                        cardRef={handleRegisterCardRef(post.id)}
+                        hiddenMediaKey={hiddenMediaKey}
+                        onOpenProfile={setViewingPlayer}
+                        scrollRootRef={containerRef}
+                      />
+                    </React.Fragment>
                   );
                 })}
             </div>

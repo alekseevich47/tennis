@@ -144,8 +144,6 @@ function ProductGallery({
           <FeedVideoPreview
             src={item.url}
             alt={`Видео ${imageAlt}`}
-            inViewport={!isDetail && isCenter && cardInViewport}
-            showPlayBadge={!isDetail && isCenter}
           />
         </>
       ) : (
