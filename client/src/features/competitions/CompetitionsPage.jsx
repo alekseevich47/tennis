@@ -43,6 +43,7 @@ import {
   usePinnedBannerIndex
 } from '../feed/usePinnedBannerIndex';
 import { mapPostsWithDaySeparators } from '../feed/commentListLayout';
+import DaySeparator from '../feed/DaySeparator';
 import '../feed/Feed.css';
 import './Competitions.css';
 
@@ -555,11 +556,7 @@ function CompetitionsPage({
                     deletedPostIds.includes(post.id) || post.is_deleted === true;
                   return (
                     <React.Fragment key={post.id}>
-                      {showDateSeparator ? (
-                        <div className="feed-day-separator" role="separator">
-                          <span className="feed-day-separator__label">{dateLabel}</span>
-                        </div>
-                      ) : null}
+                      {showDateSeparator ? <DaySeparator label={dateLabel} /> : null}
                       <TournamentPostCard
                         post={post}
                         players={players || []}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import Avatar from '../../components/ui/Avatar';
 import IconButton from '../../components/ui/IconButton';
 import CommentReplyButton from './CommentReplyButton';
@@ -7,6 +7,8 @@ import CommentSwipeReply from './CommentSwipeReply';
 import CommentContextMenu from './CommentContextMenu';
 import { formatCommentTime } from '../../lib/format';
 import { LongPressRing, useLongPress } from '../../lib/longPress';
+import { useCommentTapCopy } from './useCommentTapCopy';
+import { useToast } from '../../components/ui/ToastContext';
 
 /**
  * Пузырёк комментария в стиле мессенджера (Telegram-like).
@@ -61,13 +63,42 @@ function CommentListItem({
   editForm = null,
   children
 }) {
+  const { showToast } = useToast();
   const [menuAnchor, setMenuAnchor] = useState(/** @type {{ x: number, y: number } | null} */ (null));
   const showIconActions = !userIsModerator && (canEdit || canDelete);
 
+  const tapCopy = useCommentTapCopy({
+    enabled: !isEditing,
+    text: comment?.text || '',
+    onCopied: () => showToast({ text: 'Текст скопирован' })
+  });
+
+  const handleLongPress = useCallback((point) => {
+    tapCopy.suppressNextTap();
+    setMenuAnchor(point);
+  }, [tapCopy]);
+
   const { handlers: longPressHandlers, cardStyle, ringProps } = useLongPress({
     enabled: userIsModerator && !isEditing,
-    onLongPress: (point) => setMenuAnchor(point)
+    onLongPress: handleLongPress
   });
+
+  const bubbleHandlers = useMemo(() => {
+    const merge = (longHandler, tapHandler) => (/** @type {any} */ event) => {
+      if (userIsModerator && !isEditing) longHandler?.(event);
+      if (!isEditing) tapHandler?.(event);
+    };
+
+    return {
+      onPointerDown: merge(longPressHandlers.onPointerDown, tapCopy.handlers.onPointerDown),
+      onPointerMove: merge(longPressHandlers.onPointerMove, tapCopy.handlers.onPointerMove),
+      onPointerUp: merge(longPressHandlers.onPointerUp, tapCopy.handlers.onPointerUp),
+      onPointerCancel: merge(longPressHandlers.onPointerCancel, tapCopy.handlers.onPointerCancel),
+      onPointerLeave: userIsModerator && !isEditing ? longPressHandlers.onPointerLeave : undefined,
+      onContextMenu: userIsModerator && !isEditing ? longPressHandlers.onContextMenu : undefined,
+      onClick: merge(longPressHandlers.onClick, tapCopy.handlers.onClick)
+    };
+  }, [isEditing, longPressHandlers, tapCopy.handlers, userIsModerator]);
 
   const author = comment.expand?.author;
   const authorName = author?.full_name || 'Игрок секции';
@@ -104,7 +135,7 @@ function CommentListItem({
           <div
             className={`comment-bubble comment-bubble--${bubbleVariant}`}
             style={userIsModerator ? cardStyle : undefined}
-            {...(userIsModerator && !isEditing ? longPressHandlers : {})}
+            {...(!isEditing ? bubbleHandlers : {})}
           >
             {showIconActions && !isEditing ? (
               <div className="comment-bubble__actions" aria-label="Действия с комментарием">
