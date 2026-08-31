@@ -235,7 +235,8 @@ function PostDetailModal({
   };
 
   const handleShowMore = () => {
-    const firstVisible = (showAll || highlightCommentId ? comments : comments.slice(0, 2))[0];
+    const collapsed = comments.length > 2 ? comments.slice(-2) : comments;
+    const firstVisible = (showAll || highlightCommentId ? comments : collapsed)[0];
     if (firstVisible) {
       const el = commentItemRefs.current.get(firstVisible.id);
       const scrollParent = findScrollParent(el);
@@ -382,7 +383,7 @@ function PostDetailModal({
 
   if (!post) return null;
 
-  const displayed = showAll || highlightCommentId ? comments : comments.slice(0, 2);
+  const displayed = showAll || highlightCommentId ? comments : comments.slice(-2);
   const canReply = user?.can_comment !== false;
 
   return (

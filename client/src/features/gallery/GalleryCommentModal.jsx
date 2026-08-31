@@ -260,8 +260,8 @@ function GalleryCommentModal({
                       isEditing={editingId === comment.id}
                       swipeEnabled={canReply && editingId !== comment.id}
                       canReply={canReply}
-                      canDelete={userIsModerator}
-                      canEdit={(isAuthor || userIsModerator) && editingId !== comment.id}
+                      canDelete={isAuthor || userIsModerator}
+                      canEdit={isAuthor && editingId !== comment.id}
                       likeCount={countsByComment[comment.id] || 0}
                       isLiked={userLikedSet.has(comment.id)}
                       parentComment={comment.expand?.reply_to}

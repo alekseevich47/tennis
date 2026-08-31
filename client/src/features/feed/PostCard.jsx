@@ -92,9 +92,9 @@ function PostCard({
   const comments = useMemo(() => {
     return readComments(post)
       .filter((c) => !c.is_deleted)
-      .sort((a, b) => new Date(b.created).getTime() - new Date(a.created).getTime());
+      .sort((a, b) => new Date(a.created).getTime() - new Date(b.created).getTime());
   }, [post]);
-  const previewComments = comments.slice(0, 2);
+  const previewComments = comments.slice(-2);
   const commentCount = comments.length;
 
   const trackViews = Boolean(user?.id) && !isSoftDeleted && post?.is_deleted !== true;
