@@ -451,12 +451,6 @@
   transition: opacity 0.2s ease;
 }
 
-@media (pointer: fine) {
-  .post-media-img.clickable {
-    cursor: var(--cursor-zoom-custom);
-  }
-}
-
 .post-media-img.clickable:active {
   opacity: 0.9;
 }
@@ -729,12 +723,6 @@
   background: transparent;
   cursor: zoom-in;
   color: inherit;
-}
-
-@media (pointer: fine) {
-  .telegram-media-item__open {
-    cursor: var(--cursor-zoom-custom);
-  }
 }
 
 .telegram-media-item__open img,

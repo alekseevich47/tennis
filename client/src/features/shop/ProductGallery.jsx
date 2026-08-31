@@ -117,12 +117,13 @@ function ProductGallery({
       if (consumeSuppressClick()) return;
       if (onOpenFullscreen) {
         onOpenFullscreen(event, index);
+        event.stopPropagation();
         return;
       }
       onCenterClick?.();
       if (!isDetail) event.stopPropagation();
     },
-    [consumeSuppressClick, index, onCenterClick, onOpenFullscreen]
+    [consumeSuppressClick, index, isDetail, onCenterClick, onOpenFullscreen]
   );
 
   const goPrev = useCallback(
@@ -151,12 +152,20 @@ function ProductGallery({
 
       const btnClass = isDetail ? 'product-detail-image-btn' : 'product-card-image-btn';
       const media = item.isVideo ? (
-        <>
+        isCenter || !hasMultiple ? (
           <FeedVideoPreview
             src={item.url}
+            poster={item.thumbUrl || item.previewUrl}
+            active={isCenter || !isDetail}
             alt={`Видео ${imageAlt}`}
           />
-        </>
+        ) : (
+          <img
+            src={item.thumbUrl || item.url}
+            alt=""
+            aria-hidden="true"
+          />
+        )
       ) : (
         <img
           src={isDetail ? item.url : (item.thumbUrl || item.url)}
@@ -193,6 +202,7 @@ function ProductGallery({
     [
       disabled,
       handleCenterClick,
+      hasMultiple,
       hiddenMediaKey,
       imageAlt,
       isDetail,

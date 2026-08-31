@@ -1,7 +1,7 @@
 # Graph Report - tennis  (2026-08-31)
 
 ## Corpus Check
-- 294 files · ~261,306 words
+- 294 files · ~261,364 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `04aadc42`
+- Built from commit: `e8efb9c5`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -132,8 +132,8 @@ Cohesion: 0.08
 Nodes (49): FullscreenSlideImage(), isImagePaintReady(), useYadiskLoadProgress(), PinnedBanner(), usePinnedThumbUrl(), useFetchedOriginal(), publishAlbums(), useResolvedExternalMedia() (+41 more)
 
 ### Community 3 - "notifications.js"
-Cohesion: 0.23
-Nodes (13): ModalFloatingCloseButton(), getParticipantDisplayName(), getParticipantPlayer(), PODIUM_ORDER, TournamentPodium(), readTournamentComments(), TournamentPostCard(), TournamentPostDetailModal() (+5 more)
+Cohesion: 0.26
+Nodes (11): ModalFloatingCloseButton(), getParticipantDisplayName(), getParticipantPlayer(), PODIUM_ORDER, TournamentPodium(), readTournamentComments(), TournamentPostCard(), TournamentPostDetailModal() (+3 more)
 
 ### Community 4 - "Gallery Upload Flow"
 Cohesion: 0.42
@@ -272,8 +272,8 @@ Cohesion: 0.06
 Nodes (61): createGalleryPayload(), GalleryUploadContext, GalleryUploadProvider(), isGalleryKey(), useGalleryUpload(), isProductsKey(), ProductUploadContext, ProductUploadProvider() (+53 more)
 
 ### Community 78 - "tournamentPosts.js"
-Cohesion: 0.18
-Nodes (18): findScrollParent(), keepCommentEditInView(), restoreAndKeepCommentEditInView(), PostDetailModal(), useCommentLikes(), useComments(), buildCommentMediaReorderFormData(), createComment() (+10 more)
+Cohesion: 0.17
+Nodes (18): PostDetailModal(), useCommentLikes(), useComments(), usePostLikes(), buildCommentMediaReorderFormData(), createComment(), createCommentWithProgress(), createPost() (+10 more)
 
 ### Community 79 - "isModerator"
 Cohesion: 0.20
@@ -324,8 +324,8 @@ Cohesion: 0.33
 Nodes (7): AboutAppModal(), openExternalUrl(), useAppVersionCheck(), APP_BUILD, APP_DISPLAY_VERSION, fetchRemoteAppVersion(), getVersionManifestUrl()
 
 ### Community 91 - "gestures.js"
-Cohesion: 0.47
-Nodes (7): TournamentCommentsSection(), useTournamentComments(), buildTournamentCommentMediaReorderFormData(), createTournamentComment(), createTournamentCommentWithProgress(), listCommentsForTournamentPost(), updateTournamentComment()
+Cohesion: 0.33
+Nodes (10): TournamentCommentsSection(), findScrollParent(), keepCommentEditInView(), restoreAndKeepCommentEditInView(), useTournamentComments(), buildTournamentCommentMediaReorderFormData(), createTournamentComment(), createTournamentCommentWithProgress() (+2 more)
 
 ### Community 92 - "FloatingAchievements.jsx"
 Cohesion: 0.36
@@ -360,8 +360,8 @@ Cohesion: 0.42
 Nodes (6): disableMaxVerticalSwipes(), isEditableFocus(), useMaxCloseGuard(), closeTopOverlay(), isSectionScrollAtTop(), scrollSectionToTop()
 
 ### Community 101 - "GalleryUploadProvider.jsx"
-Cohesion: 0.39
-Nodes (7): PostCard(), PostCardLike(), readComments(), usePostLikes(), formatCommentTime(), listPostLikes(), togglePostLike()
+Cohesion: 0.43
+Nodes (6): PostCard(), PostCardLike(), readComments(), usePostViewTracker(), formatCommentTime(), recordContentView()
 
 ### Community 104 - "buyMessage.js"
 Cohesion: 0.53
@@ -375,7 +375,7 @@ Nodes (5): buildBuyMessage(), buildMaxUserChatUrl(), formatProductLine(), openMa
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `error` connect `ProfilePage.jsx` to `Post Upload and UI Kit`, `notifications.js`, `Admin UI Controls`, `log.js`, `achievements.js`, `yadiskAlbumLazy.js`, `catalog.js`, `media.js`, `GalleryCommentModal.jsx`, `useFetchedOriginal.js`, `NotificationSettingsModal.jsx`, `tournamentPosts.js`, `isModerator`, `PostUploadProvider.jsx`, `postRichText.js`, `yadiskAlbumLazy.js`, `ProductForm.jsx`, `PostMedia.jsx`, `buyMessage.js`, `gestures.js`, `FloatingAchievements.jsx`, `EditTrainingModal.jsx`, `GalleryUploadProvider.jsx`?**
+- **Why does `error` connect `ProfilePage.jsx` to `Post Upload and UI Kit`, `notifications.js`, `Admin UI Controls`, `log.js`, `achievements.js`, `yadiskAlbumLazy.js`, `catalog.js`, `media.js`, `GalleryCommentModal.jsx`, `useFetchedOriginal.js`, `NotificationSettingsModal.jsx`, `tournamentPosts.js`, `isModerator`, `PostUploadProvider.jsx`, `postRichText.js`, `yadiskAlbumLazy.js`, `ProductForm.jsx`, `PostMedia.jsx`, `buyMessage.js`, `gestures.js`, `FloatingAchievements.jsx`, `EditTrainingModal.jsx`?**
   _High betweenness centrality (0.074) - this node is a cross-community bridge._
 - **Why does `react` connect `yadiskAlbumLazy.js` to `NPM Dependencies`?**
   _High betweenness centrality (0.029) - this node is a cross-community bridge._
