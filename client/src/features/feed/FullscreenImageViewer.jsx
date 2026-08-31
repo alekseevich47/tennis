@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { usePinchZoom } from '../../hooks/usePinchZoom';
 import { useOverlayClose } from '../../hooks/useOverlayClose';
 import IconButton from '../../components/ui/IconButton';
-import { videoPreviewUrl } from '../../lib/media';
+import FullscreenSlideVideo from './FullscreenSlideVideo';
 import {
   getMemberLoadProgress,
   isYadiskOriginalPending,
@@ -17,8 +17,8 @@ const NAV_ZOOM_MAX_SCALE = 1.05;
 const GESTURE_LOCK_PX = 10;
 const SLIDE_ANIMATION_MS = 240;
 const RIPPLE_ANIMATION_MS = 420;
-/** Нижний отступ тап-зоны: нативная полоска controls (~44–56px, эмпирически под Chrome/Android WebView/iOS). */
-const VIDEO_CONTROLS_RESERVED_PX = 48;
+/** Нижний отступ тап-зоны: нативная полоска controls (~56–72px, эмпирически под webview MAX). */
+const VIDEO_CONTROLS_RESERVED_PX = 72;
 const PROGRESS_RING_R = 15.5;
 const PROGRESS_RING_C = 2 * Math.PI * PROGRESS_RING_R;
 
@@ -610,6 +610,10 @@ function FullscreenImageViewer({
   };
 
   const setActiveVideoRef = useCallback((el) => {
+    if (el) {
+      el.muted = false;
+      void el.play().catch(() => {});
+    }
     onActiveVideoRef?.(el);
   }, [onActiveVideoRef]);
 
@@ -730,37 +734,19 @@ function FullscreenImageViewer({
                       <span className="fullscreen-media-pending__spinner" aria-hidden="true" />
                     </div>
                   ) : (
-                  <div className="fullscreen-video-container">
-                    <video
-                      ref={isActiveSlide ? (el) => {
-                        mediaRef.current = el;
-                        setActiveVideoRef(el);
-                      } : undefined}
-                      src={videoPreviewUrl(item.url)}
-                      className="fullscreen-target-video"
-                      controls
-                      preload="metadata"
-                      playsInline
-                      aria-label={`Полноэкранное видео ${activeIndex + 1}`}
-                      width="1200"
-                      height="900"
-                      style={{
-                        transform: isClosing && isActiveSlide && returnTransform
-                          ? returnTransform
-                          : isActiveSlide
-                          ? `translate(${position.x}px, ${position.y}px)`
-                          : undefined
-                      }}
-                    />
-                    {isActiveSlide && (
-                      <div
-                        className="fullscreen-video-tap-zone"
-                        style={{ bottom: VIDEO_CONTROLS_RESERVED_PX }}
-                        onClick={handleVideoTapToggle}
-                        aria-hidden="true"
-                      />
-                    )}
-                  </div>
+                  <FullscreenSlideVideo
+                    item={item}
+                    isActiveSlide={isActiveSlide}
+                    mediaRef={mediaRef}
+                    onActiveVideoRef={setActiveVideoRef}
+                    controlsReservedPx={VIDEO_CONTROLS_RESERVED_PX}
+                    isClosing={isClosing}
+                    isActiveSlideClosing={isActiveSlide}
+                    returnTransform={returnTransform}
+                    position={position}
+                    onTapToggle={handleVideoTapToggle}
+                    activeIndex={activeIndex}
+                  />
                   )
                 ) : (
                   <FullscreenSlideImage

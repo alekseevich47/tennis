@@ -3,17 +3,26 @@ import Avatar from '../../components/ui/Avatar';
 import PostContentHtml from './PostContentHtml';
 
 /**
- * Цитата родительского комментария (синяя полоска + аватар + имя + текст).
- * Текст всегда clamp 2 строки. Клик по цитате (не по автору) → onActivate.
+ * Цитата родительского комментария.
  * @param {{
  *   author?: import('../../lib/avatar').UserAvatarLike | null,
  *   text?: string,
+ *   variant?: 'own' | 'other',
+ *   inBubble?: boolean,
  *   onOpenProfile?: (user: any) => void,
  *   onActivate?: () => void,
  *   compact?: boolean
  * }} props
  */
-function CommentReplyQuote({ author, text, onOpenProfile, onActivate, compact = false }) {
+function CommentReplyQuote({
+  author,
+  text,
+  variant = 'other',
+  inBubble = false,
+  onOpenProfile,
+  onActivate,
+  compact = false
+}) {
   const name = author?.full_name || 'Игрок секции';
   const interactive = typeof onActivate === 'function';
 
@@ -21,7 +30,9 @@ function CommentReplyQuote({ author, text, onOpenProfile, onActivate, compact = 
     <div
       className={[
         'comment-reply-quote',
+        `comment-reply-quote--${variant}`,
         compact ? 'comment-reply-quote--compact' : '',
+        inBubble ? 'comment-reply-quote--in-bubble' : '',
         interactive ? 'comment-reply-quote--interactive' : ''
       ]
         .filter(Boolean)
@@ -59,7 +70,9 @@ function CommentReplyQuote({ author, text, onOpenProfile, onActivate, compact = 
           }}
           aria-label={`Открыть профиль ${name}`}
         >
-          <Avatar user={author} size="sm" className="comment-reply-quote__avatar" />
+          {!inBubble ? (
+            <Avatar user={author} size="sm" className="comment-reply-quote__avatar" />
+          ) : null}
           <span className="comment-reply-quote__name">{name}</span>
         </button>
         {text ? (

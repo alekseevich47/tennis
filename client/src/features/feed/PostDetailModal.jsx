@@ -1,17 +1,15 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
-import Avatar from '../../components/ui/Avatar';
 import ModalFloatingCloseButton from '../../components/ui/ModalFloatingCloseButton';
 import PostMedia from './PostMedia';
 import PostContentHtml from './PostContentHtml';
 import CommentEditInlineForm from './CommentEditInlineForm';
 import CommentComposeForm from './CommentComposeForm';
+import CommentListItem from './CommentListItem';
 import CommentMediaBody from './CommentMediaBody';
-import CommentReplyButton from './CommentReplyButton';
 import CommentReplyComposeBar from './CommentReplyComposeBar';
-import CommentReplyQuote from './CommentReplyQuote';
-import CommentSwipeReply from './CommentSwipeReply';
+import { mapCommentsWithDaySeparators } from './commentListLayout';
 import PostContextMenu from './PostContextMenu';
 import { hasVisibleText } from './postRichText';
 import {
@@ -512,178 +510,92 @@ function PostDetailModal({
           )}
 
           <div className="modal-comments-list">
-            {displayed.map((c) => {
+            {mapCommentsWithDaySeparators(displayed).map(({ comment: c, showDateSeparator, dateLabel }) => {
               const isOwner = c.author === user?.id;
               const isSoftDeleted = softDeletedIds.includes(c.id) || c.is_deleted === true;
 
-              if (isSoftDeleted) {
-                if (isOwner || userIsModerator) {
-                  return (
-                    <div key={c.id} className="modal-comment-item comment-soft-deleted">
-                      <span className="soft-del-msg">Вы удалили комментарий. </span>
-                      <button
-                        type="button"
-                        className="soft-restore-link"
-                        onClick={() => handleRestore(c.id)}
-                      >
-                        Восстановить
-                      </button>
-                    </div>
-                  );
-                }
-                return null;
-              }
-
-              const canDelete = isOwner || userIsModerator;
-              const likeCount = countsByComment[c.id] || 0;
-              const isLiked = userLikedSet.has(c.id);
-              const parentComment = c.expand?.reply_to;
-              const swipeEnabled = canReply && editingId !== c.id;
-
               return (
-                <CommentSwipeReply
-                  key={c.id}
-                  className={`modal-comment-item${highlightedId === c.id ? ' modal-comment-item--highlight' : ''}`}
-                  enabled={swipeEnabled}
-                  onReply={() => handleReply(c)}
-                  innerRef={(node) => {
-                    if (node) commentItemRefs.current.set(c.id, node);
-                    else commentItemRefs.current.delete(c.id);
-                  }}
-                >
-                  <div className="comment-header-row">
-                    <button
-                      type="button"
-                      className="comment-author-profile-link"
-                      onClick={() => onOpenProfile?.(c.expand?.author)}
-                      aria-label={`Открыть профиль ${c.expand?.author?.full_name || 'игрока'}`}
-                    >
-                      <Avatar user={c.expand?.author} size="sm" />
-                      <span className="comment-author-name">
-                        {c.expand?.author?.full_name || 'Игрок секции'}
-                      </span>
-                    </button>
-                    <div className="comment-actions-btns">
-                      {isOwner && editingId !== c.id && (
-                        <IconButton
-                          ariaLabel="Редактировать комментарий"
-                          size="sm"
-                          variant="ghost"
-                          className="post-comment-icon-button post-comment-icon-button--edit"
-                          onClick={() => handleStartEdit(c)}
-                        >
-                          <svg
-                            viewBox="0 0 24 24"
-                            aria-hidden="true"
-                            focusable="false"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="1.8"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path d="M4 20h4.2L19.3 8.9a2 2 0 0 0 0-2.8l-1.4-1.4a2 2 0 0 0-2.8 0L4 15.8V20Z" />
-                            <path d="m13.7 6.1 4.2 4.2" />
-                          </svg>
-                        </IconButton>
-                      )}
-                      {canDelete && (
-                        <IconButton
-                          ariaLabel="Удалить комментарий"
-                          size="sm"
-                          variant="danger"
-                          className="post-comment-icon-button post-comment-icon-button--delete"
-                          onClick={() => handleSoftDelete(c.id)}
-                        >
-                          <svg
-                            viewBox="0 0 24 24"
-                            aria-hidden="true"
-                            focusable="false"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="1.8"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path d="M4 7h16" />
-                            <path d="M10 11v6" />
-                            <path d="M14 11v6" />
-                            <path d="M6 7l1 13h10l1-13" />
-                            <path d="M9 7V4h6v3" />
-                          </svg>
-                        </IconButton>
-                      )}
+                <React.Fragment key={c.id}>
+                  {showDateSeparator ? (
+                    <div className="comment-day-separator" role="separator">
+                      {dateLabel}
                     </div>
-                  </div>
+                  ) : null}
 
-                  {editingId === c.id ? (
-                    <CommentEditInlineForm
-                      comment={c}
-                      collection={COMMENT_COLLECTION}
-                      formRef={editFormRef}
-                      fieldRef={editFieldRef}
-                      onSave={handleSaveEdit}
-                      onCancel={() => setEditingId(null)}
-                    />
+                  {isSoftDeleted ? (
+                    isOwner || userIsModerator ? (
+                      <div className="modal-comment-item comment-soft-deleted">
+                        <span className="soft-del-msg">Вы удалили комментарий. </span>
+                        <button
+                          type="button"
+                          className="soft-restore-link"
+                          onClick={() => handleRestore(c.id)}
+                        >
+                          Восстановить
+                        </button>
+                      </div>
+                    ) : null
                   ) : (
-                    <>
-                      <div className="comment-body-indent">
-                        {parentComment ? (
-                          <CommentReplyQuote
-                            author={parentComment.expand?.author || null}
-                            text={parentComment.text}
-                            onOpenProfile={onOpenProfile}
-                            onActivate={() => focusCommentInList(parentComment.id, 'start')}
-                          />
-                        ) : null}
-                        <CommentMediaBody
+                    <CommentListItem
+                      comment={c}
+                      isOwner={isOwner}
+                      isHighlighted={highlightedId === c.id}
+                      isEditing={editingId === c.id}
+                      swipeEnabled={canReply && editingId !== c.id}
+                      canReply={canReply}
+                      canDelete={isOwner || userIsModerator}
+                      canEdit={isOwner && editingId !== c.id}
+                      likeCount={countsByComment[c.id] || 0}
+                      isLiked={userLikedSet.has(c.id)}
+                      parentComment={c.expand?.reply_to}
+                      userId={user?.id}
+                      onReply={() => handleReply(c)}
+                      onToggleLike={() => handleToggleLike(c.id)}
+                      onStartEdit={() => handleStartEdit(c)}
+                      onDelete={() => handleSoftDelete(c.id)}
+                      onOpenProfile={onOpenProfile}
+                      onFocusParent={() => focusCommentInList(c.expand?.reply_to?.id, 'start')}
+                      innerRef={(node) => {
+                        if (node) commentItemRefs.current.set(c.id, node);
+                        else commentItemRefs.current.delete(c.id);
+                      }}
+                      editForm={
+                        <CommentEditInlineForm
                           comment={c}
-                          collection="comments"
-                          onOpenMedia={(items, index, event) => {
-                            if (!onOpenFullscreen || !items.length) return;
-                            const gallery = items.map((item) => ({
-                              filename: item.name,
-                              url: item.fullUrl || item.url,
-                              thumbUrl: item.url,
-                              isVideo: item.isVideo,
-                              originKey: `comment-${c.id}-${item.key}`
-                            }));
-                            const originRect =
-                              event?.currentTarget?.getBoundingClientRect?.() || null;
-                            onOpenFullscreen(
-                              gallery,
-                              index,
-                              originRect,
-                              gallery[index]?.originKey
-                            );
-                          }}
+                          collection={COMMENT_COLLECTION}
+                          formRef={editFormRef}
+                          fieldRef={editFieldRef}
+                          onSave={handleSaveEdit}
+                          onCancel={() => setEditingId(null)}
                         />
-                      </div>
-                      <div className="comment-footer-row">
-                        <div className="comment-footer-actions">
-                          <button
-                            type="button"
-                            className={`comment-like-btn${isLiked ? ' comment-like-btn--active' : ''}`}
-                            onClick={() => handleToggleLike(c.id)}
-                            disabled={!user?.id}
-                            aria-label={isLiked ? 'Убрать лайк' : 'Поставить лайк'}
-                          >
-                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                            </svg>
-                            {likeCount > 0 && (
-                              <span className="comment-like-count">{likeCount}</span>
-                            )}
-                          </button>
-                          {canReply ? (
-                            <CommentReplyButton onClick={() => handleReply(c)} />
-                          ) : null}
-                        </div>
-                        <span className="comment-timestamp-text">{formatPostDate(c.created)}</span>
-                      </div>
-                    </>
+                      }
+                    >
+                      <CommentMediaBody
+                        comment={c}
+                        collection="comments"
+                        variant={isOwner ? 'own' : 'other'}
+                        onOpenMedia={(items, index, event) => {
+                          if (!onOpenFullscreen || !items.length) return;
+                          const gallery = items.map((item) => ({
+                            filename: item.name,
+                            url: item.fullUrl || item.url,
+                            thumbUrl: item.url,
+                            isVideo: item.isVideo,
+                            originKey: `comment-${c.id}-${item.key}`
+                          }));
+                          const originRect =
+                            event?.currentTarget?.getBoundingClientRect?.() || null;
+                          onOpenFullscreen(
+                            gallery,
+                            index,
+                            originRect,
+                            gallery[index]?.originKey
+                          );
+                        }}
+                      />
+                    </CommentListItem>
                   )}
-                </CommentSwipeReply>
+                </React.Fragment>
               );
             })}
           </div>

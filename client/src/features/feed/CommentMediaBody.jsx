@@ -13,10 +13,11 @@ import {
  * @param {{
  *   comment: any,
  *   collection: 'comments' | 'tournament_comments',
+ *   variant?: 'own' | 'other',
  *   onOpenMedia?: (items: any[], index: number, event: React.MouseEvent) => void
  * }} props
  */
-export default function CommentMediaBody({ comment, collection, onOpenMedia }) {
+export default function CommentMediaBody({ comment, collection, variant = 'other', onOpenMedia }) {
   const names = mediaNames(comment?.media);
   const items = useMemo(
     () =>
@@ -41,7 +42,16 @@ export default function CommentMediaBody({ comment, collection, onOpenMedia }) {
   const text = comment?.text || '';
   const captionAbove = Boolean(comment?.caption_above);
   const textNode = text ? (
-    <PostContentHtml as="p" className="comment-content-text" content={text} />
+    <PostContentHtml
+      as="p"
+      className={[
+        'comment-content-text',
+        variant === 'own' ? 'comment-content-text--own' : ''
+      ]
+        .filter(Boolean)
+        .join(' ')}
+      content={text}
+    />
   ) : null;
   const mediaNode =
     items.length > 0 ? (
