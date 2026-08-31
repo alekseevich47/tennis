@@ -66,6 +66,7 @@ function TournamentPostDetailModal({
   const menuBtnRef = useRef(/** @type {HTMLButtonElement | null} */ (null));
   const closeBtnRef = useRef(/** @type {HTMLButtonElement | null} */ (null));
   const commentsSectionRef = useRef(/** @type {HTMLElement | null} */ (null));
+  const modalBodyRef = useRef(/** @type {HTMLDivElement | null} */ (null));
 
   const playerMap = useMemo(() => {
     const map = new Map();
@@ -147,6 +148,7 @@ function TournamentPostDetailModal({
         ariaLabel="Просмотр итогов турнира и комментариев"
         size="large"
         showCloseButton={false}
+        bodyRef={modalBodyRef}
         footer={
           <div
             ref={setComposeTarget}
@@ -228,6 +230,7 @@ function TournamentPostDetailModal({
           className="tournament-post-media"
           hiddenMediaKey={hiddenMediaKey}
           onOpenFullscreen={onOpenFullscreen}
+          detailScrollRootRef={modalBodyRef}
         />
 
         {post.caption_above === false && post.content ? (

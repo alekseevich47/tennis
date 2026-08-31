@@ -6,7 +6,6 @@ import CommentsPreview from '../feed/CommentsPreview';
 import TournamentPodium from './TournamentPodium';
 import { getParticipantDisplayName, getParticipantPlayer } from './tournamentParticipants';
 import sectionAvatarUrl from '../../assets/sm-avatar.png';
-import { formatPostDate } from '../../lib/format';
 import { usePostViewTracker } from '../../hooks/usePostViewTracker';
 import { LongPressRing, useLongPress } from '../../lib/longPress';
 
@@ -169,7 +168,6 @@ function TournamentPostCard({
           <div className="section-meta">
             <span className="section-title-name">Секция Миленьких</span>
             <span className="post-date-line">
-              <span className="post-date">{formatPostDate(post.created)}</span>
               {post.post_number ? <span className="post-number">#{post.post_number}</span> : null}
               {post.is_pinned ? (
                 <svg

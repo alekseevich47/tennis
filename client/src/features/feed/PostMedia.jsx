@@ -9,6 +9,7 @@ import {
   mediaNames
 } from '../../lib/media';
 import FeedVideoPreview from './FeedVideoPreview';
+import PostDetailVideoPreview from './PostDetailVideoPreview';
 import ProgressiveImage from './ProgressiveImage';
 import AlbumStackBadge from './AlbumStackBadge';
 import MediaSwipeDots from './MediaSwipeDots';
@@ -32,7 +33,8 @@ import { useInFeedViewport } from './useInFeedViewport';
  *     originKey?: string,
  *     meta?: { albumPublicUrl?: string }
  *   ) => void,
- *   scrollRootRef?: React.RefObject<HTMLElement | null> | null
+ *   scrollRootRef?: React.RefObject<HTMLElement | null> | null,
+ *   detailScrollRootRef?: React.RefObject<HTMLElement | null> | null
  * }} props
  */
 function PostMedia({
@@ -42,7 +44,8 @@ function PostMedia({
   className,
   hiddenMediaKey = null,
   onOpenFullscreen,
-  scrollRootRef = null
+  scrollRootRef = null,
+  detailScrollRootRef = null
 }) {
   const fileItems = useMemo(
     () =>
@@ -76,8 +79,8 @@ function PostMedia({
   );
 
   const { setRef: setViewportRef, focused: mediaFocused } = useInFeedViewport(
-    variant === 'card' ? scrollRootRef : null,
-    { enabled: variant === 'card' }
+    variant === 'card' ? scrollRootRef : detailScrollRootRef,
+    { enabled: variant === 'card' || Boolean(detailScrollRootRef) }
   );
 
   const albumId = useMemo(
@@ -260,17 +263,25 @@ function PostMedia({
             );
           }
 
-          const video = (
-            <FeedVideoPreview
-              src={item.url}
-              className="telegram-post-media-item"
-              alt={alt}
-              inViewport={variant === 'card' && mediaFocused}
-              showPlayBadge={variant === 'card'}
-              width="800"
-              height="600"
-            />
-          );
+          const video =
+            variant === 'detail' ? (
+              <PostDetailVideoPreview
+                src={item.url}
+                className="telegram-post-media-item"
+                alt={alt}
+                inViewport={mediaFocused}
+                width="800"
+                height="600"
+              />
+            ) : (
+              <FeedVideoPreview
+                src={item.url}
+                className="telegram-post-media-item"
+                alt={alt}
+                width="800"
+                height="600"
+              />
+            );
 
           if (!canOpenFullscreen) {
             return (

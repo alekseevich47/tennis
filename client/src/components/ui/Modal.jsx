@@ -56,7 +56,8 @@ function Modal({
   headerActions,
   footer,
   size = 'default',
-  originRect = null
+  originRect = null,
+  bodyRef = null
 }) {
   const titleId = useId();
   const dialogRef = useRef(null);
@@ -271,7 +272,7 @@ function Modal({
           </h2>
         )}
 
-        <div className="ui-modal-body">{children}</div>
+        <div className="ui-modal-body" ref={bodyRef}>{children}</div>
 
         {footer && <div className="ui-modal-footer">{footer}</div>}
       </div>
