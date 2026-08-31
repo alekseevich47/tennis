@@ -93,6 +93,7 @@ function PostDetailModal({
   const editFieldRef = useRef(/** @type {{ focus: () => void, clear: () => void } | null} */ (null));
   const editFormRef = useRef(/** @type {HTMLFormElement | null} */ (null));
   const isAddingCommentRef = useRef(false);
+  const modalBodyRef = useRef(/** @type {HTMLDivElement | null} */ (null));
   const scrollTimerRef = useRef(null);
   const highlightClearRef = useRef(/** @type {ReturnType<typeof setTimeout> | null} */ (null));
   const expandAnchorRef = useRef(
@@ -391,6 +392,7 @@ function PostDetailModal({
         ariaLabel="Просмотр поста и комментариев"
         size="large"
         showCloseButton={false}
+        bodyRef={modalBodyRef}
         footer={
           editingId ? null : user?.can_comment === false ? (
             <div className="comment-restricted-message">
@@ -487,6 +489,7 @@ function PostDetailModal({
           variant="detail"
           hiddenMediaKey={hiddenMediaKey}
           onOpenFullscreen={onOpenFullscreen}
+          detailScrollRootRef={modalBodyRef}
         />
         {post.caption_above === false ? (
           <PostContentHtml
