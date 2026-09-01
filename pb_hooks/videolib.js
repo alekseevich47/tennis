@@ -120,6 +120,65 @@ function markProcessed(inputPath) {
 }
 
 /**
+ * @param {*} value
+ * @returns {string}
+ */
+function bytesToText(value) {
+  if (value == null) return '';
+  if (typeof value === 'string') return value;
+  if (typeof value.length === 'number') {
+    var s = '';
+    for (var i = 0; i < value.length; i++) {
+      s += String.fromCharCode(value[i] & 0xff);
+    }
+    return s;
+  }
+  return String(value);
+}
+
+/**
+ * stdout из $os.cmd: combinedOutput() в JSVM часто не возвращает текст.
+ *
+ * @param {*} cmd
+ * @returns {string}
+ */
+function cmdStdoutText(cmd) {
+  try {
+    var text = bytesToText(cmd.combinedOutput());
+    if (text) return text;
+  } catch (err) {
+    var fromErr = bytesToText(
+      err && typeof err.output === 'function' ? err.output() : err && err.output
+    );
+    if (fromErr) return fromErr;
+    throw err;
+  }
+  try {
+    if (typeof cmd.output === 'function') {
+      var alt = bytesToText(cmd.output());
+      if (alt) return alt;
+    }
+  } catch (_) {}
+  return '';
+}
+
+/**
+ * @param {string} raw
+ * @returns {{ width: number, height: number, videoCodec: string } | null}
+ */
+function parseProbeCsvOutput(raw) {
+  var line = bytesToText(raw).trim();
+  if (!line) return null;
+  var parts = line.split(',');
+  if (parts.length < 3) return null;
+  var width = parseInt(parts[0], 10);
+  var height = parseInt(parts[1], 10);
+  var codec = String(parts[2] || '').trim().toLowerCase();
+  if (!width || !height || !codec) return null;
+  return { width: width, height: height, videoCodec: codec };
+}
+
+/**
  * @param {string} line
  * @returns {boolean}
  */
@@ -128,13 +187,11 @@ function isProbeCodecToken(line) {
 }
 
 /**
- * ffprobe default=nw=1 — порядок полей не гарантирован; JSON.parse в JSVM ломается.
- *
  * @param {string} raw
  * @returns {{ width: number, height: number, videoCodec: string } | null}
  */
 function parseProbeDefaultOutput(raw) {
-  var lines = String(raw || '')
+  var lines = bytesToText(raw)
     .trim()
     .split(/\r?\n/)
     .map(function (line) {
@@ -156,10 +213,26 @@ function parseProbeDefaultOutput(raw) {
 
 /**
  * @param {string} inputPath
- * @returns {{ width: number, height: number, videoCodec: string } | null}
+ * @returns {{ meta: { width: number, height: number, videoCodec: string } | null, raw: string }}
  */
-function probeVideo(inputPath) {
-  var cmd = $os.cmd(
+function probeVideoWithRaw(inputPath) {
+  var csvCmd = $os.cmd(
+    ffprobeBin(),
+    '-v',
+    'error',
+    '-select_streams',
+    'v:0',
+    '-show_entries',
+    'stream=width,height,codec_name',
+    '-of',
+    'csv=p=0:s=,',
+    inputPath
+  );
+  var raw = cmdStdoutText(csvCmd);
+  var meta = parseProbeCsvOutput(raw);
+  if (meta) return { meta: meta, raw: raw };
+
+  var defCmd = $os.cmd(
     ffprobeBin(),
     '-v',
     'error',
@@ -171,7 +244,17 @@ function probeVideo(inputPath) {
     'default=nw=1:nk=1',
     inputPath
   );
-  return parseProbeDefaultOutput(cmd.combinedOutput());
+  raw = cmdStdoutText(defCmd);
+  meta = parseProbeDefaultOutput(raw);
+  return { meta: meta, raw: raw };
+}
+
+/**
+ * @param {string} inputPath
+ * @returns {{ width: number, height: number, videoCodec: string } | null}
+ */
+function probeVideo(inputPath) {
+  return probeVideoWithRaw(inputPath).meta;
 }
 
 /**
@@ -180,18 +263,32 @@ function probeVideo(inputPath) {
  */
 function waitAndProbeVideo(inputPath) {
   var lastErr = '';
+  var lastRaw = '';
   for (var i = 0; i < INPUT_WAIT_ATTEMPTS; i++) {
     try {
-      var meta = probeVideo(inputPath);
-      if (meta) return meta;
+      var result = probeVideoWithRaw(inputPath);
+      if (result.raw) lastRaw = result.raw;
+      if (result.meta) return result.meta;
     } catch (err) {
       lastErr = err && err.message ? err.message : String(err);
     }
     if (i + 1 < INPUT_WAIT_ATTEMPTS) sleep(INPUT_WAIT_MS);
   }
   if (lastErr) console.log('[video-transcode] probe failed: ' + lastErr);
-  else console.log('[video-transcode] probe failed: no metadata for ' + inputPath);
+  else {
+    var preview = lastRaw ? lastRaw.replace(/\s+/g, ' ').slice(0, 120) : '(empty)';
+    console.log('[video-transcode] probe failed: no metadata for ' + inputPath + ' raw=' + preview);
+  }
   return null;
+}
+
+/**
+ * @param {string} inputPath
+ * @returns {'remux' | 'scale' | 'transcode'}
+ */
+function fallbackModeForPath(inputPath) {
+  if (/\.(mp4|mov|m4v)$/i.test(inputPath)) return 'remux';
+  return 'transcode';
 }
 
 /**
@@ -315,22 +412,23 @@ function transcodeFileInPlace(inputPath) {
   if (isAlreadyProcessed(inputPath)) return true;
 
   var meta = waitAndProbeVideo(inputPath);
-  if (!meta) {
-    console.log('[video-transcode] input not ready: ' + inputPath);
-    return false;
+  var mode;
+  if (meta) {
+    mode = chooseTranscodeMode(meta);
+    console.log(
+      '[video-transcode] mode=' +
+        mode +
+        ' ' +
+        meta.width +
+        'x' +
+        meta.height +
+        ' ' +
+        meta.videoCodec
+    );
+  } else {
+    mode = fallbackModeForPath(inputPath);
+    console.log('[video-transcode] mode=' + mode + ' (probe fallback) ' + inputPath);
   }
-
-  var mode = chooseTranscodeMode(meta);
-  console.log(
-    '[video-transcode] mode=' +
-      mode +
-      ' ' +
-      meta.width +
-      'x' +
-      meta.height +
-      ' ' +
-      meta.videoCodec
-  );
 
   var tempOut = $filepath.join(
     $os.tempDir(),
