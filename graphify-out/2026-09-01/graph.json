@@ -391,8 +391,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "client_package_dependencies_react",
-      "community": 86,
-      "community_name": "PostMedia.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "react"
     },
     {
@@ -402,8 +402,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "react",
-      "community": 86,
-      "community_name": "PostMedia.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "react"
     },
     {
@@ -677,8 +677,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_app",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 78,
+      "community_name": "tournamentPosts.js",
       "norm_label": "app.jsx"
     },
     {
@@ -688,8 +688,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "client_src_app_tab_titles",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 78,
+      "community_name": "tournamentPosts.js",
       "norm_label": "tab_titles"
     },
     {
@@ -699,8 +699,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "client_src_app_getinitialfavoriteproductids",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 78,
+      "community_name": "tournamentPosts.js",
       "norm_label": "getinitialfavoriteproductids()"
     },
     {
@@ -710,8 +710,8 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "client_src_app_appinner",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 78,
+      "community_name": "tournamentPosts.js",
       "norm_label": "appinner()"
     },
     {
@@ -732,8 +732,8 @@
       "source_location": "L126",
       "_origin": "ast",
       "id": "client_src_app_appmain",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "appmain()"
     },
     {
@@ -743,8 +743,8 @@
       "source_location": "L652",
       "_origin": "ast",
       "id": "client_src_app_app",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "app()"
     },
     {
@@ -754,8 +754,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_achievementsblock",
-      "community": 58,
-      "community_name": "achievements.js",
+      "community": 107,
+      "community_name": "compressImage",
       "norm_label": "achievementsblock.jsx"
     },
     {
@@ -765,8 +765,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "client_src_components_achievementsblock_getcurrentleveltitle",
-      "community": 58,
-      "community_name": "achievements.js",
+      "community": 107,
+      "community_name": "compressImage",
       "norm_label": "getcurrentleveltitle()"
     },
     {
@@ -776,8 +776,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_components_achievementsblock_clampprogress",
-      "community": 58,
-      "community_name": "achievements.js",
+      "community": 107,
+      "community_name": "compressImage",
       "norm_label": "clampprogress()"
     },
     {
@@ -787,8 +787,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "client_src_components_achievementsblock_getprogressbarcolorclass",
-      "community": 58,
-      "community_name": "achievements.js",
+      "community": 107,
+      "community_name": "compressImage",
       "norm_label": "getprogressbarcolorclass()"
     },
     {
@@ -798,8 +798,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "client_src_components_achievementsblock_gettooltipkey",
-      "community": 58,
-      "community_name": "achievements.js",
+      "community": 107,
+      "community_name": "compressImage",
       "norm_label": "gettooltipkey()"
     },
     {
@@ -809,8 +809,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_components_achievementsblock_gettooltiptext",
-      "community": 58,
-      "community_name": "achievements.js",
+      "community": 107,
+      "community_name": "compressImage",
       "norm_label": "gettooltiptext()"
     },
     {
@@ -820,8 +820,8 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "client_src_components_achievementsblock_achievementrow",
-      "community": 58,
-      "community_name": "achievements.js",
+      "community": 107,
+      "community_name": "compressImage",
       "norm_label": "achievementrow()"
     },
     {
@@ -831,8 +831,8 @@
       "source_location": "L136",
       "_origin": "ast",
       "id": "client_src_components_achievementsblock_achievementsblock",
-      "community": 58,
-      "community_name": "achievements.js",
+      "community": 107,
+      "community_name": "compressImage",
       "norm_label": "achievementsblock()"
     },
     {
@@ -864,8 +864,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_avatarcropmodal",
-      "community": 92,
-      "community_name": "gestures.js",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "avatarcropmodal.jsx"
     },
     {
@@ -875,8 +875,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_components_avatarcropmodal_getcropcircle",
-      "community": 92,
-      "community_name": "gestures.js",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "getcropcircle()"
     },
     {
@@ -886,8 +886,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "client_src_components_avatarcropmodal_getimageplacement",
-      "community": 92,
-      "community_name": "gestures.js",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "getimageplacement()"
     },
     {
@@ -897,8 +897,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "client_src_components_avatarcropmodal_avatarcropmodal",
-      "community": 92,
-      "community_name": "gestures.js",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "avatarcropmodal()"
     },
     {
@@ -1051,8 +1051,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "galleryuploadprovider.jsx"
     },
     {
@@ -1062,8 +1062,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_galleryuploadcontext",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "galleryuploadcontext"
     },
     {
@@ -1073,8 +1073,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_isgallerykey",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "isgallerykey()"
     },
     {
@@ -1084,8 +1084,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_creategallerypayload",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "creategallerypayload()"
     },
     {
@@ -1095,8 +1095,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_getvideoaspectratio",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "getvideoaspectratio()"
     },
     {
@@ -1106,8 +1106,8 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_preparegalleryuploaditem",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "preparegalleryuploaditem()"
     },
     {
@@ -1117,8 +1117,8 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_galleryuploadprovider",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "galleryuploadprovider()"
     },
     {
@@ -1128,8 +1128,8 @@
       "source_location": "L233",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_usegalleryupload",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "usegalleryupload()"
     },
     {
@@ -1260,8 +1260,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_tournamentpostuploadprovider",
-      "community": 104,
-      "community_name": "ProductForm.jsx",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "tournamentpostuploadprovider.jsx"
     },
     {
@@ -1271,8 +1271,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_components_tournamentpostuploadprovider_tournamentpostuploadcontext",
-      "community": 104,
-      "community_name": "ProductForm.jsx",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "tournamentpostuploadcontext"
     },
     {
@@ -1282,8 +1282,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_components_tournamentpostuploadprovider_tournamentpostuploadprovider",
-      "community": 104,
-      "community_name": "ProductForm.jsx",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "tournamentpostuploadprovider()"
     },
     {
@@ -1304,8 +1304,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_alertdialog",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "alertdialog.jsx"
     },
     {
@@ -1315,8 +1315,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "client_src_components_ui_alertdialog_alertdialogcontext",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "alertdialogcontext"
     },
     {
@@ -1326,8 +1326,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_components_ui_alertdialog_initial_state",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "initial_state"
     },
     {
@@ -1337,8 +1337,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "client_src_components_ui_alertdialog_alertdialogprovider",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "alertdialogprovider()"
     },
     {
@@ -1359,8 +1359,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_avatar",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 81,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "avatar.jsx"
     },
     {
@@ -1370,8 +1370,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_components_ui_avatar_avatar",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 81,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "avatar()"
     },
     {
@@ -1403,8 +1403,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_emptystate",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "emptystate.jsx"
     },
     {
@@ -1414,8 +1414,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_components_ui_emptystate_emptystate",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "emptystate()"
     },
     {
@@ -1425,8 +1425,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_iconbutton",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "iconbutton.jsx"
     },
     {
@@ -1436,8 +1436,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_components_ui_iconbutton_iconbutton",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "iconbutton"
     },
     {
@@ -1447,8 +1447,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_infotooltip",
-      "community": 100,
-      "community_name": "tournamentPosts.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "infotooltip.jsx"
     },
     {
@@ -1458,8 +1458,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_components_ui_infotooltip_infotooltip",
-      "community": 100,
-      "community_name": "tournamentPosts.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "infotooltip()"
     },
     {
@@ -1469,8 +1469,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_membershipicon",
-      "community": 14,
-      "community_name": "datePickerUtils.js",
+      "community": 90,
+      "community_name": "postRichText.js",
       "norm_label": "membershipicon.jsx"
     },
     {
@@ -1480,8 +1480,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_components_ui_membershipicon_membershipicon",
-      "community": 14,
-      "community_name": "datePickerUtils.js",
+      "community": 90,
+      "community_name": "postRichText.js",
       "norm_label": "membershipicon()"
     },
     {
@@ -1491,8 +1491,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_modal",
-      "community": 78,
-      "community_name": "tournamentPosts.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "modal.jsx"
     },
     {
@@ -1502,8 +1502,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_components_ui_modal_focusable_selectors",
-      "community": 78,
-      "community_name": "tournamentPosts.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "focusable_selectors"
     },
     {
@@ -1513,8 +1513,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "client_src_components_ui_modal_modal",
-      "community": 78,
-      "community_name": "tournamentPosts.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "modal()"
     },
     {
@@ -1524,8 +1524,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_modalfloatingclosebutton",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 85,
+      "community_name": "PullToRefresh.jsx",
       "norm_label": "modalfloatingclosebutton.jsx"
     },
     {
@@ -1535,8 +1535,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_components_ui_modalfloatingclosebutton_modalfloatingclosebutton",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 85,
+      "community_name": "PullToRefresh.jsx",
       "norm_label": "modalfloatingclosebutton()"
     },
     {
@@ -1678,8 +1678,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_toast",
-      "community": 91,
-      "community_name": "gestures.js",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "toast.jsx"
     },
     {
@@ -1689,8 +1689,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "client_src_components_ui_toast_toast",
-      "community": 91,
-      "community_name": "gestures.js",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "toast()"
     },
     {
@@ -1700,8 +1700,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_toastcontext",
-      "community": 91,
-      "community_name": "gestures.js",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "toastcontext.jsx"
     },
     {
@@ -1711,8 +1711,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_components_ui_toastcontext_toastcontext",
-      "community": 91,
-      "community_name": "gestures.js",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "toastcontext"
     },
     {
@@ -1722,8 +1722,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_components_ui_toastcontext_toastprovider",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "toastprovider()"
     },
     {
@@ -1744,8 +1744,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_toggle",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "toggle.jsx"
     },
     {
@@ -1755,8 +1755,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_components_ui_toggle_toggle",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "toggle()"
     },
     {
@@ -1766,8 +1766,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_config",
-      "community": 114,
-      "community_name": "Avatar.jsx",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "config.js"
     },
     {
@@ -1777,8 +1777,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "client_src_config_resolvepburl",
-      "community": 114,
-      "community_name": "Avatar.jsx",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "resolvepburl()"
     },
     {
@@ -1788,8 +1788,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "client_src_config_resolvepublicurl",
-      "community": 114,
-      "community_name": "Avatar.jsx",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "resolvepublicurl()"
     },
     {
@@ -1799,8 +1799,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "client_src_config_pb_url",
-      "community": 114,
-      "community_name": "Avatar.jsx",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "pb_url"
     },
     {
@@ -1810,8 +1810,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "client_src_config_max_auth_url",
-      "community": 114,
-      "community_name": "Avatar.jsx",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "max_auth_url"
     },
     {
@@ -1821,8 +1821,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "client_src_config_max_seller_url",
-      "community": 114,
-      "community_name": "Avatar.jsx",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "max_seller_url"
     },
     {
@@ -1964,8 +1964,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_context_mentionnavcontext",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 59,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "mentionnavcontext.jsx"
     },
     {
@@ -1975,8 +1975,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_context_mentionnavcontext_mentionnavcontext",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 59,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "mentionnavcontext"
     },
     {
@@ -1986,8 +1986,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "client_src_context_mentionnavcontext_mentionnavprovider",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 59,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "mentionnavprovider()"
     },
     {
@@ -1997,8 +1997,8 @@
       "source_location": "L87",
       "_origin": "ast",
       "id": "client_src_context_mentionnavcontext_usementionnav",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 59,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "usementionnav()"
     },
     {
@@ -2008,8 +2008,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_adminpanelpage",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "adminpanelpage.jsx"
     },
     {
@@ -2019,8 +2019,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_admin_adminpanelpage_adminpanelpage",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "adminpanelpage()"
     },
     {
@@ -2030,8 +2030,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_broadcastmodal",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "broadcastmodal.jsx"
     },
     {
@@ -2041,8 +2041,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "client_src_features_admin_broadcastmodal_defaultdatetimelocal",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "defaultdatetimelocal()"
     },
     {
@@ -2052,8 +2052,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "client_src_features_admin_broadcastmodal_getaudiencelabel",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "getaudiencelabel()"
     },
     {
@@ -2063,8 +2063,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "client_src_features_admin_broadcastmodal_broadcastmodal",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "broadcastmodal()"
     },
     {
@@ -2173,8 +2173,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_notificationsendmodal",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "notificationsendmodal.jsx"
     },
     {
@@ -2184,8 +2184,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_features_admin_notificationsendmodal_defaultdatetimelocal",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "defaultdatetimelocal()"
     },
     {
@@ -2195,8 +2195,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "client_src_features_admin_notificationsendmodal_getaudiencelabel",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "getaudiencelabel()"
     },
     {
@@ -2206,8 +2206,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "client_src_features_admin_notificationsendmodal_notificationsendmodal",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "notificationsendmodal()"
     },
     {
@@ -2217,8 +2217,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_notificationsettingsmodal",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "notificationsettingsmodal.jsx"
     },
     {
@@ -2228,8 +2228,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_features_admin_notificationsettingsmodal_settings_rows",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "settings_rows"
     },
     {
@@ -2239,8 +2239,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "client_src_features_admin_notificationsettingsmodal_notificationsettingsmodal",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "notificationsettingsmodal()"
     },
     {
@@ -2250,8 +2250,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_statisticshubmodal",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "statisticshubmodal.jsx"
     },
     {
@@ -2261,8 +2261,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_features_admin_statisticshubmodal_metrics",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "metrics"
     },
     {
@@ -2272,8 +2272,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "client_src_features_admin_statisticshubmodal_statisticshubmodal",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "statisticshubmodal()"
     },
     {
@@ -2283,8 +2283,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_systemtemplatesmodal",
-      "community": 101,
-      "community_name": "SystemTemplatesModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "systemtemplatesmodal.jsx"
     },
     {
@@ -2294,8 +2294,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "client_src_features_admin_systemtemplatesmodal_pencilicon",
-      "community": 101,
-      "community_name": "SystemTemplatesModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "pencilicon()"
     },
     {
@@ -2305,8 +2305,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "client_src_features_admin_systemtemplatesmodal_powericon",
-      "community": 101,
-      "community_name": "SystemTemplatesModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "powericon()"
     },
     {
@@ -2316,8 +2316,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "client_src_features_admin_systemtemplatesmodal_templatelistbutton",
-      "community": 101,
-      "community_name": "SystemTemplatesModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "templatelistbutton()"
     },
     {
@@ -2327,8 +2327,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "client_src_features_admin_systemtemplatesmodal_systemtemplatesmodal",
-      "community": 101,
-      "community_name": "SystemTemplatesModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "systemtemplatesmodal()"
     },
     {
@@ -2338,8 +2338,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 107,
+      "community_name": "compressImage",
       "norm_label": "usermultiselect.jsx"
     },
     {
@@ -2349,8 +2349,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect_getcollapsedlabel",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 107,
+      "community_name": "compressImage",
       "norm_label": "getcollapsedlabel()"
     },
     {
@@ -2360,8 +2360,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect_isuserchecked",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 107,
+      "community_name": "compressImage",
       "norm_label": "isuserchecked()"
     },
     {
@@ -2371,8 +2371,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect_usermultiselect",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 107,
+      "community_name": "compressImage",
       "norm_label": "usermultiselect()"
     },
     {
@@ -2382,8 +2382,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_adminresultalert",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "adminresultalert.js"
     },
     {
@@ -2393,8 +2393,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "client_src_features_admin_adminresultalert_formatadminsaveerror",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "formatadminsaveerror()"
     },
     {
@@ -2404,8 +2404,8 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "client_src_features_admin_adminresultalert_buildsendresultalert",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "buildsendresultalert()"
     },
     {
@@ -2492,8 +2492,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsgrowthmodal",
-      "community": 95,
-      "community_name": "App.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "statsgrowthmodal.jsx"
     },
     {
@@ -2503,8 +2503,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsgrowthmodal_formatbirthdate",
-      "community": 95,
-      "community_name": "App.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "formatbirthdate()"
     },
     {
@@ -2514,8 +2514,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsgrowthmodal_formatdaytitle",
-      "community": 95,
-      "community_name": "App.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "formatdaytitle()"
     },
     {
@@ -2525,8 +2525,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsgrowthmodal_statsgrowthmodal",
-      "community": 95,
-      "community_name": "App.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "statsgrowthmodal()"
     },
     {
@@ -2536,8 +2536,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statslinechart",
-      "community": 95,
-      "community_name": "App.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "statslinechart.jsx"
     },
     {
@@ -2547,8 +2547,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statslinechart_formataxisdate",
-      "community": 95,
-      "community_name": "App.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "formataxisdate()"
     },
     {
@@ -2558,8 +2558,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statslinechart_formattooltipdate",
-      "community": 95,
-      "community_name": "App.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "formattooltipdate()"
     },
     {
@@ -2569,8 +2569,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statslinechart_statslinechart",
-      "community": 95,
-      "community_name": "App.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "statslinechart()"
     },
     {
@@ -2657,8 +2657,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsreachmodal",
-      "community": 100,
-      "community_name": "tournamentPosts.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "statsreachmodal.jsx"
     },
     {
@@ -2668,8 +2668,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsreachmodal_typelabel",
-      "community": 100,
-      "community_name": "tournamentPosts.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "typelabel()"
     },
     {
@@ -2679,8 +2679,8 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsreachmodal_reachuserstitle",
-      "community": 100,
-      "community_name": "tournamentPosts.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "reachuserstitle()"
     },
     {
@@ -2690,8 +2690,8 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsreachmodal_enrichtoppostnumbers",
-      "community": 100,
-      "community_name": "tournamentPosts.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "enrichtoppostnumbers()"
     },
     {
@@ -2701,8 +2701,8 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsreachmodal_formatbirthdate",
-      "community": 100,
-      "community_name": "tournamentPosts.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "formatbirthdate()"
     },
     {
@@ -2712,8 +2712,8 @@
       "source_location": "L101",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsreachmodal_infocircleicon",
-      "community": 100,
-      "community_name": "tournamentPosts.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "infocircleicon()"
     },
     {
@@ -2723,8 +2723,8 @@
       "source_location": "L127",
       "_origin": "ast",
       "id": "client_src_features_admin_stats_statsreachmodal_statsreachmodal",
-      "community": 100,
-      "community_name": "tournamentPosts.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "statsreachmodal()"
     },
     {
@@ -2866,8 +2866,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentcommentssection",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "tournamentcommentssection.jsx"
     },
     {
@@ -2877,8 +2877,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "client_src_features_competitions_tournamentcommentssection_tournamentcommentssection",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "tournamentcommentssection()"
     },
     {
@@ -3031,8 +3031,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_commentcomposeform",
-      "community": 86,
-      "community_name": "PostMedia.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "commentcomposeform.jsx"
     },
     {
@@ -3042,8 +3042,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "client_src_features_feed_commentcomposeform_attachbuttons",
-      "community": 86,
-      "community_name": "PostMedia.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "attachbuttons()"
     },
     {
@@ -3053,8 +3053,8 @@
       "source_location": "L103",
       "_origin": "ast",
       "id": "client_src_features_feed_commentcomposeform_commentcomposeform",
-      "community": 86,
-      "community_name": "PostMedia.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "commentcomposeform()"
     },
     {
@@ -3108,8 +3108,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_commenteditinlineform",
-      "community": 86,
-      "community_name": "PostMedia.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "commenteditinlineform.jsx"
     },
     {
@@ -3119,8 +3119,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "client_src_features_feed_commenteditinlineform_arestringarraysequal",
-      "community": 86,
-      "community_name": "PostMedia.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "arestringarraysequal()"
     },
     {
@@ -3141,8 +3141,8 @@
       "source_location": "L71",
       "_origin": "ast",
       "id": "client_src_features_feed_commenteditinlineform_commenteditinlineform",
-      "community": 86,
-      "community_name": "PostMedia.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "commenteditinlineform()"
     },
     {
@@ -3152,8 +3152,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_commentlistitem",
-      "community": 88,
-      "community_name": "format.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "commentlistitem.jsx"
     },
     {
@@ -3163,8 +3163,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "client_src_features_feed_commentlistitem_commentlistitem",
-      "community": 88,
-      "community_name": "format.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "commentlistitem()"
     },
     {
@@ -3174,8 +3174,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_commentlistskeleton",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "commentlistskeleton.jsx"
     },
     {
@@ -3185,8 +3185,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_features_feed_commentlistskeleton_commentlistskeleton",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "commentlistskeleton()"
     },
     {
@@ -3218,8 +3218,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_commentreplybutton",
-      "community": 88,
-      "community_name": "format.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "commentreplybutton.jsx"
     },
     {
@@ -3229,8 +3229,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_features_feed_commentreplybutton_commentreplybutton",
-      "community": 88,
-      "community_name": "format.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "commentreplybutton()"
     },
     {
@@ -3240,8 +3240,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_commentreplycomposebar",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "commentreplycomposebar.jsx"
     },
     {
@@ -3251,8 +3251,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_features_feed_commentreplycomposebar_commentreplycomposebar",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "commentreplycomposebar()"
     },
     {
@@ -3262,8 +3262,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_commentreplyquote",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "commentreplyquote.jsx"
     },
     {
@@ -3273,8 +3273,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_features_feed_commentreplyquote_commentreplyquote",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "commentreplyquote()"
     },
     {
@@ -3284,8 +3284,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_commentsendbutton",
-      "community": 67,
-      "community_name": "media.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "commentsendbutton.jsx"
     },
     {
@@ -3295,8 +3295,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_features_feed_commentsendbutton_commentsendbutton",
-      "community": 67,
-      "community_name": "media.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "commentsendbutton()"
     },
     {
@@ -3306,8 +3306,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_commentswipereply",
-      "community": 88,
-      "community_name": "format.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "commentswipereply.jsx"
     },
     {
@@ -3317,8 +3317,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_features_feed_commentswipereply_commentswipereply",
-      "community": 88,
-      "community_name": "format.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "commentswipereply()"
     },
     {
@@ -3328,8 +3328,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_commentspreview",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 59,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "commentspreview.jsx"
     },
     {
@@ -3339,8 +3339,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "client_src_features_feed_commentspreview_commenthasattachments",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 59,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "commenthasattachments()"
     },
     {
@@ -3350,8 +3350,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "client_src_features_feed_commentspreview_commentspreview",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 59,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "commentspreview()"
     },
     {
@@ -3383,8 +3383,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_daygroup",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "daygroup.jsx"
     },
     {
@@ -3394,8 +3394,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_features_feed_daygroup_daygroup",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "daygroup()"
     },
     {
@@ -3405,8 +3405,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_dayseparator",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "dayseparator.jsx"
     },
     {
@@ -3416,8 +3416,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_features_feed_dayseparator_dayseparator",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "dayseparator()"
     },
     {
@@ -3479,7 +3479,7 @@
       "label": "FeedVideoPreview()",
       "file_type": "code",
       "source_file": "client/src/features/feed/FeedVideoPreview.jsx",
-      "source_location": "L18",
+      "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_features_feed_feedvideopreview_feedvideopreview",
       "community": 80,
@@ -3537,8 +3537,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer",
-      "community": 82,
-      "community_name": "main.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "fullscreenimageviewer.jsx"
     },
     {
@@ -3548,8 +3548,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer_useyadiskloadprogress",
-      "community": 82,
-      "community_name": "main.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "useyadiskloadprogress()"
     },
     {
@@ -3559,8 +3559,8 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer_fullscreenloadspinner",
-      "community": 82,
-      "community_name": "main.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "fullscreenloadspinner()"
     },
     {
@@ -3570,8 +3570,8 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer_getwindowwidth",
-      "community": 82,
-      "community_name": "main.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "getwindowwidth()"
     },
     {
@@ -3581,8 +3581,8 @@
       "source_location": "L95",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer_istouchnavdevice",
-      "community": 82,
-      "community_name": "main.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "istouchnavdevice()"
     },
     {
@@ -3592,8 +3592,8 @@
       "source_location": "L99",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer_getoriginrect",
-      "community": 82,
-      "community_name": "main.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "getoriginrect()"
     },
     {
@@ -3603,8 +3603,8 @@
       "source_location": "L106",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer_itemslideid",
-      "community": 82,
-      "community_name": "main.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "itemslideid()"
     },
     {
@@ -3614,8 +3614,8 @@
       "source_location": "L110",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer_carouselslidekey",
-      "community": 82,
-      "community_name": "main.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "carouselslidekey()"
     },
     {
@@ -3625,8 +3625,8 @@
       "source_location": "L116",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer_isimagepaintready",
-      "community": 82,
-      "community_name": "main.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "isimagepaintready()"
     },
     {
@@ -3636,8 +3636,8 @@
       "source_location": "L123",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer_fullscreenslideimage",
-      "community": 82,
-      "community_name": "main.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "fullscreenslideimage()"
     },
     {
@@ -3647,8 +3647,8 @@
       "source_location": "L272",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer_fullscreenimageviewer",
-      "community": 82,
-      "community_name": "main.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "fullscreenimageviewer()"
     },
     {
@@ -3658,30 +3658,30 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenslidevideo",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "fullscreenslidevideo.jsx"
     },
     {
       "label": "stopVideoLoad()",
       "file_type": "code",
       "source_file": "client/src/features/feed/FullscreenSlideVideo.jsx",
-      "source_location": "L10",
+      "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenslidevideo_stopvideoload",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "stopvideoload()"
     },
     {
       "label": "FullscreenSlideVideo()",
       "file_type": "code",
       "source_file": "client/src/features/feed/FullscreenSlideVideo.jsx",
-      "source_location": "L32",
+      "source_location": "L30",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenslidevideo_fullscreenslidevideo",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "fullscreenslidevideo()"
     },
     {
@@ -3724,8 +3724,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_mediaprogressring",
-      "community": 96,
-      "community_name": "videoPreviewUrl",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "mediaprogressring.jsx"
     },
     {
@@ -3735,8 +3735,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "client_src_features_feed_mediaprogressring_mediaprogressring",
-      "community": 96,
-      "community_name": "videoPreviewUrl",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "mediaprogressring()"
     },
     {
@@ -3867,8 +3867,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_postcard",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 88,
+      "community_name": "format.js",
       "norm_label": "postcard.jsx"
     },
     {
@@ -3878,8 +3878,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_features_feed_postcard_readcomments",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 88,
+      "community_name": "format.js",
       "norm_label": "readcomments()"
     },
     {
@@ -3889,8 +3889,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "client_src_features_feed_postcard_postcardlike",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 88,
+      "community_name": "format.js",
       "norm_label": "postcardlike()"
     },
     {
@@ -3900,8 +3900,8 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "client_src_features_feed_postcard_postcard",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 88,
+      "community_name": "format.js",
       "norm_label": "postcard()"
     },
     {
@@ -3911,8 +3911,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_postcontenthtml",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 59,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "postcontenthtml.jsx"
     },
     {
@@ -3922,8 +3922,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_feed_postcontenthtml_postcontenthtml",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 59,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "postcontenthtml()"
     },
     {
@@ -3977,8 +3977,8 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "client_src_features_feed_postcontextmenu_postcontextmenu",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "postcontextmenu()"
     },
     {
@@ -3988,8 +3988,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_postdetailmodal",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "postdetailmodal.jsx"
     },
     {
@@ -3999,8 +3999,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "client_src_features_feed_postdetailmodal_postdetailmodal",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "postdetailmodal()"
     },
     {
@@ -4018,7 +4018,7 @@
       "label": "PostDetailVideoPreview()",
       "file_type": "code",
       "source_file": "client/src/features/feed/PostDetailVideoPreview.jsx",
-      "source_location": "L17",
+      "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_features_feed_postdetailvideopreview_postdetailvideopreview",
       "community": 80,
@@ -4263,8 +4263,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_scheduledpostsmodal",
-      "community": 98,
-      "community_name": "NotificationCard.jsx",
+      "community": 83,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "scheduledpostsmodal.jsx"
     },
     {
@@ -4274,8 +4274,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "client_src_features_feed_scheduledpostsmodal_planeicon",
-      "community": 98,
-      "community_name": "NotificationCard.jsx",
+      "community": 83,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "planeicon()"
     },
     {
@@ -4285,8 +4285,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "client_src_features_feed_scheduledpostsmodal_pencilicon",
-      "community": 98,
-      "community_name": "NotificationCard.jsx",
+      "community": 83,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "pencilicon()"
     },
     {
@@ -4296,8 +4296,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "client_src_features_feed_scheduledpostsmodal_copyicon",
-      "community": 98,
-      "community_name": "NotificationCard.jsx",
+      "community": 83,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "copyicon()"
     },
     {
@@ -4307,8 +4307,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "client_src_features_feed_scheduledpostsmodal_calendaricon",
-      "community": 98,
-      "community_name": "NotificationCard.jsx",
+      "community": 83,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "calendaricon()"
     },
     {
@@ -4318,8 +4318,8 @@
       "source_location": "L72",
       "_origin": "ast",
       "id": "client_src_features_feed_scheduledpostsmodal_trashicon",
-      "community": 98,
-      "community_name": "NotificationCard.jsx",
+      "community": 83,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "trashicon()"
     },
     {
@@ -4329,8 +4329,8 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "client_src_features_feed_scheduledpostsmodal_scheduledpostrow",
-      "community": 98,
-      "community_name": "NotificationCard.jsx",
+      "community": 83,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "scheduledpostrow()"
     },
     {
@@ -4340,8 +4340,8 @@
       "source_location": "L142",
       "_origin": "ast",
       "id": "client_src_features_feed_scheduledpostsmodal_scheduledpostactionsmenu",
-      "community": 98,
-      "community_name": "NotificationCard.jsx",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "scheduledpostactionsmenu()"
     },
     {
@@ -4362,8 +4362,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_sortablemediapreviewgrid",
-      "community": 96,
-      "community_name": "videoPreviewUrl",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "sortablemediapreviewgrid.jsx"
     },
     {
@@ -4373,8 +4373,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "client_src_features_feed_sortablemediapreviewgrid_istouchpointer",
-      "community": 96,
-      "community_name": "videoPreviewUrl",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "istouchpointer()"
     },
     {
@@ -4384,8 +4384,8 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "client_src_features_feed_sortablemediapreviewgrid_findstripscrollparent",
-      "community": 96,
-      "community_name": "videoPreviewUrl",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "findstripscrollparent()"
     },
     {
@@ -4395,8 +4395,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "client_src_features_feed_sortablemediapreviewgrid_prefersreducedmotion",
-      "community": 96,
-      "community_name": "videoPreviewUrl",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "prefersreducedmotion()"
     },
     {
@@ -4406,8 +4406,8 @@
       "source_location": "L78",
       "_origin": "ast",
       "id": "client_src_features_feed_sortablemediapreviewgrid_movekeytoindex",
-      "community": 96,
-      "community_name": "videoPreviewUrl",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "movekeytoindex()"
     },
     {
@@ -4417,8 +4417,8 @@
       "source_location": "L95",
       "_origin": "ast",
       "id": "client_src_features_feed_sortablemediapreviewgrid_computestripdropindex",
-      "community": 96,
-      "community_name": "videoPreviewUrl",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "computestripdropindex()"
     },
     {
@@ -4428,8 +4428,8 @@
       "source_location": "L149",
       "_origin": "ast",
       "id": "client_src_features_feed_sortablemediapreviewgrid_computegriddropindex",
-      "community": 96,
-      "community_name": "videoPreviewUrl",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "computegriddropindex()"
     },
     {
@@ -4439,8 +4439,8 @@
       "source_location": "L200",
       "_origin": "ast",
       "id": "client_src_features_feed_sortablemediapreviewgrid_sortablemediapreviewgrid",
-      "community": 96,
-      "community_name": "videoPreviewUrl",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "sortablemediapreviewgrid()"
     },
     {
@@ -4450,8 +4450,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_commentlistlayout",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "commentlistlayout.js"
     },
     {
@@ -4461,8 +4461,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_features_feed_commentlistlayout_mapitemswithdayseparators",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "mapitemswithdayseparators()"
     },
     {
@@ -4472,8 +4472,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "client_src_features_feed_commentlistlayout_groupitemsbyday",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "groupitemsbyday()"
     },
     {
@@ -4483,8 +4483,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "client_src_features_feed_commentlistlayout_groupcommentsbyday",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "groupcommentsbyday()"
     },
     {
@@ -4505,8 +4505,8 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "client_src_features_feed_commentlistlayout_mapcommentswithdayseparators",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "mapcommentswithdayseparators()"
     },
     {
@@ -4516,8 +4516,8 @@
       "source_location": "L88",
       "_origin": "ast",
       "id": "client_src_features_feed_commentlistlayout_mappostswithdayseparators",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "mappostswithdayseparators()"
     },
     {
@@ -4527,8 +4527,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_copyplaintext",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 59,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "copyplaintext.js"
     },
     {
@@ -4538,8 +4538,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_features_feed_copyplaintext_plaintextfromrange",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 59,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "plaintextfromrange()"
     },
     {
@@ -4549,8 +4549,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "client_src_features_feed_copyplaintext_handlecontentcopy",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 59,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "handlecontentcopy()"
     },
     {
@@ -4692,8 +4692,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_keepcommenteditinview",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "keepcommenteditinview.js"
     },
     {
@@ -4703,8 +4703,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_features_feed_keepcommenteditinview_findscrollparent",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "findscrollparent()"
     },
     {
@@ -4714,8 +4714,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "client_src_features_feed_keepcommenteditinview_keepcommenteditinview",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "keepcommenteditinview()"
     },
     {
@@ -4725,8 +4725,8 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "client_src_features_feed_keepcommenteditinview_restoreandkeepcommenteditinview",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "restoreandkeepcommenteditinview()"
     },
     {
@@ -4736,8 +4736,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_mentionstatus",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 77,
+      "community_name": "NotificationSettingsModal.jsx",
       "norm_label": "mentionstatus.js"
     },
     {
@@ -4747,8 +4747,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_features_feed_mentionstatus_usermissingcache",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 77,
+      "community_name": "NotificationSettingsModal.jsx",
       "norm_label": "usermissingcache"
     },
     {
@@ -4758,8 +4758,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_features_feed_mentionstatus_postmissingcache",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 77,
+      "community_name": "NotificationSettingsModal.jsx",
       "norm_label": "postmissingcache"
     },
     {
@@ -4769,8 +4769,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "client_src_features_feed_mentionstatus_userinflight",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 77,
+      "community_name": "NotificationSettingsModal.jsx",
       "norm_label": "userinflight"
     },
     {
@@ -4780,8 +4780,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_features_feed_mentionstatus_postinflight",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 77,
+      "community_name": "NotificationSettingsModal.jsx",
       "norm_label": "postinflight"
     },
     {
@@ -4791,8 +4791,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_features_feed_mentionstatus_resolveusermissing",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 77,
+      "community_name": "NotificationSettingsModal.jsx",
       "norm_label": "resolveusermissing()"
     },
     {
@@ -4802,8 +4802,8 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "client_src_features_feed_mentionstatus_ispostmissing",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 77,
+      "community_name": "NotificationSettingsModal.jsx",
       "norm_label": "ispostmissing()"
     },
     {
@@ -4813,8 +4813,8 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "client_src_features_feed_mentionstatus_resolvepostmissing",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 77,
+      "community_name": "NotificationSettingsModal.jsx",
       "norm_label": "resolvepostmissing()"
     },
     {
@@ -4824,8 +4824,8 @@
       "source_location": "L111",
       "_origin": "ast",
       "id": "client_src_features_feed_mentionstatus_applymentionmissingstatuses",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 77,
+      "community_name": "NotificationSettingsModal.jsx",
       "norm_label": "applymentionmissingstatuses()"
     },
     {
@@ -5198,8 +5198,8 @@
       "source_location": "L125",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_toplaintext",
-      "community": 88,
-      "community_name": "format.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "toplaintext()"
     },
     {
@@ -5341,8 +5341,8 @@
       "source_location": "L485",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_getfirstline",
-      "community": 6,
-      "community_name": "auditEventFormat.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "getfirstline()"
     },
     {
@@ -5429,8 +5429,8 @@
       "source_location": "L787",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_lockanimframewidth",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 59,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "lockanimframewidth()"
     },
     {
@@ -5440,8 +5440,8 @@
       "source_location": "L813",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_startanimframes",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 59,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "startanimframes()"
     },
     {
@@ -5451,8 +5451,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_preparemediadraft",
-      "community": 86,
-      "community_name": "PostMedia.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "preparemediadraft.js"
     },
     {
@@ -5462,8 +5462,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_features_feed_preparemediadraft_preparecommentmediafile",
-      "community": 86,
-      "community_name": "PostMedia.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "preparecommentmediafile()"
     },
     {
@@ -5473,8 +5473,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_usecommenttapcopy",
-      "community": 88,
-      "community_name": "format.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "usecommenttapcopy.js"
     },
     {
@@ -5484,8 +5484,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "client_src_features_feed_usecommenttapcopy_isinteractivetaptarget",
-      "community": 88,
-      "community_name": "format.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "isinteractivetaptarget()"
     },
     {
@@ -5495,8 +5495,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "client_src_features_feed_usecommenttapcopy_usecommenttapcopy",
-      "community": 88,
-      "community_name": "format.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "usecommenttapcopy()"
     },
     {
@@ -5869,8 +5869,8 @@
       "source_location": "L267",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskalbumlazy_requestalbumlazyfocus",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "requestalbumlazyfocus()"
     },
     {
@@ -6045,8 +6045,8 @@
       "source_location": "L154",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskmediasessioncache_subscribememberloadprogress",
-      "community": 82,
-      "community_name": "main.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "subscribememberloadprogress()"
     },
     {
@@ -6078,8 +6078,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_gallery_addimagemodal",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "addimagemodal.jsx"
     },
     {
@@ -6089,8 +6089,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_features_gallery_addimagemodal_addimagemodal",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "addimagemodal()"
     },
     {
@@ -6100,8 +6100,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_gallery_gallerycommentmodal",
-      "community": 67,
-      "community_name": "media.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "gallerycommentmodal.jsx"
     },
     {
@@ -6111,8 +6111,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "client_src_features_gallery_gallerycommentmodal_gallerycommentmodal",
-      "community": 67,
-      "community_name": "media.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "gallerycommentmodal()"
     },
     {
@@ -6210,8 +6210,8 @@
       "source_location": "L113",
       "_origin": "ast",
       "id": "client_src_features_gallery_gallerypage_gallerypage",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 67,
+      "community_name": "media.js",
       "norm_label": "gallerypage()"
     },
     {
@@ -6221,8 +6221,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationcard",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 93,
+      "community_name": "commentListLayout.js",
       "norm_label": "notificationcard.jsx"
     },
     {
@@ -6232,8 +6232,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationcard_click_action_labels",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 93,
+      "community_name": "commentListLayout.js",
       "norm_label": "click_action_labels"
     },
     {
@@ -6243,8 +6243,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationcard_parsecommentreplyparenttext",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 93,
+      "community_name": "commentListLayout.js",
       "norm_label": "parsecommentreplyparenttext()"
     },
     {
@@ -6254,8 +6254,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationcard_ismetaobject",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 93,
+      "community_name": "commentListLayout.js",
       "norm_label": "ismetaobject()"
     },
     {
@@ -6265,8 +6265,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationcard_getnotificationkind",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 93,
+      "community_name": "commentListLayout.js",
       "norm_label": "getnotificationkind()"
     },
     {
@@ -6276,8 +6276,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationcard_notificationpostchip",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 77,
+      "community_name": "NotificationSettingsModal.jsx",
       "norm_label": "notificationpostchip()"
     },
     {
@@ -6287,8 +6287,8 @@
       "source_location": "L127",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationcard_notificationcard",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 93,
+      "community_name": "commentListLayout.js",
       "norm_label": "notificationcard()"
     },
     {
@@ -6298,8 +6298,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationsdropdown",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 89,
+      "community_name": "usePlayers",
       "norm_label": "notificationsdropdown.jsx"
     },
     {
@@ -6309,8 +6309,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "client_src_features_notifications_notificationsdropdown_notificationsdropdown",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 89,
+      "community_name": "usePlayers",
       "norm_label": "notificationsdropdown()"
     },
     {
@@ -6507,8 +6507,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_profile_blockedpage",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 78,
+      "community_name": "tournamentPosts.js",
       "norm_label": "blockedpage.jsx"
     },
     {
@@ -6518,8 +6518,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_features_profile_blockedpage_blockedpage",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 78,
+      "community_name": "tournamentPosts.js",
       "norm_label": "blockedpage()"
     },
     {
@@ -6529,8 +6529,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_profile_membershipeditmodal",
-      "community": 14,
-      "community_name": "datePickerUtils.js",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "membershipeditmodal.jsx"
     },
     {
@@ -6540,8 +6540,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_features_profile_membershipeditmodal_getcurrentsessions",
-      "community": 14,
-      "community_name": "datePickerUtils.js",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "getcurrentsessions()"
     },
     {
@@ -6551,8 +6551,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_profile_membershipeditmodal_getunpaidsessions",
-      "community": 14,
-      "community_name": "datePickerUtils.js",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "getunpaidsessions()"
     },
     {
@@ -6562,8 +6562,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "client_src_features_profile_membershipeditmodal_normalizedateinput",
-      "community": 14,
-      "community_name": "datePickerUtils.js",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "normalizedateinput()"
     },
     {
@@ -6573,8 +6573,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "client_src_features_profile_membershipeditmodal_computeyearenddate",
-      "community": 14,
-      "community_name": "datePickerUtils.js",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "computeyearenddate()"
     },
     {
@@ -6584,8 +6584,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "client_src_features_profile_membershipeditmodal_computetwomonthenddate",
-      "community": 14,
-      "community_name": "datePickerUtils.js",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "computetwomonthenddate()"
     },
     {
@@ -6595,8 +6595,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "client_src_features_profile_membershipeditmodal_applyregularperiodauto",
-      "community": 14,
-      "community_name": "datePickerUtils.js",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "applyregularperiodauto()"
     },
     {
@@ -6606,8 +6606,8 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "client_src_features_profile_membershipeditmodal_getmodecopy",
-      "community": 14,
-      "community_name": "datePickerUtils.js",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "getmodecopy()"
     },
     {
@@ -6617,8 +6617,8 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "client_src_features_profile_membershipeditmodal_membershipeditmodal",
-      "community": 14,
-      "community_name": "datePickerUtils.js",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "membershipeditmodal()"
     },
     {
@@ -6760,8 +6760,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_profile_profilepage",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "profilepage.jsx"
     },
     {
@@ -6771,8 +6771,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "client_src_features_profile_profilepage_formatdate",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "formatdate()"
     },
     {
@@ -6782,8 +6782,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_features_profile_profilepage_normalizedateinput",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "normalizedateinput()"
     },
     {
@@ -6793,8 +6793,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "client_src_features_profile_profilepage_gettrainingtitle",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "gettrainingtitle()"
     },
     {
@@ -6804,8 +6804,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "client_src_features_profile_profilepage_gettrainingstatusforuser",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "gettrainingstatusforuser()"
     },
     {
@@ -6815,8 +6815,8 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "client_src_features_profile_profilepage_getuserpasttrainings",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "getuserpasttrainings()"
     },
     {
@@ -6826,8 +6826,8 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "client_src_features_profile_profilepage_training_badge",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "training_badge"
     },
     {
@@ -6837,8 +6837,8 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "client_src_features_profile_profilepage_profilepage",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "profilepage()"
     },
     {
@@ -6969,8 +6969,8 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "client_src_features_profile_profileviewmodal_gettrainingstatusforuser",
-      "community": 89,
-      "community_name": "usePlayers",
+      "community": 90,
+      "community_name": "postRichText.js",
       "norm_label": "gettrainingstatusforuser()"
     },
     {
@@ -6980,8 +6980,8 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "client_src_features_profile_profileviewmodal_getuserpasttrainings",
-      "community": 89,
-      "community_name": "usePlayers",
+      "community": 90,
+      "community_name": "postRichText.js",
       "norm_label": "getuserpasttrainings()"
     },
     {
@@ -7024,8 +7024,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_rating_playerform",
-      "community": 78,
-      "community_name": "tournamentPosts.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "playerform.jsx"
     },
     {
@@ -7035,8 +7035,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_features_rating_playerform_initial",
-      "community": 78,
-      "community_name": "tournamentPosts.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "initial"
     },
     {
@@ -7046,8 +7046,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_features_rating_playerform_playerform",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "playerform()"
     },
     {
@@ -7057,8 +7057,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_rating_playerrow",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 81,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "playerrow.jsx"
     },
     {
@@ -7068,8 +7068,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_features_rating_playerrow_stopsignicon",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 81,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "stopsignicon()"
     },
     {
@@ -7079,8 +7079,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "client_src_features_rating_playerrow_playerrow",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 81,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "playerrow()"
     },
     {
@@ -7112,8 +7112,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_shop_buybutton",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "buybutton.jsx"
     },
     {
@@ -7123,8 +7123,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "client_src_features_shop_buybutton_buybutton",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "buybutton()"
     },
     {
@@ -7640,8 +7640,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "buymessage.js"
     },
     {
@@ -7651,8 +7651,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage_formatproductline",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "formatproductline()"
     },
     {
@@ -7662,8 +7662,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage_buildbuymessage",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "buildbuymessage()"
     },
     {
@@ -7684,8 +7684,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage_opensellerchat",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "opensellerchat()"
     },
     {
@@ -7695,8 +7695,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage_buildmaxuserchaturl",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "buildmaxuserchaturl()"
     },
     {
@@ -7706,8 +7706,8 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage_openmaxdeeplink",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "openmaxdeeplink()"
     },
     {
@@ -7717,8 +7717,8 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage_openmaxuserchat",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "openmaxuserchat()"
     },
     {
@@ -7970,8 +7970,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_createtrainingmodal",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 89,
+      "community_name": "usePlayers",
       "norm_label": "createtrainingmodal.jsx"
     },
     {
@@ -7981,8 +7981,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_features_trainings_createtrainingmodal_initial_form",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 89,
+      "community_name": "usePlayers",
       "norm_label": "initial_form"
     },
     {
@@ -7992,8 +7992,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "client_src_features_trainings_createtrainingmodal_createtrainingmodal",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 89,
+      "community_name": "usePlayers",
       "norm_label": "createtrainingmodal()"
     },
     {
@@ -8003,8 +8003,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_trainingcard",
-      "community": 89,
-      "community_name": "usePlayers",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "trainingcard.jsx"
     },
     {
@@ -8014,8 +8014,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_features_trainings_trainingcard_trainingcard",
-      "community": 89,
-      "community_name": "usePlayers",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "trainingcard()"
     },
     {
@@ -8025,8 +8025,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_trainingdetailmodal",
-      "community": 89,
-      "community_name": "usePlayers",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "trainingdetailmodal.jsx"
     },
     {
@@ -8036,8 +8036,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "client_src_features_trainings_trainingdetailmodal_trainingdetailmodal",
-      "community": 89,
-      "community_name": "usePlayers",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "trainingdetailmodal()"
     },
     {
@@ -8487,8 +8487,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usecommentlikes",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "usecommentlikes.js"
     },
     {
@@ -8498,8 +8498,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_hooks_usecommentlikes_usecommentlikes",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "usecommentlikes()"
     },
     {
@@ -8553,8 +8553,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usegallerycomments",
-      "community": 67,
-      "community_name": "media.js",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "usegallerycomments.js"
     },
     {
@@ -8564,8 +8564,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_hooks_usegallerycomments_usegallerycomments",
-      "community": 67,
-      "community_name": "media.js",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "usegallerycomments()"
     },
     {
@@ -8597,8 +8597,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usekeepformodalclose",
-      "community": 89,
-      "community_name": "usePlayers",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "usekeepformodalclose.js"
     },
     {
@@ -8608,8 +8608,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_hooks_usekeepformodalclose_usekeepformodalclose",
-      "community": 89,
-      "community_name": "usePlayers",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "usekeepformodalclose()"
     },
     {
@@ -8740,8 +8740,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usepinchzoom",
-      "community": 92,
-      "community_name": "gestures.js",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "usepinchzoom.js"
     },
     {
@@ -8751,8 +8751,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "client_src_hooks_usepinchzoom_resolvepanlimits",
-      "community": 92,
-      "community_name": "gestures.js",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "resolvepanlimits()"
     },
     {
@@ -8762,8 +8762,8 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "client_src_hooks_usepinchzoom_usepinchzoom",
-      "community": 92,
-      "community_name": "gestures.js",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "usepinchzoom()"
     },
     {
@@ -8773,8 +8773,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_useplayers",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 107,
+      "community_name": "compressImage",
       "norm_label": "useplayers.js"
     },
     {
@@ -8784,8 +8784,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "client_src_hooks_useplayers_useplayers",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 107,
+      "community_name": "compressImage",
       "norm_label": "useplayers()"
     },
     {
@@ -8795,8 +8795,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usepostlikes",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "usepostlikes.js"
     },
     {
@@ -8806,8 +8806,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "client_src_hooks_usepostlikes_usepostlikes",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "usepostlikes()"
     },
     {
@@ -8949,8 +8949,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usescheduledposts",
-      "community": 104,
-      "community_name": "ProductForm.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "usescheduledposts.js"
     },
     {
@@ -8960,8 +8960,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "client_src_hooks_usescheduledposts_usescheduledposts",
-      "community": 104,
-      "community_name": "ProductForm.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "usescheduledposts()"
     },
     {
@@ -9081,8 +9081,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usesessionresetkey",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 78,
+      "community_name": "tournamentPosts.js",
       "norm_label": "usesessionresetkey.js"
     },
     {
@@ -9092,8 +9092,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_hooks_usesessionresetkey_usesessionresetkey",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 78,
+      "community_name": "tournamentPosts.js",
       "norm_label": "usesessionresetkey()"
     },
     {
@@ -9147,8 +9147,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usetrainings",
-      "community": 107,
-      "community_name": "compressImage",
+      "community": 89,
+      "community_name": "usePlayers",
       "norm_label": "usetrainings.js"
     },
     {
@@ -9158,42 +9158,9 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_hooks_usetrainings_usetrainings",
-      "community": 107,
-      "community_name": "compressImage",
+      "community": 89,
+      "community_name": "usePlayers",
       "norm_label": "usetrainings()"
-    },
-    {
-      "label": "useVideoPoster.js",
-      "file_type": "code",
-      "source_file": "client/src/hooks/useVideoPoster.js",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "client_src_hooks_usevideoposter",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
-      "norm_label": "usevideoposter.js"
-    },
-    {
-      "label": "resolveFallbackPoster()",
-      "file_type": "code",
-      "source_file": "client/src/hooks/useVideoPoster.js",
-      "source_location": "L13",
-      "_origin": "ast",
-      "id": "client_src_hooks_usevideoposter_resolvefallbackposter",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
-      "norm_label": "resolvefallbackposter()"
-    },
-    {
-      "label": "useVideoPoster()",
-      "file_type": "code",
-      "source_file": "client/src/hooks/useVideoPoster.js",
-      "source_location": "L26",
-      "_origin": "ast",
-      "id": "client_src_hooks_usevideoposter_usevideoposter",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
-      "norm_label": "usevideoposter()"
     },
     {
       "label": "appVersion.js",
@@ -9444,8 +9411,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_avatar",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 81,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "avatar.js"
     },
     {
@@ -9455,8 +9422,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_lib_avatar_getuseravatardata",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 81,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "getuseravatardata()"
     },
     {
@@ -9466,8 +9433,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_compress",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "compress.js"
     },
     {
@@ -9477,8 +9444,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_lib_compress_withextension",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "withextension()"
     },
     {
@@ -9488,8 +9455,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_lib_compress_hastransparency",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "hastransparency()"
     },
     {
@@ -9499,8 +9466,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_lib_compress_compressimage",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "compressimage()"
     },
     {
@@ -9510,8 +9477,8 @@
       "source_location": "L87",
       "_origin": "ast",
       "id": "client_src_lib_compress_validatevideofile",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "validatevideofile()"
     },
     {
@@ -9521,8 +9488,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_compressvideo",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "compressvideo.js"
     },
     {
@@ -9532,8 +9499,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_lib_compressvideo_loadffmpeg",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "loadffmpeg()"
     },
     {
@@ -9543,8 +9510,8 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "client_src_lib_compressvideo_tooutputfilename",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "tooutputfilename()"
     },
     {
@@ -9554,8 +9521,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "client_src_lib_compressvideo_inputextension",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "inputextension()"
     },
     {
@@ -9565,8 +9532,8 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "client_src_lib_compressvideo_bindabort",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "bindabort()"
     },
     {
@@ -9576,8 +9543,8 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "client_src_lib_compressvideo_compressvideo",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "compressvideo()"
     },
     {
@@ -9587,8 +9554,8 @@
       "source_location": "L168",
       "_origin": "ast",
       "id": "client_src_lib_compressvideo_ispreparedvideofile",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "ispreparedvideofile()"
     },
     {
@@ -9994,8 +9961,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "client_src_lib_format_formatpostdate",
-      "community": 95,
-      "community_name": "App.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "formatpostdate()"
     },
     {
@@ -10016,8 +9983,8 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "client_src_lib_format_formatcommentdayseparator",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "formatcommentdayseparator()"
     },
     {
@@ -10027,8 +9994,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "client_src_lib_format_formatcarddate",
-      "community": 89,
-      "community_name": "usePlayers",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "formatcarddate()"
     },
     {
@@ -10049,8 +10016,8 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "client_src_lib_format_formattimerange",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "formattimerange()"
     },
     {
@@ -10060,8 +10027,8 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "client_src_lib_format_hastimerangeended",
-      "community": 89,
-      "community_name": "usePlayers",
+      "community": 90,
+      "community_name": "postRichText.js",
       "norm_label": "hastimerangeended()"
     },
     {
@@ -10082,8 +10049,8 @@
       "source_location": "L113",
       "_origin": "ast",
       "id": "client_src_lib_format_formatdatetimeshort",
-      "community": 83,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 13,
+      "community_name": "gestures.js",
       "norm_label": "formatdatetimeshort()"
     },
     {
@@ -10093,8 +10060,8 @@
       "source_location": "L122",
       "_origin": "ast",
       "id": "client_src_lib_format_daykey",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "daykey()"
     },
     {
@@ -10137,8 +10104,8 @@
       "source_location": "L169",
       "_origin": "ast",
       "id": "client_src_lib_format_formatrelativetime",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 93,
+      "community_name": "commentListLayout.js",
       "norm_label": "formatrelativetime()"
     },
     {
@@ -10159,8 +10126,8 @@
       "source_location": "L201",
       "_origin": "ast",
       "id": "client_src_lib_format_formatscheduledispatchheading",
-      "community": 98,
-      "community_name": "NotificationCard.jsx",
+      "community": 83,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "formatscheduledispatchheading()"
     },
     {
@@ -10170,8 +10137,8 @@
       "source_location": "L210",
       "_origin": "ast",
       "id": "client_src_lib_format_formatscheduletimebadge",
-      "community": 98,
-      "community_name": "NotificationCard.jsx",
+      "community": 83,
+      "community_name": "yadiskAlbumLazy.js",
       "norm_label": "formatscheduletimebadge()"
     },
     {
@@ -10192,8 +10159,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_gestures",
-      "community": 92,
-      "community_name": "gestures.js",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "gestures.js"
     },
     {
@@ -10203,8 +10170,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_lib_gestures_gettouchdistance",
-      "community": 92,
-      "community_name": "gestures.js",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "gettouchdistance()"
     },
     {
@@ -10214,8 +10181,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "client_src_lib_gestures_clamp",
-      "community": 92,
-      "community_name": "gestures.js",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "clamp()"
     },
     {
@@ -10225,8 +10192,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "client_src_lib_gestures_maxpanlimits",
-      "community": 92,
-      "community_name": "gestures.js",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "maxpanlimits()"
     },
     {
@@ -10236,8 +10203,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "client_src_lib_gestures_maxpan",
-      "community": 92,
-      "community_name": "gestures.js",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "maxpan()"
     },
     {
@@ -10247,8 +10214,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "client_src_lib_gestures_backdropopacityfordrag",
-      "community": 92,
-      "community_name": "gestures.js",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "backdropopacityfordrag()"
     },
     {
@@ -10258,8 +10225,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_log",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 89,
+      "community_name": "usePlayers",
       "norm_label": "log.js"
     },
     {
@@ -10269,8 +10236,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_lib_log_noop",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 89,
+      "community_name": "usePlayers",
       "norm_label": "noop()"
     },
     {
@@ -10280,8 +10247,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_lib_log_error",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 89,
+      "community_name": "usePlayers",
       "norm_label": "error"
     },
     {
@@ -10351,10 +10318,21 @@
       "norm_label": "getmediaurl()"
     },
     {
+      "label": "getVideoPosterUrl()",
+      "file_type": "code",
+      "source_file": "client/src/lib/media.js",
+      "source_location": "L43",
+      "_origin": "ast",
+      "id": "client_src_lib_media_getvideoposterurl",
+      "community": 80,
+      "community_name": "useMaxCloseGuard.js",
+      "norm_label": "getvideoposterurl()"
+    },
+    {
       "label": "getMediaThumbUrl()",
       "file_type": "code",
       "source_file": "client/src/lib/media.js",
-      "source_location": "L41",
+      "source_location": "L70",
       "_origin": "ast",
       "id": "client_src_lib_media_getmediathumburl",
       "community": 80,
@@ -10365,7 +10343,7 @@
       "label": "firstFileName()",
       "file_type": "code",
       "source_file": "client/src/lib/media.js",
-      "source_location": "L60",
+      "source_location": "L91",
       "_origin": "ast",
       "id": "client_src_lib_media_firstfilename",
       "community": 80,
@@ -10376,7 +10354,7 @@
       "label": "mediaNames()",
       "file_type": "code",
       "source_file": "client/src/lib/media.js",
-      "source_location": "L71",
+      "source_location": "L102",
       "_origin": "ast",
       "id": "client_src_lib_media_medianames",
       "community": 80,
@@ -10387,7 +10365,7 @@
       "label": "isVideoMediaName()",
       "file_type": "code",
       "source_file": "client/src/lib/media.js",
-      "source_location": "L80",
+      "source_location": "L111",
       "_origin": "ast",
       "id": "client_src_lib_media_isvideomedianame",
       "community": 80,
@@ -10398,18 +10376,18 @@
       "label": "isVideoFile()",
       "file_type": "code",
       "source_file": "client/src/lib/media.js",
-      "source_location": "L87",
+      "source_location": "L118",
       "_origin": "ast",
       "id": "client_src_lib_media_isvideofile",
-      "community": 86,
-      "community_name": "PostMedia.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "isvideofile()"
     },
     {
       "label": "videoPreviewUrl()",
       "file_type": "code",
       "source_file": "client/src/lib/media.js",
-      "source_location": "L95",
+      "source_location": "L126",
       "_origin": "ast",
       "id": "client_src_lib_media_videopreviewurl",
       "community": 80,
@@ -10420,7 +10398,7 @@
       "label": "readSelectedFiles()",
       "file_type": "code",
       "source_file": "client/src/lib/media.js",
-      "source_location": "L105",
+      "source_location": "L136",
       "_origin": "ast",
       "id": "client_src_lib_media_readselectedfiles",
       "community": 3,
@@ -10434,8 +10412,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_modalorigin",
-      "community": 78,
-      "community_name": "tournamentPosts.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "modalorigin.js"
     },
     {
@@ -10445,8 +10423,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_lib_modalorigin_origin_selector",
-      "community": 78,
-      "community_name": "tournamentPosts.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "origin_selector"
     },
     {
@@ -10456,8 +10434,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "client_src_lib_modalorigin_snapshotoriginrect",
-      "community": 78,
-      "community_name": "tournamentPosts.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "snapshotoriginrect()"
     },
     {
@@ -10467,8 +10445,8 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "client_src_lib_modalorigin_originrectfromtarget",
-      "community": 78,
-      "community_name": "tournamentPosts.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "originrectfromtarget()"
     },
     {
@@ -10478,8 +10456,8 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "client_src_lib_modalorigin_onpointerdown",
-      "community": 78,
-      "community_name": "tournamentPosts.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "onpointerdown()"
     },
     {
@@ -10489,8 +10467,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "client_src_lib_modalorigin_ensuremodalorigintracking",
-      "community": 78,
-      "community_name": "tournamentPosts.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "ensuremodalorigintracking()"
     },
     {
@@ -10500,8 +10478,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "client_src_lib_modalorigin_getlastpointerorigin",
-      "community": 78,
-      "community_name": "tournamentPosts.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "getlastpointerorigin()"
     },
     {
@@ -10511,8 +10489,8 @@
       "source_location": "L78",
       "_origin": "ast",
       "id": "client_src_lib_modalorigin_getmodalcollapsetransform",
-      "community": 78,
-      "community_name": "tournamentPosts.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "getmodalcollapsetransform()"
     },
     {
@@ -10599,8 +10577,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_prepareuploadmedia",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "prepareuploadmedia.js"
     },
     {
@@ -10610,8 +10588,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "client_src_lib_prepareuploadmedia_prepareuploadmedia",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "prepareuploadmedia()"
     },
     {
@@ -10621,8 +10599,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "client_src_lib_prepareuploadmedia_prepareuploadmedialist",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "prepareuploadmedialist()"
     },
     {
@@ -10758,80 +10736,14 @@
       "norm_label": "scrollsectiontotop()"
     },
     {
-      "label": "videoPosterCache.js",
-      "file_type": "code",
-      "source_file": "client/src/lib/videoPosterCache.js",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "client_src_lib_videopostercache",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
-      "norm_label": "videopostercache.js"
-    },
-    {
-      "label": "posterCache",
-      "file_type": "code",
-      "source_file": "client/src/lib/videoPosterCache.js",
-      "source_location": "L5",
-      "_origin": "ast",
-      "id": "client_src_lib_videopostercache_postercache",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
-      "norm_label": "postercache"
-    },
-    {
-      "label": "inflight",
-      "file_type": "code",
-      "source_file": "client/src/lib/videoPosterCache.js",
-      "source_location": "L8",
-      "_origin": "ast",
-      "id": "client_src_lib_videopostercache_inflight",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
-      "norm_label": "inflight"
-    },
-    {
-      "label": "isVideoFileUrl()",
-      "file_type": "code",
-      "source_file": "client/src/lib/videoPosterCache.js",
-      "source_location": "L15",
-      "_origin": "ast",
-      "id": "client_src_lib_videopostercache_isvideofileurl",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
-      "norm_label": "isvideofileurl()"
-    },
-    {
-      "label": "getCachedVideoPosterUrl()",
-      "file_type": "code",
-      "source_file": "client/src/lib/videoPosterCache.js",
-      "source_location": "L23",
-      "_origin": "ast",
-      "id": "client_src_lib_videopostercache_getcachedvideoposterurl",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
-      "norm_label": "getcachedvideoposterurl()"
-    },
-    {
-      "label": "captureVideoPosterFrame()",
-      "file_type": "code",
-      "source_file": "client/src/lib/videoPosterCache.js",
-      "source_location": "L35",
-      "_origin": "ast",
-      "id": "client_src_lib_videopostercache_capturevideoposterframe",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
-      "norm_label": "capturevideoposterframe()"
-    },
-    {
       "label": "videoQualities.js",
       "file_type": "code",
       "source_file": "client/src/lib/videoQualities.js",
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_videoqualities",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "videoqualities.js"
     },
     {
@@ -10841,8 +10753,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_lib_videoqualities_resolvevideoqualities",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "resolvevideoqualities()"
     },
     {
@@ -10940,8 +10852,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_main",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "main.jsx"
     },
     {
@@ -10951,8 +10863,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_main_globalerrorfallback",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "globalerrorfallback()"
     },
     {
@@ -11094,8 +11006,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_admin",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "admin.js"
     },
     {
@@ -11105,8 +11017,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_services_admin_dispatchnow",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "dispatchnow()"
     },
     {
@@ -11116,8 +11028,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "client_src_services_admin_todatetimelocalvalue",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "todatetimelocalvalue()"
     },
     {
@@ -11127,8 +11039,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "client_src_services_admin_fromdatetimelocalvalue",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "fromdatetimelocalvalue()"
     },
     {
@@ -11138,8 +11050,8 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "client_src_services_admin_buildbroadcastrecordpayload",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "buildbroadcastrecordpayload()"
     },
     {
@@ -11149,8 +11061,8 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "client_src_services_admin_listscheduledbroadcasts",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "listscheduledbroadcasts()"
     },
     {
@@ -11160,8 +11072,8 @@
       "source_location": "L115",
       "_origin": "ast",
       "id": "client_src_services_admin_createscheduledbroadcast",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "createscheduledbroadcast()"
     },
     {
@@ -11171,8 +11083,8 @@
       "source_location": "L160",
       "_origin": "ast",
       "id": "client_src_services_admin_updatescheduledbroadcast",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "updatescheduledbroadcast()"
     },
     {
@@ -11182,8 +11094,8 @@
       "source_location": "L206",
       "_origin": "ast",
       "id": "client_src_services_admin_cancelscheduledbroadcast",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "cancelscheduledbroadcast()"
     },
     {
@@ -11193,8 +11105,8 @@
       "source_location": "L210",
       "_origin": "ast",
       "id": "client_src_services_admin_listschedulednotifications",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "listschedulednotifications()"
     },
     {
@@ -11204,8 +11116,8 @@
       "source_location": "L223",
       "_origin": "ast",
       "id": "client_src_services_admin_createschedulednotification",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "createschedulednotification()"
     },
     {
@@ -11215,8 +11127,8 @@
       "source_location": "L263",
       "_origin": "ast",
       "id": "client_src_services_admin_updateschedulednotification",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "updateschedulednotification()"
     },
     {
@@ -11226,8 +11138,8 @@
       "source_location": "L295",
       "_origin": "ast",
       "id": "client_src_services_admin_cancelschedulednotification",
-      "community": 5,
-      "community_name": "Admin UI Controls",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "cancelschedulednotification()"
     },
     {
@@ -11237,8 +11149,8 @@
       "source_location": "L299",
       "_origin": "ast",
       "id": "client_src_services_admin_getnotificationsettings",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "getnotificationsettings()"
     },
     {
@@ -11248,8 +11160,8 @@
       "source_location": "L308",
       "_origin": "ast",
       "id": "client_src_services_admin_updatenotificationsettings",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "updatenotificationsettings()"
     },
     {
@@ -11380,8 +11292,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_services_auth_buildbanneduser",
-      "community": 90,
-      "community_name": "postRichText.js",
+      "community": 65,
+      "community_name": "ProfilePage.jsx",
       "norm_label": "buildbanneduser()"
     },
     {
@@ -11435,8 +11347,8 @@
       "source_location": "L85",
       "_origin": "ast",
       "id": "client_src_services_auth_isuserbotblocked",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 78,
+      "community_name": "tournamentPosts.js",
       "norm_label": "isuserbotblocked()"
     },
     {
@@ -11479,8 +11391,8 @@
       "source_location": "L173",
       "_origin": "ast",
       "id": "client_src_services_auth_getcurrentuser",
-      "community": 107,
-      "community_name": "compressImage",
+      "community": 65,
+      "community_name": "ProfilePage.jsx",
       "norm_label": "getcurrentuser()"
     },
     {
@@ -11798,8 +11710,8 @@
       "source_location": "L294",
       "_origin": "ast",
       "id": "client_src_services_catalog_deleteproduct",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "deleteproduct()"
     },
     {
@@ -11820,8 +11732,8 @@
       "source_location": "L317",
       "_origin": "ast",
       "id": "client_src_services_catalog_listplayers",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 107,
+      "community_name": "compressImage",
       "norm_label": "listplayers()"
     },
     {
@@ -11831,8 +11743,8 @@
       "source_location": "L359",
       "_origin": "ast",
       "id": "client_src_services_catalog_buildmanualplayerpayload",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 67,
+      "community_name": "media.js",
       "norm_label": "buildmanualplayerpayload()"
     },
     {
@@ -11886,8 +11798,8 @@
       "source_location": "L440",
       "_origin": "ast",
       "id": "client_src_services_catalog_creategalleryitemwithprogress",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "creategalleryitemwithprogress()"
     },
     {
@@ -11919,8 +11831,8 @@
       "source_location": "L526",
       "_origin": "ast",
       "id": "client_src_services_catalog_deletegalleryimage",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 67,
+      "community_name": "media.js",
       "norm_label": "deletegalleryimage()"
     },
     {
@@ -11930,8 +11842,8 @@
       "source_location": "L543",
       "_origin": "ast",
       "id": "client_src_services_catalog_deletegalleryimages",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 67,
+      "community_name": "media.js",
       "norm_label": "deletegalleryimages()"
     },
     {
@@ -11963,8 +11875,8 @@
       "source_location": "L599",
       "_origin": "ast",
       "id": "client_src_services_catalog_listrecentgallerycomments",
-      "community": 67,
-      "community_name": "media.js",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "listrecentgallerycomments()"
     },
     {
@@ -11974,8 +11886,8 @@
       "source_location": "L625",
       "_origin": "ast",
       "id": "client_src_services_catalog_listgallerycomments",
-      "community": 67,
-      "community_name": "media.js",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "listgallerycomments()"
     },
     {
@@ -11985,8 +11897,8 @@
       "source_location": "L646",
       "_origin": "ast",
       "id": "client_src_services_catalog_creategallerycomment",
-      "community": 67,
-      "community_name": "media.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "creategallerycomment()"
     },
     {
@@ -11996,8 +11908,8 @@
       "source_location": "L668",
       "_origin": "ast",
       "id": "client_src_services_catalog_deletegallerycomment",
-      "community": 67,
-      "community_name": "media.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "deletegallerycomment()"
     },
     {
@@ -12007,8 +11919,8 @@
       "source_location": "L677",
       "_origin": "ast",
       "id": "client_src_services_catalog_updategallerycomment",
-      "community": 67,
-      "community_name": "media.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "updategallerycomment()"
     },
     {
@@ -12018,8 +11930,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_membershipnotify",
-      "community": 14,
-      "community_name": "datePickerUtils.js",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "membershipnotify.js"
     },
     {
@@ -12029,8 +11941,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_services_membershipnotify_notifymembershiptopup",
-      "community": 14,
-      "community_name": "datePickerUtils.js",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "notifymembershiptopup()"
     },
     {
@@ -12040,8 +11952,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_notifications",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 89,
+      "community_name": "usePlayers",
       "norm_label": "notifications.js"
     },
     {
@@ -12051,8 +11963,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_services_notifications_sessions_left_copy",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 89,
+      "community_name": "usePlayers",
       "norm_label": "sessions_left_copy"
     },
     {
@@ -12062,8 +11974,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "client_src_services_notifications_listnotifications",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 89,
+      "community_name": "usePlayers",
       "norm_label": "listnotifications()"
     },
     {
@@ -12073,8 +11985,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_services_notifications_usenotifications",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 89,
+      "community_name": "usePlayers",
       "norm_label": "usenotifications()"
     },
     {
@@ -12084,8 +11996,8 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "client_src_services_notifications_isdeletablenotification",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 89,
+      "community_name": "usePlayers",
       "norm_label": "isdeletablenotification()"
     },
     {
@@ -12095,8 +12007,8 @@
       "source_location": "L83",
       "_origin": "ast",
       "id": "client_src_services_notifications_marknotificationread",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 93,
+      "community_name": "commentListLayout.js",
       "norm_label": "marknotificationread()"
     },
     {
@@ -12106,8 +12018,8 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "client_src_services_notifications_deletenotification",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 89,
+      "community_name": "usePlayers",
       "norm_label": "deletenotification()"
     },
     {
@@ -12117,8 +12029,8 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "client_src_services_notifications_clearallnotifications",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 89,
+      "community_name": "usePlayers",
       "norm_label": "clearallnotifications()"
     },
     {
@@ -12128,8 +12040,8 @@
       "source_location": "L109",
       "_origin": "ast",
       "id": "client_src_services_notifications_maybenotifysessionsleft",
-      "community": 14,
-      "community_name": "datePickerUtils.js",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "maybenotifysessionsleft()"
     },
     {
@@ -12139,8 +12051,8 @@
       "source_location": "L142",
       "_origin": "ast",
       "id": "client_src_services_notifications_requestcommentreplynotification",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 89,
+      "community_name": "usePlayers",
       "norm_label": "requestcommentreplynotification()"
     },
     {
@@ -12172,8 +12084,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_pocketbase",
-      "community": 114,
-      "community_name": "Avatar.jsx",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "pocketbase.js"
     },
     {
@@ -12216,8 +12128,8 @@
       "source_location": "L95",
       "_origin": "ast",
       "id": "client_src_services_posts_listscheduledposts",
-      "community": 104,
-      "community_name": "ProductForm.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "listscheduledposts()"
     },
     {
@@ -12282,8 +12194,8 @@
       "source_location": "L194",
       "_origin": "ast",
       "id": "client_src_services_posts_listpostlikes",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "listpostlikes()"
     },
     {
@@ -12293,8 +12205,8 @@
       "source_location": "L216",
       "_origin": "ast",
       "id": "client_src_services_posts_togglepostlike",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "togglepostlike()"
     },
     {
@@ -12447,8 +12359,8 @@
       "source_location": "L562",
       "_origin": "ast",
       "id": "client_src_services_posts_harddeletepost",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "harddeletepost()"
     },
     {
@@ -12491,8 +12403,8 @@
       "source_location": "L721",
       "_origin": "ast",
       "id": "client_src_services_posts_buildcommentmediareorderformdata",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "buildcommentmediareorderformdata()"
     },
     {
@@ -12502,8 +12414,8 @@
       "source_location": "L747",
       "_origin": "ast",
       "id": "client_src_services_posts_updatecomment",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "updatecomment()"
     },
     {
@@ -12513,8 +12425,8 @@
       "source_location": "L757",
       "_origin": "ast",
       "id": "client_src_services_posts_harddeletecomment",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "harddeletecomment()"
     },
     {
@@ -12524,8 +12436,8 @@
       "source_location": "L776",
       "_origin": "ast",
       "id": "client_src_services_posts_listcommentlikes",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "listcommentlikes()"
     },
     {
@@ -12535,8 +12447,8 @@
       "source_location": "L801",
       "_origin": "ast",
       "id": "client_src_services_posts_togglecommentlike",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "togglecommentlike()"
     },
     {
@@ -12634,8 +12546,8 @@
       "source_location": "L136",
       "_origin": "ast",
       "id": "client_src_services_stats_fetchstatsgrowthday",
-      "community": 95,
-      "community_name": "App.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "fetchstatsgrowthday()"
     },
     {
@@ -12689,8 +12601,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_systemtemplates",
-      "community": 101,
-      "community_name": "SystemTemplatesModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "systemtemplates.js"
     },
     {
@@ -12700,8 +12612,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_services_systemtemplates_listsystemtemplates",
-      "community": 101,
-      "community_name": "SystemTemplatesModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "listsystemtemplates()"
     },
     {
@@ -12711,8 +12623,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "client_src_services_systemtemplates_updatesystemtemplate",
-      "community": 101,
-      "community_name": "SystemTemplatesModal.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "updatesystemtemplate()"
     },
     {
@@ -12777,8 +12689,8 @@
       "source_location": "L203",
       "_origin": "ast",
       "id": "client_src_services_tournamentcomments_buildtournamentcommentmediareorderformdata",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "buildtournamentcommentmediareorderformdata()"
     },
     {
@@ -12788,8 +12700,8 @@
       "source_location": "L229",
       "_origin": "ast",
       "id": "client_src_services_tournamentcomments_updatetournamentcomment",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "updatetournamentcomment()"
     },
     {
@@ -12810,8 +12722,8 @@
       "source_location": "L247",
       "_origin": "ast",
       "id": "client_src_services_tournamentcomments_flushpendingtournamentcommentdeletes",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 70,
+      "community_name": "useFetchedOriginal.js",
       "norm_label": "flushpendingtournamentcommentdeletes()"
     },
     {
@@ -12821,8 +12733,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts",
-      "community": 104,
-      "community_name": "ProductForm.jsx",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "tournamentposts.js"
     },
     {
@@ -12832,8 +12744,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_rankparticipants",
-      "community": 104,
-      "community_name": "ProductForm.jsx",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "rankparticipants()"
     },
     {
@@ -12843,8 +12755,8 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_invalidatetournamentcaches",
-      "community": 104,
-      "community_name": "ProductForm.jsx",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "invalidatetournamentcaches()"
     },
     {
@@ -12865,8 +12777,8 @@
       "source_location": "L86",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_listscheduledtournamentposts",
-      "community": 104,
-      "community_name": "ProductForm.jsx",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "listscheduledtournamentposts()"
     },
     {
@@ -12876,8 +12788,8 @@
       "source_location": "L107",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_rescheduletournamentpost",
-      "community": 104,
-      "community_name": "ProductForm.jsx",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "rescheduletournamentpost()"
     },
     {
@@ -12887,8 +12799,8 @@
       "source_location": "L119",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_publishscheduledtournamentpostnow",
-      "community": 104,
-      "community_name": "ProductForm.jsx",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "publishscheduledtournamentpostnow()"
     },
     {
@@ -12898,8 +12810,8 @@
       "source_location": "L128",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_deletescheduledtournamentpost",
-      "community": 104,
-      "community_name": "ProductForm.jsx",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "deletescheduledtournamentpost()"
     },
     {
@@ -12942,8 +12854,8 @@
       "source_location": "L170",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_softdeletetournamentpost",
-      "community": 104,
-      "community_name": "ProductForm.jsx",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "softdeletetournamentpost()"
     },
     {
@@ -12953,8 +12865,8 @@
       "source_location": "L177",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_harddeletetournamentpost",
-      "community": 104,
-      "community_name": "ProductForm.jsx",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "harddeletetournamentpost()"
     },
     {
@@ -12964,8 +12876,8 @@
       "source_location": "L187",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_purgeabandonedtournamentposts",
-      "community": 104,
-      "community_name": "ProductForm.jsx",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "purgeabandonedtournamentposts()"
     },
     {
@@ -12975,8 +12887,8 @@
       "source_location": "L214",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_buildtournamentpostpayload",
-      "community": 104,
-      "community_name": "ProductForm.jsx",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "buildtournamentpostpayload()"
     },
     {
@@ -12986,8 +12898,8 @@
       "source_location": "L247",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_applytournamentpostsideeffects",
-      "community": 104,
-      "community_name": "ProductForm.jsx",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "applytournamentpostsideeffects()"
     },
     {
@@ -12997,8 +12909,8 @@
       "source_location": "L265",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_publishtournamentpost",
-      "community": 104,
-      "community_name": "ProductForm.jsx",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "publishtournamentpost()"
     },
     {
@@ -13008,8 +12920,8 @@
       "source_location": "L290",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_publishtournamentpostwithprogress",
-      "community": 104,
-      "community_name": "ProductForm.jsx",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "publishtournamentpostwithprogress()"
     },
     {
@@ -13184,8 +13096,8 @@
       "source_location": "L264",
       "_origin": "ast",
       "id": "client_src_services_trainings_listtrainings",
-      "community": 107,
-      "community_name": "compressImage",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "listtrainings()"
     },
     {
@@ -13206,8 +13118,8 @@
       "source_location": "L309",
       "_origin": "ast",
       "id": "client_src_services_trainings_createtraining",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 89,
+      "community_name": "usePlayers",
       "norm_label": "createtraining()"
     },
     {
@@ -13228,8 +13140,8 @@
       "source_location": "L359",
       "_origin": "ast",
       "id": "client_src_services_trainings_finalizecancelledtraining",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "finalizecancelledtraining()"
     },
     {
@@ -13404,8 +13316,8 @@
       "source_location": "L738",
       "_origin": "ast",
       "id": "client_src_services_trainings_removeusersfromtraining",
-      "community": 89,
-      "community_name": "usePlayers",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "removeusersfromtraining()"
     },
     {
@@ -13426,8 +13338,8 @@
       "source_location": "L808",
       "_origin": "ast",
       "id": "client_src_services_trainings_markattendance",
-      "community": 89,
-      "community_name": "usePlayers",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "markattendance()"
     },
     {
@@ -13437,8 +13349,8 @@
       "source_location": "L825",
       "_origin": "ast",
       "id": "client_src_services_trainings_unmarkattendance",
-      "community": 89,
-      "community_name": "usePlayers",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "unmarkattendance()"
     },
     {
@@ -13470,8 +13382,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_yadisk",
-      "community": 114,
-      "community_name": "Avatar.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "services/yadisk.js"
     },
     {
@@ -13481,8 +13393,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "client_src_services_yadisk_previewcache",
-      "community": 114,
-      "community_name": "Avatar.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "previewcache"
     },
     {
@@ -13492,8 +13404,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "client_src_services_yadisk_previewinflight",
-      "community": 114,
-      "community_name": "Avatar.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "previewinflight"
     },
     {
@@ -13503,8 +13415,8 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "client_src_services_yadisk_previewcachekey",
-      "community": 114,
-      "community_name": "Avatar.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "previewcachekey()"
     },
     {
@@ -16014,6 +15926,204 @@
       "community": 74,
       "community_name": "Avatar.jsx",
       "norm_label": "users_manual.pb.js"
+    },
+    {
+      "label": "video_poster.pb.js",
+      "file_type": "code",
+      "source_file": "pb_hooks/video_poster.pb.js",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "pb_hooks_video_poster_pb",
+      "community": 82,
+      "community_name": "main.jsx",
+      "norm_label": "video_poster.pb.js"
+    },
+    {
+      "label": "video_poster_lib.js",
+      "file_type": "code",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "pb_hooks_video_poster_lib",
+      "community": 5,
+      "community_name": "Admin UI Controls",
+      "norm_label": "video_poster_lib.js"
+    },
+    {
+      "label": "isVideoFilename()",
+      "file_type": "code",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L18",
+      "_origin": "ast",
+      "id": "pb_hooks_video_poster_lib_isvideofilename",
+      "community": 5,
+      "community_name": "Admin UI Controls",
+      "norm_label": "isvideofilename()"
+    },
+    {
+      "label": "posterFilenameFor()",
+      "file_type": "code",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L26",
+      "_origin": "ast",
+      "id": "pb_hooks_video_poster_lib_posterfilenamefor",
+      "community": 5,
+      "community_name": "Admin UI Controls",
+      "norm_label": "posterfilenamefor()"
+    },
+    {
+      "label": "ffmpegBin()",
+      "file_type": "code",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L33",
+      "_origin": "ast",
+      "id": "pb_hooks_video_poster_lib_ffmpegbin",
+      "community": 5,
+      "community_name": "Admin UI Controls",
+      "norm_label": "ffmpegbin()"
+    },
+    {
+      "label": "writeFileMode()",
+      "file_type": "code",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L43",
+      "_origin": "ast",
+      "id": "pb_hooks_video_poster_lib_writefilemode",
+      "community": 5,
+      "community_name": "Admin UI Controls",
+      "norm_label": "writefilemode()"
+    },
+    {
+      "label": "normalizeFileList()",
+      "file_type": "code",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L54",
+      "_origin": "ast",
+      "id": "pb_hooks_video_poster_lib_normalizefilelist",
+      "community": 5,
+      "community_name": "Admin UI Controls",
+      "norm_label": "normalizefilelist()"
+    },
+    {
+      "label": "diffNewFiles()",
+      "file_type": "code",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L66",
+      "_origin": "ast",
+      "id": "pb_hooks_video_poster_lib_diffnewfiles",
+      "community": 5,
+      "community_name": "Admin UI Controls",
+      "norm_label": "diffnewfiles()"
+    },
+    {
+      "label": "recordVideoPath()",
+      "file_type": "code",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L81",
+      "_origin": "ast",
+      "id": "pb_hooks_video_poster_lib_recordvideopath",
+      "community": 5,
+      "community_name": "Admin UI Controls",
+      "norm_label": "recordvideopath()"
+    },
+    {
+      "label": "recordPosterPath()",
+      "file_type": "code",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L96",
+      "_origin": "ast",
+      "id": "pb_hooks_video_poster_lib_recordposterpath",
+      "community": 5,
+      "community_name": "Admin UI Controls",
+      "norm_label": "recordposterpath()"
+    },
+    {
+      "label": "ffmpegExtractPoster()",
+      "file_type": "code",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L108",
+      "_origin": "ast",
+      "id": "pb_hooks_video_poster_lib_ffmpegextractposter",
+      "community": 5,
+      "community_name": "Admin UI Controls",
+      "norm_label": "ffmpegextractposter()"
+    },
+    {
+      "label": "ensurePosterForVideo()",
+      "file_type": "code",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L140",
+      "_origin": "ast",
+      "id": "pb_hooks_video_poster_lib_ensureposterforvideo",
+      "community": 5,
+      "community_name": "Admin UI Controls",
+      "norm_label": "ensureposterforvideo()"
+    },
+    {
+      "label": "processRecordField()",
+      "file_type": "code",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L166",
+      "_origin": "ast",
+      "id": "pb_hooks_video_poster_lib_processrecordfield",
+      "community": 5,
+      "community_name": "Admin UI Controls",
+      "norm_label": "processrecordfield()"
+    },
+    {
+      "label": "processRecordVideos()",
+      "file_type": "code",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L189",
+      "_origin": "ast",
+      "id": "pb_hooks_video_poster_lib_processrecordvideos",
+      "community": 5,
+      "community_name": "Admin UI Controls",
+      "norm_label": "processrecordvideos()"
+    },
+    {
+      "label": "processRecordVideosOnUpdate()",
+      "file_type": "code",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L201",
+      "_origin": "ast",
+      "id": "pb_hooks_video_poster_lib_processrecordvideosonupdate",
+      "community": 5,
+      "community_name": "Admin UI Controls",
+      "norm_label": "processrecordvideosonupdate()"
+    },
+    {
+      "label": "getMediaTarget()",
+      "file_type": "code",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L216",
+      "_origin": "ast",
+      "id": "pb_hooks_video_poster_lib_getmediatarget",
+      "community": 5,
+      "community_name": "Admin UI Controls",
+      "norm_label": "getmediatarget()"
+    },
+    {
+      "label": "parseThumbSize()",
+      "file_type": "code",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L223",
+      "_origin": "ast",
+      "id": "pb_hooks_video_poster_lib_parsethumbsize",
+      "community": 5,
+      "community_name": "Admin UI Controls",
+      "norm_label": "parsethumbsize()"
+    },
+    {
+      "label": "resolvePosterFile()",
+      "file_type": "code",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L237",
+      "_origin": "ast",
+      "id": "pb_hooks_video_poster_lib_resolveposterfile",
+      "community": 5,
+      "community_name": "Admin UI Controls",
+      "norm_label": "resolveposterfile()"
     },
     {
       "label": "yadisk.pb.js",
@@ -25856,6 +25966,18 @@
       "_origin": "ast",
       "source": "client_src_services_yadisk",
       "target": "client_src_config",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/lib/media.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_lib_media",
+      "target": "client_src_config_pb_url",
       "confidence_score": 1.0
     },
     {
@@ -37631,35 +37753,11 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/FeedVideoPreview.jsx",
-      "source_location": "L18",
+      "source_location": "L15",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_feedvideopreview",
       "target": "client_src_features_feed_feedvideopreview_feedvideopreview",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/FeedVideoPreview.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_feedvideopreview",
-      "target": "client_src_hooks_usevideoposter",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/FeedVideoPreview.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_feedvideopreview",
-      "target": "client_src_hooks_usevideoposter_usevideoposter",
       "confidence_score": 1.0
     },
     {
@@ -37708,18 +37806,6 @@
       "_origin": "ast",
       "source": "client_src_features_shop_productgallery",
       "target": "client_src_features_feed_feedvideopreview",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/FeedVideoPreview.jsx",
-      "source_location": "L27",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_feedvideopreview_feedvideopreview",
-      "target": "client_src_hooks_usevideoposter_usevideoposter",
       "confidence_score": 1.0
     },
     {
@@ -38457,7 +38543,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/FullscreenSlideVideo.jsx",
-      "source_location": "L32",
+      "source_location": "L30",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_fullscreenslidevideo",
@@ -38468,7 +38554,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/FullscreenSlideVideo.jsx",
-      "source_location": "L10",
+      "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_fullscreenslidevideo",
@@ -38481,54 +38567,6 @@
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/FullscreenSlideVideo.jsx",
       "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_fullscreenslidevideo",
-      "target": "client_src_hooks_usevideoposter",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/FullscreenSlideVideo.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_fullscreenslidevideo",
-      "target": "client_src_hooks_usevideoposter_usevideoposter",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/FullscreenSlideVideo.jsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_fullscreenslidevideo",
-      "target": "client_src_lib_videopostercache",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/FullscreenSlideVideo.jsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_fullscreenslidevideo",
-      "target": "client_src_lib_videopostercache_getcachedvideoposterurl",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/FullscreenSlideVideo.jsx",
-      "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_fullscreenslidevideo",
@@ -38540,7 +38578,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/FullscreenSlideVideo.jsx",
-      "source_location": "L5",
+      "source_location": "L3",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_fullscreenslidevideo",
@@ -38552,7 +38590,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/FullscreenSlideVideo.jsx",
-      "source_location": "L74",
+      "source_location": "L66",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_fullscreenslidevideo_fullscreenslidevideo",
@@ -38564,31 +38602,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/FullscreenSlideVideo.jsx",
-      "source_location": "L58",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_fullscreenslidevideo_fullscreenslidevideo",
-      "target": "client_src_hooks_usevideoposter_usevideoposter",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/FullscreenSlideVideo.jsx",
-      "source_location": "L64",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_fullscreenslidevideo_fullscreenslidevideo",
-      "target": "client_src_lib_videopostercache_getcachedvideoposterurl",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/FullscreenSlideVideo.jsx",
-      "source_location": "L45",
+      "source_location": "L43",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_fullscreenslidevideo_fullscreenslidevideo",
@@ -38610,7 +38624,7 @@
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "client/src/features/feed/MediaPreviewGrid.jsx",
-      "source_location": "L318",
+      "source_location": "L316",
       "weight": 1.0,
       "_origin": "ast",
       "context": "argument",
@@ -38731,7 +38745,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/MediaPreviewGrid.jsx",
-      "source_location": "L226",
+      "source_location": "L224",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_mediapreviewgrid_mediapreviewgrid",
@@ -40479,35 +40493,11 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/feed/PostDetailVideoPreview.jsx",
-      "source_location": "L17",
+      "source_location": "L14",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailvideopreview",
       "target": "client_src_features_feed_postdetailvideopreview_postdetailvideopreview",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostDetailVideoPreview.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postdetailvideopreview",
-      "target": "client_src_hooks_usevideoposter",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostDetailVideoPreview.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postdetailvideopreview",
-      "target": "client_src_hooks_usevideoposter_usevideoposter",
       "confidence_score": 1.0
     },
     {
@@ -40520,18 +40510,6 @@
       "_origin": "ast",
       "source": "client_src_features_feed_postmedia",
       "target": "client_src_features_feed_postdetailvideopreview",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/features/feed/PostDetailVideoPreview.jsx",
-      "source_location": "L24",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_features_feed_postdetailvideopreview_postdetailvideopreview",
-      "target": "client_src_hooks_usevideoposter_usevideoposter",
       "confidence_score": 1.0
     },
     {
@@ -40656,7 +40634,7 @@
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "client/src/features/feed/PostMedia.jsx",
-      "source_location": "L422",
+      "source_location": "L418",
       "weight": 1.0,
       "_origin": "ast",
       "context": "argument",
@@ -47133,7 +47111,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/gallery/GalleryPage.jsx",
-      "source_location": "L328",
+      "source_location": "L327",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_gallery_gallerypage_gallerypage",
@@ -59678,124 +59656,6 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "client/src/hooks/useVideoPoster.js",
-      "source_location": "L13",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_hooks_usevideoposter",
-      "target": "client_src_hooks_usevideoposter_resolvefallbackposter",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/hooks/useVideoPoster.js",
-      "source_location": "L26",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_hooks_usevideoposter",
-      "target": "client_src_hooks_usevideoposter_usevideoposter",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/hooks/useVideoPoster.js",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_hooks_usevideoposter",
-      "target": "client_src_lib_videopostercache",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/hooks/useVideoPoster.js",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_hooks_usevideoposter",
-      "target": "client_src_lib_videopostercache_capturevideoposterframe",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/hooks/useVideoPoster.js",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_hooks_usevideoposter",
-      "target": "client_src_lib_videopostercache_getcachedvideoposterurl",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/hooks/useVideoPoster.js",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_hooks_usevideoposter",
-      "target": "client_src_lib_videopostercache_isvideofileurl",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/hooks/useVideoPoster.js",
-      "source_location": "L14",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_hooks_usevideoposter_resolvefallbackposter",
-      "target": "client_src_lib_videopostercache_isvideofileurl",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/hooks/useVideoPoster.js",
-      "source_location": "L27",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_hooks_usevideoposter_usevideoposter",
-      "target": "client_src_hooks_usevideoposter_resolvefallbackposter",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "client/src/hooks/useVideoPoster.js",
-      "source_location": "L61",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_hooks_usevideoposter_usevideoposter",
-      "target": "client_src_lib_videopostercache_capturevideoposterframe"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "client/src/hooks/useVideoPoster.js",
-      "source_location": "L30",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_hooks_usevideoposter_usevideoposter",
-      "target": "client_src_lib_videopostercache_getcachedvideoposterurl"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
       "source_file": "client/src/lib/appVersion.js",
       "source_location": "L4",
       "weight": 1.0,
@@ -62562,7 +62422,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/lib/media.js",
-      "source_location": "L60",
+      "source_location": "L91",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_lib_media",
@@ -62573,7 +62433,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/lib/media.js",
-      "source_location": "L41",
+      "source_location": "L70",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_lib_media",
@@ -62595,7 +62455,18 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/lib/media.js",
-      "source_location": "L87",
+      "source_location": "L43",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_lib_media",
+      "target": "client_src_lib_media_getvideoposterurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/lib/media.js",
+      "source_location": "L118",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_lib_media",
@@ -62606,7 +62477,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/lib/media.js",
-      "source_location": "L80",
+      "source_location": "L111",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_lib_media",
@@ -62617,7 +62488,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/lib/media.js",
-      "source_location": "L71",
+      "source_location": "L102",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_lib_media",
@@ -62628,7 +62499,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/lib/media.js",
-      "source_location": "L105",
+      "source_location": "L136",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_lib_media",
@@ -62639,7 +62510,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/lib/media.js",
-      "source_location": "L95",
+      "source_location": "L126",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_lib_media",
@@ -62662,18 +62533,6 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "client/src/lib/videoPosterCache.js",
-      "source_location": "L2",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_lib_videopostercache",
-      "target": "client_src_lib_media",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
       "source_file": "client/src/services/achievements.js",
       "source_location": "L4",
       "weight": 1.0,
@@ -62687,7 +62546,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/lib/media.js",
-      "source_location": "L47",
+      "source_location": "L81",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_lib_media_getmediathumburl",
@@ -62723,7 +62582,31 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/lib/media.js",
+      "source_location": "L78",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_lib_media_getmediathumburl",
+      "target": "client_src_lib_media_getvideoposterurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/lib/media.js",
       "source_location": "L51",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_lib_media_getvideoposterurl",
+      "target": "client_src_lib_media_isvideomedianame",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/lib/media.js",
+      "source_location": "L77",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_lib_media_getmediathumburl",
@@ -62735,7 +62618,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/lib/media.js",
-      "source_location": "L88",
+      "source_location": "L119",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_lib_media_isvideofile",
@@ -62765,30 +62648,6 @@
       "_origin": "ast",
       "source": "client_src_lib_prepareuploadmedia_prepareuploadmedia",
       "target": "client_src_lib_media_isvideofile"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/lib/videoPosterCache.js",
-      "source_location": "L2",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_lib_videopostercache",
-      "target": "client_src_lib_media_videopreviewurl",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "client/src/lib/videoPosterCache.js",
-      "source_location": "L147",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_lib_videopostercache_capturevideoposterframe",
-      "target": "client_src_lib_media_videopreviewurl"
     },
     {
       "relation": "contains",
@@ -63387,61 +63246,6 @@
       "_origin": "ast",
       "source": "client_src_lib_sectionscroll",
       "target": "client_src_lib_sectionscroll_setsectionscrollelement",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/lib/videoPosterCache.js",
-      "source_location": "L35",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_lib_videopostercache",
-      "target": "client_src_lib_videopostercache_capturevideoposterframe",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/lib/videoPosterCache.js",
-      "source_location": "L23",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_lib_videopostercache",
-      "target": "client_src_lib_videopostercache_getcachedvideoposterurl",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/lib/videoPosterCache.js",
-      "source_location": "L8",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_lib_videopostercache",
-      "target": "client_src_lib_videopostercache_inflight",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/lib/videoPosterCache.js",
-      "source_location": "L15",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_lib_videopostercache",
-      "target": "client_src_lib_videopostercache_isvideofileurl",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/lib/videoPosterCache.js",
-      "source_location": "L5",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_lib_videopostercache",
-      "target": "client_src_lib_videopostercache_postercache",
       "confidence_score": 1.0
     },
     {
@@ -72367,6 +72171,429 @@
       "_origin": "ast",
       "source": "pb_hooks_users_audit_pb",
       "target": "pb_hooks_users_audit_pb_productobjectlabel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L66",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib",
+      "target": "pb_hooks_video_poster_lib_diffnewfiles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L140",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib",
+      "target": "pb_hooks_video_poster_lib_ensureposterforvideo",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L33",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib",
+      "target": "pb_hooks_video_poster_lib_ffmpegbin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L108",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib",
+      "target": "pb_hooks_video_poster_lib_ffmpegextractposter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "indirect_call",
+      "confidence": "INFERRED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L287",
+      "weight": 1.0,
+      "_origin": "ast",
+      "context": "collection",
+      "source": "pb_hooks_video_poster_lib",
+      "target": "pb_hooks_video_poster_lib_getmediatarget",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "indirect_call",
+      "confidence": "INFERRED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L282",
+      "weight": 1.0,
+      "_origin": "ast",
+      "context": "collection",
+      "source": "pb_hooks_video_poster_lib",
+      "target": "pb_hooks_video_poster_lib_isvideofilename",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L54",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib",
+      "target": "pb_hooks_video_poster_lib_normalizefilelist",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "indirect_call",
+      "confidence": "INFERRED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L284",
+      "weight": 1.0,
+      "_origin": "ast",
+      "context": "collection",
+      "source": "pb_hooks_video_poster_lib",
+      "target": "pb_hooks_video_poster_lib_parsethumbsize",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "indirect_call",
+      "confidence": "INFERRED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L283",
+      "weight": 1.0,
+      "_origin": "ast",
+      "context": "collection",
+      "source": "pb_hooks_video_poster_lib",
+      "target": "pb_hooks_video_poster_lib_posterfilenamefor",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L166",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib",
+      "target": "pb_hooks_video_poster_lib_processrecordfield",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "indirect_call",
+      "confidence": "INFERRED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L285",
+      "weight": 1.0,
+      "_origin": "ast",
+      "context": "collection",
+      "source": "pb_hooks_video_poster_lib",
+      "target": "pb_hooks_video_poster_lib_processrecordvideos",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "indirect_call",
+      "confidence": "INFERRED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L286",
+      "weight": 1.0,
+      "_origin": "ast",
+      "context": "collection",
+      "source": "pb_hooks_video_poster_lib",
+      "target": "pb_hooks_video_poster_lib_processrecordvideosonupdate",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L96",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib",
+      "target": "pb_hooks_video_poster_lib_recordposterpath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L81",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib",
+      "target": "pb_hooks_video_poster_lib_recordvideopath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "indirect_call",
+      "confidence": "INFERRED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L288",
+      "weight": 1.0,
+      "_origin": "ast",
+      "context": "collection",
+      "source": "pb_hooks_video_poster_lib",
+      "target": "pb_hooks_video_poster_lib_resolveposterfile",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L43",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib",
+      "target": "pb_hooks_video_poster_lib_writefilemode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L141",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib_ensureposterforvideo",
+      "target": "pb_hooks_video_poster_lib_isvideofilename",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L176",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib_processrecordfield",
+      "target": "pb_hooks_video_poster_lib_isvideofilename",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L238",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib_resolveposterfile",
+      "target": "pb_hooks_video_poster_lib_isvideofilename",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L121",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib_ffmpegextractposter",
+      "target": "pb_hooks_video_poster_lib_ffmpegbin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L169",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib_processrecordfield",
+      "target": "pb_hooks_video_poster_lib_normalizefilelist",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L205",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib_processrecordvideosonupdate",
+      "target": "pb_hooks_video_poster_lib_normalizefilelist",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L247",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib_resolveposterfile",
+      "target": "pb_hooks_video_poster_lib_normalizefilelist",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L207",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib_processrecordvideosonupdate",
+      "target": "pb_hooks_video_poster_lib_diffnewfiles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L144",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib_ensureposterforvideo",
+      "target": "pb_hooks_video_poster_lib_recordvideopath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L97",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib_recordposterpath",
+      "target": "pb_hooks_video_poster_lib_recordvideopath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L270",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib_resolveposterfile",
+      "target": "pb_hooks_video_poster_lib_recordvideopath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L143",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib_ensureposterforvideo",
+      "target": "pb_hooks_video_poster_lib_recordposterpath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L257",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib_resolveposterfile",
+      "target": "pb_hooks_video_poster_lib_recordposterpath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L158",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib_ensureposterforvideo",
+      "target": "pb_hooks_video_poster_lib_ffmpegextractposter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L273",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib_resolveposterfile",
+      "target": "pb_hooks_video_poster_lib_ffmpegextractposter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L180",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib_processrecordfield",
+      "target": "pb_hooks_video_poster_lib_ensureposterforvideo",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L253",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib_resolveposterfile",
+      "target": "pb_hooks_video_poster_lib_ensureposterforvideo",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L192",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib_processrecordvideos",
+      "target": "pb_hooks_video_poster_lib_processrecordfield",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L208",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib_processrecordvideosonupdate",
+      "target": "pb_hooks_video_poster_lib_processrecordfield",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pb_hooks/video_poster_lib.js",
+      "source_location": "L242",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pb_hooks_video_poster_lib_resolveposterfile",
+      "target": "pb_hooks_video_poster_lib_getmediatarget",
       "confidence_score": 1.0
     },
     {

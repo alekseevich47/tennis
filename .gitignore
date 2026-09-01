@@ -6,6 +6,7 @@ build/
 target/
 client/dist/
 client/public/ffmpeg/
+client/public/web-demuxer/
 client/tasks/
 
 # Local task notes
