@@ -1,29 +1,129 @@
 // Poster для видео: ffmpeg после upload + GET /api/video-poster
+// Логика — video_poster_lib.js (require внутри хендлеров).
 
-var poster = require(__hooks + '/video_poster_lib.js');
+onRecordAfterCreateSuccess((e) => {
+  try {
+    var poster = require(__hooks + '/video_poster_lib.js');
+    poster.processRecordVideos(e.record, ['media']);
+  } catch (err) {
+    console.log('[video-poster] create posts: ' + (err && err.stack ? err.stack : err));
+  }
+  e.next();
+}, 'posts');
 
-for (var t = 0; t < poster.MEDIA_TARGETS.length; t++) {
-  (function (target) {
-    onRecordAfterCreateSuccess(function (e) {
-      try {
-        poster.processRecordVideos(e.record, target.fields);
-      } catch (err) {
-        console.log('[video-poster] create ' + target.collection + ': ' + err);
-      }
-    }, target.collection);
+onRecordAfterUpdateSuccess((e) => {
+  try {
+    var poster = require(__hooks + '/video_poster_lib.js');
+    poster.processRecordVideosOnUpdate(e.record, e.record.original(), ['media']);
+  } catch (err) {
+    console.log('[video-poster] update posts: ' + (err && err.stack ? err.stack : err));
+  }
+  e.next();
+}, 'posts');
 
-    onRecordAfterUpdateSuccess(function (e) {
-      try {
-        poster.processRecordVideosOnUpdate(e.record, e.record.original(), target.fields);
-      } catch (err) {
-        console.log('[video-poster] update ' + target.collection + ': ' + err);
-      }
-    }, target.collection);
-  })(poster.MEDIA_TARGETS[t]);
-}
+onRecordAfterCreateSuccess((e) => {
+  try {
+    var poster = require(__hooks + '/video_poster_lib.js');
+    poster.processRecordVideos(e.record, ['media']);
+  } catch (err) {
+    console.log('[video-poster] create comments: ' + (err && err.stack ? err.stack : err));
+  }
+  e.next();
+}, 'comments');
+
+onRecordAfterUpdateSuccess((e) => {
+  try {
+    var poster = require(__hooks + '/video_poster_lib.js');
+    poster.processRecordVideosOnUpdate(e.record, e.record.original(), ['media']);
+  } catch (err) {
+    console.log('[video-poster] update comments: ' + (err && err.stack ? err.stack : err));
+  }
+  e.next();
+}, 'comments');
+
+onRecordAfterCreateSuccess((e) => {
+  try {
+    var poster = require(__hooks + '/video_poster_lib.js');
+    poster.processRecordVideos(e.record, ['media']);
+  } catch (err) {
+    console.log('[video-poster] create tournament_posts: ' + (err && err.stack ? err.stack : err));
+  }
+  e.next();
+}, 'tournament_posts');
+
+onRecordAfterUpdateSuccess((e) => {
+  try {
+    var poster = require(__hooks + '/video_poster_lib.js');
+    poster.processRecordVideosOnUpdate(e.record, e.record.original(), ['media']);
+  } catch (err) {
+    console.log('[video-poster] update tournament_posts: ' + (err && err.stack ? err.stack : err));
+  }
+  e.next();
+}, 'tournament_posts');
+
+onRecordAfterCreateSuccess((e) => {
+  try {
+    var poster = require(__hooks + '/video_poster_lib.js');
+    poster.processRecordVideos(e.record, ['media']);
+  } catch (err) {
+    console.log('[video-poster] create tournament_comments: ' + (err && err.stack ? err.stack : err));
+  }
+  e.next();
+}, 'tournament_comments');
+
+onRecordAfterUpdateSuccess((e) => {
+  try {
+    var poster = require(__hooks + '/video_poster_lib.js');
+    poster.processRecordVideosOnUpdate(e.record, e.record.original(), ['media']);
+  } catch (err) {
+    console.log('[video-poster] update tournament_comments: ' + (err && err.stack ? err.stack : err));
+  }
+  e.next();
+}, 'tournament_comments');
+
+onRecordAfterCreateSuccess((e) => {
+  try {
+    var poster = require(__hooks + '/video_poster_lib.js');
+    poster.processRecordVideos(e.record, ['images']);
+  } catch (err) {
+    console.log('[video-poster] create products: ' + (err && err.stack ? err.stack : err));
+  }
+  e.next();
+}, 'products');
+
+onRecordAfterUpdateSuccess((e) => {
+  try {
+    var poster = require(__hooks + '/video_poster_lib.js');
+    poster.processRecordVideosOnUpdate(e.record, e.record.original(), ['images']);
+  } catch (err) {
+    console.log('[video-poster] update products: ' + (err && err.stack ? err.stack : err));
+  }
+  e.next();
+}, 'products');
+
+onRecordAfterCreateSuccess((e) => {
+  try {
+    var poster = require(__hooks + '/video_poster_lib.js');
+    poster.processRecordVideos(e.record, ['video']);
+  } catch (err) {
+    console.log('[video-poster] create gallery: ' + (err && err.stack ? err.stack : err));
+  }
+  e.next();
+}, 'gallery');
+
+onRecordAfterUpdateSuccess((e) => {
+  try {
+    var poster = require(__hooks + '/video_poster_lib.js');
+    poster.processRecordVideosOnUpdate(e.record, e.record.original(), ['video']);
+  } catch (err) {
+    console.log('[video-poster] update gallery: ' + (err && err.stack ? err.stack : err));
+  }
+  e.next();
+}, 'gallery');
 
 routerAdd('GET', '/api/video-poster', (c) => {
   try {
+    var poster = require(__hooks + '/video_poster_lib.js');
     var query = c.requestInfo().query || {};
     var collection = query.collection || '';
     var recordId = query.record || query.recordId || '';
@@ -51,11 +151,13 @@ routerAdd('GET', '/api/video-poster', (c) => {
     }
 
     var bytes = $os.readFile(resolved.path);
-    c.response.header().set('Content-Type', resolved.contentType || 'image/jpeg');
+    var contentType = resolved.contentType || 'image/jpeg';
     c.response.header().set('Cache-Control', 'public, max-age=86400, immutable');
-    return c.blob(200, bytes);
+    return c.blob(200, contentType, bytes);
   } catch (err) {
     console.log('[video-poster] route: ' + (err && err.stack ? err.stack : err));
     return c.json(500, { error: 'Internal error' });
   }
 });
+
+console.log('--- VIDEO POSTER LOADED ---');
