@@ -6,7 +6,8 @@ import {
   isVideoMediaName,
   MEDIA_CARD_THUMB,
   MEDIA_LQIP_THUMB,
-  mediaNames
+  mediaNames,
+  toFullscreenMediaItem
 } from '../../lib/media';
 import FeedVideoPreview from './FeedVideoPreview';
 import PostDetailVideoPreview from './PostDetailVideoPreview';
@@ -191,28 +192,9 @@ function PostMedia({
 
     const readyItems = items
       .filter((entry) => entry.url || entry.thumbUrl || entry.previewUrl)
-      .map((entry) => {
-        const preview = entry.previewUrl || entry.thumbUrl || '';
-        const original =
-          entry.url && entry.url !== preview ? entry.url : '';
-        return {
-          filename: entry.filename,
-          url: original || preview || '',
-          thumbUrl: entry.thumbUrl || entry.previewUrl || entry.url || '',
-          previewUrl: preview,
-          isVideo: Boolean(entry.isVideo),
-          originKey: entry.originKey,
-          isLoading: Boolean(entry.isLoading) && !entry.url && !entry.thumbUrl,
-          isUpgrading:
-            Boolean(entry.publicUrl) &&
-            !entry.isVideo &&
-            Boolean(preview) &&
-            !original &&
-            (entry.isUpgrading !== false),
-          publicUrl: entry.publicUrl || '',
-          path: entry.path || null
-        };
-      });
+      .map((entry) =>
+        toFullscreenMediaItem(entry, entry.originKey || `${variant}-${post.id}-${entry.filename}`)
+      );
     const readyIndex = readyItems.findIndex((entry) => entry.originKey === item.originKey);
     if (readyIndex < 0) return;
     onOpenFullscreen?.(

@@ -464,6 +464,13 @@
   color: #ffffff;
   font-size: 20px;
   pointer-events: none;
+  z-index: 4;
+}
+
+.feed-video-preview .post-media-play-badge,
+.post-detail-video-preview .post-media-play-badge,
+.telegram-video-preview .post-media-play-badge {
+  z-index: 4;
 }
 
 .post-media-img {

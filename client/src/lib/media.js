@@ -113,6 +113,87 @@ export function isVideoMediaName(filename) {
 }
 
 /**
+ * @param {string | null | undefined} url
+ */
+export function isVideoPosterUrl(url) {
+  return typeof url === 'string' && url.includes('/api/video-poster');
+}
+
+/**
+ * @param {{
+ *   filename?: string,
+ *   name?: string,
+ *   url?: string,
+ *   fullUrl?: string,
+ *   previewUrl?: string,
+ *   thumbUrl?: string,
+ *   isVideo?: boolean,
+ *   originKey?: string,
+ *   key?: string,
+ *   isLoading?: boolean,
+ *   publicUrl?: string,
+ *   path?: string | null,
+ *   isUpgrading?: boolean
+ * }} entry
+ * @param {string} originKey
+ */
+export function toFullscreenMediaItem(entry, originKey) {
+  const filename = entry.filename || entry.name || 'file';
+
+  if (entry.isVideo) {
+    const streamCandidates = [entry.url, entry.fullUrl].filter(Boolean);
+    const streamUrl = streamCandidates.find((candidate) => !isVideoPosterUrl(candidate)) || '';
+    const posterCandidates = [entry.previewUrl, entry.thumbUrl, entry.url, entry.fullUrl].filter(
+      Boolean
+    );
+    const posterUrl =
+      posterCandidates.find(
+        (candidate) => isVideoPosterUrl(candidate) || (streamUrl && candidate !== streamUrl)
+      ) ||
+      entry.previewUrl ||
+      entry.thumbUrl ||
+      '';
+
+    return {
+      filename,
+      url: streamUrl,
+      thumbUrl: posterUrl || streamUrl,
+      previewUrl: posterUrl || streamUrl,
+      isVideo: true,
+      originKey,
+      isLoading: Boolean(entry.isLoading) && !streamUrl,
+      publicUrl: entry.publicUrl || '',
+      path: entry.path || null
+    };
+  }
+
+  const preview = entry.previewUrl || entry.thumbUrl || '';
+  const original =
+    entry.url && entry.url !== preview
+      ? entry.url
+      : entry.fullUrl && entry.fullUrl !== preview
+        ? entry.fullUrl
+        : '';
+
+  return {
+    filename,
+    url: original || preview || '',
+    thumbUrl: entry.thumbUrl || entry.previewUrl || entry.url || entry.fullUrl || '',
+    previewUrl: preview,
+    isVideo: false,
+    originKey,
+    isLoading: Boolean(entry.isLoading) && !entry.url && !entry.thumbUrl,
+    isUpgrading:
+      Boolean(entry.publicUrl) &&
+      Boolean(preview) &&
+      !original &&
+      (entry.isUpgrading !== false),
+    publicUrl: entry.publicUrl || '',
+    path: entry.path || null
+  };
+}
+
+/**
  * @param {File | null | undefined} file
  */
 export function isVideoFile(file) {
