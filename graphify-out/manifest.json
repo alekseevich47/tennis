@@ -5,8 +5,8 @@
     "semantic_hash": ""
   },
   "client/public/sw.js": {
-    "mtime": 1788246266.575715,
-    "ast_hash": "ee5cb4c0603288f9a7b59aad77c406b7",
+    "mtime": 1788248169.9075243,
+    "ast_hash": "2aa9e1f8c29ace4ae563a39b31ed1501",
     "semantic_hash": ""
   },
   "client/src/App.jsx": {
@@ -265,8 +265,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/MediaPreviewGrid.jsx": {
-    "mtime": 1788246266.578791,
-    "ast_hash": "868295e819a6bbc3582806768037aebd",
+    "mtime": 1788248153.195446,
+    "ast_hash": "4300515fc4980c1c44e3833b9e9bf68b",
     "semantic_hash": ""
   },
   "client/src/features/feed/PostCard.jsx": {
@@ -280,8 +280,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostMedia.jsx": {
-    "mtime": 1788246266.5797906,
-    "ast_hash": "96bdc85474e6e6671405014264fdc6f3",
+    "mtime": 1788248154.6171536,
+    "ast_hash": "c0aa1e671e2f29694f88ce2c6d2adf8e",
     "semantic_hash": ""
   },
   "client/src/features/gallery/AddImageModal.jsx": {
@@ -300,8 +300,8 @@
     "semantic_hash": "42a8d6654c868628a4644dd84fb92c13"
   },
   "client/src/features/gallery/GalleryPage.jsx": {
-    "mtime": 1788246266.5808132,
-    "ast_hash": "e684e3f8ddb97472435e95f05dcfe44b",
+    "mtime": 1788248188.6573906,
+    "ast_hash": "3d8cbabe4e54d07652845f3c8a0b2563",
     "semantic_hash": ""
   },
   "client/src/features/notifications/NotificationCard.jsx": {
@@ -635,8 +635,8 @@
     "semantic_hash": "f52a8f8f8c5126f6353bc9e363daa2a7"
   },
   "client/src/lib/media.js": {
-    "mtime": 1788170204.669918,
-    "ast_hash": "c3b2015a4934974425c4dbadda5668b6",
+    "mtime": 1788248131.3935778,
+    "ast_hash": "e2f7ddf283e5c47e05fb7bb4ebbd65a5",
     "semantic_hash": ""
   },
   "client/src/lib/rating.js": {
@@ -1620,13 +1620,13 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/FeedVideoPreview.jsx": {
-    "mtime": 1788246266.5777912,
-    "ast_hash": "92667a1577bdd7151d005312c252b059",
+    "mtime": 1788248140.2471051,
+    "ast_hash": "bdaf99c44a587c19525673d8f188ef1d",
     "semantic_hash": ""
   },
   "client/src/features/feed/FullscreenSlideVideo.jsx": {
-    "mtime": 1788246266.5777912,
-    "ast_hash": "dcd9d19a95f6cae13b758c57d5bec0ca",
+    "mtime": 1788248153.195446,
+    "ast_hash": "0693c64780c68fc02e4cec1de353d6a4",
     "semantic_hash": ""
   },
   "client/src/lib/videoQualities.js": {
@@ -1645,8 +1645,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostDetailVideoPreview.jsx": {
-    "mtime": 1788246266.578791,
-    "ast_hash": "135b95cfaaef92de395936e5a33c9480",
+    "mtime": 1788248140.2471051,
+    "ast_hash": "3fa1bb750f9ee821c5a175d45f0437d6",
     "semantic_hash": ""
   },
   "client/src/features/feed/CommentContextMenu.jsx": {
@@ -1692,6 +1692,16 @@
   "client/src/lib/prepareUploadMedia.js": {
     "mtime": 1788247055.2200084,
     "ast_hash": "cbe8cf05971506118f9e88820f50ff3b",
+    "semantic_hash": ""
+  },
+  "pb_hooks/video_poster.pb.js": {
+    "mtime": 1788248127.6686754,
+    "ast_hash": "199dc5953026020149c1aae1e510495e",
+    "semantic_hash": ""
+  },
+  "pb_hooks/video_poster_lib.js": {
+    "mtime": 1788248105.813203,
+    "ast_hash": "ab952f5922ad3bfba52240069f912c37",
     "semantic_hash": ""
   }
 }

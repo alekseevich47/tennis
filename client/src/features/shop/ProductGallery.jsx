@@ -137,10 +137,8 @@ function ProductGallery({
       const media = item.isVideo ? (
         isCenter || !hasMultiple ? (
           <FeedVideoPreview
-            src={item.url}
             poster={item.thumbUrl || item.previewUrl}
             active={isCenter || !isDetail}
-            alt={`Видео ${imageAlt}`}
           />
         ) : (
           <img

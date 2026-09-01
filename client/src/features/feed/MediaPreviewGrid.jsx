@@ -212,10 +212,8 @@ function MediaPreviewGrid({
     if (progressive) {
       return (
         <FeedVideoPreview
-          src={item.fullUrl || item.url}
           poster={item.previewUrl || item.url}
-          active={false}
-          alt={item.name}
+          active
           className="telegram-post-media-item"
         />
       );

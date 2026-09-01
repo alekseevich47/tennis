@@ -2,13 +2,11 @@ import React from 'react';
 import clsx from 'clsx';
 
 /**
- * Превью видео в карточке: только poster + ▶, без `<video>` (mp4 грузится в fullscreen).
+ * Превью видео: серверный poster (/api/video-poster), mp4 — только в fullscreen.
  *
  * @param {{
- *   src?: string,
  *   poster?: string,
  *   active?: boolean,
- *   alt?: string,
  *   className?: string,
  *   width?: number | string,
  *   height?: number | string

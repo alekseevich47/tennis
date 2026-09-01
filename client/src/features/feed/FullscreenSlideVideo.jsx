@@ -3,6 +3,16 @@ import clsx from 'clsx';
 import { resolveVideoQualities } from '../../lib/videoQualities';
 
 /**
+ * @param {HTMLVideoElement | null} video
+ */
+function stopVideoLoad(video) {
+  if (!video) return;
+  video.pause();
+  video.removeAttribute('src');
+  video.load();
+}
+
+/**
  * @param {{
  *   item: { url?: string, previewUrl?: string, thumbUrl?: string },
  *   isActiveSlide: boolean,
@@ -33,8 +43,8 @@ function FullscreenSlideVideo({
   const qualities = useMemo(() => resolveVideoQualities(item), [item]);
   const [qualityId, setQualityId] = useState(() => qualities[qualities.length - 1]?.id || 'auto');
   const [menuOpen, setMenuOpen] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
   const videoRef = useRef(/** @type {HTMLVideoElement | null} */ (null));
-  const poster = item.previewUrl || item.thumbUrl || '';
 
   const activeQuality = useMemo(
     () => qualities.find((entry) => entry.id === qualityId) || qualities[qualities.length - 1] || null,
@@ -42,30 +52,45 @@ function FullscreenSlideVideo({
   );
 
   const videoSrc = activeQuality?.src || item.url || '';
+  const poster = item.thumbUrl || item.previewUrl || '';
+  const shouldLoadVideo = isActiveSlide && !isClosing && Boolean(videoSrc);
 
   useEffect(() => {
     const fallback = qualities[qualities.length - 1]?.id || 'auto';
     setQualityId((current) => (qualities.some((entry) => entry.id === current) ? current : fallback));
   }, [qualities]);
 
-  const attachVideoRef = useCallback((el) => {
-    videoRef.current = el;
-    if (!isActiveSlide) return;
-    mediaRef.current = el;
-    onActiveVideoRef?.(el);
-    if (el) {
-      el.muted = false;
-      void el.play().catch(() => {});
+  useEffect(() => {
+    if (shouldLoadVideo) return undefined;
+    setVideoReady(false);
+    stopVideoLoad(videoRef.current);
+    if (isActiveSlide) {
+      mediaRef.current = null;
+      onActiveVideoRef?.(null);
     }
-  }, [isActiveSlide, mediaRef, onActiveVideoRef]);
+    return undefined;
+  }, [shouldLoadVideo, isActiveSlide, mediaRef, onActiveVideoRef]);
 
   useEffect(() => {
-    if (!isActiveSlide) return;
+    setVideoReady(false);
+  }, [videoSrc, shouldLoadVideo]);
+
+  const attachVideoRef = useCallback((el) => {
+    videoRef.current = el;
+    if (!shouldLoadVideo || !el) return;
+    mediaRef.current = el;
+    onActiveVideoRef?.(el);
+    el.muted = false;
+    void el.play().catch(() => {});
+  }, [shouldLoadVideo, mediaRef, onActiveVideoRef]);
+
+  useEffect(() => {
+    if (!shouldLoadVideo) return;
     const video = videoRef.current;
     if (!video) return;
     video.muted = false;
     void video.play().catch(() => {});
-  }, [isActiveSlide, videoSrc]);
+  }, [shouldLoadVideo, videoSrc]);
 
   const handleQualitySelect = useCallback((nextId) => {
     setQualityId(nextId);
@@ -86,7 +111,7 @@ function FullscreenSlideVideo({
     video.addEventListener('loadedmetadata', onLoaded);
   }, []);
 
-  const showQualityMenu = isActiveSlide && qualities.length > 1;
+  const showQualityMenu = shouldLoadVideo && qualities.length > 1;
 
   if (!isActiveSlide) {
     return (
@@ -98,29 +123,43 @@ function FullscreenSlideVideo({
             className="fullscreen-video-poster"
             aria-hidden="true"
           />
-        ) : null}
+        ) : (
+          <span className="post-media-skeleton fullscreen-video-poster-skeleton" aria-hidden="true" />
+        )}
       </div>
     );
   }
 
   return (
     <div className="fullscreen-video-container">
-      <video
-        ref={attachVideoRef}
-        src={videoSrc}
-        className="fullscreen-target-video"
-        controls
-        preload="auto"
-        playsInline
-        aria-label={`Полноэкранное видео ${activeIndex + 1}`}
-        width="1200"
-        height="900"
-        style={{
-          transform: isClosing && isActiveSlideClosing && returnTransform
-            ? returnTransform
-            : `translate(${position.x}px, ${position.y}px)`
-        }}
-      />
+      {poster && !videoReady ? (
+        <img
+          src={poster}
+          alt=""
+          className="fullscreen-video-poster fullscreen-video-poster--loading"
+          aria-hidden="true"
+        />
+      ) : null}
+      {shouldLoadVideo ? (
+        <video
+          ref={attachVideoRef}
+          src={videoSrc}
+          className={clsx('fullscreen-target-video', videoReady && 'is-ready')}
+          controls
+          preload="auto"
+          playsInline
+          aria-label={`Полноэкранное видео ${activeIndex + 1}`}
+          width="1200"
+          height="900"
+          style={{
+            transform: isClosing && isActiveSlideClosing && returnTransform
+              ? returnTransform
+              : `translate(${position.x}px, ${position.y}px)`
+          }}
+          onCanPlay={() => setVideoReady(true)}
+          onLoadedData={() => setVideoReady(true)}
+        />
+      ) : null}
       <div
         className="fullscreen-video-tap-zone"
         style={{ bottom: controlsReservedPx }}
