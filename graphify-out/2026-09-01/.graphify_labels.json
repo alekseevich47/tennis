@@ -102,5 +102,8 @@
   "100": "useSectionScroll",
   "101": "GalleryUploadProvider.jsx",
   "102": "mention_notifications.pb.js",
-  "104": "buyMessage.js"
+  "103": "EditTrainingModal.jsx",
+  "104": "buyMessage.js",
+  "105": "SortableMediaPreviewGrid.jsx",
+  "106": "GalleryUploadProvider.jsx"
 }
