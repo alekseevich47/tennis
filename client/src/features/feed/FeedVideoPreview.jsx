@@ -49,8 +49,9 @@ function FeedVideoPreview({
     <div
       className={clsx(
         'feed-video-preview',
+        className,
         poster && 'feed-video-preview--has-poster',
-        loaded && 'is-loaded',
+        loaded && shouldLoad && 'is-loaded',
         !shouldLoad && 'feed-video-preview--inactive'
       )}
     >
@@ -58,7 +59,7 @@ function FeedVideoPreview({
         <img
           src={poster}
           alt=""
-          className={clsx('feed-video-preview__poster', className)}
+          className="feed-video-preview__poster"
           aria-hidden="true"
         />
       ) : null}
@@ -70,7 +71,7 @@ function FeedVideoPreview({
           ref={videoRef}
           src={videoPreviewUrl(src)}
           poster={poster || undefined}
-          className={clsx('feed-video-preview__video', className)}
+          className="feed-video-preview__video"
           preload="metadata"
           playsInline
           muted

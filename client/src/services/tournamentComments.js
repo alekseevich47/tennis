@@ -19,6 +19,31 @@ import { PB_URL } from '../config';
 
 /**
  * @param {string} postId
+ * @param {number} [limit]
+ * @param {{ signal?: AbortSignal }} [options]
+ * @returns {Promise<TournamentCommentRecord[]>}
+ */
+export async function listRecentCommentsForTournamentPost(postId, limit = 2, { signal } = {}) {
+  try {
+    const page = /** @type {{ items: TournamentCommentRecord[] }} */ (
+      await pb.collection('tournament_comments').getList(1, limit, {
+        filter: pb.filter('post = {:postId}', { postId }),
+        sort: '-created',
+        expand: 'author,reply_to,reply_to.author',
+        requestKey: null,
+        signal
+      })
+    );
+    return [...page.items].reverse();
+  } catch (err) {
+    if (err && /** @type {Error} */ (err).name === 'AbortError') return [];
+    error('Ошибка загрузки комментариев турнира:', err);
+    throw err;
+  }
+}
+
+/**
+ * @param {string} postId
  * @param {{ signal?: AbortSignal }} [options]
  * @returns {Promise<TournamentCommentRecord[]>}
  */

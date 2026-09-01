@@ -592,6 +592,33 @@ export async function toggleGalleryLike(mediaId, userId) {
 
 /**
  * @param {string} mediaId
+ * @param {number} [limit]
+ * @param {{ signal?: AbortSignal }} [options]
+ * @returns {Promise<GalleryCommentRecord[]>}
+ */
+export async function listRecentGalleryComments(mediaId, limit = 2, { signal } = {}) {
+  if (!mediaId) return [];
+
+  try {
+    const page = /** @type {{ items: GalleryCommentRecord[] }} */ (
+      await pb.collection('gallery_comments').getList(1, limit, {
+        filter: pb.filter('media_id = {:mediaId} && is_deleted = false', { mediaId }),
+        sort: '-created',
+        expand: 'author,reply_to,reply_to.author',
+        requestKey: null,
+        signal
+      })
+    );
+    return [...page.items].reverse();
+  } catch (err) {
+    if (err && /** @type {Error} */ (err).name === 'AbortError') return [];
+    error('Ошибка загрузки комментариев галереи:', err);
+    throw err;
+  }
+}
+
+/**
+ * @param {string} mediaId
  * @param {{ signal?: AbortSignal }} [options]
  * @returns {Promise<GalleryCommentRecord[]>}
  */

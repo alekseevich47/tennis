@@ -1,19 +1,21 @@
 // @ts-check
-import useSWR from 'swr';
-import { listGalleryComments } from '../services/catalog';
+import { useProgressiveComments } from './useProgressiveComments';
+import { listGalleryComments, listRecentGalleryComments } from '../services/catalog';
 
 /**
  * @param {string | null | undefined} mediaId
  */
 export function useGalleryComments(mediaId) {
-  const { data, mutate, isLoading } = useSWR(
-    mediaId ? ['gallery_comments', mediaId] : null,
-    ([, id]) => listGalleryComments(id)
-  );
+  const { comments, mutate, isLoading, isPartial, phase } = useProgressiveComments(mediaId, {
+    fetchRecent: listRecentGalleryComments,
+    fetchAll: listGalleryComments
+  });
 
   return {
-    comments: data || [],
+    comments,
     mutate,
-    isLoading
+    isLoading,
+    isPartial,
+    phase
   };
 }

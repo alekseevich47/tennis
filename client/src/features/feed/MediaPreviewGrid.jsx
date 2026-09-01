@@ -3,6 +3,8 @@ import clsx from 'clsx';
 import { videoPreviewUrl } from '../../lib/media';
 import AlbumStackBadge from './AlbumStackBadge';
 import MediaSwipeDots from './MediaSwipeDots';
+import ProgressiveImage from './ProgressiveImage';
+import FeedVideoPreview from './FeedVideoPreview';
 import { useSwipeGallery } from './useSwipeGallery';
 
 /**
@@ -172,6 +174,7 @@ function MediaPreviewAlbumItem({
  *   hiddenMediaKey?: string | null,
  *   onItemClick?: (item: any, index: number, event: React.MouseEvent) => void,
  *   onAlbumIndexChange?: (item: any, index: number) => void,
+ *   progressive?: boolean,
  *   getAction?: (item: any) => React.ReactNode
  * }} props
  */
@@ -183,9 +186,56 @@ function MediaPreviewGrid({
   hiddenMediaKey = null,
   onItemClick,
   onAlbumIndexChange,
+  progressive = false,
   getAction
 }) {
   if (!items.length) return null;
+
+  const renderPhotoMedia = (item) => {
+    if (progressive) {
+      return (
+        <ProgressiveImage
+          src={item.url}
+          previewSrc={item.previewUrl || item.url}
+          alt={item.name}
+          className="telegram-post-media-item"
+          loading="lazy"
+          width="800"
+          height="600"
+        />
+      );
+    }
+    return <img src={item.url} alt={item.name} loading="lazy" width="800" height="600" />;
+  };
+
+  const renderVideoMedia = (item) => {
+    if (progressive) {
+      return (
+        <FeedVideoPreview
+          src={item.fullUrl || item.url}
+          poster={item.previewUrl || item.url}
+          active
+          alt={item.name}
+          className="telegram-post-media-item"
+        />
+      );
+    }
+    return (
+      <div className="telegram-video-preview">
+        <video
+          src={videoPreviewUrl(item.url)}
+          preload="metadata"
+          playsInline
+          muted
+          disablePictureInPicture
+          aria-label={item.name}
+          width="800"
+          height="600"
+        />
+        <span className="post-media-play-badge" aria-hidden="true">▶</span>
+      </div>
+    );
+  };
 
   return (
     <div
@@ -224,23 +274,9 @@ function MediaPreviewGrid({
             </div>
           );
         } else if (item.isVideo) {
-          media = (
-            <div className="telegram-video-preview">
-              <video
-                src={videoPreviewUrl(item.url)}
-                preload="metadata"
-                playsInline
-                muted
-                disablePictureInPicture
-                aria-label={item.name}
-                width="800"
-                height="600"
-              />
-              <span className="post-media-play-badge" aria-hidden="true">▶</span>
-            </div>
-          );
+          media = renderVideoMedia(item);
         } else {
-          media = <img src={item.url} alt={item.name} loading="lazy" width="800" height="600" />;
+          media = renderPhotoMedia(item);
         }
 
         const canOpen = Boolean(onItemClick) && status === 'ready' && Boolean(item.url);

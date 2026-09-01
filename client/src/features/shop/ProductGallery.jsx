@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
 import clsx from 'clsx';
 import FeedVideoPreview from '../feed/FeedVideoPreview';
 import { useGalleryNavigation } from './useGalleryNavigation';
@@ -8,6 +8,7 @@ import { useGalleryNavigation } from './useGalleryNavigation';
  *   filename: string,
  *   url: string,
  *   thumbUrl?: string,
+ *   previewUrl?: string,
  *   isVideo: boolean,
  *   originKey: string
  * }} ProductGalleryItem
@@ -38,6 +39,7 @@ function carouselSlideKey(item, slideIndex, trackItems) {
  *   variant?: 'detail' | 'card',
  *   hiddenMediaKey?: string | null,
  *   disabled?: boolean,
+ *   mediaEnabled?: boolean,
  *   onOpenFullscreen?: (event: React.MouseEvent<HTMLElement>, index: number) => void,
  *   onCenterClick?: () => void,
  *   emptyLabel?: string,
@@ -52,6 +54,7 @@ function ProductGallery({
   variant = 'detail',
   hiddenMediaKey = null,
   disabled = false,
+  mediaEnabled = true,
   onOpenFullscreen,
   onCenterClick,
   emptyLabel = 'Нет фото',
@@ -62,11 +65,9 @@ function ProductGallery({
     setIndex,
     hasMultiple,
     isSliding,
+    isHorizontalDrag,
     trackTranslate,
     galleryRef,
-    handleTouchStart,
-    handleTouchMove,
-    handleTouchEnd,
     handlePointerDown,
     handlePointerMove,
     handlePointerUp,
@@ -79,38 +80,10 @@ function ProductGallery({
 
   const activeItem = items[index] || null;
   const isDetail = variant === 'detail';
-  const [cardInViewport, setCardInViewport] = useState(false);
-
-  useEffect(() => {
-    if (isDetail) {
-      setCardInViewport(false);
-      return undefined;
-    }
-    const node = galleryRef.current;
-    if (!node) return undefined;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        setCardInViewport(Boolean(entry?.isIntersecting) && (entry?.intersectionRatio ?? 0) >= 0.35);
-      },
-      { threshold: [0, 0.35, 0.6, 1] }
-    );
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [galleryRef, isDetail, items.length, resetKey]);
+  const shouldLoadMedia = isDetail || mediaEnabled;
   const prevItem = hasMultiple ? items[(index - 1 + items.length) % items.length] : null;
   const nextItem = hasMultiple ? items[(index + 1) % items.length] : null;
   const trackItems = hasMultiple && activeItem ? [prevItem, activeItem, nextItem] : activeItem ? [activeItem] : [];
-
-  const handleCardGalleryClick = useCallback(
-    (event) => {
-      if (isDetail || !onCenterClick) return;
-      if (consumeSuppressClick()) return;
-      if (event.target.closest('.product-card-dots button')) return;
-      onCenterClick();
-    },
-    [consumeSuppressClick, isDetail, onCenterClick]
-  );
 
   const handleCenterClick = useCallback(
     (event) => {
@@ -151,6 +124,16 @@ function ProductGallery({
       if (!item) return null;
 
       const btnClass = isDetail ? 'product-detail-image-btn' : 'product-card-image-btn';
+      const loadThisSlide = shouldLoadMedia && (isCenter || !hasMultiple || isDetail);
+
+      if (!loadThisSlide) {
+        return (
+          <div className={clsx(btnClass, 'product-gallery-media-placeholder')} aria-hidden="true">
+            <span className="product-gallery-media-placeholder__shimmer" />
+          </div>
+        );
+      }
+
       const media = item.isVideo ? (
         isCenter || !hasMultiple ? (
           <FeedVideoPreview
@@ -171,6 +154,7 @@ function ProductGallery({
           src={isDetail ? item.url : (item.thumbUrl || item.url)}
           alt={isCenter ? imageAlt : ''}
           aria-hidden={isCenter ? undefined : 'true'}
+          loading="lazy"
         />
       );
 
@@ -206,9 +190,9 @@ function ProductGallery({
       hiddenMediaKey,
       imageAlt,
       isDetail,
-      cardInViewport,
       onCenterClick,
-      onOpenFullscreen
+      onOpenFullscreen,
+      shouldLoadMedia
     ]
   );
 
@@ -218,12 +202,9 @@ function ProductGallery({
       className={clsx(
         'product-gallery',
         isDetail ? 'product-gallery--detail' : 'product-gallery--card',
-        isSliding && 'is-sliding'
+        isSliding && 'is-sliding',
+        isHorizontalDrag && 'is-horizontal-drag'
       )}
-      onClick={!isDetail && onCenterClick ? handleCardGalleryClick : undefined}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
@@ -259,7 +240,7 @@ function ProductGallery({
         <div className={isDetail ? 'product-detail-no-image' : 'no-image'}>{emptyLabel}</div>
       )}
 
-      {hasMultiple && isDetail && (
+      {hasMultiple && (
         <>
           <button
             type="button"

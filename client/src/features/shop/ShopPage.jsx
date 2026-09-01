@@ -52,8 +52,10 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
   const [hiddenMediaKey, setHiddenMediaKey] = useState(null);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [loadMediaUntilIndex, setLoadMediaUntilIndex] = useState(7);
 
   const containerRef = useRef(null);
+  const cardObserverRef = useRef(/** @type {IntersectionObserver | null} */ (null));
   const isSearchOpenRef = useRef(isSearchOpen);
   const searchQueryRef = useRef(searchQuery);
 
@@ -163,6 +165,31 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
 
     return sortProducts(searched, filters);
   }, [baseProducts, filters, priceBounds, searchQuery]);
+
+  useEffect(() => {
+    cardObserverRef.current?.disconnect();
+    cardObserverRef.current = new IntersectionObserver(
+      (entries) => {
+        let maxVisible = -1;
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const idx = Number(/** @type {HTMLElement} */ (entry.target).dataset.productIndex);
+          if (!Number.isNaN(idx)) maxVisible = Math.max(maxVisible, idx);
+        });
+        if (maxVisible >= 0) {
+          setLoadMediaUntilIndex((prev) => Math.max(prev, maxVisible + 6));
+        }
+      },
+      { root: containerRef.current, rootMargin: '120px 0px', threshold: 0.05 }
+    );
+    return () => cardObserverRef.current?.disconnect();
+  }, [visibleProducts.length]);
+
+  const registerProductCard = useCallback((node) => {
+    const observer = cardObserverRef.current;
+    if (!observer) return;
+    if (node) observer.observe(node);
+  }, []);
 
   const handleCloseSearchUI = useCallback(() => {
     setIsSearchOpen(false);
@@ -288,16 +315,19 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
           <EmptyState title="Нет товаров" description="Скоро здесь появятся первые позиции." />
         ) : (
           <div className="products-grid">
-            {visibleProducts.map((product) => {
+            {visibleProducts.map((product, productIndex) => {
               const isSoftDeleted =
                 deletedProductIds.includes(product.id) || product.is_deleted === true;
               return (
                 <ProductCard
                   key={product.id}
+                  ref={registerProductCard}
+                  data-product-index={productIndex}
                   product={product}
                   isSoftDeleted={isSoftDeleted}
                   moderator={moderator}
                   hiddenMediaKey={hiddenMediaKey}
+                  mediaEnabled={productIndex <= loadMediaUntilIndex}
                   onOpen={openProduct}
                   onDelete={handleDelete}
                   onRestore={handleRestore}
