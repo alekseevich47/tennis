@@ -1,60 +1,59 @@
 // Перекодирование видео через ffmpeg (posts, comments, shop, gallery).
-// Требует ffmpeg в PATH или FFMPEG_PATH. Лимита по объёму нет.
+// Требует ffmpeg в PATH или FFMPEG_PATH.
 //
-// НЕ используем AfterCreateSuccess/AfterUpdateSuccess: код после e.next() всё равно
-// блокирует ответ (unstack), ffmpeg ломает create → «Failed to create record.» при
-// успешно сохранённой записи. Только cron.
-
-var video = require(__hooks + '/videolib.js');
-
-var MEDIA_TARGETS = [
-  { collection: 'posts', fields: ['media'] },
-  { collection: 'comments', fields: ['media'] },
-  { collection: 'tournament_posts', fields: ['media'] },
-  { collection: 'tournament_comments', fields: ['media'] },
-  { collection: 'products', fields: ['images'] },
-  { collection: 'gallery', fields: ['video'] }
-];
-
-var TRANSCODE_LOOKBACK_MINUTES = 20;
-
-function recentCutoffIso() {
-  return new Date(Date.now() - TRANSCODE_LOOKBACK_MINUTES * 60 * 1000).toISOString();
-}
-
-function scanCollectionForVideos(target) {
-  var cutoff = recentCutoffIso();
-  var filter =
-    '(created >= "' +
-    cutoff +
-    '") || (updated >= "' +
-    cutoff +
-    '")';
-  var records;
-  try {
-    records = $app.findRecordsByFilter(target.collection, filter, '-updated', 40, 0);
-  } catch (err) {
-    console.log('[video-transcode] cron list ' + target.collection + ': ' + err);
-    return;
-  }
-
-  for (var i = 0; i < records.length; i++) {
-    try {
-      video.processRecordVideos(records[i], target.fields);
-    } catch (err) {
-      console.log('[video-transcode] cron ' + target.collection + '/' + records[i].id + ': ' + err);
-    }
-  }
-}
+// НЕ AfterCreateSuccess — ffmpeg блокирует unstack и ломает create.
+// Сразу после upload: POST /api/video-transcode-now (клиент, fire-and-forget).
+// Cron */2 — fallback для пропущенных записей.
 
 cronAdd('video_transcode_scan', '*/2 * * * *', () => {
   try {
-    for (var t = 0; t < MEDIA_TARGETS.length; t++) {
-      scanCollectionForVideos(MEDIA_TARGETS[t]);
-    }
+    var video = require(__hooks + '/videolib.js');
+    video.runTranscodeCronScan();
   } catch (err) {
     console.log('[video-transcode] cron: ' + (err && err.message ? err.message : err));
   }
 });
 
-console.log('--- VIDEO TRANSCODE LOADED (cron */2) ---');
+routerAdd('POST', '/api/video-transcode-now', (c) => {
+  try {
+    var video = require(__hooks + '/videolib.js');
+    var info = c.requestInfo();
+    var auth = info.auth;
+    if (!auth || !auth.id) {
+      return c.json(401, { error: 'Unauthorized' });
+    }
+
+    var body = info.body || {};
+    var collectionName = String(body.collection || '');
+    var recordId = String(body.recordId || '');
+    if (!video.getMediaTarget(collectionName) || !recordId) {
+      return c.json(400, { error: 'Invalid payload' });
+    }
+
+    var record;
+    try {
+      record = $app.findRecordById(collectionName, recordId);
+    } catch (_) {
+      return c.json(404, { error: 'Record not found' });
+    }
+
+    if (!video.canAuthTranscode(auth, record)) {
+      return c.json(403, { error: 'Forbidden' });
+    }
+
+    var result = video.transcodeRecordNow(collectionName, recordId);
+    if (result.error === 'not_found') {
+      return c.json(404, { error: 'Record not found' });
+    }
+    if (result.error) {
+      return c.json(400, { error: result.error });
+    }
+
+    return c.json(200, { ok: true });
+  } catch (err) {
+    console.log('[video-transcode] api: ' + (err && err.message ? err.message : err));
+    return c.json(500, { error: 'Transcode failed' });
+  }
+});
+
+console.log('--- VIDEO TRANSCODE LOADED (api + cron */2) ---');

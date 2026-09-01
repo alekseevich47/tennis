@@ -190,9 +190,121 @@ function processRecordVideosOnUpdate(record, original, fieldNames) {
   }
 }
 
+var MEDIA_TARGETS = [
+  { collection: 'posts', fields: ['media'] },
+  { collection: 'comments', fields: ['media'] },
+  { collection: 'tournament_posts', fields: ['media'] },
+  { collection: 'tournament_comments', fields: ['media'] },
+  { collection: 'products', fields: ['images'] },
+  { collection: 'gallery', fields: ['video'] }
+];
+
+var TRANSCODE_LOOKBACK_MINUTES = 20;
+
+/**
+ * @param {string} collectionName
+ * @returns {{ collection: string, fields: string[] } | null}
+ */
+function getMediaTarget(collectionName) {
+  for (var i = 0; i < MEDIA_TARGETS.length; i++) {
+    if (MEDIA_TARGETS[i].collection === collectionName) return MEDIA_TARGETS[i];
+  }
+  return null;
+}
+
+function recentCutoffIso() {
+  return new Date(Date.now() - TRANSCODE_LOOKBACK_MINUTES * 60 * 1000).toISOString();
+}
+
+/**
+ * @param {{ collection: string, fields: string[] }} target
+ */
+function scanCollectionForVideos(target) {
+  var cutoff = recentCutoffIso();
+  var filter =
+    '(created >= "' +
+    cutoff +
+    '") || (updated >= "' +
+    cutoff +
+    '")';
+  var records;
+  try {
+    records = $app.findRecordsByFilter(target.collection, filter, '-updated', 40, 0);
+  } catch (err) {
+    console.log('[video-transcode] cron list ' + target.collection + ': ' + err);
+    return;
+  }
+
+  for (var i = 0; i < records.length; i++) {
+    try {
+      processRecordVideos(records[i], target.fields);
+    } catch (err) {
+      console.log('[video-transcode] cron ' + target.collection + '/' + records[i].id + ': ' + err);
+    }
+  }
+}
+
+function runTranscodeCronScan() {
+  for (var t = 0; t < MEDIA_TARGETS.length; t++) {
+    scanCollectionForVideos(MEDIA_TARGETS[t]);
+  }
+}
+
+/**
+ * @param {*} record
+ * @returns {string}
+ */
+function recordAuthorId(record) {
+  try {
+    var id = record.getString('author');
+    if (id) return String(id);
+  } catch (_) {}
+  return '';
+}
+
+/**
+ * @param {*} auth
+ * @param {*} record
+ * @returns {boolean}
+ */
+function canAuthTranscode(auth, record) {
+  if (!auth || !auth.id) return false;
+  try {
+    if (auth.getString && auth.getString('role') === 'moderator') return true;
+  } catch (_) {}
+  var authorId = recordAuthorId(record);
+  if (authorId && authorId === String(auth.id)) return true;
+  if (!authorId && record.collection().name === 'products') return true;
+  return false;
+}
+
+/**
+ * @param {string} collectionName
+ * @param {string} recordId
+ * @returns {{ ok?: boolean, error?: string }}
+ */
+function transcodeRecordNow(collectionName, recordId) {
+  var target = getMediaTarget(collectionName);
+  if (!target) return { error: 'invalid_collection' };
+
+  var record;
+  try {
+    record = $app.findRecordById(collectionName, recordId);
+  } catch (_) {
+    return { error: 'not_found' };
+  }
+
+  processRecordVideos(record, target.fields);
+  return { ok: true };
+}
+
 module.exports = {
   isVideoFilename: isVideoFilename,
   normalizeFileList: normalizeFileList,
   processRecordVideos: processRecordVideos,
-  processRecordVideosOnUpdate: processRecordVideosOnUpdate
+  processRecordVideosOnUpdate: processRecordVideosOnUpdate,
+  getMediaTarget: getMediaTarget,
+  canAuthTranscode: canAuthTranscode,
+  transcodeRecordNow: transcodeRecordNow,
+  runTranscodeCronScan: runTranscodeCronScan
 };
