@@ -1,8 +1,27 @@
-import { writeFileSync, readFileSync } from 'node:fs'
+import { writeFileSync, readFileSync, cpSync, mkdirSync } from 'node:fs'
 import { execSync } from 'node:child_process'
 import { join } from 'node:path'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+
+function ffmpegAssetsPlugin() {
+  const coreDir = join('node_modules', '@ffmpeg', 'core', 'dist', 'esm')
+  const destDir = join('public', 'ffmpeg')
+
+  const copyCore = () => {
+    mkdirSync(destDir, { recursive: true })
+    cpSync(join(coreDir, 'ffmpeg-core.js'), join(destDir, 'ffmpeg-core.js'))
+    cpSync(join(coreDir, 'ffmpeg-core.wasm'), join(destDir, 'ffmpeg-core.wasm'))
+  }
+
+  return {
+    name: 'ffmpeg-assets',
+    buildStart: copyCore,
+    configureServer() {
+      copyCore()
+    }
+  }
+}
 
 function resolveAppBuild() {
   if (process.env.VITE_APP_VERSION) return process.env.VITE_APP_VERSION.trim()
@@ -39,7 +58,7 @@ function versionJsonPlugin(build) {
 
 export default defineConfig({
   base: '/tt-api/',
-  plugins: [react(), versionJsonPlugin(APP_BUILD)],
+  plugins: [react(), ffmpegAssetsPlugin(), versionJsonPlugin(APP_BUILD)],
   define: {
     'import.meta.env.VITE_APP_VERSION': JSON.stringify(APP_BUILD),
     'import.meta.env.VITE_APP_DISPLAY_VERSION': JSON.stringify(APP_DISPLAY_VERSION)

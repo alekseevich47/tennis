@@ -1,6 +1,7 @@
 // @ts-check
 import pb from './pb';
 import { error } from '../lib/log';
+import { mapUploadProgress, prepareUploadMediaList } from '../lib/prepareUploadMedia';
 import { PB_URL } from '../config';
 
 /**
@@ -70,7 +71,7 @@ export async function listCommentsForTournamentPost(postId, { signal } = {}) {
  * @param {string | null} [replyToId]
  * @param {{ mediaFiles?: File[], captionAbove?: boolean, signal?: AbortSignal, onProgress?: (percent: number) => void }} [options]
  */
-export function createTournamentComment(
+export async function createTournamentComment(
   postId,
   text,
   userId,
@@ -96,15 +97,23 @@ export function createTournamentComment(
     );
   }
 
+  const preparedMedia = await prepareUploadMediaList(mediaFiles, {
+    signal,
+    onProgress: (percent) => onProgress?.(Math.round(percent * 0.4))
+  });
+
   const formData = new FormData();
   formData.append('post', postId);
   formData.append('author', userId);
   formData.append('text', text || '');
   if (replyToId) formData.append('reply_to', replyToId);
   if (captionAbove) formData.append('caption_above', 'true');
-  mediaFiles.forEach((file) => formData.append('media', file));
+  preparedMedia.forEach((file) => formData.append('media', file));
 
-  return createTournamentCommentWithProgress(formData, { signal, onProgress });
+  return createTournamentCommentWithProgress(formData, {
+    signal,
+    onProgress: (percent) => onProgress?.(mapUploadProgress(percent))
+  });
 }
 
 /**
