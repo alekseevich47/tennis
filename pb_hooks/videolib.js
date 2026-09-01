@@ -151,13 +151,17 @@ function probeVideo(inputPath) {
  * @returns {{ width: number, height: number, videoCodec: string } | null}
  */
 function waitAndProbeVideo(inputPath) {
+  var lastErr = '';
   for (var i = 0; i < INPUT_WAIT_ATTEMPTS; i++) {
     try {
       var meta = probeVideo(inputPath);
       if (meta) return meta;
-    } catch (_) {}
+    } catch (err) {
+      lastErr = err && err.message ? err.message : String(err);
+    }
     if (i + 1 < INPUT_WAIT_ATTEMPTS) sleep(INPUT_WAIT_MS);
   }
+  if (lastErr) console.log('[video-transcode] probe failed: ' + lastErr);
   return null;
 }
 
@@ -334,7 +338,7 @@ function transcodeFileInPlace(inputPath) {
 function recordFilePath(record, filename) {
   if (!record || !filename) return null;
   try {
-    return $filepath.join(record.baseFilesPath(), filename);
+    return $filepath.join($app.dataDir(), 'storage', record.baseFilesPath(), filename);
   } catch (err) {
     console.log('[video-transcode] baseFilesPath: ' + err);
     return null;
@@ -407,7 +411,7 @@ var MEDIA_TARGETS = [
   { collection: 'gallery', fields: ['video'] }
 ];
 
-var TRANSCODE_LOOKBACK_MINUTES = 20;
+var TRANSCODE_LOOKBACK_MINUTES = 1440;
 
 /**
  * @param {string} collectionName
@@ -449,6 +453,9 @@ function scanCollectionForVideos(target) {
     } catch (err) {
       console.log('[video-transcode] cron ' + target.collection + '/' + records[i].id + ': ' + err);
     }
+  }
+  if (records.length > 0) {
+    console.log('[video-transcode] cron ' + target.collection + ': scanned ' + records.length);
   }
 }
 
