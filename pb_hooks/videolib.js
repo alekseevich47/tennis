@@ -46,6 +46,12 @@ function ffmpegBin() {
 }
 
 /**
+ * Без запятой в min() — $os.cmd не через shell, кавычки в scale='min(1920,iw)' ломаются.
+ * force_original_aspect_ratio=decrease — не апскейлить узкие ролики.
+ */
+var FFMPEG_SCALE_VF = 'scale=1920:-2:force_original_aspect_ratio=decrease';
+
+/**
  * @param {string} inputPath
  * @param {string} outputPath
  * @returns {boolean}
@@ -64,7 +70,7 @@ function runFfmpegTranscode(inputPath, outputPath) {
       '-crf',
       '23',
       '-vf',
-      "scale='min(1920,iw)':-2",
+      FFMPEG_SCALE_VF,
       '-c:a',
       'aac',
       '-b:a',
@@ -77,7 +83,17 @@ function runFfmpegTranscode(inputPath, outputPath) {
     $os.readFile(outputPath);
     return true;
   } catch (err) {
-    console.log('[video-transcode] ffmpeg failed: ' + (err && err.message ? err.message : err));
+    var msg = err && err.message ? err.message : String(err);
+    var out = '';
+    try {
+      if (err && typeof err.output === 'function') out = String(err.output());
+      else if (err && err.output) out = String(err.output);
+    } catch (_) {}
+    if (out) {
+      var tail = out.length > 800 ? out.slice(out.length - 800) : out;
+      console.log('[video-transcode] ffmpeg output: ' + tail);
+    }
+    console.log('[video-transcode] ffmpeg failed: ' + msg);
     try {
       $os.remove(outputPath);
     } catch (_) {}
