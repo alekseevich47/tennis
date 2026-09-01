@@ -4,6 +4,7 @@ import PostContentHtml from '../feed/PostContentHtml';
 import PostRichTextField from '../feed/PostRichTextField';
 import CommentSendButton from '../feed/CommentSendButton';
 import CommentListItem from '../feed/CommentListItem';
+import CommentListSkeleton from '../feed/CommentListSkeleton';
 import CommentReplyComposeBar from '../feed/CommentReplyComposeBar';
 import { groupCommentsByDay } from '../feed/commentListLayout';
 import DayGroup from '../feed/DayGroup';
@@ -46,7 +47,7 @@ function GalleryCommentModal({
 }) {
   const mediaItem = useKeepForModalClose(isOpen, mediaItemProp);
   const mediaId = mediaItem?.id || null;
-  const { comments, mutate, isLoading } = useGalleryComments(isOpen ? mediaId : null);
+  const { comments, mutate, isLoading, isPartial } = useGalleryComments(isOpen ? mediaId : null);
   const [commentText, setCommentText] = useState('');
   const [isAddingComment, setIsAddingComment] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
@@ -240,11 +241,12 @@ function GalleryCommentModal({
 
       <div className="gallery-comments-section">
         {isLoading ? (
-          <p className="gallery-comments-empty">Загрузка комментариев...</p>
+          <CommentListSkeleton count={4} />
         ) : comments.length === 0 ? (
           <p className="gallery-comments-empty">Комментариев пока нет.</p>
         ) : (
           <div className="gallery-comments-list modal-comments-list">
+            {isPartial ? <CommentListSkeleton count={2} className="comment-list-skeleton--older" /> : null}
             {groupCommentsByDay(comments).map((group) => (
               <DayGroup key={group.dayKey} label={group.dateLabel} variant="comments">
                 {group.items.map((comment) => {

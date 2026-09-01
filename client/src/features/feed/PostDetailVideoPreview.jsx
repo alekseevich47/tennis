@@ -47,6 +47,7 @@ function PostDetailVideoPreview({
     <div
       className={clsx(
         'post-detail-video-preview',
+        className,
         poster && 'post-detail-video-preview--has-poster',
         loaded && 'is-loaded'
       )}
@@ -55,7 +56,7 @@ function PostDetailVideoPreview({
         <img
           src={poster}
           alt=""
-          className={clsx('post-detail-video-preview__poster', className)}
+          className="post-detail-video-preview__poster"
           aria-hidden="true"
         />
       ) : null}
@@ -67,7 +68,7 @@ function PostDetailVideoPreview({
           ref={videoRef}
           src={videoPreviewUrl(src)}
           poster={poster || undefined}
-          className={clsx('post-detail-video-preview__video', className)}
+          className="post-detail-video-preview__video"
           preload="metadata"
           playsInline
           muted

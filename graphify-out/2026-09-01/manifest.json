@@ -1,7 +1,7 @@
 {
   "client/package.json": {
-    "mtime": 1788235417.734915,
-    "ast_hash": "34372ee8e43dd54e8e289bf9e270adad",
+    "mtime": 1788237769.4523804,
+    "ast_hash": "1b175cbbc7f215d42f1f1a58fb244777",
     "semantic_hash": ""
   },
   "client/public/sw.js": {
@@ -240,8 +240,8 @@
     "semantic_hash": "c1a7c776170b9c7a0db35931084044c2"
   },
   "client/src/features/feed/CommentsPreview.jsx": {
-    "mtime": 1788170204.596073,
-    "ast_hash": "6946940314ce8f1f3f79db5b55d0d999",
+    "mtime": 1788237666.9201953,
+    "ast_hash": "286c6df610c71bce6dfc1cefb8d562f0",
     "semantic_hash": ""
   },
   "client/src/features/feed/CreatePostModal.jsx": {
@@ -260,8 +260,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/FullscreenImageViewer.jsx": {
-    "mtime": 1788189787.1239014,
-    "ast_hash": "fb07d5172f80269d6125b1b9c515a512",
+    "mtime": 1788237590.078456,
+    "ast_hash": "079124c2f42eea2d78225c4d07df155c",
     "semantic_hash": ""
   },
   "client/src/features/feed/MediaPreviewGrid.jsx": {
@@ -280,8 +280,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostMedia.jsx": {
-    "mtime": 1788191474.7951953,
-    "ast_hash": "4e454abbb0f9eeef1559b07c45af879f",
+    "mtime": 1788237530.366094,
+    "ast_hash": "94bd5650a52b7d83ac07837a89132559",
     "semantic_hash": ""
   },
   "client/src/features/gallery/AddImageModal.jsx": {
@@ -1045,13 +1045,13 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostFormatToolbar.jsx": {
-    "mtime": 1788170204.6038377,
-    "ast_hash": "d657c6736e1528e651559ad10c35cc3e",
+    "mtime": 1788237705.7018957,
+    "ast_hash": "24f7d3d6174cd40810bfdc392f09e9d2",
     "semantic_hash": ""
   },
   "client/src/features/feed/PostRichTextField.jsx": {
-    "mtime": 1788170204.6059587,
-    "ast_hash": "c28020cf05d623d9f6e869babadec143",
+    "mtime": 1788237758.3077633,
+    "ast_hash": "ea4df2537a4781ca6a5aeb1724f2227f",
     "semantic_hash": ""
   },
   "client/src/features/feed/postRichText.js": {
@@ -1390,8 +1390,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/CommentComposeForm.jsx": {
-    "mtime": 1788170204.5940728,
-    "ast_hash": "1c4020d2818e4645867ff9e204137b17",
+    "mtime": 1788237670.7634528,
+    "ast_hash": "5926c73cebf1bec184b0cd0a3e0693bc",
     "semantic_hash": ""
   },
   "client/src/features/feed/CommentMediaBody.jsx": {
@@ -1400,8 +1400,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/MediaProgressRing.jsx": {
-    "mtime": 1788170204.6005566,
-    "ast_hash": "91760d376caadaa164ee2c95ba734958",
+    "mtime": 1788237636.802049,
+    "ast_hash": "6df34ababa000234a717d1cba9aadbf6",
     "semantic_hash": ""
   },
   "client/src/features/feed/SortableMediaPreviewGrid.jsx": {
@@ -1475,8 +1475,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/MentionSuggestPopup.jsx": {
-    "mtime": 1788170204.6005566,
-    "ast_hash": "b83845ce220903e151d4bba2dfa831ab",
+    "mtime": 1788237743.257722,
+    "ast_hash": "9aa2db519f7bb4cc0b5a6725e7f023e8",
     "semantic_hash": ""
   },
   "client/src/features/feed/postMentions.js": {
@@ -1485,8 +1485,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/CommentEditInlineForm.jsx": {
-    "mtime": 1788170204.59509,
-    "ast_hash": "74c06026c8af5838433fa32aef7bfce2",
+    "mtime": 1788237657.0837348,
+    "ast_hash": "1bec2bde216045c083c1956c1912d1b3",
     "semantic_hash": ""
   },
   "client/src/features/admin/SystemTemplatesModal.jsx": {
@@ -1605,8 +1605,8 @@
     "semantic_hash": ""
   },
   "client/src/features/shop/useGalleryNavigation.js": {
-    "mtime": 1788189787.1266394,
-    "ast_hash": "5c1dfd25df2365bb7e960db98bb8adb6",
+    "mtime": 1788237608.5149932,
+    "ast_hash": "04fda6cb82db36e72f753ae200a13875",
     "semantic_hash": ""
   },
   "client/src/hooks/useProductParamTemplates.js": {
@@ -1620,8 +1620,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/FeedVideoPreview.jsx": {
-    "mtime": 1788191474.7931952,
-    "ast_hash": "742171a8f933b70a95ce3b11639f8707",
+    "mtime": 1788237519.2304604,
+    "ast_hash": "d03ce20011303ddbaedf919493f19cfd",
     "semantic_hash": ""
   },
   "client/src/features/feed/FullscreenSlideVideo.jsx": {
@@ -1645,8 +1645,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostDetailVideoPreview.jsx": {
-    "mtime": 1788191474.7941952,
-    "ast_hash": "a1356e9001eafaf9ee7de99ca5bc13d7",
+    "mtime": 1788237524.8624258,
+    "ast_hash": "53dd347b9156868a7f7a2f3c046f81c1",
     "semantic_hash": ""
   },
   "client/src/features/feed/CommentContextMenu.jsx": {
@@ -1675,13 +1675,18 @@
     "semantic_hash": ""
   },
   "pb_hooks/videolib.js": {
-    "mtime": 1788235436.4947996,
-    "ast_hash": "a27adffa03137055ce4f7d11aff77222",
+    "mtime": 1788236216.0321658,
+    "ast_hash": "d8479b2684db9e4722f5b086d44e1877",
     "semantic_hash": ""
   },
   "client/src/services/videoTranscode.js": {
-    "mtime": 1788230693.745386,
-    "ast_hash": "f97b5010f45984f0171bdde174a3fc5b",
+    "mtime": 1788236216.005065,
+    "ast_hash": "48d4d207266369ef3d0c51e82ad23195",
+    "semantic_hash": ""
+  },
+  "client/src/features/feed/prepareMediaDraft.js": {
+    "mtime": 1788237632.0676694,
+    "ast_hash": "3af289ab2d210f8cf1565113e42537cc",
     "semantic_hash": ""
   }
 }

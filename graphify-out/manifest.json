@@ -1,7 +1,7 @@
 {
   "client/package.json": {
-    "mtime": 1788237769.4523804,
-    "ast_hash": "1b175cbbc7f215d42f1f1a58fb244777",
+    "mtime": 1788243582.4192574,
+    "ast_hash": "d12839c911dafd0d2efdbce1d78f2f23",
     "semantic_hash": ""
   },
   "client/public/sw.js": {
@@ -215,8 +215,8 @@
     "semantic_hash": ""
   },
   "client/src/features/competitions/TournamentCommentsSection.jsx": {
-    "mtime": 1788186902.3151317,
-    "ast_hash": "02068f93eee1e9d5f5c42f848d607d5e",
+    "mtime": 1788243521.3220243,
+    "ast_hash": "8e86cf2d1389f168500e6511d1354fd4",
     "semantic_hash": ""
   },
   "client/src/features/competitions/TournamentPodium.jsx": {
@@ -240,8 +240,8 @@
     "semantic_hash": "c1a7c776170b9c7a0db35931084044c2"
   },
   "client/src/features/feed/CommentsPreview.jsx": {
-    "mtime": 1788237666.9201953,
-    "ast_hash": "286c6df610c71bce6dfc1cefb8d562f0",
+    "mtime": 1788243389.9360836,
+    "ast_hash": "eaf62a577b62376aad8b6b8e781a1f49",
     "semantic_hash": ""
   },
   "client/src/features/feed/CreatePostModal.jsx": {
@@ -260,13 +260,13 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/FullscreenImageViewer.jsx": {
-    "mtime": 1788237590.078456,
-    "ast_hash": "079124c2f42eea2d78225c4d07df155c",
+    "mtime": 1788243358.8409686,
+    "ast_hash": "9df7b9d56fb01b30e1f43dfd1ba0bffb",
     "semantic_hash": ""
   },
   "client/src/features/feed/MediaPreviewGrid.jsx": {
-    "mtime": 1788170204.5995564,
-    "ast_hash": "f6b7d827bb9cf338f40f823b9e78c003",
+    "mtime": 1788243477.4839528,
+    "ast_hash": "37954ca8873fb42a4c21bea793dcd9f7",
     "semantic_hash": ""
   },
   "client/src/features/feed/PostCard.jsx": {
@@ -275,12 +275,12 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostDetailModal.jsx": {
-    "mtime": 1788191474.7941952,
-    "ast_hash": "48341ae6c9f3c0da4ae07a3499f00b98",
+    "mtime": 1788243513.7859893,
+    "ast_hash": "74586f50acf4332b1bc8b3335a2853f9",
     "semantic_hash": ""
   },
   "client/src/features/feed/PostMedia.jsx": {
-    "mtime": 1788237530.366094,
+    "mtime": 1788240835.9742818,
     "ast_hash": "94bd5650a52b7d83ac07837a89132559",
     "semantic_hash": ""
   },
@@ -290,8 +290,8 @@
     "semantic_hash": "06d70b8a0c04a44b3f6903e1312b89d2"
   },
   "client/src/features/gallery/GalleryCommentModal.jsx": {
-    "mtime": 1788191474.7962391,
-    "ast_hash": "813a0ff656f29be708f7be055f299542",
+    "mtime": 1788243526.105275,
+    "ast_hash": "9fb990138e858877b3ee2bd77be6f961",
     "semantic_hash": ""
   },
   "client/src/features/gallery/GalleryMediaOverlay.jsx": {
@@ -405,8 +405,8 @@
     "semantic_hash": "e25625ba38bb4fec779d9dfb03bbd78c"
   },
   "client/src/features/shop/ProductCard.jsx": {
-    "mtime": 1788171837.7183828,
-    "ast_hash": "2a9138b788a873c3316abf17ba61b925",
+    "mtime": 1788243331.4641333,
+    "ast_hash": "044a561f0c1d11a097f000edfb72d3dc",
     "semantic_hash": ""
   },
   "client/src/features/shop/ProductDetail.jsx": {
@@ -425,8 +425,8 @@
     "semantic_hash": ""
   },
   "client/src/features/shop/ShopPage.jsx": {
-    "mtime": 1788171837.719479,
-    "ast_hash": "0bd2d7d99f63a9340368482d0aeb617d",
+    "mtime": 1788243322.6527965,
+    "ast_hash": "88e2947fe8e8da3c7a5017b0e7501b93",
     "semantic_hash": ""
   },
   "client/src/features/shop/buyMessage.js": {
@@ -510,9 +510,9 @@
     "semantic_hash": ""
   },
   "client/src/hooks/useComments.js": {
-    "mtime": 1788170204.6561034,
-    "ast_hash": "f49d443eb6d638b88a9328bb9ba3b3dd",
-    "semantic_hash": "f49d443eb6d638b88a9328bb9ba3b3dd"
+    "mtime": 1788243487.6813664,
+    "ast_hash": "ba3bc7ae4f79d5d6f4e30d52fea8798e",
+    "semantic_hash": ""
   },
   "client/src/hooks/useGallery.js": {
     "mtime": 1788170204.6561034,
@@ -520,9 +520,9 @@
     "semantic_hash": "541e40bc1fb1fac612ba4dacf897feca"
   },
   "client/src/hooks/useGalleryComments.js": {
-    "mtime": 1788170204.6561034,
-    "ast_hash": "6ccd68560ec5528b542eff5e5528ba3c",
-    "semantic_hash": "6ccd68560ec5528b542eff5e5528ba3c"
+    "mtime": 1788243488.7936485,
+    "ast_hash": "873108ce573bc70fe0e04b02e0bacc06",
+    "semantic_hash": ""
   },
   "client/src/hooks/useGalleryLikes.js": {
     "mtime": 1788170204.6561034,
@@ -580,9 +580,9 @@
     "semantic_hash": "f9b14b415cfa7539b291499589eb734a"
   },
   "client/src/hooks/useTournamentComments.js": {
-    "mtime": 1788170204.6634233,
-    "ast_hash": "f46f868dc2deb87fe30d47e1b98b39af",
-    "semantic_hash": "f46f868dc2deb87fe30d47e1b98b39af"
+    "mtime": 1788243488.2340248,
+    "ast_hash": "03b70abe297541d06f019b2988a2cd35",
+    "semantic_hash": ""
   },
   "client/src/hooks/useTournamentPosts.js": {
     "mtime": 1788170204.6634233,
@@ -670,8 +670,8 @@
     "semantic_hash": ""
   },
   "client/src/services/catalog.js": {
-    "mtime": 1788191474.797238,
-    "ast_hash": "0be8c01eceb589b439d078fd7d967fe0",
+    "mtime": 1788243485.9180834,
+    "ast_hash": "81cd792970f42868398b0d228ab25e53",
     "semantic_hash": ""
   },
   "client/src/services/notifications.js": {
@@ -690,8 +690,8 @@
     "semantic_hash": ""
   },
   "client/src/services/posts.js": {
-    "mtime": 1788230693.745386,
-    "ast_hash": "9419434e1a6fce57c0b19e2e6432600e",
+    "mtime": 1788243485.7448945,
+    "ast_hash": "3d0c74b2096c70846dd0c6e50030372b",
     "semantic_hash": ""
   },
   "client/src/services/stats.js": {
@@ -700,8 +700,8 @@
     "semantic_hash": ""
   },
   "client/src/services/tournamentComments.js": {
-    "mtime": 1788191474.798237,
-    "ast_hash": "29bf3bba6248d690d5c8a3bd2088c115",
+    "mtime": 1788243485.9180834,
+    "ast_hash": "a5e42567dfe37acc066cea85b01385ac",
     "semantic_hash": ""
   },
   "client/src/services/tournamentPosts.js": {
@@ -1045,12 +1045,12 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostFormatToolbar.jsx": {
-    "mtime": 1788237705.7018957,
+    "mtime": 1788240835.9732552,
     "ast_hash": "24f7d3d6174cd40810bfdc392f09e9d2",
     "semantic_hash": ""
   },
   "client/src/features/feed/PostRichTextField.jsx": {
-    "mtime": 1788237758.3077633,
+    "mtime": 1788240835.9742818,
     "ast_hash": "ea4df2537a4781ca6a5aeb1724f2227f",
     "semantic_hash": ""
   },
@@ -1390,23 +1390,23 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/CommentComposeForm.jsx": {
-    "mtime": 1788237670.7634528,
+    "mtime": 1788240835.9681628,
     "ast_hash": "5926c73cebf1bec184b0cd0a3e0693bc",
     "semantic_hash": ""
   },
   "client/src/features/feed/CommentMediaBody.jsx": {
-    "mtime": 1788171837.7103808,
-    "ast_hash": "b5aa7e8fbb911102253e94fa6d22c7f9",
+    "mtime": 1788243474.5569327,
+    "ast_hash": "1af146e829d6876ce4f898261ed55f0f",
     "semantic_hash": ""
   },
   "client/src/features/feed/MediaProgressRing.jsx": {
-    "mtime": 1788237636.802049,
+    "mtime": 1788240835.9712563,
     "ast_hash": "6df34ababa000234a717d1cba9aadbf6",
     "semantic_hash": ""
   },
   "client/src/features/feed/SortableMediaPreviewGrid.jsx": {
-    "mtime": 1788170204.60796,
-    "ast_hash": "ae3fcab196ebc1c3ee70a362e8fbe8e6",
+    "mtime": 1788243368.6457827,
+    "ast_hash": "3fc0f63ee5b2dc620adf7ca1f73e8bab",
     "semantic_hash": ""
   },
   "client/src/assets/paper-clip.png": {
@@ -1475,7 +1475,7 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/MentionSuggestPopup.jsx": {
-    "mtime": 1788237743.257722,
+    "mtime": 1788240835.9722557,
     "ast_hash": "9aa2db519f7bb4cc0b5a6725e7f023e8",
     "semantic_hash": ""
   },
@@ -1485,7 +1485,7 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/CommentEditInlineForm.jsx": {
-    "mtime": 1788237657.0837348,
+    "mtime": 1788240835.9691794,
     "ast_hash": "1bec2bde216045c083c1956c1912d1b3",
     "semantic_hash": ""
   },
@@ -1580,8 +1580,8 @@
     "semantic_hash": ""
   },
   "client/src/features/shop/ProductGallery.jsx": {
-    "mtime": 1788189787.1256273,
-    "ast_hash": "2d18a45a726ddf222a0b5e565fbdcbec",
+    "mtime": 1788243311.4106035,
+    "ast_hash": "b60891e9ea18734baf058aa727139d9a",
     "semantic_hash": ""
   },
   "client/src/features/shop/ProductParamTemplatesModal.jsx": {
@@ -1605,8 +1605,8 @@
     "semantic_hash": ""
   },
   "client/src/features/shop/useGalleryNavigation.js": {
-    "mtime": 1788237608.5149932,
-    "ast_hash": "04fda6cb82db36e72f753ae200a13875",
+    "mtime": 1788243303.460806,
+    "ast_hash": "50021bf9cbb9c51e263a2fd063e98b01",
     "semantic_hash": ""
   },
   "client/src/hooks/useProductParamTemplates.js": {
@@ -1620,8 +1620,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/FeedVideoPreview.jsx": {
-    "mtime": 1788237519.2304604,
-    "ast_hash": "d03ce20011303ddbaedf919493f19cfd",
+    "mtime": 1788243275.7971623,
+    "ast_hash": "e0d216da6bbcb20d69af41e6a0726aad",
     "semantic_hash": ""
   },
   "client/src/features/feed/FullscreenSlideVideo.jsx": {
@@ -1635,8 +1635,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/CommentListItem.jsx": {
-    "mtime": 1788191474.7911952,
-    "ast_hash": "190a296ce46a2356c7639da45d0222ac",
+    "mtime": 1788243386.9843276,
+    "ast_hash": "14351b49b44e33d8c5dda68e3b3251cd",
     "semantic_hash": ""
   },
   "client/src/features/feed/commentListLayout.js": {
@@ -1645,8 +1645,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostDetailVideoPreview.jsx": {
-    "mtime": 1788237524.8624258,
-    "ast_hash": "53dd347b9156868a7f7a2f3c046f81c1",
+    "mtime": 1788243277.0626218,
+    "ast_hash": "a3ec930fcebad54c34b980778c344ded",
     "semantic_hash": ""
   },
   "client/src/features/feed/CommentContextMenu.jsx": {
@@ -1685,8 +1685,18 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/prepareMediaDraft.js": {
-    "mtime": 1788237632.0676694,
+    "mtime": 1788240835.9753482,
     "ast_hash": "3af289ab2d210f8cf1565113e42537cc",
+    "semantic_hash": ""
+  },
+  "client/src/features/feed/CommentListSkeleton.jsx": {
+    "mtime": 1788243487.1830144,
+    "ast_hash": "e8257876c032d025c9ebd5e1aebe2e7a",
+    "semantic_hash": ""
+  },
+  "client/src/hooks/useProgressiveComments.js": {
+    "mtime": 1788243486.6458704,
+    "ast_hash": "4ae2ddceef3dea4bf62ea78cafd1e8b7",
     "semantic_hash": ""
   }
 }

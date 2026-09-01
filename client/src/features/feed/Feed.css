@@ -153,6 +153,21 @@
   overflow: hidden;
 }
 
+.feed-video-preview.telegram-post-media-item,
+.post-detail-video-preview.telegram-post-media-item,
+.telegram-post-media-grid--1 .feed-video-preview,
+.telegram-post-media-grid--1 .post-detail-video-preview {
+  display: block;
+  aspect-ratio: 16 / 10;
+  min-height: 128px;
+  max-height: 320px;
+  height: auto;
+}
+
+.telegram-post-media-grid--detail .post-detail-video-preview.telegram-post-media-item {
+  max-height: 420px;
+}
+
 .feed-video-preview--has-poster,
 .post-detail-video-preview--has-poster {
   background: #0a0a0a;
@@ -3593,10 +3608,84 @@ button.post-card-like:hover:not(:disabled) {
 
 .comment-edit-inline-form__media {
   margin-left: 0;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.comment-bubble--own .comment-edit-inline-form .post-format-toolbar--permanent {
+  color: #8e8e93;
+}
+
+.comment-bubble--own .comment-edit-inline-form .post-format-toolbar--permanent .post-format-toolbar__btn {
+  color: inherit;
+}
+
+.comment-bubble--own .comment-edit-inline-form__actions button[type='submit'] {
+  background: #007aff;
+  color: #fff;
+}
+
+.comment-bubble--own .comment-edit-inline-form__actions button[type='button'] {
+  background: #f1f3f5;
+  color: #495057;
+}
+
+.comment-bubble--own .comment-edit-media-strip {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+}
+
+.comment-bubble--own .comment-edit-media-strip .sortable-media-preview--strip {
+  touch-action: pan-x;
 }
 
 .comment-edit-media-strip {
   width: 100%;
+}
+
+.comment-list-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 4px 0 8px;
+}
+
+.comment-list-skeleton--older {
+  margin-bottom: 8px;
+}
+
+.comment-list-skeleton__row {
+  display: flex;
+}
+
+.comment-list-skeleton__row--other {
+  justify-content: flex-start;
+}
+
+.comment-list-skeleton__row--own {
+  justify-content: flex-end;
+}
+
+.comment-list-skeleton__bubble {
+  display: block;
+  width: min(68%, 240px);
+  height: 52px;
+  border-radius: 14px;
+  background:
+    linear-gradient(110deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.45) 50%, rgba(255, 255, 255, 0) 70%),
+    #dde3ea;
+  background-size: 200% 100%, auto;
+  animation: progressive-image-shimmer 1.2s ease-in-out infinite;
+}
+
+.comment-list-skeleton__row--own .comment-list-skeleton__bubble {
+  background:
+    linear-gradient(110deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.35) 50%, rgba(255, 255, 255, 0) 70%),
+    #b8d9ff;
+  background-size: 200% 100%, auto;
 }
 
 .preview-comment-row {
@@ -3610,10 +3699,18 @@ button.post-card-like:hover:not(:disabled) {
   word-break: break-word;
 }
 
+.preview-comment-row__head {
+  display: inline-flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-right: 6px;
+  vertical-align: bottom;
+}
+
 .preview-comment-author {
   font-weight: 700;
   color: #007aff;
-  margin-right: 6px;
 }
 
 .preview-comment-attachments {
@@ -3621,7 +3718,6 @@ button.post-card-like:hover:not(:disabled) {
   align-items: center;
   gap: 4px;
   color: #59a8ff;
-  vertical-align: baseline;
 }
 
 .preview-comment-attachments__icon {
