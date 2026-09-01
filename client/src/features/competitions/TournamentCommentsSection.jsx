@@ -13,6 +13,7 @@ import {
   keepCommentEditInView
 } from '../feed/keepCommentEditInView';
 import '../feed/Feed.css';
+import { toFullscreenMediaItem } from '../../lib/media';
 import { useTournamentComments } from '../../hooks/useTournamentComments';
 import { useCommentLikes } from '../../hooks/useCommentLikes';
 import {
@@ -333,13 +334,9 @@ function TournamentCommentsSection({
                           variant={isOwner ? 'own' : 'other'}
                           onOpenMedia={(items, index, event) => {
                             if (!onOpenFullscreen || !items.length) return;
-                            const gallery = items.map((item) => ({
-                              filename: item.name,
-                              url: item.fullUrl || item.url,
-                              thumbUrl: item.url,
-                              isVideo: item.isVideo,
-                              originKey: `t-comment-${c.id}-${item.key}`
-                            }));
+                            const gallery = items.map((item) =>
+                              toFullscreenMediaItem(item, `t-comment-${c.id}-${item.key}`)
+                            );
                             const originRect =
                               event?.currentTarget?.getBoundingClientRect?.() || null;
                             onOpenFullscreen(
