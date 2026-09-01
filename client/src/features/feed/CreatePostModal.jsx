@@ -188,8 +188,12 @@ function CreatePostModal({ isOpen, onClose, onCreated, user }) {
       const formData = new FormData();
       formData.append('content', text.trim());
       formData.append('author', user?.id || '');
-      formData.append('external_media', JSON.stringify(yadisk.storedMedia));
-      formData.append('caption_above', captionAbove ? 'true' : 'false');
+      if (yadisk.storedMedia?.length) {
+        formData.append('external_media', JSON.stringify(yadisk.storedMedia));
+      }
+      if (captionAbove) {
+        formData.append('caption_above', 'true');
+      }
       if (scheduledAt) {
         formData.append('is_scheduled', 'true');
         formData.append('scheduled_at', scheduledAt);
