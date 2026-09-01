@@ -9,8 +9,6 @@ import React, {
 } from 'react';
 import { mutate } from 'swr';
 import { createGalleryItemWithProgress } from '../services/catalog';
-import { compressVideo } from '../lib/compressVideo';
-import { isVideoFile } from '../lib/media';
 import { error } from '../lib/log';
 import './GalleryUploadProvider.css';
 
@@ -55,16 +53,14 @@ function getVideoAspectRatio(file) {
 
 /**
  * @param {{ file: File, aspect_ratio?: number, media_type?: string }} item
- * @param {{ signal?: AbortSignal, onProgress?: (percent: number) => void }} [options]
+ * @returns {Promise<{ file: File, aspect_ratio?: number, media_type?: string }>}
  */
-async function prepareGalleryUploadItem(item, { signal, onProgress } = {}) {
-  if (!isVideoFile(item.file)) return item;
+async function prepareGalleryUploadItem(item) {
+  if (item.media_type !== 'video' && !item.file.type.startsWith('video/')) return item;
 
-  const preparedFile = await compressVideo(item.file, { signal, onProgress });
-  const aspect_ratio = await getVideoAspectRatio(preparedFile);
+  const aspect_ratio = await getVideoAspectRatio(item.file);
   return {
     ...item,
-    file: preparedFile,
     aspect_ratio,
     media_type: 'video'
   };
@@ -113,31 +109,12 @@ export function GalleryUploadProvider({ children }) {
             ? {
                 ...current,
                 progress: 0,
-                message:
-                  items[index].media_type === 'video' || isVideoFile(items[index].file)
-                    ? `Подготовка видео ${currentNumber} из ${items.length}: 0%`
-                    : `Загрузка ${currentNumber} из ${items.length}: 0%`
+                message: `Загрузка ${currentNumber} из ${items.length}: 0%`
               }
             : current
         );
 
-        const preparedItem = await prepareGalleryUploadItem(items[index], {
-          signal: controller.signal,
-          onProgress: (progress) => {
-            setUploadTask((current) =>
-              current
-                ? {
-                    ...current,
-                    progress: Math.round(progress * 0.4),
-                    message:
-                      progress < 100
-                        ? `Подготовка видео ${currentNumber} из ${items.length}: ${progress}%`
-                        : `Загрузка ${currentNumber} из ${items.length}: 0%`
-                  }
-                : current
-            );
-          }
-        });
+        const preparedItem = await prepareGalleryUploadItem(items[index]);
 
         if (controller.signal.aborted) return;
 
@@ -150,7 +127,7 @@ export function GalleryUploadProvider({ children }) {
               current
                 ? {
                     ...current,
-                    progress: Math.round(40 + (progress / 100) * 60),
+                    progress,
                     message: `Загрузка ${currentNumber} из ${items.length}: ${progress}%`
                   }
                 : current

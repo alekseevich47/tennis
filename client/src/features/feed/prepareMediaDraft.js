@@ -1,17 +1,15 @@
 import { compressImage } from '../../lib/compress';
-import { compressVideo } from '../../lib/compressVideo';
 import { isVideoFile } from '../../lib/media';
 
 /**
- * Подготовка файла для прикрепления в комментарии: сжатие / чтение metadata + blob URL.
+ * Подготовка файла для прикрепления в комментарии: сжатие изображений + blob URL.
  *
  * @param {File} file
  * @param {(percent: number) => void} [onProgress]
- * @param {AbortSignal} [signal]
  * @returns {Promise<{ file: File, url: string, isVideo: boolean, name: string }>}
  */
-export async function prepareCommentMediaFile(file, onProgress, signal) {
-  onProgress?.(4);
+export async function prepareCommentMediaFile(file, onProgress) {
+  onProgress?.(8);
 
   if (file.type.startsWith('image/')) {
     onProgress?.(22);
@@ -27,22 +25,23 @@ export async function prepareCommentMediaFile(file, onProgress, signal) {
     };
   }
 
-  if (isVideoFile(file)) {
-    const prepared = await compressVideo(file, {
-      signal,
-      onProgress: (percent) => onProgress?.(Math.max(4, percent))
-    });
-    const url = URL.createObjectURL(prepared);
-    return {
-      file: prepared,
-      url,
-      isVideo: true,
-      name: prepared.name
-    };
-  }
-
-  onProgress?.(100);
+  onProgress?.(35);
   const url = URL.createObjectURL(file);
+  await new Promise((resolve, reject) => {
+    const video = document.createElement('video');
+    video.preload = 'metadata';
+    video.muted = true;
+    video.playsInline = true;
+    const finish = () => {
+      onProgress?.(100);
+      resolve(undefined);
+    };
+    video.onloadedmetadata = finish;
+    video.onloadeddata = finish;
+    video.onerror = () => reject(new Error('Не удалось прочитать видео'));
+    video.src = url;
+  });
+
   return {
     file,
     url,

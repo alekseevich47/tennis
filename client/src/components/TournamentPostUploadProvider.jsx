@@ -38,10 +38,7 @@ export function TournamentPostUploadProvider({ children }) {
             ? {
                 ...current,
                 progress,
-                message:
-                  progress < 40
-                    ? `Подготовка: ${progress}%`
-                    : `Загрузка медиа: ${progress}%`
+                message: `Загрузка медиа: ${progress}%`
               }
             : current
         );

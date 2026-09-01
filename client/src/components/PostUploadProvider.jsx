@@ -71,9 +71,7 @@ export function PostUploadProvider({ children }) {
                 message:
                   progress >= 100
                     ? 'Публикация добавлена'
-                    : progress < 40
-                      ? `Подготовка: ${progress}%`
-                      : `Загрузка медиа: ${progress}%`
+                    : `Загрузка медиа: ${progress}%`
               }
             : current
         );

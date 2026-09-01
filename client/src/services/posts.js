@@ -1,7 +1,7 @@
 // @ts-check
 import pb from './pb';
 import { error } from '../lib/log';
-import { mapUploadProgress, prepareMediaInBody, prepareUploadMediaList } from '../lib/prepareUploadMedia';
+import { prepareMediaInBody, prepareUploadMediaList } from '../lib/prepareUploadMedia';
 import { PB_URL } from '../config';
 
 /**
@@ -402,14 +402,8 @@ export async function publishPost(payload, { signal, onProgress } = {}) {
     payload instanceof FormData ? parsePostCreateFormData(payload) : payload;
 
   if (postPayloadHasMedia(body)) {
-    body = await prepareMediaInBody(body, {
-      signal,
-      onProgress: (percent) => onProgress?.(percent)
-    });
-    return createPostWithProgress(postCreateBodyToFormData(body), {
-      signal,
-      onProgress: (percent) => onProgress?.(mapUploadProgress(percent))
-    });
+    body = await prepareMediaInBody(body);
+    return createPostWithProgress(postCreateBodyToFormData(body), { signal, onProgress });
   }
 
   onProgress?.(30);
@@ -618,10 +612,7 @@ export async function createComment({
     );
   }
 
-  const preparedMedia = await prepareUploadMediaList(mediaFiles, {
-    signal,
-    onProgress: (percent) => onProgress?.(Math.round(percent * 0.4))
-  });
+  const preparedMedia = await prepareUploadMediaList(mediaFiles);
 
   const formData = new FormData();
   formData.append('post', postId);
@@ -631,10 +622,7 @@ export async function createComment({
   if (captionAbove) formData.append('caption_above', 'true');
   preparedMedia.forEach((file) => formData.append('media', file));
 
-  return createCommentWithProgress(formData, {
-    signal,
-    onProgress: (percent) => onProgress?.(mapUploadProgress(percent))
-  });
+  return createCommentWithProgress(formData, { signal, onProgress });
 }
 
 /**
