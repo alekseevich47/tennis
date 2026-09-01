@@ -81,11 +81,14 @@
   "79": "isModerator",
   "80": "useMaxCloseGuard.js",
   "81": "PostUploadProvider.jsx",
+  "82": "main.jsx",
   "83": "yadiskAlbumLazy.js",
   "84": "ArchiveModal.jsx",
+  "85": "PullToRefresh.jsx",
   "86": "PostMedia.jsx",
   "87": "buyMessage.js",
   "88": "format.js",
+  "89": "usePlayers",
   "90": "postRichText.js",
   "91": "gestures.js",
   "92": "gestures.js",
@@ -102,6 +105,5 @@
   "103": "postMentions.js",
   "104": "ProductForm.jsx",
   "105": "FullscreenImageViewer.jsx",
-  "110": "MembershipOverviewModal.jsx",
-  "113": "SortableMediaPreviewGrid.jsx"
+  "106": "StatsLineChart.jsx"
 }

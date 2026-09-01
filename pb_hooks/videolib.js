@@ -49,6 +49,25 @@ var MAX_VIDEO_WIDTH = 1920;
 var INPUT_WAIT_MS = 500;
 var INPUT_WAIT_ATTEMPTS = 10;
 var PROCESSED_SUFFIX = '.transcoded';
+var FILE_MODE = parseInt('644', 8);
+
+/**
+ * @param {string} path
+ */
+function ensureFileMode(path) {
+  try {
+    $os.chmod(path, FILE_MODE);
+  } catch (_) {}
+}
+
+/**
+ * @param {string} path
+ * @param {string | number[]} data
+ */
+function writeFileMode(path, data) {
+  $os.writeFile(path, data, FILE_MODE);
+  ensureFileMode(path);
+}
 
 /**
  * @returns {string}
@@ -100,8 +119,10 @@ function execFfmpeg(cmd, outputPath) {
  * @returns {boolean}
  */
 function isAlreadyProcessed(inputPath) {
+  var marker = inputPath + PROCESSED_SUFFIX;
+  ensureFileMode(marker);
   try {
-    $os.readFile(inputPath + PROCESSED_SUFFIX);
+    $os.readFile(marker);
     return true;
   } catch (_) {
     return false;
@@ -113,7 +134,7 @@ function isAlreadyProcessed(inputPath) {
  */
 function markProcessed(inputPath) {
   try {
-    $os.writeFile(inputPath + PROCESSED_SUFFIX, []);
+    writeFileMode(inputPath + PROCESSED_SUFFIX, '1');
   } catch (err) {
     console.log('[video-transcode] mark processed: ' + err);
   }
@@ -411,6 +432,8 @@ function transcodeFileInPlace(inputPath) {
   if (!inputPath) return false;
   if (isAlreadyProcessed(inputPath)) return true;
 
+  ensureFileMode(inputPath);
+
   var meta = waitAndProbeVideo(inputPath);
   var mode;
   if (meta) {
@@ -439,16 +462,19 @@ function transcodeFileInPlace(inputPath) {
     return false;
   }
 
+  var stagingPath = inputPath + '.remux.tmp';
   try {
-    try {
-      $os.remove(inputPath);
-    } catch (_) {}
     var bytes = $os.readFile(tempOut);
-    $os.writeFile(inputPath, bytes);
+    writeFileMode(stagingPath, bytes);
+    $os.rename(stagingPath, inputPath);
+    ensureFileMode(inputPath);
     markProcessed(inputPath);
     return true;
   } catch (err) {
     console.log('[video-transcode] replace failed: ' + (err && err.message ? err.message : err));
+    try {
+      $os.remove(stagingPath);
+    } catch (_) {}
     return false;
   } finally {
     try {
