@@ -133,16 +133,22 @@ function probeVideo(inputPath) {
     '-show_entries',
     'stream=width,height,codec_name',
     '-of',
-    'default=nw=1:nk=1',
+    'json=compact=1',
     inputPath
   );
   var out = String(cmd.combinedOutput()).trim();
-  var lines = out.split(/\r?\n/).filter(Boolean);
-  if (lines.length < 3) return null;
-  var width = parseInt(lines[0], 10);
-  var height = parseInt(lines[1], 10);
-  var codec = String(lines[2] || '').toLowerCase();
-  if (!width || !height) return null;
+  if (!out) return null;
+
+  var data = JSON.parse(out);
+  var streams = data && data.streams;
+  if (!streams || !streams.length) return null;
+
+  var stream = streams[0];
+  var width = parseInt(String(stream.width || ''), 10);
+  var height = parseInt(String(stream.height || ''), 10);
+  var codec = String(stream.codec_name || '').toLowerCase();
+  if (!width || !height || !codec) return null;
+
   return { width: width, height: height, videoCodec: codec };
 }
 
@@ -162,6 +168,7 @@ function waitAndProbeVideo(inputPath) {
     if (i + 1 < INPUT_WAIT_ATTEMPTS) sleep(INPUT_WAIT_MS);
   }
   if (lastErr) console.log('[video-transcode] probe failed: ' + lastErr);
+  else console.log('[video-transcode] probe failed: no metadata for ' + inputPath);
   return null;
 }
 
