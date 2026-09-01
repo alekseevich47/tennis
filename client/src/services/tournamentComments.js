@@ -1,7 +1,7 @@
 // @ts-check
 import pb from './pb';
 import { error } from '../lib/log';
-import { mapUploadProgress, prepareUploadMediaList } from '../lib/prepareUploadMedia';
+import { prepareUploadMediaList } from '../lib/prepareUploadMedia';
 import { PB_URL } from '../config';
 
 /**
@@ -97,10 +97,7 @@ export async function createTournamentComment(
     );
   }
 
-  const preparedMedia = await prepareUploadMediaList(mediaFiles, {
-    signal,
-    onProgress: (percent) => onProgress?.(Math.round(percent * 0.4))
-  });
+  const preparedMedia = await prepareUploadMediaList(mediaFiles);
 
   const formData = new FormData();
   formData.append('post', postId);
@@ -110,10 +107,7 @@ export async function createTournamentComment(
   if (captionAbove) formData.append('caption_above', 'true');
   preparedMedia.forEach((file) => formData.append('media', file));
 
-  return createTournamentCommentWithProgress(formData, {
-    signal,
-    onProgress: (percent) => onProgress?.(mapUploadProgress(percent))
-  });
+  return createTournamentCommentWithProgress(formData, { signal, onProgress });
 }
 
 /**

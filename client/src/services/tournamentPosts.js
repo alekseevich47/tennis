@@ -3,7 +3,7 @@ import { mutate } from 'swr';
 import pb from './pb';
 import { getCurrentUser } from './auth';
 import { error } from '../lib/log';
-import { mapUploadProgress, prepareUploadMediaList } from '../lib/prepareUploadMedia';
+import { prepareUploadMediaList } from '../lib/prepareUploadMedia';
 import { PB_URL } from '../config';
 
 /**
@@ -289,10 +289,7 @@ export async function publishTournamentPost(params) {
  */
 export async function publishTournamentPostWithProgress(params, { signal, onProgress } = {}) {
   const preparedFiles = params.files?.length
-    ? await prepareUploadMediaList(params.files, {
-        signal,
-        onProgress: (percent) => onProgress?.(Math.round(percent * 0.4))
-      })
+    ? await prepareUploadMediaList(params.files)
     : params.files;
 
   const { formData, participants, isScheduled } = buildTournamentPostPayload({
@@ -322,9 +319,7 @@ export async function publishTournamentPostWithProgress(params, { signal, onProg
 
     xhr.upload.onprogress = (event) => {
       if (!event.lengthComputable || !onProgress) return;
-      onProgress(
-        mapUploadProgress(Math.min(98, Math.round((event.loaded / event.total) * 100)))
-      );
+      onProgress(Math.min(98, Math.round((event.loaded / event.total) * 100)));
     };
 
     xhr.onload = () => {
