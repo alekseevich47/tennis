@@ -141,6 +141,31 @@ export async function deleteScheduledPost(id) {
 
 /**
  * @param {string} postId
+ * @param {number} [limit]
+ * @param {{ signal?: AbortSignal }} [options]
+ * @returns {Promise<CommentRecord[]>}
+ */
+export async function listRecentCommentsForPost(postId, limit = 2, { signal } = {}) {
+  try {
+    const page = /** @type {{ items: CommentRecord[] }} */ (
+      await pb.collection('comments').getList(1, limit, {
+        filter: pb.filter('post = {:postId}', { postId }),
+        sort: '-created',
+        expand: 'author,reply_to,reply_to.author',
+        requestKey: null,
+        signal
+      })
+    );
+    return [...page.items].reverse();
+  } catch (err) {
+    if (err && /** @type {Error} */ (err).name === 'AbortError') return [];
+    error('Ошибка загрузки комментариев:', err);
+    throw err;
+  }
+}
+
+/**
+ * @param {string} postId
  * @param {{ signal?: AbortSignal }} [options]
  * @returns {Promise<CommentRecord[]>}
  */

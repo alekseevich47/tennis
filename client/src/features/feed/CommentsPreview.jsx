@@ -27,26 +27,25 @@ function CommentsPreview({ comments }) {
         const hasText = hasVisibleText(c.text);
         return (
           <div key={c.id} className="preview-comment-row">
-            <span className="preview-comment-author">{c.expand?.author?.full_name || 'Игрок'}:</span>{' '}
-            {hasAttachments ? (
-              <span className="preview-comment-attachments">
-                <img
-                  src={paperClipUrl}
-                  alt=""
-                  className="preview-comment-attachments__icon"
-                  width="14"
-                  height="14"
-                  aria-hidden="true"
-                  draggable={false}
-                />
-                <span className="preview-comment-attachments__label">Вложения</span>
-              </span>
-            ) : null}
+            <div className="preview-comment-row__head">
+              <span className="preview-comment-author">{c.expand?.author?.full_name || 'Игрок'}:</span>
+              {hasAttachments ? (
+                <span className="preview-comment-attachments">
+                  <img
+                    src={paperClipUrl}
+                    alt=""
+                    className="preview-comment-attachments__icon"
+                    width="14"
+                    height="14"
+                    aria-hidden="true"
+                    draggable={false}
+                  />
+                  <span className="preview-comment-attachments__label">Вложения</span>
+                </span>
+              ) : null}
+            </div>
             {hasText ? (
-              <>
-                {hasAttachments ? ' ' : null}
-                <PostContentHtml as="span" className="preview-comment-text" content={c.text} />
-              </>
+              <PostContentHtml as="span" className="preview-comment-text" content={c.text} />
             ) : null}
           </div>
         );

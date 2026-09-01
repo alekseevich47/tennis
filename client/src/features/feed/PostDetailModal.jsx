@@ -7,6 +7,7 @@ import PostContentHtml from './PostContentHtml';
 import CommentEditInlineForm from './CommentEditInlineForm';
 import CommentComposeForm from './CommentComposeForm';
 import CommentListItem from './CommentListItem';
+import CommentListSkeleton from './CommentListSkeleton';
 import CommentMediaBody from './CommentMediaBody';
 import CommentReplyComposeBar from './CommentReplyComposeBar';
 import { groupCommentsByDay } from './commentListLayout';
@@ -73,7 +74,7 @@ function PostDetailModal({
 }) {
   const post = useKeepForModalClose(isOpen, postProp);
   const postId = post?.id || null;
-  const { data: comments = [], mutate: mutateComments } = useComments(postId);
+  const { data: comments = [], mutate: mutateComments, isLoading: commentsLoading, isPartial: commentsPartial } = useComments(postId);
 
   const [showAll, setShowAll] = useState(false);
   const [commentText, setCommentText] = useState('');
@@ -502,9 +503,12 @@ function PostDetailModal({
         ) : null}
 
         <div className="modal-comments-section">
-          <h3>Комментарии ({comments.length})</h3>
+          <h3>
+            Комментарии
+            {!commentsLoading ? ` (${comments.length})` : ''}
+          </h3>
 
-          {comments.length > 2 && !showAll && !highlightCommentId && (
+          {comments.length > 2 && !showAll && !highlightCommentId && !commentsLoading && !commentsPartial && (
             <button
               type="button"
               className="show-more-comments-btn"
@@ -515,7 +519,12 @@ function PostDetailModal({
           )}
 
           <div className="modal-comments-list" ref={commentsTopRef}>
-            {groupCommentsByDay(displayed).map((group) => (
+            {commentsLoading ? (
+              <CommentListSkeleton count={4} />
+            ) : (
+              <>
+                {commentsPartial ? <CommentListSkeleton count={2} className="comment-list-skeleton--older" /> : null}
+                {groupCommentsByDay(displayed).map((group) => (
               <DayGroup key={group.dayKey} label={group.dateLabel} variant="comments">
                 {group.items.map((c) => {
                   const isOwner = c.author === user?.id;
@@ -602,6 +611,8 @@ function PostDetailModal({
                 })}
               </DayGroup>
             ))}
+              </>
+            )}
           </div>
         </div>
       </Modal>

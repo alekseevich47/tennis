@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import CommentEditInlineForm from '../feed/CommentEditInlineForm';
 import CommentComposeForm from '../feed/CommentComposeForm';
 import CommentListItem from '../feed/CommentListItem';
+import CommentListSkeleton from '../feed/CommentListSkeleton';
 import CommentMediaBody from '../feed/CommentMediaBody';
 import CommentReplyComposeBar from '../feed/CommentReplyComposeBar';
 import { groupCommentsByDay } from '../feed/commentListLayout';
@@ -65,7 +66,7 @@ function TournamentCommentsSection({
   const highlightClearRef = useRef(/** @type {ReturnType<typeof setTimeout> | null} */ (null));
   const skipInitialScrollRef = useRef(true);
 
-  const { data: comments = [], mutate: mutateComments } = useTournamentComments(postId);
+  const { data: comments = [], mutate: mutateComments, isLoading: commentsLoading, isPartial: commentsPartial } = useTournamentComments(postId);
 
   const activeCommentIds = useMemo(
     () =>
@@ -259,10 +260,14 @@ function TournamentCommentsSection({
   const listNode = (
     <div className="tournament-comments">
       <div className="tournament-comments-list modal-comments-list" ref={commentsTopRef}>
-        {comments.length === 0 ? (
-              <p className="tournament-comments-empty">Пока нет комментариев</p>
-            ) : (
-              groupCommentsByDay(comments).map((group) => (
+        {commentsLoading ? (
+          <CommentListSkeleton count={4} />
+        ) : comments.length === 0 ? (
+          <p className="tournament-comments-empty">Пока нет комментариев</p>
+        ) : (
+          <>
+            {commentsPartial ? <CommentListSkeleton count={2} className="comment-list-skeleton--older" /> : null}
+            {groupCommentsByDay(comments).map((group) => (
                 <DayGroup key={group.dayKey} label={group.dateLabel} variant="comments">
                   {group.items.map((c) => {
                     const isOwner = c.author === user?.id;
@@ -349,8 +354,9 @@ function TournamentCommentsSection({
                     );
                   })}
                 </DayGroup>
-              ))
-            )}
+              ))}
+          </>
+        )}
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useMemo } from 'react';
+import React, { forwardRef, memo, useCallback, useMemo } from 'react';
 import clsx from 'clsx';
 import { useFavorites } from '../../context/FavoritesContext';
 import { useProductCategories } from '../../hooks/useProductCategories';
@@ -18,20 +18,26 @@ import { normalizeProductCategoryIds } from './productCategories';
  *   isSoftDeleted?: boolean,
  *   moderator?: boolean,
  *   hiddenMediaKey?: string | null,
+ *   mediaEnabled?: boolean,
  *   onOpen: (product: any) => void,
  *   onDelete?: (productId: string) => void,
  *   onRestore?: (productId: string) => void
  * }} props
  */
-function ProductCard({
+const ProductCard = forwardRef(function ProductCard(
+  {
   product,
   isSoftDeleted = false,
   moderator = false,
   hiddenMediaKey = null,
+  mediaEnabled = true,
   onOpen,
   onDelete,
-  onRestore
-}) {
+  onRestore,
+  ...rest
+},
+  ref
+) {
   const { data: categories = [] } = useProductCategories();
   const { isFavorite, addItem, removeItem } = useFavorites();
   const favorited = isFavorite(product.id);
@@ -105,7 +111,11 @@ function ProductCard({
   }, [favorited, addItem, removeItem, product]);
 
   return (
-    <article className={clsx('product-card', isSoftDeleted && 'product-card--soft-deleted')}>
+    <article
+      ref={ref}
+      className={clsx('product-card', isSoftDeleted && 'product-card--soft-deleted')}
+      {...rest}
+    >
       {moderator && !isSoftDeleted && (
         <button
           type="button"
@@ -142,6 +152,7 @@ function ProductCard({
           resetKey={product.id}
           variant="card"
           hiddenMediaKey={hiddenMediaKey}
+          mediaEnabled={mediaEnabled}
           onCenterClick={openProduct}
           imageAlt={`Фото товара ${product.title || 'без названия'}`}
         />
@@ -212,6 +223,6 @@ function ProductCard({
       )}
     </article>
   );
-}
+});
 
 export default memo(ProductCard);

@@ -64,7 +64,6 @@ function CommentListItem({
 }) {
   const { showToast } = useToast();
   const [menuAnchor, setMenuAnchor] = useState(/** @type {{ x: number, y: number } | null} */ (null));
-  // Long-press: свой — edit/delete любому автору; чужой — delete только модератору (canDelete).
   const longPressEnabled = !isEditing && (canEdit || canDelete);
 
   const tapCopy = useCommentTapCopy({
@@ -83,22 +82,31 @@ function CommentListItem({
     onLongPress: handleLongPress
   });
 
+  const layoutLongPressHandlers = useMemo(() => {
+    if (!longPressEnabled) return {};
+    return {
+      onPointerDownCapture: longPressHandlers.onPointerDown,
+      onPointerMoveCapture: longPressHandlers.onPointerMove,
+      onPointerUpCapture: longPressHandlers.onPointerUp,
+      onPointerCancelCapture: longPressHandlers.onPointerCancel,
+      onContextMenuCapture: longPressHandlers.onContextMenu
+    };
+  }, [longPressEnabled, longPressHandlers]);
+
   const bubbleHandlers = useMemo(() => {
-    const merge = (longHandler, tapHandler) => (/** @type {any} */ event) => {
-      if (longPressEnabled) longHandler?.(event);
+    const mergeClick = (longHandler, tapHandler) => (/** @type {any} */ event) => {
+      longHandler?.(event);
       if (!isEditing) tapHandler?.(event);
     };
 
     return {
-      onPointerDown: merge(longPressHandlers.onPointerDown, tapCopy.handlers.onPointerDown),
-      onPointerMove: merge(longPressHandlers.onPointerMove, tapCopy.handlers.onPointerMove),
-      onPointerUp: merge(longPressHandlers.onPointerUp, tapCopy.handlers.onPointerUp),
-      onPointerCancel: merge(longPressHandlers.onPointerCancel, tapCopy.handlers.onPointerCancel),
-      onPointerLeave: longPressEnabled ? longPressHandlers.onPointerLeave : undefined,
-      onContextMenu: longPressEnabled ? longPressHandlers.onContextMenu : undefined,
-      onClick: merge(longPressHandlers.onClick, tapCopy.handlers.onClick)
+      onPointerDown: !isEditing ? tapCopy.handlers.onPointerDown : undefined,
+      onPointerMove: !isEditing ? tapCopy.handlers.onPointerMove : undefined,
+      onPointerUp: !isEditing ? tapCopy.handlers.onPointerUp : undefined,
+      onPointerCancel: !isEditing ? tapCopy.handlers.onPointerCancel : undefined,
+      onClick: mergeClick(longPressHandlers.onClick, tapCopy.handlers.onClick)
     };
-  }, [isEditing, longPressEnabled, longPressHandlers, tapCopy.handlers]);
+  }, [isEditing, longPressHandlers.onClick, tapCopy.handlers]);
 
   const author = comment.expand?.author;
   const authorName = author?.full_name || 'Игрок секции';
@@ -120,7 +128,11 @@ function CommentListItem({
         onReply={onReply}
         innerRef={innerRef}
       >
-        <div className="comment-row__layout">
+        <div
+          className="comment-row__layout"
+          style={longPressEnabled ? cardStyle : undefined}
+          {...layoutLongPressHandlers}
+        >
           {!isOwner ? (
             <button
               type="button"
@@ -133,8 +145,7 @@ function CommentListItem({
           ) : null}
 
           <div
-            className={`comment-bubble comment-bubble--${bubbleVariant}`}
-            style={longPressEnabled ? cardStyle : undefined}
+            className={`comment-bubble comment-bubble--${bubbleVariant}${menuAnchor ? ' comment-bubble--menu-open' : ''}`}
             {...(!isEditing ? bubbleHandlers : {})}
           >
             {isEditing ? (
@@ -165,7 +176,18 @@ function CommentListItem({
                   </button>
                 ) : null}
 
-                <div className="comment-bubble__body">{children}</div>
+                <div
+                  className="comment-bubble__body"
+                  onClickCapture={(event) => {
+                    if (!menuAnchor) return;
+                    if (event.target instanceof Element && event.target.closest('.comment-media-grid')) {
+                      event.preventDefault();
+                      event.stopPropagation();
+                    }
+                  }}
+                >
+                  {children}
+                </div>
 
                 <div className="comment-bubble__meta">
                   <div className="comment-footer-actions">

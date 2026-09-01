@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import clsx from 'clsx';
 import gsap from 'gsap';
 import { Flip } from 'gsap/Flip';
@@ -927,23 +928,26 @@ function SortableMediaPreviewGrid({
         );
       })}
 
-      {ghost && lifted ? (
-        <div
-          className="sortable-media-ghost"
-          style={{
-            width: ghost.w,
-            height: ghost.h,
-            transform: `translate3d(${ghost.x}px, ${ghost.y}px, 0)`
-          }}
-          aria-hidden="true"
-        >
-          {ghost.isVideo ? (
-            <video src={videoPreviewUrl(ghost.url)} muted playsInline />
-          ) : (
-            <img src={ghost.url} alt="" draggable={false} />
-          )}
-        </div>
-      ) : null}
+      {ghost && lifted
+        ? createPortal(
+            <div
+              className="sortable-media-ghost"
+              style={{
+                width: ghost.w,
+                height: ghost.h,
+                transform: `translate3d(${ghost.x}px, ${ghost.y}px, 0)`
+              }}
+              aria-hidden="true"
+            >
+              {ghost.isVideo ? (
+                <video src={videoPreviewUrl(ghost.url)} muted playsInline />
+              ) : (
+                <img src={ghost.url} alt="" draggable={false} />
+              )}
+            </div>,
+            document.body
+          )
+        : null}
     </div>
   );
 }

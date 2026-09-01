@@ -17,7 +17,6 @@ const NAV_CLICK_DRIFT_PX = 8;
 const NAV_ZOOM_MAX_SCALE = 1.05;
 const GESTURE_LOCK_PX = 10;
 const SLIDE_ANIMATION_MS = 240;
-const CROSSFADE_MS = 220;
 const RIPPLE_ANIMATION_MS = 420;
 /** Нижний отступ тап-зоны: нативная полоска controls (~56–72px, эмпирически под webview MAX). */
 const VIDEO_CONTROLS_RESERVED_PX = 72;
@@ -284,7 +283,6 @@ function FullscreenImageViewer({
   const [activeIndex, setActiveIndex] = useState(initialIndex);
   const [swipeOffset, setSwipeOffset] = useState(0);
   const [isSliding, setIsSliding] = useState(false);
-  const [isCrossfading, setIsCrossfading] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [returnRect, setReturnRect] = useState(null);
   const [ripple, setRipple] = useState(null);
@@ -309,7 +307,6 @@ function FullscreenImageViewer({
   );
   const activeItem = items[activeIndex] || null;
   const hasMultiple = items.length > 1;
-  const useCrossfadeNav = items.length > 1 && items.length <= 3;
   const isTouchNav = isTouchNavDevice();
   const hideActiveOrigin = useCallback(() => {
     onCloseStart?.(activeItem?.originKey || originKey || null);
@@ -380,16 +377,6 @@ function FullscreenImageViewer({
     const normalizedIndex = (nextIndex + items.length) % items.length;
     if (animated && normalizedIndex !== activeIndex) {
       window.clearTimeout(slideTimerRef.current);
-      if (useCrossfadeNav) {
-        setIsCrossfading(true);
-        slideTimerRef.current = window.setTimeout(() => {
-          setActiveIndex(normalizedIndex);
-          onActiveIndexChange?.(normalizedIndex);
-          reset();
-          requestAnimationFrame(() => setIsCrossfading(false));
-        }, CROSSFADE_MS);
-        return;
-      }
       const direction = normalizedIndex > activeIndex || (activeIndex === items.length - 1 && normalizedIndex === 0)
         ? -1
         : 1;
@@ -408,9 +395,8 @@ function FullscreenImageViewer({
     onActiveIndexChange?.(normalizedIndex);
     setSwipeOffset(0);
     setIsSliding(false);
-    setIsCrossfading(false);
     reset();
-  }, [activeIndex, items.length, onActiveIndexChange, reset, useCrossfadeNav]);
+  }, [activeIndex, items.length, onActiveIndexChange, reset]);
 
   const goNext = useCallback((options) => goTo(activeIndex + 1, options), [activeIndex, goTo]);
   const goPrev = useCallback((options) => goTo(activeIndex - 1, options), [activeIndex, goTo]);
@@ -421,7 +407,6 @@ function FullscreenImageViewer({
     setActiveIndex(Math.min(initialIndex, Math.max(items.length - 1, 0)));
     setSwipeOffset(0);
     setIsSliding(false);
-    setIsCrossfading(false);
     setReturnRect(null);
     setRipple(null);
     gestureModeRef.current = 'idle';
@@ -551,9 +536,7 @@ function FullscreenImageViewer({
     }
 
     if (gestureModeRef.current === 'horizontal') {
-      if (!useCrossfadeNav) {
-        setSwipeOffset(dx);
-      }
+      setSwipeOffset(dx);
       return;
     }
 
@@ -571,7 +554,7 @@ function FullscreenImageViewer({
       if (Math.abs(dx) > SWIPE_NAV_THRESHOLD_PX) {
         if (dx < 0) goNext({ animated: true });
         else goPrev({ animated: true });
-      } else if (!useCrossfadeNav) {
+      } else {
         setIsSliding(true);
         setSwipeOffset(0);
         window.setTimeout(() => setIsSliding(false), SLIDE_ANIMATION_MS);
@@ -776,34 +759,23 @@ function FullscreenImageViewer({
           </>
         )}
 
-        {useCrossfadeNav ? (
-          <div
-            className={clsx(
-              'fullscreen-crossfade-slide',
-              isCrossfading && 'is-fading'
-            )}
-          >
-            {renderSlideContent(activeItem, true)}
-          </div>
-        ) : (
-          <div
-            className={`fullscreen-carousel-track ${isSliding ? 'is-sliding' : ''}`}
-            style={{ transform: `translate3d(${trackTranslate}, 0, 0)` }}
-          >
-            {trackItems.map((item, index) => {
-              const isActiveSlide = !hasMultiple || index === 1;
-              return (
-                <div
-                  className="fullscreen-carousel-slide"
-                  data-active={isActiveSlide ? 'true' : undefined}
-                  key={carouselSlideKey(item, index, trackItems)}
-                >
-                  {renderSlideContent(item, isActiveSlide)}
-                </div>
-              );
-            })}
-          </div>
-        )}
+        <div
+          className={`fullscreen-carousel-track ${isSliding ? 'is-sliding' : ''}`}
+          style={{ transform: `translate3d(${trackTranslate}, 0, 0)` }}
+        >
+          {trackItems.map((item, index) => {
+            const isActiveSlide = !hasMultiple || index === 1;
+            return (
+              <div
+                className="fullscreen-carousel-slide"
+                data-active={isActiveSlide ? 'true' : undefined}
+                key={carouselSlideKey(item, index, trackItems)}
+              >
+                {renderSlideContent(item, isActiveSlide)}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>,
     document.body
