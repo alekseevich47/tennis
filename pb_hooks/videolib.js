@@ -120,6 +120,41 @@ function markProcessed(inputPath) {
 }
 
 /**
+ * @param {string} line
+ * @returns {boolean}
+ */
+function isProbeCodecToken(line) {
+  return /^[a-z][a-z0-9_]*$/i.test(line);
+}
+
+/**
+ * ffprobe default=nw=1 — порядок полей не гарантирован; JSON.parse в JSVM ломается.
+ *
+ * @param {string} raw
+ * @returns {{ width: number, height: number, videoCodec: string } | null}
+ */
+function parseProbeDefaultOutput(raw) {
+  var lines = String(raw || '')
+    .trim()
+    .split(/\r?\n/)
+    .map(function (line) {
+      return line.trim();
+    })
+    .filter(Boolean);
+  if (lines.length < 3) return null;
+
+  var numbers = [];
+  var codec = '';
+  for (var i = 0; i < lines.length; i++) {
+    var token = lines[i];
+    if (/^\d+$/.test(token)) numbers.push(parseInt(token, 10));
+    else if (!codec && isProbeCodecToken(token)) codec = token.toLowerCase();
+  }
+  if (numbers.length < 2 || !codec) return null;
+  return { width: numbers[0], height: numbers[1], videoCodec: codec };
+}
+
+/**
  * @param {string} inputPath
  * @returns {{ width: number, height: number, videoCodec: string } | null}
  */
@@ -133,23 +168,10 @@ function probeVideo(inputPath) {
     '-show_entries',
     'stream=width,height,codec_name',
     '-of',
-    'json=compact=1',
+    'default=nw=1:nk=1',
     inputPath
   );
-  var out = String(cmd.combinedOutput()).trim();
-  if (!out) return null;
-
-  var data = JSON.parse(out);
-  var streams = data && data.streams;
-  if (!streams || !streams.length) return null;
-
-  var stream = streams[0];
-  var width = parseInt(String(stream.width || ''), 10);
-  var height = parseInt(String(stream.height || ''), 10);
-  var codec = String(stream.codec_name || '').toLowerCase();
-  if (!width || !height || !codec) return null;
-
-  return { width: width, height: height, videoCodec: codec };
+  return parseProbeDefaultOutput(cmd.combinedOutput());
 }
 
 /**
