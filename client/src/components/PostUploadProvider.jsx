@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import { mutate } from 'swr';
 import { isDefinitePostCreateFailure, publishPost } from '../services/posts';
+import { formatAdminSaveError } from '../features/admin/adminResultAlert';
 import { error } from '../lib/log';
 import './PostUploadProvider.css';
 
@@ -60,7 +61,10 @@ export function PostUploadProvider({ children }) {
             ? {
                 ...current,
                 progress,
-                message: progress >= 100 ? 'Публикация добавлена' : 'Загружаем публикацию…'
+                message:
+                  progress >= 100
+                    ? 'Публикация добавлена'
+                    : `Загрузка медиа: ${progress}%`
               }
             : current
         );
@@ -85,7 +89,7 @@ export function PostUploadProvider({ children }) {
           setUploadTask({
             progress: 0,
             status: 'error',
-            message: 'Не удалось опубликовать. Проверьте соединение.'
+            message: formatAdminSaveError(err, 'Не удалось опубликовать. Проверьте соединение.')
           });
           return;
         }
