@@ -4,21 +4,32 @@ import { join } from 'node:path'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-function ffmpegAssetsPlugin() {
-  const coreDir = join('node_modules', '@ffmpeg', 'core', 'dist', 'esm')
-  const destDir = join('public', 'ffmpeg')
+function mediaAssetsPlugin() {
+  const ffmpegCoreDir = join('node_modules', '@ffmpeg', 'core', 'dist', 'esm')
+  const ffmpegDestDir = join('public', 'ffmpeg')
+  const demuxerWasm = join(
+    'node_modules',
+    'web-demuxer',
+    'dist',
+    'wasm-files',
+    'web-demuxer-mini.wasm'
+  )
+  const demuxerDestDir = join('public', 'web-demuxer')
 
-  const copyCore = () => {
-    mkdirSync(destDir, { recursive: true })
-    cpSync(join(coreDir, 'ffmpeg-core.js'), join(destDir, 'ffmpeg-core.js'))
-    cpSync(join(coreDir, 'ffmpeg-core.wasm'), join(destDir, 'ffmpeg-core.wasm'))
+  const copyAssets = () => {
+    mkdirSync(ffmpegDestDir, { recursive: true })
+    cpSync(join(ffmpegCoreDir, 'ffmpeg-core.js'), join(ffmpegDestDir, 'ffmpeg-core.js'))
+    cpSync(join(ffmpegCoreDir, 'ffmpeg-core.wasm'), join(ffmpegDestDir, 'ffmpeg-core.wasm'))
+
+    mkdirSync(demuxerDestDir, { recursive: true })
+    cpSync(demuxerWasm, join(demuxerDestDir, 'web-demuxer-mini.wasm'))
   }
 
   return {
-    name: 'ffmpeg-assets',
-    buildStart: copyCore,
+    name: 'media-assets',
+    buildStart: copyAssets,
     configureServer() {
-      copyCore()
+      copyAssets()
     }
   }
 }
@@ -58,7 +69,7 @@ function versionJsonPlugin(build) {
 
 export default defineConfig({
   base: '/tt-api/',
-  plugins: [react(), ffmpegAssetsPlugin(), versionJsonPlugin(APP_BUILD)],
+  plugins: [react(), mediaAssetsPlugin(), versionJsonPlugin(APP_BUILD)],
   define: {
     'import.meta.env.VITE_APP_VERSION': JSON.stringify(APP_BUILD),
     'import.meta.env.VITE_APP_DISPLAY_VERSION': JSON.stringify(APP_DISPLAY_VERSION)
