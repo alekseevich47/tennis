@@ -8,6 +8,9 @@ import { registerOverlay } from '../../lib/overlayStack';
 
 const ENTER_MS = 0.22;
 const EXIT_MS = 0.16;
+const MENTION_ITEM_HEIGHT_PX = 44;
+const MENTION_VISIBLE_ITEMS = 3;
+const MENTION_LIST_MAX_HEIGHT_PX = MENTION_VISIBLE_ITEMS * MENTION_ITEM_HEIGHT_PX + 8;
 
 function prefersReducedMotion() {
   return typeof window !== 'undefined'
@@ -25,6 +28,7 @@ function prefersReducedMotion() {
  *   posts?: Array<{ id: string, post_number: number, source: 'feed' | 'tournament', preview?: string }>,
  *   activeIndex: number,
  *   anchorRect: { top: number, left: number, bottom: number, width: number } | null,
+ *   placementMode?: 'caret' | 'toolbar-above',
  *   onHoverIndex: (index: number) => void,
  *   onSelectUser: (user: any) => void,
  *   onSelectPost: (post: any) => void,
@@ -42,6 +46,7 @@ function MentionSuggestPopup({
   posts = [],
   activeIndex,
   anchorRect,
+  placementMode = 'caret',
   onHoverIndex,
   onSelectUser,
   onSelectPost,
@@ -59,8 +64,10 @@ function MentionSuggestPopup({
     if (!mounted) {
       enteredRef.current = false;
       placementRef.current = null;
+      return;
     }
-  }, [mounted]);
+    placementRef.current = null;
+  }, [mounted, anchorRect?.top, anchorRect?.left, placementMode]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -124,23 +131,27 @@ function MentionSuggestPopup({
     Math.max(8, anchorRect.left),
     window.innerWidth - panelWidth - 8
   );
-  const estimatedHeight = Math.min(280, 48 + Math.max(items.length, 1) * 44 + 28);
+  const estimatedHeight = Math.min(
+    280,
+    48 + Math.min(Math.max(items.length, 1), MENTION_VISIBLE_ITEMS) * MENTION_ITEM_HEIGHT_PX + 28
+  );
   const gap = 8;
   const spaceBelow = window.innerHeight - anchorRect.bottom - gap;
   const spaceAbove = anchorRect.top - gap;
 
   if (!placementRef.current) {
     placementRef.current =
-      spaceBelow >= Math.min(estimatedHeight, 120) || spaceBelow >= spaceAbove
-        ? 'below'
-        : 'above';
+      placementMode === 'toolbar-above' ||
+      (!(spaceBelow >= Math.min(estimatedHeight, 120) || spaceBelow >= spaceAbove))
+        ? 'above'
+        : 'below';
   }
 
   let top;
-  if (placementRef.current === 'below') {
-    top = anchorRect.bottom + gap;
-  } else {
+  if (placementMode === 'toolbar-above' || placementRef.current === 'above') {
     top = Math.max(8, anchorRect.top - estimatedHeight - gap);
+  } else {
+    top = anchorRect.bottom + gap;
   }
   top = Math.min(top, window.innerHeight - 48);
 

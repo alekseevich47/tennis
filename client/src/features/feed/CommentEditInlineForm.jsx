@@ -7,7 +7,7 @@ import FullscreenImageViewer from './FullscreenImageViewer';
 import { useLocalMediaFullscreen } from './useLocalMediaFullscreen';
 import { findScrollParent, restoreAndKeepCommentEditInView } from './keepCommentEditInView';
 import { hasVisibleText, toDisplayHtml } from './postRichText';
-import { compressImage } from '../../lib/compress';
+import { prepareCommentMediaFile } from './prepareMediaDraft';
 import {
   getMediaUrl,
   isVideoFile,
@@ -98,6 +98,7 @@ function CommentEditInlineForm({
     [orderedMedia]
   );
   const hasNewMedia = orderedMedia.some((item) => item.kind === 'new');
+  const hasPendingMedia = orderedMedia.some((item) => item.status === 'loading');
   const orderChanged =
     !areStringArraysEqual(currentExistingNames, originalNames.filter((n) => currentExistingNames.includes(n))) ||
     currentExistingNames.length !== originalNames.length ||
@@ -106,7 +107,9 @@ function CommentEditInlineForm({
   const textChanged = text !== originalHtml;
   const hasChanges = textChanged || mediaChanged;
   const canSave =
-    hasChanges && (hasVisibleText(text) || orderedMedia.some((item) => item.status === 'ready'));
+    !hasPendingMedia &&
+    hasChanges &&
+    (hasVisibleText(text) || orderedMedia.some((item) => item.status === 'ready'));
   const remainingSlots = Math.max(0, MAX_COMMENT_MEDIA_FILES - orderedMedia.length);
   const hasText = hasVisibleText(text);
   const [toolbarAttachVisible, setToolbarAttachVisible] = useState(() => hasText);
@@ -127,15 +130,14 @@ function CommentEditInlineForm({
 
   const previewItems = useMemo(
     () =>
-      orderedMedia
-        .filter((item) => item.status === 'ready' && item.url)
-        .map((item) => ({
-          key: item.key,
-          url: item.url,
-          name: item.name,
-          isVideo: item.isVideo,
-          status: 'ready'
-        })),
+      orderedMedia.map((item) => ({
+        key: item.key,
+        url: item.url,
+        name: item.name,
+        isVideo: item.isVideo,
+        status: item.status || (item.url ? 'ready' : 'loading'),
+        progress: item.progress ?? null
+      })),
     [orderedMedia]
   );
 
@@ -192,12 +194,16 @@ function CommentEditInlineForm({
             url: '',
             name: file.name,
             isVideo: isVideoFile(file),
-            status: /** @type {'loading'} */ ('loading')
+            status: /** @type {'loading'} */ ('loading'),
+            progress: 0
           }
         ]);
         try {
-          const prepared = file.type.startsWith('image/') ? await compressImage(file) : file;
-          const url = URL.createObjectURL(prepared);
+          const prepared = await prepareCommentMediaFile(file, (progress) => {
+            setOrderedMedia((cur) =>
+              cur.map((item) => (item.key === key ? { ...item, progress } : item))
+            );
+          });
           setOrderedMedia((cur) =>
             cur.map((item) =>
               item.key === key
@@ -205,11 +211,12 @@ function CommentEditInlineForm({
                     key,
                     kind: 'new',
                     filename: undefined,
-                    file: prepared,
-                    url,
+                    file: prepared.file,
+                    url: prepared.url,
                     name: prepared.name,
-                    isVideo: isVideoFile(prepared),
-                    status: 'ready'
+                    isVideo: prepared.isVideo,
+                    status: 'ready',
+                    progress: 100
                   }
                 : item
             )

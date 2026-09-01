@@ -133,7 +133,7 @@ export function useGalleryNavigation(length, resetKey, { index: controlledIndex,
     if (length <= 1) return;
     if (
       event.target instanceof Element &&
-      event.target.closest('.product-detail-image-btn, .product-card-image-btn')
+      event.target.closest('.product-gallery-zone, .product-gallery-dots, .product-card-dots')
     ) {
       return;
     }

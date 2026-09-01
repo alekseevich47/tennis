@@ -275,9 +275,9 @@ function PostMedia({
             variant === 'detail' ? (
               <PostDetailVideoPreview
                 src={item.url}
+                poster={item.thumbUrl || item.previewUrl}
                 className="telegram-post-media-item"
                 alt={alt}
-                inViewport={mediaFocused}
                 width="800"
                 height="600"
               />
