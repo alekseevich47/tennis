@@ -9,6 +9,8 @@ import React, {
 } from 'react';
 import { mutate } from 'swr';
 import { createGalleryItemWithProgress } from '../services/catalog';
+import { compressVideo } from '../lib/compressVideo';
+import { isVideoFile } from '../lib/media';
 import { error } from '../lib/log';
 import './GalleryUploadProvider.css';
 
@@ -28,6 +30,44 @@ function createGalleryPayload({ file, aspect_ratio, media_type }) {
   }
 
   return data;
+}
+
+/**
+ * @param {File} file
+ * @returns {Promise<number>}
+ */
+function getVideoAspectRatio(file) {
+  return new Promise((resolve, reject) => {
+    const video = document.createElement('video');
+    const objectUrl = URL.createObjectURL(file);
+
+    video.onloadedmetadata = () => {
+      URL.revokeObjectURL(objectUrl);
+      resolve(video.videoWidth / video.videoHeight);
+    };
+    video.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error('Не удалось прочитать размеры видео'));
+    };
+    video.src = objectUrl;
+  });
+}
+
+/**
+ * @param {{ file: File, aspect_ratio?: number, media_type?: string }} item
+ * @param {{ signal?: AbortSignal, onProgress?: (percent: number) => void }} [options]
+ */
+async function prepareGalleryUploadItem(item, { signal, onProgress } = {}) {
+  if (!isVideoFile(item.file)) return item;
+
+  const preparedFile = await compressVideo(item.file, { signal, onProgress });
+  const aspect_ratio = await getVideoAspectRatio(preparedFile);
+  return {
+    ...item,
+    file: preparedFile,
+    aspect_ratio,
+    media_type: 'video'
+  };
 }
 
 export function GalleryUploadProvider({ children }) {
@@ -67,17 +107,41 @@ export function GalleryUploadProvider({ children }) {
 
       for (let index = 0; index < items.length; index += 1) {
         const currentNumber = index + 1;
-        const payload = createGalleryPayload(items[index]);
 
         setUploadTask((current) =>
           current
             ? {
                 ...current,
                 progress: 0,
-                message: `Загрузка ${currentNumber} из ${items.length}: 0%`
+                message:
+                  items[index].media_type === 'video' || isVideoFile(items[index].file)
+                    ? `Подготовка видео ${currentNumber} из ${items.length}: 0%`
+                    : `Загрузка ${currentNumber} из ${items.length}: 0%`
               }
             : current
         );
+
+        const preparedItem = await prepareGalleryUploadItem(items[index], {
+          signal: controller.signal,
+          onProgress: (progress) => {
+            setUploadTask((current) =>
+              current
+                ? {
+                    ...current,
+                    progress: Math.round(progress * 0.4),
+                    message:
+                      progress < 100
+                        ? `Подготовка видео ${currentNumber} из ${items.length}: ${progress}%`
+                        : `Загрузка ${currentNumber} из ${items.length}: 0%`
+                  }
+                : current
+            );
+          }
+        });
+
+        if (controller.signal.aborted) return;
+
+        const payload = createGalleryPayload(preparedItem);
 
         const createdItem = await createGalleryItemWithProgress(payload, {
           signal: controller.signal,
@@ -86,7 +150,7 @@ export function GalleryUploadProvider({ children }) {
               current
                 ? {
                     ...current,
-                    progress,
+                    progress: Math.round(40 + (progress / 100) * 60),
                     message: `Загрузка ${currentNumber} из ${items.length}: ${progress}%`
                   }
                 : current

@@ -9,11 +9,9 @@ import React, {
 import { mutate } from 'swr';
 import {
   isDefinitePostCreateFailure,
-  postPayloadHasVideo,
   publishPost,
   tryRecoverRecentPost
 } from '../services/posts';
-import { requestVideoTranscode } from '../services/videoTranscode';
 import { formatAdminSaveError } from '../features/admin/adminResultAlert';
 import { error } from '../lib/log';
 import './PostUploadProvider.css';
@@ -45,17 +43,6 @@ function prependPostToFeed(createdPost) {
   return { progress: 100, status: 'done', message: 'Публикация добавлена' };
 }
 
-/**
- * @param {FormData | Record<string, unknown>} payload
- * @param {import('../services/posts').PostRecord} createdPost
- */
-function maybeTranscodePostVideo(payload, createdPost) {
-  if (!createdPost?.id || createdPost.is_scheduled) return;
-  if (postPayloadHasVideo(payload)) {
-    requestVideoTranscode('posts', createdPost.id);
-  }
-}
-
 export function PostUploadProvider({ children }) {
   const [uploadTask, setUploadTask] = useState(null);
   const uploadAbortRef = useRef(null);
@@ -84,14 +71,15 @@ export function PostUploadProvider({ children }) {
                 message:
                   progress >= 100
                     ? 'Публикация добавлена'
-                    : `Загрузка медиа: ${progress}%`
+                    : progress < 40
+                      ? `Подготовка: ${progress}%`
+                      : `Загрузка медиа: ${progress}%`
               }
             : current
         );
       }
     })
       .then((createdPost) => {
-        maybeTranscodePostVideo(payload, createdPost);
         setUploadTask(prependPostToFeed(createdPost));
         window.setTimeout(() => setUploadTask(null), 1400);
       })
@@ -104,7 +92,6 @@ export function PostUploadProvider({ children }) {
 
         const recovered = await tryRecoverRecentPost(payload);
         if (recovered) {
-          maybeTranscodePostVideo(payload, recovered);
           setUploadTask(prependPostToFeed(recovered));
           window.setTimeout(() => setUploadTask(null), 1400);
           return;

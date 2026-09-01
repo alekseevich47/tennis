@@ -19,6 +19,7 @@ import {
   readSelectedFiles
 } from '../../lib/media';
 import { error } from '../../lib/log';
+import { prepareUploadMediaList } from '../../lib/prepareUploadMedia';
 import { hasVisibleText, toDisplayHtml } from './postRichText';
 import { useLongPress, LongPressRing } from '../../lib/longPress';
 
@@ -249,10 +250,16 @@ function EditPostModal({ isOpen, post, onClose, onSaved }) {
               new File([blob], filename, { type: blob.type || 'application/octet-stream' })
             );
           }
-          mediaFiles.forEach((file) => payload.append('media', file));
+          const preparedNewFiles = mediaFiles.length
+            ? await prepareUploadMediaList(mediaFiles)
+            : [];
+          preparedNewFiles.forEach((file) => payload.append('media', file));
         } else {
           removedMediaNames.forEach((filename) => payload.append('media-', filename));
-          mediaFiles.forEach((file) => payload.append('media', file));
+          const preparedNewFiles = mediaFiles.length
+            ? await prepareUploadMediaList(mediaFiles)
+            : [];
+          preparedNewFiles.forEach((file) => payload.append('media', file));
         }
       } else if (hasExternalChanges || captionChanged) {
         payload = {

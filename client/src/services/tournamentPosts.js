@@ -3,6 +3,7 @@ import { mutate } from 'swr';
 import pb from './pb';
 import { getCurrentUser } from './auth';
 import { error } from '../lib/log';
+import { mapUploadProgress, prepareUploadMediaList } from '../lib/prepareUploadMedia';
 import { PB_URL } from '../config';
 
 /**
@@ -286,8 +287,18 @@ export async function publishTournamentPost(params) {
  * @param {{ signal?: AbortSignal, onProgress?: (percent: number) => void }} [options]
  * @returns {Promise<TournamentPostRecord>}
  */
-export function publishTournamentPostWithProgress(params, { signal, onProgress } = {}) {
-  const { formData, participants, isScheduled } = buildTournamentPostPayload(params);
+export async function publishTournamentPostWithProgress(params, { signal, onProgress } = {}) {
+  const preparedFiles = params.files?.length
+    ? await prepareUploadMediaList(params.files, {
+        signal,
+        onProgress: (percent) => onProgress?.(Math.round(percent * 0.4))
+      })
+    : params.files;
+
+  const { formData, participants, isScheduled } = buildTournamentPostPayload({
+    ...params,
+    files: preparedFiles
+  });
 
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
@@ -311,7 +322,9 @@ export function publishTournamentPostWithProgress(params, { signal, onProgress }
 
     xhr.upload.onprogress = (event) => {
       if (!event.lengthComputable || !onProgress) return;
-      onProgress(Math.min(98, Math.round((event.loaded / event.total) * 100)));
+      onProgress(
+        mapUploadProgress(Math.min(98, Math.round((event.loaded / event.total) * 100)))
+      );
     };
 
     xhr.onload = () => {
