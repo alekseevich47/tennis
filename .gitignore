@@ -5,6 +5,7 @@ node_modules/
 build/
 target/
 client/dist/
+client/public/ffmpeg/
 client/tasks/
 
 # Local task notes

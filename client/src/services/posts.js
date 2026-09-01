@@ -1,6 +1,7 @@
 // @ts-check
 import pb from './pb';
 import { error } from '../lib/log';
+import { mapUploadProgress, prepareMediaInBody, prepareUploadMediaList } from '../lib/prepareUploadMedia';
 import { PB_URL } from '../config';
 
 /**
@@ -397,11 +398,18 @@ function postCreateHttpError(responseText, status) {
  * @returns {Promise<PostRecord>}
  */
 export async function publishPost(payload, { signal, onProgress } = {}) {
-  const body =
+  let body =
     payload instanceof FormData ? parsePostCreateFormData(payload) : payload;
 
   if (postPayloadHasMedia(body)) {
-    return createPostWithProgress(postCreateBodyToFormData(body), { signal, onProgress });
+    body = await prepareMediaInBody(body, {
+      signal,
+      onProgress: (percent) => onProgress?.(percent)
+    });
+    return createPostWithProgress(postCreateBodyToFormData(body), {
+      signal,
+      onProgress: (percent) => onProgress?.(mapUploadProgress(percent))
+    });
   }
 
   onProgress?.(30);
@@ -415,7 +423,7 @@ export async function publishPost(payload, { signal, onProgress } = {}) {
 const RECENT_POST_RECOVERY_MS = 120000;
 
 /**
- * Если create вернул ошибку, но запись на сервере уже есть (хук ffmpeg и т.п.).
+ * Если create вернул ошибку, но запись на сервере уже есть.
  *
  * @param {FormData | Record<string, unknown>} payload
  * @returns {Promise<PostRecord | null>}
@@ -583,7 +591,7 @@ export async function purgeAbandonedPosts({ signal } = {}) {
  * }} params
  * @param {{ signal?: AbortSignal, onProgress?: (percent: number) => void }} [options]
  */
-export function createComment({
+export async function createComment({
   postId,
   authorId,
   text = '',
@@ -610,15 +618,23 @@ export function createComment({
     );
   }
 
+  const preparedMedia = await prepareUploadMediaList(mediaFiles, {
+    signal,
+    onProgress: (percent) => onProgress?.(Math.round(percent * 0.4))
+  });
+
   const formData = new FormData();
   formData.append('post', postId);
   formData.append('author', authorId);
   formData.append('text', text || '');
   if (replyToId) formData.append('reply_to', replyToId);
   if (captionAbove) formData.append('caption_above', 'true');
-  mediaFiles.forEach((file) => formData.append('media', file));
+  preparedMedia.forEach((file) => formData.append('media', file));
 
-  return createCommentWithProgress(formData, { signal, onProgress });
+  return createCommentWithProgress(formData, {
+    signal,
+    onProgress: (percent) => onProgress?.(mapUploadProgress(percent))
+  });
 }
 
 /**
