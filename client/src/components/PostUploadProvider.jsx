@@ -7,7 +7,11 @@ import React, {
   useState
 } from 'react';
 import { mutate } from 'swr';
-import { isDefinitePostCreateFailure, publishPost } from '../services/posts';
+import {
+  isDefinitePostCreateFailure,
+  publishPost,
+  tryRecoverRecentPost
+} from '../services/posts';
 import { formatAdminSaveError } from '../features/admin/adminResultAlert';
 import { error } from '../lib/log';
 import './PostUploadProvider.css';
@@ -29,7 +33,10 @@ function prependPostToFeed(createdPost) {
   }
   mutate(
     (key) => Array.isArray(key) && key[0] === 'posts',
-    (current = []) => [createdPost, ...current],
+    (current = []) => {
+      if (current.some((post) => post.id === createdPost.id)) return current;
+      return [createdPost, ...current];
+    },
     { revalidate: false }
   );
   void revalidatePosts();
@@ -80,11 +87,20 @@ export function PostUploadProvider({ children }) {
           return;
         }
         error('create post upload:', err);
+
+        const recovered = await tryRecoverRecentPost(payload);
+        if (recovered) {
+          setUploadTask(prependPostToFeed(recovered));
+          window.setTimeout(() => setUploadTask(null), 1400);
+          return;
+        }
+
         try {
           await revalidatePosts();
         } catch (revalidateErr) {
           error('create post revalidate:', revalidateErr);
         }
+
         if (isDefinitePostCreateFailure(err)) {
           setUploadTask({
             progress: 0,
@@ -93,6 +109,7 @@ export function PostUploadProvider({ children }) {
           });
           return;
         }
+
         setUploadTask({
           progress: 100,
           status: 'done',
