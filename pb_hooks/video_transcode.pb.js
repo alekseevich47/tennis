@@ -15,16 +15,23 @@ var MEDIA_TARGETS = [
 for (var t = 0; t < MEDIA_TARGETS.length; t++) {
   (function (target) {
     onRecordAfterCreateSuccess(function (e) {
+      var record = e.record;
+      var fields = target.fields;
+      e.next();
       try {
-        video.processRecordVideos(e.record, target.fields);
+        video.processRecordVideos(record, fields);
       } catch (err) {
         console.log('[video-transcode] create ' + target.collection + ': ' + err);
       }
     }, target.collection);
 
     onRecordAfterUpdateSuccess(function (e) {
+      var record = e.record;
+      var original = e.record.original();
+      var fields = target.fields;
+      e.next();
       try {
-        video.processRecordVideosOnUpdate(e.record, e.record.original(), target.fields);
+        video.processRecordVideosOnUpdate(record, original, fields);
       } catch (err) {
         console.log('[video-transcode] update ' + target.collection + ': ' + err);
       }
