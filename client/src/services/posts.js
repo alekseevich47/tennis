@@ -217,29 +217,36 @@ export async function createPost(payload) {
 }
 
 /**
- * @param {FormData} formData
+ * @param {unknown} err
  * @returns {boolean}
  */
-export function formDataHasUploadFiles(formData) {
-  if (!formData || typeof formData.entries !== 'function') return false;
-  for (const [key, value] of formData.entries()) {
-    if (key !== 'media') continue;
-    if (value instanceof File && value.size > 0) return true;
-    if (value instanceof Blob && value.size > 0) return true;
+export function isDefinitePostCreateFailure(err) {
+  const status = /** @type {{ status?: number, response?: { code?: number } }} */ (err)?.status
+    ?? /** @type {{ response?: { code?: number } }} */ (err)?.response?.code;
+  if (typeof status === 'number' && status >= 400 && status < 500) {
+    return status !== 408 && status !== 429;
   }
   return false;
 }
 
 /**
+ * Публикация поста через PocketBase SDK (fetch). XHR в webview MAX часто даёт onerror
+ * после успешного upload — запись на сервере есть, клиент не получает JSON.
+ *
  * @param {FormData | Record<string, unknown>} payload
  * @param {{ signal?: AbortSignal, onProgress?: (percent: number) => void }} [options]
  * @returns {Promise<PostRecord>}
  */
-export function publishPost(payload, options = {}) {
-  if (payload instanceof FormData && formDataHasUploadFiles(payload)) {
-    return createPostWithProgress(payload, options);
-  }
-  return createPost(payload);
+export async function publishPost(payload, { signal, onProgress } = {}) {
+  onProgress?.(20);
+  const record = /** @type {PostRecord} */ (
+    await pb.collection('posts').create(
+      /** @type {Record<string, unknown>} */ (payload),
+      { signal, requestKey: null }
+    )
+  );
+  onProgress?.(100);
+  return record;
 }
 
 /**

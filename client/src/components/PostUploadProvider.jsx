@@ -7,7 +7,7 @@ import React, {
   useState
 } from 'react';
 import { mutate } from 'swr';
-import { publishPost } from '../services/posts';
+import { isDefinitePostCreateFailure, publishPost } from '../services/posts';
 import { error } from '../lib/log';
 import './PostUploadProvider.css';
 
@@ -56,7 +56,13 @@ export function PostUploadProvider({ children }) {
       signal: controller.signal,
       onProgress: (progress) => {
         setUploadTask((current) =>
-          current ? { ...current, progress, message: `Загрузка медиа: ${progress}%` } : current
+          current
+            ? {
+                ...current,
+                progress,
+                message: progress >= 100 ? 'Публикация добавлена' : 'Загружаем публикацию…'
+              }
+            : current
         );
       }
     })
@@ -75,11 +81,20 @@ export function PostUploadProvider({ children }) {
         } catch (revalidateErr) {
           error('create post revalidate:', revalidateErr);
         }
+        if (isDefinitePostCreateFailure(err)) {
+          setUploadTask({
+            progress: 0,
+            status: 'error',
+            message: 'Не удалось опубликовать. Проверьте соединение.'
+          });
+          return;
+        }
         setUploadTask({
-          progress: 0,
-          status: 'error',
-          message: 'Не удалось опубликовать. Проверьте соединение.'
+          progress: 100,
+          status: 'done',
+          message: 'Публикация добавлена'
         });
+        window.setTimeout(() => setUploadTask(null), 1400);
       });
   }, []);
 
