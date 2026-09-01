@@ -44,23 +44,23 @@ onRecordAfterUpdateSuccess((e) => {
 }, 'tournament_comments');
 
 onRecordAfterCreateSuccess((e) => {
+  e.next();
   try {
     var lib = require(__hooks + '/mention_notifications_lib.js');
     lib.notifyMentionsForRecord(e.record.collection().name, e.record, null);
   } catch (err) {
     console.log('[mention_notifications] create post: ' + (err && err.stack ? err.stack : err));
   }
-  e.next();
 }, 'posts');
 
 onRecordAfterCreateSuccess((e) => {
+  e.next();
   try {
     var lib = require(__hooks + '/mention_notifications_lib.js');
     lib.notifyMentionsForRecord(e.record.collection().name, e.record, null);
   } catch (err) {
     console.log('[mention_notifications] create post: ' + (err && err.stack ? err.stack : err));
   }
-  e.next();
 }, 'tournament_posts');
 
 onRecordAfterUpdateSuccess((e) => {

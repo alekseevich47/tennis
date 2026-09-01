@@ -41,3 +41,5 @@ for (var t = 0; t < MEDIA_TARGETS.length; t++) {
     }, target.collection);
   })(MEDIA_TARGETS[t]);
 }
+
+console.log('--- VIDEO TRANSCODE LOADED (CreateRequest/UpdateRequest) ---');
