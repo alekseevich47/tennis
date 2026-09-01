@@ -14,6 +14,7 @@ import { groupCommentsByDay } from './commentListLayout';
 import DayGroup from './DayGroup';
 import PostContextMenu from './PostContextMenu';
 import { hasVisibleText } from './postRichText';
+import { toFullscreenMediaItem } from '../../lib/media';
 import {
   findScrollParent,
   keepCommentEditInView
@@ -589,13 +590,9 @@ function PostDetailModal({
                         variant={isOwner ? 'own' : 'other'}
                         onOpenMedia={(items, index, event) => {
                           if (!onOpenFullscreen || !items.length) return;
-                          const gallery = items.map((item) => ({
-                            filename: item.name,
-                            url: item.fullUrl || item.url,
-                            thumbUrl: item.url,
-                            isVideo: item.isVideo,
-                            originKey: `comment-${c.id}-${item.key}`
-                          }));
+                          const gallery = items.map((item) =>
+                            toFullscreenMediaItem(item, `comment-${c.id}-${item.key}`)
+                          );
                           const originRect =
                             event?.currentTarget?.getBoundingClientRect?.() || null;
                           onOpenFullscreen(
