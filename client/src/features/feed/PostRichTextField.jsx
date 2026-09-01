@@ -344,6 +344,23 @@ const PostRichTextField = forwardRef(function PostRichTextField(
     selection.addRange(range);
   }, []);
 
+  const updateMentionAnchorFromToolbar = useCallback(() => {
+    const toolbarRow = rootRef.current?.querySelector('.post-rich-text__toolbar-row');
+    const editor = editorRef.current;
+    const tr = toolbarRow?.getBoundingClientRect();
+    const er = editor?.getBoundingClientRect();
+    if (!tr && !er) return;
+    const left = Math.round(tr?.left ?? er?.left ?? 8);
+    const width = Math.round(tr?.width ?? er?.width ?? 220);
+    const toolbarTop = Math.round(tr?.top ?? er?.top ?? 0);
+    setMentionAnchor({
+      top: toolbarTop,
+      left,
+      bottom: toolbarTop,
+      width: Math.max(width, 220)
+    });
+  }, []);
+
   const flushMentionShow = useCallback(() => {
     const pending = mentionPendingRef.current;
     if (!pending || !mentionDraftRef.current) return;
@@ -375,28 +392,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
 
     mentionDraftRef.current = draft;
     hideFloatingToolbar(true);
-
-    try {
-      const rect = draft.range.getBoundingClientRect();
-      if (rect && (rect.width > 0 || rect.height > 0 || rect.top > 0)) {
-        setMentionAnchor({
-          top: rect.top,
-          left: rect.left,
-          bottom: rect.bottom,
-          width: Math.max(rect.width, 8)
-        });
-      } else if (el) {
-        const er = el.getBoundingClientRect();
-        setMentionAnchor({
-          top: er.top,
-          left: er.left,
-          bottom: er.top + 24,
-          width: 8
-        });
-      }
-    } catch {
-      // ignore
-    }
+    updateMentionAnchorFromToolbar();
 
     // Показ — после паузы 0.5s с последней буквы; данные подгружаются параллельно.
     if (mentionShowTimerRef.current) clearTimeout(mentionShowTimerRef.current);
@@ -461,7 +457,22 @@ const PostRichTextField = forwardRef(function PostRichTextField(
         }
       }
     }, MENTION_FETCH_DEBOUNCE_MS);
-  }, [closeMentionSuggest, enableMentions, flushMentionShow, hideFloatingToolbar]);
+  }, [closeMentionSuggest, enableMentions, flushMentionShow, hideFloatingToolbar, updateMentionAnchorFromToolbar]);
+
+  useEffect(() => {
+    if (!mentionOpen && !mentionMounted) return undefined;
+    const refresh = () => updateMentionAnchorFromToolbar();
+    refresh();
+    const vv = window.visualViewport;
+    vv?.addEventListener('resize', refresh);
+    vv?.addEventListener('scroll', refresh);
+    window.addEventListener('resize', refresh);
+    return () => {
+      vv?.removeEventListener('resize', refresh);
+      vv?.removeEventListener('scroll', refresh);
+      window.removeEventListener('resize', refresh);
+    };
+  }, [mentionMounted, mentionOpen, updateMentionAnchorFromToolbar]);
 
   const applyMentionUser = useCallback(
     (user) => {
@@ -909,6 +920,21 @@ const PostRichTextField = forwardRef(function PostRichTextField(
       return;
     }
 
+    if (command === 'mention') {
+      if (!enableMentions) return;
+      saveSelection();
+      restoreSelection();
+      const el = editorRef.current;
+      if (!el) return;
+      el.focus({ preventScroll: true });
+      document.execCommand('insertText', false, '@');
+      skipNextSync.current = true;
+      syncEmptyAndValue();
+      refreshActive();
+      updateMentionSuggest();
+      return;
+    }
+
     if (command === 'frame') {
       if (!enableFrame) return;
       saveSelection();
@@ -1070,6 +1096,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
               frameOpen={frameOpen}
               enableFrame={enableFrame}
               enableEmoji={emojiEnabled}
+              enableMentions={enableMentions}
               emojiOpen={emojiOpen && emojiMode !== 'field'}
               onCommand={handleCommand}
             />
@@ -1111,6 +1138,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
           frameOpen={frameOpen}
           enableFrame={enableFrame}
           enableEmoji={emojiEnabled}
+          enableMentions={enableMentions}
           emojiOpen={emojiOpen}
           trailing={toolbarExtra}
           onCommand={handleCommand}
@@ -1298,6 +1326,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
           posts={mentionPosts}
           activeIndex={mentionActiveIndex}
           anchorRect={mentionAnchor}
+          placementMode="toolbar-above"
           onHoverIndex={setMentionActiveIndex}
           onSelectUser={applyMentionUser}
           onSelectPost={applyMentionPost}

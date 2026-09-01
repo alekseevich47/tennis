@@ -7,9 +7,10 @@ import clsx from 'clsx';
  *   frameOpen?: boolean,
  *   enableFrame?: boolean,
  *   enableEmoji?: boolean,
+ *   enableMentions?: boolean,
  *   emojiOpen?: boolean,
  *   trailing?: React.ReactNode,
- *   onCommand: (command: 'bold' | 'italic' | 'underline' | 'frame' | 'link' | 'emoji') => void
+ *   onCommand: (command: 'bold' | 'italic' | 'underline' | 'frame' | 'link' | 'emoji' | 'mention') => void
  * }} props
  */
 function PostFormatToolbar({
@@ -17,6 +18,7 @@ function PostFormatToolbar({
   frameOpen = false,
   enableFrame = true,
   enableEmoji = true,
+  enableMentions = false,
   emojiOpen = false,
   trailing = null,
   onCommand
@@ -93,6 +95,18 @@ function PostFormatToolbar({
               strokeLinecap="round"
             />
           </svg>
+        </button>
+      ) : null}
+      {enableMentions ? (
+        <button
+          type="button"
+          className="post-format-toolbar__btn post-format-toolbar__btn--mention"
+          aria-label="Упоминание"
+          onClick={run('mention')}
+        >
+          <span className="post-format-toolbar__glyph post-format-toolbar__glyph--mention" aria-hidden="true">
+            @
+          </span>
         </button>
       ) : null}
       <button

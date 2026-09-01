@@ -17,6 +17,7 @@ const NAV_CLICK_DRIFT_PX = 8;
 const NAV_ZOOM_MAX_SCALE = 1.05;
 const GESTURE_LOCK_PX = 10;
 const SLIDE_ANIMATION_MS = 240;
+const CROSSFADE_MS = 220;
 const RIPPLE_ANIMATION_MS = 420;
 /** Нижний отступ тап-зоны: нативная полоска controls (~56–72px, эмпирически под webview MAX). */
 const VIDEO_CONTROLS_RESERVED_PX = 72;
@@ -90,6 +91,10 @@ function FullscreenLoadSpinner({ progress }) {
 
 function getWindowWidth() {
   return window.innerWidth || document.documentElement.clientWidth || 360;
+}
+
+function isTouchNavDevice() {
+  return typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches;
 }
 
 function getOriginRect(originKey) {
@@ -279,6 +284,7 @@ function FullscreenImageViewer({
   const [activeIndex, setActiveIndex] = useState(initialIndex);
   const [swipeOffset, setSwipeOffset] = useState(0);
   const [isSliding, setIsSliding] = useState(false);
+  const [isCrossfading, setIsCrossfading] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [returnRect, setReturnRect] = useState(null);
   const [ripple, setRipple] = useState(null);
@@ -303,6 +309,8 @@ function FullscreenImageViewer({
   );
   const activeItem = items[activeIndex] || null;
   const hasMultiple = items.length > 1;
+  const useCrossfadeNav = items.length > 1 && items.length <= 3;
+  const isTouchNav = isTouchNavDevice();
   const hideActiveOrigin = useCallback(() => {
     onCloseStart?.(activeItem?.originKey || originKey || null);
   }, [activeItem?.originKey, onCloseStart, originKey]);
@@ -364,16 +372,27 @@ function FullscreenImageViewer({
   });
 
   const isImage = activeItem && !activeItem.isVideo;
-  const showNavControls = hasMultiple && scale <= NAV_ZOOM_MAX_SCALE && !isClosing;
+  const showNavControls =
+    hasMultiple && !isTouchNav && scale <= NAV_ZOOM_MAX_SCALE && !isClosing;
 
   const goTo = useCallback((nextIndex, { animated = false } = {}) => {
     if (items.length === 0) return;
     const normalizedIndex = (nextIndex + items.length) % items.length;
     if (animated && normalizedIndex !== activeIndex) {
+      window.clearTimeout(slideTimerRef.current);
+      if (useCrossfadeNav) {
+        setIsCrossfading(true);
+        slideTimerRef.current = window.setTimeout(() => {
+          setActiveIndex(normalizedIndex);
+          onActiveIndexChange?.(normalizedIndex);
+          reset();
+          requestAnimationFrame(() => setIsCrossfading(false));
+        }, CROSSFADE_MS);
+        return;
+      }
       const direction = normalizedIndex > activeIndex || (activeIndex === items.length - 1 && normalizedIndex === 0)
         ? -1
         : 1;
-      window.clearTimeout(slideTimerRef.current);
       setIsSliding(true);
       setSwipeOffset(direction * getWindowWidth());
       slideTimerRef.current = window.setTimeout(() => {
@@ -389,8 +408,9 @@ function FullscreenImageViewer({
     onActiveIndexChange?.(normalizedIndex);
     setSwipeOffset(0);
     setIsSliding(false);
+    setIsCrossfading(false);
     reset();
-  }, [activeIndex, items.length, onActiveIndexChange, reset]);
+  }, [activeIndex, items.length, onActiveIndexChange, reset, useCrossfadeNav]);
 
   const goNext = useCallback((options) => goTo(activeIndex + 1, options), [activeIndex, goTo]);
   const goPrev = useCallback((options) => goTo(activeIndex - 1, options), [activeIndex, goTo]);
@@ -401,6 +421,7 @@ function FullscreenImageViewer({
     setActiveIndex(Math.min(initialIndex, Math.max(items.length - 1, 0)));
     setSwipeOffset(0);
     setIsSliding(false);
+    setIsCrossfading(false);
     setReturnRect(null);
     setRipple(null);
     gestureModeRef.current = 'idle';
@@ -530,7 +551,9 @@ function FullscreenImageViewer({
     }
 
     if (gestureModeRef.current === 'horizontal') {
-      setSwipeOffset(dx);
+      if (!useCrossfadeNav) {
+        setSwipeOffset(dx);
+      }
       return;
     }
 
@@ -548,7 +571,7 @@ function FullscreenImageViewer({
       if (Math.abs(dx) > SWIPE_NAV_THRESHOLD_PX) {
         if (dx < 0) goNext({ animated: true });
         else goPrev({ animated: true });
-      } else {
+      } else if (!useCrossfadeNav) {
         setIsSliding(true);
         setSwipeOffset(0);
         window.setTimeout(() => setIsSliding(false), SLIDE_ANIMATION_MS);
@@ -622,6 +645,7 @@ function FullscreenImageViewer({
   const nextItem = items[(activeIndex + 1) % items.length];
   const trackItems = hasMultiple ? [prevItem, activeItem, nextItem] : [activeItem];
   const trackTranslate = hasMultiple ? `calc(-100% + ${swipeOffset}px)` : `${swipeOffset}px`;
+
   const returnTransform = useMemo(() => {
     const rect = returnRect || originRect;
     if (!rect) return null;
@@ -635,6 +659,50 @@ function FullscreenImageViewer({
     );
     return `translate(${dx}px, ${dy}px) scale(${targetScale})`;
   }, [originRect, returnRect]);
+
+  const renderSlideContent = (item, isActiveSlide) => {
+    const pendingVideo = item.isVideo && (Boolean(item.isLoading) || !item.url);
+    const imageStyle = {
+      transform: isClosing && isActiveSlide && returnTransform
+        ? returnTransform
+        : `translate(${isActiveSlide ? position.x : 0}px, ${isActiveSlide ? position.y : 0}px) scale(${isActiveSlide ? scale : 1})`
+    };
+
+    if (item.isVideo) {
+      if (pendingVideo) {
+        return (
+          <div className="fullscreen-media-pending" aria-label="Загрузка медиа">
+            <span className="fullscreen-media-pending__spinner" aria-hidden="true" />
+          </div>
+        );
+      }
+      return (
+        <FullscreenSlideVideo
+          item={item}
+          isActiveSlide={isActiveSlide}
+          mediaRef={mediaRef}
+          onActiveVideoRef={setActiveVideoRef}
+          controlsReservedPx={VIDEO_CONTROLS_RESERVED_PX}
+          isClosing={isClosing}
+          isActiveSlideClosing={isActiveSlide}
+          returnTransform={returnTransform}
+          position={position}
+          onTapToggle={handleVideoTapToggle}
+          activeIndex={activeIndex}
+        />
+      );
+    }
+
+    return (
+      <FullscreenSlideImage
+        item={item}
+        isActiveSlide={isActiveSlide}
+        mediaRef={mediaRef}
+        alt={`Полноразмерное изображение ${activeIndex + 1}`}
+        style={imageStyle}
+      />
+    );
+  };
 
   if (!activeItem) return null;
 
@@ -708,60 +776,34 @@ function FullscreenImageViewer({
           </>
         )}
 
-        <div
-          className={`fullscreen-carousel-track ${isSliding ? 'is-sliding' : ''}`}
-          style={{ transform: `translate3d(${trackTranslate}, 0, 0)` }}
-        >
-          {trackItems.map((item, index) => {
-            const isActiveSlide = !hasMultiple || index === 1;
-            const pendingVideo = item.isVideo && (Boolean(item.isLoading) || !item.url);
-            const imageStyle = {
-              transform: isClosing && isActiveSlide && returnTransform
-                ? returnTransform
-                : `translate(${isActiveSlide ? position.x : 0}px, ${isActiveSlide ? position.y : 0}px) scale(${isActiveSlide ? scale : 1})`
-            };
-            return (
-              <div
-                className="fullscreen-carousel-slide"
-                data-active={isActiveSlide ? 'true' : undefined}
-                key={carouselSlideKey(item, index, trackItems)}
-              >
-                {item.isVideo ? (
-                  pendingVideo ? (
-                    <div
-                      className="fullscreen-media-pending"
-                      aria-label="Загрузка медиа"
-                    >
-                      <span className="fullscreen-media-pending__spinner" aria-hidden="true" />
-                    </div>
-                  ) : (
-                  <FullscreenSlideVideo
-                    item={item}
-                    isActiveSlide={isActiveSlide}
-                    mediaRef={mediaRef}
-                    onActiveVideoRef={setActiveVideoRef}
-                    controlsReservedPx={VIDEO_CONTROLS_RESERVED_PX}
-                    isClosing={isClosing}
-                    isActiveSlideClosing={isActiveSlide}
-                    returnTransform={returnTransform}
-                    position={position}
-                    onTapToggle={handleVideoTapToggle}
-                    activeIndex={activeIndex}
-                  />
-                  )
-                ) : (
-                  <FullscreenSlideImage
-                    item={item}
-                    isActiveSlide={isActiveSlide}
-                    mediaRef={mediaRef}
-                    alt={`Полноразмерное изображение ${activeIndex + 1}`}
-                    style={imageStyle}
-                  />
-                )}
-              </div>
-            );
-          })}
-        </div>
+        {useCrossfadeNav ? (
+          <div
+            className={clsx(
+              'fullscreen-crossfade-slide',
+              isCrossfading && 'is-fading'
+            )}
+          >
+            {renderSlideContent(activeItem, true)}
+          </div>
+        ) : (
+          <div
+            className={`fullscreen-carousel-track ${isSliding ? 'is-sliding' : ''}`}
+            style={{ transform: `translate3d(${trackTranslate}, 0, 0)` }}
+          >
+            {trackItems.map((item, index) => {
+              const isActiveSlide = !hasMultiple || index === 1;
+              return (
+                <div
+                  className="fullscreen-carousel-slide"
+                  data-active={isActiveSlide ? 'true' : undefined}
+                  key={carouselSlideKey(item, index, trackItems)}
+                >
+                  {renderSlideContent(item, isActiveSlide)}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>,
     document.body
