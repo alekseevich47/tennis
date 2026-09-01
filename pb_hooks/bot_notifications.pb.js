@@ -608,41 +608,39 @@ cronAdd('training_reminder_evening', '0 13 * * *', () => {
 
 // 10.2b — новая публикация → всем пользователям (не из очереди is_scheduled)
 onRecordAfterCreateSuccess((e) => {
+  if (e.record && e.record.getBool('is_scheduled')) {
+    e.next();
+    return;
+  }
+  e.next();
   const bot = require(__hooks + '/botlib.js');
   try {
-    if (e.record && e.record.getBool('is_scheduled')) {
-      e.next();
-      return;
-    }
     const settings = $app.findFirstRecordByFilter('notification_settings', '');
     if (settings && !settings.getBool('posts_created_enabled')) {
-      e.next();
       return;
     }
     bot.broadcastNewPublication();
   } catch (err) {
     console.log('[bot] posts broadcast: ' + err);
   }
-  e.next();
 }, 'posts');
 
 onRecordAfterCreateSuccess((e) => {
+  if (e.record && e.record.getBool('is_scheduled')) {
+    e.next();
+    return;
+  }
+  e.next();
   const bot = require(__hooks + '/botlib.js');
   try {
-    if (e.record && e.record.getBool('is_scheduled')) {
-      e.next();
-      return;
-    }
     const settings = $app.findFirstRecordByFilter('notification_settings', '');
     if (settings && !settings.getBool('tournament_posts_created_enabled')) {
-      e.next();
       return;
     }
     bot.broadcastNewPublication();
   } catch (err) {
     console.log('[bot] tournament_posts broadcast: ' + err);
   }
-  e.next();
 }, 'tournament_posts');
 
 console.log('--- MAX BOT NOTIFICATIONS LOADED ---');

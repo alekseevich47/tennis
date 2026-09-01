@@ -7,11 +7,33 @@ import React, {
   useState
 } from 'react';
 import { mutate } from 'swr';
-import { createPostWithProgress } from '../services/posts';
+import { publishPost } from '../services/posts';
 import { error } from '../lib/log';
 import './PostUploadProvider.css';
 
 const PostUploadContext = createContext(null);
+
+function revalidatePosts() {
+  return mutate((key) => Array.isArray(key) && key[0] === 'posts');
+}
+
+/**
+ * @param {import('../services/posts').PostRecord} createdPost
+ */
+function prependPostToFeed(createdPost) {
+  const scheduled = Boolean(createdPost?.is_scheduled);
+  if (scheduled) {
+    mutate((key) => Array.isArray(key) && key[0] === 'scheduled_posts');
+    return { progress: 100, status: 'done', message: 'Публикация запланирована' };
+  }
+  mutate(
+    (key) => Array.isArray(key) && key[0] === 'posts',
+    (current = []) => [createdPost, ...current],
+    { revalidate: false }
+  );
+  void revalidatePosts();
+  return { progress: 100, status: 'done', message: 'Публикация добавлена' };
+}
 
 export function PostUploadProvider({ children }) {
   const [uploadTask, setUploadTask] = useState(null);
@@ -30,7 +52,7 @@ export function PostUploadProvider({ children }) {
     uploadAbortRef.current = controller;
     setUploadTask({ progress: 0, status: 'uploading', message: 'Загружаем публикацию…' });
 
-    createPostWithProgress(payload, {
+    publishPost(payload, {
       signal: controller.signal,
       onProgress: (progress) => {
         setUploadTask((current) =>
@@ -39,31 +61,20 @@ export function PostUploadProvider({ children }) {
       }
     })
       .then((createdPost) => {
-        const scheduled = Boolean(createdPost?.is_scheduled);
-        if (scheduled) {
-          mutate((key) => Array.isArray(key) && key[0] === 'scheduled_posts');
-          setUploadTask({
-            progress: 100,
-            status: 'done',
-            message: 'Публикация запланирована'
-          });
-        } else {
-          mutate(
-            (key) => Array.isArray(key) && key[0] === 'posts',
-            (current = []) => [createdPost, ...current],
-            { revalidate: false }
-          );
-          mutate((key) => Array.isArray(key) && key[0] === 'posts');
-          setUploadTask({ progress: 100, status: 'done', message: 'Публикация добавлена' });
-        }
+        setUploadTask(prependPostToFeed(createdPost));
         window.setTimeout(() => setUploadTask(null), 1400);
       })
-      .catch((err) => {
+      .catch(async (err) => {
         if (err?.name === 'AbortError') {
           setUploadTask(null);
           return;
         }
         error('create post upload:', err);
+        try {
+          await revalidatePosts();
+        } catch (revalidateErr) {
+          error('create post revalidate:', revalidateErr);
+        }
         setUploadTask({
           progress: 0,
           status: 'error',
