@@ -217,6 +217,32 @@ export async function createPost(payload) {
 }
 
 /**
+ * @param {FormData} formData
+ * @returns {boolean}
+ */
+export function formDataHasUploadFiles(formData) {
+  if (!formData || typeof formData.entries !== 'function') return false;
+  for (const [key, value] of formData.entries()) {
+    if (key !== 'media') continue;
+    if (value instanceof File && value.size > 0) return true;
+    if (value instanceof Blob && value.size > 0) return true;
+  }
+  return false;
+}
+
+/**
+ * @param {FormData | Record<string, unknown>} payload
+ * @param {{ signal?: AbortSignal, onProgress?: (percent: number) => void }} [options]
+ * @returns {Promise<PostRecord>}
+ */
+export function publishPost(payload, options = {}) {
+  if (payload instanceof FormData && formDataHasUploadFiles(payload)) {
+    return createPostWithProgress(payload, options);
+  }
+  return createPost(payload);
+}
+
+/**
  * PocketBase SDK uses fetch, which does not expose upload progress. This XHR path is
  * only for media publishing so moderators can keep using the app and cancel upload.
  *
@@ -244,6 +270,8 @@ export function createPostWithProgress(payload, { signal, onProgress } = {}) {
     if (pb.authStore.token) {
       xhr.setRequestHeader('Authorization', pb.authStore.token);
     }
+    xhr.responseType = 'text';
+    xhr.timeout = 600000;
 
     xhr.upload.onprogress = (event) => {
       if (!event.lengthComputable || !onProgress) return;
@@ -272,6 +300,13 @@ export function createPostWithProgress(payload, { signal, onProgress } = {}) {
       settled = true;
       signal?.removeEventListener('abort', abortUpload);
       reject(new Error('Сеть прервала загрузку публикации'));
+    };
+
+    xhr.ontimeout = () => {
+      if (settled) return;
+      settled = true;
+      signal?.removeEventListener('abort', abortUpload);
+      reject(new Error('Превышено время ожидания ответа сервера'));
     };
 
     xhr.onabort = () => {
