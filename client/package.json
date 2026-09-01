@@ -1,6 +1,6 @@
 {
   "name": "tabletennis-miniapp",
-  "version": "1.0.11.1",
+  "version": "1.0.12.0",
   "description": "Мини-приложение для секции настольного тенниса в мессенджере MAX",
   "private": true,
   "scripts": {
@@ -17,6 +17,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^3.0.0",
     "gsap": "^3.15.0",
+    "mp4-muxer": "^5.2.2",
     "pocketbase": "^0.21.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -24,6 +25,7 @@
     "react-router-dom": "^6.20.0",
     "recharts": "^3.9.2",
     "swr": "^2.2.5",
+    "web-demuxer": "^4.0.0",
     "zustand": "^4.4.7"
   },
   "devDependencies": {
