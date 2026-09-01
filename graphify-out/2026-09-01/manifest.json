@@ -265,8 +265,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/MediaPreviewGrid.jsx": {
-    "mtime": 1788246266.578791,
-    "ast_hash": "868295e819a6bbc3582806768037aebd",
+    "mtime": 1788247504.981876,
+    "ast_hash": "37954ca8873fb42a4c21bea793dcd9f7",
     "semantic_hash": ""
   },
   "client/src/features/feed/PostCard.jsx": {
@@ -1620,13 +1620,13 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/FeedVideoPreview.jsx": {
-    "mtime": 1788246266.5777912,
-    "ast_hash": "92667a1577bdd7151d005312c252b059",
+    "mtime": 1788247475.7220607,
+    "ast_hash": "5bc4dfcb273a1aea7252bc8a68421c30",
     "semantic_hash": ""
   },
   "client/src/features/feed/FullscreenSlideVideo.jsx": {
-    "mtime": 1788246266.5777912,
-    "ast_hash": "dcd9d19a95f6cae13b758c57d5bec0ca",
+    "mtime": 1788247504.4332328,
+    "ast_hash": "8835d9037b476a915e15f95fb2037699",
     "semantic_hash": ""
   },
   "client/src/lib/videoQualities.js": {
@@ -1645,8 +1645,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostDetailVideoPreview.jsx": {
-    "mtime": 1788246266.578791,
-    "ast_hash": "135b95cfaaef92de395936e5a33c9480",
+    "mtime": 1788247477.4466884,
+    "ast_hash": "1288bddd440ca69792c0bddd99dd856f",
     "semantic_hash": ""
   },
   "client/src/features/feed/CommentContextMenu.jsx": {
@@ -1684,19 +1684,24 @@
     "ast_hash": "4ae2ddceef3dea4bf62ea78cafd1e8b7",
     "semantic_hash": ""
   },
-  "client/public/ffmpeg/ffmpeg-core.js": {
-    "mtime": 1788247028.5651972,
-    "ast_hash": "eaefa8c3c4ebcb6a283f0d1012babece",
-    "semantic_hash": ""
-  },
   "client/src/lib/compressVideo.js": {
-    "mtime": 1788247052.0109928,
-    "ast_hash": "35327383d464a51bf4f2ab14e4848426",
+    "mtime": 1788247230.4877007,
+    "ast_hash": "fd6b5046073521c726d5c5f4eeeb6af5",
     "semantic_hash": ""
   },
   "client/src/lib/prepareUploadMedia.js": {
     "mtime": 1788247055.2200084,
     "ast_hash": "cbe8cf05971506118f9e88820f50ff3b",
+    "semantic_hash": ""
+  },
+  "client/src/hooks/useVideoPoster.js": {
+    "mtime": 1788247489.1818905,
+    "ast_hash": "6d8ece77f3527dc80763f43545200686",
+    "semantic_hash": ""
+  },
+  "client/src/lib/videoPosterCache.js": {
+    "mtime": 1788247486.7053287,
+    "ast_hash": "af856666d7b675be5ae87ccb4f382201",
     "semantic_hash": ""
   }
 }

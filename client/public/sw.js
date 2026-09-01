@@ -17,6 +17,7 @@ function isMediaRequest(request) {
 
   const { pathname } = new URL(request.url);
   if (isVideoMediaPath(pathname)) return false;
+  if (pathname === '/api/video-poster' || pathname === '/tt/api/video-poster') return true;
 
   return (
     pathname.startsWith('/api/files/') ||

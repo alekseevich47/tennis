@@ -324,7 +324,7 @@ function GalleryPage({
       const url = getMediaUrl(img, 'gallery', mediaFile);
       if (!filename || !url) return [];
       const thumbUrl = isVideo
-        ? url
+        ? getMediaThumbUrl(img, 'gallery', mediaFile, MEDIA_CARD_THUMB) || url
         : getMediaThumbUrl(img, 'gallery', mediaFile, MEDIA_CARD_THUMB) || url;
 
       return [{
@@ -585,9 +585,7 @@ function GalleryPage({
                 >
                   {item.isVideo ? (
                     <FeedVideoPreview
-                      src={item.url}
-                      poster={item.thumbUrl || item.previewUrl || item.url}
-                      alt="Видео из галереи секции"
+                      poster={item.thumbUrl || item.previewUrl}
                     />
                   ) : (
                     <img src={item.url} alt="Фотография из галереи секции" />
