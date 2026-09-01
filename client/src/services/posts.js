@@ -217,6 +217,105 @@ export async function createPost(payload) {
 }
 
 /**
+ * @param {FormData} formData
+ * @returns {Record<string, unknown>}
+ */
+export function parsePostCreateFormData(formData) {
+  /** @type {Record<string, unknown>} */
+  const body = {};
+  /** @type {File[]} */
+  const mediaFiles = [];
+
+  for (const [key, raw] of formData.entries()) {
+    if (raw instanceof File) {
+      if (key === 'media') mediaFiles.push(raw);
+      else body[key] = raw;
+      continue;
+    }
+
+    const value = String(raw);
+    switch (key) {
+      case 'caption_above':
+      case 'is_scheduled':
+        body[key] = value === 'true';
+        break;
+      case 'external_media':
+        if (!value || value === '[]' || value === 'null') break;
+        try {
+          const parsed = JSON.parse(value);
+          if (parsed != null && (!Array.isArray(parsed) || parsed.length > 0)) {
+            body[key] = parsed;
+          }
+        } catch {
+          // пропускаем невалидный JSON
+        }
+        break;
+      case 'content':
+        if (value.trim()) body[key] = value.trim();
+        break;
+      case 'author':
+        if (value.trim()) body[key] = value.trim();
+        break;
+      case 'scheduled_at':
+        if (value) body[key] = value;
+        break;
+      default:
+        if (value) body[key] = value;
+    }
+  }
+
+  if (mediaFiles.length === 1) body.media = mediaFiles[0];
+  else if (mediaFiles.length > 1) body.media = mediaFiles;
+
+  return body;
+}
+
+/**
+ * @param {Record<string, unknown>} body
+ * @returns {FormData}
+ */
+export function postCreateBodyToFormData(body) {
+  const formData = new FormData();
+  for (const [key, value] of Object.entries(body)) {
+    if (value === undefined || value === null) continue;
+    if (key === 'media') {
+      const files = Array.isArray(value) ? value : [value];
+      files.forEach((file) => {
+        if (file instanceof File) formData.append('media', file);
+      });
+      continue;
+    }
+    if (key === 'external_media' && typeof value === 'object') {
+      formData.append(key, JSON.stringify(value));
+      continue;
+    }
+    if (typeof value === 'boolean') {
+      formData.append(key, value ? 'true' : 'false');
+      continue;
+    }
+    formData.append(key, String(value));
+  }
+  return formData;
+}
+
+/**
+ * @param {FormData | Record<string, unknown>} payload
+ * @returns {boolean}
+ */
+function postPayloadHasMedia(payload) {
+  if (payload instanceof FormData) {
+    for (const [key, value] of payload.entries()) {
+      if (key === 'media' && value instanceof File && value.size > 0) return true;
+    }
+    return false;
+  }
+  const media = payload.media;
+  if (media instanceof File) return media.size > 0;
+  if (Array.isArray(media)) return media.some((item) => item instanceof File && item.size > 0);
+  return false;
+}
+
+/**
  * @param {unknown} err
  * @returns {boolean}
  */
@@ -230,20 +329,44 @@ export function isDefinitePostCreateFailure(err) {
 }
 
 /**
- * Публикация поста через PocketBase SDK (fetch). XHR в webview MAX часто даёт onerror
- * после успешного upload — запись на сервере есть, клиент не получает JSON.
- *
+ * @param {string} responseText
+ * @param {number} status
+ * @returns {Error}
+ */
+function postCreateHttpError(responseText, status) {
+  try {
+    const parsed = JSON.parse(responseText);
+    /** @type {Record<string, { message?: string }>} */
+    const data = parsed?.data && typeof parsed.data === 'object' ? parsed.data : {};
+    const fieldMessages = Object.values(data)
+      .map((entry) => (entry?.message ? String(entry.message).trim() : ''))
+      .filter(Boolean);
+    const message =
+      fieldMessages.join('; ')
+      || (typeof parsed?.message === 'string' ? parsed.message.trim() : '')
+      || `Не удалось опубликовать запись (${status})`;
+    return Object.assign(new Error(message), { status, response: parsed });
+  } catch {
+    return Object.assign(new Error(`Не удалось опубликовать запись (${status})`), { status });
+  }
+}
+
+/**
  * @param {FormData | Record<string, unknown>} payload
  * @param {{ signal?: AbortSignal, onProgress?: (percent: number) => void }} [options]
  * @returns {Promise<PostRecord>}
  */
 export async function publishPost(payload, { signal, onProgress } = {}) {
-  onProgress?.(20);
+  const body =
+    payload instanceof FormData ? parsePostCreateFormData(payload) : payload;
+
+  if (postPayloadHasMedia(body)) {
+    return createPostWithProgress(postCreateBodyToFormData(body), { signal, onProgress });
+  }
+
+  onProgress?.(30);
   const record = /** @type {PostRecord} */ (
-    await pb.collection('posts').create(
-      /** @type {Record<string, unknown>} */ (payload),
-      { signal, requestKey: null }
-    )
+    await pb.collection('posts').create(body, { signal, requestKey: null })
   );
   onProgress?.(100);
   return record;
@@ -299,7 +422,7 @@ export function createPostWithProgress(payload, { signal, onProgress } = {}) {
         }
         return;
       }
-      reject(new Error(`Не удалось опубликовать запись (${xhr.status})`));
+      reject(postCreateHttpError(xhr.responseText, xhr.status));
     };
 
     xhr.onerror = () => {

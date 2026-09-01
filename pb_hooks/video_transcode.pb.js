@@ -1,8 +1,7 @@
 // Перекодирование видео после загрузки (posts, comments, shop, gallery).
 // Требует ffmpeg в PATH или FFMPEG_PATH в env. Лимита по объёму нет.
 //
-// PB: onRecordCreateRequest / onRecordUpdateRequest — e.next() сразу, ffmpeg ПОСЛЕ.
-// Так HTTP-ответ create/update уходит клиенту до перекодирования (не блокируем XHR).
+// AfterCreateSuccess / AfterUpdateSuccess: e.next() сразу → ffmpeg после ответа клиенту.
 
 var video = require(__hooks + '/videolib.js');
 
@@ -17,7 +16,7 @@ var MEDIA_TARGETS = [
 
 for (var t = 0; t < MEDIA_TARGETS.length; t++) {
   (function (target) {
-    onRecordCreateRequest(function (e) {
+    onRecordAfterCreateSuccess(function (e) {
       var record = e.record;
       var fields = target.fields;
       e.next();
@@ -28,7 +27,7 @@ for (var t = 0; t < MEDIA_TARGETS.length; t++) {
       }
     }, target.collection);
 
-    onRecordUpdateRequest(function (e) {
+    onRecordAfterUpdateSuccess(function (e) {
       var record = e.record;
       var original = e.record.original();
       var fields = target.fields;
@@ -42,4 +41,4 @@ for (var t = 0; t < MEDIA_TARGETS.length; t++) {
   })(MEDIA_TARGETS[t]);
 }
 
-console.log('--- VIDEO TRANSCODE LOADED (CreateRequest/UpdateRequest) ---');
+console.log('--- VIDEO TRANSCODE LOADED (AfterCreateSuccess) ---');
