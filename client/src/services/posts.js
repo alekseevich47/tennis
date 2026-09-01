@@ -316,6 +316,21 @@ function postPayloadHasMedia(payload) {
 }
 
 /**
+ * @param {FormData | Record<string, unknown>} payload
+ * @returns {boolean}
+ */
+export function postPayloadHasVideo(payload) {
+  const body = payload instanceof FormData ? parsePostCreateFormData(payload) : payload;
+  const media = body.media;
+  /** @param {unknown} item */
+  const isVideo = (item) =>
+    item instanceof File && (item.type.startsWith('video/') || /\.(mp4|webm|mov)$/i.test(item.name));
+  if (media instanceof File) return isVideo(media);
+  if (Array.isArray(media)) return media.some(isVideo);
+  return false;
+}
+
+/**
  * @param {unknown} err
  * @returns {boolean}
  */

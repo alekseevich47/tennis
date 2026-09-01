@@ -8,6 +8,8 @@ import React, {
 } from 'react';
 import { mutate } from 'swr';
 import { publishTournamentPostWithProgress } from '../services/tournamentPosts';
+import { postPayloadHasVideo } from '../services/posts';
+import { requestVideoTranscode } from '../services/videoTranscode';
 import { error } from '../lib/log';
 import './PostUploadProvider.css';
 
@@ -39,6 +41,9 @@ export function TournamentPostUploadProvider({ children }) {
       }
     })
       .then((createdPost) => {
+        if (!createdPost?.is_scheduled && postPayloadHasVideo(payload)) {
+          requestVideoTranscode('tournament_posts', createdPost.id);
+        }
         const scheduled = Boolean(createdPost?.is_scheduled);
         if (scheduled) {
           mutate((key) => Array.isArray(key) && key[0] === 'scheduled_tournament_posts');
