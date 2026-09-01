@@ -2,12 +2,10 @@ import React from 'react';
 import clsx from 'clsx';
 
 /**
- * Видео в деталке поста: poster + ▶; воспроизведение только в fullscreen.
+ * Видео в деталке: серверный poster; воспроизведение — fullscreen.
  *
  * @param {{
- *   src?: string,
  *   poster?: string,
- *   alt?: string,
  *   className?: string,
  *   width?: number | string,
  *   height?: number | string

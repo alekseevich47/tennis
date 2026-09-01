@@ -1,5 +1,5 @@
 // @ts-check
-import { MEDIA_BASE_URL } from '../config';
+import { MEDIA_BASE_URL, PB_URL } from '../config';
 
 export const MAX_POST_MEDIA_FILES = 5;
 
@@ -32,6 +32,35 @@ export function getMediaUrl(record, collectionFallback, fileField) {
 }
 
 /**
+ * URL poster для видео (серверный ffmpeg, /api/video-poster).
+ *
+ * @param {BaseRecord | null | undefined} record
+ * @param {string} collectionFallback
+ * @param {string | string[] | null | undefined} fileField
+ * @param {string} [thumb]
+ * @returns {string | null}
+ */
+export function getVideoPosterUrl(
+  record,
+  collectionFallback,
+  fileField,
+  thumb = MEDIA_CARD_THUMB
+) {
+  if (!record?.id || !fileField) return null;
+  const filename = Array.isArray(fileField) ? fileField[0] : fileField;
+  if (!filename || !isVideoMediaName(filename)) return null;
+  const collection =
+    record.collectionName || record.collectionId || collectionFallback;
+  const params = new URLSearchParams({
+    collection,
+    record: record.id,
+    file: filename,
+    thumb
+  });
+  return `${PB_URL}/api/video-poster?${params.toString()}`;
+}
+
+/**
  * @param {BaseRecord | null | undefined} record
  * @param {string} collectionFallback
  * @param {string | string[] | null | undefined} fileField
@@ -44,11 +73,13 @@ export function getMediaThumbUrl(
   fileField,
   thumb = MEDIA_CARD_THUMB
 ) {
+  const filename = Array.isArray(fileField) ? fileField[0] : fileField;
+  if (filename && isVideoMediaName(filename)) {
+    return getVideoPosterUrl(record, collectionFallback, fileField, thumb);
+  }
+
   const url = getMediaUrl(record, collectionFallback, fileField);
   if (!url) return null;
-
-  const filename = Array.isArray(fileField) ? fileField[0] : fileField;
-  if (isVideoMediaName(filename)) return url;
 
   return `${url}?thumb=${thumb}`;
 }
