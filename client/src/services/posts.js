@@ -372,6 +372,35 @@ export async function publishPost(payload, { signal, onProgress } = {}) {
   return record;
 }
 
+const RECENT_POST_RECOVERY_MS = 120000;
+
+/**
+ * Если create вернул ошибку, но запись на сервере уже есть (хук ffmpeg и т.п.).
+ *
+ * @param {FormData | Record<string, unknown>} payload
+ * @returns {Promise<PostRecord | null>}
+ */
+export async function tryRecoverRecentPost(payload) {
+  const body = payload instanceof FormData ? parsePostCreateFormData(payload) : payload;
+  const authorId = String(body.author || pb.authStore.model?.id || '');
+  if (!authorId) return null;
+
+  try {
+    const posts = await listPosts();
+    const now = Date.now();
+    for (const post of posts) {
+      if (post.author !== authorId || post.is_scheduled) continue;
+      const age = now - new Date(post.created).getTime();
+      if (age >= 0 && age < RECENT_POST_RECOVERY_MS) {
+        return post;
+      }
+    }
+  } catch (err) {
+    error('recover recent post:', err);
+  }
+  return null;
+}
+
 /**
  * PocketBase SDK uses fetch, which does not expose upload progress. This XHR path is
  * only for media publishing so moderators can keep using the app and cancel upload.

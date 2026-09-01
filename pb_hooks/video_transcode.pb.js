@@ -1,7 +1,9 @@
-// Перекодирование видео после загрузки (posts, comments, shop, gallery).
-// Требует ffmpeg в PATH или FFMPEG_PATH в env. Лимита по объёму нет.
+// Перекодирование видео через ffmpeg (posts, comments, shop, gallery).
+// Требует ffmpeg в PATH или FFMPEG_PATH. Лимита по объёму нет.
 //
-// AfterCreateSuccess / AfterUpdateSuccess: e.next() сразу → ffmpeg после ответа клиенту.
+// НЕ используем AfterCreateSuccess/AfterUpdateSuccess: код после e.next() всё равно
+// блокирует ответ (unstack), ffmpeg ломает create → «Failed to create record.» при
+// успешно сохранённой записи. Только cron.
 
 var video = require(__hooks + '/videolib.js');
 
@@ -14,31 +16,45 @@ var MEDIA_TARGETS = [
   { collection: 'gallery', fields: ['video'] }
 ];
 
-for (var t = 0; t < MEDIA_TARGETS.length; t++) {
-  (function (target) {
-    onRecordAfterCreateSuccess(function (e) {
-      var record = e.record;
-      var fields = target.fields;
-      e.next();
-      try {
-        video.processRecordVideos(record, fields);
-      } catch (err) {
-        console.log('[video-transcode] create ' + target.collection + ': ' + err);
-      }
-    }, target.collection);
+var TRANSCODE_LOOKBACK_MINUTES = 20;
 
-    onRecordAfterUpdateSuccess(function (e) {
-      var record = e.record;
-      var original = e.record.original();
-      var fields = target.fields;
-      e.next();
-      try {
-        video.processRecordVideosOnUpdate(record, original, fields);
-      } catch (err) {
-        console.log('[video-transcode] update ' + target.collection + ': ' + err);
-      }
-    }, target.collection);
-  })(MEDIA_TARGETS[t]);
+function recentCutoffIso() {
+  return new Date(Date.now() - TRANSCODE_LOOKBACK_MINUTES * 60 * 1000).toISOString();
 }
 
-console.log('--- VIDEO TRANSCODE LOADED (AfterCreateSuccess) ---');
+function scanCollectionForVideos(target) {
+  var cutoff = recentCutoffIso();
+  var filter =
+    '(created >= "' +
+    cutoff +
+    '") || (updated >= "' +
+    cutoff +
+    '")';
+  var records;
+  try {
+    records = $app.findRecordsByFilter(target.collection, filter, '-updated', 40, 0);
+  } catch (err) {
+    console.log('[video-transcode] cron list ' + target.collection + ': ' + err);
+    return;
+  }
+
+  for (var i = 0; i < records.length; i++) {
+    try {
+      video.processRecordVideos(records[i], target.fields);
+    } catch (err) {
+      console.log('[video-transcode] cron ' + target.collection + '/' + records[i].id + ': ' + err);
+    }
+  }
+}
+
+cronAdd('video_transcode_scan', '*/2 * * * *', () => {
+  try {
+    for (var t = 0; t < MEDIA_TARGETS.length; t++) {
+      scanCollectionForVideos(MEDIA_TARGETS[t]);
+    }
+  } catch (err) {
+    console.log('[video-transcode] cron: ' + (err && err.message ? err.message : err));
+  }
+});
+
+console.log('--- VIDEO TRANSCODE LOADED (cron */2) ---');
