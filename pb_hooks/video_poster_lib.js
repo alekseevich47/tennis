@@ -106,19 +106,21 @@ function recordPosterPath(record, videoFilename) {
  * @returns {boolean}
  */
 function ffmpegExtractPoster(inputPath, outputPath, thumbSize) {
-  /** @type {string[]} */
-  var args = ['-y', '-i', inputPath, '-frames:v', '1'];
-  if (thumbSize) {
-    args.push('-vf', 'scale=' + thumbSize + ':force_original_aspect_ratio=decrease');
-  } else {
-    args.push('-vf', 'scale=800:800:force_original_aspect_ratio=decrease');
-  }
-  args.push('-q:v', '3', outputPath);
-
   try {
-    var cmd = $os.cmd.apply(
-      $os,
-      [ffmpegBin()].concat(args)
+    var cmd = $os.cmd(
+      ffmpegBin(),
+      '-y',
+      '-i',
+      inputPath,
+      '-frames:v',
+      '1',
+      '-vf',
+      thumbSize
+        ? 'scale=' + thumbSize + ':force_original_aspect_ratio=decrease'
+        : 'scale=800:800:force_original_aspect_ratio=decrease',
+      '-q:v',
+      '3',
+      outputPath
     );
     cmd.combinedOutput();
     $os.readFile(outputPath);
