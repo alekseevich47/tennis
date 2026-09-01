@@ -214,7 +214,7 @@ function MediaPreviewGrid({
         <FeedVideoPreview
           src={item.fullUrl || item.url}
           poster={item.previewUrl || item.url}
-          active
+          active={false}
           alt={item.name}
           className="telegram-post-media-item"
         />

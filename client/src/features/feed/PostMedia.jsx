@@ -285,7 +285,7 @@ function PostMedia({
               <FeedVideoPreview
                 src={item.url}
                 poster={item.thumbUrl || item.previewUrl}
-                active={mediaFocused && !deferVideoLoad}
+                active={mediaFocused && !deferVideoLoad && hiddenMediaKey !== item.originKey}
                 className="telegram-post-media-item"
                 alt={alt}
                 width="800"

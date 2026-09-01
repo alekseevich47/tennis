@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
-import { videoPreviewUrl } from '../../lib/media';
 import { resolveVideoQualities } from '../../lib/videoQualities';
 
 /**
@@ -35,11 +34,14 @@ function FullscreenSlideVideo({
   const [qualityId, setQualityId] = useState(() => qualities[qualities.length - 1]?.id || 'auto');
   const [menuOpen, setMenuOpen] = useState(false);
   const videoRef = useRef(/** @type {HTMLVideoElement | null} */ (null));
+  const poster = item.previewUrl || item.thumbUrl || '';
 
   const activeQuality = useMemo(
     () => qualities.find((entry) => entry.id === qualityId) || qualities[qualities.length - 1] || null,
     [qualities, qualityId]
   );
+
+  const videoSrc = activeQuality?.src || item.url || '';
 
   useEffect(() => {
     const fallback = qualities[qualities.length - 1]?.id || 'auto';
@@ -63,7 +65,7 @@ function FullscreenSlideVideo({
     if (!video) return;
     video.muted = false;
     void video.play().catch(() => {});
-  }, [isActiveSlide, activeQuality?.src]);
+  }, [isActiveSlide, videoSrc]);
 
   const handleQualitySelect = useCallback((nextId) => {
     setQualityId(nextId);
@@ -86,14 +88,29 @@ function FullscreenSlideVideo({
 
   const showQualityMenu = isActiveSlide && qualities.length > 1;
 
+  if (!isActiveSlide) {
+    return (
+      <div className="fullscreen-video-container fullscreen-video-container--inactive">
+        {poster ? (
+          <img
+            src={poster}
+            alt=""
+            className="fullscreen-video-poster"
+            aria-hidden="true"
+          />
+        ) : null}
+      </div>
+    );
+  }
+
   return (
     <div className="fullscreen-video-container">
       <video
-        ref={isActiveSlide ? attachVideoRef : undefined}
-        src={videoPreviewUrl(activeQuality?.src || item.url || '')}
+        ref={attachVideoRef}
+        src={videoSrc}
         className="fullscreen-target-video"
         controls
-        preload="metadata"
+        preload="auto"
         playsInline
         aria-label={`Полноэкранное видео ${activeIndex + 1}`}
         width="1200"
@@ -101,19 +118,15 @@ function FullscreenSlideVideo({
         style={{
           transform: isClosing && isActiveSlideClosing && returnTransform
             ? returnTransform
-            : isActiveSlide
-              ? `translate(${position.x}px, ${position.y}px)`
-              : undefined
+            : `translate(${position.x}px, ${position.y}px)`
         }}
       />
-      {isActiveSlide && (
-        <div
-          className="fullscreen-video-tap-zone"
-          style={{ bottom: controlsReservedPx }}
-          onClick={onTapToggle}
-          aria-hidden="true"
-        />
-      )}
+      <div
+        className="fullscreen-video-tap-zone"
+        style={{ bottom: controlsReservedPx }}
+        onClick={onTapToggle}
+        aria-hidden="true"
+      />
       {showQualityMenu && (
         <div className={clsx('fullscreen-video-quality', menuOpen && 'is-open')}>
           <button
