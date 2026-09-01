@@ -45,54 +45,48 @@ function ffmpegBin() {
   return ($os.getenv('FFMPEG_PATH') || 'ffmpeg').trim() || 'ffmpeg';
 }
 
-/**
- * Без запятой в min() — $os.cmd не через shell, кавычки в scale='min(1920,iw)' ломаются.
- * force_original_aspect_ratio=decrease — не апскейлить узкие ролики.
- */
-var FFMPEG_SCALE_VF = 'scale=1920:-2:force_original_aspect_ratio=decrease';
+var MAX_VIDEO_WIDTH = 1920;
+var INPUT_WAIT_MS = 500;
+var INPUT_WAIT_ATTEMPTS = 10;
+var PROCESSED_SUFFIX = '.transcoded';
 
 /**
- * @param {string} inputPath
+ * @returns {string}
+ */
+function ffprobeBin() {
+  var ffmpeg = ffmpegBin();
+  if (ffmpeg.indexOf('ffmpeg') >= 0) return ffmpeg.replace(/ffmpeg$/, 'ffprobe');
+  return 'ffprobe';
+}
+
+/**
+ * @param {unknown} err
+ * @returns {string}
+ */
+function ffmpegErrorOutput(err) {
+  var out = '';
+  try {
+    if (err && typeof err.output === 'function') out = String(err.output());
+    else if (err && err.output) out = String(err.output);
+  } catch (_) {}
+  if (!out) return '';
+  return out.length > 800 ? out.slice(out.length - 800) : out;
+}
+
+/**
  * @param {string} outputPath
+ * @param {*} cmd
  * @returns {boolean}
  */
-function runFfmpegTranscode(inputPath, outputPath) {
+function execFfmpeg(cmd, outputPath) {
   try {
-    var cmd = $os.cmd(
-      ffmpegBin(),
-      '-y',
-      '-i',
-      inputPath,
-      '-c:v',
-      'libx264',
-      '-preset',
-      'fast',
-      '-crf',
-      '23',
-      '-vf',
-      FFMPEG_SCALE_VF,
-      '-c:a',
-      'aac',
-      '-b:a',
-      '128k',
-      '-movflags',
-      '+faststart',
-      outputPath
-    );
     cmd.combinedOutput();
     $os.readFile(outputPath);
     return true;
   } catch (err) {
     var msg = err && err.message ? err.message : String(err);
-    var out = '';
-    try {
-      if (err && typeof err.output === 'function') out = String(err.output());
-      else if (err && err.output) out = String(err.output);
-    } catch (_) {}
-    if (out) {
-      var tail = out.length > 800 ? out.slice(out.length - 800) : out;
-      console.log('[video-transcode] ffmpeg output: ' + tail);
-    }
+    var tail = ffmpegErrorOutput(err);
+    if (tail) console.log('[video-transcode] ffmpeg output: ' + tail);
     console.log('[video-transcode] ffmpeg failed: ' + msg);
     try {
       $os.remove(outputPath);
@@ -105,15 +99,212 @@ function runFfmpegTranscode(inputPath, outputPath) {
  * @param {string} inputPath
  * @returns {boolean}
  */
+function isAlreadyProcessed(inputPath) {
+  try {
+    $os.readFile(inputPath + PROCESSED_SUFFIX);
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
+/**
+ * @param {string} inputPath
+ */
+function markProcessed(inputPath) {
+  try {
+    $os.writeFile(inputPath + PROCESSED_SUFFIX, []);
+  } catch (err) {
+    console.log('[video-transcode] mark processed: ' + err);
+  }
+}
+
+/**
+ * @param {string} inputPath
+ * @returns {{ width: number, height: number, videoCodec: string } | null}
+ */
+function probeVideo(inputPath) {
+  var cmd = $os.cmd(
+    ffprobeBin(),
+    '-v',
+    'error',
+    '-select_streams',
+    'v:0',
+    '-show_entries',
+    'stream=width,height,codec_name',
+    '-of',
+    'default=nw=1:nk=1',
+    inputPath
+  );
+  var out = String(cmd.combinedOutput()).trim();
+  var lines = out.split(/\r?\n/).filter(Boolean);
+  if (lines.length < 3) return null;
+  var width = parseInt(lines[0], 10);
+  var height = parseInt(lines[1], 10);
+  var codec = String(lines[2] || '').toLowerCase();
+  if (!width || !height) return null;
+  return { width: width, height: height, videoCodec: codec };
+}
+
+/**
+ * @param {string} inputPath
+ * @returns {{ width: number, height: number, videoCodec: string } | null}
+ */
+function waitAndProbeVideo(inputPath) {
+  for (var i = 0; i < INPUT_WAIT_ATTEMPTS; i++) {
+    try {
+      var meta = probeVideo(inputPath);
+      if (meta) return meta;
+    } catch (_) {}
+    if (i + 1 < INPUT_WAIT_ATTEMPTS) sleep(INPUT_WAIT_MS);
+  }
+  return null;
+}
+
+/**
+ * @param {string} codec
+ * @returns {boolean}
+ */
+function isH264Family(codec) {
+  return codec === 'h264' || codec === 'hevc' || codec === 'h265';
+}
+
+/**
+ * @param {{ width: number, videoCodec: string }} meta
+ * @returns {'remux' | 'scale' | 'transcode'}
+ */
+function chooseTranscodeMode(meta) {
+  if (meta.width > MAX_VIDEO_WIDTH) return 'scale';
+  if (isH264Family(meta.videoCodec)) return 'remux';
+  return 'transcode';
+}
+
+/**
+ * @param {string} inputPath
+ * @param {string} outputPath
+ * @returns {boolean}
+ */
+function ffmpegRemux(inputPath, outputPath) {
+  var cmd = $os.cmd(
+    ffmpegBin(),
+    '-y',
+    '-i',
+    inputPath,
+    '-c',
+    'copy',
+    '-movflags',
+    '+faststart',
+    outputPath
+  );
+  return execFfmpeg(cmd, outputPath);
+}
+
+/**
+ * Уже H.264/HEVC ≤1920px — только faststart, без re-encode (не раздуваем файл).
+ *
+ * @param {string} inputPath
+ * @param {string} outputPath
+ * @returns {boolean}
+ */
+function ffmpegTranscodeNoScale(inputPath, outputPath) {
+  var cmd = $os.cmd(
+    ffmpegBin(),
+    '-y',
+    '-i',
+    inputPath,
+    '-c:v',
+    'libx264',
+    '-preset',
+    'fast',
+    '-crf',
+    '23',
+    '-c:a',
+    'aac',
+    '-b:a',
+    '128k',
+    '-movflags',
+    '+faststart',
+    outputPath
+  );
+  return execFfmpeg(cmd, outputPath);
+}
+
+/**
+ * Ширина >1920 — уменьшить без апскейла (bounding box 1920×1920).
+ *
+ * @param {string} inputPath
+ * @param {string} outputPath
+ * @returns {boolean}
+ */
+function ffmpegTranscodeScaleDown(inputPath, outputPath) {
+  var cmd = $os.cmd(
+    ffmpegBin(),
+    '-y',
+    '-i',
+    inputPath,
+    '-c:v',
+    'libx264',
+    '-preset',
+    'fast',
+    '-crf',
+    '23',
+    '-vf',
+    'scale=1920:1920:force_original_aspect_ratio=decrease:force_divisible_by=2',
+    '-c:a',
+    'aac',
+    '-b:a',
+    '128k',
+    '-movflags',
+    '+faststart',
+    outputPath
+  );
+  return execFfmpeg(cmd, outputPath);
+}
+
+/**
+ * @param {string} inputPath
+ * @param {string} outputPath
+ * @param {'remux' | 'scale' | 'transcode'} mode
+ * @returns {boolean}
+ */
+function runFfmpegByMode(inputPath, outputPath, mode) {
+  if (mode === 'remux') return ffmpegRemux(inputPath, outputPath);
+  if (mode === 'scale') return ffmpegTranscodeScaleDown(inputPath, outputPath);
+  return ffmpegTranscodeNoScale(inputPath, outputPath);
+}
+
+/**
+ * @param {string} inputPath
+ * @returns {boolean}
+ */
 function transcodeFileInPlace(inputPath) {
   if (!inputPath) return false;
+  if (isAlreadyProcessed(inputPath)) return true;
+
+  var meta = waitAndProbeVideo(inputPath);
+  if (!meta) {
+    console.log('[video-transcode] input not ready: ' + inputPath);
+    return false;
+  }
+
+  var mode = chooseTranscodeMode(meta);
+  console.log(
+    '[video-transcode] mode=' +
+      mode +
+      ' ' +
+      meta.width +
+      'x' +
+      meta.height +
+      ' ' +
+      meta.videoCodec
+  );
 
   var tempOut = $filepath.join(
     $os.tempDir(),
     'pb_video_' + $security.randomString(10) + PROCESSED_MARKER
   );
 
-  if (!runFfmpegTranscode(inputPath, tempOut)) {
+  if (!runFfmpegByMode(inputPath, tempOut, mode)) {
     return false;
   }
 
@@ -123,6 +314,7 @@ function transcodeFileInPlace(inputPath) {
     } catch (_) {}
     var bytes = $os.readFile(tempOut);
     $os.writeFile(inputPath, bytes);
+    markProcessed(inputPath);
     return true;
   } catch (err) {
     console.log('[video-transcode] replace failed: ' + (err && err.message ? err.message : err));
