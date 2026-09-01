@@ -9,10 +9,11 @@ import { useAlertDialog } from '../../components/ui/AlertDialog';
 import Spinner from '../../components/ui/Spinner';
 import EmptyState from '../../components/ui/EmptyState';
 import FullscreenImageViewer from '../feed/FullscreenImageViewer';
+import FeedVideoPreview from '../feed/FeedVideoPreview';
 import GalleryMediaOverlay from './GalleryMediaOverlay';
 import GalleryCommentModal from './GalleryCommentModal';
 import ProfileViewModal from '../profile/ProfileViewModal';
-import { getMediaThumbUrl, getMediaUrl, MEDIA_CARD_THUMB, videoPreviewUrl } from '../../lib/media';
+import { getMediaThumbUrl, getMediaUrl, MEDIA_CARD_THUMB } from '../../lib/media';
 import { error } from '../../lib/log';
 import './Gallery.css';
 
@@ -583,12 +584,10 @@ function GalleryPage({
                       : 'Открыть фото на весь экран'}
                 >
                   {item.isVideo ? (
-                    <video
-                      src={videoPreviewUrl(item.url)}
-                      preload="metadata"
-                      muted
-                      playsInline
-                      aria-label="Видео из галереи секции"
+                    <FeedVideoPreview
+                      src={item.url}
+                      poster={item.thumbUrl || item.previewUrl || item.url}
+                      alt="Видео из галереи секции"
                     />
                   ) : (
                     <img src={item.url} alt="Фотография из галереи секции" />

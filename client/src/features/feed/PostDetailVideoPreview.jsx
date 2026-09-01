@@ -1,12 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import clsx from 'clsx';
-import { videoPreviewUrl } from '../../lib/media';
 
 /**
- * Видео в деталке поста: без autoplay, poster + ▶; звук только в fullscreen.
+ * Видео в деталке поста: poster + ▶; воспроизведение только в fullscreen.
  *
  * @param {{
- *   src: string,
+ *   src?: string,
  *   poster?: string,
  *   alt?: string,
  *   className?: string,
@@ -15,42 +14,21 @@ import { videoPreviewUrl } from '../../lib/media';
  * }} props
  */
 function PostDetailVideoPreview({
-  src,
   poster,
-  alt = 'Видео',
   className,
   width = 800,
   height = 600
 }) {
-  const videoRef = useRef(/** @type {HTMLVideoElement | null} */ (null));
-  const [loaded, setLoaded] = useState(false);
-  const shouldLoad = Boolean(src);
-
-  useEffect(() => {
-    setLoaded(false);
-  }, [src]);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    video.pause();
-    try {
-      video.currentTime = 0;
-    } catch {
-      // ignore seek before metadata
-    }
-  }, [src]);
-
-  const showSkeleton = !poster && !loaded;
+  const showSkeleton = !poster;
 
   return (
     <div
       className={clsx(
         'post-detail-video-preview',
         className,
-        poster && 'post-detail-video-preview--has-poster',
-        loaded && 'is-loaded'
+        poster && 'post-detail-video-preview--has-poster'
       )}
+      style={{ width, height }}
     >
       {poster ? (
         <img
@@ -58,27 +36,11 @@ function PostDetailVideoPreview({
           alt=""
           className="post-detail-video-preview__poster"
           aria-hidden="true"
+          loading="lazy"
         />
       ) : null}
       {showSkeleton ? (
         <span className="post-media-skeleton post-detail-video-preview__skeleton" aria-hidden="true" />
-      ) : null}
-      {shouldLoad ? (
-        <video
-          ref={videoRef}
-          src={videoPreviewUrl(src)}
-          poster={poster || undefined}
-          className="post-detail-video-preview__video"
-          preload="metadata"
-          playsInline
-          muted
-          disablePictureInPicture
-          aria-label={alt}
-          width={width}
-          height={height}
-          onLoadedData={() => setLoaded(true)}
-          onCanPlay={() => setLoaded(true)}
-        />
       ) : null}
       <span className="post-media-play-badge" aria-hidden="true">▶</span>
     </div>

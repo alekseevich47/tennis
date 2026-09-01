@@ -8,10 +8,16 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(self.clients.claim());
 });
 
+function isVideoMediaPath(pathname) {
+  return /\.(mp4|webm|mov)(\?|$)/i.test(pathname);
+}
+
 function isMediaRequest(request) {
   if (request.method !== 'GET') return false;
 
   const { pathname } = new URL(request.url);
+  if (isVideoMediaPath(pathname)) return false;
+
   return (
     pathname.startsWith('/api/files/') ||
     pathname.startsWith('/tt/api/files/')
