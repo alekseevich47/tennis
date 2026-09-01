@@ -108,8 +108,5 @@
   "106": "StatsLineChart.jsx",
   "107": "compressImage",
   "108": "Modal.jsx",
-  "109": "Avatar.jsx",
-  "110": "normalizeHexColor",
-  "111": "commentListLayout.js",
-  "112": "StatsTrainingsCountModal.jsx"
+  "110": "normalizeHexColor"
 }
