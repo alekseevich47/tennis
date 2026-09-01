@@ -10,8 +10,8 @@ import SortableMediaPreviewGrid from './SortableMediaPreviewGrid';
 import FullscreenImageViewer from './FullscreenImageViewer';
 import PostContentHtml from './PostContentHtml';
 import { useLocalMediaFullscreen } from './useLocalMediaFullscreen';
-import { compressImage } from '../../lib/compress';
 import { isVideoFile, readSelectedFiles } from '../../lib/media';
+import { prepareCommentMediaFile } from './prepareMediaDraft';
 import { hasVisibleText } from './postRichText';
 import { useLongPress, LongPressRing } from '../../lib/longPress';
 import { useOverlayClose } from '../../hooks/useOverlayClose';
@@ -215,23 +215,20 @@ function CommentComposeForm({
           const file = incoming[i];
           const key = drafts[i].key;
           try {
-            setMediaItems((cur) =>
-              cur.map((item) => (item.key === key ? { ...item, progress: 20 } : item))
-            );
-            const prepared = file.type.startsWith('image/') ? await compressImage(file) : file;
-            setMediaItems((cur) =>
-              cur.map((item) => (item.key === key ? { ...item, progress: 70 } : item))
-            );
-            const url = URL.createObjectURL(prepared);
+            const prepared = await prepareCommentMediaFile(file, (progress) => {
+              setMediaItems((cur) =>
+                cur.map((item) => (item.key === key ? { ...item, progress } : item))
+              );
+            });
             setMediaItems((cur) =>
               cur.map((item) =>
                 item.key === key
                   ? {
                       key,
-                      file: prepared,
-                      url,
+                      file: prepared.file,
+                      url: prepared.url,
                       name: prepared.name,
-                      isVideo: isVideoFile(prepared),
+                      isVideo: prepared.isVideo,
                       status: 'ready',
                       progress: 100
                     }

@@ -105,5 +105,6 @@
   "103": "postMentions.js",
   "104": "ProductForm.jsx",
   "105": "FullscreenImageViewer.jsx",
-  "106": "StatsLineChart.jsx"
+  "106": "StatsLineChart.jsx",
+  "107": "compressImage"
 }
