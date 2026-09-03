@@ -131,6 +131,12 @@ server {
         add_header Cache-Control "no-cache" always;
     }
 
+    location ^~ /assets/ {
+        alias <REPLACE_ME_STATIC_PATH>/assets/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
     location / {
         alias <REPLACE_ME_STATIC_PATH>/;
         index index.html;
