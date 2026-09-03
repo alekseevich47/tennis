@@ -11,6 +11,27 @@ const RING_STROKE = 1.5;
 const RING_OFFSET_X = 28;
 const RING_OFFSET_Y = -40;
 
+const LONG_PRESS_IGNORE_SELECTOR = [
+  'button',
+  'a',
+  '[role="button"]',
+  'input',
+  'textarea',
+  'select',
+  '[contenteditable="true"]',
+  '.comment-media-grid',
+  '.telegram-media-item__open',
+  '.media-preview-grid'
+].join(', ');
+
+/**
+ * @param {EventTarget | null} target
+ */
+function isLongPressIgnoredTarget(target) {
+  if (!(target instanceof Element)) return false;
+  return Boolean(target.closest(LONG_PRESS_IGNORE_SELECTOR));
+}
+
 /**
  * Стиль «приближение + затемнение» карточки во время long-press.
  * @param {number} progress 0..1
@@ -219,6 +240,7 @@ export function useLongPress({
   const onPointerDown = useCallback((/** @type {React.PointerEvent} */ e) => {
     if (!enabled) return;
     if (e.button != null && e.button !== 0) return;
+    if (isLongPressIgnoredTarget(e.target)) return;
 
     const x = e.clientX;
     const y = e.clientY;

@@ -4,12 +4,17 @@ import { listCommentsForPost, listRecentCommentsForPost } from '../services/post
 
 /**
  * @param {string | null | undefined} postId
+ * @param {{ knownEmpty?: boolean }} [options]
  */
-export function useComments(postId) {
-  const { comments, mutate, isLoading, isPartial, phase } = useProgressiveComments(postId, {
-    fetchRecent: listRecentCommentsForPost,
-    fetchAll: listCommentsForPost
-  });
+export function useComments(postId, { knownEmpty = false } = {}) {
+  const { comments, mutate, isLoading, isPartial, phase } = useProgressiveComments(
+    postId,
+    {
+      fetchRecent: listRecentCommentsForPost,
+      fetchAll: listCommentsForPost
+    },
+    { knownEmpty }
+  );
 
   return {
     data: comments,

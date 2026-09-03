@@ -6,7 +6,7 @@ import CommentListItem from '../feed/CommentListItem';
 import CommentListSkeleton from '../feed/CommentListSkeleton';
 import CommentMediaBody from '../feed/CommentMediaBody';
 import CommentReplyComposeBar from '../feed/CommentReplyComposeBar';
-import { groupCommentsByDay } from '../feed/commentListLayout';
+import { groupCommentsByDay, isKnownEmptyExpandedComments } from '../feed/commentListLayout';
 import DayGroup from '../feed/DayGroup';
 import { hasVisibleText } from '../feed/postRichText';
 import {
@@ -31,6 +31,7 @@ const HIGHLIGHT_MS = 2500;
 /**
  * @param {{
  *   postId: string,
+ *   post?: any,
  *   user: any,
  *   userIsModerator: boolean,
  *   onOpenProfile?: (user: any) => void,
@@ -42,6 +43,7 @@ const HIGHLIGHT_MS = 2500;
  */
 function TournamentCommentsSection({
   postId,
+  post = null,
   user,
   userIsModerator,
   onOpenProfile,
@@ -67,7 +69,9 @@ function TournamentCommentsSection({
   const highlightClearRef = useRef(/** @type {ReturnType<typeof setTimeout> | null} */ (null));
   const skipInitialScrollRef = useRef(true);
 
-  const { data: comments = [], mutate: mutateComments, isLoading: commentsLoading, isPartial: commentsPartial } = useTournamentComments(postId);
+  const { data: comments = [], mutate: mutateComments, isLoading: commentsLoading, isPartial: commentsPartial } = useTournamentComments(postId, {
+    knownEmpty: isKnownEmptyExpandedComments(post, 'tournament_comments(post)')
+  });
 
   const activeCommentIds = useMemo(
     () =>

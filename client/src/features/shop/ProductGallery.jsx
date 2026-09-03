@@ -75,7 +75,8 @@ function ProductGallery({
     consumeSuppressClick
   } = useGalleryNavigation(items.length, resetKey ?? items.length, {
     index: controlledIndex,
-    onIndexChange
+    onIndexChange,
+    skipMouseDrag: variant === 'card'
   });
 
   const activeItem = items[index] || null;

@@ -10,7 +10,7 @@ import CommentListItem from './CommentListItem';
 import CommentListSkeleton from './CommentListSkeleton';
 import CommentMediaBody from './CommentMediaBody';
 import CommentReplyComposeBar from './CommentReplyComposeBar';
-import { groupCommentsByDay } from './commentListLayout';
+import { groupCommentsByDay, isKnownEmptyExpandedComments } from './commentListLayout';
 import DayGroup from './DayGroup';
 import PostContextMenu from './PostContextMenu';
 import { hasVisibleText } from './postRichText';
@@ -75,7 +75,10 @@ function PostDetailModal({
 }) {
   const post = useKeepForModalClose(isOpen, postProp);
   const postId = post?.id || null;
-  const { data: comments = [], mutate: mutateComments, isLoading: commentsLoading, isPartial: commentsPartial } = useComments(postId);
+  const knownEmptyComments = isKnownEmptyExpandedComments(post, 'comments(post)');
+  const { data: comments = [], mutate: mutateComments, isLoading: commentsLoading, isPartial: commentsPartial } = useComments(postId, {
+    knownEmpty: knownEmptyComments
+  });
 
   const [showAll, setShowAll] = useState(false);
   const [commentText, setCommentText] = useState('');

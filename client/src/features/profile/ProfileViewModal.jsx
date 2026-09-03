@@ -28,7 +28,7 @@ import {
 import pb from '../../services/pb';
 import { error } from '../../lib/log';
 import { getPlayerRatingRank } from '../../lib/rating';
-import { compressImage } from '../../lib/compress';
+import { exportAvatarFile } from '../../lib/avatar';
 import { formatCardDateWithYear, formatTimeRange, hasTimeRangeEnded } from '../../lib/format';
 import { formatAdminSaveError } from '../admin/adminResultAlert';
 import MembershipIcon from '../../components/ui/MembershipIcon';
@@ -356,16 +356,13 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
   };
 
   const handleAvatarCropConfirm = async (croppedBlob) => {
-    const croppedFile = new File([croppedBlob], 'avatar.png', { type: 'image/png' });
-    let nextAvatarFile = croppedFile;
-
     try {
-      nextAvatarFile = await compressImage(croppedFile);
+      const nextAvatarFile = await exportAvatarFile(croppedBlob);
+      setAvatarFile(nextAvatarFile);
     } catch (err) {
-      error('compress cropped profile view avatar:', err);
+      error('export cropped profile view avatar:', err);
+      setAvatarFile(new File([croppedBlob], 'avatar.png', { type: 'image/png' }));
     }
-
-    setAvatarFile(nextAvatarFile);
     setPendingAvatarFile(null);
     setCropModalOpen(false);
   };

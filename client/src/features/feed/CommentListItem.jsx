@@ -180,9 +180,8 @@ function CommentListItem({
                   className="comment-bubble__body"
                   onClickCapture={(event) => {
                     if (!menuAnchor) return;
-                    if (event.target instanceof Element && event.target.closest('.comment-media-grid')) {
-                      event.preventDefault();
-                      event.stopPropagation();
+                    if (event.target instanceof Element && event.target.closest('.comment-media-grid, .telegram-media-item__open')) {
+                      return;
                     }
                   }}
                 >

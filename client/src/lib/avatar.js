@@ -11,6 +11,42 @@ import { getMediaThumbUrl } from './media';
  * @property {string} [avatar_url]
  */
 
+const AVATAR_EXPORT_SIZE = 256;
+const AVATAR_EXPORT_QUALITY = 0.82;
+
+/**
+ * Квадратный webp для хранения в БД (обрезка уже сделана в AvatarCropModal).
+ * @param {Blob | File} source
+ * @returns {Promise<File>}
+ */
+export async function exportAvatarFile(source) {
+  const input =
+    source instanceof File
+      ? source
+      : new File([source], 'avatar.png', { type: source.type || 'image/png' });
+  const bitmap = await createImageBitmap(input);
+  try {
+    const canvas = new OffscreenCanvas(AVATAR_EXPORT_SIZE, AVATAR_EXPORT_SIZE);
+    const context = canvas.getContext('2d');
+    if (!context) {
+      throw new Error('Canvas context is unavailable');
+    }
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, AVATAR_EXPORT_SIZE, AVATAR_EXPORT_SIZE);
+    context.drawImage(bitmap, 0, 0, AVATAR_EXPORT_SIZE, AVATAR_EXPORT_SIZE);
+    const blob = await canvas.convertToBlob({
+      type: 'image/webp',
+      quality: AVATAR_EXPORT_QUALITY
+    });
+    return new File([blob], 'avatar.webp', {
+      type: 'image/webp',
+      lastModified: Date.now()
+    });
+  } finally {
+    bitmap.close();
+  }
+}
+
 /**
  * Возвращает данные для рендера аватарки: либо src на изображение, либо инициал-fallback.
  * @param {UserAvatarLike | null | undefined} user

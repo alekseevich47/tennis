@@ -46,19 +46,42 @@ export function openSellerChat(url) {
   const isMaxHost =
     /^https?:\/\/(www\.)?max\.ru\//i.test(target) || target.startsWith('max://');
 
-  // Чат продавца/модератора: в Mini App всегда openMaxLink для max.ru / max:// —
-  // openLink может открыть не тот чат в контексте бота.
-  if (isMaxHost && webApp?.openMaxLink) {
-    webApp.openMaxLink(target);
+  const openChat = () => {
+    // Чат продавца/модератора: в Mini App всегда openMaxLink для max.ru / max:// —
+    // openLink может открыть не тот чат в контексте бота.
+    if (isMaxHost && webApp?.openMaxLink) {
+      webApp.openMaxLink(target);
+      return;
+    }
+
+    if (webApp?.openLink) {
+      webApp.openLink(target);
+      return;
+    }
+
+    window.open(target, '_blank');
+  };
+
+  // Desktop/web: openMaxLink может мгновенно триггерить нативный close-confirm.
+  // Кратко глушим его, чат оставляем в фоне, затем снова включаем подтверждение ✕.
+  if (!isMobileMaxPlatform() && webApp?.disableClosingConfirmation) {
+    try {
+      webApp.disableClosingConfirmation();
+    } catch {
+      // ignore
+    }
+    openChat();
+    window.setTimeout(() => {
+      try {
+        webApp.enableClosingConfirmation?.();
+      } catch {
+        // ignore
+      }
+    }, 1200);
     return;
   }
 
-  if (webApp?.openLink) {
-    webApp.openLink(target);
-    return;
-  }
-
-  window.open(target, '_blank');
+  openChat();
 }
 
 /**
