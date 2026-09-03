@@ -3,20 +3,24 @@ import { useEffect, useState } from 'react';
 import pb from '../../services/pb';
 import {
   fetchBlobUrlWithProgress,
-  getCachedMediaBlobUrl
+  getCachedMediaBlobUrl,
+  getCachedMediaPartialPercent
 } from '../../lib/fetchBlobProgress';
 
 /**
  * Скачивает HTTP-оригинал с прогрессом → blob URL (кэш на сессию).
+ * На unmount abort; частичный ответ сохраняется и докачивается через Range.
  *
  * @param {string} url
  * @param {boolean} enabled
  * @returns {{ progress: number | null, blobUrl: string | null, failed: boolean }}
  */
 export function useFetchedOriginal(url, enabled) {
-  const [progress, setProgress] = useState(() =>
-    enabled && url && getCachedMediaBlobUrl(url) ? 100 : null
-  );
+  const [progress, setProgress] = useState(() => {
+    if (!enabled || !url) return null;
+    if (getCachedMediaBlobUrl(url)) return 100;
+    return getCachedMediaPartialPercent(url);
+  });
   const [blobUrl, setBlobUrl] = useState(() =>
     enabled && url ? getCachedMediaBlobUrl(url) : null
   );
@@ -38,13 +42,15 @@ export function useFetchedOriginal(url, enabled) {
       return undefined;
     }
 
+    const controller = new AbortController();
     let cancelled = false;
     setBlobUrl(null);
     setFailed(false);
-    setProgress(0);
+    setProgress(getCachedMediaPartialPercent(url) || 0);
     const headers = pb.authStore.token ? { Authorization: pb.authStore.token } : {};
 
     fetchBlobUrlWithProgress(url, {
+      signal: controller.signal,
       headers,
       onProgress: (percent) => {
         if (!cancelled) setProgress(percent);
@@ -56,12 +62,14 @@ export function useFetchedOriginal(url, enabled) {
           setProgress(100);
         }
       })
-      .catch(() => {
-        if (!cancelled) setFailed(true);
+      .catch((err) => {
+        if (cancelled || (err && /** @type {Error} */ (err).name === 'AbortError')) return;
+        setFailed(true);
       });
 
     return () => {
       cancelled = true;
+      controller.abort();
     };
   }, [url, enabled]);
 

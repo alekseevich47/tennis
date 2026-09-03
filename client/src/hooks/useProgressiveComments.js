@@ -7,8 +7,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
  *   fetchRecent: (id: string, limit: number, options?: { signal?: AbortSignal }) => Promise<any[]>,
  *   fetchAll: (id: string, options?: { signal?: AbortSignal }) => Promise<any[]>
  * }} fetchers
+ * @param {{ knownEmpty?: boolean }} [options]
  */
-export function useProgressiveComments(resourceId, { fetchRecent, fetchAll }) {
+export function useProgressiveComments(resourceId, { fetchRecent, fetchAll }, { knownEmpty = false } = {}) {
   const [phase, setPhase] = useState(/** @type {'idle' | 'loading' | 'partial' | 'ready'} */ ('idle'));
   const [comments, setComments] = useState([]);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -18,6 +19,12 @@ export function useProgressiveComments(resourceId, { fetchRecent, fetchAll }) {
   useEffect(() => {
     if (!resourceId) {
       setPhase('idle');
+      setComments([]);
+      return undefined;
+    }
+
+    if (knownEmpty && refreshKey === 0) {
+      setPhase('ready');
       setComments([]);
       return undefined;
     }
@@ -54,7 +61,7 @@ export function useProgressiveComments(resourceId, { fetchRecent, fetchAll }) {
       cancelled = true;
       controller.abort();
     };
-  }, [resourceId, refreshKey]);
+  }, [resourceId, refreshKey, knownEmpty]);
 
   const mutate = useCallback(async () => {
     setRefreshKey((key) => key + 1);

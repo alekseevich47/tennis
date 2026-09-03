@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { resolveVideoQualities } from '../../lib/videoQualities';
+import { useFetchedOriginal } from './useFetchedOriginal';
 
 /**
  * @param {HTMLVideoElement | null} video
@@ -54,6 +55,10 @@ function FullscreenSlideVideo({
   const videoSrc = activeQuality?.src || item.url || '';
   const poster = item.thumbUrl || item.previewUrl || '';
   const shouldLoadVideo = isActiveSlide && !isClosing && Boolean(videoSrc);
+  const httpVideo = Boolean(shouldLoadVideo && /^https?:\/\//i.test(videoSrc));
+  const fetched = useFetchedOriginal(httpVideo ? videoSrc : '', httpVideo);
+  const playSrc = httpVideo ? fetched.blobUrl || '' : shouldLoadVideo ? videoSrc : '';
+  const shouldMountVideo = Boolean(playSrc);
 
   useEffect(() => {
     const fallback = qualities[qualities.length - 1]?.id || 'auto';
@@ -61,7 +66,7 @@ function FullscreenSlideVideo({
   }, [qualities]);
 
   useEffect(() => {
-    if (shouldLoadVideo) return undefined;
+    if (shouldMountVideo) return undefined;
     setVideoReady(false);
     stopVideoLoad(videoRef.current);
     if (isActiveSlide) {
@@ -69,28 +74,28 @@ function FullscreenSlideVideo({
       onActiveVideoRef?.(null);
     }
     return undefined;
-  }, [shouldLoadVideo, isActiveSlide, mediaRef, onActiveVideoRef]);
+  }, [shouldMountVideo, isActiveSlide, mediaRef, onActiveVideoRef]);
 
   useEffect(() => {
     setVideoReady(false);
-  }, [videoSrc, shouldLoadVideo]);
+  }, [playSrc, shouldMountVideo]);
 
   const attachVideoRef = useCallback((el) => {
     videoRef.current = el;
-    if (!shouldLoadVideo || !el) return;
+    if (!shouldMountVideo || !el) return;
     mediaRef.current = el;
     onActiveVideoRef?.(el);
     el.muted = false;
     void el.play().catch(() => {});
-  }, [shouldLoadVideo, mediaRef, onActiveVideoRef]);
+  }, [shouldMountVideo, mediaRef, onActiveVideoRef]);
 
   useEffect(() => {
-    if (!shouldLoadVideo) return;
+    if (!shouldMountVideo) return;
     const video = videoRef.current;
     if (!video) return;
     video.muted = false;
     void video.play().catch(() => {});
-  }, [shouldLoadVideo, videoSrc]);
+  }, [shouldMountVideo, playSrc]);
 
   const handleQualitySelect = useCallback((nextId) => {
     setQualityId(nextId);
@@ -140,10 +145,15 @@ function FullscreenSlideVideo({
           aria-hidden="true"
         />
       ) : null}
-      {shouldLoadVideo ? (
+      {httpVideo && !playSrc && !fetched.failed && typeof fetched.progress === 'number' ? (
+        <span className="fullscreen-video-fetch-progress" aria-live="polite">
+          {fetched.progress}%
+        </span>
+      ) : null}
+      {shouldMountVideo ? (
         <video
           ref={attachVideoRef}
-          src={videoSrc}
+          src={playSrc}
           className={clsx('fullscreen-target-video', videoReady && 'is-ready')}
           controls
           preload="auto"

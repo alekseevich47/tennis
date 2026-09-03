@@ -2685,6 +2685,18 @@ button.post-card-like:hover:not(:disabled) {
   pointer-events: none;
 }
 
+.fullscreen-video-fetch-progress {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  pointer-events: none;
+}
+
 .fullscreen-video-poster-skeleton {
   position: absolute;
   inset: 0;
@@ -3655,16 +3667,27 @@ button.post-card-like:hover:not(:disabled) {
 }
 
 .comment-bubble--own .comment-edit-inline-form .post-format-toolbar--permanent {
-  color: #8e8e93;
+  color: #ffffff;
 }
 
 .comment-bubble--own .comment-edit-inline-form .post-format-toolbar--permanent .post-format-toolbar__btn {
-  color: inherit;
+  color: #ffffff;
+}
+
+.comment-bubble--own .comment-edit-inline-form .post-format-toolbar--permanent .post-format-toolbar__btn:hover,
+.comment-bubble--own .comment-edit-inline-form .post-format-toolbar--permanent .post-format-toolbar__btn.is-active {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+}
+
+.comment-bubble--own .comment-edit-inline-form .post-format-toolbar--permanent .post-format-toolbar__icon,
+.comment-bubble--own .comment-edit-inline-form .post-format-toolbar--permanent .post-format-toolbar__glyph {
+  color: #ffffff;
 }
 
 .comment-bubble--own .comment-edit-inline-form__actions button[type='submit'] {
-  background: #007aff;
-  color: #fff;
+  background: #ffffff;
+  color: #111111;
 }
 
 .comment-bubble--own .comment-edit-inline-form__actions button[type='button'] {

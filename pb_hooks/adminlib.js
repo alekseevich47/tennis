@@ -34,15 +34,20 @@ function dispatchScheduledBroadcast(record) {
     const bot = require(__hooks + '/botlib.js');
     const text = bot.htmlToMaxMarkdown(record.getString('text'));
     const userIds = resolveAudienceUserIds(record, { forBroadcast: true });
-    const mediaField = record.get('media');
-    const mediaFilenames = mediaField
-      ? (Array.isArray(mediaField) ? mediaField : [mediaField])
-      : [];
-    const attachments = bot.buildPublicFileAttachments(
-      'scheduled_broadcasts',
-      record.id,
-      mediaFilenames
-    );
+    const attachments = bot.buildBroadcastImageAttachments
+      ? bot.buildBroadcastImageAttachments(record)
+      : bot.buildPublicFileAttachments(
+          'scheduled_broadcasts',
+          record.id,
+          (function () {
+            const mediaField = record.get('media');
+            return mediaField
+              ? Array.isArray(mediaField)
+                ? mediaField
+                : [mediaField]
+              : [];
+          })()
+        );
 
     bot.broadcastToUserIds(userIds, text, attachments);
     record.set('status', 'sent');

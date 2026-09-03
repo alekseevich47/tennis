@@ -55,7 +55,6 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
   const [loadMediaUntilIndex, setLoadMediaUntilIndex] = useState(7);
 
   const containerRef = useRef(null);
-  const cardObserverRef = useRef(/** @type {IntersectionObserver | null} */ (null));
   const isSearchOpenRef = useRef(isSearchOpen);
   const searchQueryRef = useRef(searchQuery);
 
@@ -167,8 +166,15 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
   }, [baseProducts, filters, priceBounds, searchQuery]);
 
   useEffect(() => {
-    cardObserverRef.current?.disconnect();
-    cardObserverRef.current = new IntersectionObserver(
+    setLoadMediaUntilIndex(7);
+  }, [filters, searchQuery]);
+
+  useEffect(() => {
+    if (isLoading) return undefined;
+    const root = containerRef.current;
+    if (!root) return undefined;
+
+    const observer = new IntersectionObserver(
       (entries) => {
         let maxVisible = -1;
         entries.forEach((entry) => {
@@ -180,16 +186,15 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
           setLoadMediaUntilIndex((prev) => Math.max(prev, maxVisible + 6));
         }
       },
-      { root: containerRef.current, rootMargin: '120px 0px', threshold: 0.05 }
+      { root, rootMargin: '120px 0px', threshold: 0.05 }
     );
-    return () => cardObserverRef.current?.disconnect();
-  }, [visibleProducts.length]);
 
-  const registerProductCard = useCallback((node) => {
-    const observer = cardObserverRef.current;
-    if (!observer) return;
-    if (node) observer.observe(node);
-  }, []);
+    root.querySelectorAll('[data-product-index]').forEach((node) => {
+      observer.observe(node);
+    });
+
+    return () => observer.disconnect();
+  }, [isLoading, visibleProducts]);
 
   const handleCloseSearchUI = useCallback(() => {
     setIsSearchOpen(false);
@@ -321,7 +326,6 @@ function ShopPage({ onDeletedIdsChange, productToOpen = null, onProductOpened } 
               return (
                 <ProductCard
                   key={product.id}
-                  ref={registerProductCard}
                   data-product-index={productIndex}
                   product={product}
                   isSoftDeleted={isSoftDeleted}
