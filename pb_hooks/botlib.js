@@ -272,8 +272,82 @@ function broadcastToUserIds(userIds, text, attachments) {
   }
 }
 
+function guessImageMime(filename) {
+  const lower = String(filename || '').toLowerCase();
+  if (lower.endsWith('.png')) return 'image/png';
+  if (lower.endsWith('.gif')) return 'image/gif';
+  if (lower.endsWith('.webp')) return 'image/webp';
+  return 'image/jpeg';
+}
+
+function parseHttpJson(res) {
+  try {
+    if (res && res.json) return res.json;
+    return JSON.parse((res && res.raw) || '{}');
+  } catch (_) {
+    return {};
+  }
+}
+
+/**
+ * MAX Uploads API: POST /uploads?type=image → url, затем multipart field "data".
+ * @returns {string | null} token
+ */
+function uploadImageToMax(botToken, filename, bytes) {
+  if (!botToken || !bytes) return null;
+  const init = $http.send({
+    method: 'POST',
+    url: 'https://botapi.max.ru/uploads?type=image',
+    headers: { Authorization: botToken },
+    timeout: 20
+  });
+  const initJson = parseHttpJson(init);
+  const uploadUrl = initJson && initJson.url;
+  if (!uploadUrl || init.statusCode >= 300) {
+    console.log('[bot] max uploads init: ' + init.statusCode + ' ' + ((init && init.raw) || ''));
+    return null;
+  }
+
+  const mime = guessImageMime(filename);
+  const boundary = '----MaxBroadcast' + Date.now();
+  const safeName = String(filename || 'image.jpg').replace(/"/g, '');
+  const prefix =
+    '--' +
+    boundary +
+    '\r\n' +
+    'Content-Disposition: form-data; name="data"; filename="' +
+    safeName +
+    '"\r\n' +
+    'Content-Type: ' +
+    mime +
+    '\r\n\r\n';
+  const suffix = '\r\n--' + boundary + '--\r\n';
+  const upload = $http.send({
+    method: 'POST',
+    url: uploadUrl,
+    headers: { 'Content-Type': 'multipart/form-data; boundary=' + boundary },
+    body: prefix + bytes + suffix,
+    timeout: 60
+  });
+  const upJson = parseHttpJson(upload);
+  let token = upJson && upJson.token;
+  if (!token && upJson && upJson.photos) {
+    const keys = Object.keys(upJson.photos);
+    if (keys.length) {
+      const photo = upJson.photos[keys[0]];
+      token = photo && photo.token;
+    }
+  }
+  if (!token) {
+    console.log('[bot] max uploads file: ' + upload.statusCode + ' ' + ((upload && upload.raw) || ''));
+    return null;
+  }
+  return token;
+}
+
 function buildPublicFileAttachments(collectionName, recordId, filenames) {
   if (!filenames || !filenames.length) return undefined;
+  if (!PB_PUBLIC_BASE) return undefined;
   const attachments = [];
   for (let i = 0; i < filenames.length; i++) {
     const filename = filenames[i];
@@ -284,6 +358,54 @@ function buildPublicFileAttachments(collectionName, recordId, filenames) {
         url: PB_PUBLIC_BASE + '/api/files/' + collectionName + '/' + recordId + '/' + filename
       }
     });
+  }
+  return attachments.length ? attachments : undefined;
+}
+
+/**
+ * Вложения рассылки: upload в MAX (token), иначе публичный URL (часто 403 из‑за viewRule).
+ * @param {any} record scheduled_broadcasts
+ */
+function buildBroadcastImageAttachments(record) {
+  if (!record) return undefined;
+  const mediaField = record.get('media');
+  const filenames = mediaField
+    ? Array.isArray(mediaField)
+      ? mediaField
+      : [mediaField]
+    : [];
+  if (!filenames.length) return undefined;
+
+  const botToken = $os.getenv('MAX_BOT_TOKEN');
+  const attachments = [];
+  for (let i = 0; i < filenames.length; i++) {
+    const filename = filenames[i];
+    if (!filename) continue;
+    let token = null;
+    try {
+      const path = $filepath.join($app.dataDir(), 'storage', record.baseFilesPath(), filename);
+      const bytes = $os.readFile(path);
+      token = uploadImageToMax(botToken, filename, bytes);
+    } catch (err) {
+      console.log('[bot] read broadcast media: ' + err);
+    }
+    if (token) {
+      attachments.push({ type: 'image', payload: { token: token } });
+      continue;
+    }
+    if (PB_PUBLIC_BASE) {
+      attachments.push({
+        type: 'image',
+        payload: {
+          url:
+            PB_PUBLIC_BASE +
+            '/api/files/scheduled_broadcasts/' +
+            record.id +
+            '/' +
+            filename
+        }
+      });
+    }
   }
   return attachments.length ? attachments : undefined;
 }
@@ -310,6 +432,7 @@ module.exports = {
   broadcastToUserIds: broadcastToUserIds,
   broadcastNewPublication: broadcastNewPublication,
   buildPublicFileAttachments: buildPublicFileAttachments,
+  buildBroadcastImageAttachments: buildBroadcastImageAttachments,
   htmlToMaxMarkdown: htmlToMaxMarkdown,
   PB_PUBLIC_BASE: PB_PUBLIC_BASE
 };

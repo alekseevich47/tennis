@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import UserMultiSelect from './UserMultiSelect';
-import MediaPreviewGrid from '../feed/MediaPreviewGrid';
+import SortableMediaPreviewGrid from '../feed/SortableMediaPreviewGrid';
+import PostAttachButton from '../feed/PostAttachButton';
 import PostRichTextField from '../feed/PostRichTextField';
 import PostContentHtml from '../feed/PostContentHtml';
 import pb from '../../services/pb';
@@ -43,6 +44,7 @@ function getAudienceLabel(audience) {
  */
 export default function BroadcastModal({ isOpen, onClose }) {
   const { alert } = useAlertDialog();
+  const fileInputRef = useRef(/** @type {HTMLInputElement | null} */ (null));
   const [text, setText] = useState('');
   const [audience, setAudience] = useState('all');
   const [recipients, setRecipients] = useState([]);
@@ -145,13 +147,15 @@ export default function BroadcastModal({ isOpen, onClose }) {
         key: `existing-${filename}`,
         url: `${MEDIA_BASE_URL}/scheduled_broadcasts/${editingId}/${filename}`,
         name: filename,
-        isVideo: false
+        isVideo: false,
+        status: 'ready'
       }));
     const incoming = imageFiles.map((file) => ({
       key: `${file.name}-${file.lastModified}`,
       url: URL.createObjectURL(file),
       name: file.name,
-      isVideo: false
+      isVideo: false,
+      status: 'ready'
     }));
     return [...existing, ...incoming];
   }, [existingMedia, mediaToDelete, imageFiles, editingId]);
@@ -173,6 +177,32 @@ export default function BroadcastModal({ isOpen, onClose }) {
     },
     [keptExistingCount, remainingImageSlots]
   );
+
+  const handleAttachClick = useCallback(() => {
+    if (remainingImageSlots <= 0) return;
+    fileInputRef.current?.click();
+  }, [remainingImageSlots]);
+
+  const handleReorderPreview = useCallback((next) => {
+    const nextExistingKept = [];
+    const nextFiles = [];
+    const fileByKey = new Map(
+      imageFiles.map((file) => [`${file.name}-${file.lastModified}`, file])
+    );
+    next.forEach((item) => {
+      if (String(item.key).startsWith('existing-')) {
+        nextExistingKept.push(item.name);
+        return;
+      }
+      const file = fileByKey.get(item.key);
+      if (file) nextFiles.push(file);
+    });
+    setExistingMedia((prev) => {
+      const deleted = prev.filter((name) => mediaToDelete.includes(name));
+      return [...nextExistingKept, ...deleted];
+    });
+    setImageFiles(nextFiles);
+  }, [imageFiles, mediaToDelete]);
 
   const handleEditClick = useCallback(
     async (item) => {
@@ -305,50 +335,60 @@ export default function BroadcastModal({ isOpen, onClose }) {
 
         <div className="admin-modal__field">
           <span className="admin-modal__label">Фотографии</span>
-          <div className="media-upload-group">
-            <label htmlFor="broadcast-media" className="media-input-label">
-              <span aria-hidden="true">📎</span>{' '}
-              {imageFiles.length > 0 ? `Выбрано: ${imageFiles.length}` : 'Добавить фото'}
-              <input
-                id="broadcast-media"
-                type="file"
-                accept="image/*"
-                multiple
-                disabled={remainingImageSlots === 0}
-                onChange={handleAddImages}
-                className="visually-hidden"
+          <input
+            ref={fileInputRef}
+            id="broadcast-media"
+            type="file"
+            accept="image/*,.gif"
+            multiple
+            disabled={remainingImageSlots === 0}
+            onChange={(e) => {
+              void handleAddImages(e);
+            }}
+            className="visually-hidden"
+          />
+          {previewItems.length > 0 ? (
+            <div className="create-post-media-strip-wrap">
+              <SortableMediaPreviewGrid
+                items={previewItems}
+                layout="strip"
+                className="create-post-preview-strip broadcast-modal-preview-grid"
+                onReorder={handleReorderPreview}
+                getAction={(item) => (
+                  <button
+                    type="button"
+                    className="media-remove-btn comment-media-remove-btn"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      if (String(item.key).startsWith('existing-')) {
+                        const filename = item.key.slice('existing-'.length);
+                        setMediaToDelete((current) =>
+                          current.includes(filename) ? current : [...current, filename]
+                        );
+                        return;
+                      }
+                      setImageFiles((current) =>
+                        current.filter((file) => `${file.name}-${file.lastModified}` !== item.key)
+                      );
+                    }}
+                    aria-label={`Убрать файл ${item.name}`}
+                  >
+                    <span aria-hidden="true">×</span>
+                  </button>
+                )}
               />
-            </label>
+            </div>
+          ) : null}
+          <div className="broadcast-modal-attach-row">
+            <PostAttachButton
+              disabled={remainingImageSlots === 0}
+              onClick={handleAttachClick}
+            />
             <span className="file-name-preview">
               До {MAX_BROADCAST_MEDIA_FILES} фото
+              {imageFiles.length > 0 ? ` · выбрано: ${imageFiles.length}` : ''}
             </span>
           </div>
-          <MediaPreviewGrid
-            items={previewItems}
-            className="broadcast-modal-preview-grid"
-            showCaption={false}
-            getAction={(item) => (
-              <button
-                type="button"
-                className="media-remove-btn"
-                onClick={() => {
-                  if (item.key.startsWith('existing-')) {
-                    const filename = item.key.slice('existing-'.length);
-                    setMediaToDelete((current) =>
-                      current.includes(filename) ? current : [...current, filename]
-                    );
-                    return;
-                  }
-                  setImageFiles((current) =>
-                    current.filter((file) => `${file.name}-${file.lastModified}` !== item.key)
-                  );
-                }}
-                aria-label={`Убрать файл ${item.name}`}
-              >
-                <span aria-hidden="true">×</span>
-              </button>
-            )}
-          />
         </div>
 
         <div className="admin-modal__field">

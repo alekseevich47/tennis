@@ -58,6 +58,21 @@ export function groupCommentsByDay(comments) {
 }
 
 /**
+ * Лента уже подтянула expand — если видимых комментариев 0, повторный fetch не нужен.
+ * Без `expand` (deep link) — неизвестно, не пропускать загрузку.
+ * @param {any} record
+ * @param {string} expandKey
+ * @returns {boolean}
+ */
+export function isKnownEmptyExpandedComments(record, expandKey) {
+  if (!record?.expand) return false;
+  const list = record.expand[expandKey];
+  if (!list) return true;
+  const items = Array.isArray(list) ? list : [list];
+  return items.every((item) => !item || item.is_deleted === true);
+}
+
+/**
  * @template T
  * @param {T[]} posts
  */

@@ -1,7 +1,7 @@
 {
   "client/package.json": {
-    "mtime": 1788257214.9478827,
-    "ast_hash": "1b9c031bf31c6c1ae686b49a69a96467",
+    "mtime": 1788453241.101104,
+    "ast_hash": "03afb84c7a562673a2d194073eb935b9",
     "semantic_hash": ""
   },
   "client/public/sw.js": {
@@ -10,7 +10,7 @@
     "semantic_hash": ""
   },
   "client/src/App.jsx": {
-    "mtime": 1788448755.6470978,
+    "mtime": 1788448953.776024,
     "ast_hash": "e817481a2ad561dac9b9ab8231983688",
     "semantic_hash": ""
   },
@@ -120,13 +120,13 @@
     "semantic_hash": "0a082060e608b78fe4d9e9851bd5b5a6"
   },
   "client/src/features/admin/AdminPanelPage.jsx": {
-    "mtime": 1788448763.8252645,
+    "mtime": 1788448953.778026,
     "ast_hash": "80e01ff20af460dc9f1a9a8a30626c55",
     "semantic_hash": ""
   },
   "client/src/features/admin/BroadcastModal.jsx": {
-    "mtime": 1788170204.5802915,
-    "ast_hash": "b8d96604f2608b4ab67935e7b592922a",
+    "mtime": 1788453273.8663242,
+    "ast_hash": "8ca2ef7231e08735ecd5b18d8df3b9df",
     "semantic_hash": ""
   },
   "client/src/features/admin/LogsModal.jsx": {
@@ -215,8 +215,8 @@
     "semantic_hash": ""
   },
   "client/src/features/competitions/TournamentCommentsSection.jsx": {
-    "mtime": 1788257214.9478827,
-    "ast_hash": "b4544d22a9f67450a00e8430e2da6cb5",
+    "mtime": 1788453055.2640502,
+    "ast_hash": "b9dff2ef48a77fddaaee523a026fbc01",
     "semantic_hash": ""
   },
   "client/src/features/competitions/TournamentPodium.jsx": {
@@ -230,8 +230,8 @@
     "semantic_hash": ""
   },
   "client/src/features/competitions/TournamentPostDetailModal.jsx": {
-    "mtime": 1788175454.1856751,
-    "ast_hash": "0530dd4680f003c3ebe91b1150a2d811",
+    "mtime": 1788453053.7230062,
+    "ast_hash": "78bba1a0c6f0b3cb8aada3c4d8de880c",
     "semantic_hash": ""
   },
   "client/src/features/competitions/tournamentParticipants.js": {
@@ -255,8 +255,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/FeedPage.jsx": {
-    "mtime": 1788189787.122901,
-    "ast_hash": "89d1812e3df9d8169a775f081cd3b0bb",
+    "mtime": 1788453240.0672657,
+    "ast_hash": "53a3c5f8c8777adb9532f29a5ba425a5",
     "semantic_hash": ""
   },
   "client/src/features/feed/FullscreenImageViewer.jsx": {
@@ -275,8 +275,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostDetailModal.jsx": {
-    "mtime": 1788257214.950884,
-    "ast_hash": "4446aff5853e09a96d3961e5fd8c7b16",
+    "mtime": 1788453049.7241473,
+    "ast_hash": "6d0a41a3777c301ad30a2592e7defdc2",
     "semantic_hash": ""
   },
   "client/src/features/feed/PostMedia.jsx": {
@@ -350,8 +350,8 @@
     "semantic_hash": "84da5a05702df43b0f2b6453f5a0dc84"
   },
   "client/src/features/profile/ProfilePage.jsx": {
-    "mtime": 1788170204.630935,
-    "ast_hash": "04a44073c66993c9af23290f69135388",
+    "mtime": 1788453173.4215457,
+    "ast_hash": "53cdeb8e5227b292274673978d02babb",
     "semantic_hash": ""
   },
   "client/src/features/profile/ProfileSingleDateField.jsx": {
@@ -365,13 +365,13 @@
     "semantic_hash": "299cae2527ab38d59a4ba2d5415bcfe2"
   },
   "client/src/features/profile/ProfileViewModal.jsx": {
-    "mtime": 1788170204.6319356,
-    "ast_hash": "a21d8f4edf9e70be340e30c2b78dcd8e",
+    "mtime": 1788453181.3572183,
+    "ast_hash": "ab91a0e404fe54af2f31a6274410e06e",
     "semantic_hash": ""
   },
   "client/src/features/rating/PlayerForm.jsx": {
-    "mtime": 1788170204.6319356,
-    "ast_hash": "6b8533cf1f4a152dfa3dd0068ff6ef2b",
+    "mtime": 1788453185.1639977,
+    "ast_hash": "fc0d2d407558bdbd3988cd2ab6c29270",
     "semantic_hash": ""
   },
   "client/src/features/rating/PlayerRow.jsx": {
@@ -425,13 +425,13 @@
     "semantic_hash": ""
   },
   "client/src/features/shop/ShopPage.jsx": {
-    "mtime": 1788243723.0094068,
-    "ast_hash": "88e2947fe8e8da3c7a5017b0e7501b93",
+    "mtime": 1788453134.107905,
+    "ast_hash": "d166562403971554fe0bbad683883b95",
     "semantic_hash": ""
   },
   "client/src/features/shop/buyMessage.js": {
-    "mtime": 1788170204.646502,
-    "ast_hash": "1ac39cbd49a4478e3d54fd293dd48ae8",
+    "mtime": 1788453187.702286,
+    "ast_hash": "c4395471b217d0448f9f14e7bc4a0991",
     "semantic_hash": ""
   },
   "client/src/features/trainings/CalendarStrip.jsx": {
@@ -510,8 +510,8 @@
     "semantic_hash": ""
   },
   "client/src/hooks/useComments.js": {
-    "mtime": 1788243723.0114067,
-    "ast_hash": "ba3bc7ae4f79d5d6f4e30d52fea8798e",
+    "mtime": 1788453045.6660872,
+    "ast_hash": "465ea2b9898361e00cfe9b9d221e0691",
     "semantic_hash": ""
   },
   "client/src/hooks/useGallery.js": {
@@ -580,8 +580,8 @@
     "semantic_hash": "f9b14b415cfa7539b291499589eb734a"
   },
   "client/src/hooks/useTournamentComments.js": {
-    "mtime": 1788243723.0124922,
-    "ast_hash": "03b70abe297541d06f019b2988a2cd35",
+    "mtime": 1788453045.880435,
+    "ast_hash": "45ab39dfa3279dcd648a4d7eb64c6a91",
     "semantic_hash": ""
   },
   "client/src/hooks/useTournamentPosts.js": {
@@ -600,8 +600,8 @@
     "semantic_hash": ""
   },
   "client/src/lib/avatar.js": {
-    "mtime": 1788170204.6659186,
-    "ast_hash": "78aa00c50c432ca1d7ec24f809703596",
+    "mtime": 1788453166.114059,
+    "ast_hash": "d98a82b6ec4f1798dc6e34955b58ff06",
     "semantic_hash": ""
   },
   "client/src/lib/compress.js": {
@@ -725,7 +725,7 @@
     "semantic_hash": "8f68c27c3fc38817b2726b20e2d4f1ee"
   },
   "client/vite.config.js": {
-    "mtime": 1788448717.0077703,
+    "mtime": 1788448953.7793689,
     "ast_hash": "6a54a4f9ad1636b4f2fe8e28db2d15ef",
     "semantic_hash": ""
   },
@@ -740,8 +740,8 @@
     "semantic_hash": "c3bb65e3501415381612c46674ecbf3f"
   },
   "pb_hooks/adminlib.js": {
-    "mtime": 1788170204.8752563,
-    "ast_hash": "e529b8500d39bb9e8d5f3d98b1087c3d",
+    "mtime": 1788453231.3318486,
+    "ast_hash": "4185b1ee06598ad1aff112b534ab8645",
     "semantic_hash": ""
   },
   "pb_hooks/auditlib.js": {
@@ -755,8 +755,8 @@
     "semantic_hash": ""
   },
   "pb_hooks/botlib.js": {
-    "mtime": 1788170204.8773727,
-    "ast_hash": "9a743cfb3add4acd5d60e32bf96ec728",
+    "mtime": 1788453230.9101496,
+    "ast_hash": "a14ee12cfacd1c236973c7c1471bc662",
     "semantic_hash": ""
   },
   "pb_hooks/feed_audit.pb.js": {
@@ -1070,8 +1070,8 @@
     "semantic_hash": ""
   },
   "client/src/lib/longPress.js": {
-    "mtime": 1788170204.668919,
-    "ast_hash": "1dc88a07aac0c50599d79e6ea9b28e8e",
+    "mtime": 1788453110.0416675,
+    "ast_hash": "57cbf04cf57af641cf0ccf4811d33fa7",
     "semantic_hash": ""
   },
   "client/src/features/feed/PinnedBanner.jsx": {
@@ -1170,7 +1170,7 @@
     "semantic_hash": ""
   },
   "config/nginx_config_prod.txt": {
-    "mtime": 1788448774.9882953,
+    "mtime": 1788448953.7823765,
     "ast_hash": "df7991b58938ec38d1a845368ca99ae4",
     "semantic_hash": ""
   },
@@ -1375,13 +1375,13 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/useFetchedOriginal.js": {
-    "mtime": 1788170204.6141517,
-    "ast_hash": "45833fc32308d9b51b852174092ebcdc",
+    "mtime": 1788453075.4973953,
+    "ast_hash": "860cc374d19348ede74981098a57a44d",
     "semantic_hash": ""
   },
   "client/src/lib/fetchBlobProgress.js": {
-    "mtime": 1788170204.667918,
-    "ast_hash": "2df04ccf988d1cff59c9ba3488ae3abb",
+    "mtime": 1788453098.7200694,
+    "ast_hash": "7567296a9f824f83e4284793c15ffa3c",
     "semantic_hash": ""
   },
   "scripts/server-bootstrap.sh": {
@@ -1580,8 +1580,8 @@
     "semantic_hash": ""
   },
   "client/src/features/shop/ProductGallery.jsx": {
-    "mtime": 1788253624.391825,
-    "ast_hash": "14b1b3aa093923fac28080d7d9a837d2",
+    "mtime": 1788453128.291068,
+    "ast_hash": "de1d41096652c27fef78de2f0c26c40b",
     "semantic_hash": ""
   },
   "client/src/features/shop/ProductParamTemplatesModal.jsx": {
@@ -1605,8 +1605,8 @@
     "semantic_hash": ""
   },
   "client/src/features/shop/useGalleryNavigation.js": {
-    "mtime": 1788243723.010405,
-    "ast_hash": "50021bf9cbb9c51e263a2fd063e98b01",
+    "mtime": 1788453127.61254,
+    "ast_hash": "600e933463f5f231f6e0174a8f6a816b",
     "semantic_hash": ""
   },
   "client/src/hooks/useProductParamTemplates.js": {
@@ -1625,8 +1625,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/FullscreenSlideVideo.jsx": {
-    "mtime": 1788253624.3878138,
-    "ast_hash": "0693c64780c68fc02e4cec1de353d6a4",
+    "mtime": 1788453089.6699324,
+    "ast_hash": "549bad1f723f50a9ed88f09f7b6bb1e8",
     "semantic_hash": ""
   },
   "client/src/lib/videoQualities.js": {
@@ -1635,13 +1635,13 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/CommentListItem.jsx": {
-    "mtime": 1788243722.9961872,
-    "ast_hash": "14351b49b44e33d8c5dda68e3b3251cd",
+    "mtime": 1788453112.3514345,
+    "ast_hash": "ecd33d0537a4e3592b4de33b89afa42f",
     "semantic_hash": ""
   },
   "client/src/features/feed/commentListLayout.js": {
-    "mtime": 1788186902.3191361,
-    "ast_hash": "e4ff335987ef5df16cc3dfdb8c3bc98b",
+    "mtime": 1788453043.784688,
+    "ast_hash": "578d10a088de4d7d6a809f0e36d28a53",
     "semantic_hash": ""
   },
   "client/src/features/feed/PostDetailVideoPreview.jsx": {
@@ -1680,8 +1680,8 @@
     "semantic_hash": ""
   },
   "client/src/hooks/useProgressiveComments.js": {
-    "mtime": 1788243723.0124922,
-    "ast_hash": "4ae2ddceef3dea4bf62ea78cafd1e8b7",
+    "mtime": 1788453044.6548257,
+    "ast_hash": "6ddb459ca9d1a80d6d479ddc83866d3e",
     "semantic_hash": ""
   },
   "client/src/lib/prepareUploadMedia.js": {
@@ -1705,8 +1705,8 @@
     "semantic_hash": ""
   },
   "client/src/app/lazyPages.js": {
-    "mtime": 1788448717.6769593,
-    "ast_hash": "df4f0f46369e1c693f6ccee43a3be11c",
+    "mtime": 1788453234.6730478,
+    "ast_hash": "2eaa5cb4c06d446714796de367d136bf",
     "semantic_hash": ""
   }
 }

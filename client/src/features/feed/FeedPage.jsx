@@ -33,6 +33,7 @@ import {
 } from './yadiskMediaSessionCache';
 import { groupPostsByDay } from './commentListLayout';
 import DayGroup from './DayGroup';
+import { prefetchLazyTabPages } from '../../app/lazyPages';
 import './Feed.css';
 
 /**
@@ -57,6 +58,10 @@ function FeedPage({
 }) {
   const userIsModerator = isModerator();
   const { data: posts, isLoading, mutate } = usePosts({ includeDeleted: userIsModerator });
+
+  useEffect(() => {
+    prefetchLazyTabPages();
+  }, []);
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);

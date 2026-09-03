@@ -281,6 +281,7 @@ function TournamentPostDetailModal({
 
         <TournamentCommentsSection
           postId={post.id}
+          post={post}
           user={user}
           userIsModerator={userIsModerator}
           onOpenProfile={onOpenProfile}

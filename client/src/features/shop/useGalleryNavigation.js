@@ -13,9 +13,9 @@ const IGNORE_TOUCH_SELECTOR =
  *
  * @param {number} length
  * @param {string | number} [resetKey]
- * @param {{ index?: number, onIndexChange?: (index: number) => void }} [options]
+ * @param {{ index?: number, onIndexChange?: (index: number) => void, skipMouseDrag?: boolean }} [options]
  */
-export function useGalleryNavigation(length, resetKey, { index: controlledIndex, onIndexChange } = {}) {
+export function useGalleryNavigation(length, resetKey, { index: controlledIndex, onIndexChange, skipMouseDrag = false } = {}) {
   const [internalIndex, setInternalIndex] = useState(0);
   const [swipeOffset, setSwipeOffset] = useState(0);
   const [isSliding, setIsSliding] = useState(false);
@@ -204,6 +204,7 @@ export function useGalleryNavigation(length, resetKey, { index: controlledIndex,
   const handlePointerDown = useCallback(
     (event) => {
       if (event.pointerType === 'touch' || length <= 1) return;
+      if (skipMouseDrag && event.pointerType === 'mouse') return;
       if (
         event.target instanceof Element &&
         event.target.closest('.product-gallery-zone, .product-gallery-dots, .product-card-dots')
@@ -216,7 +217,7 @@ export function useGalleryNavigation(length, resetKey, { index: controlledIndex,
       gestureModeRef.current = 'pending';
       event.currentTarget.setPointerCapture?.(event.pointerId);
     },
-    [length]
+    [length, skipMouseDrag]
   );
 
   const handlePointerMove = useCallback(

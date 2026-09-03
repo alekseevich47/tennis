@@ -18,7 +18,7 @@ import { listCancelledTrainingsForUser } from '../../services/trainings';
 import pb from '../../services/pb';
 import { error } from '../../lib/log';
 import { getPlayerRatingRank } from '../../lib/rating';
-import { compressImage } from '../../lib/compress';
+import { exportAvatarFile } from '../../lib/avatar';
 import { formatCardDateWithYear, formatTimeRange, hasTimeRangeEnded } from '../../lib/format';
 import {
   BUY_MOBILE_TOAST_ACTION_LABEL,
@@ -253,16 +253,13 @@ function ProfilePage({
   };
 
   const handleAvatarCropConfirm = async (croppedBlob) => {
-    const croppedFile = new File([croppedBlob], 'avatar.png', { type: 'image/png' });
-    let nextAvatarFile = croppedFile;
-
     try {
-      nextAvatarFile = await compressImage(croppedFile);
+      const nextAvatarFile = await exportAvatarFile(croppedBlob);
+      setAvatarFile(nextAvatarFile);
     } catch (err) {
-      error('compress cropped avatar:', err);
+      error('export cropped avatar:', err);
+      setAvatarFile(new File([croppedBlob], 'avatar.png', { type: 'image/png' }));
     }
-
-    setAvatarFile(nextAvatarFile);
     setPendingAvatarFile(null);
     setCropModalOpen(false);
   };
