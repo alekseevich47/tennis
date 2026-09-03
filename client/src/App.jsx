@@ -1,11 +1,19 @@
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useMaxAuth } from './hooks/useMaxAuth';
 import { useMaxCloseGuard } from './hooks/useMaxCloseGuard';
 import { useSessionResetKey } from './hooks/useSessionResetKey';
 import { useOverlayClose } from './hooks/useOverlayClose';
 import { useSectionSwipe } from './hooks/useSectionSwipe';
 import { isUserBanned, isUserBotBlocked, isModerator, completeOnboarding } from './services/auth';
-import OnboardingTutorial from './features/onboarding/OnboardingTutorial';
+import {
+  LazyAdminPanelPage,
+  LazyCompetitionsPage,
+  LazyGalleryPage,
+  LazyOnboardingTutorial,
+  LazyProfilePage,
+  LazyShopPage,
+  LazyTrainingsPage
+} from './app/lazyPages';
 import AppHeader from './components/AppHeader';
 import BottomNav from './components/BottomNav';
 import Spinner from './components/ui/Spinner';
@@ -17,14 +25,8 @@ import { FavoritesProvider, useFavorites } from './context/FavoritesContext';
 import { AddActionProvider } from './context/AddActionContext';
 import { MentionNavProvider } from './context/MentionNavContext';
 import FeedPage from './features/feed/FeedPage';
-import TrainingsPage from './features/trainings/TrainingsPage';
 import MembershipOverviewModal from './features/trainings/components/MembershipOverviewModal';
-import ShopPage from './features/shop/ShopPage';
-import CompetitionsPage from './features/competitions/CompetitionsPage';
-import GalleryPage from './features/gallery/GalleryPage';
-import ProfilePage from './features/profile/ProfilePage';
 import BlockedPage from './features/profile/BlockedPage';
-import AdminPanelPage from './features/admin/AdminPanelPage';
 import { MAX_SELLER_URL } from './config';
 import { openSellerChat } from './features/shop/buyMessage';
 import {
@@ -44,6 +46,20 @@ import { hardDeleteTournamentPost } from './services/tournamentPosts';
 import { flushPendingTournamentCommentDeletes } from './services/tournamentComments';
 import { error } from './lib/log';
 import './styles/global.css';
+
+function TabSuspense({ children }) {
+  return (
+    <Suspense
+      fallback={
+        <div className="app-boot">
+          <Spinner label="Загрузка..." />
+        </div>
+      }
+    >
+      {children}
+    </Suspense>
+  );
+}
 
 const TAB_TITLES = [
   'Лента',
@@ -399,7 +415,7 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
         return (
           <>
             {trainingsReady ? (
-              <TrainingsPage
+              <LazyTrainingsPage
                 user={user}
                 onDeletedIdsChange={setPendingDeleteTrainingIds}
                 onFlushPendingDeletes={flushPendingDeletes}
@@ -418,7 +434,7 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
       case 2:
         return (
           <ProductUploadProvider>
-            <ShopPage
+            <LazyShopPage
               onDeletedIdsChange={setPendingDeleteProductIds}
               productToOpen={isPrimary ? favoriteProductToOpen : null}
               onProductOpened={() => setFavoriteProductToOpen(null)}
@@ -427,7 +443,7 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
         );
       case 3:
         return (
-          <CompetitionsPage
+          <LazyCompetitionsPage
             user={user}
             onTabChange={handleTabChange}
             onSubTabChange={handleCompetitionsSubTabChange}
@@ -445,7 +461,7 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
         );
       case GALLERY_TAB_INDEX:
         return (
-          <GalleryPage
+          <LazyGalleryPage
             user={user}
             searchQuery={gallerySearch.query}
             commentTargetToOpen={
@@ -458,7 +474,7 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
         );
       case PROFILE_TAB_INDEX:
         return (
-          <ProfilePage
+          <LazyProfilePage
             user={user}
             onUpdate={handleUserUpdate}
             onTabChange={handleTabChange}
@@ -467,7 +483,7 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
           />
         );
       case ADMIN_TAB_INDEX:
-        return userIsModerator ? <AdminPanelPage /> : null;
+        return userIsModerator ? <LazyAdminPanelPage /> : null;
       default:
         return null;
     }
@@ -522,16 +538,18 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
     >
     <div className={`app${user && !user.onboarding_completed ? ' onboarding-active' : ''}`}>
       {user && !user.onboarding_completed && (
-        <OnboardingTutorial
-          user={user}
-          onUpdate={handleUserUpdate}
-          onComplete={async () => {
-            const updated = await completeOnboarding(user.id);
-            handleUserUpdate(updated);
-            setActiveTab(0);
-          }}
-          onTabChange={setActiveTab}
-        />
+        <TabSuspense>
+          <LazyOnboardingTutorial
+            user={user}
+            onUpdate={handleUserUpdate}
+            onComplete={async () => {
+              const updated = await completeOnboarding(user.id);
+              handleUserUpdate(updated);
+              setActiveTab(0);
+            }}
+            onTabChange={setActiveTab}
+          />
+        </TabSuspense>
       )}
 
       <AppHeader
@@ -612,11 +630,11 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
               className={panelClassForTab(peekPrev)}
               aria-hidden="true"
             >
-              {renderTabPage(peekPrev)}
+              <TabSuspense>{renderTabPage(peekPrev)}</TabSuspense>
             </div>
           )}
           <div key={`section-${activeTab}`} className={panelClassForTab(activeTab)}>
-            {renderTabPage(activeTab, { isPrimary: true })}
+            <TabSuspense>{renderTabPage(activeTab, { isPrimary: true })}</TabSuspense>
           </div>
           {peekNext != null && (
             <div
@@ -624,7 +642,7 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
               className={panelClassForTab(peekNext)}
               aria-hidden="true"
             >
-              {renderTabPage(peekNext)}
+              <TabSuspense>{renderTabPage(peekNext)}</TabSuspense>
             </div>
           )}
         </div>

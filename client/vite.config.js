@@ -37,6 +37,20 @@ function versionJsonPlugin(build) {
   }
 }
 
+/** Разделение vendor-зависимостей для долгого кэша hashed assets. */
+function manualChunks(id) {
+  if (!id.includes('node_modules')) return undefined
+  if (id.includes('recharts') || /[/\\]d3-/.test(id)) return 'vendor-charts'
+  if (id.includes('gsap')) return 'vendor-motion'
+  if (id.includes('react-dom') || /[/\\]react[/\\]/.test(id) || id.includes('scheduler')) {
+    return 'vendor-react'
+  }
+  if (id.includes('react-router')) return 'vendor-router'
+  if (id.includes('pocketbase')) return 'vendor-pb'
+  if (id.includes('date-fns') || id.includes('@daypicker')) return 'vendor-date'
+  return 'vendor-misc'
+}
+
 export default defineConfig({
   base: '/tt-api/',
   plugins: [react(), versionJsonPlugin(APP_BUILD)],
@@ -50,6 +64,12 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: true
+    sourcemap: false,
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks
+      }
+    }
   }
 })

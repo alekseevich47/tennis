@@ -1,16 +1,32 @@
-import React, { useCallback, useState } from 'react';
+import React, { Suspense, lazy, useCallback, useState } from 'react';
 import BroadcastModal from './BroadcastModal';
 import LogsModal from './LogsModal';
 import NotificationSendModal from './NotificationSendModal';
 import NotificationSettingsModal from './NotificationSettingsModal';
 import SystemTemplatesModal from './SystemTemplatesModal';
 import StatisticsHubModal from './StatisticsHubModal';
-import StatsGrowthModal from './stats/StatsGrowthModal';
-import StatsReachModal from './stats/StatsReachModal';
-import StatsBookingModal from './stats/StatsBookingModal';
-import StatsTrainingsCountModal from './stats/StatsTrainingsCountModal';
-import StatsAchievementsModal from './stats/StatsAchievementsModal';
+import Spinner from '../../components/ui/Spinner';
 import './AdminPanelPage.css';
+
+const LazyStatsGrowthModal = lazy(() => import('./stats/StatsGrowthModal'));
+const LazyStatsReachModal = lazy(() => import('./stats/StatsReachModal'));
+const LazyStatsBookingModal = lazy(() => import('./stats/StatsBookingModal'));
+const LazyStatsTrainingsCountModal = lazy(() => import('./stats/StatsTrainingsCountModal'));
+const LazyStatsAchievementsModal = lazy(() => import('./stats/StatsAchievementsModal'));
+
+function StatsModalSuspense({ children }) {
+  return (
+    <Suspense
+      fallback={
+        <div className="app-boot">
+          <Spinner label="Загрузка..." />
+        </div>
+      }
+    >
+      {children}
+    </Suspense>
+  );
+}
 
 /**
  * Корневая страница раздела «Админ-панель».
@@ -111,31 +127,51 @@ export default function AdminPanelPage() {
         onClose={() => setStatsHubOpen(false)}
         onSelect={handleSelectMetric}
       />
-      <StatsGrowthModal
-        isOpen={statsMetric === 'growth'}
-        onClose={() => setStatsMetric(null)}
-        onBack={handleStatsBack}
-      />
-      <StatsReachModal
-        isOpen={statsMetric === 'reach'}
-        onClose={() => setStatsMetric(null)}
-        onBack={handleStatsBack}
-      />
-      <StatsBookingModal
-        isOpen={statsMetric === 'booking'}
-        onClose={() => setStatsMetric(null)}
-        onBack={handleStatsBack}
-      />
-      <StatsTrainingsCountModal
-        isOpen={statsMetric === 'trainings'}
-        onClose={() => setStatsMetric(null)}
-        onBack={handleStatsBack}
-      />
-      <StatsAchievementsModal
-        isOpen={statsMetric === 'achievements'}
-        onClose={() => setStatsMetric(null)}
-        onBack={handleStatsBack}
-      />
+      {statsMetric === 'growth' && (
+        <StatsModalSuspense>
+          <LazyStatsGrowthModal
+            isOpen
+            onClose={() => setStatsMetric(null)}
+            onBack={handleStatsBack}
+          />
+        </StatsModalSuspense>
+      )}
+      {statsMetric === 'reach' && (
+        <StatsModalSuspense>
+          <LazyStatsReachModal
+            isOpen
+            onClose={() => setStatsMetric(null)}
+            onBack={handleStatsBack}
+          />
+        </StatsModalSuspense>
+      )}
+      {statsMetric === 'booking' && (
+        <StatsModalSuspense>
+          <LazyStatsBookingModal
+            isOpen
+            onClose={() => setStatsMetric(null)}
+            onBack={handleStatsBack}
+          />
+        </StatsModalSuspense>
+      )}
+      {statsMetric === 'trainings' && (
+        <StatsModalSuspense>
+          <LazyStatsTrainingsCountModal
+            isOpen
+            onClose={() => setStatsMetric(null)}
+            onBack={handleStatsBack}
+          />
+        </StatsModalSuspense>
+      )}
+      {statsMetric === 'achievements' && (
+        <StatsModalSuspense>
+          <LazyStatsAchievementsModal
+            isOpen
+            onClose={() => setStatsMetric(null)}
+            onBack={handleStatsBack}
+          />
+        </StatsModalSuspense>
+      )}
       <BroadcastModal isOpen={broadcastOpen} onClose={() => setBroadcastOpen(false)} />
       <SystemTemplatesModal
         isOpen={editBroadcastsOpen}
