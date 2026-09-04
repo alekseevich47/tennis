@@ -25,17 +25,44 @@
   border: none;
   background: transparent;
   padding: 0;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+.system-templates-menu-backdrop--visible {
+  opacity: 1;
 }
 
 .system-templates-menu {
   position: absolute;
-  min-width: 180px;
+  min-width: 188px;
   background: rgba(255, 255, 255, 0.98);
   border-radius: 12px;
   box-shadow: 0 10px 28px rgba(15, 23, 42, 0.18);
   border: 1px solid rgba(15, 23, 42, 0.08);
   overflow: hidden;
   padding: 4px;
+  opacity: 0;
+  transform: translateY(-6px) scale(0.96);
+  transform-origin: top left;
+  transition: opacity 0.22s cubic-bezier(0.22, 1, 0.36, 1), transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.system-templates-menu--from-end {
+  transform-origin: top right;
+}
+
+.system-templates-menu--visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .system-templates-menu,
+  .system-templates-menu-backdrop {
+    transition: none;
+  }
 }
 
 .system-templates-menu__btn {

@@ -26,10 +26,15 @@ const LONG_PRESS_IGNORE_SELECTOR = [
 
 /**
  * @param {EventTarget | null} target
+ * @param {EventTarget | null} [currentTarget] — хост long-press; если он сам button/a, не игнорить
  */
-function isLongPressIgnoredTarget(target) {
+function isLongPressIgnoredTarget(target, currentTarget) {
   if (!(target instanceof Element)) return false;
-  return Boolean(target.closest(LONG_PRESS_IGNORE_SELECTOR));
+  const ignored = target.closest(LONG_PRESS_IGNORE_SELECTOR);
+  if (!ignored) return false;
+  // Хост сам является button/a (напр. TemplateListButton) — long-press разрешён
+  if (currentTarget instanceof Element && ignored === currentTarget) return false;
+  return true;
 }
 
 /**
@@ -240,7 +245,7 @@ export function useLongPress({
   const onPointerDown = useCallback((/** @type {React.PointerEvent} */ e) => {
     if (!enabled) return;
     if (e.button != null && e.button !== 0) return;
-    if (isLongPressIgnoredTarget(e.target)) return;
+    if (isLongPressIgnoredTarget(e.target, e.currentTarget)) return;
 
     const x = e.clientX;
     const y = e.clientY;

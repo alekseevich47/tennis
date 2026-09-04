@@ -3,6 +3,7 @@ import { isVideoFile } from '../../lib/media';
 
 /**
  * Подготовка файла для прикрепления в комментарии: сжатие изображений + blob URL.
+ * Видео в комментариях не поддерживается.
  *
  * @param {File} file
  * @param {(percent: number) => void} [onProgress]
@@ -11,7 +12,11 @@ import { isVideoFile } from '../../lib/media';
 export async function prepareCommentMediaFile(file, onProgress) {
   onProgress?.(8);
 
-  if (file.type.startsWith('image/')) {
+  if (isVideoFile(file) || file.type.startsWith('video/')) {
+    throw new Error('Видео в комментариях не поддерживается');
+  }
+
+  if (file.type.startsWith('image/') || /\.gif$/i.test(file.name)) {
     onProgress?.(22);
     const prepared = await compressImage(file);
     onProgress?.(78);
@@ -20,32 +25,10 @@ export async function prepareCommentMediaFile(file, onProgress) {
     return {
       file: prepared,
       url,
-      isVideo: isVideoFile(prepared),
+      isVideo: false,
       name: prepared.name
     };
   }
 
-  onProgress?.(35);
-  const url = URL.createObjectURL(file);
-  await new Promise((resolve, reject) => {
-    const video = document.createElement('video');
-    video.preload = 'metadata';
-    video.muted = true;
-    video.playsInline = true;
-    const finish = () => {
-      onProgress?.(100);
-      resolve(undefined);
-    };
-    video.onloadedmetadata = finish;
-    video.onloadeddata = finish;
-    video.onerror = () => reject(new Error('Не удалось прочитать видео'));
-    video.src = url;
-  });
-
-  return {
-    file,
-    url,
-    isVideo: isVideoFile(file),
-    name: file.name
-  };
+  throw new Error('Поддерживаются только изображения');
 }
