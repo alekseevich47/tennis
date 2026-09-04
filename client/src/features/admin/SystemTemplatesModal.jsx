@@ -1,6 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import clsx from 'clsx';
 import Modal from '../../components/ui/Modal';
+import IconButton from '../../components/ui/IconButton';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { useLongPress, LongPressRing } from '../../lib/longPress';
 import { listSystemTemplates, updateSystemTemplate } from '../../services/systemTemplates';
@@ -23,6 +25,115 @@ function PowerIcon() {
       <path d="M12 2v10" strokeLinecap="round" />
       <path d="M6.3 6.3a8 8 0 1 0 11.4 0" strokeLinecap="round" />
     </svg>
+  );
+}
+
+function KebabIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden>
+      <circle cx="12" cy="5" r="1.75" />
+      <circle cx="12" cy="12" r="1.75" />
+      <circle cx="12" cy="19" r="1.75" />
+    </svg>
+  );
+}
+
+/**
+ * @param {{
+ *   open: boolean,
+ *   item: Record<string, unknown> | null,
+ *   x: number,
+ *   y: number,
+ *   origin?: 'start' | 'end',
+ *   onClose: () => void,
+ *   onEdit: (item: Record<string, unknown>) => void,
+ *   onToggle: (item: Record<string, unknown>) => void
+ * }} props
+ */
+function TemplateActionsMenu({
+  open,
+  item,
+  x,
+  y,
+  origin = 'start',
+  onClose,
+  onEdit,
+  onToggle
+}) {
+  const menuRef = useRef(/** @type {HTMLDivElement | null} */ (null));
+  const [mounted, setMounted] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const itemRef = useRef(item);
+  if (open && item) itemRef.current = item;
+
+  useEffect(() => {
+    if (open && item) {
+      setMounted(true);
+      const frame = requestAnimationFrame(() => setVisible(true));
+      return () => cancelAnimationFrame(frame);
+    }
+    setVisible(false);
+    return undefined;
+  }, [open, item]);
+
+  const handleTransitionEnd = useCallback(
+    (event) => {
+      if (event.target !== menuRef.current) return;
+      if (event.propertyName !== 'opacity') return;
+      if (open) return;
+      setMounted(false);
+    },
+    [open]
+  );
+
+  if (!mounted || !itemRef.current) return null;
+
+  const displayItem = itemRef.current;
+
+  return createPortal(
+    <div className="system-templates-menu-root">
+      <button
+        type="button"
+        className={clsx(
+          'system-templates-menu-backdrop',
+          visible && 'system-templates-menu-backdrop--visible'
+        )}
+        aria-label="Закрыть меню"
+        onClick={onClose}
+      />
+      <div
+        ref={menuRef}
+        className={clsx(
+          'system-templates-menu',
+          origin === 'end' && 'system-templates-menu--from-end',
+          visible && 'system-templates-menu--visible'
+        )}
+        style={{
+          left: Math.min(Math.max(8, x), window.innerWidth - 200),
+          top: Math.min(Math.max(8, y), window.innerHeight - 120)
+        }}
+        role="menu"
+        onTransitionEnd={handleTransitionEnd}
+      >
+        <button
+          type="button"
+          className="system-templates-menu__btn"
+          onClick={() => onEdit(displayItem)}
+        >
+          <PencilIcon />
+          Редактировать
+        </button>
+        <button
+          type="button"
+          className="system-templates-menu__btn"
+          onClick={() => onToggle(displayItem)}
+        >
+          <PowerIcon />
+          {displayItem.enabled === false ? 'Включить' : 'Отключить'}
+        </button>
+      </div>
+    </div>,
+    document.body
   );
 }
 
@@ -68,9 +179,12 @@ function TemplateListButton({ item, onTap, onLongPress }) {
  */
 export default function SystemTemplatesModal({ isOpen, onClose, channel, title }) {
   const { alert } = useAlertDialog();
+  const kebabRef = useRef(/** @type {HTMLButtonElement | null} */ (null));
   const [items, setItems] = useState(/** @type {Record<string, unknown>[]} */ ([]));
   const [loading, setLoading] = useState(false);
-  const [menu, setMenu] = useState(/** @type {null | { item: Record<string, unknown>, x: number, y: number }} */ (null));
+  const [menu, setMenu] = useState(
+    /** @type {null | { item: Record<string, unknown>, x: number, y: number, origin?: 'start' | 'end' }} */ (null)
+  );
   const [infoItem, setInfoItem] = useState(/** @type {Record<string, unknown> | null} */ (null));
   const [editItem, setEditItem] = useState(/** @type {Record<string, unknown> | null} */ (null));
   const [editTitle, setEditTitle] = useState('');
@@ -101,6 +215,8 @@ export default function SystemTemplatesModal({ isOpen, onClose, channel, title }
     load();
   }, [isOpen, load]);
 
+  const closeMenu = useCallback(() => setMenu(null), []);
+
   const handleToggleEnabled = async (item) => {
     setMenu(null);
     const next = item.enabled === false;
@@ -111,6 +227,9 @@ export default function SystemTemplatesModal({ isOpen, onClose, channel, title }
       });
       setItems((prev) =>
         prev.map((row) => (row.id === updated.id ? { ...row, ...updated } : row))
+      );
+      setInfoItem((prev) =>
+        prev && prev.id === updated.id ? { ...prev, ...updated } : prev
       );
     } catch (err) {
       error('toggle template:', err);
@@ -124,6 +243,26 @@ export default function SystemTemplatesModal({ isOpen, onClose, channel, title }
     setEditTitle(String(item.title || ''));
     setEditBody(String(item.body || ''));
     setEditAction(String(item.action_label || ''));
+  };
+
+  const openHeaderMenu = () => {
+    if (!infoItem) return;
+    const rect = kebabRef.current?.getBoundingClientRect();
+    if (rect) {
+      setMenu({
+        item: infoItem,
+        x: rect.right - 188,
+        y: rect.bottom + 6,
+        origin: 'end'
+      });
+      return;
+    }
+    setMenu({
+      item: infoItem,
+      x: window.innerWidth - 208,
+      y: 56,
+      origin: 'end'
+    });
   };
 
   const saveEdit = async (e) => {
@@ -143,6 +282,9 @@ export default function SystemTemplatesModal({ isOpen, onClose, channel, title }
       const updated = await updateSystemTemplate(patch);
       setItems((prev) =>
         prev.map((row) => (row.id === updated.id ? { ...row, ...updated } : row))
+      );
+      setInfoItem((prev) =>
+        prev && prev.id === updated.id ? { ...prev, ...updated } : prev
       );
       setEditItem(null);
     } catch (err) {
@@ -168,7 +310,7 @@ export default function SystemTemplatesModal({ isOpen, onClose, channel, title }
                   <TemplateListButton
                     item={item}
                     onTap={() => setInfoItem(item)}
-                    onLongPress={(point) => setMenu({ item, x: point.x, y: point.y })}
+                    onLongPress={(point) => setMenu({ item, x: point.x, y: point.y, origin: 'start' })}
                   />
                 </li>
               ))}
@@ -177,41 +319,36 @@ export default function SystemTemplatesModal({ isOpen, onClose, channel, title }
         </div>
       </Modal>
 
-      {menu &&
-        createPortal(
-          <div className="system-templates-menu-root">
-            <button
-              type="button"
-              className="system-templates-menu-backdrop"
-              aria-label="Закрыть меню"
-              onClick={() => setMenu(null)}
-            />
-            <div
-              className="system-templates-menu"
-              style={{ left: Math.min(menu.x, window.innerWidth - 200), top: Math.min(menu.y, window.innerHeight - 120) }}
-              role="menu"
-            >
-              <button type="button" className="system-templates-menu__btn" onClick={() => openEdit(menu.item)}>
-                <PencilIcon />
-                Редактировать
-              </button>
-              <button
-                type="button"
-                className="system-templates-menu__btn"
-                onClick={() => handleToggleEnabled(menu.item)}
-              >
-                <PowerIcon />
-                {menu.item.enabled === false ? 'Включить' : 'Отключить'}
-              </button>
-            </div>
-          </div>,
-          document.body
-        )}
+      <TemplateActionsMenu
+        open={Boolean(menu)}
+        item={menu?.item ?? null}
+        x={menu?.x ?? 0}
+        y={menu?.y ?? 0}
+        origin={menu?.origin ?? 'start'}
+        onClose={closeMenu}
+        onEdit={openEdit}
+        onToggle={handleToggleEnabled}
+      />
 
       <Modal
         isOpen={Boolean(infoItem)}
-        onClose={() => setInfoItem(null)}
+        onClose={() => {
+          setMenu(null);
+          setInfoItem(null);
+        }}
         title={String(infoItem?.name || 'Информация')}
+        headerActions={(
+          <IconButton
+            ref={kebabRef}
+            type="button"
+            className="system-templates-kebab"
+            ariaLabel="Действия с шаблоном"
+            variant="ghost"
+            onClick={openHeaderMenu}
+          >
+            <KebabIcon />
+          </IconButton>
+        )}
       >
         {infoItem && (
           <div className="system-templates-info">

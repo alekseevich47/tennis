@@ -272,19 +272,36 @@ label.product-category-option {
 
 .product-card-favorite-btn {
   position: absolute;
-  top: 8px;
-  left: 8px;
+  top: 2px;
+  left: 2px;
   z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   border: none;
-  background: rgba(255, 255, 255, 0.88);
+  background: transparent;
   border-radius: 50%;
   cursor: pointer;
+}
+
+.product-card-favorite-btn::before {
+  content: '';
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.88);
+  pointer-events: none;
+}
+
+.product-card-favorite-btn svg {
+  position: relative;
+  z-index: 1;
+  width: 20px;
+  height: 20px;
 }
 
 .product-gallery--card {

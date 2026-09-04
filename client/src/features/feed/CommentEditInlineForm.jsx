@@ -173,9 +173,9 @@ function CommentEditInlineForm({
       const slots = Math.max(0, MAX_COMMENT_MEDIA_FILES - orderedMedia.length);
       const incoming = readSelectedFiles(fileList, slots).filter(
         (file) =>
-          file.type.startsWith('image/') ||
-          file.type.startsWith('video/') ||
-          /\.gif$/i.test(file.name)
+          !isVideoFile(file) &&
+          !file.type.startsWith('video/') &&
+          (file.type.startsWith('image/') || /\.gif$/i.test(file.name))
       );
       if (!incoming.length) {
         requestAnimationFrame(() => field?.restoreSelection?.());
@@ -283,7 +283,7 @@ function CommentEditInlineForm({
         id={galleryInputId}
         ref={galleryInputRef}
         type="file"
-        accept="image/*,video/*,.gif"
+        accept="image/*,.gif"
         multiple
         className="visually-hidden"
         tabIndex={-1}

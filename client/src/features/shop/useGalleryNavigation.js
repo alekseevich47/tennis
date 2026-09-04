@@ -215,7 +215,7 @@ export function useGalleryNavigation(length, resetKey, { index: controlledIndex,
       setIsSliding(false);
       pointerStartRef.current = { x: event.clientX, y: event.clientY };
       gestureModeRef.current = 'pending';
-      event.currentTarget.setPointerCapture?.(event.pointerId);
+      // Capture только после lock в horizontal — иначе click по центру не открывает fullscreen
     },
     [length, skipMouseDrag]
   );
@@ -226,8 +226,16 @@ export function useGalleryNavigation(length, resetKey, { index: controlledIndex,
       const dx = event.clientX - pointerStartRef.current.x;
       const dy = event.clientY - pointerStartRef.current.y;
 
+      const wasPending = gestureModeRef.current === 'pending';
       tryLockHorizontal(dx, dy);
       if (gestureModeRef.current === 'horizontal') {
+        if (wasPending && event.currentTarget.hasPointerCapture?.(event.pointerId) !== true) {
+          try {
+            event.currentTarget.setPointerCapture?.(event.pointerId);
+          } catch {
+            /* ignore */
+          }
+        }
         event.preventDefault();
         setSwipeOffset(dx);
       }
@@ -238,7 +246,13 @@ export function useGalleryNavigation(length, resetKey, { index: controlledIndex,
   const handlePointerUp = useCallback(
     (event) => {
       if (event.pointerType === 'touch') return;
-      event.currentTarget.releasePointerCapture?.(event.pointerId);
+      if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
+        try {
+          event.currentTarget.releasePointerCapture(event.pointerId);
+        } catch {
+          /* ignore */
+        }
+      }
 
       if (gestureModeRef.current === 'horizontal') {
         const dx = event.clientX - pointerStartRef.current.x;

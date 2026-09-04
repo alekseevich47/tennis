@@ -12,10 +12,19 @@ import { usePlayers } from '../../hooks/usePlayers';
  *   className?: string,
  *   as?: 'div' | 'p' | 'span' | 'button',
  *   onClick?: (e: React.MouseEvent) => void,
- *   type?: 'button' | 'submit' | 'reset'
+ *   type?: 'button' | 'submit' | 'reset',
+ *   disableMentions?: boolean
  * } & Record<string, unknown>} props
  */
-function PostContentHtml({ content, className, as = 'div', onClick, type = 'button', ...rest }) {
+function PostContentHtml({
+  content,
+  className,
+  as = 'div',
+  onClick,
+  type = 'button',
+  disableMentions = false,
+  ...rest
+}) {
   const html = toDisplayHtml(content || '');
   const Tag = as;
   const ref = useRef(/** @type {HTMLElement | null} */ (null));
@@ -37,7 +46,6 @@ function PostContentHtml({ content, className, as = 'div', onClick, type = 'butt
     let cancelled = false;
     const run = async () => {
       await applyMentionMissingStatuses(ref.current, { players });
-      if (cancelled) return;
     };
     const raf = requestAnimationFrame(() => {
       run();
@@ -52,36 +60,38 @@ function PostContentHtml({ content, className, as = 'div', onClick, type = 'butt
    * @param {React.MouseEvent} e
    */
   const handleClick = (e) => {
-    const target = e.target instanceof Element ? e.target : null;
-    const mention = target?.closest?.(`.${MENTION_CLASS}`);
-    if (mention && ref.current?.contains(mention)) {
-      e.preventDefault();
-      e.stopPropagation();
-      if (mention.classList.contains(MENTION_MISSING_CLASS)) {
-        return;
-      }
-      const kind = mention.getAttribute('data-mention');
-      if (kind === 'user') {
-        const id = mention.getAttribute('data-user-id') || '';
-        const name = mention.getAttribute('data-name') || '';
-        const avatar = mention.getAttribute('data-avatar') || '';
-        if (id) {
-          mentionNav?.openUserProfile({
-            id,
-            full_name: name,
-            ...(avatar ? { avatar_url: avatar } : {})
-          });
+    if (!disableMentions) {
+      const target = e.target instanceof Element ? e.target : null;
+      const mention = target?.closest?.(`.${MENTION_CLASS}`);
+      if (mention && ref.current?.contains(mention)) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (mention.classList.contains(MENTION_MISSING_CLASS)) {
+          return;
         }
-        return;
-      }
-      if (kind === 'post') {
-        const postId = mention.getAttribute('data-post-id') || '';
-        const sourceRaw = mention.getAttribute('data-post-source') || 'feed';
-        const source = sourceRaw === 'tournament' ? 'tournament' : 'feed';
-        if (postId) {
-          mentionNav?.openPostMention({ source, postId });
+        const kind = mention.getAttribute('data-mention');
+        if (kind === 'user') {
+          const id = mention.getAttribute('data-user-id') || '';
+          const name = mention.getAttribute('data-name') || '';
+          const avatar = mention.getAttribute('data-avatar') || '';
+          if (id) {
+            mentionNav?.openUserProfile({
+              id,
+              full_name: name,
+              ...(avatar ? { avatar_url: avatar } : {})
+            });
+          }
+          return;
         }
-        return;
+        if (kind === 'post') {
+          const postId = mention.getAttribute('data-post-id') || '';
+          const sourceRaw = mention.getAttribute('data-post-source') || 'feed';
+          const source = sourceRaw === 'tournament' ? 'tournament' : 'feed';
+          if (postId) {
+            mentionNav?.openPostMention({ source, postId });
+          }
+          return;
+        }
       }
     }
     onClick?.(e);

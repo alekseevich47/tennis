@@ -3802,6 +3802,14 @@ button.post-card-like:hover:not(:disabled) {
   color: #343a40;
 }
 
+.preview-comment-text .mention,
+.preview-comment-text .post-mention,
+.comments-preview-trigger .mention,
+.comments-preview-trigger .post-mention {
+  pointer-events: none;
+  cursor: inherit;
+}
+
 .modal-comment-item.comment-soft-deleted {
   background: #fff0f1;
   border: 1px dashed #ffa8a8;

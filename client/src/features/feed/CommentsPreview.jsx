@@ -45,7 +45,12 @@ function CommentsPreview({ comments }) {
               ) : null}
             </div>
             {hasText ? (
-              <PostContentHtml as="span" className="preview-comment-text" content={c.text} />
+              <PostContentHtml
+                as="span"
+                className="preview-comment-text"
+                content={c.text}
+                disableMentions
+              />
             ) : null}
           </div>
         );

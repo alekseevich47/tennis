@@ -189,9 +189,9 @@ function CommentComposeForm({
       const slots = Math.max(0, MAX_COMMENT_MEDIA_FILES - prev.length);
       const incoming = readSelectedFiles(fileList, slots).filter(
         (file) =>
-          file.type.startsWith('image/') ||
-          file.type.startsWith('video/') ||
-          /\.gif$/i.test(file.name)
+          !isVideoFile(file) &&
+          !file.type.startsWith('video/') &&
+          (file.type.startsWith('image/') || /\.gif$/i.test(file.name))
       );
       if (!incoming.length) {
         requestAnimationFrame(() => {
@@ -467,7 +467,7 @@ function CommentComposeForm({
         <input
           ref={galleryInputRef}
           type="file"
-          accept="image/*,video/*,.gif"
+          accept="image/*,.gif"
           multiple
           className="visually-hidden"
           tabIndex={-1}

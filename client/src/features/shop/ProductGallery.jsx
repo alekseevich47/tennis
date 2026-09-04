@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import clsx from 'clsx';
 import FeedVideoPreview from '../feed/FeedVideoPreview';
 import { useGalleryNavigation } from './useGalleryNavigation';
@@ -85,6 +85,37 @@ function ProductGallery({
   const prevItem = hasMultiple ? items[(index - 1 + items.length) % items.length] : null;
   const nextItem = hasMultiple ? items[(index + 1) % items.length] : null;
   const trackItems = hasMultiple && activeItem ? [prevItem, activeItem, nextItem] : activeItem ? [activeItem] : [];
+
+  // При открытии деталки — сразу prefetch всех превью (не только соседних в треке).
+  useEffect(() => {
+    if (!isDetail || items.length === 0) return undefined;
+    const probes = items.map((item) => {
+      const thumb = item.thumbUrl || item.previewUrl || item.url;
+      const full = item.url && item.url !== thumb ? item.url : null;
+      const images = [];
+      if (thumb && typeof Image !== 'undefined') {
+        const img = new Image();
+        img.decoding = 'async';
+        img.src = thumb;
+        images.push(img);
+      }
+      if (full && typeof Image !== 'undefined') {
+        const img = new Image();
+        img.decoding = 'async';
+        img.src = full;
+        images.push(img);
+      }
+      return images;
+    });
+    return () => {
+      probes.forEach((group) => {
+        group.forEach((img) => {
+          img.onload = null;
+          img.onerror = null;
+        });
+      });
+    };
+  }, [isDetail, items]);
 
   const handleCenterClick = useCallback(
     (event) => {
