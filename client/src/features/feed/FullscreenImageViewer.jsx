@@ -103,16 +103,6 @@ function getOriginRect(originKey) {
   return element?.getBoundingClientRect?.() || null;
 }
 
-function itemSlideId(item) {
-  return item?.originKey || item?.filename || item?.url || item?.previewUrl || '';
-}
-
-function carouselSlideKey(item, index, trackItems) {
-  const id = itemSlideId(item) || `slide-${index}`;
-  const first = trackItems.findIndex((other) => itemSlideId(other) === id);
-  return first === index ? id : `${id}__dup`;
-}
-
 function isImagePaintReady(src) {
   if (!src || typeof Image === 'undefined') return false;
   const probe = new Image();
@@ -372,14 +362,17 @@ function FullscreenImageViewer({
   const showNavControls =
     hasMultiple && !isTouchNav && scale <= NAV_ZOOM_MAX_SCALE && !isClosing;
 
-  const goTo = useCallback((nextIndex, { animated = false } = {}) => {
+  const goTo = useCallback((nextIndex, { animated = false, direction: forcedDirection } = {}) => {
     if (items.length === 0) return;
     const normalizedIndex = (nextIndex + items.length) % items.length;
     if (animated && normalizedIndex !== activeIndex) {
       window.clearTimeout(slideTimerRef.current);
-      const direction = normalizedIndex > activeIndex || (activeIndex === items.length - 1 && normalizedIndex === 0)
-        ? -1
-        : 1;
+      // Явный direction от goNext/goPrev — иначе wrap 0↔n-1 даёт вспышку при 2–3 фото
+      const direction = forcedDirection === 1 || forcedDirection === -1
+        ? forcedDirection
+        : ((normalizedIndex - activeIndex + items.length) % items.length) <= items.length / 2
+          ? -1
+          : 1;
       setIsSliding(true);
       setSwipeOffset(direction * getWindowWidth());
       slideTimerRef.current = window.setTimeout(() => {
@@ -398,8 +391,42 @@ function FullscreenImageViewer({
     reset();
   }, [activeIndex, items.length, onActiveIndexChange, reset]);
 
-  const goNext = useCallback((options) => goTo(activeIndex + 1, options), [activeIndex, goTo]);
-  const goPrev = useCallback((options) => goTo(activeIndex - 1, options), [activeIndex, goTo]);
+  const goNext = useCallback(
+    (options = {}) => goTo(activeIndex + 1, { ...options, direction: -1 }),
+    [activeIndex, goTo]
+  );
+  const goPrev = useCallback(
+    (options = {}) => goTo(activeIndex - 1, { ...options, direction: 1 }),
+    [activeIndex, goTo]
+  );
+
+  // Prefetch всех изображений альбома — смена src в слотах без пустого кадра.
+  useEffect(() => {
+    if (!hasItems) return undefined;
+    const probes = [];
+    items.forEach((item) => {
+      if (item.isVideo) return;
+      const urls = [item.thumbUrl, item.previewUrl, item.url].filter(Boolean);
+      const seen = new Set();
+      urls.forEach((src) => {
+        if (seen.has(src) || typeof Image === 'undefined') return;
+        seen.add(src);
+        const img = new Image();
+        img.decoding = 'async';
+        img.src = src;
+        if (typeof img.decode === 'function') {
+          void img.decode().catch(() => {});
+        }
+        probes.push(img);
+      });
+    });
+    return () => {
+      probes.forEach((img) => {
+        img.onload = null;
+        img.onerror = null;
+      });
+    };
+  }, [galleryKey, hasItems, items]);
 
   useEffect(() => {
     setIsClosing(false);
@@ -626,7 +653,13 @@ function FullscreenImageViewer({
 
   const prevItem = items[(activeIndex - 1 + items.length) % items.length];
   const nextItem = items[(activeIndex + 1) % items.length];
-  const trackItems = hasMultiple ? [prevItem, activeItem, nextItem] : [activeItem];
+  const trackSlots = hasMultiple
+    ? [
+        { slot: 'prev', item: prevItem, isActive: false },
+        { slot: 'center', item: activeItem, isActive: true },
+        { slot: 'next', item: nextItem, isActive: false }
+      ]
+    : [{ slot: 'center', item: activeItem, isActive: true }];
   const trackTranslate = hasMultiple ? `calc(-100% + ${swipeOffset}px)` : `${swipeOffset}px`;
 
   const returnTransform = useMemo(() => {
@@ -763,18 +796,15 @@ function FullscreenImageViewer({
           className={`fullscreen-carousel-track ${isSliding ? 'is-sliding' : ''}`}
           style={{ transform: `translate3d(${trackTranslate}, 0, 0)` }}
         >
-          {trackItems.map((item, index) => {
-            const isActiveSlide = !hasMultiple || index === 1;
-            return (
-              <div
-                className="fullscreen-carousel-slide"
-                data-active={isActiveSlide ? 'true' : undefined}
-                key={carouselSlideKey(item, index, trackItems)}
-              >
-                {renderSlideContent(item, isActiveSlide)}
-              </div>
-            );
-          })}
+          {trackSlots.map(({ slot, item, isActive }) => (
+            <div
+              className="fullscreen-carousel-slide"
+              data-active={isActive ? 'true' : undefined}
+              key={slot}
+            >
+              {item ? renderSlideContent(item, isActive) : null}
+            </div>
+          ))}
         </div>
       </div>
     </div>,
