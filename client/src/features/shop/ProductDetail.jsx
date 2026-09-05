@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
+import ModalFloatingCloseButton from '../../components/ui/ModalFloatingCloseButton';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { useFavorites } from '../../context/FavoritesContext';
 import { useProductCategories } from '../../hooks/useProductCategories';
@@ -64,6 +65,8 @@ function ProductDetail({
   const { alert } = useAlertDialog();
   const { data: categories = [] } = useProductCategories();
   const { isFavorite, addItem, removeItem } = useFavorites();
+  const closeBtnRef = useRef(/** @type {HTMLButtonElement | null} */ (null));
+  const descriptionRef = useRef(/** @type {HTMLDivElement | null} */ (null));
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [favoritesCount, setFavoritesCount] = useState(0);
   const [viewsCount, setViewsCount] = useState(0);
@@ -130,6 +133,16 @@ function ProductDetail({
     setViewsCount(Number(product?.views) || 0);
     setFavoritesCount(Math.max(0, Number(product?.favorites_count) || 0));
   }, [product?.id, product?.views, product?.favorites_count]);
+
+  useEffect(() => {
+    if (!descriptionExpanded) return undefined;
+    const node = descriptionRef.current;
+    if (!node) return undefined;
+    const raf = window.requestAnimationFrame(() => {
+      node.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    return () => window.cancelAnimationFrame(raf);
+  }, [descriptionExpanded]);
 
   const handleFavoriteClick = useCallback((event) => {
     event.stopPropagation();
@@ -230,6 +243,9 @@ function ProductDetail({
             </div>
           </div>
           <IconButton
+            ref={closeBtnRef}
+            type="button"
+            className="ui-modal-close"
             ariaLabel="Закрыть карточку товара"
             variant="ghost"
             size="sm"
@@ -238,6 +254,12 @@ function ProductDetail({
             <span aria-hidden="true">✕</span>
           </IconButton>
         </div>
+
+        <ModalFloatingCloseButton
+          isOpen={isOpen}
+          anchorRef={closeBtnRef}
+          onClose={onClose}
+        />
 
         <div className="product-detail-gallery">
           <button
@@ -324,15 +346,17 @@ function ProductDetail({
               onClick={() => setDescriptionExpanded((value) => !value)}
               aria-expanded={descriptionExpanded}
             >
-              <span>Ещё характеристики</span>
+              <span>Подробнее</span>
               <span className="product-detail-more-chevron" aria-hidden="true">›</span>
             </button>
             {descriptionExpanded && (
-              <PostContentHtml
-                content={product.description}
-                className="product-description"
-                as="div"
-              />
+              <div ref={descriptionRef}>
+                <PostContentHtml
+                  content={product.description}
+                  className="product-description"
+                  as="div"
+                />
+              </div>
             )}
           </div>
         )}

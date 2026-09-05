@@ -14,12 +14,6 @@ const SCROLL_LOCK_CLASS = 'onboarding-scroll-locked';
 
 const TOUR_STEPS = {
   2: {
-    tab: 5,
-    spotlight: true,
-    selector: '.membership-btn',
-    text: 'Кнопка "Абонемент" — здесь ваш тип абонемента, количество оставшихся занятий и период действия.'
-  },
-  3: {
     tab: 0,
     spotlight: true,
     selector: '.bottom-nav .nav-item[data-nav-index="0"]',
@@ -27,7 +21,7 @@ const TOUR_STEPS = {
     scrollBlock: 'nearest',
     text: 'Лента — мы очень рады делиться с Вами нашими новостями! Ставьте лайки ❤️ и пишите комментарии 💬.'
   },
-  4: {
+  3: {
     tab: 1,
     spotlight: true,
     // оба — полный cutout (multi-hole SVG); tooltip на календаре
@@ -36,7 +30,7 @@ const TOUR_STEPS = {
     fullHighlights: true,
     text: 'Выберите день в полосе, откройте тренировку и нажмите "Записаться". Снять запись возможно — не позднее чем за 1 час до начала.'
   },
-  5: {
+  4: {
     tab: 2,
     spotlight: true,
     selector: '.bottom-nav .nav-item[data-nav-index="2"]',
@@ -44,7 +38,7 @@ const TOUR_STEPS = {
     scrollBlock: 'nearest',
     text: 'Магазин секции: открывайте карточку товара и добавляйте в избранное ♥. Если хотите узнать о товаре — нажимайте на кнопку "Купить"'
   },
-  6: {
+  5: {
     tab: 3,
     spotlight: true,
     selector: '.bottom-nav .nav-item[data-nav-index="3"]',
@@ -52,13 +46,19 @@ const TOUR_STEPS = {
     scrollBlock: 'nearest',
     text: 'Здесь Вы можете ознакомиться с результатами соревнований и прокомментиравать публикации 💬.'
   },
-  7: {
+  6: {
     tab: 5,
     spotlight: true,
     selector: '.bottom-nav .nav-item[data-nav-index="5"]',
     descriptionPlacement: 'top-card',
     scrollBlock: 'nearest',
     text: 'Профиль — ваши данные, абонемент и посещённые тренировки.'
+  },
+  7: {
+    tab: 5,
+    spotlight: true,
+    selector: '.membership-btn',
+    text: 'Кнопка "Абонемент" — здесь ваш тип абонемента, количество оставшихся занятий и период действия.'
   }
 };
 

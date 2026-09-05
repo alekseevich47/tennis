@@ -1,7 +1,7 @@
 {
   "client/package.json": {
-    "mtime": 1788589026.1300342,
-    "ast_hash": "10b6a33768c658d766e9c2caaaa0273d",
+    "mtime": 1788489168.4824047,
+    "ast_hash": "26be75cf244e508f2e762f82b7e8d41e",
     "semantic_hash": ""
   },
   "client/public/sw.js": {
@@ -240,7 +240,7 @@
     "semantic_hash": "c1a7c776170b9c7a0db35931084044c2"
   },
   "client/src/features/feed/CommentsPreview.jsx": {
-    "mtime": 1788490008.9179208,
+    "mtime": 1788489126.923715,
     "ast_hash": "fab0b2b32a169c78b2c6f38fca5d0e62",
     "semantic_hash": ""
   },
@@ -260,7 +260,7 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/FullscreenImageViewer.jsx": {
-    "mtime": 1788490008.9201536,
+    "mtime": 1788489124.9370332,
     "ast_hash": "88e1c69f5008530e01d7b502b7ebcd7a",
     "semantic_hash": ""
   },
@@ -320,8 +320,8 @@
     "semantic_hash": "3d0285b7d1fb0294d62f5bef1f9162a3"
   },
   "client/src/features/onboarding/OnboardingTutorial.jsx": {
-    "mtime": 1788588997.1371093,
-    "ast_hash": "51eec88598bbd60ca23df28ca4bf3363",
+    "mtime": 1788170204.6259189,
+    "ast_hash": "09d2b604fe334acb5571e4e61d7349e7",
     "semantic_hash": ""
   },
   "client/src/features/profile/BlockedPage.jsx": {
@@ -410,8 +410,8 @@
     "semantic_hash": ""
   },
   "client/src/features/shop/ProductDetail.jsx": {
-    "mtime": 1788589017.3187041,
-    "ast_hash": "0f16aa0e0c4b01ac8ca19f394028e47d",
+    "mtime": 1788170204.6393697,
+    "ast_hash": "1654799cc2a1642d2a6441c41654334e",
     "semantic_hash": ""
   },
   "client/src/features/shop/ProductForm.jsx": {
@@ -1040,7 +1040,7 @@
     "semantic_hash": "1b688d2e5709aa3d66fa198afa86ea49"
   },
   "client/src/features/feed/PostContentHtml.jsx": {
-    "mtime": 1788490008.9201536,
+    "mtime": 1788489144.3097444,
     "ast_hash": "b2684c4ad9ca95ab55edbc5a1dac6254",
     "semantic_hash": ""
   },
@@ -1070,7 +1070,7 @@
     "semantic_hash": ""
   },
   "client/src/lib/longPress.js": {
-    "mtime": 1788490008.9231522,
+    "mtime": 1788488971.2318304,
     "ast_hash": "f2a45ab130e657312306e5b1f7d3f8f5",
     "semantic_hash": ""
   },
@@ -1390,7 +1390,7 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/CommentComposeForm.jsx": {
-    "mtime": 1788490008.916921,
+    "mtime": 1788489154.8678372,
     "ast_hash": "d305e63504204e893991c0a74fe8a9a3",
     "semantic_hash": ""
   },
@@ -1485,12 +1485,12 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/CommentEditInlineForm.jsx": {
-    "mtime": 1788490008.9179208,
+    "mtime": 1788489162.79125,
     "ast_hash": "8ed1a53baa955c550a2532cff3de041a",
     "semantic_hash": ""
   },
   "client/src/features/admin/SystemTemplatesModal.jsx": {
-    "mtime": 1788490008.915921,
+    "mtime": 1788489028.044384,
     "ast_hash": "4dc6f16de1d5be2083dc57da6cbe2fc4",
     "semantic_hash": ""
   },
@@ -1580,7 +1580,7 @@
     "semantic_hash": ""
   },
   "client/src/features/shop/ProductGallery.jsx": {
-    "mtime": 1788490008.9211538,
+    "mtime": 1788489061.424487,
     "ast_hash": "afd977195427b72f14876cb7e91b3600",
     "semantic_hash": ""
   },
@@ -1605,7 +1605,7 @@
     "semantic_hash": ""
   },
   "client/src/features/shop/useGalleryNavigation.js": {
-    "mtime": 1788490008.9221537,
+    "mtime": 1788489237.0280962,
     "ast_hash": "730757eaaf3a68a48913ed3df739e20b",
     "semantic_hash": ""
   },
@@ -1670,7 +1670,7 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/prepareMediaDraft.js": {
-    "mtime": 1788490008.9211538,
+    "mtime": 1788489153.2339926,
     "ast_hash": "0edb17d324b6b7f477602652eb637ec8",
     "semantic_hash": ""
   },
@@ -1707,16 +1707,6 @@
   "client/src/app/lazyPages.js": {
     "mtime": 1788454347.8590612,
     "ast_hash": "2eaa5cb4c06d446714796de367d136bf",
-    "semantic_hash": ""
-  },
-  "scripts/backup_to_yandex.sh": {
-    "mtime": 1788490249.2087915,
-    "ast_hash": "88f2f349f20117dea40b5b568f4620ab",
-    "semantic_hash": ""
-  },
-  "scripts/restore_from_yandex.sh": {
-    "mtime": 1788490244.3946733,
-    "ast_hash": "ce65941a166b072f95371dc60bf853ef",
     "semantic_hash": ""
   }
 }
