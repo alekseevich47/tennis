@@ -325,8 +325,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_package_dependencies_react",
-      "community": 88,
-      "community_name": "format.js",
+      "community": 8,
+      "community_name": "NPM Dependencies",
       "norm_label": "react"
     },
     {
@@ -336,8 +336,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "react",
-      "community": 88,
-      "community_name": "format.js",
+      "community": 8,
+      "community_name": "NPM Dependencies",
       "norm_label": "react"
     },
     {
@@ -1007,8 +1007,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_public_ffmpeg_ffmpeg_core_utf8arraytostring",
-      "community": 129,
-      "community_name": "UTF8ToString",
+      "community": 107,
+      "community_name": "_strftime",
       "norm_label": "utf8arraytostring()"
     },
     {
@@ -1018,8 +1018,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_public_ffmpeg_ffmpeg_core_utf8tostring",
-      "community": 129,
-      "community_name": "UTF8ToString",
+      "community": 107,
+      "community_name": "_strftime",
       "norm_label": "utf8tostring()"
     },
     {
@@ -1029,8 +1029,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_public_ffmpeg_ffmpeg_core_assert_fail",
-      "community": 129,
-      "community_name": "UTF8ToString",
+      "community": 107,
+      "community_name": "_strftime",
       "norm_label": "___assert_fail()"
     },
     {
@@ -1370,8 +1370,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_public_ffmpeg_ffmpeg_core_base",
-      "community": 59,
-      "community_name": "yadiskAlbumLazy.js",
+      "community": 84,
+      "community_name": "ArchiveModal.jsx",
       "norm_label": "base()"
     },
     {
@@ -1414,8 +1414,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_public_ffmpeg_ffmpeg_core_lazyuint8array_get",
-      "community": 101,
-      "community_name": "intArrayFromString",
+      "community": 92,
+      "community_name": "@fontsource-variable/nunito",
       "norm_label": ".get()"
     },
     {
@@ -1447,8 +1447,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_public_ffmpeg_ffmpeg_core_writechunks",
-      "community": 101,
-      "community_name": "intArrayFromString",
+      "community": 92,
+      "community_name": "@fontsource-variable/nunito",
       "norm_label": "writechunks()"
     },
     {
@@ -1502,8 +1502,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_public_ffmpeg_ffmpeg_core_inetpton4",
-      "community": 129,
-      "community_name": "UTF8ToString",
+      "community": 78,
+      "community_name": "tournamentPosts.js",
       "norm_label": "inetpton4()"
     },
     {
@@ -1513,8 +1513,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_public_ffmpeg_ffmpeg_core_jstoi_q",
-      "community": 129,
-      "community_name": "UTF8ToString",
+      "community": 78,
+      "community_name": "tournamentPosts.js",
       "norm_label": "jstoi_q()"
     },
     {
@@ -1524,8 +1524,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_public_ffmpeg_ffmpeg_core_inetpton6",
-      "community": 129,
-      "community_name": "UTF8ToString",
+      "community": 78,
+      "community_name": "tournamentPosts.js",
       "norm_label": "inetpton6()"
     },
     {
@@ -2272,8 +2272,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_public_ffmpeg_ffmpeg_core_getaddrinfo",
-      "community": 129,
-      "community_name": "UTF8ToString",
+      "community": 78,
+      "community_name": "tournamentPosts.js",
       "norm_label": "_getaddrinfo()"
     },
     {
@@ -2602,8 +2602,8 @@
       "source_location": "L142",
       "_origin": "ast",
       "id": "client_src_app_appmain",
-      "community": 91,
-      "community_name": "gestures.js",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "appmain()"
     },
     {
@@ -2800,8 +2800,8 @@
       "source_location": "L136",
       "_origin": "ast",
       "id": "client_src_components_achievementsblock_achievementsblock",
-      "community": 13,
-      "community_name": "gestures.js",
+      "community": 58,
+      "community_name": "achievements.js",
       "norm_label": "achievementsblock()"
     },
     {
@@ -2811,8 +2811,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_appheader",
-      "community": 96,
-      "community_name": "react-dom",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "appheader.jsx"
     },
     {
@@ -3020,8 +3020,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 67,
+      "community_name": "media.js",
       "norm_label": "galleryuploadprovider.jsx"
     },
     {
@@ -3031,8 +3031,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_galleryuploadcontext",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 67,
+      "community_name": "media.js",
       "norm_label": "galleryuploadcontext"
     },
     {
@@ -3042,8 +3042,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_isgallerykey",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 67,
+      "community_name": "media.js",
       "norm_label": "isgallerykey()"
     },
     {
@@ -3053,8 +3053,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_creategallerypayload",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 67,
+      "community_name": "media.js",
       "norm_label": "creategallerypayload()"
     },
     {
@@ -3064,8 +3064,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_getvideoaspectratio",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 67,
+      "community_name": "media.js",
       "norm_label": "getvideoaspectratio()"
     },
     {
@@ -3075,8 +3075,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_preparegalleryuploaditem",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 67,
+      "community_name": "media.js",
       "norm_label": "preparegalleryuploaditem()"
     },
     {
@@ -3086,8 +3086,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "client_src_components_galleryuploadprovider_galleryuploadprovider",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 67,
+      "community_name": "media.js",
       "norm_label": "galleryuploadprovider()"
     },
     {
@@ -3251,8 +3251,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_components_tournamentpostuploadprovider_tournamentpostuploadprovider",
-      "community": 79,
-      "community_name": "isModerator",
+      "community": 77,
+      "community_name": "NotificationSettingsModal.jsx",
       "norm_label": "tournamentpostuploadprovider()"
     },
     {
@@ -3273,8 +3273,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_alertdialog",
-      "community": 3,
-      "community_name": "notifications.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "alertdialog.jsx"
     },
     {
@@ -3284,8 +3284,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "client_src_components_ui_alertdialog_alertdialogcontext",
-      "community": 3,
-      "community_name": "notifications.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "alertdialogcontext"
     },
     {
@@ -3295,8 +3295,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_components_ui_alertdialog_initial_state",
-      "community": 3,
-      "community_name": "notifications.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "initial_state"
     },
     {
@@ -3339,8 +3339,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_components_ui_avatar_avatar",
-      "community": 6,
-      "community_name": "auditEventFormat.js",
+      "community": 13,
+      "community_name": "gestures.js",
       "norm_label": "avatar()"
     },
     {
@@ -3350,8 +3350,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_closeappconfirmsheet",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "closeappconfirmsheet.jsx"
     },
     {
@@ -3361,8 +3361,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_components_ui_closeappconfirmsheet_closeappconfirmsheet",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 91,
+      "community_name": "gestures.js",
       "norm_label": "closeappconfirmsheet()"
     },
     {
@@ -3372,8 +3372,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_emptystate",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "emptystate.jsx"
     },
     {
@@ -3383,8 +3383,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_components_ui_emptystate_emptystate",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "emptystate()"
     },
     {
@@ -3394,8 +3394,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_iconbutton",
-      "community": 96,
-      "community_name": "react-dom",
+      "community": 86,
+      "community_name": "@ffmpeg/ffmpeg",
       "norm_label": "iconbutton.jsx"
     },
     {
@@ -3405,8 +3405,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_components_ui_iconbutton_iconbutton",
-      "community": 96,
-      "community_name": "react-dom",
+      "community": 86,
+      "community_name": "@ffmpeg/ffmpeg",
       "norm_label": "iconbutton"
     },
     {
@@ -3416,8 +3416,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_infotooltip",
-      "community": 93,
-      "community_name": "commentListLayout.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "infotooltip.jsx"
     },
     {
@@ -3427,8 +3427,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_components_ui_infotooltip_infotooltip",
-      "community": 93,
-      "community_name": "commentListLayout.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "infotooltip()"
     },
     {
@@ -3438,8 +3438,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_membershipicon",
-      "community": 96,
-      "community_name": "react-dom",
+      "community": 13,
+      "community_name": "gestures.js",
       "norm_label": "membershipicon.jsx"
     },
     {
@@ -3449,8 +3449,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_components_ui_membershipicon_membershipicon",
-      "community": 96,
-      "community_name": "react-dom",
+      "community": 13,
+      "community_name": "gestures.js",
       "norm_label": "membershipicon()"
     },
     {
@@ -3460,8 +3460,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_modal",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "modal.jsx"
     },
     {
@@ -3471,8 +3471,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_components_ui_modal_focusable_selectors",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "focusable_selectors"
     },
     {
@@ -3482,8 +3482,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "client_src_components_ui_modal_modal",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "modal()"
     },
     {
@@ -3493,8 +3493,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_modalfloatingclosebutton",
-      "community": 99,
-      "community_name": "EditTrainingModal.jsx",
+      "community": 106,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "modalfloatingclosebutton.jsx"
     },
     {
@@ -3504,8 +3504,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_components_ui_modalfloatingclosebutton_modalfloatingclosebutton",
-      "community": 99,
-      "community_name": "EditTrainingModal.jsx",
+      "community": 106,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "modalfloatingclosebutton()"
     },
     {
@@ -3515,8 +3515,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_pulltorefresh",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "pulltorefresh.jsx"
     },
     {
@@ -3526,8 +3526,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "client_src_components_ui_pulltorefresh_pulltorefresh",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "pulltorefresh()"
     },
     {
@@ -3559,8 +3559,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_skeleton",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 67,
+      "community_name": "media.js",
       "norm_label": "skeleton.jsx"
     },
     {
@@ -3570,8 +3570,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_components_ui_skeleton_skeletonbone",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 67,
+      "community_name": "media.js",
       "norm_label": "skeletonbone()"
     },
     {
@@ -3581,8 +3581,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_components_ui_skeleton_feedlistskeleton",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 67,
+      "community_name": "media.js",
       "norm_label": "feedlistskeleton()"
     },
     {
@@ -3592,8 +3592,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "client_src_components_ui_skeleton_traininglistskeleton",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 67,
+      "community_name": "media.js",
       "norm_label": "traininglistskeleton()"
     },
     {
@@ -3603,8 +3603,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "client_src_components_ui_skeleton_shopgridskeleton",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 67,
+      "community_name": "media.js",
       "norm_label": "shopgridskeleton()"
     },
     {
@@ -3614,8 +3614,8 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "client_src_components_ui_skeleton_ratinglistskeleton",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 67,
+      "community_name": "media.js",
       "norm_label": "ratinglistskeleton()"
     },
     {
@@ -3625,8 +3625,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_spinner",
-      "community": 104,
-      "community_name": "Modal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "spinner.jsx"
     },
     {
@@ -3636,8 +3636,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_components_ui_spinner_spinner",
-      "community": 104,
-      "community_name": "Modal.jsx",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "spinner()"
     },
     {
@@ -3647,8 +3647,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_toast",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 65,
+      "community_name": "ProfilePage.jsx",
       "norm_label": "toast.jsx"
     },
     {
@@ -3658,8 +3658,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "client_src_components_ui_toast_toast",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 65,
+      "community_name": "ProfilePage.jsx",
       "norm_label": "toast()"
     },
     {
@@ -3669,8 +3669,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_ui_toastcontext",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 65,
+      "community_name": "ProfilePage.jsx",
       "norm_label": "toastcontext.jsx"
     },
     {
@@ -3680,8 +3680,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_components_ui_toastcontext_toastcontext",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 65,
+      "community_name": "ProfilePage.jsx",
       "norm_label": "toastcontext"
     },
     {
@@ -3691,8 +3691,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_components_ui_toastcontext_toastprovider",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 65,
+      "community_name": "ProfilePage.jsx",
       "norm_label": "toastprovider()"
     },
     {
@@ -3702,8 +3702,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "client_src_components_ui_toastcontext_usetoast",
-      "community": 3,
-      "community_name": "notifications.js",
+      "community": 65,
+      "community_name": "ProfilePage.jsx",
       "norm_label": "usetoast()"
     },
     {
@@ -3801,8 +3801,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_context_addactioncontext",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 131,
+      "community_name": "BottomNav.jsx",
       "norm_label": "addactioncontext.jsx"
     },
     {
@@ -3812,8 +3812,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_context_addactioncontext_default_api",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 131,
+      "community_name": "BottomNav.jsx",
       "norm_label": "default_api"
     },
     {
@@ -3823,8 +3823,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_context_addactioncontext_addactioncontext",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 131,
+      "community_name": "BottomNav.jsx",
       "norm_label": "addactioncontext"
     },
     {
@@ -3834,8 +3834,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "client_src_context_addactioncontext_addactionprovider",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 131,
+      "community_name": "BottomNav.jsx",
       "norm_label": "addactionprovider()"
     },
     {
@@ -3856,8 +3856,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "client_src_context_addactioncontext_useregisteraddaction",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 88,
+      "community_name": "format.js",
       "norm_label": "useregisteraddaction()"
     },
     {
@@ -3867,8 +3867,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext",
-      "community": 123,
-      "community_name": "AddActionContext.jsx",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "favoritescontext.jsx"
     },
     {
@@ -3878,8 +3878,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_favoritescontext",
-      "community": 123,
-      "community_name": "AddActionContext.jsx",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "favoritescontext"
     },
     {
@@ -3889,8 +3889,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_patchproductsfavoritescount",
-      "community": 123,
-      "community_name": "AddActionContext.jsx",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "patchproductsfavoritescount()"
     },
     {
@@ -3900,8 +3900,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_loadfavoriteproducts",
-      "community": 123,
-      "community_name": "AddActionContext.jsx",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "loadfavoriteproducts()"
     },
     {
@@ -3911,8 +3911,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "client_src_context_favoritescontext_favoritesprovider",
-      "community": 123,
-      "community_name": "AddActionContext.jsx",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "favoritesprovider()"
     },
     {
@@ -3955,8 +3955,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "client_src_context_mentionnavcontext_mentionnavprovider",
-      "community": 91,
-      "community_name": "gestures.js",
+      "community": 81,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "mentionnavprovider()"
     },
     {
@@ -4065,8 +4065,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_broadcastmodal",
-      "community": 87,
-      "community_name": "buyMessage.js",
+      "community": 93,
+      "community_name": "commentListLayout.js",
       "norm_label": "broadcastmodal.jsx"
     },
     {
@@ -4076,8 +4076,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "client_src_features_admin_broadcastmodal_defaultdatetimelocal",
-      "community": 87,
-      "community_name": "buyMessage.js",
+      "community": 93,
+      "community_name": "commentListLayout.js",
       "norm_label": "defaultdatetimelocal()"
     },
     {
@@ -4087,8 +4087,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "client_src_features_admin_broadcastmodal_getaudiencelabel",
-      "community": 87,
-      "community_name": "buyMessage.js",
+      "community": 93,
+      "community_name": "commentListLayout.js",
       "norm_label": "getaudiencelabel()"
     },
     {
@@ -4098,8 +4098,8 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "client_src_features_admin_broadcastmodal_broadcastmodal",
-      "community": 87,
-      "community_name": "buyMessage.js",
+      "community": 93,
+      "community_name": "commentListLayout.js",
       "norm_label": "broadcastmodal()"
     },
     {
@@ -4395,8 +4395,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect",
-      "community": 93,
-      "community_name": "commentListLayout.js",
+      "community": 13,
+      "community_name": "gestures.js",
       "norm_label": "usermultiselect.jsx"
     },
     {
@@ -4406,8 +4406,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect_getcollapsedlabel",
-      "community": 93,
-      "community_name": "commentListLayout.js",
+      "community": 13,
+      "community_name": "gestures.js",
       "norm_label": "getcollapsedlabel()"
     },
     {
@@ -4417,8 +4417,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect_isuserchecked",
-      "community": 93,
-      "community_name": "commentListLayout.js",
+      "community": 13,
+      "community_name": "gestures.js",
       "norm_label": "isuserchecked()"
     },
     {
@@ -4428,8 +4428,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "client_src_features_admin_usermultiselect_usermultiselect",
-      "community": 93,
-      "community_name": "commentListLayout.js",
+      "community": 13,
+      "community_name": "gestures.js",
       "norm_label": "usermultiselect()"
     },
     {
@@ -5066,8 +5066,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_albumstackbadge",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "albumstackbadge.jsx"
     },
     {
@@ -5077,8 +5077,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_features_feed_albumstackbadge_albumstackbadge",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "albumstackbadge()"
     },
     {
@@ -5088,8 +5088,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_commentcomposeform",
-      "community": 88,
-      "community_name": "format.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "commentcomposeform.jsx"
     },
     {
@@ -5099,8 +5099,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "client_src_features_feed_commentcomposeform_attachbuttons",
-      "community": 88,
-      "community_name": "format.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "attachbuttons()"
     },
     {
@@ -5110,8 +5110,8 @@
       "source_location": "L103",
       "_origin": "ast",
       "id": "client_src_features_feed_commentcomposeform_commentcomposeform",
-      "community": 88,
-      "community_name": "format.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "commentcomposeform()"
     },
     {
@@ -5121,8 +5121,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_commentcontextmenu",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "commentcontextmenu.jsx"
     },
     {
@@ -5132,8 +5132,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "client_src_features_feed_commentcontextmenu_editicon",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "editicon()"
     },
     {
@@ -5143,8 +5143,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "client_src_features_feed_commentcontextmenu_deleteicon",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "deleteicon()"
     },
     {
@@ -5154,8 +5154,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "client_src_features_feed_commentcontextmenu_commentcontextmenu",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "commentcontextmenu()"
     },
     {
@@ -5165,8 +5165,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_commenteditinlineform",
-      "community": 88,
-      "community_name": "format.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "commenteditinlineform.jsx"
     },
     {
@@ -5176,8 +5176,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "client_src_features_feed_commenteditinlineform_arestringarraysequal",
-      "community": 88,
-      "community_name": "format.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "arestringarraysequal()"
     },
     {
@@ -5198,8 +5198,8 @@
       "source_location": "L71",
       "_origin": "ast",
       "id": "client_src_features_feed_commenteditinlineform_commenteditinlineform",
-      "community": 88,
-      "community_name": "format.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "commenteditinlineform()"
     },
     {
@@ -5297,8 +5297,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_commentreplycomposebar",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "commentreplycomposebar.jsx"
     },
     {
@@ -5308,8 +5308,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_features_feed_commentreplycomposebar_commentreplycomposebar",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "commentreplycomposebar()"
     },
     {
@@ -5319,8 +5319,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_commentreplyquote",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "commentreplyquote.jsx"
     },
     {
@@ -5330,8 +5330,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_features_feed_commentreplyquote_commentreplyquote",
-      "community": 65,
-      "community_name": "ProfilePage.jsx",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "commentreplyquote()"
     },
     {
@@ -5385,8 +5385,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_commentspreview",
-      "community": 128,
-      "community_name": "PostContentHtml.jsx",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "commentspreview.jsx"
     },
     {
@@ -5396,8 +5396,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "client_src_features_feed_commentspreview_commenthasattachments",
-      "community": 128,
-      "community_name": "PostContentHtml.jsx",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "commenthasattachments()"
     },
     {
@@ -5407,8 +5407,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "client_src_features_feed_commentspreview_commentspreview",
-      "community": 128,
-      "community_name": "PostContentHtml.jsx",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "commentspreview()"
     },
     {
@@ -5429,8 +5429,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "client_src_features_feed_createpostmodal_createpostmodal",
-      "community": 88,
-      "community_name": "format.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "createpostmodal()"
     },
     {
@@ -5528,8 +5528,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_feedvideopreview",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "feedvideopreview.jsx"
     },
     {
@@ -5539,8 +5539,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_features_feed_feedvideopreview_feedvideopreview",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "feedvideopreview()"
     },
     {
@@ -5605,8 +5605,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer_useyadiskloadprogress",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "useyadiskloadprogress()"
     },
     {
@@ -5660,8 +5660,8 @@
       "source_location": "L106",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer_isimagepaintready",
-      "community": 111,
-      "community_name": "SortableMediaPreviewGrid.jsx",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "isimagepaintready()"
     },
     {
@@ -5671,8 +5671,8 @@
       "source_location": "L113",
       "_origin": "ast",
       "id": "client_src_features_feed_fullscreenimageviewer_fullscreenslideimage",
-      "community": 111,
-      "community_name": "SortableMediaPreviewGrid.jsx",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "fullscreenslideimage()"
     },
     {
@@ -5726,8 +5726,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_mediapreviewgrid",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "mediapreviewgrid.jsx"
     },
     {
@@ -5737,8 +5737,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "client_src_features_feed_mediapreviewgrid_mediapreviewalbumitem",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "mediapreviewalbumitem()"
     },
     {
@@ -5748,8 +5748,8 @@
       "source_location": "L181",
       "_origin": "ast",
       "id": "client_src_features_feed_mediapreviewgrid_mediapreviewgrid",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "mediapreviewgrid()"
     },
     {
@@ -5781,8 +5781,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_mediaswipedots",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "mediaswipedots.jsx"
     },
     {
@@ -5792,8 +5792,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_features_feed_mediaswipedots_mediaswipedots",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "mediaswipedots()"
     },
     {
@@ -5803,8 +5803,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_mentionsuggestpopup",
-      "community": 6,
-      "community_name": "auditEventFormat.js",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "mentionsuggestpopup.jsx"
     },
     {
@@ -5814,8 +5814,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_features_feed_mentionsuggestpopup_prefersreducedmotion",
-      "community": 6,
-      "community_name": "auditEventFormat.js",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "prefersreducedmotion()"
     },
     {
@@ -5825,8 +5825,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "client_src_features_feed_mentionsuggestpopup_mentionsuggestpopup",
-      "community": 6,
-      "community_name": "auditEventFormat.js",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "mentionsuggestpopup()"
     },
     {
@@ -5836,8 +5836,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_pinnedbanner",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "pinnedbanner.jsx"
     },
     {
@@ -5847,8 +5847,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "client_src_features_feed_pinnedbanner_usepinnedthumburl",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "usepinnedthumburl()"
     },
     {
@@ -5858,8 +5858,8 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "client_src_features_feed_pinnedbanner_pinnedbanner",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "pinnedbanner()"
     },
     {
@@ -5902,8 +5902,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_postcard",
-      "community": 126,
-      "community_name": "PostCard.jsx",
+      "community": 106,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "postcard.jsx"
     },
     {
@@ -5913,8 +5913,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_features_feed_postcard_readcomments",
-      "community": 126,
-      "community_name": "PostCard.jsx",
+      "community": 106,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "readcomments()"
     },
     {
@@ -5924,8 +5924,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "client_src_features_feed_postcard_postcardlike",
-      "community": 126,
-      "community_name": "PostCard.jsx",
+      "community": 106,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "postcardlike()"
     },
     {
@@ -5935,8 +5935,8 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "client_src_features_feed_postcard_postcard",
-      "community": 126,
-      "community_name": "PostCard.jsx",
+      "community": 106,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "postcard()"
     },
     {
@@ -5946,8 +5946,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_postcontenthtml",
-      "community": 128,
-      "community_name": "PostContentHtml.jsx",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "postcontenthtml.jsx"
     },
     {
@@ -5957,8 +5957,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_features_feed_postcontenthtml_postcontenthtml",
-      "community": 128,
-      "community_name": "PostContentHtml.jsx",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "postcontenthtml()"
     },
     {
@@ -5968,8 +5968,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_postcontextmenu",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "postcontextmenu.jsx"
     },
     {
@@ -5979,8 +5979,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "client_src_features_feed_postcontextmenu_pinicon",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "pinicon()"
     },
     {
@@ -5990,8 +5990,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "client_src_features_feed_postcontextmenu_editicon",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "editicon()"
     },
     {
@@ -6001,8 +6001,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "client_src_features_feed_postcontextmenu_deleteicon",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "deleteicon()"
     },
     {
@@ -6012,8 +6012,8 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "client_src_features_feed_postcontextmenu_postcontextmenu",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "postcontextmenu()"
     },
     {
@@ -6023,8 +6023,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_postdetailmodal",
-      "community": 99,
-      "community_name": "EditTrainingModal.jsx",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "postdetailmodal.jsx"
     },
     {
@@ -6034,8 +6034,8 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "client_src_features_feed_postdetailmodal_postdetailmodal",
-      "community": 99,
-      "community_name": "EditTrainingModal.jsx",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "postdetailmodal()"
     },
     {
@@ -6045,8 +6045,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_postdetailvideopreview",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "postdetailvideopreview.jsx"
     },
     {
@@ -6056,8 +6056,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_features_feed_postdetailvideopreview_postdetailvideopreview",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "postdetailvideopreview()"
     },
     {
@@ -6111,8 +6111,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_postmedia",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "postmedia.jsx"
     },
     {
@@ -6122,8 +6122,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "client_src_features_feed_postmedia_postmedia",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "postmedia()"
     },
     {
@@ -6188,8 +6188,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_progressiveimage",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "progressiveimage.jsx"
     },
     {
@@ -6199,8 +6199,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "client_src_features_feed_progressiveimage_progressiveimage",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "progressiveimage()"
     },
     {
@@ -6210,8 +6210,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_publishlongpressmenu",
-      "community": 3,
-      "community_name": "notifications.js",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "publishlongpressmenu.jsx"
     },
     {
@@ -6221,8 +6221,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "client_src_features_feed_publishlongpressmenu_calendaricon",
-      "community": 3,
-      "community_name": "notifications.js",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "calendaricon()"
     },
     {
@@ -6232,8 +6232,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "client_src_features_feed_publishlongpressmenu_movetexticon",
-      "community": 3,
-      "community_name": "notifications.js",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "movetexticon()"
     },
     {
@@ -6254,8 +6254,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_scheduledatetimesheet",
-      "community": 86,
-      "community_name": "@ffmpeg/ffmpeg",
+      "community": 84,
+      "community_name": "ArchiveModal.jsx",
       "norm_label": "scheduledatetimesheet.jsx"
     },
     {
@@ -6265,8 +6265,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_features_feed_scheduledatetimesheet_pad",
-      "community": 86,
-      "community_name": "@ffmpeg/ffmpeg",
+      "community": 84,
+      "community_name": "ArchiveModal.jsx",
       "norm_label": "pad"
     },
     {
@@ -6276,8 +6276,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "client_src_features_feed_scheduledatetimesheet_wheelcolumn",
-      "community": 86,
-      "community_name": "@ffmpeg/ffmpeg",
+      "community": 84,
+      "community_name": "ArchiveModal.jsx",
       "norm_label": "wheelcolumn()"
     },
     {
@@ -6287,8 +6287,8 @@
       "source_location": "L118",
       "_origin": "ast",
       "id": "client_src_features_feed_scheduledatetimesheet_scheduledatetimesheet",
-      "community": 86,
-      "community_name": "@ffmpeg/ffmpeg",
+      "community": 84,
+      "community_name": "ArchiveModal.jsx",
       "norm_label": "scheduledatetimesheet()"
     },
     {
@@ -6298,8 +6298,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_scheduledpostsmodal",
-      "community": 68,
-      "community_name": "GalleryCommentModal.jsx",
+      "community": 84,
+      "community_name": "ArchiveModal.jsx",
       "norm_label": "scheduledpostsmodal.jsx"
     },
     {
@@ -6309,8 +6309,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "client_src_features_feed_scheduledpostsmodal_planeicon",
-      "community": 68,
-      "community_name": "GalleryCommentModal.jsx",
+      "community": 84,
+      "community_name": "ArchiveModal.jsx",
       "norm_label": "planeicon()"
     },
     {
@@ -6320,8 +6320,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "client_src_features_feed_scheduledpostsmodal_pencilicon",
-      "community": 68,
-      "community_name": "GalleryCommentModal.jsx",
+      "community": 84,
+      "community_name": "ArchiveModal.jsx",
       "norm_label": "pencilicon()"
     },
     {
@@ -6331,8 +6331,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "client_src_features_feed_scheduledpostsmodal_copyicon",
-      "community": 68,
-      "community_name": "GalleryCommentModal.jsx",
+      "community": 84,
+      "community_name": "ArchiveModal.jsx",
       "norm_label": "copyicon()"
     },
     {
@@ -6342,8 +6342,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "client_src_features_feed_scheduledpostsmodal_calendaricon",
-      "community": 68,
-      "community_name": "GalleryCommentModal.jsx",
+      "community": 84,
+      "community_name": "ArchiveModal.jsx",
       "norm_label": "calendaricon()"
     },
     {
@@ -6353,8 +6353,8 @@
       "source_location": "L72",
       "_origin": "ast",
       "id": "client_src_features_feed_scheduledpostsmodal_trashicon",
-      "community": 68,
-      "community_name": "GalleryCommentModal.jsx",
+      "community": 84,
+      "community_name": "ArchiveModal.jsx",
       "norm_label": "trashicon()"
     },
     {
@@ -6364,8 +6364,8 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "client_src_features_feed_scheduledpostsmodal_scheduledpostrow",
-      "community": 68,
-      "community_name": "GalleryCommentModal.jsx",
+      "community": 84,
+      "community_name": "ArchiveModal.jsx",
       "norm_label": "scheduledpostrow()"
     },
     {
@@ -6375,8 +6375,8 @@
       "source_location": "L142",
       "_origin": "ast",
       "id": "client_src_features_feed_scheduledpostsmodal_scheduledpostactionsmenu",
-      "community": 68,
-      "community_name": "GalleryCommentModal.jsx",
+      "community": 84,
+      "community_name": "ArchiveModal.jsx",
       "norm_label": "scheduledpostactionsmenu()"
     },
     {
@@ -6485,8 +6485,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_commentlistlayout",
-      "community": 113,
-      "community_name": "commentListLayout.js",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "commentlistlayout.js"
     },
     {
@@ -6496,8 +6496,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_features_feed_commentlistlayout_mapitemswithdayseparators",
-      "community": 113,
-      "community_name": "commentListLayout.js",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "mapitemswithdayseparators()"
     },
     {
@@ -6507,8 +6507,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "client_src_features_feed_commentlistlayout_groupitemsbyday",
-      "community": 113,
-      "community_name": "commentListLayout.js",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "groupitemsbyday()"
     },
     {
@@ -6518,8 +6518,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "client_src_features_feed_commentlistlayout_groupcommentsbyday",
-      "community": 113,
-      "community_name": "commentListLayout.js",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "groupcommentsbyday()"
     },
     {
@@ -6529,8 +6529,8 @@
       "source_location": "L67",
       "_origin": "ast",
       "id": "client_src_features_feed_commentlistlayout_isknownemptyexpandedcomments",
-      "community": 99,
-      "community_name": "EditTrainingModal.jsx",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "isknownemptyexpandedcomments()"
     },
     {
@@ -6551,8 +6551,8 @@
       "source_location": "L89",
       "_origin": "ast",
       "id": "client_src_features_feed_commentlistlayout_mapcommentswithdayseparators",
-      "community": 113,
-      "community_name": "commentListLayout.js",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "mapcommentswithdayseparators()"
     },
     {
@@ -6562,8 +6562,8 @@
       "source_location": "L103",
       "_origin": "ast",
       "id": "client_src_features_feed_commentlistlayout_mappostswithdayseparators",
-      "community": 113,
-      "community_name": "commentListLayout.js",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "mappostswithdayseparators()"
     },
     {
@@ -6573,8 +6573,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_copyplaintext",
-      "community": 128,
-      "community_name": "PostContentHtml.jsx",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "copyplaintext.js"
     },
     {
@@ -6584,8 +6584,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_features_feed_copyplaintext_plaintextfromrange",
-      "community": 128,
-      "community_name": "PostContentHtml.jsx",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "plaintextfromrange()"
     },
     {
@@ -6595,8 +6595,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "client_src_features_feed_copyplaintext_handlecontentcopy",
-      "community": 128,
-      "community_name": "PostContentHtml.jsx",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "handlecontentcopy()"
     },
     {
@@ -6606,8 +6606,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_emoji_emojipicker",
-      "community": 6,
-      "community_name": "auditEventFormat.js",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "emojipicker.jsx"
     },
     {
@@ -6617,8 +6617,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_features_feed_emoji_emojipicker_prefersreducedmotion",
-      "community": 6,
-      "community_name": "auditEventFormat.js",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "prefersreducedmotion()"
     },
     {
@@ -6628,8 +6628,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "client_src_features_feed_emoji_emojipicker_emptyclockicon",
-      "community": 6,
-      "community_name": "auditEventFormat.js",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "emptyclockicon()"
     },
     {
@@ -6639,8 +6639,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "client_src_features_feed_emoji_emojipicker_backspaceicon",
-      "community": 6,
-      "community_name": "auditEventFormat.js",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "backspaceicon()"
     },
     {
@@ -6650,8 +6650,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "client_src_features_feed_emoji_emojipicker_category_icons",
-      "community": 6,
-      "community_name": "auditEventFormat.js",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "category_icons"
     },
     {
@@ -6661,8 +6661,8 @@
       "source_location": "L186",
       "_origin": "ast",
       "id": "client_src_features_feed_emoji_emojipicker_emojipicker",
-      "community": 6,
-      "community_name": "auditEventFormat.js",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "emojipicker()"
     },
     {
@@ -6672,8 +6672,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_emoji_emojidata",
-      "community": 6,
-      "community_name": "auditEventFormat.js",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "emojidata.js"
     },
     {
@@ -6683,8 +6683,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_features_feed_emoji_emojidata_default_frequent_emojis",
-      "community": 6,
-      "community_name": "auditEventFormat.js",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "default_frequent_emojis"
     },
     {
@@ -6694,8 +6694,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "client_src_features_feed_emoji_emojidata_emoji_categories",
-      "community": 6,
-      "community_name": "auditEventFormat.js",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "emoji_categories"
     },
     {
@@ -6705,8 +6705,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_emoji_emojirecent",
-      "community": 6,
-      "community_name": "auditEventFormat.js",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "emojirecent.js"
     },
     {
@@ -6716,8 +6716,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_features_feed_emoji_emojirecent_readrecentemojis",
-      "community": 6,
-      "community_name": "auditEventFormat.js",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "readrecentemojis()"
     },
     {
@@ -6727,8 +6727,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "client_src_features_feed_emoji_emojirecent_pushrecentemoji",
-      "community": 6,
-      "community_name": "auditEventFormat.js",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "pushrecentemoji()"
     },
     {
@@ -6738,8 +6738,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_keepcommenteditinview",
-      "community": 99,
-      "community_name": "EditTrainingModal.jsx",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "keepcommenteditinview.js"
     },
     {
@@ -6749,8 +6749,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_features_feed_keepcommenteditinview_findscrollparent",
-      "community": 99,
-      "community_name": "EditTrainingModal.jsx",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "findscrollparent()"
     },
     {
@@ -6760,8 +6760,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "client_src_features_feed_keepcommenteditinview_keepcommenteditinview",
-      "community": 99,
-      "community_name": "EditTrainingModal.jsx",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "keepcommenteditinview()"
     },
     {
@@ -6771,8 +6771,8 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "client_src_features_feed_keepcommenteditinview_restoreandkeepcommenteditinview",
-      "community": 99,
-      "community_name": "EditTrainingModal.jsx",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "restoreandkeepcommenteditinview()"
     },
     {
@@ -7343,8 +7343,8 @@
       "source_location": "L372",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_todisplayhtml",
-      "community": 128,
-      "community_name": "PostContentHtml.jsx",
+      "community": 6,
+      "community_name": "auditEventFormat.js",
       "norm_label": "todisplayhtml()"
     },
     {
@@ -7387,8 +7387,8 @@
       "source_location": "L485",
       "_origin": "ast",
       "id": "client_src_features_feed_postrichtext_getfirstline",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 6,
+      "community_name": "auditEventFormat.js",
       "norm_label": "getfirstline()"
     },
     {
@@ -7497,8 +7497,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_preparemediadraft",
-      "community": 88,
-      "community_name": "format.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "preparemediadraft.js"
     },
     {
@@ -7508,8 +7508,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_features_feed_preparemediadraft_preparecommentmediafile",
-      "community": 88,
-      "community_name": "format.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "preparecommentmediafile()"
     },
     {
@@ -7574,8 +7574,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_useinfeedviewport",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "useinfeedviewport.js"
     },
     {
@@ -7585,8 +7585,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_features_feed_useinfeedviewport_useinfeedviewport",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "useinfeedviewport()"
     },
     {
@@ -7596,8 +7596,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_uselocalmediafullscreen",
-      "community": 88,
-      "community_name": "format.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "uselocalmediafullscreen.js"
     },
     {
@@ -7607,8 +7607,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "client_src_features_feed_uselocalmediafullscreen_uselocalmediafullscreen",
-      "community": 88,
-      "community_name": "format.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "uselocalmediafullscreen()"
     },
     {
@@ -7717,8 +7717,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_useswipegallery",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "useswipegallery.js"
     },
     {
@@ -7728,8 +7728,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_features_feed_useswipegallery_useswipegallery",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "useswipegallery()"
     },
     {
@@ -7761,8 +7761,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskalbumcache",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "yadiskalbumcache.js"
     },
     {
@@ -7772,8 +7772,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskalbumcache_cache",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "cache"
     },
     {
@@ -7783,8 +7783,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskalbumcache_listeners",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "listeners"
     },
     {
@@ -7805,8 +7805,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskalbumcache_getyadiskalbumcache",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "getyadiskalbumcache()"
     },
     {
@@ -7827,7 +7827,7 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskalbumcache_tofullscreenalbumitems",
-      "community": 81,
+      "community": 110,
       "community_name": "PostUploadProvider.jsx",
       "norm_label": "tofullscreenalbumitems()"
     },
@@ -7915,8 +7915,8 @@
       "source_location": "L267",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskalbumlazy_requestalbumlazyfocus",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "requestalbumlazyfocus()"
     },
     {
@@ -8069,8 +8069,8 @@
       "source_location": "L129",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskmediasessioncache_isyadiskoriginalpending",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "isyadiskoriginalpending()"
     },
     {
@@ -8091,8 +8091,8 @@
       "source_location": "L154",
       "_origin": "ast",
       "id": "client_src_features_feed_yadiskmediasessioncache_subscribememberloadprogress",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "subscribememberloadprogress()"
     },
     {
@@ -8124,8 +8124,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_gallery_addimagemodal",
-      "community": 87,
-      "community_name": "buyMessage.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "addimagemodal.jsx"
     },
     {
@@ -8135,8 +8135,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_features_gallery_addimagemodal_addimagemodal",
-      "community": 87,
-      "community_name": "buyMessage.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "addimagemodal()"
     },
     {
@@ -8410,8 +8410,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 87,
+      "community_name": "buyMessage.js",
       "norm_label": "onboardingtutorial.jsx"
     },
     {
@@ -8421,8 +8421,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_tour_steps",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 87,
+      "community_name": "buyMessage.js",
       "norm_label": "tour_steps"
     },
     {
@@ -8432,8 +8432,8 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_card_steps",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 87,
+      "community_name": "buyMessage.js",
       "norm_label": "card_steps"
     },
     {
@@ -8443,8 +8443,8 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_nav_steps",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 87,
+      "community_name": "buyMessage.js",
       "norm_label": "nav_steps"
     },
     {
@@ -8454,8 +8454,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_normalizedateinput",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 87,
+      "community_name": "buyMessage.js",
       "norm_label": "normalizedateinput()"
     },
     {
@@ -8465,8 +8465,8 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_scrolltargetintoview",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 87,
+      "community_name": "buyMessage.js",
       "norm_label": "scrolltargetintoview()"
     },
     {
@@ -8476,8 +8476,8 @@
       "source_location": "L99",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_padhighlightrect",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 87,
+      "community_name": "buyMessage.js",
       "norm_label": "padhighlightrect()"
     },
     {
@@ -8487,8 +8487,8 @@
       "source_location": "L112",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_gettooltipstyle",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 87,
+      "community_name": "buyMessage.js",
       "norm_label": "gettooltipstyle()"
     },
     {
@@ -8498,8 +8498,8 @@
       "source_location": "L131",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_getstepselectors",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 87,
+      "community_name": "buyMessage.js",
       "norm_label": "getstepselectors()"
     },
     {
@@ -8509,8 +8509,8 @@
       "source_location": "L141",
       "_origin": "ast",
       "id": "client_src_features_onboarding_onboardingtutorial_onboardingtutorial",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 87,
+      "community_name": "buyMessage.js",
       "norm_label": "onboardingtutorial()"
     },
     {
@@ -8553,8 +8553,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_profile_blockedpage",
-      "community": 91,
-      "community_name": "gestures.js",
+      "community": 85,
+      "community_name": "PullToRefresh.jsx",
       "norm_label": "blockedpage.jsx"
     },
     {
@@ -8564,8 +8564,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_features_profile_blockedpage_blockedpage",
-      "community": 91,
-      "community_name": "gestures.js",
+      "community": 85,
+      "community_name": "PullToRefresh.jsx",
       "norm_label": "blockedpage()"
     },
     {
@@ -8905,8 +8905,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_features_profile_profilesingledatefield_profilesingledatefield",
-      "community": 13,
-      "community_name": "gestures.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "profilesingledatefield()"
     },
     {
@@ -8916,8 +8916,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_profile_profiletrainingssearch",
-      "community": 13,
-      "community_name": "gestures.js",
+      "community": 86,
+      "community_name": "@ffmpeg/ffmpeg",
       "norm_label": "profiletrainingssearch.jsx"
     },
     {
@@ -8927,8 +8927,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_features_profile_profiletrainingssearch_formatdaterangelabel",
-      "community": 13,
-      "community_name": "gestures.js",
+      "community": 86,
+      "community_name": "@ffmpeg/ffmpeg",
       "norm_label": "formatdaterangelabel()"
     },
     {
@@ -8938,8 +8938,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_features_profile_profiletrainingssearch_calendaricon",
-      "community": 13,
-      "community_name": "gestures.js",
+      "community": 86,
+      "community_name": "@ffmpeg/ffmpeg",
       "norm_label": "calendaricon()"
     },
     {
@@ -8949,8 +8949,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "client_src_features_profile_profiletrainingssearch_filterprofiletrainings",
-      "community": 13,
-      "community_name": "gestures.js",
+      "community": 86,
+      "community_name": "@ffmpeg/ffmpeg",
       "norm_label": "filterprofiletrainings()"
     },
     {
@@ -8960,8 +8960,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "client_src_features_profile_profiletrainingssearch_profiletrainingssearch",
-      "community": 13,
-      "community_name": "gestures.js",
+      "community": 86,
+      "community_name": "@ffmpeg/ffmpeg",
       "norm_label": "profiletrainingssearch()"
     },
     {
@@ -9070,8 +9070,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_rating_playerform",
-      "community": 13,
-      "community_name": "gestures.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "playerform.jsx"
     },
     {
@@ -9081,8 +9081,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_features_rating_playerform_initial",
-      "community": 13,
-      "community_name": "gestures.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "initial"
     },
     {
@@ -9092,8 +9092,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_features_rating_playerform_playerform",
-      "community": 13,
-      "community_name": "gestures.js",
+      "community": 88,
+      "community_name": "format.js",
       "norm_label": "playerform()"
     },
     {
@@ -9103,8 +9103,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_rating_playerrow",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 88,
+      "community_name": "format.js",
       "norm_label": "playerrow.jsx"
     },
     {
@@ -9114,8 +9114,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_features_rating_playerrow_stopsignicon",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 88,
+      "community_name": "format.js",
       "norm_label": "stopsignicon()"
     },
     {
@@ -9125,8 +9125,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "client_src_features_rating_playerrow_playerrow",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 88,
+      "community_name": "format.js",
       "norm_label": "playerrow()"
     },
     {
@@ -9136,8 +9136,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_rating_ratingpage",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 88,
+      "community_name": "format.js",
       "norm_label": "ratingpage.jsx"
     },
     {
@@ -9147,8 +9147,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "client_src_features_rating_ratingpage_ratingpage",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 88,
+      "community_name": "format.js",
       "norm_label": "ratingpage()"
     },
     {
@@ -9158,8 +9158,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_shop_buybutton",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 109,
+      "community_name": "yadiskMediaSessionCache.js",
       "norm_label": "buybutton.jsx"
     },
     {
@@ -9169,8 +9169,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "client_src_features_shop_buybutton_buybutton",
-      "community": 110,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 109,
+      "community_name": "yadiskMediaSessionCache.js",
       "norm_label": "buybutton()"
     },
     {
@@ -9180,8 +9180,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_shop_categorydropdown",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "categorydropdown.jsx"
     },
     {
@@ -9191,8 +9191,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "client_src_features_shop_categorydropdown_categorydropdown",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "categorydropdown()"
     },
     {
@@ -9301,41 +9301,41 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_shop_productdetail",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "productdetail.jsx"
     },
     {
       "label": "CopyIcon()",
       "file_type": "code",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L20",
+      "source_location": "L21",
       "_origin": "ast",
       "id": "client_src_features_shop_productdetail_copyicon",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "copyicon()"
     },
     {
       "label": "EyeIcon()",
       "file_type": "code",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L29",
+      "source_location": "L30",
       "_origin": "ast",
       "id": "client_src_features_shop_productdetail_eyeicon",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "eyeicon()"
     },
     {
       "label": "ProductDetail()",
       "file_type": "code",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L55",
+      "source_location": "L56",
       "_origin": "ast",
       "id": "client_src_features_shop_productdetail_productdetail",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "productdetail()"
     },
     {
@@ -9686,8 +9686,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage",
-      "community": 132,
-      "community_name": "buyMessage.js",
+      "community": 109,
+      "community_name": "yadiskMediaSessionCache.js",
       "norm_label": "buymessage.js"
     },
     {
@@ -9697,8 +9697,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage_formatproductline",
-      "community": 132,
-      "community_name": "buyMessage.js",
+      "community": 109,
+      "community_name": "yadiskMediaSessionCache.js",
       "norm_label": "formatproductline()"
     },
     {
@@ -9708,8 +9708,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage_buildbuymessage",
-      "community": 132,
-      "community_name": "buyMessage.js",
+      "community": 109,
+      "community_name": "yadiskMediaSessionCache.js",
       "norm_label": "buildbuymessage()"
     },
     {
@@ -9730,8 +9730,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage_opensellerchat",
-      "community": 91,
-      "community_name": "gestures.js",
+      "community": 109,
+      "community_name": "yadiskMediaSessionCache.js",
       "norm_label": "opensellerchat()"
     },
     {
@@ -9741,8 +9741,8 @@
       "source_location": "L92",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage_buildmaxuserchaturl",
-      "community": 132,
-      "community_name": "buyMessage.js",
+      "community": 109,
+      "community_name": "yadiskMediaSessionCache.js",
       "norm_label": "buildmaxuserchaturl()"
     },
     {
@@ -9752,8 +9752,8 @@
       "source_location": "L100",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage_openmaxdeeplink",
-      "community": 132,
-      "community_name": "buyMessage.js",
+      "community": 109,
+      "community_name": "yadiskMediaSessionCache.js",
       "norm_label": "openmaxdeeplink()"
     },
     {
@@ -9763,8 +9763,8 @@
       "source_location": "L114",
       "_origin": "ast",
       "id": "client_src_features_shop_buymessage_openmaxuserchat",
-      "community": 132,
-      "community_name": "buyMessage.js",
+      "community": 109,
+      "community_name": "yadiskMediaSessionCache.js",
       "norm_label": "openmaxuserchat()"
     },
     {
@@ -10016,8 +10016,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_createtrainingmodal",
-      "community": 103,
-      "community_name": "useAlertDialog",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "createtrainingmodal.jsx"
     },
     {
@@ -10027,8 +10027,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_features_trainings_createtrainingmodal_initial_form",
-      "community": 103,
-      "community_name": "useAlertDialog",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "initial_form"
     },
     {
@@ -10038,8 +10038,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "client_src_features_trainings_createtrainingmodal_createtrainingmodal",
-      "community": 103,
-      "community_name": "useAlertDialog",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "createtrainingmodal()"
     },
     {
@@ -10049,8 +10049,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_trainingcard",
-      "community": 96,
-      "community_name": "react-dom",
+      "community": 86,
+      "community_name": "@ffmpeg/ffmpeg",
       "norm_label": "trainingcard.jsx"
     },
     {
@@ -10060,8 +10060,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_features_trainings_trainingcard_trainingcard",
-      "community": 96,
-      "community_name": "react-dom",
+      "community": 86,
+      "community_name": "@ffmpeg/ffmpeg",
       "norm_label": "trainingcard()"
     },
     {
@@ -10071,8 +10071,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_trainingdetailmodal",
-      "community": 96,
-      "community_name": "react-dom",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "trainingdetailmodal.jsx"
     },
     {
@@ -10082,8 +10082,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "client_src_features_trainings_trainingdetailmodal_trainingdetailmodal",
-      "community": 96,
-      "community_name": "react-dom",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "trainingdetailmodal()"
     },
     {
@@ -10115,8 +10115,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_archivemodal",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 86,
+      "community_name": "@ffmpeg/ffmpeg",
       "norm_label": "archivemodal.jsx"
     },
     {
@@ -10126,8 +10126,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_archivemodal_formatdaterangelabel",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 86,
+      "community_name": "@ffmpeg/ffmpeg",
       "norm_label": "formatdaterangelabel()"
     },
     {
@@ -10137,8 +10137,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_archivemodal_calendaricon",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 86,
+      "community_name": "@ffmpeg/ffmpeg",
       "norm_label": "calendaricon()"
     },
     {
@@ -10148,8 +10148,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_archivemodal_archivemodal",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 86,
+      "community_name": "@ffmpeg/ffmpeg",
       "norm_label": "archivemodal()"
     },
     {
@@ -10203,8 +10203,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_daterangemodal_getarchivedefaultdaterange",
-      "community": 14,
-      "community_name": "datePickerUtils.js",
+      "community": 86,
+      "community_name": "@ffmpeg/ffmpeg",
       "norm_label": "getarchivedefaultdaterange()"
     },
     {
@@ -10280,8 +10280,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_edittrainingmodal",
-      "community": 84,
-      "community_name": "ArchiveModal.jsx",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "edittrainingmodal.jsx"
     },
     {
@@ -10291,8 +10291,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_edittrainingmodal_initial_form",
-      "community": 84,
-      "community_name": "ArchiveModal.jsx",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "initial_form"
     },
     {
@@ -10302,8 +10302,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_edittrainingmodal_todatetimelocalvalue",
-      "community": 84,
-      "community_name": "ArchiveModal.jsx",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "todatetimelocalvalue()"
     },
     {
@@ -10313,8 +10313,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_edittrainingmodal_getformfromtraining",
-      "community": 84,
-      "community_name": "ArchiveModal.jsx",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "getformfromtraining()"
     },
     {
@@ -10324,8 +10324,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_edittrainingmodal_getpatchfromform",
-      "community": 84,
-      "community_name": "ArchiveModal.jsx",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "getpatchfromform()"
     },
     {
@@ -10335,8 +10335,8 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_edittrainingmodal_getpatchfromtraining",
-      "community": 84,
-      "community_name": "ArchiveModal.jsx",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "getpatchfromtraining()"
     },
     {
@@ -10346,8 +10346,8 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_edittrainingmodal_buildtrainingpatch",
-      "community": 84,
-      "community_name": "ArchiveModal.jsx",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "buildtrainingpatch()"
     },
     {
@@ -10357,8 +10357,8 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_edittrainingmodal_edittrainingmodal",
-      "community": 84,
-      "community_name": "ArchiveModal.jsx",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "edittrainingmodal()"
     },
     {
@@ -10368,8 +10368,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_membershipoverviewmodal",
-      "community": 104,
-      "community_name": "Modal.jsx",
+      "community": 13,
+      "community_name": "gestures.js",
       "norm_label": "membershipoverviewmodal.jsx"
     },
     {
@@ -10379,8 +10379,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_membershipoverviewmodal_trainingcountsasusedsession",
-      "community": 104,
-      "community_name": "Modal.jsx",
+      "community": 13,
+      "community_name": "gestures.js",
       "norm_label": "trainingcountsasusedsession()"
     },
     {
@@ -10390,8 +10390,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_membershipoverviewmodal_formatdaterangelabel",
-      "community": 104,
-      "community_name": "Modal.jsx",
+      "community": 13,
+      "community_name": "gestures.js",
       "norm_label": "formatdaterangelabel()"
     },
     {
@@ -10401,8 +10401,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_membershipoverviewmodal_calendaricon",
-      "community": 104,
-      "community_name": "Modal.jsx",
+      "community": 13,
+      "community_name": "gestures.js",
       "norm_label": "calendaricon()"
     },
     {
@@ -10412,8 +10412,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_membershipoverviewmodal_membershipoverviewmodal",
-      "community": 104,
-      "community_name": "Modal.jsx",
+      "community": 13,
+      "community_name": "gestures.js",
       "norm_label": "membershipoverviewmodal()"
     },
     {
@@ -10423,8 +10423,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_userpickermodal",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "userpickermodal.jsx"
     },
     {
@@ -10434,8 +10434,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_userpickermodal_isuserbookingdisabled",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "isuserbookingdisabled()"
     },
     {
@@ -10445,8 +10445,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_features_trainings_components_userpickermodal_userpickermodal",
-      "community": 103,
-      "community_name": "useAlertDialog",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "userpickermodal()"
     },
     {
@@ -10533,8 +10533,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usecommentlikes",
-      "community": 114,
-      "community_name": "Avatar.jsx",
+      "community": 95,
+      "community_name": "pocketbase",
       "norm_label": "usecommentlikes.js"
     },
     {
@@ -10544,8 +10544,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client_src_hooks_usecommentlikes_usecommentlikes",
-      "community": 114,
-      "community_name": "Avatar.jsx",
+      "community": 95,
+      "community_name": "pocketbase",
       "norm_label": "usecommentlikes()"
     },
     {
@@ -10742,8 +10742,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_useonboarding",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 87,
+      "community_name": "buyMessage.js",
       "norm_label": "useonboarding.js"
     },
     {
@@ -10753,8 +10753,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_hooks_useonboarding_useonboarding",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 87,
+      "community_name": "buyMessage.js",
       "norm_label": "useonboarding()"
     },
     {
@@ -10819,8 +10819,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_useplayers",
-      "community": 104,
-      "community_name": "Modal.jsx",
+      "community": 13,
+      "community_name": "gestures.js",
       "norm_label": "useplayers.js"
     },
     {
@@ -10830,8 +10830,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "client_src_hooks_useplayers_useplayers",
-      "community": 104,
-      "community_name": "Modal.jsx",
+      "community": 13,
+      "community_name": "gestures.js",
       "norm_label": "useplayers()"
     },
     {
@@ -10841,8 +10841,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usepostlikes",
-      "community": 126,
-      "community_name": "PostCard.jsx",
+      "community": 103,
+      "community_name": "useAlertDialog",
       "norm_label": "usepostlikes.js"
     },
     {
@@ -10852,8 +10852,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "client_src_hooks_usepostlikes_usepostlikes",
-      "community": 126,
-      "community_name": "PostCard.jsx",
+      "community": 103,
+      "community_name": "useAlertDialog",
       "norm_label": "usepostlikes()"
     },
     {
@@ -10907,8 +10907,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_useproductcategories",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "useproductcategories.js"
     },
     {
@@ -10918,8 +10918,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "client_src_hooks_useproductcategories_useproductcategories",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "useproductcategories()"
     },
     {
@@ -11017,8 +11017,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usesectionscroll",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 67,
+      "community_name": "media.js",
       "norm_label": "usesectionscroll.js"
     },
     {
@@ -11028,8 +11028,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "client_src_hooks_usesectionscroll_usesectionscroll",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 67,
+      "community_name": "media.js",
       "norm_label": "usesectionscroll()"
     },
     {
@@ -11171,8 +11171,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usetournamentposts",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "usetournamentposts.js"
     },
     {
@@ -11182,8 +11182,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_hooks_usetournamentposts_usetournamentposts",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "usetournamentposts()"
     },
     {
@@ -11193,8 +11193,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_hooks_usetrainings",
-      "community": 104,
-      "community_name": "Modal.jsx",
+      "community": 90,
+      "community_name": "postRichText.js",
       "norm_label": "usetrainings.js"
     },
     {
@@ -11204,8 +11204,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_hooks_usetrainings_usetrainings",
-      "community": 104,
-      "community_name": "Modal.jsx",
+      "community": 13,
+      "community_name": "gestures.js",
       "norm_label": "usetrainings()"
     },
     {
@@ -11479,8 +11479,8 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "client_src_lib_avatar_getuseravatardata",
-      "community": 6,
-      "community_name": "auditEventFormat.js",
+      "community": 13,
+      "community_name": "gestures.js",
       "norm_label": "getuseravatardata()"
     },
     {
@@ -11490,8 +11490,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_compress",
-      "community": 87,
-      "community_name": "buyMessage.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "compress.js"
     },
     {
@@ -11501,8 +11501,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_lib_compress_withextension",
-      "community": 87,
-      "community_name": "buyMessage.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "withextension()"
     },
     {
@@ -11512,8 +11512,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_lib_compress_hastransparency",
-      "community": 87,
-      "community_name": "buyMessage.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "hastransparency()"
     },
     {
@@ -11523,8 +11523,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_lib_compress_compressimage",
-      "community": 87,
-      "community_name": "buyMessage.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "compressimage()"
     },
     {
@@ -11534,8 +11534,8 @@
       "source_location": "L87",
       "_origin": "ast",
       "id": "client_src_lib_compress_validatevideofile",
-      "community": 87,
-      "community_name": "buyMessage.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "validatevideofile()"
     },
     {
@@ -11721,8 +11721,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_datesearch",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 86,
+      "community_name": "@ffmpeg/ffmpeg",
       "norm_label": "datesearch.js"
     },
     {
@@ -11732,8 +11732,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "client_src_lib_datesearch_month_entries",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 86,
+      "community_name": "@ffmpeg/ffmpeg",
       "norm_label": "month_entries"
     },
     {
@@ -11743,8 +11743,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "client_src_lib_datesearch_findrussianmonth",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 86,
+      "community_name": "@ffmpeg/ffmpeg",
       "norm_label": "findrussianmonth()"
     },
     {
@@ -11754,8 +11754,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "client_src_lib_datesearch_parserussiandate",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 86,
+      "community_name": "@ffmpeg/ffmpeg",
       "norm_label": "parserussiandate()"
     },
     {
@@ -11765,8 +11765,8 @@
       "source_location": "L75",
       "_origin": "ast",
       "id": "client_src_lib_datesearch_parsenumericdate",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 86,
+      "community_name": "@ffmpeg/ffmpeg",
       "norm_label": "parsenumericdate()"
     },
     {
@@ -11776,8 +11776,8 @@
       "source_location": "L114",
       "_origin": "ast",
       "id": "client_src_lib_datesearch_parsedatequery",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 86,
+      "community_name": "@ffmpeg/ffmpeg",
       "norm_label": "parsedatequery()"
     },
     {
@@ -11787,8 +11787,8 @@
       "source_location": "L125",
       "_origin": "ast",
       "id": "client_src_lib_datesearch_isdatequeryparsed",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 86,
+      "community_name": "@ffmpeg/ffmpeg",
       "norm_label": "isdatequeryparsed()"
     },
     {
@@ -11798,8 +11798,8 @@
       "source_location": "L134",
       "_origin": "ast",
       "id": "client_src_lib_datesearch_matchesdatequery",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 86,
+      "community_name": "@ffmpeg/ffmpeg",
       "norm_label": "matchesdatequery()"
     },
     {
@@ -11985,8 +11985,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "client_src_lib_format_formatpostdate",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 86,
+      "community_name": "@ffmpeg/ffmpeg",
       "norm_label": "formatpostdate()"
     },
     {
@@ -11996,8 +11996,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "client_src_lib_format_formatcommenttime",
-      "community": 126,
-      "community_name": "PostCard.jsx",
+      "community": 106,
+      "community_name": "TournamentPostDetailModal.jsx",
       "norm_label": "formatcommenttime()"
     },
     {
@@ -12007,8 +12007,8 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "client_src_lib_format_formatcommentdayseparator",
-      "community": 113,
-      "community_name": "commentListLayout.js",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "formatcommentdayseparator()"
     },
     {
@@ -12018,8 +12018,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "client_src_lib_format_formatcarddate",
-      "community": 96,
-      "community_name": "react-dom",
+      "community": 86,
+      "community_name": "@ffmpeg/ffmpeg",
       "norm_label": "formatcarddate()"
     },
     {
@@ -12029,8 +12029,8 @@
       "source_location": "L72",
       "_origin": "ast",
       "id": "client_src_lib_format_formatcarddatewithyear",
-      "community": 13,
-      "community_name": "gestures.js",
+      "community": 86,
+      "community_name": "@ffmpeg/ffmpeg",
       "norm_label": "formatcarddatewithyear()"
     },
     {
@@ -12040,8 +12040,8 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "client_src_lib_format_formattimerange",
-      "community": 96,
-      "community_name": "react-dom",
+      "community": 86,
+      "community_name": "@ffmpeg/ffmpeg",
       "norm_label": "formattimerange()"
     },
     {
@@ -12051,8 +12051,8 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "client_src_lib_format_hastimerangeended",
-      "community": 96,
-      "community_name": "react-dom",
+      "community": 13,
+      "community_name": "gestures.js",
       "norm_label": "hastimerangeended()"
     },
     {
@@ -12095,8 +12095,8 @@
       "source_location": "L131",
       "_origin": "ast",
       "id": "client_src_lib_format_issameday",
-      "community": 86,
-      "community_name": "@ffmpeg/ffmpeg",
+      "community": 84,
+      "community_name": "ArchiveModal.jsx",
       "norm_label": "issameday()"
     },
     {
@@ -12106,8 +12106,8 @@
       "source_location": "L144",
       "_origin": "ast",
       "id": "client_src_lib_format_generatenextdays",
-      "community": 86,
-      "community_name": "@ffmpeg/ffmpeg",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "generatenextdays()"
     },
     {
@@ -12139,8 +12139,8 @@
       "source_location": "L191",
       "_origin": "ast",
       "id": "client_src_lib_format_formatschedulesendlabel",
-      "community": 86,
-      "community_name": "@ffmpeg/ffmpeg",
+      "community": 84,
+      "community_name": "ArchiveModal.jsx",
       "norm_label": "formatschedulesendlabel()"
     },
     {
@@ -12150,8 +12150,8 @@
       "source_location": "L201",
       "_origin": "ast",
       "id": "client_src_lib_format_formatscheduledispatchheading",
-      "community": 68,
-      "community_name": "GalleryCommentModal.jsx",
+      "community": 84,
+      "community_name": "ArchiveModal.jsx",
       "norm_label": "formatscheduledispatchheading()"
     },
     {
@@ -12161,8 +12161,8 @@
       "source_location": "L210",
       "_origin": "ast",
       "id": "client_src_lib_format_formatscheduletimebadge",
-      "community": 86,
-      "community_name": "@ffmpeg/ffmpeg",
+      "community": 84,
+      "community_name": "ArchiveModal.jsx",
       "norm_label": "formatscheduletimebadge()"
     },
     {
@@ -12172,8 +12172,8 @@
       "source_location": "L220",
       "_origin": "ast",
       "id": "client_src_lib_format_formatscheduledaywheellabel",
-      "community": 86,
-      "community_name": "@ffmpeg/ffmpeg",
+      "community": 84,
+      "community_name": "ArchiveModal.jsx",
       "norm_label": "formatscheduledaywheellabel()"
     },
     {
@@ -12249,8 +12249,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_log",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 95,
+      "community_name": "pocketbase",
       "norm_label": "log.js"
     },
     {
@@ -12260,8 +12260,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_lib_log_noop",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 95,
+      "community_name": "pocketbase",
       "norm_label": "noop()"
     },
     {
@@ -12436,8 +12436,8 @@
       "source_location": "L140",
       "_origin": "ast",
       "id": "client_src_lib_media_tofullscreenmediaitem",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "tofullscreenmediaitem()"
     },
     {
@@ -12447,8 +12447,8 @@
       "source_location": "L199",
       "_origin": "ast",
       "id": "client_src_lib_media_isvideofile",
-      "community": 88,
-      "community_name": "format.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "isvideofile()"
     },
     {
@@ -12458,8 +12458,8 @@
       "source_location": "L207",
       "_origin": "ast",
       "id": "client_src_lib_media_videopreviewurl",
-      "community": 2,
-      "community_name": "Post Upload and UI Kit",
+      "community": 56,
+      "community_name": "PostDetailModal.jsx",
       "norm_label": "videopreviewurl()"
     },
     {
@@ -12469,8 +12469,8 @@
       "source_location": "L217",
       "_origin": "ast",
       "id": "client_src_lib_media_readselectedfiles",
-      "community": 88,
-      "community_name": "format.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "readselectedfiles()"
     },
     {
@@ -12480,8 +12480,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_modalorigin",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "modalorigin.js"
     },
     {
@@ -12491,8 +12491,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_lib_modalorigin_origin_selector",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "origin_selector"
     },
     {
@@ -12502,8 +12502,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "client_src_lib_modalorigin_snapshotoriginrect",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "snapshotoriginrect()"
     },
     {
@@ -12513,8 +12513,8 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "client_src_lib_modalorigin_originrectfromtarget",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "originrectfromtarget()"
     },
     {
@@ -12524,8 +12524,8 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "client_src_lib_modalorigin_onpointerdown",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "onpointerdown()"
     },
     {
@@ -12535,8 +12535,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "client_src_lib_modalorigin_ensuremodalorigintracking",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "ensuremodalorigintracking()"
     },
     {
@@ -12546,8 +12546,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "client_src_lib_modalorigin_getlastpointerorigin",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "getlastpointerorigin()"
     },
     {
@@ -12557,8 +12557,8 @@
       "source_location": "L78",
       "_origin": "ast",
       "id": "client_src_lib_modalorigin_getmodalcollapsetransform",
-      "community": 63,
-      "community_name": "catalog.js",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "getmodalcollapsetransform()"
     },
     {
@@ -12568,8 +12568,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_overlaystack",
-      "community": 6,
-      "community_name": "auditEventFormat.js",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "overlaystack.js"
     },
     {
@@ -12579,8 +12579,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_lib_overlaystack_stack",
-      "community": 6,
-      "community_name": "auditEventFormat.js",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "stack"
     },
     {
@@ -12590,8 +12590,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "client_src_lib_overlaystack_registeroverlay",
-      "community": 6,
-      "community_name": "auditEventFormat.js",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "registeroverlay()"
     },
     {
@@ -12612,8 +12612,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "client_src_lib_overlaystack_hasopenoverlay",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "hasopenoverlay()"
     },
     {
@@ -12634,8 +12634,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "client_src_lib_overlaystack_getoverlaydepth",
-      "community": 6,
-      "community_name": "auditEventFormat.js",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "getoverlaydepth()"
     },
     {
@@ -12645,8 +12645,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_prepareuploadmedia",
-      "community": 87,
-      "community_name": "buyMessage.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "prepareuploadmedia.js"
     },
     {
@@ -12656,8 +12656,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_lib_prepareuploadmedia_prepareuploadmedia",
-      "community": 87,
-      "community_name": "buyMessage.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "prepareuploadmedia()"
     },
     {
@@ -12667,8 +12667,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_lib_prepareuploadmedia_prepareuploadmedialist",
-      "community": 87,
-      "community_name": "buyMessage.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "prepareuploadmedialist()"
     },
     {
@@ -12678,8 +12678,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "client_src_lib_prepareuploadmedia_preparemediainbody",
-      "community": 70,
-      "community_name": "useFetchedOriginal.js",
+      "community": 3,
+      "community_name": "notifications.js",
       "norm_label": "preparemediainbody()"
     },
     {
@@ -12689,8 +12689,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_lib_rating",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 88,
+      "community_name": "format.js",
       "norm_label": "rating.js"
     },
     {
@@ -12700,8 +12700,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_lib_rating_getratingpoints",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 88,
+      "community_name": "format.js",
       "norm_label": "getratingpoints()"
     },
     {
@@ -12711,8 +12711,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_lib_rating_isratingvisible",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 88,
+      "community_name": "format.js",
       "norm_label": "isratingvisible()"
     },
     {
@@ -12722,8 +12722,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_lib_rating_buildplayerranks",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 88,
+      "community_name": "format.js",
       "norm_label": "buildplayerranks()"
     },
     {
@@ -12733,8 +12733,8 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "client_src_lib_rating_getplayerratingrank",
-      "community": 13,
-      "community_name": "gestures.js",
+      "community": 88,
+      "community_name": "format.js",
       "norm_label": "getplayerratingrank()"
     },
     {
@@ -12755,8 +12755,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_lib_sectionscroll_setsectionscrollelement",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 67,
+      "community_name": "media.js",
       "norm_label": "setsectionscrollelement()"
     },
     {
@@ -13118,8 +13118,8 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "client_src_services_admin_listscheduledbroadcasts",
-      "community": 87,
-      "community_name": "buyMessage.js",
+      "community": 93,
+      "community_name": "commentListLayout.js",
       "norm_label": "listscheduledbroadcasts()"
     },
     {
@@ -13151,8 +13151,8 @@
       "source_location": "L206",
       "_origin": "ast",
       "id": "client_src_services_admin_cancelscheduledbroadcast",
-      "community": 87,
-      "community_name": "buyMessage.js",
+      "community": 93,
+      "community_name": "commentListLayout.js",
       "norm_label": "cancelscheduledbroadcast()"
     },
     {
@@ -13404,8 +13404,8 @@
       "source_location": "L85",
       "_origin": "ast",
       "id": "client_src_services_auth_isuserbotblocked",
-      "community": 91,
-      "community_name": "gestures.js",
+      "community": 85,
+      "community_name": "PullToRefresh.jsx",
       "norm_label": "isuserbotblocked()"
     },
     {
@@ -13448,8 +13448,8 @@
       "source_location": "L173",
       "_origin": "ast",
       "id": "client_src_services_auth_getcurrentuser",
-      "community": 57,
-      "community_name": "log.js",
+      "community": 63,
+      "community_name": "catalog.js",
       "norm_label": "getcurrentuser()"
     },
     {
@@ -13591,8 +13591,8 @@
       "source_location": "L331",
       "_origin": "ast",
       "id": "client_src_services_auth_completeonboarding",
-      "community": 56,
-      "community_name": "PostDetailModal.jsx",
+      "community": 87,
+      "community_name": "buyMessage.js",
       "norm_label": "completeonboarding()"
     },
     {
@@ -13602,8 +13602,8 @@
       "source_location": "L345",
       "_origin": "ast",
       "id": "client_src_services_auth_updateuserprofile",
-      "community": 90,
-      "community_name": "postRichText.js",
+      "community": 87,
+      "community_name": "buyMessage.js",
       "norm_label": "updateuserprofile()"
     },
     {
@@ -13624,8 +13624,8 @@
       "source_location": "L103",
       "_origin": "ast",
       "id": "client_src_services_catalog_listproductcategories",
-      "community": 80,
-      "community_name": "useMaxCloseGuard.js",
+      "community": 68,
+      "community_name": "GalleryCommentModal.jsx",
       "norm_label": "listproductcategories()"
     },
     {
@@ -13701,8 +13701,8 @@
       "source_location": "L183",
       "_origin": "ast",
       "id": "client_src_services_catalog_adjustproductfavoritescount",
-      "community": 123,
-      "community_name": "AddActionContext.jsx",
+      "community": 110,
+      "community_name": "PostUploadProvider.jsx",
       "norm_label": "adjustproductfavoritescount()"
     },
     {
@@ -13767,8 +13767,8 @@
       "source_location": "L294",
       "_origin": "ast",
       "id": "client_src_services_catalog_deleteproduct",
-      "community": 91,
-      "community_name": "gestures.js",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "deleteproduct()"
     },
     {
@@ -13789,8 +13789,8 @@
       "source_location": "L317",
       "_origin": "ast",
       "id": "client_src_services_catalog_listplayers",
-      "community": 104,
-      "community_name": "Modal.jsx",
+      "community": 13,
+      "community_name": "gestures.js",
       "norm_label": "listplayers()"
     },
     {
@@ -13800,8 +13800,8 @@
       "source_location": "L359",
       "_origin": "ast",
       "id": "client_src_services_catalog_buildmanualplayerpayload",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 67,
+      "community_name": "media.js",
       "norm_label": "buildmanualplayerpayload()"
     },
     {
@@ -13811,8 +13811,8 @@
       "source_location": "L383",
       "_origin": "ast",
       "id": "client_src_services_catalog_createplayer",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 88,
+      "community_name": "format.js",
       "norm_label": "createplayer()"
     },
     {
@@ -13855,8 +13855,8 @@
       "source_location": "L440",
       "_origin": "ast",
       "id": "client_src_services_catalog_creategalleryitemwithprogress",
-      "community": 77,
-      "community_name": "NotificationSettingsModal.jsx",
+      "community": 67,
+      "community_name": "media.js",
       "norm_label": "creategalleryitemwithprogress()"
     },
     {
@@ -13987,8 +13987,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_membershipnotify",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 14,
+      "community_name": "datePickerUtils.js",
       "norm_label": "membershipnotify.js"
     },
     {
@@ -14119,8 +14119,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_pb",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 90,
+      "community_name": "postRichText.js",
       "norm_label": "pb.js"
     },
     {
@@ -14130,8 +14130,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_services_pb_pb",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 90,
+      "community_name": "postRichText.js",
       "norm_label": "pb"
     },
     {
@@ -14251,8 +14251,8 @@
       "source_location": "L194",
       "_origin": "ast",
       "id": "client_src_services_posts_listpostlikes",
-      "community": 126,
-      "community_name": "PostCard.jsx",
+      "community": 103,
+      "community_name": "useAlertDialog",
       "norm_label": "listpostlikes()"
     },
     {
@@ -14262,8 +14262,8 @@
       "source_location": "L216",
       "_origin": "ast",
       "id": "client_src_services_posts_togglepostlike",
-      "community": 126,
-      "community_name": "PostCard.jsx",
+      "community": 103,
+      "community_name": "useAlertDialog",
       "norm_label": "togglepostlike()"
     },
     {
@@ -14416,8 +14416,8 @@
       "source_location": "L556",
       "_origin": "ast",
       "id": "client_src_services_posts_harddeletepost",
-      "community": 91,
-      "community_name": "gestures.js",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "harddeletepost()"
     },
     {
@@ -14460,8 +14460,8 @@
       "source_location": "L709",
       "_origin": "ast",
       "id": "client_src_services_posts_buildcommentmediareorderformdata",
-      "community": 99,
-      "community_name": "EditTrainingModal.jsx",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "buildcommentmediareorderformdata()"
     },
     {
@@ -14471,8 +14471,8 @@
       "source_location": "L735",
       "_origin": "ast",
       "id": "client_src_services_posts_updatecomment",
-      "community": 99,
-      "community_name": "EditTrainingModal.jsx",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "updatecomment()"
     },
     {
@@ -14482,8 +14482,8 @@
       "source_location": "L745",
       "_origin": "ast",
       "id": "client_src_services_posts_harddeletecomment",
-      "community": 99,
-      "community_name": "EditTrainingModal.jsx",
+      "community": 114,
+      "community_name": "Avatar.jsx",
       "norm_label": "harddeletecomment()"
     },
     {
@@ -14493,8 +14493,8 @@
       "source_location": "L764",
       "_origin": "ast",
       "id": "client_src_services_posts_listcommentlikes",
-      "community": 114,
-      "community_name": "Avatar.jsx",
+      "community": 95,
+      "community_name": "pocketbase",
       "norm_label": "listcommentlikes()"
     },
     {
@@ -14504,8 +14504,8 @@
       "source_location": "L789",
       "_origin": "ast",
       "id": "client_src_services_posts_togglecommentlike",
-      "community": 114,
-      "community_name": "Avatar.jsx",
+      "community": 95,
+      "community_name": "pocketbase",
       "norm_label": "togglecommentlike()"
     },
     {
@@ -14768,8 +14768,8 @@
       "source_location": "L232",
       "_origin": "ast",
       "id": "client_src_services_tournamentcomments_harddeletetournamentcomment",
-      "community": 106,
-      "community_name": "TournamentPostDetailModal.jsx",
+      "community": 95,
+      "community_name": "pocketbase",
       "norm_label": "harddeletetournamentcomment()"
     },
     {
@@ -14779,8 +14779,8 @@
       "source_location": "L241",
       "_origin": "ast",
       "id": "client_src_services_tournamentcomments_flushpendingtournamentcommentdeletes",
-      "community": 106,
-      "community_name": "TournamentPostDetailModal.jsx",
+      "community": 95,
+      "community_name": "pocketbase",
       "norm_label": "flushpendingtournamentcommentdeletes()"
     },
     {
@@ -14823,8 +14823,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_listtournamentposts",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "listtournamentposts()"
     },
     {
@@ -14878,8 +14878,8 @@
       "source_location": "L142",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_updatetournamentpost",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "updatetournamentpost()"
     },
     {
@@ -14889,8 +14889,8 @@
       "source_location": "L154",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_pintournamentpost",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "pintournamentpost()"
     },
     {
@@ -14900,8 +14900,8 @@
       "source_location": "L162",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_unpintournamentpost",
-      "community": 81,
-      "community_name": "PostUploadProvider.jsx",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "unpintournamentpost()"
     },
     {
@@ -14922,8 +14922,8 @@
       "source_location": "L177",
       "_origin": "ast",
       "id": "client_src_services_tournamentposts_harddeletetournamentpost",
-      "community": 91,
-      "community_name": "gestures.js",
+      "community": 79,
+      "community_name": "isModerator",
       "norm_label": "harddeletetournamentpost()"
     },
     {
@@ -15131,8 +15131,8 @@
       "source_location": "L225",
       "_origin": "ast",
       "id": "client_src_services_trainings_aretrainingvaluesequal",
-      "community": 84,
-      "community_name": "ArchiveModal.jsx",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "aretrainingvaluesequal()"
     },
     {
@@ -15142,8 +15142,8 @@
       "source_location": "L244",
       "_origin": "ast",
       "id": "client_src_services_trainings_gettrainingchangedfields",
-      "community": 84,
-      "community_name": "ArchiveModal.jsx",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "gettrainingchangedfields()"
     },
     {
@@ -15175,8 +15175,8 @@
       "source_location": "L309",
       "_origin": "ast",
       "id": "client_src_services_trainings_createtraining",
-      "community": 103,
-      "community_name": "useAlertDialog",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "createtraining()"
     },
     {
@@ -15186,8 +15186,8 @@
       "source_location": "L326",
       "_origin": "ast",
       "id": "client_src_services_trainings_updatetraining",
-      "community": 84,
-      "community_name": "ArchiveModal.jsx",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "updatetraining()"
     },
     {
@@ -15285,8 +15285,8 @@
       "source_location": "L476",
       "_origin": "ast",
       "id": "client_src_services_trainings_notifytrainingrestoredbot",
-      "community": 103,
-      "community_name": "useAlertDialog",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "notifytrainingrestoredbot()"
     },
     {
@@ -15395,8 +15395,8 @@
       "source_location": "L808",
       "_origin": "ast",
       "id": "client_src_services_trainings_markattendance",
-      "community": 96,
-      "community_name": "react-dom",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "markattendance()"
     },
     {
@@ -15406,8 +15406,8 @@
       "source_location": "L825",
       "_origin": "ast",
       "id": "client_src_services_trainings_unmarkattendance",
-      "community": 96,
-      "community_name": "react-dom",
+      "community": 57,
+      "community_name": "log.js",
       "norm_label": "unmarkattendance()"
     },
     {
@@ -15417,8 +15417,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_users",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 90,
+      "community_name": "postRichText.js",
       "norm_label": "users.js"
     },
     {
@@ -15428,8 +15428,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_services_users_listusers",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 90,
+      "community_name": "postRichText.js",
       "norm_label": "listusers()"
     },
     {
@@ -15439,8 +15439,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_services_yadisk",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "services/yadisk.js"
     },
     {
@@ -15450,8 +15450,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "client_src_services_yadisk_previewcache",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "previewcache"
     },
     {
@@ -15461,8 +15461,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "client_src_services_yadisk_previewinflight",
-      "community": 85,
-      "community_name": "PullToRefresh.jsx",
+      "community": 2,
+      "community_name": "Post Upload and UI Kit",
       "norm_label": "previewinflight"
     },
     {
@@ -17430,8 +17430,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "pb_hooks_templatelib",
-      "community": 105,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "templatelib.js"
     },
     {
@@ -17441,8 +17441,8 @@
       "source_location": "L281",
       "_origin": "ast",
       "id": "pb_hooks_templatelib_finddefault",
-      "community": 105,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "finddefault()"
     },
     {
@@ -17452,8 +17452,8 @@
       "source_location": "L288",
       "_origin": "ast",
       "id": "pb_hooks_templatelib_interpolate",
-      "community": 105,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "interpolate()"
     },
     {
@@ -17463,8 +17463,8 @@
       "source_location": "L298",
       "_origin": "ast",
       "id": "pb_hooks_templatelib_collectionexists",
-      "community": 105,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "collectionexists()"
     },
     {
@@ -17474,8 +17474,8 @@
       "source_location": "L307",
       "_origin": "ast",
       "id": "pb_hooks_templatelib_ensuresystemtemplates",
-      "community": 105,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "ensuresystemtemplates()"
     },
     {
@@ -17485,8 +17485,8 @@
       "source_location": "L349",
       "_origin": "ast",
       "id": "pb_hooks_templatelib_resolve",
-      "community": 105,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "resolve()"
     },
     {
@@ -17496,8 +17496,8 @@
       "source_location": "L383",
       "_origin": "ast",
       "id": "pb_hooks_templatelib_listbychannel",
-      "community": 105,
-      "community_name": "FullscreenImageViewer.jsx",
+      "community": 127,
+      "community_name": "useSectionSwipe.js",
       "norm_label": "listbychannel()"
     },
     {
@@ -18436,6 +18436,36 @@
       "norm_label": "fetchcontentfile()"
     },
     {
+      "label": "backup_to_yandex.sh",
+      "file_type": "code",
+      "source_file": "scripts/backup_to_yandex.sh",
+      "source_location": "L1",
+      "metadata": {
+        "language": "bash",
+        "kind": "file"
+      },
+      "_origin": "ast",
+      "id": "scripts_backup_to_yandex",
+      "community": 96,
+      "community_name": "react-dom",
+      "norm_label": "backup_to_yandex.sh"
+    },
+    {
+      "label": "backup_to_yandex.sh script",
+      "file_type": "code",
+      "source_file": "scripts/backup_to_yandex.sh",
+      "source_location": "L1",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_entrypoint"
+      },
+      "_origin": "ast",
+      "id": "scripts_backup_to_yandex_sh__entry",
+      "community": 96,
+      "community_name": "react-dom",
+      "norm_label": "backup_to_yandex.sh script"
+    },
+    {
       "label": "deploy.sh",
       "file_type": "code",
       "source_file": "scripts/deploy.sh",
@@ -18509,6 +18539,36 @@
       "community": 97,
       "community_name": "Avatar.jsx",
       "norm_label": "deploy_loc.sh script"
+    },
+    {
+      "label": "restore_from_yandex.sh",
+      "file_type": "code",
+      "source_file": "scripts/restore_from_yandex.sh",
+      "source_location": "L1",
+      "metadata": {
+        "language": "bash",
+        "kind": "file"
+      },
+      "_origin": "ast",
+      "id": "scripts_restore_from_yandex",
+      "community": 99,
+      "community_name": "EditTrainingModal.jsx",
+      "norm_label": "restore_from_yandex.sh"
+    },
+    {
+      "label": "restore_from_yandex.sh script",
+      "file_type": "code",
+      "source_file": "scripts/restore_from_yandex.sh",
+      "source_location": "L1",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_entrypoint"
+      },
+      "_origin": "ast",
+      "id": "scripts_restore_from_yandex_sh__entry",
+      "community": 99,
+      "community_name": "EditTrainingModal.jsx",
+      "norm_label": "restore_from_yandex.sh script"
     },
     {
       "label": "server-bootstrap.sh",
@@ -27223,7 +27283,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L4",
+      "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -27691,7 +27751,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L4",
+      "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -27703,7 +27763,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L64",
+      "source_location": "L65",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail_productdetail",
@@ -30211,6 +30271,18 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/shop/ProductDetail.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_shop_productdetail",
+      "target": "client_src_components_ui_modalfloatingclosebutton",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -30231,6 +30303,18 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_feed_postdetailmodal",
+      "target": "client_src_components_ui_modalfloatingclosebutton_modalfloatingclosebutton",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/features/shop/ProductDetail.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_features_shop_productdetail",
       "target": "client_src_components_ui_modalfloatingclosebutton_modalfloatingclosebutton",
       "confidence_score": 1.0
     },
@@ -32143,7 +32227,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -32263,7 +32347,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -32275,7 +32359,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L66",
+      "source_location": "L67",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail_productdetail",
@@ -45413,7 +45497,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L7",
+      "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -45545,7 +45629,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L7",
+      "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -57492,7 +57576,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L8",
+      "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -57576,7 +57660,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L8",
+      "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -58038,7 +58122,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L18",
+      "source_location": "L19",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -58050,7 +58134,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L18",
+      "source_location": "L19",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -58061,7 +58145,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L20",
+      "source_location": "L21",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -58072,7 +58156,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L29",
+      "source_location": "L30",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -58083,7 +58167,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L55",
+      "source_location": "L56",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -58095,7 +58179,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L9",
+      "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -58107,7 +58191,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L9",
+      "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -58119,7 +58203,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L11",
+      "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -58131,7 +58215,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L11",
+      "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -58143,7 +58227,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L11",
+      "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -58155,7 +58239,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L11",
+      "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -58167,7 +58251,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L10",
+      "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -58179,7 +58263,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L10",
+      "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -58191,7 +58275,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L17",
+      "source_location": "L18",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -58203,7 +58287,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L17",
+      "source_location": "L18",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -58215,7 +58299,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L6",
+      "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -58227,7 +58311,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L6",
+      "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -58239,7 +58323,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -58251,7 +58335,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -58263,7 +58347,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -58275,7 +58359,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -58287,7 +58371,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail",
@@ -58311,7 +58395,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L92",
+      "source_location": "L95",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail_productdetail",
@@ -58323,7 +58407,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L120",
+      "source_location": "L123",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail_productdetail",
@@ -58335,7 +58419,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L115",
+      "source_location": "L118",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail_productdetail",
@@ -58347,7 +58431,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L117",
+      "source_location": "L120",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail_productdetail",
@@ -58359,7 +58443,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L63",
+      "source_location": "L64",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail_productdetail",
@@ -58371,7 +58455,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L65",
+      "source_location": "L66",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail_productdetail",
@@ -58383,7 +58467,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L79",
+      "source_location": "L82",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail_productdetail",
@@ -58395,7 +58479,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L75",
+      "source_location": "L78",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail_productdetail",
@@ -58407,7 +58491,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L77",
+      "source_location": "L80",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail_productdetail",
@@ -58419,7 +58503,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/features/shop/ProductDetail.jsx",
-      "source_location": "L74",
+      "source_location": "L77",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_features_shop_productdetail_productdetail",
@@ -78865,6 +78949,17 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "scripts/backup_to_yandex.sh",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "scripts_backup_to_yandex",
+      "target": "scripts_backup_to_yandex_sh__entry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "scripts/deploy.sh",
       "source_location": "L1",
       "weight": 1.0,
@@ -78893,6 +78988,17 @@
       "_origin": "ast",
       "source": "scripts_deploy_loc",
       "target": "scripts_deploy_loc_sh__entry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/restore_from_yandex.sh",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "scripts_restore_from_yandex",
+      "target": "scripts_restore_from_yandex_sh__entry",
       "confidence_score": 1.0
     },
     {
@@ -79753,5 +79859,5 @@
       "source_file": "client/src/assets/ach/1_1.png"
     }
   ],
-  "built_at_commit": "8b14a0e812b7c1d64f68d329a15ed3d4dc2fde14"
+  "built_at_commit": "f7fdff010c11fdbbb41d3096293c3b957cd74d9d"
 }
