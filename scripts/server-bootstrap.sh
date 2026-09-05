@@ -17,7 +17,7 @@ export DEBIAN_FRONTEND=noninteractive
 
 apt-get update
 apt-get install -y --no-install-recommends \
-  ca-certificates curl git unzip nginx apache2-utils ufw \
+  ca-certificates curl git unzip zip gzip sqlite3 nginx apache2-utils ufw \
   certbot python3-certbot-nginx python3
 
 if ! command -v node >/dev/null 2>&1 || [[ "$(node -v | sed 's/v//' | cut -d. -f1)" -lt 18 ]]; then
@@ -206,6 +206,12 @@ curl -sS -X POST "https://botapi.max.ru/subscriptions" \
   -H "Content-Type: application/json" \
   -d "{\"url\":\"https://${DOMAIN}/api/max-bot-webhook\",\"update_types\":[\"bot_started\",\"bot_stopped\"],\"secret\":\"${MAX_BOT_WEBHOOK_SECRET}\"}" \
   || true
+
+# Бэкапы: cron + sudoers (кнопки админки). rclone remote «yandex» настроить вручную.
+# Инструкция: $APP_DIR/scripts/BACKUP.md
+if [[ -x "$APP_DIR/scripts/install_backup_cron.sh" ]]; then
+  "$APP_DIR/scripts/install_backup_cron.sh" || true
+fi
 
 echo "Bootstrap OK. Credentials: $CRED_FILE"
 curl -sS "https://${DOMAIN}/health" || true

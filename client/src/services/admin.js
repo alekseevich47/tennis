@@ -308,3 +308,19 @@ export async function getNotificationSettings() {
 export async function updateNotificationSettings(id, patch) {
   return pb.collection('notification_settings').update(id, patch);
 }
+
+/**
+ * Запуск бэкапа с сервера (модератор). Скрипт стартует асинхронно.
+ * @param {'db' | 'media'} type
+ */
+export async function triggerBackup(type) {
+  try {
+    return await pb.send('/api/admin-backup', {
+      method: 'POST',
+      body: { type }
+    });
+  } catch (err) {
+    error('admin backup:', err);
+    throw err;
+  }
+}

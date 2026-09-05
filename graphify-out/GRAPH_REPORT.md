@@ -1,16 +1,16 @@
 # Graph Report - tennis  (2026-09-05)
 
 ## Corpus Check
-- 304 files · ~270,872 words
+- 313 files · ~273,336 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1755 nodes · 5127 edges · 120 communities (106 shown, 14 thin omitted)
-- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 171 edges (avg confidence: 0.59)
+- 1802 nodes · 5178 edges · 140 communities (121 shown, 19 thin omitted)
+- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 173 edges (avg confidence: 0.59)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `f7fdff01`
+- Built from commit: `9fc41243`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -86,6 +86,8 @@
 - swr
 - intArrayFromString
 - useAlertDialog
+- CreateTournamentPostModal.jsx
+- backup_common.sh
 - TournamentPostDetailModal.jsx
 - _strftime
 - ProfileTrainingsSearch.jsx
@@ -93,20 +95,37 @@
 - PostUploadProvider.jsx
 - SortableMediaPreviewGrid.jsx
 - callRuntimeCallbacks
+- useLongPress
 - Avatar.jsx
+- Бэкапы и восстановление PocketBase
 - asyncLoad
+- PullToRefresh.jsx
+- EditTrainingModal.jsx
 - useComments.js
 - emscripten_realloc_buffer
 - getEnvStrings
 - usePinnedBannerIndex.js
-- AboutAppModal.jsx
 - useSectionSwipe.js
+- useAlertDialog
+- AboutAppModal.jsx
+- UTF8ToString
+- useSectionSwipe.js
+- commentListLayout.js
+- overlayStack.js
+- Skeleton.jsx
 - BottomNav.jsx
+- FavoritesContext.jsx
+- backuplib.js
+- backup_db_to_yandex.sh
+- backup_storage_to_yandex.sh
+- install_backup_cron.sh
+- restore_db_from_yandex.sh
+- restore_storage_from_yandex.sh
 
 ## God Nodes (most connected - your core abstractions)
-1. `error` - 138 edges
-2. `Modal()` - 48 edges
-3. `useAlertDialog()` - 47 edges
+1. `error` - 139 edges
+2. `useAlertDialog()` - 49 edges
+3. `Modal()` - 48 edges
 4. `ProfileViewModal()` - 38 edges
 5. `pb` - 35 edges
 6. `isModerator()` - 33 edges
@@ -135,19 +154,19 @@
 - **PocketBase collections** — readme_schema_users, readme_schema_posts, readme_schema_comments, readme_schema_trainings, readme_schema_products, readme_schema_championships, readme_schema_matches, readme_schema_gallery [EXTRACTED 1.00]
 - **Achievement badge asset set** — client_src_assets_ach_1_1_png_badge, client_src_assets_ach_1_2_png_badge, client_src_assets_ach_1_3_png_badge, client_src_assets_ach_1_4_png_badge, client_src_assets_ach_1_5_png_badge, client_src_assets_ach_2_1_png_badge, client_src_assets_ach_2_2_png_badge, client_src_assets_ach_2_3_png_badge, client_src_assets_ach_2_4_png_badge, client_src_assets_ach_2_5_png_badge, client_src_assets_ach_3_1_png_badge, client_src_assets_ach_3_2_png_badge, client_src_assets_ach_3_3_png_badge, client_src_assets_ach_3_4_png_badge, client_src_assets_ach_3_5_png_badge, client_src_assets_ach_4_1_png_badge, client_src_assets_ach_4_2_png_badge, client_src_assets_ach_4_3_png_badge, client_src_assets_ach_4_4_png_badge, client_src_assets_ach_4_5_png_badge, client_src_assets_ach_5_1_png_badge, client_src_assets_ach_5_2_png_badge, client_src_assets_ach_5_3_png_badge, client_src_assets_ach_5_4_png_badge, client_src_assets_ach_5_5_png_badge [INFERRED 0.85]
 
-## Communities (120 total, 14 thin omitted)
+## Communities (140 total, 19 thin omitted)
 
 ### Community 0 - "App Shell Navigation"
 Cohesion: 0.29
 Nodes (17): autoUnfreezeUser(), createAppNotification(), formatDayMonthBoldRu(), getEffectiveEndDate(), gmt7Hour(), notifyFreeze(), notifyTopUp(), pad2() (+9 more)
 
 ### Community 2 - "Post Upload and UI Kit"
-Cohesion: 0.11
-Nodes (37): publishAlbums(), useResolvedExternalMedia(), useYadiskEmbed(), cache, listeners, setYadiskAlbumCache(), createAlbumWindowController(), createPriorityQueue() (+29 more)
+Cohesion: 0.07
+Nodes (50): FeedVideoPreview(), MediaPreviewAlbumItem(), MediaPreviewGrid(), PinnedBanner(), usePinnedThumbUrl(), PostDetailVideoPreview(), PostMedia(), useInFeedViewport() (+42 more)
 
 ### Community 3 - "notifications.js"
-Cohesion: 0.15
-Nodes (34): useAlertDialog(), CreateTournamentPostModal(), EditTournamentPostModal(), AttachButtons(), CommentComposeForm(), areStringArraysEqual(), CommentEditInlineForm(), CreatePostModal() (+26 more)
+Cohesion: 0.28
+Nodes (16): react, CreateTournamentPostModal(), EditTournamentPostModal(), AttachButtons(), CommentComposeForm(), areStringArraysEqual(), CommentEditInlineForm(), CommentSendButton() (+8 more)
 
 ### Community 4 - "Gallery Upload Flow"
 Cohesion: 0.42
@@ -166,8 +185,8 @@ Cohesion: 0.67
 Nodes (3): DEBIAN_FRONTEND, server-bootstrap.sh script, wait_pb()
 
 ### Community 8 - "NPM Dependencies"
-Cohesion: 0.04
-Nodes (44): dependencies, clsx, date-fns, @daypicker/react, @fontsource-variable/nunito, gsap, pocketbase, react (+36 more)
+Cohesion: 0.05
+Nodes (42): dependencies, clsx, date-fns, @daypicker/react, @fontsource-variable/nunito, gsap, pocketbase, react-dom (+34 more)
 
 ### Community 9 - "Audit Logs Modal"
 Cohesion: 0.60
@@ -182,12 +201,12 @@ Cohesion: 0.07
 Nodes (28): Achievement badge tier 1 level 1, Achievement badge tier 1 level 2, Achievement badge tier 1 level 3, Achievement badge tier 1 level 4, Achievement badge tier 1 level 5, Achievement badge tier 2 level 1, Achievement badge tier 2 level 2, Achievement badge tier 2 level 3 (+20 more)
 
 ### Community 13 - "gestures.js"
-Cohesion: 0.14
-Nodes (22): Avatar(), MembershipIcon(), getCollapsedLabel(), isUserChecked(), UserMultiSelect(), formatDate(), getTrainingStatusForUser(), getTrainingTitle() (+14 more)
+Cohesion: 0.22
+Nodes (17): formatDate(), getTrainingStatusForUser(), getTrainingTitle(), getUserPastTrainings(), normalizeDateInput(), ProfilePage(), TRAINING_BADGE, TrainingCard() (+9 more)
 
 ### Community 14 - "datePickerUtils.js"
-Cohesion: 0.06
-Nodes (56): AppHeader(), AlertDialogContext, INITIAL_STATE, FOCUSABLE_SELECTORS, Modal(), applyRegularPeriodAuto(), computeTwoMonthEndDate(), computeYearEndDate() (+48 more)
+Cohesion: 0.26
+Nodes (11): IconButton, FOCUSABLE_SELECTORS, Modal(), INITIAL, ensureModalOriginTracking(), getLastPointerOrigin(), getModalCollapseTransform(), onPointerDown() (+3 more)
 
 ### Community 17 - "Audit Diff Library"
 Cohesion: 0.18
@@ -230,12 +249,12 @@ Cohesion: 0.50
 Nodes (4): PB collection products, Магазин, Shopping cart animation snippet, Shopping cart animation
 
 ### Community 56 - "PostDetailModal.jsx"
-Cohesion: 0.10
-Nodes (19): AvatarCropModal(), getCropCircle(), getImagePlacement(), FeedVideoPreview(), MediaPreviewAlbumItem(), MediaPreviewGrid(), PostContextMenu(), useSwipeGallery() (+11 more)
+Cohesion: 0.15
+Nodes (14): AvatarCropModal(), getCropCircle(), getImagePlacement(), CommentContextMenu(), carouselSlideKey(), ProductGallery(), slideId(), useGalleryNavigation() (+6 more)
 
 ### Community 57 - "log.js"
-Cohesion: 0.10
-Nodes (47): AppMain(), isUserBookingDisabled(), UserPickerModal(), CreateTrainingModal(), TrainingDetailModal(), TrainingsPage(), canCancelBooking(), generateNextDays() (+39 more)
+Cohesion: 0.14
+Nodes (34): TrainingsPage(), canCancelBooking(), dayKey(), generateNextDays(), isModerator(), addPendingDeleteTrainingId(), areTrainingValuesEqual(), assertMembershipSessionAvailable() (+26 more)
 
 ### Community 58 - "achievements.js"
 Cohesion: 0.15
@@ -243,7 +262,7 @@ Nodes (24): AchievementRow(), AchievementsBlock(), clampProgress(), getCurrentLe
 
 ### Community 59 - "yadiskAlbumLazy.js"
 Cohesion: 0.04
-Nodes (19): bigintToI53Checked(), doCallback(), done(), doReadv(), doWritev(), _emscripten_asm_const_int(), exec(), exitJS() (+11 more)
+Nodes (20): base(), bigintToI53Checked(), doCallback(), done(), doReadv(), doWritev(), _emscripten_asm_const_int(), exec() (+12 more)
 
 ### Community 60 - "maxauthlib.js"
 Cohesion: 0.43
@@ -254,24 +273,24 @@ Cohesion: 0.28
 Nodes (17): buildDownloadUrl(), buildFileItem(), buildMetaUrl(), collectAlbumItems(), detectMediaKind(), fetchContentFile(), fetchDownloadHref(), fetchPublicResource() (+9 more)
 
 ### Community 63 - "catalog.js"
-Cohesion: 0.10
-Nodes (34): EmptyState(), InfoTooltip(), Spinner(), MODES, StatsAchievementsModal(), hasAnyActivity(), SLICES, StatsBookingModal() (+26 more)
+Cohesion: 0.06
+Nodes (60): AppHeader(), InfoTooltip(), MembershipIcon(), Spinner(), MODES, StatsAchievementsModal(), hasAnyActivity(), SLICES (+52 more)
 
 ### Community 65 - "ProfilePage.jsx"
-Cohesion: 0.21
-Nodes (9): Toast(), ToastContext, ToastProvider(), useToast(), CommentListItem(), CommentReplyButton(), CommentSwipeReply(), isInteractiveTapTarget() (+1 more)
+Cohesion: 0.22
+Nodes (7): Avatar(), CommentListItem(), CommentReplyButton(), CommentReplyComposeBar(), CommentReplyQuote(), CommentSwipeReply(), getUserAvatarData()
 
 ### Community 67 - "media.js"
-Cohesion: 0.05
-Nodes (64): createGalleryPayload(), GalleryUploadContext, GalleryUploadProvider(), getVideoAspectRatio(), isGalleryKey(), prepareGalleryUploadItem(), useGalleryUpload(), isProductsKey() (+56 more)
+Cohesion: 0.06
+Nodes (58): createGalleryPayload(), GalleryUploadContext, GalleryUploadProvider(), getVideoAspectRatio(), isGalleryKey(), prepareGalleryUploadItem(), useGalleryUpload(), isProductsKey() (+50 more)
 
 ### Community 68 - "GalleryCommentModal.jsx"
-Cohesion: 0.12
-Nodes (15): ForceUpdateOverlay(), CommentContextMenu(), FullscreenImageViewer(), FullscreenSlideImage(), getOriginRect(), getWindowWidth(), isImagePaintReady(), isTouchNavDevice() (+7 more)
+Cohesion: 0.33
+Nodes (8): FullscreenImageViewer(), FullscreenSlideImage(), getOriginRect(), getWindowWidth(), isImagePaintReady(), isTouchNavDevice(), useYadiskLoadProgress(), subscribeMemberLoadProgress()
 
 ### Community 70 - "useFetchedOriginal.js"
 Cohesion: 0.15
-Nodes (21): PostUploadContext, PostUploadProvider(), prependPostToFeed(), revalidatePosts(), usePosts(), createComment(), createCommentWithProgress(), createPost() (+13 more)
+Nodes (19): useScheduledPosts(), prepareMediaInBody(), prepareUploadMedia(), prepareUploadMediaList(), createComment(), createCommentWithProgress(), createPost(), createPostWithProgress() (+11 more)
 
 ### Community 72 - "claimlib.js"
 Cohesion: 0.22
@@ -282,108 +301,116 @@ Cohesion: 0.83
 Nodes (3): asString(), createManualUser(), randomManualEmail()
 
 ### Community 77 - "NotificationSettingsModal.jsx"
-Cohesion: 0.40
-Nodes (3): App(), TournamentPostUploadProvider(), AlertDialogProvider()
+Cohesion: 0.18
+Nodes (17): NotificationsDropdown(), formatDateRangeLabel(), MembershipOverviewModal(), trainingCountsAsUsedSession(), CreateTrainingModal(), INITIAL_FORM, useTrainings(), error (+9 more)
 
 ### Community 78 - "tournamentPosts.js"
-Cohesion: 0.14
-Nodes (19): alignMemory(), _getaddrinfo(), getSocketAddress(), getSocketFromFD(), inetPton4(), inetPton6(), jstoi_q(), mmapAlloc() (+11 more)
+Cohesion: 0.18
+Nodes (15): alignMemory(), getSocketAddress(), getSocketFromFD(), mmapAlloc(), ___syscall_accept4(), ___syscall_bind(), ___syscall_connect(), ___syscall_getpeername() (+7 more)
 
 ### Community 79 - "isModerator"
-Cohesion: 0.18
-Nodes (17): TournamentPostUploadContext, useTournamentPosts(), applyTournamentPostSideEffects(), buildTournamentPostPayload(), deleteScheduledTournamentPost(), hardDeleteTournamentPost(), invalidateTournamentCaches(), listTournamentPosts() (+9 more)
+Cohesion: 0.23
+Nodes (14): TournamentPostUploadContext, TournamentPostUploadProvider(), applyTournamentPostSideEffects(), buildTournamentPostPayload(), deleteScheduledTournamentPost(), hardDeleteTournamentPost(), invalidateTournamentCaches(), publishScheduledTournamentPostNow() (+6 more)
 
 ### Community 80 - "useMaxCloseGuard.js"
 Cohesion: 0.25
 Nodes (15): areStringArraysEqual(), areStringSetsEqual(), INITIAL, parseOptionalOldPrice(), parsePrice(), ProductForm(), areProductColorsEqual(), areProductParametersEqual() (+7 more)
 
 ### Community 81 - "PostUploadProvider.jsx"
-Cohesion: 0.16
-Nodes (24): prefetchLazyTabPages(), usePostUpload(), useTournamentPostUpload(), ScrollToTopButton(), MentionNavContext, MentionNavProvider(), useMentionNav(), CompetitionsPage() (+16 more)
+Cohesion: 0.20
+Nodes (16): prefetchLazyTabPages(), usePostUpload(), ScrollToTopButton(), FeedPage(), applyPinFocusHighlight(), computePinnedBannerIndex(), pinHighlightTimers, sortPinnedByCreated() (+8 more)
 
 ### Community 83 - "yadiskAlbumLazy.js"
-Cohesion: 0.10
-Nodes (36): ALL_CATEGORY_VALUES, AuditEventRow(), formatDateRangeLabel(), getLogsDefaultDateRange(), LogsModal(), toDateInputValue(), htmlToReadableText(), looksLikeRichHtml() (+28 more)
+Cohesion: 0.09
+Nodes (38): ALL_CATEGORY_VALUES, AuditEventRow(), formatDateRangeLabel(), getLogsDefaultDateRange(), LogsModal(), toDateInputValue(), htmlToReadableText(), looksLikeRichHtml() (+30 more)
 
 ### Community 84 - "ArchiveModal.jsx"
 Cohesion: 0.16
-Nodes (10): base(), PAD, ScheduleDateTimeSheet(), ScheduledPostActionsMenu(), ScheduledPostRow(), formatScheduleDayWheelLabel(), formatScheduleDispatchHeading(), formatScheduleSendLabel() (+2 more)
+Nodes (9): ForceUpdateOverlay(), PAD, ScheduleDateTimeSheet(), ScheduledPostActionsMenu(), ScheduledPostRow(), useOverlayClose(), formatScheduleDayWheelLabel(), formatScheduleDispatchHeading() (+1 more)
 
 ### Community 85 - "PullToRefresh.jsx"
-Cohesion: 0.28
-Nodes (5): MAX_AUTH_URL, MAX_SELLER_URL, PB_URL, BlockedPage(), isUserBotBlocked()
+Cohesion: 0.20
+Nodes (14): applyRegularPeriodAuto(), computeTwoMonthEndDate(), computeYearEndDate(), getCurrentSessions(), getModeCopy(), getUnpaidSessions(), MembershipEditModal(), normalizeDateInput() (+6 more)
 
 ### Community 86 - "@ffmpeg/ffmpeg"
-Cohesion: 0.13
-Nodes (26): IconButton, filterProfileTrainings(), formatDateRangeLabel(), ProfileTrainingsSearch(), CalendarStrip(), ArchiveModal(), formatDateRangeLabel(), getArchiveDefaultDateRange() (+18 more)
+Cohesion: 0.21
+Nodes (15): EmptyState(), filterProfileTrainings(), formatDateRangeLabel(), ProfileTrainingsSearch(), ArchiveModal(), formatDateRangeLabel(), getArchiveDefaultDateRange(), findRussianMonth() (+7 more)
 
 ### Community 87 - "buyMessage.js"
 Cohesion: 0.27
 Nodes (12): CARD_STEPS, getStepSelectors(), getTooltipStyle(), NAV_STEPS, normalizeDateInput(), OnboardingTutorial(), padHighlightRect(), scrollTargetIntoView() (+4 more)
 
 ### Community 88 - "format.js"
-Cohesion: 0.31
-Nodes (8): useRegisterAddAction(), PlayerForm(), RatingPage(), buildPlayerRanks(), getPlayerRatingRank(), getRatingPoints(), isRatingVisible(), createPlayer()
+Cohesion: 0.21
+Nodes (14): useTournamentPostUpload(), MentionNavContext, MentionNavProvider(), useMentionNav(), CompetitionsPage(), TABS, subscribeYadiskMediaCache(), useSectionScroll() (+6 more)
 
 ### Community 89 - "usePlayers"
-Cohesion: 0.12
-Nodes (28): applyMentionMissingStatuses(), isPostMissing(), postInflight, postMissingCache, resolvePostMissing(), resolveUserMissing(), userInflight, userMissingCache (+20 more)
+Cohesion: 0.16
+Nodes (19): formatCountdownPart(), formatTrainingCountdownBadge(), isUserBooked(), CLICK_ACTION_LABELS, getNotificationKind(), isMetaObject(), NotificationCard(), parseCommentReplyParentText() (+11 more)
 
 ### Community 90 - "postRichText.js"
-Cohesion: 0.18
-Nodes (20): formatDate(), getTrainingStatusForUser(), getTrainingTitle(), getUserPastTrainings(), isModerator(), normalizeDateInput(), ProfileViewModal(), TRAINING_BADGE (+12 more)
+Cohesion: 0.22
+Nodes (18): formatDate(), getTrainingStatusForUser(), getTrainingTitle(), getUserPastTrainings(), isModerator(), normalizeDateInput(), ProfileViewModal(), TRAINING_BADGE (+10 more)
 
 ### Community 91 - "gestures.js"
-Cohesion: 0.19
-Nodes (12): AppInner(), getInitialFavoriteProductIds(), LazyAdminPanelPage, LazyCompetitionsPage, LazyGalleryPage, LazyOnboardingTutorial, LazyProfilePage, LazyShopPage (+4 more)
+Cohesion: 0.22
+Nodes (10): LazyAdminPanelPage, LazyCompetitionsPage, LazyGalleryPage, LazyOnboardingTutorial, LazyProfilePage, LazyShopPage, LazyTrainingsPage, TAB_TITLES (+2 more)
 
 ### Community 92 - "@fontsource-variable/nunito"
-Cohesion: 0.12
-Nodes (16): getWasmTableEntry(), invoke_i(), invoke_ii(), invoke_iii(), invoke_iiii(), invoke_iiiii(), invoke_iiiiii(), invoke_iiiiiiiii() (+8 more)
+Cohesion: 0.13
+Nodes (15): getWasmTableEntry(), invoke_i(), invoke_ii(), invoke_iii(), invoke_iiii(), invoke_iiiii(), invoke_iiiiii(), invoke_iiiiiiiii() (+7 more)
 
 ### Community 93 - "commentListLayout.js"
-Cohesion: 0.08
-Nodes (36): Toggle(), LazyStatsAchievementsModal, LazyStatsBookingModal, LazyStatsGrowthModal, LazyStatsReachModal, LazyStatsTrainingsCountModal, buildSendResultAlert(), formatAdminSaveError() (+28 more)
+Cohesion: 0.05
+Nodes (65): PostUploadContext, PostUploadProvider(), prependPostToFeed(), revalidatePosts(), AlertDialogContext, AlertDialogProvider(), INITIAL_STATE, Toggle() (+57 more)
 
 ### Community 94 - "mention_notifications_lib.js"
 Cohesion: 0.44
 Nodes (10): alreadyNotified(), buildActorMeta(), diffNewIds(), extractUserMentionIds(), getRelationId(), notifyCommentMentions(), notifyMentionsForRecord(), notifyPostMentions() (+2 more)
 
 ### Community 95 - "pocketbase"
-Cohesion: 0.23
-Nodes (13): TournamentCommentsSection(), useCommentLikes(), useTournamentComments(), listCommentLikes(), toggleCommentLike(), buildTournamentCommentMediaReorderFormData(), createTournamentComment(), createTournamentCommentWithProgress() (+5 more)
+Cohesion: 0.28
+Nodes (13): TournamentCommentsSection(), groupCommentsByDay(), isKnownEmptyExpandedComments(), useTournamentComments(), toFullscreenMediaItem(), buildTournamentCommentMediaReorderFormData(), createTournamentComment(), createTournamentCommentWithProgress() (+5 more)
 
 ### Community 98 - "react-error-boundary"
 Cohesion: 0.15
 Nodes (15): abort(), createWasm(), _dlopen(), ___dlsym(), getBinary(), getBinaryPromise(), getValue(), initRandomFill() (+7 more)
 
 ### Community 101 - "intArrayFromString"
-Cohesion: 0.18
-Nodes (12): _getnameinfo(), inetNtop4(), inetNtop6(), intArrayFromString(), LazyUint8Array(), lengthBytesUTF8(), readSockaddr(), stringToNewUTF8() (+4 more)
+Cohesion: 0.15
+Nodes (13): _getnameinfo(), inetNtop4(), inetNtop6(), intArrayFromString(), LazyUint8Array(), lengthBytesUTF8(), readSockaddr(), stringToNewUTF8() (+5 more)
 
 ### Community 103 - "useAlertDialog"
-Cohesion: 0.24
-Nodes (18): getInitialUser(), useMaxAuth(), usePostLikes(), error, buildBannedUser(), clearBanInfo(), finalizeBannedUser(), initMaxAuth() (+10 more)
+Cohesion: 0.19
+Nodes (21): AppInner(), AppMain(), getInitialFavoriteProductIds(), getInitialUser(), useMaxAuth(), buildBannedUser(), clearBanInfo(), finalizeBannedUser() (+13 more)
+
+### Community 104 - "CreateTournamentPostModal.jsx"
+Cohesion: 0.31
+Nodes (6): PostAttachButton(), PostRichTextField, PostScheduleButton(), PublishLongPressMenu(), ScheduledPostsModal(), LongPressRing()
+
+### Community 105 - "backup_common.sh"
+Cohesion: 0.13
+Nodes (3): db_fingerprint(), save_db_fingerprint(), backup_common.sh script
 
 ### Community 106 - "TournamentPostDetailModal.jsx"
-Cohesion: 0.22
-Nodes (14): ModalFloatingCloseButton(), getParticipantDisplayName(), getParticipantPlayer(), PODIUM_ORDER, TournamentPodium(), readTournamentComments(), TournamentPostCard(), TournamentPostDetailModal() (+6 more)
+Cohesion: 0.15
+Nodes (21): getParticipantDisplayName(), getParticipantPlayer(), PODIUM_ORDER, TournamentPodium(), readTournamentComments(), TournamentPostCard(), TournamentPostDetailModal(), commentHasAttachments() (+13 more)
 
 ### Community 107 - "_strftime"
-Cohesion: 0.15
-Nodes (13): addDays(), arraySum(), ___assert_fail(), __gmtime_js(), isLeapYear(), __localtime_js(), __mktime_js(), readI53FromI64() (+5 more)
+Cohesion: 0.20
+Nodes (10): addDays(), arraySum(), __gmtime_js(), isLeapYear(), __localtime_js(), __mktime_js(), readI53FromI64(), _strftime() (+2 more)
 
 ### Community 108 - "ProfileTrainingsSearch.jsx"
 Cohesion: 0.36
 Nodes (8): MediaProgressRing(), computeGridDropIndex(), computeStripDropIndex(), findStripScrollParent(), isTouchPointer(), moveKeyToIndex(), prefersReducedMotion(), SortableMediaPreviewGrid()
 
 ### Community 109 - "yadiskMediaSessionCache.js"
-Cohesion: 0.28
-Nodes (13): formatFreezeLogEntry(), formatMembershipDate(), getMembershipTypeLabel(), MembershipModal(), parseFreezeLog(), BuyButton(), buildBuyMessage(), buildMaxUserChatUrl() (+5 more)
+Cohesion: 0.14
+Nodes (22): Toast(), ToastContext, ToastProvider(), useToast(), MAX_AUTH_URL, MAX_SELLER_URL, PB_URL, BlockedPage() (+14 more)
 
 ### Community 110 - "PostUploadProvider.jsx"
-Cohesion: 0.10
-Nodes (33): FavoritesContext, FavoritesProvider(), loadFavoriteProducts(), patchProductsFavoritesCount(), useFavorites(), buildEditMediaItems(), CommentMediaBody(), commentHasAttachments() (+25 more)
+Cohesion: 0.19
+Nodes (17): useFavorites(), buildEditMediaItems(), CommentMediaBody(), CategoryDropdown(), FavoritesDropdown(), FavoritesDropdownItem(), ProductCard, ProductDetail() (+9 more)
 
 ### Community 111 - "SortableMediaPreviewGrid.jsx"
 Cohesion: 0.20
@@ -393,13 +420,29 @@ Nodes (14): FullscreenSlideVideo(), stopVideoLoad(), useFetchedOriginal(), blobF
 Cohesion: 0.25
 Nodes (8): addOnPostRun(), addOnPreRun(), callRuntimeCallbacks(), initRuntime(), postRun(), preRun(), run(), setTimeout()
 
+### Community 113 - "useLongPress"
+Cohesion: 0.21
+Nodes (8): SystemTemplatesModal(), TemplateListButton(), getLongPressCardStyle(), isLongPressIgnoredTarget(), LONG_PRESS_IGNORE_SELECTOR, useLongPress(), listSystemTemplates(), updateSystemTemplate()
+
 ### Community 114 - "Avatar.jsx"
-Cohesion: 0.14
-Nodes (23): groupCommentsByDay(), groupItemsByDay(), isKnownEmptyExpandedComments(), mapCommentsWithDaySeparators(), mapItemsWithDaySeparators(), mapPostsWithDaySeparators(), CommentListSkeleton(), CommentReplyComposeBar() (+15 more)
+Cohesion: 0.15
+Nodes (20): ModalFloatingCloseButton(), CommentListSkeleton(), DayGroup(), DaySeparator(), findScrollParent(), keepCommentEditInView(), restoreAndKeepCommentEditInView(), PostContextMenu() (+12 more)
+
+### Community 115 - "Бэкапы и восстановление PocketBase"
+Cohesion: 0.17
+Nodes (11): RPO, Бэкапы и восстановление PocketBase, Важно, Восстановление, Новый сервер, старый недоступен, Полный disaster (БД + медиа), Ручной запуск, Слои (+3 more)
 
 ### Community 116 - "asyncLoad"
 Cohesion: 0.38
 Nodes (7): addRunDependency(), assert(), asyncLoad(), FS_createPreloadedFile(), getUniqueRunDependency(), handleMessage(), removeRunDependency()
+
+### Community 117 - "PullToRefresh.jsx"
+Cohesion: 0.36
+Nodes (8): PullToRefresh(), hasOpenOverlay(), collectionExists(), ensureSystemTemplates(), findDefault(), interpolate(), listByChannel(), resolve()
+
+### Community 118 - "EditTrainingModal.jsx"
+Cohesion: 0.39
+Nodes (8): buildTrainingPatch(), EditTrainingModal(), getFormFromTraining(), getPatchFromForm(), getPatchFromTraining(), INITIAL_FORM, toDateTimeLocalValue(), updateTraining()
 
 ### Community 119 - "useComments.js"
 Cohesion: 0.38
@@ -417,37 +460,69 @@ Nodes (5): _environ_get(), _environ_sizes_get(), getEnvStrings(), getExecutableN
 Cohesion: 0.36
 Nodes (7): BlockedAppShell(), disableMaxVerticalSwipes(), isEditableFocus(), useMaxCloseGuard(), closeTopOverlay(), isSectionScrollAtTop(), scrollSectionToTop()
 
+### Community 123 - "useSectionSwipe.js"
+Cohesion: 0.36
+Nodes (8): getSwipeableTabs(), getWindowWidth(), IGNORE_SELECTOR, isTextFieldFocused(), shouldIgnoreTarget(), SWIPE_ALLOW_OVERLAY_SUFFIXES, useSectionSwipe(), hasBlockingOverlay()
+
+### Community 124 - "useAlertDialog"
+Cohesion: 0.43
+Nodes (5): useAlertDialog(), AddImageModal(), compressImage(), hasTransparency(), withExtension()
+
 ### Community 125 - "AboutAppModal.jsx"
-Cohesion: 0.33
-Nodes (7): AboutAppModal(), openExternalUrl(), useAppVersionCheck(), APP_BUILD, APP_DISPLAY_VERSION, fetchRemoteAppVersion(), getVersionManifestUrl()
+Cohesion: 0.29
+Nodes (8): App(), AboutAppModal(), openExternalUrl(), useAppVersionCheck(), APP_BUILD, APP_DISPLAY_VERSION, fetchRemoteAppVersion(), getVersionManifestUrl()
+
+### Community 126 - "UTF8ToString"
+Cohesion: 0.29
+Nodes (7): ___assert_fail(), _getaddrinfo(), inetPton4(), inetPton6(), jstoi_q(), UTF8ArrayToString(), UTF8ToString()
 
 ### Community 127 - "useSectionSwipe.js"
-Cohesion: 0.09
-Nodes (27): PullToRefresh(), DEFAULT_FREQUENT_EMOJIS, EMOJI_CATEGORIES, CATEGORY_ICONS, EmojiPicker(), prefersReducedMotion(), pushRecentEmoji(), readRecentEmojis() (+19 more)
+Cohesion: 0.29
+Nodes (7): DEFAULT_FREQUENT_EMOJIS, EMOJI_CATEGORIES, CATEGORY_ICONS, EmojiPicker(), prefersReducedMotion(), pushRecentEmoji(), readRecentEmojis()
+
+### Community 128 - "commentListLayout.js"
+Cohesion: 0.52
+Nodes (6): groupItemsByDay(), groupPostsByDay(), mapCommentsWithDaySeparators(), mapItemsWithDaySeparators(), mapPostsWithDaySeparators(), formatCommentDaySeparator()
+
+### Community 129 - "overlayStack.js"
+Cohesion: 0.43
+Nodes (4): MentionSuggestPopup(), prefersReducedMotion(), registerOverlay(), stack
+
+### Community 130 - "Skeleton.jsx"
+Cohesion: 0.33
+Nodes (4): FeedListSkeleton(), RatingListSkeleton(), ShopGridSkeleton(), TrainingListSkeleton()
 
 ### Community 131 - "BottomNav.jsx"
 Cohesion: 0.27
 Nodes (8): ADMIN_NAV_ITEM, BottomNav(), GALLERY_NAV_ITEM, NAV_ITEMS, AddActionContext, AddActionProvider(), DEFAULT_API, useTriggerAddAction()
 
+### Community 132 - "FavoritesContext.jsx"
+Cohesion: 0.53
+Nodes (5): FavoritesContext, FavoritesProvider(), loadFavoriteProducts(), patchProductsFavoritesCount(), adjustProductFavoritesCount()
+
+### Community 133 - "backuplib.js"
+Cohesion: 0.83
+Nodes (3): resolveScript(), scriptsDir(), startBackup()
+
 ## Knowledge Gaps
-- **152 isolated node(s):** `name`, `version`, `description`, `private`, `dev` (+147 more)
+- **167 isolated node(s):** `name`, `version`, `description`, `private`, `dev` (+162 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **14 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **19 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `ScheduleDateTimeSheet()` connect `ArchiveModal.jsx` to `log.js`, `notifications.js`, `GalleryCommentModal.jsx`?**
-  _High betweenness centrality (0.178) - this node is a cross-community bridge._
-- **Why does `base()` connect `ArchiveModal.jsx` to `yadiskAlbumLazy.js`?**
-  _High betweenness centrality (0.177) - this node is a cross-community bridge._
-- **Why does `error` connect `useAlertDialog` to `Post Upload and UI Kit`, `notifications.js`, `gestures.js`, `datePickerUtils.js`, `log.js`, `achievements.js`, `media.js`, `GalleryCommentModal.jsx`, `useFetchedOriginal.js`, `NotificationSettingsModal.jsx`, `isModerator`, `PostUploadProvider.jsx`, `ArchiveModal.jsx`, `buyMessage.js`, `format.js`, `usePlayers`, `postRichText.js`, `gestures.js`, `commentListLayout.js`, `pocketbase`, `yadiskMediaSessionCache.js`, `PostUploadProvider.jsx`, `Avatar.jsx`, `useComments.js`?**
-  _High betweenness centrality (0.095) - this node is a cross-community bridge._
+- **Why does `ScheduleDateTimeSheet()` connect `ArchiveModal.jsx` to `CreateTournamentPostModal.jsx`, `usePlayers`, `yadiskAlbumLazy.js`, `log.js`?**
+  _High betweenness centrality (0.171) - this node is a cross-community bridge._
+- **Why does `base()` connect `yadiskAlbumLazy.js` to `ArchiveModal.jsx`?**
+  _High betweenness centrality (0.170) - this node is a cross-community bridge._
+- **Why does `error` connect `NotificationSettingsModal.jsx` to `Post Upload and UI Kit`, `notifications.js`, `FavoritesContext.jsx`, `gestures.js`, `datePickerUtils.js`, `log.js`, `achievements.js`, `media.js`, `useFetchedOriginal.js`, `isModerator`, `PostUploadProvider.jsx`, `ArchiveModal.jsx`, `PullToRefresh.jsx`, `buyMessage.js`, `format.js`, `postRichText.js`, `gestures.js`, `commentListLayout.js`, `pocketbase`, `useAlertDialog`, `CreateTournamentPostModal.jsx`, `TournamentPostDetailModal.jsx`, `yadiskMediaSessionCache.js`, `PostUploadProvider.jsx`, `useLongPress`, `Avatar.jsx`, `EditTrainingModal.jsx`, `useComments.js`?**
+  _High betweenness centrality (0.099) - this node is a cross-community bridge._
 - **What connects `name`, `version`, `description` to the rest of the system?**
-  _152 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _167 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Post Upload and UI Kit` be split into smaller, more focused modules?**
-  _Cohesion score 0.11313131313131314 - nodes in this community are weakly interconnected._
-- **Should `notifications.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.14823529411764705 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07404426559356136 - nodes in this community are weakly interconnected._
 - **Should `auditEventFormat.js` be split into smaller, more focused modules?**
   _Cohesion score 0.07390873015873016 - nodes in this community are weakly interconnected._
+- **Should `NPM Dependencies` be split into smaller, more focused modules?**
+  _Cohesion score 0.046511627906976744 - nodes in this community are weakly interconnected._

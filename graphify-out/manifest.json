@@ -1,7 +1,7 @@
 {
   "client/package.json": {
-    "mtime": 1788589026.1300342,
-    "ast_hash": "10b6a33768c658d766e9c2caaaa0273d",
+    "mtime": 1788592053.301904,
+    "ast_hash": "3b8d0a3a3db8cfa5e2fa56a5890509e4",
     "semantic_hash": ""
   },
   "client/public/sw.js": {
@@ -120,8 +120,8 @@
     "semantic_hash": "0a082060e608b78fe4d9e9851bd5b5a6"
   },
   "client/src/features/admin/AdminPanelPage.jsx": {
-    "mtime": 1788448953.778026,
-    "ast_hash": "80e01ff20af460dc9f1a9a8a30626c55",
+    "mtime": 1788592032.1848392,
+    "ast_hash": "69897eec04fb42542a6446f3c4fa25a0",
     "semantic_hash": ""
   },
   "client/src/features/admin/BroadcastModal.jsx": {
@@ -320,7 +320,7 @@
     "semantic_hash": "3d0285b7d1fb0294d62f5bef1f9162a3"
   },
   "client/src/features/onboarding/OnboardingTutorial.jsx": {
-    "mtime": 1788588997.1371093,
+    "mtime": 1788589254.3135228,
     "ast_hash": "51eec88598bbd60ca23df28ca4bf3363",
     "semantic_hash": ""
   },
@@ -410,7 +410,7 @@
     "semantic_hash": ""
   },
   "client/src/features/shop/ProductDetail.jsx": {
-    "mtime": 1788589017.3187041,
+    "mtime": 1788589254.3145235,
     "ast_hash": "0f16aa0e0c4b01ac8ca19f394028e47d",
     "semantic_hash": ""
   },
@@ -655,9 +655,9 @@
     "semantic_hash": "da7234bfcc36d0129b07a8cc939c0236"
   },
   "client/src/services/admin.js": {
-    "mtime": 1788170204.6720781,
-    "ast_hash": "4a209fb18279371b0b73c65e746cb873",
-    "semantic_hash": "4a209fb18279371b0b73c65e746cb873"
+    "mtime": 1788592008.4577384,
+    "ast_hash": "01505c46354557144afb2cc5dd405e70",
+    "semantic_hash": ""
   },
   "client/src/services/auditLog.js": {
     "mtime": 1788170204.673078,
@@ -870,8 +870,8 @@
     "semantic_hash": "924b95fb543d6c752aa7e12c3f56da5a"
   },
   "README.md": {
-    "mtime": 1788170204.469377,
-    "ast_hash": "978d8d096d73b5840c6bbe65318ca6c1",
+    "mtime": 1788592066.532806,
+    "ast_hash": "8aa2eccfbf6a03bf1fd97e6a20adceb2",
     "semantic_hash": ""
   },
   "client/index.html": {
@@ -1385,8 +1385,8 @@
     "semantic_hash": ""
   },
   "scripts/server-bootstrap.sh": {
-    "mtime": 1788170204.8955624,
-    "ast_hash": "abea8adbd2aab47922cc332f282cadef",
+    "mtime": 1788591962.692254,
+    "ast_hash": "526e2a8c12e106b908fcb2a78dd1404b",
     "semantic_hash": ""
   },
   "client/src/features/feed/CommentComposeForm.jsx": {
@@ -1710,13 +1710,58 @@
     "semantic_hash": ""
   },
   "scripts/backup_to_yandex.sh": {
-    "mtime": 1788490249.2087915,
-    "ast_hash": "88f2f349f20117dea40b5b568f4620ab",
+    "mtime": 1788591901.7858317,
+    "ast_hash": "267d1ba988713309a31bdf06746382a0",
     "semantic_hash": ""
   },
   "scripts/restore_from_yandex.sh": {
-    "mtime": 1788490244.3946733,
-    "ast_hash": "ce65941a166b072f95371dc60bf853ef",
+    "mtime": 1788591942.2532513,
+    "ast_hash": "b9ead7428190e79c07e1260ae680d43a",
+    "semantic_hash": ""
+  },
+  "pb_hooks/backup.pb.js": {
+    "mtime": 1788591988.447932,
+    "ast_hash": "a005abc28ac4da7c86d61f443ce1b156",
+    "semantic_hash": ""
+  },
+  "pb_hooks/backuplib.js": {
+    "mtime": 1788592115.5169375,
+    "ast_hash": "c0cd399b9083a3a45d2b8556d7e50b7b",
+    "semantic_hash": ""
+  },
+  "scripts/backup_common.sh": {
+    "mtime": 1788591915.267188,
+    "ast_hash": "c11ae54a9038cc2579b69a39f48f9489",
+    "semantic_hash": ""
+  },
+  "scripts/backup_db_to_yandex.sh": {
+    "mtime": 1788591892.659583,
+    "ast_hash": "ebdea4ddb88fc4e4d8ea7bdc00285f49",
+    "semantic_hash": ""
+  },
+  "scripts/backup_storage_to_yandex.sh": {
+    "mtime": 1788591901.6964042,
+    "ast_hash": "a4f8014a18fd115f58f8fcac2fe7db2b",
+    "semantic_hash": ""
+  },
+  "scripts/install_backup_cron.sh": {
+    "mtime": 1788591972.847342,
+    "ast_hash": "56bb1030b6b802986295572c69608eb9",
+    "semantic_hash": ""
+  },
+  "scripts/restore_db_from_yandex.sh": {
+    "mtime": 1788592083.509356,
+    "ast_hash": "4f81a59b7731db0b588caa3f91fb7588",
+    "semantic_hash": ""
+  },
+  "scripts/restore_storage_from_yandex.sh": {
+    "mtime": 1788591942.1756074,
+    "ast_hash": "49ac7d7944105603f4a00b48eb45e7ae",
+    "semantic_hash": ""
+  },
+  "scripts/BACKUP.md": {
+    "mtime": 1788592052.5351377,
+    "ast_hash": "6458fb725b892172b33b8b974ec511fc",
     "semantic_hash": ""
   }
 }
