@@ -1,28 +1,69 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Полный weekly-архив: консистентная БД + storage/ → Яндекс.Диск (full/).
+set -euo pipefail
 
-# Настройки путей
-PB_DATA_DIR="/opt/pocketbase/pb_data"
-BACKUP_DIR="/opt/tennis/backups"
-TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=backup_common.sh
+source "$SCRIPT_DIR/backup_common.sh"
 
-# Папка для частей текущего бэкапа на сервере
-TMP_SPLIT_DIR="$BACKUP_DIR/split_$TIMESTAMP"
-mkdir -p "$TMP_SPLIT_DIR"
+backup_parse_args "$@"
 
-# Шаг 1: Создаем ОДИН обычный целый архив
-zip -r "$BACKUP_DIR/full_backup_$TIMESTAMP.zip" "$PB_DATA_DIR" -x "$PB_DATA_DIR/backups/*"
+REMOTE_FULL="$REMOTE_ROOT/full"
+FULL_MAX_AGE="${FULL_MAX_AGE:-14d}"
 
-# Шаг 2: Режем этот целый готовый файл на куски по 15 Мегабайт
-# (split создаст файлы: part_aa, part_ab, part_ac и т.д. внутри временной папки)
-split -b 15m "$BACKUP_DIR/full_backup_$TIMESTAMP.zip" "$TMP_SPLIT_DIR/part_"
+run_full_backup() {
+  local stamp="$TIMESTAMP"
+  local work_dir="$BACKUP_DIR/full_work_$stamp"
+  local split_dir="$BACKUP_DIR/split_$stamp"
+  local zip_path="$BACKUP_DIR/full_backup_$stamp.zip"
+  local pb_snapshot="$work_dir/pb_data"
 
-# Шаг 3: Поочередно загружаем каждый кусочек в индивидуальную папку на Яндекс.Диске
-rclone copy "$TMP_SPLIT_DIR/" yandex:tennis_backup/backup_$TIMESTAMP/ --transfers 1 --checkers 1 --buffer-size 0M
+  rm -rf "$work_dir" "$split_dir"
+  mkdir -p "$pb_snapshot" "$split_dir"
 
-# Шаг 4: Полностью удаляем временные файлы с VPS
-rm -rf "$TMP_SPLIT_DIR"
-rm -f "$BACKUP_DIR/full_backup_$TIMESTAMP.zip"
+  echo "[backup-full] consistent SQLite snapshot…"
+  sqlite_backup_file "$PB_DATA_DIR/data.db" "$pb_snapshot/data.db"
+  if [[ -f "$PB_DATA_DIR/auxiliary.db" ]]; then
+    sqlite_backup_file "$PB_DATA_DIR/auxiliary.db" "$pb_snapshot/auxiliary.db"
+  fi
 
-# Шаг 5: Очистка старых бэкапов в Облаке старше 14 дней
-rclone delete yandex:tennis_backup/ --min-age 14d
-rclone rmdirs yandex:tennis_backup/ --leave-root
+  if [[ -d "$PB_DATA_DIR/storage" ]]; then
+    echo "[backup-full] copying storage/…"
+    cp -a "$PB_DATA_DIR/storage" "$pb_snapshot/storage"
+  else
+    mkdir -p "$pb_snapshot/storage"
+  fi
+
+  # Optional types.d.ts if present (harmless)
+  if [[ -f "$PB_DATA_DIR/types.d.ts" ]]; then
+    cp -a "$PB_DATA_DIR/types.d.ts" "$pb_snapshot/types.d.ts"
+  fi
+
+  echo "[backup-full] zipping…"
+  # Store as absolute-looking path opt/pocketbase/pb_data so unzip -d / restores like before
+  (
+    cd "$work_dir"
+    mkdir -p "opt/pocketbase"
+    mv pb_data "opt/pocketbase/pb_data"
+    zip -r "$zip_path" "opt/pocketbase/pb_data"
+  )
+
+  echo "[backup-full] splitting to 15MB parts…"
+  split -b 15m "$zip_path" "$split_dir/part_"
+
+  echo "[backup-full] uploading to $REMOTE_FULL/backup_$stamp/"
+  rclone_copy "$split_dir/" "$REMOTE_FULL/backup_$stamp/"
+
+  rm -rf "$work_dir" "$split_dir"
+  rm -f "$zip_path"
+
+  if [[ "$DRY_RUN" -eq 0 ]]; then
+    echo "[backup-full] pruning full/ older than $FULL_MAX_AGE…"
+    rclone delete "$REMOTE_FULL/" --min-age "$FULL_MAX_AGE" || true
+    rclone rmdirs "$REMOTE_FULL/" --leave-root || true
+  fi
+
+  echo "[backup-full] done: full/backup_$stamp/"
+}
+
+with_flock full run_full_backup
