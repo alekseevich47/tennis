@@ -583,25 +583,35 @@
 .progressive-image {
   position: relative;
   overflow: hidden;
-  background: var(--media-skeleton-bg, #c5ccd6);
+  background: #c5ccd6;
 }
 
 .progressive-image__placeholder {
   position: absolute;
   inset: 0;
   z-index: 0;
-  background-color: var(--media-skeleton-bg, #c5ccd6);
-  background-image: var(--media-skeleton-image);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background:
+    linear-gradient(110deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.45) 50%, rgba(255, 255, 255, 0) 70%),
+    #c5ccd6;
+  background-size: 200% 100%, auto;
+  animation: progressive-image-shimmer 1.2s ease-in-out infinite;
   transition: opacity 0.28s ease;
 }
 
 .progressive-image--ready .progressive-image__placeholder,
 .progressive-image:has(.progressive-image__preview.is-visible) .progressive-image__placeholder {
   opacity: 0;
+  animation: none;
   pointer-events: none;
+}
+
+@keyframes progressive-image-shimmer {
+  0% {
+    background-position: 100% 0, 0 0;
+  }
+  100% {
+    background-position: -100% 0, 0 0;
+  }
 }
 
 .progressive-image__layer {
@@ -633,11 +643,7 @@
 }
 
 .post-media-pending {
-  background-color: var(--media-skeleton-bg, #c5ccd6);
-  background-image: var(--media-skeleton-image);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background: #c5ccd6;
 }
 
 .post-media-skeleton {
@@ -646,11 +652,11 @@
   height: 100%;
   min-height: 128px;
   aspect-ratio: 1 / 1;
-  background-color: var(--media-skeleton-bg, #c5ccd6);
-  background-image: var(--media-skeleton-image);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background:
+    linear-gradient(110deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.45) 50%, rgba(255, 255, 255, 0) 70%),
+    #c5ccd6;
+  background-size: 200% 100%, auto;
+  animation: progressive-image-shimmer 1.2s ease-in-out infinite;
 }
 
 .progressive-image:not(.progressive-image--single) .progressive-image__full {
@@ -670,6 +676,13 @@
 
 .progressive-image--single .progressive-image__full {
   position: relative;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progressive-image__placeholder,
+  .post-media-skeleton {
+    animation: none;
+  }
 }
 
 .telegram-video-preview video,
@@ -761,11 +774,7 @@
   height: 100%;
   min-height: 128px;
   aspect-ratio: 1 / 1;
-  background-color: var(--media-skeleton-bg, #c5ccd6);
-  background-image: var(--media-skeleton-image);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background: #c5ccd6;
 }
 
 .telegram-media-item.is-returning-origin {
@@ -2691,6 +2700,47 @@ button.post-card-like:hover:not(:disabled) {
   z-index: 1;
 }
 
+.fullscreen-vjs-shell {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  will-change: transform;
+}
+
+.fullscreen-vjs-shell.is-ready {
+  opacity: 1;
+}
+
+.fullscreen-vjs-player,
+.fullscreen-vjs-skin {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.fullscreen-vjs-skin {
+  --media-border-radius: 0;
+  --media-scale-unit: 14px;
+  background: #000;
+}
+
+.fullscreen-vjs-media {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+
 .fullscreen-target-video {
   max-width: 100%;
   max-height: 100%;
@@ -2702,21 +2752,11 @@ button.post-card-like:hover:not(:disabled) {
   will-change: transform;
 }
 
-.fullscreen-video-tap-zone {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 2;
-  cursor: pointer;
-  touch-action: manipulation;
-}
-
 .fullscreen-video-quality {
   position: absolute;
   left: 12px;
-  bottom: 12px;
-  z-index: 4;
+  bottom: 64px;
+  z-index: 6;
   pointer-events: auto;
 }
 
@@ -2763,7 +2803,8 @@ button.post-card-like:hover:not(:disabled) {
 }
 
 .fullscreen-overlay[data-closing="true"] .fullscreen-target-img,
-.fullscreen-overlay[data-closing="true"] .fullscreen-target-video {
+.fullscreen-overlay[data-closing="true"] .fullscreen-target-video,
+.fullscreen-overlay[data-closing="true"] .fullscreen-vjs-shell {
   transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -3730,15 +3771,6 @@ button.post-card-like:hover:not(:disabled) {
     linear-gradient(110deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.35) 50%, rgba(255, 255, 255, 0) 70%),
     #b8d9ff;
   background-size: 200% 100%, auto;
-}
-
-@keyframes progressive-image-shimmer {
-  0% {
-    background-position: 100% 0, 0 0;
-  }
-  100% {
-    background-position: -100% 0, 0 0;
-  }
 }
 
 .preview-comment-row {

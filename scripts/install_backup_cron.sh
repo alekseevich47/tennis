@@ -8,11 +8,15 @@ SCRIPTS="$APP_DIR/scripts"
 BACKUP_DIR="${BACKUP_DIR:-/opt/tennis/backups}"
 PB_USER="${PB_USER:-pocketbase}"
 
-mkdir -p "$BACKUP_DIR/state" "$BACKUP_DIR/locks" /etc/tennis
+mkdir -p "$BACKUP_DIR/state" "$BACKUP_DIR/locks" "$BACKUP_DIR/logs" "$BACKUP_DIR/manual" /etc/tennis
+# logs/manual — пишет пользователь pocketbase (кнопки админки); state/locks — root/cron
+chown "$PB_USER:$PB_USER" "$BACKUP_DIR/logs" "$BACKUP_DIR/manual" 2>/dev/null || true
 chmod +x "$SCRIPTS"/backup_*.sh "$SCRIPTS"/restore_*.sh "$SCRIPTS"/install_backup_cron.sh \
   "$SCRIPTS"/pocketbase_io_watchdog.sh "$SCRIPTS"/ops_alert_max.sh \
   "$SCRIPTS"/admin_backup_runner.sh 2>/dev/null || true
 chmod +x "$SCRIPTS/backup_common.sh" 2>/dev/null || true
+# убрать CRLF, если файл приехал с Windows
+sed -i 's/\r$//' "$SCRIPTS/admin_backup_runner.sh" 2>/dev/null || true
 
 # DB offset +3 min from membership_lifecycle */15; MEDIA 00:00 MSK; full Sun 00:00 MSK
 CRON_MARKER="# tennis-backup-v2"

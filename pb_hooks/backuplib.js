@@ -1,6 +1,9 @@
 // Библиотека запуска backup-скриптов из админ-API.
 // Вызывать только через require(__hooks + '/backuplib.js').
 
+var MANUAL_DIR = '/opt/tennis/backups/manual';
+var MANUAL_LOG_DIR = '/opt/tennis/backups/logs';
+
 function scriptsDir() {
   var fromEnv = ($os.getenv('BACKUP_SCRIPTS_DIR') || '').trim();
   return fromEnv || '/opt/tennis/scripts';
@@ -13,12 +16,71 @@ function notifyUrl() {
   );
 }
 
-function notifyToken() {
-  return ($os.getenv('BACKUP_NOTIFY_TOKEN') || '').trim();
-}
-
 function shellSingleQuote(s) {
   return "'" + String(s).replace(/'/g, "'\\''") + "'";
+}
+
+function tokenPath(type) {
+  return MANUAL_DIR + '/notify-' + type + '.token';
+}
+
+function manualLogFile(type) {
+  return MANUAL_LOG_DIR + '/manual-' + type + '.log';
+}
+
+function randomToken() {
+  try {
+    var out = $os.cmd('openssl', 'rand', '-hex', '24').combinedOutput();
+    var s = String(out || '').trim();
+    if (s) return s;
+  } catch (_) {}
+  return (
+    String(Date.now()) +
+    '-' +
+    Math.random().toString(36).slice(2) +
+    Math.random().toString(36).slice(2)
+  );
+}
+
+function ensureManualDirs() {
+  $os.cmd(
+    'bash',
+    '-c',
+    'mkdir -p ' + shellSingleQuote(MANUAL_DIR) + ' ' + shellSingleQuote(MANUAL_LOG_DIR)
+  ).run();
+}
+
+/**
+ * @param {'db'|'media'} type
+ * @param {string} token
+ */
+function writeNotifyToken(type, token) {
+  ensureManualDirs();
+  $os.writeFile(tokenPath(type), String(token));
+  try {
+    $os.chmod(tokenPath(type), parseInt('600', 8));
+  } catch (_) {}
+}
+
+/**
+ * One-shot: читает и удаляет токен. true если совпал.
+ * @param {'db'|'media'} type
+ * @param {string} got
+ * @returns {boolean}
+ */
+function consumeNotifyToken(type, got) {
+  var path = tokenPath(type);
+  var expected = '';
+  try {
+    expected = String($os.readFile(path) || '').trim();
+  } catch (_) {
+    return false;
+  }
+  try {
+    $os.remove(path);
+  } catch (_) {}
+  if (!expected || !got) return false;
+  return String(got) === expected;
 }
 
 /**
@@ -30,13 +92,13 @@ function resolveScript(type) {
   if (type === 'db') {
     return {
       script: $filepath.join(dir, 'backup_db_to_yandex.sh'),
-      logFile: '/var/log/tennis-backup-db.log'
+      logFile: manualLogFile('db')
     };
   }
   if (type === 'media') {
     return {
       script: $filepath.join(dir, 'backup_storage_to_yandex.sh'),
-      logFile: '/var/log/tennis-backup-media.log'
+      logFile: manualLogFile('media')
     };
   }
   var err = new Error('Invalid backup type');
@@ -45,33 +107,6 @@ function resolveScript(type) {
 }
 
 /**
- * @param {*} c echo context
- * @returns {boolean}
- */
-function isLoopbackRequest(c) {
-  var raw = '';
-  try {
-    if (c && typeof c.realIP === 'function') {
-      raw = String(c.realIP() || '');
-    }
-  } catch (_) {}
-  if (!raw) {
-    try {
-      var info = c.requestInfo();
-      raw = String((info && (info.remoteIP || info.remoteAddr)) || '');
-    } catch (_) {}
-  }
-  var s = String(raw || '')
-    .trim()
-    .toLowerCase();
-  if (!s) return false;
-  if (s.indexOf('127.0.0.1') === 0) return true;
-  if (s === '::1' || s.indexOf('[::1]') === 0 || s.indexOf('::1:') === 0) return true;
-  return false;
-}
-
-/**
- * In-app уведомления всем role=moderator о результате ручного бэкапа.
  * @param {core.App} app
  * @param {'db'|'media'} type
  * @param {boolean} ok
@@ -79,13 +114,13 @@ function isLoopbackRequest(c) {
  */
 function notifyModeratorsBackupResult(app, type, ok) {
   var label = type === 'media' ? 'медиа' : 'БД';
-  var logHint = type === 'media' ? 'tennis-backup-media.log' : 'tennis-backup-db.log';
+  var logHint = manualLogFile(type);
   var title = 'Секция Миленьких - Система';
   var body = ok
     ? 'Ручной бэкап ' + label + ' выполнен успешно.'
-    : 'Ручной бэкап ' + label + ' завершился с ошибкой. Проверьте /var/log/' + logHint + '.';
+    : 'Ручной бэкап ' + label + ' завершился с ошибкой. Лог: ' + logHint;
 
-  var mods = app.findRecordsByFilter('users', 'role = "moderator"', '', 0, 0);
+  var mods = app.findRecordsByFilter('users', 'role = "moderator"', '', 200, 0);
   var collection = app.findCollectionByNameOrId('notifications');
   var notified = 0;
   var i;
@@ -123,17 +158,24 @@ function notifyModeratorsBackupResult(app, type, ok) {
 
 /**
  * Запускает скрипт через sudo -n в фоне (не блокирует HTTP).
- * По завершении runner дергает /api/internal/backup-notify.
+ * Лог — в /opt/tennis/backups/logs (доступен пользователю pocketbase).
+ * По завершении runner дергает /api/internal/backup-notify с one-shot токеном.
  * @param {'db'|'media'} type
  */
 function startBackup(type) {
   var resolved = resolveScript(type);
   var runner = $filepath.join(scriptsDir(), 'admin_backup_runner.sh');
   var url = notifyUrl();
-  var token = notifyToken();
-  // Пути фиксированные (не из user input). nohup — без зомби от cmd.start().
+  var token = randomToken();
+  writeNotifyToken(type, token);
+
+  // mkdir + nohup: не пишем в /var/log (часто root-only → джоба умирает молча).
   var shellCmd =
-    'nohup env BACKUP_NOTIFY_TOKEN=' +
+    'mkdir -p ' +
+    shellSingleQuote(MANUAL_LOG_DIR) +
+    ' ' +
+    shellSingleQuote(MANUAL_DIR) +
+    ' && nohup env BACKUP_NOTIFY_TOKEN=' +
     shellSingleQuote(token) +
     ' bash ' +
     shellSingleQuote(runner) +
@@ -142,7 +184,7 @@ function startBackup(type) {
     ' ' +
     shellSingleQuote(url) +
     ' >>' +
-    resolved.logFile +
+    shellSingleQuote(resolved.logFile) +
     ' 2>&1 &';
   var cmd = $os.cmd('bash', '-c', shellCmd);
   try {
@@ -150,6 +192,9 @@ function startBackup(type) {
   } catch (err) {
     var message = err && err.message ? err.message : String(err);
     console.log('[backup] start failed (' + type + '): ' + message);
+    try {
+      $os.remove(tokenPath(type));
+    } catch (_) {}
     try {
       notifyModeratorsBackupResult($app, type, false);
     } catch (notifyErr) {
@@ -164,15 +209,17 @@ function startBackup(type) {
     e.status = 500;
     throw e;
   }
-  console.log('[backup] accepted type=' + type + ' runner=' + runner);
+  console.log(
+    '[backup] accepted type=' + type + ' runner=' + runner + ' log=' + resolved.logFile
+  );
   return { success: true, accepted: true, type: type };
 }
 
 module.exports = {
   startBackup: startBackup,
   scriptsDir: scriptsDir,
-  isLoopbackRequest: isLoopbackRequest,
+  consumeNotifyToken: consumeNotifyToken,
   notifyModeratorsBackupResult: notifyModeratorsBackupResult,
   notifyUrl: notifyUrl,
-  notifyToken: notifyToken
+  manualLogFile: manualLogFile
 };
