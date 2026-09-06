@@ -18,8 +18,6 @@ const NAV_ZOOM_MAX_SCALE = 1.05;
 const GESTURE_LOCK_PX = 10;
 const SLIDE_ANIMATION_MS = 240;
 const RIPPLE_ANIMATION_MS = 420;
-/** Нижний отступ тап-зоны: нативная полоска controls (~56–72px, эмпирически под webview MAX). */
-const VIDEO_CONTROLS_RESERVED_PX = 72;
 const PROGRESS_RING_R = 15.5;
 const PROGRESS_RING_C = 2 * Math.PI * PROGRESS_RING_R;
 
@@ -618,17 +616,6 @@ function FullscreenImageViewer({
     if (x > rect.width * 0.62) goNext({ animated: true });
   };
 
-  const handleVideoTapToggle = useCallback((event) => {
-    event.stopPropagation();
-    const video = mediaRef.current;
-    if (!(video instanceof HTMLVideoElement)) return;
-    if (video.paused) {
-      void video.play();
-    } else {
-      video.pause();
-    }
-  }, []);
-
   const handleNavClick = (event, direction) => {
     const rect = event.currentTarget.getBoundingClientRect();
     window.clearTimeout(rippleTimerRef.current);
@@ -698,12 +685,10 @@ function FullscreenImageViewer({
           isActiveSlide={isActiveSlide}
           mediaRef={mediaRef}
           onActiveVideoRef={setActiveVideoRef}
-          controlsReservedPx={VIDEO_CONTROLS_RESERVED_PX}
           isClosing={isClosing}
           isActiveSlideClosing={isActiveSlide}
           returnTransform={returnTransform}
           position={position}
-          onTapToggle={handleVideoTapToggle}
           activeIndex={activeIndex}
         />
       );

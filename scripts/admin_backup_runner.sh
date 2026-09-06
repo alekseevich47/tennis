@@ -23,10 +23,14 @@ case "$TYPE" in
     ;;
 esac
 
+echo "[admin_backup_runner] start type=$TYPE script=$SCRIPT"
+
 set +e
 sudo -n "$SCRIPT" --force
 code=$?
 set -e
+
+echo "[admin_backup_runner] backup exit=$code"
 
 ok_json=false
 if [[ "$code" -eq 0 ]]; then
@@ -35,15 +39,21 @@ fi
 
 payload=$(printf '{"type":"%s","ok":%s,"code":%s}' "$TYPE" "$ok_json" "$code")
 
-curl_args=(-sS -m 15 -X POST "$NOTIFY_URL"
-  -H 'Content-Type: application/json'
-  -d "$payload")
-if [[ -n "$NOTIFY_TOKEN" ]]; then
-  curl_args+=(-H "X-Backup-Notify-Token: $NOTIFY_TOKEN")
+if [[ -z "$NOTIFY_TOKEN" ]]; then
+  echo "[admin_backup_runner] WARN: BACKUP_NOTIFY_TOKEN empty — skip notify" >&2
+  exit "$code"
 fi
 
-if ! curl "${curl_args[@]}"; then
-  echo "[admin_backup_runner] notify HTTP failed (backup exit=$code)" >&2
+http_code=$(curl -sS -m 15 -o /tmp/tennis-backup-notify-body.$$ -w '%{http_code}' -X POST "$NOTIFY_URL" \
+  -H 'Content-Type: application/json' \
+  -H "X-Backup-Notify-Token: $NOTIFY_TOKEN" \
+  -d "$payload" || true)
+
+echo "[admin_backup_runner] notify HTTP $http_code body=$(cat /tmp/tennis-backup-notify-body.$$ 2>/dev/null || true)"
+rm -f /tmp/tennis-backup-notify-body.$$
+
+if [[ "$http_code" != "200" ]]; then
+  echo "[admin_backup_runner] notify failed (backup exit=$code)" >&2
 fi
 
 exit "$code"
