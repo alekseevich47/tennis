@@ -2691,15 +2691,6 @@ button.post-card-like:hover:not(:disabled) {
   min-height: 0;
 }
 
-.fullscreen-target-video:not(.is-ready) {
-  opacity: 0;
-}
-
-.fullscreen-target-video.is-ready {
-  opacity: 1;
-  z-index: 1;
-}
-
 .fullscreen-vjs-shell {
   position: relative;
   z-index: 1;
@@ -2710,12 +2701,7 @@ button.post-card-like:hover:not(:disabled) {
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0;
   will-change: transform;
-}
-
-.fullscreen-vjs-shell.is-ready {
-  opacity: 1;
 }
 
 .fullscreen-vjs-player,
@@ -2741,69 +2727,7 @@ button.post-card-like:hover:not(:disabled) {
   background: #000;
 }
 
-.fullscreen-target-video {
-  max-width: 100%;
-  max-height: 100%;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  background: #000000;
-  z-index: 1;
-  will-change: transform;
-}
-
-.fullscreen-video-quality {
-  position: absolute;
-  left: 12px;
-  bottom: 64px;
-  z-index: 6;
-  pointer-events: auto;
-}
-
-.fullscreen-video-quality__toggle {
-  min-height: 32px;
-  padding: 6px 12px;
-  border: 0;
-  border-radius: 8px;
-  background: rgba(15, 23, 42, 0.72);
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.fullscreen-video-quality__menu {
-  position: absolute;
-  left: 0;
-  bottom: calc(100% + 8px);
-  min-width: 120px;
-  margin: 0;
-  padding: 4px;
-  list-style: none;
-  border-radius: 10px;
-  background: rgba(15, 23, 42, 0.92);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
-}
-
-.fullscreen-video-quality__menu button {
-  width: 100%;
-  padding: 8px 10px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: #ffffff;
-  font-size: 13px;
-  text-align: left;
-  cursor: pointer;
-}
-
-.fullscreen-video-quality__menu button.is-active,
-.fullscreen-video-quality__menu button:hover {
-  background: rgba(255, 255, 255, 0.12);
-}
-
 .fullscreen-overlay[data-closing="true"] .fullscreen-target-img,
-.fullscreen-overlay[data-closing="true"] .fullscreen-target-video,
 .fullscreen-overlay[data-closing="true"] .fullscreen-vjs-shell {
   transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -2878,7 +2802,7 @@ button.post-card-like:hover:not(:disabled) {
   .fullscreen-overlay[data-closing="true"],
   .fullscreen-carousel-track.is-sliding,
   .fullscreen-overlay[data-closing="true"] .fullscreen-target-img,
-  .fullscreen-overlay[data-closing="true"] .fullscreen-target-video,
+  .fullscreen-overlay[data-closing="true"] .fullscreen-vjs-shell,
   .fullscreen-nav-ripple {
     animation: none;
     transition-duration: 0.01ms;
