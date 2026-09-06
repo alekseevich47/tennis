@@ -21,11 +21,14 @@ run_full_backup() {
   rm -rf "$work_dir" "$split_dir"
   mkdir -p "$pb_snapshot" "$split_dir"
 
-  echo "[backup-full] consistent SQLite snapshot…"
+  echo "[backup-full] consistent SQLite snapshot (Online Backup API)…"
   sqlite_backup_file "$PB_DATA_DIR/data.db" "$pb_snapshot/data.db"
   if [[ -f "$PB_DATA_DIR/auxiliary.db" ]]; then
     sqlite_backup_file "$PB_DATA_DIR/auxiliary.db" "$pb_snapshot/auxiliary.db"
   fi
+  # Never pack live -wal/-shm into the archive (only .backup outputs above).
+  rm -f "$pb_snapshot/data.db-wal" "$pb_snapshot/data.db-shm" \
+    "$pb_snapshot/auxiliary.db-wal" "$pb_snapshot/auxiliary.db-shm"
 
   if [[ -d "$PB_DATA_DIR/storage" ]]; then
     echo "[backup-full] copying storage/…"

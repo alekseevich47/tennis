@@ -89,7 +89,8 @@ touch_media_ok() {
   touch "$STATE_DIR/last_media_ok"
 }
 
-# Consistent online copy of SQLite DB into dest path (no gzip).
+# SQLite Online Backup API (не cp/zip горячего data.db и не -wal/-shm).
+# https://www.sqlite.org/backup.html — консистентный снимок при живом PocketBase.
 sqlite_backup_file() {
   local src="$1"
   local dest="$2"
@@ -97,8 +98,18 @@ sqlite_backup_file() {
     echo "SQLite source missing: $src" >&2
     return 1
   fi
+  if [[ "$src" == "$dest" ]]; then
+    echo "sqlite_backup_file: src and dest must differ" >&2
+    return 1
+  fi
+  case "$src" in
+    *-wal|*-shm)
+      echo "sqlite_backup_file: refuse sidecars ($src); use main .db only" >&2
+      return 1
+      ;;
+  esac
   if ! command -v sqlite3 >/dev/null 2>&1; then
-    echo "sqlite3 is required" >&2
+    echo "sqlite3 is required (Online Backup API)" >&2
     return 1
   fi
   sqlite3 "$src" ".backup '$dest'"
