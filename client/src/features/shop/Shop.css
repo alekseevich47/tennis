@@ -1031,28 +1031,16 @@ label.product-category-option {
   display: block;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #f0f4f8, #e8eef5);
+  background-color: var(--media-skeleton-bg, #c5ccd6);
+  background-image: var(--media-skeleton-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   overflow: hidden;
 }
 
 .product-gallery-media-placeholder__shimmer {
-  display: block;
-  width: 100%;
-  height: 100%;
-  background:
-    linear-gradient(110deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.45) 50%, rgba(255, 255, 255, 0) 70%),
-    #e8eef5;
-  background-size: 200% 100%, auto;
-  animation: progressive-image-shimmer 1.2s ease-in-out infinite;
-}
-
-@keyframes progressive-image-shimmer {
-  0% {
-    background-position: 100% 0, 0 0;
-  }
-  100% {
-    background-position: -100% 0, 0 0;
-  }
+  display: none;
 }
 
 .product-gallery-zone {

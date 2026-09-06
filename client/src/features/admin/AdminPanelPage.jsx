@@ -78,8 +78,8 @@ export default function AdminPanelPage() {
         await triggerBackup(type);
         showToast({
           text: isDb
-            ? 'Бэкап БД запущен. Файлы появятся на Яндекс.Диске через минуту.'
-            : 'Бэкап медиа запущен. Sync идёт в фоне.'
+            ? 'Бэкап БД запущен. Результат придёт в колокольчик.'
+            : 'Бэкап медиа запущен. Результат придёт в колокольчик.'
         });
       } catch (err) {
         const msg =

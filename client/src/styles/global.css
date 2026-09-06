@@ -1,5 +1,11 @@
 @import './fonts.css';
 
+:root {
+  /* Плейсхолдер подгрузки медиа (лента / деталка / магазин) — preload в main.jsx */
+  --media-skeleton-image: url('../assets/skeleton.jpg');
+  --media-skeleton-bg: #c5ccd6;
+}
+
 * {
   margin: 0;
   padding: 0;

@@ -8,9 +8,12 @@ import { ToastProvider } from './components/ui/ToastContext';
 import { PostUploadProvider } from './components/PostUploadProvider';
 import { TournamentPostUploadProvider } from './components/TournamentPostUploadProvider';
 import { GalleryUploadProvider } from './components/GalleryUploadProvider';
+import { preloadMediaSkeleton } from './lib/mediaSkeleton';
 // Nunito Variable (self-hosted). Откат: закомментировать + --app-font-family-legacy в fonts.css
 import '@fontsource-variable/nunito/wght.css';
 import './styles/global.css';
+
+preloadMediaSkeleton();
 
 function GlobalErrorFallback({ error, resetErrorBoundary }) {
   return (

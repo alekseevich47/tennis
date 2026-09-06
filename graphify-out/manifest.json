@@ -1,7 +1,7 @@
 {
   "client/package.json": {
-    "mtime": 1788680887.464002,
-    "ast_hash": "02e3bfb9e196e09cb55c5cc3e09d1a2c",
+    "mtime": 1788682959.8853178,
+    "ast_hash": "0b6448e5401bffd9532e9872fac1d15b",
     "semantic_hash": ""
   },
   "client/public/sw.js": {
@@ -120,8 +120,8 @@
     "semantic_hash": "0a082060e608b78fe4d9e9851bd5b5a6"
   },
   "client/src/features/admin/AdminPanelPage.jsx": {
-    "mtime": 1788592233.1589582,
-    "ast_hash": "69897eec04fb42542a6446f3c4fa25a0",
+    "mtime": 1788681900.2666042,
+    "ast_hash": "2c9894ddc44ca536160cde6ff348dc5c",
     "semantic_hash": ""
   },
   "client/src/features/admin/BroadcastModal.jsx": {
@@ -645,8 +645,8 @@
     "semantic_hash": "702b0fa6d03ddc691735c8af1861b9d8"
   },
   "client/src/main.jsx": {
-    "mtime": 1788170204.6720781,
-    "ast_hash": "35fa133235183b27263f1972639eca6c",
+    "mtime": 1788682943.0742936,
+    "ast_hash": "1ee9515af1b0cde4efdc2a7b4b59ff36",
     "semantic_hash": ""
   },
   "client/src/services/achievements.js": {
@@ -1375,12 +1375,12 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/useFetchedOriginal.js": {
-    "mtime": 1788680855.15299,
+    "mtime": 1788681556.0723288,
     "ast_hash": "82337ea5e3bce4c053cca6cbf1d73eaa",
     "semantic_hash": ""
   },
   "client/src/lib/fetchBlobProgress.js": {
-    "mtime": 1788680884.3411348,
+    "mtime": 1788681556.0733764,
     "ast_hash": "542ebbd59638f60bb340f47d3af658ef",
     "semantic_hash": ""
   },
@@ -1625,8 +1625,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/FullscreenSlideVideo.jsx": {
-    "mtime": 1788680950.343853,
-    "ast_hash": "65eff2b187f5d4faddb3b28af2e087c1",
+    "mtime": 1788682316.552528,
+    "ast_hash": "bf370954375d32589e5c43f064ecc508",
     "semantic_hash": ""
   },
   "client/src/lib/videoQualities.js": {
@@ -1720,13 +1720,13 @@
     "semantic_hash": ""
   },
   "pb_hooks/backup.pb.js": {
-    "mtime": 1788592233.2006373,
-    "ast_hash": "a005abc28ac4da7c86d61f443ce1b156",
+    "mtime": 1788681894.0168157,
+    "ast_hash": "9a56fd959d788c37da2c3cf56583e626",
     "semantic_hash": ""
   },
   "pb_hooks/backuplib.js": {
-    "mtime": 1788592233.201161,
-    "ast_hash": "c0cd399b9083a3a45d2b8556d7e50b7b",
+    "mtime": 1788681893.9071994,
+    "ast_hash": "b46dab7115e005b69dc240ee2328fdf6",
     "semantic_hash": ""
   },
   "scripts/backup_common.sh": {
@@ -1745,8 +1745,8 @@
     "semantic_hash": ""
   },
   "scripts/install_backup_cron.sh": {
-    "mtime": 1788679160.7296069,
-    "ast_hash": "b48216c5ab69b9915797fe6e75358ad9",
+    "mtime": 1788681902.5291862,
+    "ast_hash": "daa0db65a59cd3feadab45e429d4414b",
     "semantic_hash": ""
   },
   "scripts/restore_db_from_yandex.sh": {
@@ -1760,8 +1760,8 @@
     "semantic_hash": ""
   },
   "scripts/BACKUP.md": {
-    "mtime": 1788679160.7275364,
-    "ast_hash": "9f99cf0103f008ff5f44a1cd8c35b06d",
+    "mtime": 1788681908.4172246,
+    "ast_hash": "000dee07dbfd66ab746ec9df820d98af",
     "semantic_hash": ""
   },
   "scripts/ops_alert_max.sh": {
@@ -1772,6 +1772,26 @@
   "scripts/pocketbase_io_watchdog.sh": {
     "mtime": 1788679160.730607,
     "ast_hash": "a07a39bf0300250c9f13cf3f20ac273a",
+    "semantic_hash": ""
+  },
+  "scripts/admin_backup_runner.sh": {
+    "mtime": 1788681886.220752,
+    "ast_hash": "b06a99236daffe9288bd16193635131d",
+    "semantic_hash": ""
+  },
+  "client/src/lib/mediaSkeleton.js": {
+    "mtime": 1788684162.953741,
+    "ast_hash": "231fc86eda2b6a0bbd99790855f3bec4",
+    "semantic_hash": ""
+  },
+  "client/src/assets/skeleton.jpg": {
+    "mtime": 1788684149.7991939,
+    "ast_hash": "99102233f5dfb98d66c0b3bae6244566",
+    "semantic_hash": ""
+  },
+  "\u0441\u043a\u0435\u043b\u0435\u0442\u043e\u043d.jpg": {
+    "mtime": 1788684026.3845232,
+    "ast_hash": "af79dbc7622e6885fb37a55fcc4df548",
     "semantic_hash": ""
   }
 }
