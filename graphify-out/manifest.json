@@ -1,6 +1,6 @@
 {
   "client/package.json": {
-    "mtime": 1788592053.301904,
+    "mtime": 1788592233.1579573,
     "ast_hash": "3b8d0a3a3db8cfa5e2fa56a5890509e4",
     "semantic_hash": ""
   },
@@ -120,7 +120,7 @@
     "semantic_hash": "0a082060e608b78fe4d9e9851bd5b5a6"
   },
   "client/src/features/admin/AdminPanelPage.jsx": {
-    "mtime": 1788592032.1848392,
+    "mtime": 1788592233.1589582,
     "ast_hash": "69897eec04fb42542a6446f3c4fa25a0",
     "semantic_hash": ""
   },
@@ -655,7 +655,7 @@
     "semantic_hash": "da7234bfcc36d0129b07a8cc939c0236"
   },
   "client/src/services/admin.js": {
-    "mtime": 1788592008.4577384,
+    "mtime": 1788592233.1599572,
     "ast_hash": "01505c46354557144afb2cc5dd405e70",
     "semantic_hash": ""
   },
@@ -870,7 +870,7 @@
     "semantic_hash": "924b95fb543d6c752aa7e12c3f56da5a"
   },
   "README.md": {
-    "mtime": 1788592066.532806,
+    "mtime": 1788592233.1569571,
     "ast_hash": "8aa2eccfbf6a03bf1fd97e6a20adceb2",
     "semantic_hash": ""
   },
@@ -1385,7 +1385,7 @@
     "semantic_hash": ""
   },
   "scripts/server-bootstrap.sh": {
-    "mtime": 1788591962.692254,
+    "mtime": 1788592233.205757,
     "ast_hash": "526e2a8c12e106b908fcb2a78dd1404b",
     "semantic_hash": ""
   },
@@ -1710,58 +1710,68 @@
     "semantic_hash": ""
   },
   "scripts/backup_to_yandex.sh": {
-    "mtime": 1788591901.7858317,
-    "ast_hash": "267d1ba988713309a31bdf06746382a0",
+    "mtime": 1788679062.2506883,
+    "ast_hash": "4e2f8b78784707732047b97604e847a4",
     "semantic_hash": ""
   },
   "scripts/restore_from_yandex.sh": {
-    "mtime": 1788591942.2532513,
+    "mtime": 1788592233.2045429,
     "ast_hash": "b9ead7428190e79c07e1260ae680d43a",
     "semantic_hash": ""
   },
   "pb_hooks/backup.pb.js": {
-    "mtime": 1788591988.447932,
+    "mtime": 1788592233.2006373,
     "ast_hash": "a005abc28ac4da7c86d61f443ce1b156",
     "semantic_hash": ""
   },
   "pb_hooks/backuplib.js": {
-    "mtime": 1788592115.5169375,
+    "mtime": 1788592233.201161,
     "ast_hash": "c0cd399b9083a3a45d2b8556d7e50b7b",
     "semantic_hash": ""
   },
   "scripts/backup_common.sh": {
-    "mtime": 1788591915.267188,
-    "ast_hash": "c11ae54a9038cc2579b69a39f48f9489",
+    "mtime": 1788679048.651783,
+    "ast_hash": "3ff1c105f4991a022e13572bddff6c3c",
     "semantic_hash": ""
   },
   "scripts/backup_db_to_yandex.sh": {
-    "mtime": 1788591892.659583,
-    "ast_hash": "ebdea4ddb88fc4e4d8ea7bdc00285f49",
+    "mtime": 1788592233.2023273,
+    "ast_hash": "9c6f7b86a1b9401ba3d7dd64d2eccc82",
     "semantic_hash": ""
   },
   "scripts/backup_storage_to_yandex.sh": {
-    "mtime": 1788591901.6964042,
-    "ast_hash": "a4f8014a18fd115f58f8fcac2fe7db2b",
+    "mtime": 1788592233.2028902,
+    "ast_hash": "163141fb557726d5006059800dc288fe",
     "semantic_hash": ""
   },
   "scripts/install_backup_cron.sh": {
-    "mtime": 1788591972.847342,
-    "ast_hash": "56bb1030b6b802986295572c69608eb9",
+    "mtime": 1788679045.264647,
+    "ast_hash": "b48216c5ab69b9915797fe6e75358ad9",
     "semantic_hash": ""
   },
   "scripts/restore_db_from_yandex.sh": {
-    "mtime": 1788592083.509356,
-    "ast_hash": "4f81a59b7731db0b588caa3f91fb7588",
+    "mtime": 1788592233.2040129,
+    "ast_hash": "8cb14c2c10a3209413966802e1db15c3",
     "semantic_hash": ""
   },
   "scripts/restore_storage_from_yandex.sh": {
-    "mtime": 1788591942.1756074,
-    "ast_hash": "49ac7d7944105603f4a00b48eb45e7ae",
+    "mtime": 1788592233.2051501,
+    "ast_hash": "c3714c87d1c035baeadb8ef46c925003",
     "semantic_hash": ""
   },
   "scripts/BACKUP.md": {
-    "mtime": 1788592052.5351377,
-    "ast_hash": "6458fb725b892172b33b8b974ec511fc",
+    "mtime": 1788679062.4831343,
+    "ast_hash": "9f99cf0103f008ff5f44a1cd8c35b06d",
+    "semantic_hash": ""
+  },
+  "scripts/ops_alert_max.sh": {
+    "mtime": 1788679040.7748666,
+    "ast_hash": "ba89cf6828a4c23c48afc61d4d532b9d",
+    "semantic_hash": ""
+  },
+  "scripts/pocketbase_io_watchdog.sh": {
+    "mtime": 1788679031.3172112,
+    "ast_hash": "f255d3eebab6d86aa68c7f7b3e6af47d",
     "semantic_hash": ""
   }
 }
