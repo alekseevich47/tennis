@@ -1,10 +1,37 @@
 import React, { useCallback } from 'react';
 import clsx from 'clsx';
 import '@videojs/react/video/skin.css';
-import { Video, VideoPlayer, VideoSkin } from '@videojs/react/video';
+import { selectControls } from '@videojs/react';
+import { Video, VideoPlayer, VideoSkin, usePlayer } from '@videojs/react/video';
 
 /**
- * Video.js v10 Default (React) — без кастомной логики плеера.
+ * Крестик в верхнем трее Default skin (рядом с secondary controls).
+ * Видимость синхронизирована с `controlsVisible`.
+ *
+ * @param {{ onClose: () => void }} props
+ */
+function PlayerCloseButton({ onClose }) {
+  const controls = usePlayer(selectControls);
+  const visible = Boolean(controls?.controlsVisible ?? controls?.visible);
+
+  return (
+    <button
+      type="button"
+      className="fullscreen-vjs-close"
+      aria-label="Закрыть просмотр"
+      data-visible={visible ? '' : undefined}
+      onClick={(event) => {
+        event.stopPropagation();
+        onClose();
+      }}
+    >
+      <span aria-hidden="true">✕</span>
+    </button>
+  );
+}
+
+/**
+ * Video.js v10 Default (React) + close в верхнем трее.
  *
  * @param {{
  *   src: string,
@@ -12,7 +39,8 @@ import { Video, VideoPlayer, VideoSkin } from '@videojs/react/video';
  *   className?: string,
  *   style?: React.CSSProperties,
  *   ariaLabel?: string,
- *   videoRef?: (el: HTMLVideoElement | null) => void
+ *   videoRef?: (el: HTMLVideoElement | null) => void,
+ *   onClose: () => void
  * }} props
  */
 function FullscreenVjsPlayer({
@@ -21,13 +49,13 @@ function FullscreenVjsPlayer({
   className,
   style,
   ariaLabel,
-  videoRef
+  videoRef,
+  onClose
 }) {
   const attachRef = useCallback(
     (el) => {
       videoRef?.(el);
       if (!el) return;
-      // Открытие fullscreen — user gesture → можно со звуком.
       el.muted = false;
       void el.play().catch(() => {});
     },
@@ -47,6 +75,7 @@ function FullscreenVjsPlayer({
             aria-label={ariaLabel}
           />
         </VideoSkin>
+        <PlayerCloseButton onClose={onClose} />
       </VideoPlayer>
     </div>
   );

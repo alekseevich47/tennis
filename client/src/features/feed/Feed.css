@@ -2718,6 +2718,47 @@ button.post-card-like:hover:not(:disabled) {
   background: #000;
 }
 
+/* Верхний трей: место справа под наш ✕ (рядом с secondary controls). */
+.fullscreen-vjs-skin .media-controls--secondary {
+  right: calc(var(--media-inset, 8px) + 2.75rem);
+}
+
+.fullscreen-vjs-close {
+  position: absolute;
+  top: var(--media-inset, 8px);
+  right: var(--media-inset, 8px);
+  z-index: 15;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 9999px;
+  color: #fff;
+  font-size: 1.05rem;
+  line-height: 1;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
+  pointer-events: none;
+  opacity: 0;
+  scale: 0.95;
+  transition:
+    opacity var(--media-controls-transition-duration, 0.25s)
+      var(--media-controls-transition-timing-function, ease),
+    scale var(--media-controls-transition-duration, 0.25s)
+      var(--media-controls-transition-timing-function, ease);
+}
+
+.fullscreen-vjs-close[data-visible] {
+  pointer-events: auto;
+  opacity: 1;
+  scale: 1;
+}
+
 .fullscreen-vjs-media {
   width: 100%;
   height: 100%;
