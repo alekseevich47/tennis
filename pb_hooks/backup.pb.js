@@ -28,4 +28,45 @@ routerAdd('POST', '/api/admin-backup', (c) => {
   }
 });
 
+// Колбэк после admin_backup_runner.sh (только loopback; опционально BACKUP_NOTIFY_TOKEN).
+routerAdd('POST', '/api/internal/backup-notify', (c) => {
+  const backuplib = require(__hooks + '/backuplib.js');
+  if (!backuplib.isLoopbackRequest(c)) {
+    return c.json(403, { error: 'Forbidden' });
+  }
+
+  const expected = backuplib.notifyToken();
+  if (expected) {
+    let got = '';
+    try {
+      got = c.request.header.get('X-Backup-Notify-Token') || '';
+    } catch (_) {}
+    if (!got) {
+      try {
+        const headers = c.requestInfo().headers || {};
+        got = headers['x_backup_notify_token'] || '';
+      } catch (_) {}
+    }
+    if (String(got) !== expected) {
+      return c.json(403, { error: 'Forbidden' });
+    }
+  }
+
+  const body = c.requestInfo().body || {};
+  const type = body.type;
+  const ok = body.ok === true || body.ok === 'true';
+  if (type !== 'db' && type !== 'media') {
+    return c.json(400, { error: 'type must be "db" or "media"' });
+  }
+
+  try {
+    const result = backuplib.notifyModeratorsBackupResult($app, type, ok);
+    return c.json(200, result);
+  } catch (err) {
+    const message = (err && err.message) || String(err);
+    console.log('[backup] notify api: ' + message);
+    return c.json(500, { error: message });
+  }
+});
+
 console.log('--- BACKUP API LOADED ---');

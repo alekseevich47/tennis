@@ -583,35 +583,25 @@
 .progressive-image {
   position: relative;
   overflow: hidden;
-  background: #c5ccd6;
+  background: var(--media-skeleton-bg, #c5ccd6);
 }
 
 .progressive-image__placeholder {
   position: absolute;
   inset: 0;
   z-index: 0;
-  background:
-    linear-gradient(110deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.45) 50%, rgba(255, 255, 255, 0) 70%),
-    #c5ccd6;
-  background-size: 200% 100%, auto;
-  animation: progressive-image-shimmer 1.2s ease-in-out infinite;
+  background-color: var(--media-skeleton-bg, #c5ccd6);
+  background-image: var(--media-skeleton-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   transition: opacity 0.28s ease;
 }
 
 .progressive-image--ready .progressive-image__placeholder,
 .progressive-image:has(.progressive-image__preview.is-visible) .progressive-image__placeholder {
   opacity: 0;
-  animation: none;
   pointer-events: none;
-}
-
-@keyframes progressive-image-shimmer {
-  0% {
-    background-position: 100% 0, 0 0;
-  }
-  100% {
-    background-position: -100% 0, 0 0;
-  }
 }
 
 .progressive-image__layer {
@@ -643,7 +633,11 @@
 }
 
 .post-media-pending {
-  background: #c5ccd6;
+  background-color: var(--media-skeleton-bg, #c5ccd6);
+  background-image: var(--media-skeleton-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .post-media-skeleton {
@@ -652,11 +646,11 @@
   height: 100%;
   min-height: 128px;
   aspect-ratio: 1 / 1;
-  background:
-    linear-gradient(110deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.45) 50%, rgba(255, 255, 255, 0) 70%),
-    #c5ccd6;
-  background-size: 200% 100%, auto;
-  animation: progressive-image-shimmer 1.2s ease-in-out infinite;
+  background-color: var(--media-skeleton-bg, #c5ccd6);
+  background-image: var(--media-skeleton-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .progressive-image:not(.progressive-image--single) .progressive-image__full {
@@ -676,13 +670,6 @@
 
 .progressive-image--single .progressive-image__full {
   position: relative;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .progressive-image__placeholder,
-  .post-media-skeleton {
-    animation: none;
-  }
 }
 
 .telegram-video-preview video,
@@ -774,7 +761,11 @@
   height: 100%;
   min-height: 128px;
   aspect-ratio: 1 / 1;
-  background: #c5ccd6;
+  background-color: var(--media-skeleton-bg, #c5ccd6);
+  background-image: var(--media-skeleton-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .telegram-media-item.is-returning-origin {
@@ -2685,18 +2676,6 @@ button.post-card-like:hover:not(:disabled) {
   pointer-events: none;
 }
 
-.fullscreen-video-fetch-progress {
-  position: absolute;
-  z-index: 2;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  color: #fff;
-  font-size: 14px;
-  font-weight: 700;
-  pointer-events: none;
-}
-
 .fullscreen-video-poster-skeleton {
   position: absolute;
   inset: 0;
@@ -3751,6 +3730,15 @@ button.post-card-like:hover:not(:disabled) {
     linear-gradient(110deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.35) 50%, rgba(255, 255, 255, 0) 70%),
     #b8d9ff;
   background-size: 200% 100%, auto;
+}
+
+@keyframes progressive-image-shimmer {
+  0% {
+    background-position: 100% 0, 0 0;
+  }
+  100% {
+    background-position: -100% 0, 0 0;
+  }
 }
 
 .preview-comment-row {
