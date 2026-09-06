@@ -28,18 +28,32 @@ function manualLogFile(type) {
   return MANUAL_LOG_DIR + '/manual-' + type + '.log';
 }
 
+var TOKEN_FILE_MODE = parseInt('600', 8);
+
+/** @returns {string} 48 hex chars */
 function randomToken() {
-  try {
-    var out = $os.cmd('openssl', 'rand', '-hex', '24').combinedOutput();
-    var s = String(out || '').trim();
-    if (s) return s;
-  } catch (_) {}
-  return (
-    String(Date.now()) +
-    '-' +
-    Math.random().toString(36).slice(2) +
-    Math.random().toString(36).slice(2)
-  );
+  var hex = '0123456789abcdef';
+  var out = '';
+  var i;
+  for (i = 0; i < 48; i++) {
+    out += hex.charAt(Math.floor(Math.random() * 16));
+  }
+  return out;
+}
+
+/** @param {unknown} raw */
+function bytesOrStringToText(raw) {
+  if (raw == null) return '';
+  if (typeof raw === 'string') return raw;
+  if (typeof raw === 'object' && raw.length != null) {
+    var s = '';
+    var i;
+    for (i = 0; i < raw.length; i++) {
+      s += String.fromCharCode(Number(raw[i]) & 0xff);
+    }
+    return s;
+  }
+  return String(raw);
 }
 
 function ensureManualDirs() {
@@ -56,9 +70,10 @@ function ensureManualDirs() {
  */
 function writeNotifyToken(type, token) {
   ensureManualDirs();
-  $os.writeFile(tokenPath(type), String(token));
+  // mode обязателен: без него JSVM пишет ---------- (000) → notify 403
+  $os.writeFile(tokenPath(type), String(token), TOKEN_FILE_MODE);
   try {
-    $os.chmod(tokenPath(type), parseInt('600', 8));
+    $os.chmod(tokenPath(type), TOKEN_FILE_MODE);
   } catch (_) {}
 }
 
@@ -72,7 +87,7 @@ function consumeNotifyToken(type, got) {
   var path = tokenPath(type);
   var expected = '';
   try {
-    expected = String($os.readFile(path) || '').trim();
+    expected = bytesOrStringToText($os.readFile(path)).trim();
   } catch (_) {
     return false;
   }
