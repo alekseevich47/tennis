@@ -45,6 +45,7 @@ function FullscreenSlideVideo({
   const [qualityId, setQualityId] = useState(() => qualities[qualities.length - 1]?.id || 'auto');
   const [menuOpen, setMenuOpen] = useState(false);
   const [videoReady, setVideoReady] = useState(false);
+  const [buffering, setBuffering] = useState(false);
   const videoRef = useRef(/** @type {HTMLVideoElement | null} */ (null));
   const playSrcRef = useRef('');
   const resumeAfterSrcRef = useRef(/** @type {{ time: number, play: boolean } | null} */ (null));
@@ -71,6 +72,7 @@ function FullscreenSlideVideo({
   useEffect(() => {
     if (shouldMountVideo) return undefined;
     setVideoReady(false);
+    setBuffering(false);
     stopVideoLoad(videoRef.current);
     playSrcRef.current = '';
     resumeAfterSrcRef.current = null;
@@ -95,11 +97,12 @@ function FullscreenSlideVideo({
       playSrcRef.current = playSrc;
       lastPlaybackRef.current = { time: 0, play: true };
       setVideoReady(false);
+      setBuffering(true);
     } else if (prev !== playSrc) {
       // Src уже сменён в DOM → currentTime сброшен; берём lastPlayback с timeupdate.
       resume = { ...lastPlaybackRef.current };
       playSrcRef.current = playSrc;
-      setVideoReady(false);
+      setBuffering(true);
     } else {
       return undefined;
     }
@@ -152,13 +155,22 @@ function FullscreenSlideVideo({
     void el.play().catch(() => {});
   }, [shouldMountVideo, mediaRef, onActiveVideoRef]);
 
+  const markPlayable = useCallback(() => {
+    setVideoReady(true);
+    setBuffering(false);
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = false;
+    void video.play().catch(() => {});
+  }, []);
+
   const handleWaiting = useCallback(() => {
-    if (!fetched.isPartial) return;
+    setBuffering(true);
     const video = videoRef.current;
     if (video) {
       lastPlaybackRef.current = { time: video.currentTime, play: !video.paused };
     }
-    fetched.extendPartial();
+    if (fetched.isPartial) fetched.extendPartial();
   }, [fetched.isPartial, fetched.extendPartial]);
 
   const handleTimeUpdate = useCallback(() => {
@@ -187,11 +199,10 @@ function FullscreenSlideVideo({
   }, []);
 
   const showQualityMenu = shouldLoadVideo && qualities.length > 1;
-  const showProgress =
-    httpVideo &&
+  const showSpinner =
+    shouldLoadVideo &&
     !fetched.failed &&
-    typeof fetched.progress === 'number' &&
-    fetched.progress < 100;
+    (!shouldMountVideo || buffering || !videoReady);
 
   if (!isActiveSlide) {
     return (
@@ -220,9 +231,9 @@ function FullscreenSlideVideo({
           aria-hidden="true"
         />
       ) : null}
-      {showProgress ? (
-        <span className="fullscreen-video-fetch-progress" aria-live="polite">
-          {fetched.progress}%
+      {showSpinner ? (
+        <span className="fullscreen-media-upgrade-spinner" aria-label="Загрузка видео">
+          <span className="fullscreen-media-pending__spinner" aria-hidden="true" />
         </span>
       ) : null}
       {shouldMountVideo ? (
@@ -241,8 +252,8 @@ function FullscreenSlideVideo({
               ? returnTransform
               : `translate(${position.x}px, ${position.y}px)`
           }}
-          onCanPlay={() => setVideoReady(true)}
-          onLoadedData={() => setVideoReady(true)}
+          onCanPlay={markPlayable}
+          onPlaying={() => setBuffering(false)}
           onWaiting={handleWaiting}
           onTimeUpdate={handleTimeUpdate}
           onPlay={handleTimeUpdate}

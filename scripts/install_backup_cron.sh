@@ -10,7 +10,8 @@ PB_USER="${PB_USER:-pocketbase}"
 
 mkdir -p "$BACKUP_DIR/state" "$BACKUP_DIR/locks" /etc/tennis
 chmod +x "$SCRIPTS"/backup_*.sh "$SCRIPTS"/restore_*.sh "$SCRIPTS"/install_backup_cron.sh \
-  "$SCRIPTS"/pocketbase_io_watchdog.sh "$SCRIPTS"/ops_alert_max.sh 2>/dev/null || true
+  "$SCRIPTS"/pocketbase_io_watchdog.sh "$SCRIPTS"/ops_alert_max.sh \
+  "$SCRIPTS"/admin_backup_runner.sh 2>/dev/null || true
 chmod +x "$SCRIPTS/backup_common.sh" 2>/dev/null || true
 
 # DB offset +3 min from membership_lifecycle */15; MEDIA 00:00 MSK; full Sun 00:00 MSK
