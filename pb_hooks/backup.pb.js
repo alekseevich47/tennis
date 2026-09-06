@@ -28,35 +28,30 @@ routerAdd('POST', '/api/admin-backup', (c) => {
   }
 });
 
-// Колбэк после admin_backup_runner.sh (только loopback; опционально BACKUP_NOTIFY_TOKEN).
+// Колбэк после admin_backup_runner.sh (one-shot токен из /opt/tennis/backups/manual/).
 routerAdd('POST', '/api/internal/backup-notify', (c) => {
   const backuplib = require(__hooks + '/backuplib.js');
-  if (!backuplib.isLoopbackRequest(c)) {
-    return c.json(403, { error: 'Forbidden' });
-  }
-
-  const expected = backuplib.notifyToken();
-  if (expected) {
-    let got = '';
-    try {
-      got = c.request.header.get('X-Backup-Notify-Token') || '';
-    } catch (_) {}
-    if (!got) {
-      try {
-        const headers = c.requestInfo().headers || {};
-        got = headers['x_backup_notify_token'] || '';
-      } catch (_) {}
-    }
-    if (String(got) !== expected) {
-      return c.json(403, { error: 'Forbidden' });
-    }
-  }
-
   const body = c.requestInfo().body || {};
   const type = body.type;
   const ok = body.ok === true || body.ok === 'true';
   if (type !== 'db' && type !== 'media') {
     return c.json(400, { error: 'type must be "db" or "media"' });
+  }
+
+  let got = '';
+  try {
+    got = c.request.header.get('X-Backup-Notify-Token') || '';
+  } catch (_) {}
+  if (!got) {
+    try {
+      const headers = c.requestInfo().headers || {};
+      got = headers['x_backup_notify_token'] || '';
+    } catch (_) {}
+  }
+
+  if (!backuplib.consumeNotifyToken(type, got)) {
+    console.log('[backup] notify rejected: bad/missing one-shot token type=' + type);
+    return c.json(403, { error: 'Forbidden' });
   }
 
   try {

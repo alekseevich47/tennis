@@ -66,7 +66,7 @@ sudo /opt/tennis/scripts/backup_to_yandex.sh
 
 Из приложения (модератор): **Админ-панель → «Бэкап БД» / «Бэкап медиа»**.
 
-После завершения ручного бэкапа всем `role=moderator` уходит in-app уведомление в колокольчик от **«Секция Миленьких - Система»** (успех или ошибка). Цепочка: `POST /api/admin-backup` → `admin_backup_runner.sh` → `POST http://127.0.0.1:8090/api/internal/backup-notify` (только loopback; опционально env `BACKUP_NOTIFY_TOKEN` / `BACKUP_NOTIFY_URL`).
+После завершения ручного бэкапа всем `role=moderator` уходит in-app уведомление в колокольчик от **«Секция Миленьких - Система»** (успех или ошибка). Цепочка: `POST /api/admin-backup` → `admin_backup_runner.sh` (`sudo -n` скрипт) → `POST http://127.0.0.1:8090/api/internal/backup-notify` с one-shot токеном (`/opt/tennis/backups/manual/notify-*.token`). Лог ручного запуска: `/opt/tennis/backups/logs/manual-{db|media}.log` (не `/var/log`, туда pocketbase часто не может писать). Env: `BACKUP_NOTIFY_URL` при другом порте PB.
 
 ## Восстановление
 

@@ -42,6 +42,7 @@ function manualChunks(id) {
   if (!id.includes('node_modules')) return undefined
   if (id.includes('recharts') || /[/\\]d3-/.test(id)) return 'vendor-charts'
   if (id.includes('gsap')) return 'vendor-motion'
+  if (id.includes('@videojs')) return 'vendor-videojs'
   if (id.includes('react-dom') || /[/\\]react[/\\]/.test(id) || id.includes('scheduler')) {
     return 'vendor-react'
   }
