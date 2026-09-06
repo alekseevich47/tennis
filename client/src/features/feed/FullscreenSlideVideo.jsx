@@ -14,7 +14,8 @@ const FullscreenVjsPlayer = lazy(() => import('./FullscreenVjsPlayer'));
  *   isActiveSlideClosing: boolean,
  *   returnTransform: string | null,
  *   position: { x: number, y: number },
- *   activeIndex: number
+ *   activeIndex: number,
+ *   onClose: () => void
  * }} props
  */
 function FullscreenSlideVideo({
@@ -26,7 +27,8 @@ function FullscreenSlideVideo({
   isActiveSlideClosing,
   returnTransform,
   position,
-  activeIndex
+  activeIndex,
+  onClose
 }) {
   const videoSrc = item.url || '';
   const poster = item.thumbUrl || item.previewUrl || '';
@@ -80,6 +82,7 @@ function FullscreenSlideVideo({
           }}
           ariaLabel={`Полноэкранное видео ${activeIndex + 1}`}
           videoRef={attachVideoRef}
+          onClose={onClose}
         />
       </Suspense>
     </div>

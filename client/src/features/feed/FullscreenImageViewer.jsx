@@ -690,6 +690,7 @@ function FullscreenImageViewer({
           returnTransform={returnTransform}
           position={position}
           activeIndex={activeIndex}
+          onClose={requestClose}
         />
       );
     }
@@ -718,18 +719,20 @@ function FullscreenImageViewer({
       data-closing={isClosing ? 'true' : undefined}
     >
       {counterText && <div className="fullscreen-counter">{counterText}</div>}
-      <IconButton
-        ariaLabel="Закрыть просмотр"
-        size="md"
-        variant="ghost"
-        className="fullscreen-close-btn"
-        onClick={(event) => {
-          event.stopPropagation();
-          requestClose();
-        }}
-      >
-        <span aria-hidden="true">✕</span>
-      </IconButton>
+      {!activeItem?.isVideo ? (
+        <IconButton
+          ariaLabel="Закрыть просмотр"
+          size="md"
+          variant="ghost"
+          className="fullscreen-close-btn"
+          onClick={(event) => {
+            event.stopPropagation();
+            requestClose();
+          }}
+        >
+          <span aria-hidden="true">✕</span>
+        </IconButton>
+      ) : null}
       <div
         ref={wheelTargetRef}
         className="fullscreen-image-wrapper"
