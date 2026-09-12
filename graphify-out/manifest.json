@@ -1,7 +1,7 @@
 {
   "client/package.json": {
-    "mtime": 1788688347.4869084,
-    "ast_hash": "dc82f1cec4cd065b80148b3d689f366f",
+    "mtime": 1789186002.9330308,
+    "ast_hash": "20719995ec50074f411a70b0ed3db322",
     "semantic_hash": ""
   },
   "client/public/sw.js": {
@@ -840,8 +840,8 @@
     "semantic_hash": "f712110b07c6aa47a317c8dc16b069be"
   },
   "pb_hooks/trainingslib.js": {
-    "mtime": 1789183048.334165,
-    "ast_hash": "1db1c57f2de1e0eaf61efe35e2fa4f77",
+    "mtime": 1789183265.384343,
+    "ast_hash": "e28b63a8b0e1c9a58d5e030b8286325d",
     "semantic_hash": ""
   },
   "pb_hooks/users_audit.pb.js": {
@@ -1185,8 +1185,8 @@
     "semantic_hash": ""
   },
   "pb_hooks/users_access_guard_lib.js": {
-    "mtime": 1789183034.511767,
-    "ast_hash": "b028ee7f633b6d4cb3f832b453bfc275",
+    "mtime": 1789217170.7637804,
+    "ast_hash": "a899976f8db18a3b0a74a348f3886d63",
     "semantic_hash": ""
   },
   "client/src/features/feed/useResolvedExternalMedia.js": {
@@ -1370,8 +1370,8 @@
     "semantic_hash": ""
   },
   "scripts/deploy.sh": {
-    "mtime": 1788170204.894563,
-    "ast_hash": "9370194b90a92e334d53eb573a39f1e1",
+    "mtime": 1789205035.2074645,
+    "ast_hash": "55cdab9c160bf5f7cbd717f8435a7b7e",
     "semantic_hash": ""
   },
   "client/src/features/feed/useFetchedOriginal.js": {
@@ -1782,6 +1782,11 @@
   "client/src/features/feed/FullscreenVjsPlayer.jsx": {
     "mtime": 1788688347.4899104,
     "ast_hash": "1c67a9c4d0bfa8fb5f95a16e3a5149de",
+    "semantic_hash": ""
+  },
+  "config/nginx-security-headers.inc": {
+    "mtime": 1789205034.111556,
+    "ast_hash": "e95e7f22467fd32b40fd9500293b7d28",
     "semantic_hash": ""
   }
 }
