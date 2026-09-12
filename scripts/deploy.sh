@@ -27,6 +27,8 @@ npm ci
 npx vite build --base /
 
 install -m 644 "$APP_DIR/config/nginx-app.conf" /etc/nginx/sites-available/tennis
+# Security headers include (нужен до nginx -t)
+install -m 644 "$APP_DIR/config/nginx-security-headers.inc" /opt/tennis/config/nginx-security-headers.inc
 nginx -t
 systemctl reload nginx
 

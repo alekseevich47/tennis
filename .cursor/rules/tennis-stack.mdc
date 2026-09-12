@@ -30,7 +30,7 @@ alwaysApply: false
   - **Hooks**: `users_access_guard_lib` — allow-list саморедактируемых полей (не deny-list); `trainingslib.assertTrainingUpdateAllowed` — non-moderator только booking-поля.
   - **XSS**: `ProductForm` seed description через `toDisplayHtml`; `PostRichTextField` — `toDisplayHtml` перед `innerHTML`.
   - **Secrets**: `client/.env` снят с tracking; шаблон `client/.env.example`. Ротировать `MAX_BOT_TOKEN` в проде после деплоя.
-  - **Nginx**: расширенный CSP (+ `script-src` pin `st.max.ru`) + HSTS + Permissions-Policy в `config/nginx-app.conf`.
+  - **Nginx**: расширенный CSP (+ `script-src` pin `st.max.ru`) + HSTS + Permissions-Policy в `config/nginx-app.conf`; security headers вынесены в `config/nginx-security-headers.inc` и **include во всех location с `add_header`** (иначе nginx не наследует server-level headers — CSP «пропадал» на `/index.html`).
 - **v1.0.17.3**:
   - **Fullscreen video close**: оверлейный `.fullscreen-close-btn` скрыт на видео; ✕ в верхнем трее Video.js (`PlayerCloseButton` + `selectControls.controlsVisible`), рядом с secondary controls.
   - **Ручной бэкап notify**: `$os.writeFile(tokenPath, token, 0600)` обязателен — без mode JSVM пишет файл `----------` (000) → `notify HTTP 403` / `bad/missing one-shot token`; токен — hex в JS (не `openssl combinedOutput`). Каталоги `/opt/tennis/backups/{logs,manual}` — `pocketbase:pocketbase`.
