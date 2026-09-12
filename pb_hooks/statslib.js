@@ -202,17 +202,9 @@ function calcLevelFromValue(levels, value) {
   return { achieved: false, level: 0, title: '', required_value: 0 };
 }
 
-function userValueForAchievement(sortOrder, user) {
-  switch (sortOrder) {
-    case 1:
-      return Number(user.getFloat('rating_points')) || 0;
-    case 2:
-      return Number(user.getFloat('wins')) || 0;
-    case 3:
-      return Number(user.getFloat('attendance_count')) || 0;
-    default:
-      return 0;
-  }
+function userValueForAchievement(sortOrder, user, tournamentStats) {
+  var achievementsLib = require(__hooks + '/achievementslib.js');
+  return achievementsLib.userValueForSortOrder(sortOrder, user, tournamentStats || null);
 }
 
 // --- metrics ---
@@ -650,6 +642,8 @@ function getGrowthUsersForDay(dateYmd) {
 function getAchievementsNow() {
   var achievements = $app.findRecordsByFilter('achievements', '', 'sort_order', 0, 0);
   var users = $app.findRecordsByFilter('users', '', '', 0, 0);
+  var achievementsLib = require(__hooks + '/achievementslib.js');
+  var tournamentStatsMap = achievementsLib.buildTournamentPlaceStatsMap($app);
   var result = [];
 
   var ai;
@@ -679,7 +673,11 @@ function getAchievementsNow() {
     var ui;
     for (ui = 0; ui < users.length; ui++) {
       var user = users[ui];
-      var value = userValueForAchievement(sortOrder, user);
+      var value = userValueForAchievement(
+        sortOrder,
+        user,
+        tournamentStatsMap[user.id] || { podiumCount: 0, firstPlaceCount: 0 }
+      );
       var progress = calcLevelFromValue(levels, value);
       userLevels.push({
         id: user.id,

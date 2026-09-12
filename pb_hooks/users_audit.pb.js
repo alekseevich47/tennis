@@ -313,68 +313,25 @@ onRecordUpdateRequest((e) => {
       });
     }
 
-    // —— Достижения (sort_order 1–3) ——
+    // —— Достижения по полям users (sort_order 1 Постоянство, 4 Рейтинг) ——
+    var achievementsLib = require(__hooks + '/achievementslib.js');
     var achievementFields = [
-      { sortOrder: 1, field: 'rating_points' },
-      { sortOrder: 2, field: 'wins' },
-      { sortOrder: 3, field: 'attendance_count' }
+      { sortOrder: 1, field: 'attendance_count' },
+      { sortOrder: 4, field: 'rating_points' }
     ];
     var ai;
     for (ai = 0; ai < achievementFields.length; ai++) {
       var af = achievementFields[ai];
       var oldVal = Number(original.getFloat(af.field)) || 0;
       var newVal = Number(record.getFloat(af.field)) || 0;
-      if (newVal <= oldVal) continue;
-
-      var achievements = $app.findRecordsByFilter(
-        'achievements',
-        'sort_order = ' + af.sortOrder,
-        '',
-        1,
-        0
-      );
-      if (!achievements || !achievements.length) continue;
-
-      var achievement = achievements[0];
-      var achievementId = achievement.id;
-      var achievementName = achievement.getString('name') || '';
-
-      var levels = $app.findRecordsByFilter(
-        'achievement_levels',
-        'achievement = "' + achievementId + '"',
-        'required_value',
-        0,
-        0
-      );
-      var li;
-      for (li = 0; li < levels.length; li++) {
-        var levelRec = levels[li];
-        var reqVal = Number(levelRec.getFloat('required_value')) || 0;
-        var levelNum = Number(levelRec.getFloat('level')) || 0;
-        if (oldVal < reqVal && newVal >= reqVal) {
-          var levelTitle = levelRec.getString('title') || achievementName;
-          audit.logEvent($app, {
-            category: 'profile',
-            action: 'profile.achievement.grant',
-            actionKind: 'other',
-            subject: subject,
-            target: target,
-            objectType: 'user',
-            objectId: record.id,
-            objectLabel: targetLabel,
-            details: {
-              achievementId: achievementId,
-              achievementName: achievementName,
-              level: levelNum,
-              levelTitle: levelTitle,
-              requiredValue: reqVal,
-              userValue: newVal
-            },
-            summaryRu: targetLabel + ' получил(а) достижение «' + levelTitle + '»',
-            severity: 'info'
-          });
-        }
-      }
+      achievementsLib.maybeGrantAchievementLevels($app, audit, {
+        sortOrder: af.sortOrder,
+        oldVal: oldVal,
+        newVal: newVal,
+        subject: subject,
+        target: target,
+        targetLabel: targetLabel
+      });
     }
   } catch (err) {
     console.log('[users-audit] update: ' + err);
