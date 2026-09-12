@@ -1,7 +1,7 @@
 // @ts-check
 import { normalizeProductCategoryIds } from './productCategories';
 
-/** @typedef {'name_asc' | 'name_desc' | 'price_asc' | 'price_desc' | 'newest' | 'popular'} ShopSortMode */
+/** @typedef {'name_asc' | 'name_desc' | 'price_asc' | 'price_desc' | 'newest' | 'popular' | 'availability'} ShopSortMode */
 
 /**
  * @typedef {{
@@ -91,7 +91,7 @@ export function productMatchesFilters(product, filters, bounds) {
 }
 
 /**
- * Один режим сортировки: название XOR цена XOR новизна XOR популярность.
+ * Один режим сортировки: название XOR цена XOR новизна XOR популярность XOR наличие.
  * @param {import('../../services/catalog').ProductRecord[]} products
  * @param {ShopSortMode | Pick<ShopFiltersState, 'sort'>} sortOrFilters
  */
@@ -115,6 +115,13 @@ export function sortProducts(products, sortOrFilters) {
     if (viewsDiff !== 0) return viewsDiff;
     return byCreated(a, b);
   };
+  /** В наличии сверху; внутри группы — как по популярности. */
+  const byAvailability = (a, b) => {
+    const stockDiff =
+      Number(Boolean(a.out_of_stock)) - Number(Boolean(b.out_of_stock));
+    if (stockDiff !== 0) return stockDiff;
+    return byViews(a, b);
+  };
 
   switch (sort) {
     case 'name_asc':
@@ -131,6 +138,9 @@ export function sortProducts(products, sortOrFilters) {
       break;
     case 'newest':
       next.sort(byCreated);
+      break;
+    case 'availability':
+      next.sort(byAvailability);
       break;
     case 'popular':
     default:

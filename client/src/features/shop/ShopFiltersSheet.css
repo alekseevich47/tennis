@@ -156,7 +156,8 @@
 }
 
 .shop-filters-sort-row__icon--calendar,
-.shop-filters-sort-row__icon--flame {
+.shop-filters-sort-row__icon--flame,
+.shop-filters-sort-row__icon--stock {
   color: #8b98a5;
 }
 

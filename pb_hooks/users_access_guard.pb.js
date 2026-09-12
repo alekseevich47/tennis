@@ -1,9 +1,8 @@
-// Field-level защита привилегированных полей users.
-// Имя файла раньше users_audit / users_ban_auth / users_default_visible —
-// guard должен выполняться первым и иметь право throw до записи.
+// Field-level ACL users (allow-list для обычного user).
+// Guard должен выполняться первым и иметь право throw до записи.
 // Логика в users_access_guard_lib.js — require внутри хендлеров (изоляция JSVM).
 // Superuser (Admin UI /_/) и moderator обходят field-level ACL;
-// обычный user — только исключения онбординга в assertPrivilegedUpdateAllowed.
+// обычный user — только SELF_EDITABLE_ALWAYS + исключения онбординга.
 
 onRecordCreateRequest((e) => {
   var guard = require(__hooks + '/users_access_guard_lib.js');

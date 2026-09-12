@@ -1,24 +1,40 @@
-// Field-level защита привилегированных полей users.
+// Field-level ACL users: обычный user — только allow-list саморедактируемых полей.
 // Файл без .pb.js — подключается через require() внутри хендлеров.
 // В PB JSVM верхнеуровневые var из .pb.js хендлерам недоступны (см. botlib.js / maxauthlib.js).
 
-var PRIVILEGED_FIELDS = [
-  'role', 'is_banned', 'ban_reason', 'banned_at',
-  'comment_restriction_reason', 'available_sessions', 'used_sessions', 'unpaid_sessions',
-  'attendance_count', 'membership_type', 'membership_start_date',
-  'membership_end_date', 'membership_comment', 'membership_frozen',
-  'membership_frozen_at', 'membership_freeze_log', 'bot_blocked', 'bot_blocked_at',
-  'membership_expiry_warn_for', 'membership_expired_notified_for', 'freeze_expiry_warn_for',
-  'max_id', 'rating_points', 'wins', 'losses', 'birth_date', 'section_start_date',
-  'email', 'full_name', 'is_visible', 'can_comment'
-];
+/** Поля, которые обычный user может менять у себя без доп. условий. */
+var SELF_EDITABLE_ALWAYS = {
+  avatar: true,
+  avatar_url: true,
+  dominant_hand: true,
+  favorite_products: true,
+  password: true,
+  emailVisibility: true,
+  onboarding_completed: true,
+  name_set_in_onboarding: true
+};
+
+/**
+ * Поля, которые могут меняться у auth-коллекции без участия клиента
+ * (или не сравниваем как user-controlled).
+ */
+var IGNORE_FIELDS = {
+  id: true,
+  created: true,
+  updated: true,
+  tokenKey: true,
+  verified: true
+};
 
 var BOOL_FIELDS = {
   is_banned: true,
   membership_frozen: true,
   bot_blocked: true,
   is_visible: true,
-  can_comment: true
+  can_comment: true,
+  onboarding_completed: true,
+  name_set_in_onboarding: true,
+  emailVisibility: true
 };
 
 var NUMBER_FIELDS = {
@@ -31,6 +47,11 @@ var NUMBER_FIELDS = {
   losses: true
 };
 
+var JSON_OR_RELATION_FIELDS = {
+  membership_freeze_log: true,
+  favorite_products: true
+};
+
 function fieldChanged(original, record, f) {
   if (BOOL_FIELDS[f]) {
     return original.getBool(f) !== record.getBool(f);
@@ -38,16 +59,18 @@ function fieldChanged(original, record, f) {
   if (NUMBER_FIELDS[f]) {
     return Number(original.get(f) || 0) !== Number(record.get(f) || 0);
   }
-  if (f === 'membership_freeze_log') {
-    var aLog = original.get(f);
-    var bLog = record.get(f);
+  if (JSON_OR_RELATION_FIELDS[f]) {
+    var aVal = original.get(f);
+    var bVal = record.get(f);
     var aStr = '';
     var bStr = '';
-    try { aStr = JSON.stringify(aLog == null ? null : aLog); } catch (_) { aStr = String(aLog); }
-    try { bStr = JSON.stringify(bLog == null ? null : bLog); } catch (_) { bStr = String(bLog); }
+    try { aStr = JSON.stringify(aVal == null ? null : aVal); } catch (_) { aStr = String(aVal); }
+    try { bStr = JSON.stringify(bVal == null ? null : bVal); } catch (_) { bStr = String(bVal); }
     return aStr !== bStr;
   }
-  // text / email / date / select — строковое сравнение, пустое нормализуем
+  if (f === 'avatar') {
+    return String(original.getString(f) || '') !== String(record.getString(f) || '');
+  }
   var a = original.getString(f) || '';
   var b = record.getString(f) || '';
   return a !== b;
@@ -68,13 +91,33 @@ function applyCreateDefaults(record) {
   record.set('bot_blocked', false);
 }
 
+/**
+ * Allow-list: любое изменённое поле вне списка (с учётом онбординг-исключений) → Forbidden.
+ * @param {any} original
+ * @param {any} record
+ */
 function assertPrivilegedUpdateAllowed(original, record) {
   var isOnboardingTransition =
     !original.getBool('onboarding_completed') && record.getBool('onboarding_completed');
 
-  for (var i = 0; i < PRIVILEGED_FIELDS.length; i++) {
-    var f = PRIVILEGED_FIELDS[i];
+  var schemaFields = [
+    'full_name', 'is_visible', 'is_banned', 'ban_reason', 'banned_at', 'can_comment',
+    'comment_restriction_reason', 'password', 'email', 'emailVisibility', 'verified',
+    'avatar', 'rating_points', 'role', 'max_id', 'dominant_hand', 'avatar_url',
+    'attendance_count', 'available_sessions', 'used_sessions', 'unpaid_sessions',
+    'birth_date', 'section_start_date', 'membership_type', 'membership_start_date',
+    'membership_end_date', 'membership_comment', 'membership_frozen', 'membership_frozen_at',
+    'membership_freeze_log', 'membership_expiry_warn_for', 'membership_expired_notified_for',
+    'freeze_expiry_warn_for', 'onboarding_completed', 'name_set_in_onboarding',
+    'favorite_products', 'bot_blocked', 'bot_blocked_at'
+  ];
+
+  for (var i = 0; i < schemaFields.length; i++) {
+    var f = schemaFields[i];
+    if (IGNORE_FIELDS[f]) continue;
     if (!fieldChanged(original, record, f)) continue;
+
+    if (SELF_EDITABLE_ALWAYS[f]) continue;
 
     // Имя ставится в отдельном PATCH до completeOnboarding (OnboardingTutorial).
     if (f === 'full_name' &&
@@ -88,6 +131,7 @@ function assertPrivilegedUpdateAllowed(original, record) {
     if (f === 'birth_date' && !original.getBool('onboarding_completed')) {
       continue;
     }
+
     throw new ForbiddenError('Изменение поля "' + f + '" недоступно');
   }
 }

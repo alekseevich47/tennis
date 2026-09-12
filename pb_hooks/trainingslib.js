@@ -300,6 +300,77 @@ function withSkipBookingSideEffects(fn) {
   }
 }
 
+/** Поля, которые обычный user может менять (запись/снятие себя). */
+var TRAINING_USER_EDITABLE = {
+  booked_users: true,
+  unbooked_users: true,
+  unpaid_booked_users: true,
+  moderator_kicked_users: true,
+  restore_insufficient_users: true
+};
+
+var TRAINING_COMPARE_FIELDS = [
+  'date', 'duration', 'type', 'max_slots', 'location', 'description',
+  'is_deleted', 'is_closed', 'is_cancelled', 'delete_pending_at',
+  'booked_users', 'attended_users', 'unbooked_users', 'unpaid_booked_users',
+  'moderator_kicked_users', 'restore_insufficient_users',
+  'reminder_4h_sent', 'completion_notified'
+];
+
+function trainingFieldChanged(original, record, f) {
+  if (f === 'is_deleted' || f === 'is_closed' || f === 'is_cancelled' ||
+      f === 'reminder_4h_sent' || f === 'completion_notified') {
+    return original.getBool(f) !== record.getBool(f);
+  }
+  if (f === 'duration' || f === 'max_slots') {
+    return Number(original.get(f) || 0) !== Number(record.get(f) || 0);
+  }
+  if (f === 'booked_users' || f === 'attended_users' || f === 'unbooked_users' ||
+      f === 'unpaid_booked_users' || f === 'moderator_kicked_users' ||
+      f === 'restore_insufficient_users') {
+    var aRel = original.get(f);
+    var bRel = record.get(f);
+    var aS = '';
+    var bS = '';
+    try { aS = JSON.stringify(aRel == null ? [] : aRel); } catch (_) { aS = String(aRel); }
+    try { bS = JSON.stringify(bRel == null ? [] : bRel); } catch (_) { bS = String(bRel); }
+    return aS !== bS;
+  }
+  return String(original.getString(f) || '') !== String(record.getString(f) || '');
+}
+
+function isTrainingPrivilegedAuth(auth) {
+  if (!auth) return false;
+  try {
+    if (typeof auth.isSuperuser === 'function' && auth.isSuperuser()) return true;
+  } catch (_) { /* ignore */ }
+  try {
+    if (auth.collection && auth.collection().name === '_superusers') return true;
+  } catch (_) { /* ignore */ }
+  return !!(auth.getString && auth.getString('role') === 'moderator');
+}
+
+/**
+ * Non-moderator: только booking-поля; нельзя cancel/delete/meta тренировки.
+ * @param {any} original
+ * @param {any} record
+ * @param {any} auth
+ */
+function assertTrainingUpdateAllowed(original, record, auth) {
+  if (isTrainingPrivilegedAuth(auth)) return;
+
+  for (var i = 0; i < TRAINING_COMPARE_FIELDS.length; i++) {
+    var f = TRAINING_COMPARE_FIELDS[i];
+    if (!trainingFieldChanged(original, record, f)) continue;
+    if (TRAINING_USER_EDITABLE[f]) continue;
+    // trainings_auto_close может выставить is_closed на том же UpdateRequest до/вместе с записью.
+    if (f === 'is_closed' && !original.getBool('is_closed') && record.getBool('is_closed')) {
+      continue;
+    }
+    throw new ForbiddenError('Изменение поля "' + f + '" недоступно');
+  }
+}
+
 function applyBookingSideEffects(original, record, auth) {
   if (skipBookingSideEffectsDepth > 0) return;
 
@@ -446,6 +517,7 @@ module.exports = {
   finalizeCancelledTrainingRecord: finalizeCancelledTrainingRecord,
   isReadyToFinalizePendingDelete: isReadyToFinalizePendingDelete,
   hasTimeRangeEnded: hasTimeRangeEnded,
+  assertTrainingUpdateAllowed: assertTrainingUpdateAllowed,
   applyBookingSideEffects: applyBookingSideEffects,
   withSkipBookingSideEffects: withSkipBookingSideEffects,
   // backward-compat alias (если кто-то ещё require'ит старое имя)
