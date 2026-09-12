@@ -1,7 +1,7 @@
 {
   "client/package.json": {
-    "mtime": 1789186002.9330308,
-    "ast_hash": "20719995ec50074f411a70b0ed3db322",
+    "mtime": 1789220982.632782,
+    "ast_hash": "36f5ba7db43d3dd2049263a8b5c15482",
     "semantic_hash": ""
   },
   "client/public/sw.js": {
@@ -495,8 +495,8 @@
     "semantic_hash": ""
   },
   "client/src/hooks/useAchievements.js": {
-    "mtime": 1789219337.6462438,
-    "ast_hash": "0604b09b97d5b5efb109b495aa6113e1",
+    "mtime": 1789221605.160719,
+    "ast_hash": "09c228765d7156f2407e003e00845c61",
     "semantic_hash": ""
   },
   "client/src/hooks/useAuditEvents.js": {
@@ -650,8 +650,8 @@
     "semantic_hash": ""
   },
   "client/src/services/achievements.js": {
-    "mtime": 1789219337.6462438,
-    "ast_hash": "f6058873487310bbd6445c91cf4cd899",
+    "mtime": 1789221604.4935958,
+    "ast_hash": "400e05cbfbed487b42a8cbb39d3cb754",
     "semantic_hash": ""
   },
   "client/src/services/admin.js": {
@@ -805,8 +805,8 @@
     "semantic_hash": ""
   },
   "pb_hooks/tournament_audit.pb.js": {
-    "mtime": 1789219430.4168959,
-    "ast_hash": "2c885ef52007ab9669583b79934550cf",
+    "mtime": 1789219522.4126093,
+    "ast_hash": "9743ca554ba6df1c00852ca98ed2feb1",
     "semantic_hash": ""
   },
   "pb_hooks/trainings_audit.pb.js": {
@@ -860,8 +860,8 @@
     "semantic_hash": ""
   },
   "schema.json": {
-    "mtime": 1789182993.637081,
-    "ast_hash": "58a183241c8c002cdd22e91a5ec3fdd5",
+    "mtime": 1789221632.395617,
+    "ast_hash": "aaafe935ec951ac777ee50680e073015",
     "semantic_hash": ""
   },
   "AUDIT.md": {
@@ -1787,11 +1787,6 @@
   "config/nginx-security-headers.inc": {
     "mtime": 1789205034.111556,
     "ast_hash": "e95e7f22467fd32b40fd9500293b7d28",
-    "semantic_hash": ""
-  },
-  "client/src/services/achievementIcons.js": {
-    "mtime": 1789219300.097521,
-    "ast_hash": "1e8228724ed72325666c6d2cbc0bb313",
     "semantic_hash": ""
   },
   "pb_hooks/achievementslib.js": {

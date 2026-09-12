@@ -1,7 +1,10 @@
 // @ts-check
 import pb from './pb';
 import { error } from '../lib/log';
-import { getAchievementLevelIconUrl } from './achievementIcons';
+import { getMediaThumbUrl } from '../lib/media';
+
+/** Thumb для медалей 32–40px (2× retina). */
+export const ACHIEVEMENT_ICON_THUMB = '100x100';
 
 /**
  * @typedef {Object} AchievementLevelRecord
@@ -99,12 +102,11 @@ export function getAchievementLevels(achievement) {
 }
 
 /**
- * @param {number} sortOrder
- * @param {number} level
+ * @param {AchievementLevelRecord} levelRecord
  * @returns {string}
  */
-export function getLevelIconUrl(sortOrder, level) {
-  return getAchievementLevelIconUrl(sortOrder, level);
+export function getLevelIconUrl(levelRecord) {
+  return getMediaThumbUrl(levelRecord, 'achievement_levels', levelRecord.icon, ACHIEVEMENT_ICON_THUMB) || '';
 }
 
 /**
@@ -132,22 +134,20 @@ export function countUserTournamentPlaces(posts, userId) {
 /**
  * @param {AchievementLevelRecord[]} levels
  * @param {number} value
- * @param {number} [sortOrder]
  * @returns {UserAchievementProgress}
  */
-function calcLevelFromValue(levels, value, sortOrder = 0) {
+function calcLevelFromValue(levels, value) {
   const sorted = [...levels].sort((a, b) => (b.level ?? 0) - (a.level ?? 0));
 
   for (const levelRecord of sorted) {
     const required = levelRecord.required_value ?? 0;
     if (value >= required) {
-      const level = levelRecord.level ?? 0;
       return {
         achieved: true,
-        level,
+        level: levelRecord.level ?? 0,
         title: levelRecord.title || '',
         required_value: required,
-        icon_url: getLevelIconUrl(sortOrder, level)
+        icon_url: getLevelIconUrl(levelRecord)
       };
     }
   }
@@ -190,7 +190,7 @@ export function calcNextLevel(levels, userValue) {
  * @returns {UserAchievementProgress}
  */
 export function calcRatingAchievement(ratingPoints, levels) {
-  return calcLevelFromValue(levels, ratingPoints ?? 0, 4);
+  return calcLevelFromValue(levels, ratingPoints ?? 0);
 }
 
 /**
@@ -199,7 +199,7 @@ export function calcRatingAchievement(ratingPoints, levels) {
  * @returns {UserAchievementProgress}
  */
 export function calcWinsAchievement(firstPlaceCount, levels) {
-  return calcLevelFromValue(levels, firstPlaceCount ?? 0, 5);
+  return calcLevelFromValue(levels, firstPlaceCount ?? 0);
 }
 
 /**
@@ -208,7 +208,7 @@ export function calcWinsAchievement(firstPlaceCount, levels) {
  * @returns {UserAchievementProgress}
  */
 export function calcAttendanceAchievement(attendanceCount, levels) {
-  return calcLevelFromValue(levels, attendanceCount ?? 0, 1);
+  return calcLevelFromValue(levels, attendanceCount ?? 0);
 }
 
 /**
@@ -217,7 +217,7 @@ export function calcAttendanceAchievement(attendanceCount, levels) {
  * @returns {UserAchievementProgress}
  */
 export function calcPodiumAchievement(podiumCount, levels) {
-  return calcLevelFromValue(levels, podiumCount ?? 0, 3);
+  return calcLevelFromValue(levels, podiumCount ?? 0);
 }
 
 /**
