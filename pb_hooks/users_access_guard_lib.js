@@ -7,6 +7,7 @@ var SELF_EDITABLE_ALWAYS = {
   avatar: true,
   avatar_url: true,
   dominant_hand: true,
+  birth_date: true,
   favorite_products: true,
   password: true,
   emailVisibility: true,
@@ -17,13 +18,18 @@ var SELF_EDITABLE_ALWAYS = {
 /**
  * Поля, которые могут меняться у auth-коллекции без участия клиента
  * (или не сравниваем как user-controlled).
+ * membership_freeze_log / warn-поля — серверные; JSON.stringify(get()) в goja → opaque 400.
  */
 var IGNORE_FIELDS = {
   id: true,
   created: true,
   updated: true,
   tokenKey: true,
-  verified: true
+  verified: true,
+  membership_freeze_log: true,
+  membership_expiry_warn_for: true,
+  membership_expired_notified_for: true,
+  freeze_expiry_warn_for: true
 };
 
 var BOOL_FIELDS = {
@@ -47,10 +53,30 @@ var NUMBER_FIELDS = {
   losses: true
 };
 
-var JSON_OR_RELATION_FIELDS = {
-  membership_freeze_log: true,
-  favorite_products: true
-};
+/** Relation multi: сравниваем только id, без JSON.stringify (goja/Proxy). */
+function relationIdsKey(entries) {
+  if (!entries || !entries.length) return '';
+  var ids = [];
+  for (var i = 0; i < entries.length; i++) {
+    var entry = entries[i];
+    if (!entry) continue;
+    if (typeof entry === 'string') {
+      ids.push(entry);
+      continue;
+    }
+    if (typeof entry.getId === 'function') {
+      ids.push(String(entry.getId()));
+      continue;
+    }
+    if (entry.id) {
+      ids.push(String(entry.id));
+      continue;
+    }
+    ids.push(String(entry));
+  }
+  ids.sort();
+  return ids.join(',');
+}
 
 function fieldChanged(original, record, f) {
   if (BOOL_FIELDS[f]) {
@@ -59,14 +85,8 @@ function fieldChanged(original, record, f) {
   if (NUMBER_FIELDS[f]) {
     return Number(original.get(f) || 0) !== Number(record.get(f) || 0);
   }
-  if (JSON_OR_RELATION_FIELDS[f]) {
-    var aVal = original.get(f);
-    var bVal = record.get(f);
-    var aStr = '';
-    var bStr = '';
-    try { aStr = JSON.stringify(aVal == null ? null : aVal); } catch (_) { aStr = String(aVal); }
-    try { bStr = JSON.stringify(bVal == null ? null : bVal); } catch (_) { bStr = String(bVal); }
-    return aStr !== bStr;
+  if (f === 'favorite_products') {
+    return relationIdsKey(original.get(f)) !== relationIdsKey(record.get(f));
   }
   if (f === 'avatar') {
     return String(original.getString(f) || '') !== String(record.getString(f) || '');
@@ -128,10 +148,6 @@ function assertPrivilegedUpdateAllowed(original, record) {
         record.getBool(f) === true) {
       continue;
     }
-    if (f === 'birth_date' && !original.getBool('onboarding_completed')) {
-      continue;
-    }
-
     throw new ForbiddenError('Изменение поля "' + f + '" недоступно');
   }
 }
