@@ -1232,7 +1232,7 @@
         "hidden": false,
         "id": "file1704208859",
         "maxSelect": 1,
-        "maxSize": 0,
+        "maxSize": 512000,
         "mimeTypes": [
           "image/png"
         ],
@@ -1241,7 +1241,9 @@
         "protected": false,
         "required": false,
         "system": false,
-        "thumbs": [],
+        "thumbs": [
+          "100x100"
+        ],
         "type": "file"
       },
       {

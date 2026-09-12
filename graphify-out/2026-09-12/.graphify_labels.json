@@ -140,6 +140,8 @@
   "138": "restore_storage_from_yandex.sh",
   "139": "backup.pb.js",
   "140": "nginx-security-headers.inc",
+  "141": "ProductUploadProvider.jsx",
+  "142": "DayGroup.jsx",
   "143": "compressImage",
   "151": "admin_backup_runner.sh"
 }
