@@ -5,6 +5,7 @@ import { useAlertDialog } from '../../components/ui/AlertDialog';
 import SortableMediaPreviewGrid from '../feed/SortableMediaPreviewGrid';
 import FullscreenImageViewer from '../feed/FullscreenImageViewer';
 import PostRichTextField from '../feed/PostRichTextField';
+import { toDisplayHtml } from '../feed/postRichText';
 import { useLocalMediaFullscreen } from '../feed/useLocalMediaFullscreen';
 import { useProductCategories } from '../../hooks/useProductCategories';
 import { useProductParamTemplates } from '../../hooks/useProductParamTemplates';
@@ -98,7 +99,7 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
   const [form, setForm] = useState(() => ({
     ...INITIAL,
     title: product?.title || '',
-    description: product?.description || '',
+    description: toDisplayHtml(product?.description || ''),
     price: product?.price?.toString() || '',
     old_price: Number(product?.old_price) > 0 ? String(product.old_price) : '',
     sizes: product?.sizes || '',
@@ -177,7 +178,7 @@ function ProductForm({ isOpen, product, onClose, onSubmit }) {
     setForm({
       ...INITIAL,
       title: product?.title || '',
-      description: product?.description || '',
+      description: toDisplayHtml(product?.description || ''),
       price: product?.price?.toString() || '',
       old_price: Number(product?.old_price) > 0 ? String(product.old_price) : '',
       sizes: product?.sizes || '',

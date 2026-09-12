@@ -28,7 +28,8 @@ import {
   hasVisibleText,
   isEditorEmpty,
   normalizeHexColor,
-  readActiveFormats
+  readActiveFormats,
+  toDisplayHtml
 } from './postRichText';
 import {
   MENTION_CLASS,
@@ -575,7 +576,7 @@ const PostRichTextField = forwardRef(function PostRichTextField(
           savedRangeRef.current = saved;
         }
       }
-      el.innerHTML = next;
+      el.innerHTML = toDisplayHtml(next);
       ensureFrameCarets(el);
       setEmpty(isEditorEmpty(el));
       if (hadFocus && saved) {
