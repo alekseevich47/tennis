@@ -17,6 +17,7 @@ client/tasks/
 .env.*
 !.env.example
 !.env.prod.example
+!client/.env.example
 client/.env
 
 # IDE files

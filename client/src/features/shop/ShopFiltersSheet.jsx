@@ -302,6 +302,49 @@ export default function ShopFiltersSheet({
             Популярное
           </button>
         </div>
+
+        <div className="shop-filters-sort-row">
+          <div className="shop-filters-sort-row__meta">
+            <span className="shop-filters-sort-row__icon shop-filters-sort-row__icon--stock" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18">
+                <path
+                  d="M4.5 8.5 12 4l7.5 4.5v7L12 20l-7.5-4.5v-7z"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.65"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M4.5 8.5 12 13l7.5-4.5M12 13v7"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.65"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </span>
+            <span className="shop-filters-sort-row__label">По наличию</span>
+          </div>
+          <button
+            type="button"
+            className={clsx(
+              'shop-filters-chip',
+              draft.sort === 'availability' && 'is-active'
+            )}
+            aria-pressed={draft.sort === 'availability'}
+            onClick={() => {
+              patchDraft({
+                sort:
+                  draft.sort === 'availability'
+                    ? DEFAULT_SHOP_FILTERS.sort
+                    : 'availability'
+              });
+            }}
+          >
+            В наличии
+          </button>
+        </div>
       </section>
     </Modal>
   );

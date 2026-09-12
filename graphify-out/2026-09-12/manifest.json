@@ -415,8 +415,8 @@
     "semantic_hash": ""
   },
   "client/src/features/shop/ProductForm.jsx": {
-    "mtime": 1789183065.213817,
-    "ast_hash": "b2391386cbfc8911d2f5f4ea69142f8a",
+    "mtime": 1788170204.6393697,
+    "ast_hash": "6f738e971a4ab22a5deec254bead150f",
     "semantic_hash": ""
   },
   "client/src/features/shop/SearchBar.jsx": {
@@ -840,8 +840,8 @@
     "semantic_hash": "f712110b07c6aa47a317c8dc16b069be"
   },
   "pb_hooks/trainingslib.js": {
-    "mtime": 1789183048.334165,
-    "ast_hash": "1db1c57f2de1e0eaf61efe35e2fa4f77",
+    "mtime": 1788170204.8884568,
+    "ast_hash": "b616cf48edb1a88e66f5349d74de5ff8",
     "semantic_hash": ""
   },
   "pb_hooks/users_audit.pb.js": {
@@ -860,8 +860,8 @@
     "semantic_hash": ""
   },
   "schema.json": {
-    "mtime": 1789182993.637081,
-    "ast_hash": "58a183241c8c002cdd22e91a5ec3fdd5",
+    "mtime": 1788170204.894563,
+    "ast_hash": "43b1482907515112c178ce8335839810",
     "semantic_hash": ""
   },
   "AUDIT.md": {
@@ -875,8 +875,8 @@
     "semantic_hash": ""
   },
   "client/index.html": {
-    "mtime": 1789183136.1078415,
-    "ast_hash": "4658fd338f572ea4098b1d7d86ee5805",
+    "mtime": 1788170204.5302446,
+    "ast_hash": "c27e9dcd8fd52597af6597eeec972f27",
     "semantic_hash": ""
   },
   "drop_category.txt": {
@@ -1050,8 +1050,8 @@
     "semantic_hash": ""
   },
   "client/src/features/feed/PostRichTextField.jsx": {
-    "mtime": 1789183072.5679593,
-    "ast_hash": "2a33484f1c76b4dda93b1e3fcf5ba34a",
+    "mtime": 1788240835.9742818,
+    "ast_hash": "ea4df2537a4781ca6a5aeb1724f2227f",
     "semantic_hash": ""
   },
   "client/src/features/feed/postRichText.js": {
@@ -1120,8 +1120,8 @@
     "semantic_hash": ""
   },
   "pb_hooks/trainings_booking_validate.pb.js": {
-    "mtime": 1789183049.9885426,
-    "ast_hash": "ffbc78272bf79abb5dd28f5ed37f6dea",
+    "mtime": 1788170204.886457,
+    "ast_hash": "08b5fc976c5f026f5b06011bb7123b62",
     "semantic_hash": ""
   },
   "client/src/features/profile/AboutAppModal.jsx": {
@@ -1175,8 +1175,8 @@
     "semantic_hash": ""
   },
   "pb_hooks/users_access_guard.pb.js": {
-    "mtime": 1789183049.9885426,
-    "ast_hash": "2172870b7c11272be3840b5b1ebead7e",
+    "mtime": 1788170204.8884568,
+    "ast_hash": "055c6df283d83928a15153a589504778",
     "semantic_hash": ""
   },
   "pb_hooks/maxauthlib.js": {
@@ -1185,8 +1185,8 @@
     "semantic_hash": ""
   },
   "pb_hooks/users_access_guard_lib.js": {
-    "mtime": 1789183034.511767,
-    "ast_hash": "b028ee7f633b6d4cb3f832b453bfc275",
+    "mtime": 1788170204.889457,
+    "ast_hash": "210684c1556ed54eac83ceaa36d7be05",
     "semantic_hash": ""
   },
   "client/src/features/feed/useResolvedExternalMedia.js": {
