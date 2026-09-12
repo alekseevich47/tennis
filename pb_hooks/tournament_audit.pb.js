@@ -72,6 +72,18 @@ onRecordCreateRequest((e) => {
         severity: 'info'
       });
     }
+
+    if (!isScheduled) {
+      var achievementsLib = require(__hooks + '/achievementslib.js');
+      achievementsLib.maybeGrantTournamentAchievements($app, audit, {
+        subject: subject,
+        postId: record.id,
+        oldParticipants: [],
+        newParticipants: achievementsLib.parseParticipants(participants),
+        wasPublished: false,
+        isPublished: true
+      });
+    }
   } catch (err) {
     console.log('[tournament-audit] tournament_posts create: ' + err);
   }
@@ -112,6 +124,18 @@ onRecordUpdateRequest((e) => {
         summaryRu: name + ' восстановил(а) публикацию турнира ' + objectLabel,
         severity: 'info'
       });
+      if (!record.getBool('is_scheduled')) {
+        var achievementsLibRestore = require(__hooks + '/achievementslib.js');
+        var restoredParticipants = achievementsLibRestore.parseParticipants(record.get('participants'));
+        achievementsLibRestore.maybeGrantTournamentAchievements($app, audit, {
+          subject: subject,
+          postId: record.id,
+          oldParticipants: [],
+          newParticipants: restoredParticipants,
+          wasPublished: false,
+          isPublished: true
+        });
+      }
       return;
     }
 
@@ -128,6 +152,28 @@ onRecordUpdateRequest((e) => {
         diff: diff,
         summaryRu: name + ' отредактировал(а) публикацию турнира ' + objectLabel,
         severity: 'info'
+      });
+    }
+
+    var achievementsLib = require(__hooks + '/achievementslib.js');
+    var wasScheduled = original.getBool('is_scheduled');
+    var isScheduledNow = record.getBool('is_scheduled');
+    var wasPublished = !wasDeleted && !wasScheduled;
+    var isPublished = !isDeleted && !isScheduledNow;
+    var oldParticipants = achievementsLib.parseParticipants(original.get('participants'));
+    var newParticipants = achievementsLib.parseParticipants(record.get('participants'));
+    var participantsChanged =
+      JSON.stringify(oldParticipants) !== JSON.stringify(newParticipants);
+    var publishStateChanged = wasPublished !== isPublished;
+
+    if (participantsChanged || publishStateChanged) {
+      achievementsLib.maybeGrantTournamentAchievements($app, audit, {
+        subject: subject,
+        postId: record.id,
+        oldParticipants: oldParticipants,
+        newParticipants: newParticipants,
+        wasPublished: wasPublished,
+        isPublished: isPublished
       });
     }
   } catch (err) {

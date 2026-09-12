@@ -495,9 +495,9 @@
     "semantic_hash": ""
   },
   "client/src/hooks/useAchievements.js": {
-    "mtime": 1788170204.6540823,
-    "ast_hash": "ea0e061e0ed8950ccc1b992e5a66875a",
-    "semantic_hash": "ea0e061e0ed8950ccc1b992e5a66875a"
+    "mtime": 1789219337.6462438,
+    "ast_hash": "0604b09b97d5b5efb109b495aa6113e1",
+    "semantic_hash": ""
   },
   "client/src/hooks/useAuditEvents.js": {
     "mtime": 1788170204.6550815,
@@ -650,9 +650,9 @@
     "semantic_hash": ""
   },
   "client/src/services/achievements.js": {
-    "mtime": 1788170204.6720781,
-    "ast_hash": "da7234bfcc36d0129b07a8cc939c0236",
-    "semantic_hash": "da7234bfcc36d0129b07a8cc939c0236"
+    "mtime": 1789219337.6462438,
+    "ast_hash": "f6058873487310bbd6445c91cf4cd899",
+    "semantic_hash": ""
   },
   "client/src/services/admin.js": {
     "mtime": 1788592233.1599572,
@@ -800,13 +800,13 @@
     "semantic_hash": ""
   },
   "pb_hooks/statslib.js": {
-    "mtime": 1788170204.8844566,
-    "ast_hash": "016461e48758c6b66a6584997960fbde",
+    "mtime": 1789219394.232251,
+    "ast_hash": "30574a1fbd83aadaeb17f8a43a8c710c",
     "semantic_hash": ""
   },
   "pb_hooks/tournament_audit.pb.js": {
-    "mtime": 1788170204.885457,
-    "ast_hash": "cb3b45de8e48b06ccf965a04959d754f",
+    "mtime": 1789219430.4168959,
+    "ast_hash": "2c885ef52007ab9669583b79934550cf",
     "semantic_hash": ""
   },
   "pb_hooks/trainings_audit.pb.js": {
@@ -845,9 +845,9 @@
     "semantic_hash": ""
   },
   "pb_hooks/users_audit.pb.js": {
-    "mtime": 1788170204.889457,
-    "ast_hash": "8b316bbf551df7599c2373a171ace3a3",
-    "semantic_hash": "8b316bbf551df7599c2373a171ace3a3"
+    "mtime": 1789219386.3348176,
+    "ast_hash": "3ffa87b4c75f4417d4d417c2bf600d9b",
+    "semantic_hash": ""
   },
   "pb_hooks/users_ban_auth.pb.js": {
     "mtime": 1788170204.8914778,
@@ -1460,7 +1460,7 @@
     "semantic_hash": ""
   },
   "pb_hooks/posts_scheduler.pb.js": {
-    "mtime": 1788170204.883377,
+    "mtime": 1789219416.7207031,
     "ast_hash": "d7395685fcb770ac7ce365d002bafae2",
     "semantic_hash": ""
   },
@@ -1787,6 +1787,16 @@
   "config/nginx-security-headers.inc": {
     "mtime": 1789205034.111556,
     "ast_hash": "e95e7f22467fd32b40fd9500293b7d28",
+    "semantic_hash": ""
+  },
+  "client/src/services/achievementIcons.js": {
+    "mtime": 1789219300.097521,
+    "ast_hash": "1e8228724ed72325666c6d2cbc0bb313",
+    "semantic_hash": ""
+  },
+  "pb_hooks/achievementslib.js": {
+    "mtime": 1789219365.5686088,
+    "ast_hash": "d425a1c26c4e86804a0572274d4c4bdd",
     "semantic_hash": ""
   }
 }

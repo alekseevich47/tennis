@@ -1,7 +1,8 @@
 // @ts-check
 import pb from './pb';
 import { error } from '../lib/log';
-import { getMediaUrl } from '../lib/media';
+import { getAchievementLevelIconUrl } from './achievementIcons';
+
 /**
  * @typedef {Object} AchievementLevelRecord
  * @property {string} id
@@ -38,6 +39,12 @@ import { getMediaUrl } from '../lib/media';
  * @property {number} userValue
  */
 
+/**
+ * @typedef {Object} TournamentPlaceStats
+ * @property {number} podiumCount
+ * @property {number} firstPlaceCount
+ */
+
 /** @param {{ signal?: AbortSignal }} [options] */
 export async function listAchievements({ signal } = {}) {
   try {
@@ -55,10 +62,34 @@ export async function listAchievements({ signal } = {}) {
 }
 
 /**
+ * Опубликованные турнирные посты — только participants для агрегата мест.
+ * @param {{ signal?: AbortSignal }} [options]
+ * @returns {Promise<Array<{ id: string, participants?: Array<{ userId?: string, place?: number }> }>>}
+ */
+export async function listTournamentPostsForAchievements({ signal } = {}) {
+  try {
+    const base = '(is_deleted = false || is_deleted = null)';
+    const scheduled = 'is_scheduled != true';
+    return /** @type {Array<{ id: string, participants?: Array<{ userId?: string, place?: number }> }>} */ (
+      await pb.collection('tournament_posts').getFullList({
+        filter: `(${base}) && (${scheduled})`,
+        fields: 'id,participants',
+        requestKey: null,
+        signal
+      })
+    );
+  } catch (err) {
+    if (err && /** @type {Error} */ (err).name === 'AbortError') return [];
+    error('Ошибка загрузки турниров для достижений:', err);
+    throw err;
+  }
+}
+
+/**
  * @param {AchievementRecord} achievement
  * @returns {AchievementLevelRecord[]}
  */
-function getAchievementLevels(achievement) {
+export function getAchievementLevels(achievement) {
   const expand = /** @type {Record<string, unknown> | undefined} */ (achievement.expand);
   const levels = expand?.achievement_levels_via_achievement ?? [];
   if (!Array.isArray(levels)) return [];
@@ -68,30 +99,55 @@ function getAchievementLevels(achievement) {
 }
 
 /**
- * @param {AchievementLevelRecord} levelRecord
+ * @param {number} sortOrder
+ * @param {number} level
  * @returns {string}
  */
-function getLevelIconUrl(levelRecord) {
-  return getMediaUrl(levelRecord, 'achievement_levels', levelRecord.icon) || '';
+export function getLevelIconUrl(sortOrder, level) {
+  return getAchievementLevelIconUrl(sortOrder, level);
+}
+
+/**
+ * @param {Array<{ participants?: Array<{ userId?: string, place?: number }> }>} posts
+ * @param {string} userId
+ * @returns {TournamentPlaceStats}
+ */
+export function countUserTournamentPlaces(posts, userId) {
+  let podiumCount = 0;
+  let firstPlaceCount = 0;
+
+  for (const post of posts) {
+    const participants = Array.isArray(post.participants) ? post.participants : [];
+    const mine = participants.find((p) => p && p.userId === userId);
+    if (!mine) continue;
+    const place = Number(mine.place);
+    if (!Number.isFinite(place) || place < 1) continue;
+    if (place === 1) firstPlaceCount += 1;
+    if (place <= 3) podiumCount += 1;
+  }
+
+  return { podiumCount, firstPlaceCount };
 }
 
 /**
  * @param {AchievementLevelRecord[]} levels
  * @param {number} value
+ * @param {number} [sortOrder]
  * @returns {UserAchievementProgress}
  */
-function calcLevelFromValue(levels, value) {
+function calcLevelFromValue(levels, value, sortOrder = 0) {
   const sorted = [...levels].sort((a, b) => (b.level ?? 0) - (a.level ?? 0));
 
   for (const levelRecord of sorted) {
     const required = levelRecord.required_value ?? 0;
     if (value >= required) {
+      const level = levelRecord.level ?? 0;
       return {
         achieved: true,
-        level: levelRecord.level ?? 0,
+        level,
         title: levelRecord.title || '',
         required_value: required,
-        icon_url: getLevelIconUrl(levelRecord)
+        icon_url: getLevelIconUrl(sortOrder, level)
       };
     }
   }
@@ -134,16 +190,16 @@ export function calcNextLevel(levels, userValue) {
  * @returns {UserAchievementProgress}
  */
 export function calcRatingAchievement(ratingPoints, levels) {
-  return calcLevelFromValue(levels, ratingPoints ?? 0);
+  return calcLevelFromValue(levels, ratingPoints ?? 0, 4);
 }
 
 /**
- * @param {number} wins
+ * @param {number} firstPlaceCount
  * @param {AchievementLevelRecord[]} levels
  * @returns {UserAchievementProgress}
  */
-export function calcWinsAchievement(wins, levels) {
-  return calcLevelFromValue(levels, wins ?? 0);
+export function calcWinsAchievement(firstPlaceCount, levels) {
+  return calcLevelFromValue(levels, firstPlaceCount ?? 0, 5);
 }
 
 /**
@@ -152,7 +208,16 @@ export function calcWinsAchievement(wins, levels) {
  * @returns {UserAchievementProgress}
  */
 export function calcAttendanceAchievement(attendanceCount, levels) {
-  return calcLevelFromValue(levels, attendanceCount ?? 0);
+  return calcLevelFromValue(levels, attendanceCount ?? 0, 1);
+}
+
+/**
+ * @param {number} podiumCount
+ * @param {AchievementLevelRecord[]} levels
+ * @returns {UserAchievementProgress}
+ */
+export function calcPodiumAchievement(podiumCount, levels) {
+  return calcLevelFromValue(levels, podiumCount ?? 0, 3);
 }
 
 /**
@@ -172,31 +237,37 @@ function calcUnavailableAchievement() {
  * @param {number} sortOrder
  * @param {Record<string, unknown>} user
  * @param {AchievementLevelRecord[]} levels
+ * @param {TournamentPlaceStats} [tournamentStats]
  * @returns {{ progress: UserAchievementProgress, userValue: number }}
  */
-function calcAchievementProgress(sortOrder, user, levels) {
+function calcAchievementProgress(sortOrder, user, levels, tournamentStats) {
+  const podiumCount = tournamentStats?.podiumCount ?? 0;
+  const firstPlaceCount = tournamentStats?.firstPlaceCount ?? 0;
+
   switch (sortOrder) {
     case 1:
-      return {
-        progress: calcRatingAchievement(Number(user.rating_points) || 0, levels),
-        userValue: Number(user.rating_points) || 0
-      };
-    case 2:
-      return {
-        progress: calcWinsAchievement(Number(user.wins) || 0, levels),
-        userValue: Number(user.wins) || 0
-      };
-    case 3:
       return {
         progress: calcAttendanceAchievement(Number(user.attendance_count) || 0, levels),
         userValue: Number(user.attendance_count) || 0
       };
+    case 2:
+      // Серия побед — matches удалены; метрика пока недоступна.
+      return { progress: calcUnavailableAchievement(), userValue: 0 };
+    case 3:
+      return {
+        progress: calcPodiumAchievement(podiumCount, levels),
+        userValue: podiumCount
+      };
     case 4:
-      // Серия побед — раньше считалась по matches (коллекция удалена).
-      return { progress: calcUnavailableAchievement(), userValue: 0 };
+      return {
+        progress: calcRatingAchievement(Number(user.rating_points) || 0, levels),
+        userValue: Number(user.rating_points) || 0
+      };
     case 5:
-      // Призовой пьедестал — по tournament_posts (пока не реализовано).
-      return { progress: calcUnavailableAchievement(), userValue: 0 };
+      return {
+        progress: calcWinsAchievement(firstPlaceCount, levels),
+        userValue: firstPlaceCount
+      };
     default:
       return { progress: calcUnavailableAchievement(), userValue: 0 };
   }
@@ -206,22 +277,24 @@ function calcAchievementProgress(sortOrder, user, levels) {
  * @param {string} userId
  * @param {AchievementRecord[]} achievements
  * @param {Record<string, unknown>} user
+ * @param {TournamentPlaceStats} [tournamentStats]
  * @returns {Map<string, UserAchievementResult>}
  */
-export function getUserAchievements(userId, achievements, user) {
+export function getUserAchievements(userId, achievements, user, tournamentStats) {
   /** @type {Map<string, UserAchievementResult>} */
   const result = new Map();
 
-  try {
-    for (const achievement of achievements) {
-      const levels = getAchievementLevels(achievement);
-      const sortOrder = Number(achievement.sort_order) || 0;
-      const { progress, userValue } = calcAchievementProgress(sortOrder, user, levels);
+  for (const achievement of achievements) {
+    const levels = getAchievementLevels(achievement);
+    const sortOrder = Number(achievement.sort_order) || 0;
+    const { progress, userValue } = calcAchievementProgress(
+      sortOrder,
+      user,
+      levels,
+      tournamentStats
+    );
 
-      result.set(achievement.id, { progress, userValue });
-    }
-  } catch (err) {
-    throw err;
+    result.set(achievement.id, { progress, userValue });
   }
 
   return result;
