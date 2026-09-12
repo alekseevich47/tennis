@@ -49,7 +49,6 @@ export function useAchievements(userId) {
 
     return achievements.map((achievement) => {
       const levels = getAchievementLevels(achievement);
-      const sortOrder = Number(achievement.sort_order) || 0;
       const achievementResult = progressMap.get(achievement.id);
       const progress = achievementResult?.progress;
       const userValue = achievementResult?.userValue ?? 0;
@@ -66,7 +65,7 @@ export function useAchievements(userId) {
             title: levelRecord.title || '',
             required_value: levelRecord.required_value ?? 0,
             achieved: currentLevel > 0 && level <= currentLevel,
-            icon_url: getLevelIconUrl(sortOrder, level)
+            icon_url: getLevelIconUrl(levelRecord)
           };
         })
       };

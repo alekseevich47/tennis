@@ -123,14 +123,8 @@
   "121": "getEnvStrings",
   "122": "usePinnedBannerIndex.js",
   "123": "useSectionSwipe.js",
-  "124": "EditTrainingModal.jsx",
-  "125": "AboutAppModal.jsx",
-  "126": "useSectionSwipe.js",
   "127": "ScheduledPostsModal.jsx",
   "128": "UTF8ToString",
-  "129": "DayGroup.jsx",
-  "130": "Skeleton.jsx",
-  "131": "useCommentLikes",
   "132": "useScheduledPosts.js",
   "133": "backuplib.js",
   "134": "backup_db_to_yandex.sh",
@@ -140,8 +134,5 @@
   "138": "restore_storage_from_yandex.sh",
   "139": "backup.pb.js",
   "140": "nginx-security-headers.inc",
-  "141": "ProductUploadProvider.jsx",
-  "142": "DayGroup.jsx",
-  "143": "compressImage",
   "151": "admin_backup_runner.sh"
 }
