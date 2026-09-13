@@ -14,7 +14,8 @@ import './NotificationCard.css';
 const CLICK_ACTION_LABELS = {
   open_training: 'Перейти к тренировке',
   open_membership: 'Перейти к абонементу',
-  open_seller_chat: 'Продлить абонемент'
+  open_seller_chat: 'Продлить абонемент',
+  open_profile: 'Профиль'
 };
 
 const READ_VISIBLE_DELAY_MS = 1200;
@@ -121,7 +122,8 @@ function NotificationPostChip({ postId, postSource, postNumber, onOpen }) {
  *   onOpenMembership?: () => void,
  *   onOpenBooking?: () => void,
  *   onOpenComment?: (meta: Record<string, unknown>) => void,
- *   onOpenSellerChat?: () => void
+ *   onOpenSellerChat?: () => void,
+ *   onOpenProfile?: (meta?: Record<string, unknown>) => void
  * }} props
  */
 export default function NotificationCard({
@@ -135,7 +137,8 @@ export default function NotificationCard({
   onOpenMembership,
   onOpenBooking,
   onOpenComment,
-  onOpenSellerChat
+  onOpenSellerChat,
+  onOpenProfile
 }) {
   const cardRef = useRef(null);
   const markedRef = useRef(false);
@@ -345,6 +348,10 @@ export default function NotificationCard({
       onOpenMembership?.();
       return;
     }
+    if (clickAction === 'open_profile' || kind === 'achievement_grant') {
+      onOpenProfile?.(meta);
+      return;
+    }
     if (clickAction === 'open_booking') {
       onOpenBooking?.();
       return;
@@ -367,6 +374,7 @@ export default function NotificationCard({
     meta,
     onOpenBooking,
     onOpenMembership,
+    onOpenProfile,
     onOpenSellerChat,
     onOpenTraining,
     openLinkedContent
@@ -579,8 +587,8 @@ export default function NotificationCard({
         ) : null}
 
         <div className="notification-card__reply-layout">
-          <div className="notification-card__section-avatar" aria-hidden="true">
-            <img src={sectionAvatarUrl} alt="" decoding="async" />
+          <div className="section-avatar" aria-hidden="true">
+            <img className="section-avatar__image" src={sectionAvatarUrl} alt="" decoding="async" />
           </div>
           <div className="notification-card__reply-content">
             <div className="notification-card__reply-header">
@@ -599,7 +607,16 @@ export default function NotificationCard({
             ) : null}
             {badgeText ? (
               <div className="notification-card__meta">
-                <span className="notification-card__badge">{badgeText}</span>
+                <button
+                  type="button"
+                  className="notification-card__badge notification-card__badge--action"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    handleActionClick();
+                  }}
+                >
+                  {badgeText}
+                </button>
               </div>
             ) : null}
           </div>

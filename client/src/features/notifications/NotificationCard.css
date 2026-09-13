@@ -89,6 +89,24 @@
   color: #4b5563;
 }
 
+button.notification-card__badge--action {
+  border: none;
+  cursor: pointer;
+  color: #0056b3;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+button.notification-card__badge--action:hover {
+  text-decoration: underline;
+}
+
+button.notification-card__badge--action:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: 2px;
+}
+
 .notification-card__action {
   display: inline-block;
   padding: 0;

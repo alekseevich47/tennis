@@ -393,6 +393,12 @@
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
   cursor: default;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.achievement-row--focus {
+  border-color: #007aff;
+  box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.25);
 }
 
 .achievement-name {

@@ -148,6 +148,9 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
   const [favoriteProductToOpen, setFavoriteProductToOpen] = useState(null);
   const [notificationTrainingId, setNotificationTrainingId] = useState(null);
   const [notificationMembershipOpen, setNotificationMembershipOpen] = useState(false);
+  const [notificationAchievementsFocus, setNotificationAchievementsFocus] = useState(
+    /** @type {{ achievementId?: string } | null} */ (null)
+  );
   const [notificationCommentTarget, setNotificationCommentTarget] = useState(
     /** @type {{ collection: string, postId?: string, mediaId?: string, commentId?: string } | null} */ (null)
   );
@@ -480,6 +483,10 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
             onTabChange={handleTabChange}
             openMembershipFromNotification={isPrimary ? notificationMembershipOpen : false}
             onMembershipOpened={() => setNotificationMembershipOpen(false)}
+            focusAchievementsFromNotification={
+              isPrimary ? notificationAchievementsFocus : null
+            }
+            onAchievementsFocusHandled={() => setNotificationAchievementsFocus(null)}
           />
         );
       case ADMIN_TAB_INDEX:
@@ -583,6 +590,12 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
         onOpenMembershipFromNotification={() => {
           setActiveTab(PROFILE_TAB_INDEX);
           setNotificationMembershipOpen(true);
+        }}
+        onOpenProfileFromNotification={(meta) => {
+          setActiveTab(PROFILE_TAB_INDEX);
+          setNotificationAchievementsFocus({
+            achievementId: meta?.achievementId ? String(meta.achievementId) : undefined
+          });
         }}
         onOpenBookingFromNotification={() => setActiveTab(1)}
         onOpenSellerChatFromNotification={() => {

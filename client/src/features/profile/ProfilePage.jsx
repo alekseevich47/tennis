@@ -86,14 +86,24 @@ const TRAINING_BADGE = {
 };
 
 /**
- * @param {{ user: any, onUpdate?: (user: any) => void, onTabChange?: (tabIndex: number) => void }} props
+ * @param {{
+ *   user: any,
+ *   onUpdate?: (user: any) => void,
+ *   onTabChange?: (tabIndex: number) => void,
+ *   openMembershipFromNotification?: boolean,
+ *   onMembershipOpened?: () => void,
+ *   focusAchievementsFromNotification?: { achievementId?: string } | null,
+ *   onAchievementsFocusHandled?: () => void
+ * }} props
  */
 function ProfilePage({
   user,
   onUpdate,
   onTabChange,
   openMembershipFromNotification = false,
-  onMembershipOpened
+  onMembershipOpened,
+  focusAchievementsFromNotification = null,
+  onAchievementsFocusHandled
 }) {
   const { alert } = useAlertDialog();
   const { showToast } = useToast();
@@ -480,7 +490,13 @@ function ProfilePage({
             </div>
           </div>
 
-          <AchievementsBlock userId={user.id} collapsible />
+          <AchievementsBlock
+            userId={user.id}
+            collapsible
+            forceExpanded={Boolean(focusAchievementsFromNotification)}
+            focusAchievementId={focusAchievementsFromNotification?.achievementId || null}
+            onFocusHandled={onAchievementsFocusHandled}
+          />
 
           <div className="profile-trainings-block">
             <button
