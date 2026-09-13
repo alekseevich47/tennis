@@ -125,8 +125,8 @@
     "semantic_hash": ""
   },
   "client/src/features/admin/BroadcastModal.jsx": {
-    "mtime": 1788454347.860062,
-    "ast_hash": "8ca2ef7231e08735ecd5b18d8df3b9df",
+    "mtime": 1789260633.4989133,
+    "ast_hash": "3b578d11a4ddbfbf378dac86ec207169",
     "semantic_hash": ""
   },
   "client/src/features/admin/LogsModal.jsx": {
@@ -530,8 +530,8 @@
     "semantic_hash": "4faf29487af1701424e8fff107ceb7da"
   },
   "client/src/hooks/useMaxAuth.js": {
-    "mtime": 1788170204.658426,
-    "ast_hash": "c5538e86b4dd21c6bc290bffeb6ed720",
+    "mtime": 1789260585.89585,
+    "ast_hash": "3c1938ce7fd72902e6eb9dd235f27d5d",
     "semantic_hash": ""
   },
   "client/src/hooks/useOnboarding.js": {
@@ -635,8 +635,8 @@
     "semantic_hash": "f52a8f8f8c5126f6353bc9e363daa2a7"
   },
   "client/src/lib/media.js": {
-    "mtime": 1788257214.9520013,
-    "ast_hash": "c1bebd0d478ecfed2ee9320d330caff6",
+    "mtime": 1789260325.9081135,
+    "ast_hash": "6d0c4ad55eaa679e3163a9a3b5e19cec",
     "semantic_hash": ""
   },
   "client/src/lib/rating.js": {
@@ -665,8 +665,8 @@
     "semantic_hash": ""
   },
   "client/src/services/auth.js": {
-    "mtime": 1788170204.673078,
-    "ast_hash": "65575f87a85e00b8c1e35d873381f43e",
+    "mtime": 1789260469.101559,
+    "ast_hash": "d380bfc5ac741dcaa525ccb7b5433d22",
     "semantic_hash": ""
   },
   "client/src/services/catalog.js": {
@@ -710,8 +710,8 @@
     "semantic_hash": ""
   },
   "client/src/services/trainings.js": {
-    "mtime": 1788170204.6782184,
-    "ast_hash": "bcf0bc71d5ed2f0677a61588f6791dd0",
+    "mtime": 1789260602.8695016,
+    "ast_hash": "e6848f28817f0f78b98c347506c41fde",
     "semantic_hash": ""
   },
   "client/src/services/users.js": {
@@ -750,8 +750,8 @@
     "semantic_hash": "2cb575dbca36ca734cf88a175848b404"
   },
   "pb_hooks/bot_notifications.pb.js": {
-    "mtime": 1788228036.2032697,
-    "ast_hash": "ca789ab5b34db1e966e64b22fa0768e4",
+    "mtime": 1789260243.2237117,
+    "ast_hash": "4e2d52047825f50e9db8bdadf140ed3c",
     "semantic_hash": ""
   },
   "pb_hooks/botlib.js": {
@@ -800,8 +800,8 @@
     "semantic_hash": ""
   },
   "pb_hooks/statslib.js": {
-    "mtime": 1789219394.232251,
-    "ast_hash": "30574a1fbd83aadaeb17f8a43a8c710c",
+    "mtime": 1789260364.2986238,
+    "ast_hash": "95c57ad7396e92b583ac6513a9c2b96c",
     "semantic_hash": ""
   },
   "pb_hooks/tournament_audit.pb.js": {
@@ -840,8 +840,8 @@
     "semantic_hash": "f712110b07c6aa47a317c8dc16b069be"
   },
   "pb_hooks/trainingslib.js": {
-    "mtime": 1789183265.384343,
-    "ast_hash": "e28b63a8b0e1c9a58d5e030b8286325d",
+    "mtime": 1789260325.9081135,
+    "ast_hash": "b43f9a44507a0c4ac5b22a14c8a04497",
     "semantic_hash": ""
   },
   "pb_hooks/users_audit.pb.js": {
@@ -850,8 +850,8 @@
     "semantic_hash": ""
   },
   "pb_hooks/users_ban_auth.pb.js": {
-    "mtime": 1788170204.8914778,
-    "ast_hash": "f2868b5b9de088d9cadf122118d90475",
+    "mtime": 1789260467.9393039,
+    "ast_hash": "6b414730f1decaac6d9e7fe95c75d6a7",
     "semantic_hash": ""
   },
   "pb_hooks/users_default_visible.pb.js": {
@@ -860,8 +860,8 @@
     "semantic_hash": ""
   },
   "schema.json": {
-    "mtime": 1789221632.395617,
-    "ast_hash": "aaafe935ec951ac777ee50680e073015",
+    "mtime": 1789260272.4375837,
+    "ast_hash": "d18ee44750ab9beef6c83652f2a2d6ef",
     "semantic_hash": ""
   },
   "AUDIT.md": {
@@ -870,8 +870,8 @@
     "semantic_hash": "924b95fb543d6c752aa7e12c3f56da5a"
   },
   "README.md": {
-    "mtime": 1788592233.1569571,
-    "ast_hash": "8aa2eccfbf6a03bf1fd97e6a20adceb2",
+    "mtime": 1789260216.3076258,
+    "ast_hash": "af6e43ed82db64a73b151ada0bb9ba31",
     "semantic_hash": ""
   },
   "client/index.html": {
@@ -1685,8 +1685,8 @@
     "semantic_hash": ""
   },
   "pb_hooks/video_poster.pb.js": {
-    "mtime": 1788257214.953006,
-    "ast_hash": "bcb65e0d847d8cd46948ef96dec3eaaf",
+    "mtime": 1789260242.7883284,
+    "ast_hash": "51cbff309bc836a0ada2a279748761be",
     "semantic_hash": ""
   },
   "pb_hooks/video_poster_lib.js": {
@@ -1792,6 +1792,121 @@
   "pb_hooks/achievementslib.js": {
     "mtime": 1789219365.5686088,
     "ast_hash": "d425a1c26c4e86804a0572274d4c4bdd",
+    "semantic_hash": ""
+  },
+  "pb_hooks/auth_logout.pb.js": {
+    "mtime": 1789260602.1743379,
+    "ast_hash": "e5680b35f2db03b81c20c2b10e374f96",
+    "semantic_hash": ""
+  },
+  "pb_hooks/content_views_create_guard.pb.js": {
+    "mtime": 1789260365.561787,
+    "ast_hash": "0c34df4e5fde3caf7503000b2662205b",
+    "semantic_hash": ""
+  },
+  "pb_hooks/notifications_recipient_guard.pb.js": {
+    "mtime": 1789260346.163098,
+    "ast_hash": "87cf3b98a245f6e599fa3ab8b2fee1d8",
+    "semantic_hash": ""
+  },
+  "strix_runs/app-milenkih-team-ru_cab8/.state/agents.json": {
+    "mtime": 1789227753.5236807,
+    "ast_hash": "a15700029db55ba3dc4c0cea72d265ec",
+    "semantic_hash": ""
+  },
+  "strix_runs/app-milenkih-team-ru_cab8/.state/coverage.json": {
+    "mtime": 1789227715.6465542,
+    "ast_hash": "2f7562a01511ae2e4602d15fea854b20",
+    "semantic_hash": ""
+  },
+  "strix_runs/app-milenkih-team-ru_cab8/.state/notes.json": {
+    "mtime": 1789227550.9147043,
+    "ast_hash": "3e77ee584f8111c0249e43c5905a80a3",
+    "semantic_hash": ""
+  },
+  "strix_runs/app-milenkih-team-ru_cab8/.state/threat_models.json": {
+    "mtime": 1789225023.422956,
+    "ast_hash": "37402141d97af16b2d131a216adda55a",
+    "semantic_hash": ""
+  },
+  "strix_runs/app-milenkih-team-ru_cab8/.state/todos.json": {
+    "mtime": 1789226691.2557704,
+    "ast_hash": "565c42ba5638aeacbd9792686b7e7900",
+    "semantic_hash": ""
+  },
+  "strix_runs/app-milenkih-team-ru_cab8/coverage.json": {
+    "mtime": 1789227755.2492166,
+    "ast_hash": "581e6dac033e0c5b6646af4681ffc4e2",
+    "semantic_hash": ""
+  },
+  "strix_runs/app-milenkih-team-ru_cab8/run.json": {
+    "mtime": 1789227755.3032713,
+    "ast_hash": "0011087ce49c430167d8c08e16b7e357",
+    "semantic_hash": ""
+  },
+  "strix_runs/app-milenkih-team-ru_cab8/vulnerabilities.json": {
+    "mtime": 1789227755.2561927,
+    "ast_hash": "0f9dca472c3b8a196453dd12805f2526",
+    "semantic_hash": ""
+  },
+  "docs/ops-max-bot-token.md": {
+    "mtime": 1789260213.5355968,
+    "ast_hash": "2f6a9eb9acab6b21f437a65aa3c29e07",
+    "semantic_hash": ""
+  },
+  "docs/ops-strix-schema-apply.md": {
+    "mtime": 1789260668.958953,
+    "ast_hash": "ab98f3be3a4f41194b20211b197b1c8a",
+    "semantic_hash": ""
+  },
+  "strix_runs/app-milenkih-team-ru_cab8/penetration_test_report.md": {
+    "mtime": 1789227755.2516382,
+    "ast_hash": "51cc681d270d3005b595902ee9a72392",
+    "semantic_hash": ""
+  },
+  "strix_runs/app-milenkih-team-ru_cab8/penetration_test_report.ru.md": {
+    "mtime": 1789257723.4149518,
+    "ast_hash": "87b75092da5dba39f0a4aaa5f36f24f9",
+    "semantic_hash": ""
+  },
+  "strix_runs/app-milenkih-team-ru_cab8/vulnerabilities/vuln-0001.md": {
+    "mtime": 1789226672.2332718,
+    "ast_hash": "a55105eae10ed4fc2161509c12c69bd9",
+    "semantic_hash": ""
+  },
+  "strix_runs/app-milenkih-team-ru_cab8/vulnerabilities/vuln-0002.md": {
+    "mtime": 1789226034.7470443,
+    "ast_hash": "89715e367596b0648ab704a425f57a68",
+    "semantic_hash": ""
+  },
+  "strix_runs/app-milenkih-team-ru_cab8/vulnerabilities/vuln-0003.md": {
+    "mtime": 1789227704.589345,
+    "ast_hash": "6e1b64d639cae60f4a3d0b4030d88667",
+    "semantic_hash": ""
+  },
+  "strix_runs/app-milenkih-team-ru_cab8/vulnerabilities/vuln-0004.md": {
+    "mtime": 1789226905.1889918,
+    "ast_hash": "4a79cdcd9bfeed4f78f0feaf40d68339",
+    "semantic_hash": ""
+  },
+  "strix_runs/app-milenkih-team-ru_cab8/vulnerabilities/vuln-0005.md": {
+    "mtime": 1789226616.528965,
+    "ast_hash": "bba15b47c592884ad4af411c7c3c76df",
+    "semantic_hash": ""
+  },
+  "strix_runs/app-milenkih-team-ru_cab8/vulnerabilities/vuln-0006.md": {
+    "mtime": 1789226696.0988772,
+    "ast_hash": "0b25ee14b1433e2a0657a5af02b2ee88",
+    "semantic_hash": ""
+  },
+  "strix_runs/app-milenkih-team-ru_cab8/vulnerabilities/vuln-0007.md": {
+    "mtime": 1789226936.9988523,
+    "ast_hash": "baf553a46f695ae69d0a6aafed8a03c1",
+    "semantic_hash": ""
+  },
+  "strix_runs/app-milenkih-team-ru_cab8/vulnerabilities/vuln-0008.md": {
+    "mtime": 1789227710.9838774,
+    "ast_hash": "4e2b87c70ab484b378a5557bd42285e9",
     "semantic_hash": ""
   }
 }

@@ -91,10 +91,28 @@ export function isUserBotBlocked(user) {
  * @returns {UserRecord}
  */
 function finalizeBannedUser(user) {
+  // Best-effort server invalidate; ignore network errors (уже могли отозвать tokenKey при бане).
+  void pb.send('/api/logout', { method: 'POST' }).catch(() => {});
   pb.authStore.clear();
   const banned = buildBannedUser(user);
   saveBanInfo(banned);
   return banned;
+}
+
+/**
+ * Server-side logout: ротация tokenKey + очистка authStore.
+ * @returns {Promise<void>}
+ */
+export async function logoutUser() {
+  try {
+    if (pb.authStore.isValid) {
+      await pb.send('/api/logout', { method: 'POST' });
+    }
+  } catch (err) {
+    error('Ошибка /api/logout:', err);
+  } finally {
+    pb.authStore.clear();
+  }
 }
 
 /**

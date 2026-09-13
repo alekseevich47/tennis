@@ -1,5 +1,6 @@
 // @ts-check
 import { MEDIA_BASE_URL, PB_URL } from '../config';
+import pb from '../services/pb';
 
 export const MAX_POST_MEDIA_FILES = 5;
 
@@ -13,9 +14,83 @@ export const MEDIA_CARD_THUMB = '800x0';
  * @typedef {{ id: string, collectionId?: string, collectionName?: string }} BaseRecord
  */
 
+/** @type {string} */
+let cachedFileToken = '';
+/** @type {number} */
+let cachedFileTokenUntil = 0;
+/** @type {Promise<string> | null} */
+let fileTokenInflight = null;
+
+const FILE_TOKEN_TTL_MS = 90_000;
+
+/**
+ * PocketBase protected files требуют ?token= из /api/files/token.
+ * Кэшируем короткий TTL; вызывайте при логине и периодически.
+ * @returns {Promise<string>}
+ */
+export async function refreshMediaFileToken() {
+  if (!pb.authStore.isValid) {
+    cachedFileToken = '';
+    cachedFileTokenUntil = 0;
+    return '';
+  }
+  if (fileTokenInflight) return fileTokenInflight;
+  fileTokenInflight = (async () => {
+    try {
+      const token = await pb.files.getToken();
+      cachedFileToken = token || '';
+      cachedFileTokenUntil = Date.now() + FILE_TOKEN_TTL_MS;
+      return cachedFileToken;
+    } catch {
+      cachedFileToken = '';
+      cachedFileTokenUntil = 0;
+      return '';
+    } finally {
+      fileTokenInflight = null;
+    }
+  })();
+  return fileTokenInflight;
+}
+
+/**
+ * @returns {string}
+ */
+function currentFileToken() {
+  if (!pb.authStore.isValid) return '';
+  if (!cachedFileToken || Date.now() > cachedFileTokenUntil) {
+    // fire-and-forget refresh; URL may briefly use stale/empty token
+    void refreshMediaFileToken();
+    if (!cachedFileToken) return '';
+  }
+  return cachedFileToken;
+}
+
+/**
+ * @param {string} url
+ * @returns {string}
+ */
+function withFileToken(url) {
+  const token = currentFileToken();
+  if (!url || !token) return url;
+  const sep = url.includes('?') ? '&' : '?';
+  return `${url}${sep}token=${encodeURIComponent(token)}`;
+}
+
+/**
+ * Auth JWT для кастомных маршрутов в <img src> (video-poster).
+ * @param {string} url
+ * @returns {string}
+ */
+function withAuthQueryToken(url) {
+  const token = pb.authStore.token;
+  if (!url || !token) return url;
+  const sep = url.includes('?') ? '&' : '?';
+  return `${url}${sep}token=${encodeURIComponent(token)}`;
+}
+
 /**
  * Универсальный билдер ссылки на файл PocketBase.
- * `${MEDIA_BASE_URL}/<collection>/<recordId>/<filename>`
+ * `${MEDIA_BASE_URL}/<collection>/<recordId>/<filename>?token=...`
  *
  * @param {BaseRecord | null | undefined} record
  * @param {string} collectionFallback - использовать если record.collectionName/collectionId отсутствует
@@ -28,7 +103,7 @@ export function getMediaUrl(record, collectionFallback, fileField) {
   if (!filename || typeof filename !== 'string') return null;
   const collection =
     record.collectionName || record.collectionId || collectionFallback;
-  return `${MEDIA_BASE_URL}/${collection}/${record.id}/${filename}`;
+  return withFileToken(`${MEDIA_BASE_URL}/${collection}/${record.id}/${filename}`);
 }
 
 /**
@@ -57,7 +132,7 @@ export function getVideoPosterUrl(
     file: filename,
     thumb
   });
-  return `${PB_URL}/api/video-poster?${params.toString()}`;
+  return withAuthQueryToken(`${PB_URL}/api/video-poster?${params.toString()}`);
 }
 
 /**
@@ -81,7 +156,8 @@ export function getMediaThumbUrl(
   const url = getMediaUrl(record, collectionFallback, fileField);
   if (!url) return null;
 
-  return `${url}?thumb=${thumb}`;
+  const sep = url.includes('?') ? '&' : '?';
+  return `${url}${sep}thumb=${thumb}`;
 }
 
 /**

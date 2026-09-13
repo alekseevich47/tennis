@@ -303,10 +303,7 @@ function withSkipBookingSideEffects(fn) {
 /** Поля, которые обычный user может менять (запись/снятие себя). */
 var TRAINING_USER_EDITABLE = {
   booked_users: true,
-  unbooked_users: true,
-  unpaid_booked_users: true,
-  moderator_kicked_users: true,
-  restore_insufficient_users: true
+  unbooked_users: true
 };
 
 var TRAINING_COMPARE_FIELDS = [
@@ -391,23 +388,62 @@ function applyBookingSideEffects(original, record, auth) {
   var trainingId = record.id;
   var i;
 
-  // --- IDOR (C-6): обычный пользователь — только себя; посещаемость — только модератор ---
-  if (!isCancelTransition && !isRestoreTransition) {
-    if (added.length && !isModerator) {
-      for (i = 0; i < added.length; i++) {
-        if (String(added[i]) !== authId) {
-          throw new ForbiddenError('Можно записать только себя');
+  // --- IDOR: обычный пользователь — только себя во всех relation-полях;
+  // посещаемость — только модератор. Без обхода через cancel/restore transition.
+  // auth == null: внутренний/system вызов (skipBooking / compat) — не режем.
+  if (auth && !isModerator) {
+    var relationChecks = [
+      { added: added, removed: removed, selfOnly: true, labelAdd: 'Можно записать только себя', labelRem: 'Можно снять с записи только себя' },
+      {
+        added: audit.newlyAdded(original.get('unbooked_users'), record.get('unbooked_users')),
+        removed: audit.newlyRemoved(original.get('unbooked_users'), record.get('unbooked_users')),
+        selfOnly: true,
+        labelAdd: 'Можно менять unbooked_users только для себя',
+        labelRem: 'Можно менять unbooked_users только для себя'
+      },
+      {
+        added: audit.newlyAdded(original.get('unpaid_booked_users'), record.get('unpaid_booked_users')),
+        removed: audit.newlyRemoved(original.get('unpaid_booked_users'), record.get('unpaid_booked_users')),
+        forbid: true,
+        label: 'unpaid_booked_users — только система/модератор'
+      },
+      {
+        added: audit.newlyAdded(original.get('moderator_kicked_users'), record.get('moderator_kicked_users')),
+        removed: audit.newlyRemoved(original.get('moderator_kicked_users'), record.get('moderator_kicked_users')),
+        forbid: true,
+        label: 'moderator_kicked_users — только модератор'
+      },
+      {
+        added: audit.newlyAdded(original.get('restore_insufficient_users'), record.get('restore_insufficient_users')),
+        removed: audit.newlyRemoved(original.get('restore_insufficient_users'), record.get('restore_insufficient_users')),
+        forbid: true,
+        label: 'restore_insufficient_users — только модератор'
+      }
+    ];
+    for (var rc = 0; rc < relationChecks.length; rc++) {
+      var check = relationChecks[rc];
+      if (check.forbid) {
+        if ((check.added && check.added.length) || (check.removed && check.removed.length)) {
+          throw new ForbiddenError(check.label);
+        }
+        continue;
+      }
+      if (check.added && check.added.length) {
+        for (i = 0; i < check.added.length; i++) {
+          if (String(check.added[i]) !== authId) {
+            throw new ForbiddenError(check.labelAdd);
+          }
+        }
+      }
+      if (check.removed && check.removed.length) {
+        for (i = 0; i < check.removed.length; i++) {
+          if (String(check.removed[i]) !== authId) {
+            throw new ForbiddenError(check.labelRem);
+          }
         }
       }
     }
-    if (removed.length && !isModerator) {
-      for (i = 0; i < removed.length; i++) {
-        if (String(removed[i]) !== authId) {
-          throw new ForbiddenError('Можно снять с записи только себя');
-        }
-      }
-    }
-    if ((attendedAdded.length || attendedRemoved.length) && !isModerator) {
+    if (attendedAdded.length || attendedRemoved.length) {
       throw new ForbiddenError('Отметка посещения — только модератор');
     }
   }
@@ -417,6 +453,36 @@ function applyBookingSideEffects(original, record, auth) {
   var bookedCount = audit.newlyAdded([], record.get('booked_users')).length;
   if (maxSlots > 0 && bookedCount > maxSlots) {
     throw new BadRequestError('Нет свободных мест');
+  }
+
+  // Повторная запись: снять добавленных из kicked/insufficient (сервер, не client PATCH).
+  if (added.length) {
+    var kickedNow = audit.newlyAdded([], record.get('moderator_kicked_users') || []);
+    var insuffNow = audit.newlyAdded([], record.get('restore_insufficient_users') || []);
+    var nextKickedAuto = [];
+    for (i = 0; i < kickedNow.length; i++) {
+      var kid = String(kickedNow[i]);
+      var wasAdded = false;
+      for (var ai = 0; ai < added.length; ai++) {
+        if (String(added[ai]) === kid) { wasAdded = true; break; }
+      }
+      if (!wasAdded) nextKickedAuto.push(kickedNow[i]);
+    }
+    var nextInsuffAuto = [];
+    for (i = 0; i < insuffNow.length; i++) {
+      var iid = String(insuffNow[i]);
+      var wasAddedI = false;
+      for (var bi = 0; bi < added.length; bi++) {
+        if (String(added[bi]) === iid) { wasAddedI = true; break; }
+      }
+      if (!wasAddedI) nextInsuffAuto.push(insuffNow[i]);
+    }
+    if (nextKickedAuto.length !== kickedNow.length) {
+      record.set('moderator_kicked_users', nextKickedAuto);
+    }
+    if (nextInsuffAuto.length !== insuffNow.length) {
+      record.set('restore_insufficient_users', nextInsuffAuto);
+    }
   }
 
   var hasWork =

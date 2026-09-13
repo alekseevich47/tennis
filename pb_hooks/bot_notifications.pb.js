@@ -33,7 +33,8 @@ routerAdd('POST', '/api/bot-notify-training', (c) => {
   const userIds = body.userIds || (body.userId ? [body.userId] : []);
   const trainingId = body.trainingId;
   const actorId = body.actorId;
-  const actorIsModerator = !!body.actorIsModerator;
+  // Роль только из auth, не из body (API5 / spoofed moderator notifications).
+  const actorIsModerator = auth.getString('role') === 'moderator';
   const totalBookedCount = body.totalBookedCount;
 
   if (!event || !userIds.length || !trainingId || !actorId || totalBookedCount == null) {
@@ -41,6 +42,14 @@ routerAdd('POST', '/api/bot-notify-training', (c) => {
   }
   if (actorId !== auth.id) {
     return c.json(403, { error: 'Forbidden' });
+  }
+  // Non-moderator может уведомлять только о себе; чужие userIds — только moderator.
+  if (!actorIsModerator) {
+    for (let i = 0; i < userIds.length; i++) {
+      if (String(userIds[i]) !== String(auth.id)) {
+        return c.json(403, { error: 'Forbidden' });
+      }
+    }
   }
 
   let training;

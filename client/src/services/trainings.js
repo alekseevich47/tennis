@@ -1,4 +1,4 @@
-// @ts-check
+﻿// @ts-check
 import pb from './pb';
 import { isModerator, getCurrentUser, BOT_BLOCKED_BOOKING_MESSAGE } from './auth';
 import { error } from '../lib/log';
@@ -9,7 +9,8 @@ export const SHOW_DELETED_TRAININGS_KEY = 'trainings_show_deleted_moderator';
 
 /**
  * Уведомить модераторов через MAX Bot API (pb_hooks/bot_notifications.pb.js).
- * @param {{ event: 'book' | 'unbook', userIds: string[], trainingId: string, actorIsModerator: boolean, totalBookedCount: number }} payload
+ * Роль модератора определяется на сервере из auth, не из body.
+ * @param {{ event: 'book' | 'unbook', userIds: string[], trainingId: string, totalBookedCount: number }} payload
  */
 async function notifyTrainingBot(payload) {
   const actorId = getCurrentUser()?.id;
@@ -178,13 +179,19 @@ async function assertNotBotBlocked(userId) {
  */
 function buildBookedUsersPatch(training, nextBookedUsers, addedUserIds) {
   const patch = { booked_users: nextBookedUsers };
-  const addedSet = new Set(addedUserIds);
-  const kicked = training.moderator_kicked_users || [];
-  const insufficient = training.restore_insufficient_users || [];
-  const nextKicked = kicked.filter((id) => !addedSet.has(id));
-  const nextInsufficient = insufficient.filter((id) => !addedSet.has(id));
-  if (nextKicked.length !== kicked.length) patch.moderator_kicked_users = nextKicked;
-  if (nextInsufficient.length !== insufficient.length) patch.restore_insufficient_users = nextInsufficient;
+  // Чистку moderator_kicked / restore_insufficient при повторной записи
+  // делает серверный хук (non-mod не может писать эти поля).
+  if (isModerator()) {
+    const addedSet = new Set(addedUserIds);
+    const kicked = training.moderator_kicked_users || [];
+    const insufficient = training.restore_insufficient_users || [];
+    const nextKicked = kicked.filter((id) => !addedSet.has(id));
+    const nextInsufficient = insufficient.filter((id) => !addedSet.has(id));
+    if (nextKicked.length !== kicked.length) patch.moderator_kicked_users = nextKicked;
+    if (nextInsufficient.length !== insufficient.length) {
+      patch.restore_insufficient_users = nextInsufficient;
+    }
+  }
   return patch;
 }
 
@@ -621,7 +628,6 @@ export async function bookTraining(training, userId) {
       userIds: [userId],
       totalBookedCount: (record.booked_users || []).length,
       trainingId: training.id,
-      actorIsModerator: isModerator()
     });
     return record;
   } catch (err) {
@@ -666,7 +672,6 @@ export async function bookUserToTraining(training, userId, targetUser, { overrid
       userIds: [userId],
       totalBookedCount: (record.booked_users || []).length,
       trainingId: training.id,
-      actorIsModerator: true
     });
     return record;
   } catch (err) {
@@ -722,7 +727,6 @@ export async function bookUsersToTraining(training, userIds, targetUsers = [], {
       userIds: nextUserIds,
       totalBookedCount: (record.booked_users || []).length,
       trainingId: training.id,
-      actorIsModerator: true
     });
     return record;
   } catch (err) {
@@ -765,7 +769,6 @@ export async function removeUsersFromTraining(training, userIds) {
       userIds: removedUserIds,
       totalBookedCount: (record.booked_users || []).length,
       trainingId: training.id,
-      actorIsModerator: true
     });
     return record;
   } catch (err) {
@@ -793,7 +796,6 @@ export async function cancelTrainingBooking(training, userId) {
       userIds: [userId],
       totalBookedCount: (record.booked_users || []).length,
       trainingId: training.id,
-      actorIsModerator: isModerator()
     });
     return record;
   } catch (err) {
