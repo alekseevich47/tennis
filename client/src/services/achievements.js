@@ -14,6 +14,7 @@ export const ACHIEVEMENT_ICON_THUMB = '100x100';
  * @property {string} [achievement]
  * @property {number} [level]
  * @property {string} [title]
+ * @property {string} [description]
  * @property {number} [required_value]
  * @property {string | string[]} [icon]
  */
@@ -46,6 +47,7 @@ export const ACHIEVEMENT_ICON_THUMB = '100x100';
  * @typedef {Object} TournamentPlaceStats
  * @property {number} podiumCount
  * @property {number} firstPlaceCount
+ * @property {number} participatedCount
  */
 
 /** @param {{ signal?: AbortSignal }} [options] */
@@ -117,18 +119,20 @@ export function getLevelIconUrl(levelRecord) {
 export function countUserTournamentPlaces(posts, userId) {
   let podiumCount = 0;
   let firstPlaceCount = 0;
+  let participatedCount = 0;
 
   for (const post of posts) {
     const participants = Array.isArray(post.participants) ? post.participants : [];
     const mine = participants.find((p) => p && p.userId === userId);
     if (!mine) continue;
+    participatedCount += 1;
     const place = Number(mine.place);
     if (!Number.isFinite(place) || place < 1) continue;
     if (place === 1) firstPlaceCount += 1;
     if (place <= 3) podiumCount += 1;
   }
 
-  return { podiumCount, firstPlaceCount };
+  return { podiumCount, firstPlaceCount, participatedCount };
 }
 
 /**
@@ -221,6 +225,15 @@ export function calcPodiumAchievement(podiumCount, levels) {
 }
 
 /**
+ * @param {number} participatedCount
+ * @param {AchievementLevelRecord[]} levels
+ * @returns {UserAchievementProgress}
+ */
+export function calcParticipatedAchievement(participatedCount, levels) {
+  return calcLevelFromValue(levels, participatedCount ?? 0);
+}
+
+/**
  * @returns {UserAchievementProgress}
  */
 function calcUnavailableAchievement() {
@@ -243,6 +256,7 @@ function calcUnavailableAchievement() {
 function calcAchievementProgress(sortOrder, user, levels, tournamentStats) {
   const podiumCount = tournamentStats?.podiumCount ?? 0;
   const firstPlaceCount = tournamentStats?.firstPlaceCount ?? 0;
+  const participatedCount = tournamentStats?.participatedCount ?? 0;
 
   switch (sortOrder) {
     case 1:
@@ -251,8 +265,10 @@ function calcAchievementProgress(sortOrder, user, levels, tournamentStats) {
         userValue: Number(user.attendance_count) || 0
       };
     case 2:
-      // Серия побед — matches удалены; метрика пока недоступна.
-      return { progress: calcUnavailableAchievement(), userValue: 0 };
+      return {
+        progress: calcParticipatedAchievement(participatedCount, levels),
+        userValue: participatedCount
+      };
     case 3:
       return {
         progress: calcPodiumAchievement(podiumCount, levels),

@@ -164,6 +164,7 @@ export default function NotificationCard({
   const isCommentReply = kind === 'comment_reply';
   const isMentionComment = kind === 'mention_comment';
   const isMentionPost = kind === 'mention_post';
+  const isAchievementGrant = kind === 'achievement_grant';
   const isSocialCard = isCommentReply || isMentionComment || isMentionPost;
   const canDelete = isDeletableNotification(notification);
 
@@ -391,6 +392,7 @@ export default function NotificationCard({
     'notification-card',
     isSocialCard && 'notification-card--comment-reply',
     isMentionPost && 'notification-card--mention-post',
+    isAchievementGrant && 'notification-card--achievement-grant',
     showUnreadDot && 'notification-card--unread',
     dragging && 'notification-card--dragging',
     exiting && 'notification-card--exiting'
@@ -547,6 +549,59 @@ export default function NotificationCard({
                 ) : null}
               </p>
             </div>
+          </div>
+        </div>
+
+        {canDelete ? (
+          <button
+            type="button"
+            className="notification-card__delete"
+            aria-label="Удалить уведомление"
+            onClick={handleDelete}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+        ) : null}
+      </article>
+    );
+  }
+
+  if (isAchievementGrant) {
+    const displayName = String(notification.title || 'Секция Миленьких');
+    const bodyText = String(notification.body || '');
+
+    return (
+      <article ref={cardRef} className={cardClassName} {...swipeHandlers}>
+        {showUnreadDot ? (
+          <span className="notification-card__unread-dot" aria-hidden="true" />
+        ) : null}
+
+        <div className="notification-card__reply-layout">
+          <div className="notification-card__section-avatar" aria-hidden="true">
+            <img src={sectionAvatarUrl} alt="" decoding="async" />
+          </div>
+          <div className="notification-card__reply-content">
+            <div className="notification-card__reply-header">
+              <time
+                className="notification-card__time notification-card__time--reply"
+                dateTime={String(notification.created || '')}
+              >
+                {notification.created ? formatRelativeTime(notification.created, now) : ''}
+              </time>
+              <p className="notification-card__reply-sentence">
+                <span className="notification-card__reply-name">{displayName}</span>
+              </p>
+            </div>
+            {bodyText ? (
+              <PostContentHtml as="div" className="notification-card__body" content={bodyText} />
+            ) : null}
+            {badgeText ? (
+              <div className="notification-card__meta">
+                <span className="notification-card__badge">{badgeText}</span>
+              </div>
+            ) : null}
           </div>
         </div>
 

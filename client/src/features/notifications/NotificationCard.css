@@ -204,11 +204,13 @@
   background: #e8eef5;
 }
 
-.notification-card__section-avatar img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.notification-card--achievement-grant .notification-card__body {
+  margin-top: 6px;
+  white-space: pre-wrap;
+}
+
+.notification-card--achievement-grant .notification-card__meta {
+  margin-top: 8px;
 }
 
 .notification-card__post-chip {

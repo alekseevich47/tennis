@@ -38,12 +38,13 @@ function listPublishedTournamentPosts(app) {
  * @param {Array<*>} posts
  * @param {string} userId
  * @param {{ excludePostId?: string, overridePostId?: string, overrideParticipants?: Array<*> } | null} [opts]
- * @returns {{ podiumCount: number, firstPlaceCount: number }}
+ * @returns {{ podiumCount: number, firstPlaceCount: number, participatedCount: number }}
  */
 function countUserTournamentPlacesFromPosts(posts, userId, opts) {
   opts = opts || null;
   var podiumCount = 0;
   var firstPlaceCount = 0;
+  var participatedCount = 0;
   var i;
   for (i = 0; i < posts.length; i++) {
     var post = posts[i];
@@ -66,17 +67,22 @@ function countUserTournamentPlacesFromPosts(posts, userId, opts) {
       }
     }
     if (!mine) continue;
+    participatedCount += 1;
     var place = Number(mine.place);
     if (!isFinite(place) || place < 1) continue;
     if (place === 1) firstPlaceCount += 1;
     if (place <= 3) podiumCount += 1;
   }
-  return { podiumCount: podiumCount, firstPlaceCount: firstPlaceCount };
+  return {
+    podiumCount: podiumCount,
+    firstPlaceCount: firstPlaceCount,
+    participatedCount: participatedCount
+  };
 }
 
 /**
  * @param {*} app
- * @returns {Object<string, { podiumCount: number, firstPlaceCount: number }>}
+ * @returns {Object<string, { podiumCount: number, firstPlaceCount: number, participatedCount: number }>}
  */
 function buildTournamentPlaceStatsMap(app) {
   var posts = listPublishedTournamentPosts(app);
@@ -88,11 +94,12 @@ function buildTournamentPlaceStatsMap(app) {
     for (j = 0; j < participants.length; j++) {
       var p = participants[j];
       if (!p || !p.userId) continue;
+      if (!byUser[p.userId]) {
+        byUser[p.userId] = { podiumCount: 0, firstPlaceCount: 0, participatedCount: 0 };
+      }
+      byUser[p.userId].participatedCount += 1;
       var place = Number(p.place);
       if (!isFinite(place) || place < 1) continue;
-      if (!byUser[p.userId]) {
-        byUser[p.userId] = { podiumCount: 0, firstPlaceCount: 0 };
-      }
       if (place === 1) byUser[p.userId].firstPlaceCount += 1;
       if (place <= 3) byUser[p.userId].podiumCount += 1;
     }
@@ -103,16 +110,16 @@ function buildTournamentPlaceStatsMap(app) {
 /**
  * @param {number} sortOrder
  * @param {*} user
- * @param {{ podiumCount?: number, firstPlaceCount?: number } | null} [tournamentStats]
+ * @param {{ podiumCount?: number, firstPlaceCount?: number, participatedCount?: number } | null} [tournamentStats]
  * @returns {number}
  */
 function userValueForSortOrder(sortOrder, user, tournamentStats) {
-  var stats = tournamentStats || { podiumCount: 0, firstPlaceCount: 0 };
+  var stats = tournamentStats || { podiumCount: 0, firstPlaceCount: 0, participatedCount: 0 };
   switch (sortOrder) {
     case 1:
       return Number(user.getFloat('attendance_count')) || 0;
     case 2:
-      return 0;
+      return Number(stats.participatedCount) || 0;
     case 3:
       return Number(stats.podiumCount) || 0;
     case 4:
@@ -125,7 +132,100 @@ function userValueForSortOrder(sortOrder, user, tournamentStats) {
 }
 
 /**
- * Логирует грант уровней при пересечении порогов oldVal → newVal.
+ * @param {*} meta
+ * @returns {Object|null}
+ */
+function parseMeta(meta) {
+  if (!meta) return null;
+  if (typeof meta === 'string') {
+    try {
+      return JSON.parse(meta);
+    } catch (_) {
+      return null;
+    }
+  }
+  if (typeof meta === 'object') return meta;
+  return null;
+}
+
+/**
+ * Dedup: уже есть in-app уведомление о гранте этого уровня.
+ * @param {*} app
+ * @param {string} userId
+ * @param {string} achievementId
+ * @param {number} levelNum
+ * @returns {boolean}
+ */
+function hasAchievementGrantNotification(app, userId, achievementId, levelNum) {
+  var list = app.findRecordsByFilter(
+    'notifications',
+    'recipient = "' + userId + '"',
+    '-created',
+    200,
+    0
+  );
+  var i;
+  for (i = 0; i < list.length; i++) {
+    var meta = parseMeta(list[i].get('meta'));
+    if (!meta || meta.kind !== 'achievement_grant') continue;
+    if (String(meta.achievementId || '') !== String(achievementId)) continue;
+    if (Number(meta.level) !== Number(levelNum)) continue;
+    return true;
+  }
+  return false;
+}
+
+/**
+ * In-app уведомление от «Секция Миленьких» (только $app.save).
+ * @param {*} app
+ * @param {{
+ *   userId: string,
+ *   achievementId: string,
+ *   achievementName: string,
+ *   level: number,
+ *   levelTitle: string,
+ *   levelDescription: string,
+ *   sortOrder: number,
+ *   requiredValue: number,
+ *   userValue: number
+ * }} payload
+ */
+function createAchievementGrantNotification(app, payload) {
+  if (hasAchievementGrantNotification(app, payload.userId, payload.achievementId, payload.level)) {
+    return;
+  }
+
+  var levelTitle = String(payload.levelTitle || '').trim() || 'Уровень';
+  var achievementName = String(payload.achievementName || '').trim() || 'Достижение';
+  var levelDescription = String(payload.levelDescription || '').trim();
+  var body =
+    'Новое достижение «' + levelTitle + '» (' + achievementName + ').';
+  if (levelDescription) {
+    body += '\n\n' + levelDescription;
+  }
+
+  var col = app.findCollectionByNameOrId('notifications');
+  var n = new Record(col);
+  n.set('recipient', payload.userId);
+  n.set('title', 'Секция Миленьких');
+  n.set('body', body);
+  n.set('badge_text', levelTitle);
+  n.set('is_read', false);
+  n.set('meta', {
+    kind: 'achievement_grant',
+    achievementId: payload.achievementId,
+    achievementName: achievementName,
+    level: payload.level,
+    levelTitle: levelTitle,
+    sortOrder: payload.sortOrder,
+    requiredValue: payload.requiredValue,
+    userValue: payload.userValue
+  });
+  app.save(n);
+}
+
+/**
+ * Логирует грант уровней при пересечении порогов oldVal → newVal + in-app notify.
  * @param {*} app
  * @param {*} audit
  * @param {{
@@ -155,6 +255,7 @@ function maybeGrantAchievementLevels(app, audit, opts) {
   var achievementId = achievement.id;
   var achievementName = achievement.getString('name') || '';
   var targetLabel = opts.targetLabel || (opts.target && opts.target.label) || 'Игрок';
+  var userId = opts.target && opts.target.id ? String(opts.target.id) : '';
 
   var levels = app.findRecordsByFilter(
     'achievement_levels',
@@ -170,6 +271,13 @@ function maybeGrantAchievementLevels(app, audit, opts) {
     var levelNum = Number(levelRec.getFloat('level')) || 0;
     if (oldVal < reqVal && newVal >= reqVal) {
       var levelTitle = levelRec.getString('title') || achievementName;
+      var levelDescription = '';
+      try {
+        levelDescription = levelRec.getString('description') || '';
+      } catch (_) {
+        levelDescription = '';
+      }
+
       audit.logEvent(app, {
         category: 'profile',
         action: 'profile.achievement.grant',
@@ -190,12 +298,30 @@ function maybeGrantAchievementLevels(app, audit, opts) {
         summaryRu: targetLabel + ' получил(а) достижение «' + levelTitle + '»',
         severity: 'info'
       });
+
+      if (userId) {
+        try {
+          createAchievementGrantNotification(app, {
+            userId: userId,
+            achievementId: achievementId,
+            achievementName: achievementName,
+            level: levelNum,
+            levelTitle: levelTitle,
+            levelDescription: levelDescription,
+            sortOrder: opts.sortOrder,
+            requiredValue: reqVal,
+            userValue: newVal
+          });
+        } catch (notifyErr) {
+          console.log('[achievements] notify grant: ' + notifyErr);
+        }
+      }
     }
   }
 }
 
 /**
- * Гранты sort_order 3/5 после публикации или смены участников турнирного поста.
+ * Гранты sort_order 2/3/5 после публикации или смены участников турнирного поста.
  * @param {*} app
  * @param {*} audit
  * @param {{
@@ -273,6 +399,14 @@ function maybeGrantTournamentAchievements(app, audit, opts) {
 
     var target = { id: userId, label: targetLabel };
 
+    maybeGrantAchievementLevels(app, audit, {
+      sortOrder: 2,
+      oldVal: oldStats.participatedCount,
+      newVal: newStats.participatedCount,
+      subject: opts.subject,
+      target: target,
+      targetLabel: targetLabel
+    });
     maybeGrantAchievementLevels(app, audit, {
       sortOrder: 3,
       oldVal: oldStats.podiumCount,
