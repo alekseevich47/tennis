@@ -2519,7 +2519,8 @@
           "open_training",
           "open_membership",
           "open_booking",
-          "open_seller_chat"
+          "open_seller_chat",
+          "open_profile"
         ]
       },
       {

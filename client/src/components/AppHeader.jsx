@@ -34,6 +34,7 @@ import './AppHeader.css';
  *   onOpenBookingFromNotification?: () => void,
  *   onOpenCommentFromNotification?: (meta: Record<string, unknown>) => void,
  *   onOpenSellerChatFromNotification?: () => void,
+ *   onOpenProfileFromNotification?: (meta?: Record<string, unknown>) => void,
  *   searchConfig?: {
  *     open: boolean,
  *     query: string,
@@ -67,6 +68,7 @@ function AppHeader({
   onOpenBookingFromNotification,
   onOpenCommentFromNotification,
   onOpenSellerChatFromNotification,
+  onOpenProfileFromNotification,
   searchConfig
 }) {
   const favoritesAnchorRef = useRef(null);
@@ -210,6 +212,7 @@ function AppHeader({
                 onOpenBooking={onOpenBookingFromNotification}
                 onOpenComment={onOpenCommentFromNotification}
                 onOpenSellerChat={onOpenSellerChatFromNotification}
+                onOpenProfile={onOpenProfileFromNotification}
               />
             ) : null}
           </div>

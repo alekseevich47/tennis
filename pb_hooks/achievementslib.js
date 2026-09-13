@@ -198,8 +198,7 @@ function createAchievementGrantNotification(app, payload) {
   var levelTitle = String(payload.levelTitle || '').trim() || 'Уровень';
   var achievementName = String(payload.achievementName || '').trim() || 'Достижение';
   var levelDescription = String(payload.levelDescription || '').trim();
-  var body =
-    'Новое достижение «' + levelTitle + '» (' + achievementName + ').';
+  var body = 'Вы получили новое достижение: «' + levelTitle + '».';
   if (levelDescription) {
     body += '\n\n' + levelDescription;
   }
@@ -209,7 +208,8 @@ function createAchievementGrantNotification(app, payload) {
   n.set('recipient', payload.userId);
   n.set('title', 'Секция Миленьких');
   n.set('body', body);
-  n.set('badge_text', levelTitle);
+  n.set('badge_text', 'Профиль');
+  n.set('click_action', 'open_profile');
   n.set('is_read', false);
   n.set('meta', {
     kind: 'achievement_grant',

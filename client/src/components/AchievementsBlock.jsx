@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { useAchievements } from '../hooks/useAchievements';
 import Spinner from './ui/Spinner';
@@ -50,9 +50,16 @@ function getTooltipText(level) {
  *   tooltipLevelId: string | null,
  *   setTooltipLevelId: React.Dispatch<React.SetStateAction<string | null>>,
  *   isCoarsePointer: boolean,
+ *   highlighted?: boolean,
  * }} props
  */
-function AchievementRow({ achievement, tooltipLevelId, setTooltipLevelId, isCoarsePointer }) {
+function AchievementRow({
+  achievement,
+  tooltipLevelId,
+  setTooltipLevelId,
+  isCoarsePointer,
+  highlighted = false
+}) {
   const currentTitle = getCurrentLevelTitle(achievement.levels);
   const { nextLevel, userValue = 0 } = achievement;
   const progressPercent = nextLevel
@@ -66,7 +73,10 @@ function AchievementRow({ achievement, tooltipLevelId, setTooltipLevelId, isCoar
   const progressBarColorClass = getProgressBarColorClass(progressPercent);
 
   return (
-    <div className="achievement-row">
+    <div
+      className={clsx('achievement-row', highlighted && 'achievement-row--focus')}
+      data-achievement-id={achievement.id}
+    >
       <p className="achievement-name">{achievement.name}</p>
       {currentTitle ? (
         <span className="achievement-current-level">Текущий уровень: {currentTitle}</span>
@@ -131,12 +141,21 @@ function AchievementRow({ achievement, tooltipLevelId, setTooltipLevelId, isCoar
 }
 
 /**
- * @param {{ userId?: string | null, className?: string, collapsible?: boolean }} props
+ * @param {{ userId?: string | null, className?: string, collapsible?: boolean, forceExpanded?: boolean, focusAchievementId?: string | null, onFocusHandled?: () => void }} props
  */
-function AchievementsBlock({ userId, className, collapsible = false }) {
-  const [expanded, setExpanded] = useState(false);
+function AchievementsBlock({
+  userId,
+  className,
+  collapsible = false,
+  forceExpanded = false,
+  focusAchievementId = null,
+  onFocusHandled
+}) {
+  const [expanded, setExpanded] = useState(Boolean(forceExpanded));
   const [tooltipLevelId, setTooltipLevelId] = useState(null);
   const [isCoarsePointer, setIsCoarsePointer] = useState(false);
+  const [highlightId, setHighlightId] = useState(/** @type {string | null} */ (null));
+  const focusHandledRef = useRef(false);
   const { data, isLoading, error } = useAchievements(userId);
 
   useEffect(() => {
@@ -146,6 +165,40 @@ function AchievementsBlock({ userId, className, collapsible = false }) {
     mq.addEventListener('change', update);
     return () => mq.removeEventListener('change', update);
   }, []);
+
+  useEffect(() => {
+    if (!forceExpanded && !focusAchievementId) {
+      focusHandledRef.current = false;
+      return;
+    }
+    setExpanded(true);
+    if (!focusAchievementId && !focusHandledRef.current) {
+      focusHandledRef.current = true;
+      onFocusHandled?.();
+    }
+  }, [forceExpanded, focusAchievementId, onFocusHandled]);
+
+  useEffect(() => {
+    if (!focusAchievementId || focusHandledRef.current) return;
+    if (isLoading) return;
+    focusHandledRef.current = true;
+    if (!data?.length) {
+      onFocusHandled?.();
+      return;
+    }
+    setHighlightId(focusAchievementId);
+    const timer = window.setTimeout(() => {
+      const safeId = focusAchievementId.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      const el = document.querySelector(`[data-achievement-id="${safeId}"]`);
+      el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      onFocusHandled?.();
+    }, 80);
+    const clearHighlight = window.setTimeout(() => setHighlightId(null), 2200);
+    return () => {
+      window.clearTimeout(timer);
+      window.clearTimeout(clearHighlight);
+    };
+  }, [focusAchievementId, isLoading, data, onFocusHandled]);
 
   if (!userId) return null;
 
@@ -183,6 +236,7 @@ function AchievementsBlock({ userId, className, collapsible = false }) {
             tooltipLevelId={tooltipLevelId}
             setTooltipLevelId={setTooltipLevelId}
             isCoarsePointer={isCoarsePointer}
+            highlighted={highlightId === achievement.id}
           />
         ))}
       </div>
