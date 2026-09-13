@@ -124,7 +124,24 @@ onRecordAfterUpdateSuccess((e) => {
 routerAdd('GET', '/api/video-poster', (c) => {
   try {
     var poster = require(__hooks + '/video_poster_lib.js');
-    var query = c.requestInfo().query || {};
+    var info = c.requestInfo();
+    var auth = info.auth;
+    // <img src> не шлёт Authorization — допускаем JWT в ?token= (тот же auth JWT).
+    if (!auth) {
+      var qAuth = (info.query || {}).token || '';
+      if (qAuth) {
+        try {
+          auth = $app.findAuthRecordByToken(qAuth);
+        } catch (_) {
+          auth = null;
+        }
+      }
+    }
+    if (!auth) {
+      return c.json(401, { error: 'Unauthorized' });
+    }
+
+    var query = info.query || {};
     var collection = query.collection || '';
     var recordId = query.record || query.recordId || '';
     var filename = query.file || query.filename || '';
@@ -152,7 +169,7 @@ routerAdd('GET', '/api/video-poster', (c) => {
 
     var bytes = $os.readFile(resolved.path);
     var contentType = resolved.contentType || 'image/jpeg';
-    c.response.header().set('Cache-Control', 'public, max-age=86400, immutable');
+    c.response.header().set('Cache-Control', 'private, max-age=86400');
     return c.blob(200, contentType, bytes);
   } catch (err) {
     console.log('[video-poster] route: ' + (err && err.stack ? err.stack : err));

@@ -16,8 +16,7 @@ import {
 import { formatPostDate } from '../../lib/format';
 import { error } from '../../lib/log';
 import { compressImage } from '../../lib/compress';
-import { MEDIA_BASE_URL } from '../../config';
-import { mediaNames, readSelectedFiles } from '../../lib/media';
+import { getMediaUrl, mediaNames, readSelectedFiles } from '../../lib/media';
 import { hasVisibleText } from '../feed/postRichText';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { buildSendResultAlert, formatAdminSaveError } from './adminResultAlert';
@@ -145,7 +144,7 @@ export default function BroadcastModal({ isOpen, onClose }) {
       .filter((filename) => !mediaToDelete.includes(filename))
       .map((filename) => ({
         key: `existing-${filename}`,
-        url: `${MEDIA_BASE_URL}/scheduled_broadcasts/${editingId}/${filename}`,
+        url: getMediaUrl({ id: editingId, collectionName: 'scheduled_broadcasts' }, 'scheduled_broadcasts', filename) || '',
         name: filename,
         isVideo: false,
         status: 'ready'

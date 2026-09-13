@@ -345,7 +345,7 @@
         ],
         "name": "avatar",
         "presentable": false,
-        "protected": false,
+        "protected": true,
         "required": false,
         "system": false,
         "thumbs": [
@@ -1827,7 +1827,7 @@
         "mimeTypes": [],
         "name": "media",
         "presentable": false,
-        "protected": false,
+        "protected": true,
         "required": false,
         "system": false,
         "thumbs": [
@@ -1873,9 +1873,9 @@
     "id": "pbc_319288612",
     "listRule": null,
     "viewRule": null,
-    "createRule": "@request.auth.id != \"\" && user = @request.auth.id",
+    "createRule": null,
     "updateRule": null,
-    "deleteRule": null,
+    "deleteRule": "@request.auth.role = \"moderator\"",
     "name": "content_views",
     "type": "base",
     "fields": [
@@ -2008,7 +2008,7 @@
         "mimeTypes": [],
         "name": "image",
         "presentable": false,
-        "protected": false,
+        "protected": true,
         "required": false,
         "system": false,
         "thumbs": [
@@ -2051,7 +2051,7 @@
         "mimeTypes": [],
         "name": "video",
         "presentable": false,
-        "protected": false,
+        "protected": true,
         "required": false,
         "system": false,
         "thumbs": [],
@@ -2404,7 +2404,7 @@
     "listRule": "recipient = @request.auth.id",
     "viewRule": "recipient = @request.auth.id",
     "createRule": "@request.auth.id != \"\" && (recipient = @request.auth.id || @request.auth.role = \"moderator\")",
-    "updateRule": "recipient = @request.auth.id",
+    "updateRule": "recipient = @request.auth.id && (@request.body.recipient:isset = false || recipient = @request.body.recipient)",
     "deleteRule": "recipient = @request.auth.id && (training_state = \"farewell\" || training_state = \"completed\" || badge_dynamic_type != \"training_countdown\")",
     "name": "notifications",
     "type": "base",
@@ -2702,7 +2702,7 @@
         "mimeTypes": [],
         "name": "media",
         "presentable": false,
-        "protected": false,
+        "protected": true,
         "required": false,
         "system": false,
         "thumbs": [
@@ -3000,7 +3000,7 @@
         "mimeTypes": [],
         "name": "images",
         "presentable": false,
-        "protected": false,
+        "protected": true,
         "required": false,
         "system": false,
         "thumbs": [
@@ -3315,7 +3315,7 @@
         ],
         "name": "media",
         "presentable": false,
-        "protected": false,
+        "protected": true,
         "required": false,
         "system": false,
         "thumbs": [],
@@ -3582,7 +3582,7 @@
         "mimeTypes": [],
         "name": "media",
         "presentable": false,
-        "protected": false,
+        "protected": true,
         "required": false,
         "system": false,
         "thumbs": [
@@ -3670,7 +3670,7 @@
         "mimeTypes": [],
         "name": "media",
         "presentable": false,
-        "protected": false,
+        "protected": true,
         "required": false,
         "system": false,
         "thumbs": [],
@@ -4109,7 +4109,10 @@
         "required": true,
         "system": false,
         "type": "select",
-        "values": ["bot", "app"]
+        "values": [
+          "bot",
+          "app"
+        ]
       },
       {
         "autogeneratePattern": "",
@@ -4190,7 +4193,11 @@
         "required": false,
         "system": false,
         "type": "select",
-        "values": ["user", "moderator", "both"]
+        "values": [
+          "user",
+          "moderator",
+          "both"
+        ]
       },
       {
         "hidden": false,

@@ -875,12 +875,25 @@ function createContentView(userId, payload) {
   record.set('object_type', objectType);
   record.set('object_id', objectId);
   if (source) record.set('source', source);
-  $app.save(record);
+
+  // Флаг для content_views_create_guard: разрешить только этот путь.
+  skipContentViewCreateGuardDepth += 1;
+  try {
+    $app.save(record);
+  } finally {
+    skipContentViewCreateGuardDepth -= 1;
+  }
 
   return {
     ok: true,
     id: record.id
   };
+}
+
+var skipContentViewCreateGuardDepth = 0;
+
+function isContentViewCreateAllowed() {
+  return skipContentViewCreateGuardDepth > 0;
 }
 
 module.exports = {
@@ -896,5 +909,6 @@ module.exports = {
   getTrainingsForDay: getTrainingsForDay,
   getAchievementsNow: getAchievementsNow,
   getAchievementGrants: getAchievementGrants,
-  createContentView: createContentView
+  createContentView: createContentView,
+  isContentViewCreateAllowed: isContentViewCreateAllowed
 };

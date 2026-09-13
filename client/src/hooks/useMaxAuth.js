@@ -7,14 +7,15 @@ import {
   loadBanInfo,
   isUserBanned,
   refreshAuthUser,
-  saveBanInfo
+  saveBanInfo,
+  logoutUser
 } from '../services/auth';
 import { purgeAbandonedComments, purgeAbandonedPosts } from '../services/posts';
 import { purgeAbandonedTournamentPosts } from '../services/tournamentPosts';
 import { purgeAbandonedProducts } from '../services/catalog';
 import { warn, error } from '../lib/log';
+import { refreshMediaFileToken } from '../lib/media';
 import { mutate as mutateSWR } from 'swr';
-
 /**
  * @typedef {import('../services/auth').UserRecord} UserRecord
  */
@@ -96,6 +97,10 @@ export function useMaxAuth() {
         if (cancelled) return;
         applyUser(loggedUser);
 
+        if (loggedUser?.id && !isUserBanned(loggedUser) && pb.authStore.isValid) {
+          void refreshMediaFileToken();
+        }
+
         // Параллельная зачистка зомби soft-delete — не блокирует UI.
         if (loggedUser?.id && !isUserBanned(loggedUser)) {
           purgeAbandonedComments(loggedUser.id, { signal: controller.signal }).catch((e) =>
@@ -132,9 +137,21 @@ export function useMaxAuth() {
     const unsubscribe = pb.authStore.onChange(() => {
       if (bannedRef.current?.is_banned) return;
       setUser(/** @type {UserRecord | null} */ (pb.authStore.model));
+      if (pb.authStore.isValid) {
+        void refreshMediaFileToken();
+      }
     });
     return unsubscribe;
   }, []);
+
+  // Периодически обновлять file token (protected media).
+  useEffect(() => {
+    if (!user?.id || isUserBanned(user)) return;
+    const id = window.setInterval(() => {
+      void refreshMediaFileToken();
+    }, 60_000);
+    return () => window.clearInterval(id);
+  }, [user?.id]);
 
   // Realtime: бан, bot_blocked, заморозка абонемента, ограничение комментариев.
   useEffect(() => {
@@ -149,7 +166,7 @@ export function useMaxAuth() {
       if (!record) return;
 
       if (record.is_banned === true) {
-        pb.authStore.clear();
+        void logoutUser();
         const bannedUser = /** @type {UserRecord} */ ({
           is_banned: true,
           ban_reason: String(record.ban_reason || ''),

@@ -67,9 +67,10 @@ npm run build
 | `VITE_MAX_AUTH_URL` | Endpoint авторизации MAX, например `${PB_URL}/api/max-auth` |
 | `VITE_MAX_APP_ID` | ID мини-приложения из кабинета разработчика MAX |
 | `VITE_API_URL` | Публичный URL статики (опционально, для ссылок) |
+| `MAX_BOT_TOKEN` | **Не для клиента.** Только process env PocketBase (systemd override). См. [`docs/ops-max-bot-token.md`](docs/ops-max-bot-token.md) |
 
 > [!IMPORTANT]
-> Не коммитьте `.env` с production-секретами. Для локальной разработки достаточно копии `config/env_app.conf`.
+> Не коммитьте `.env` с production-секретами. `MAX_BOT_TOKEN` никогда не кладите в `client/.env` / tracked-конфиги — только в `/etc/systemd/system/pocketbase.service.d/override.conf`. Для Vite достаточно копии [`config/env.prod.example`](config/env.prod.example) / [`client/.env.example`](client/.env.example).
 
 ## Структура репозитория
 
