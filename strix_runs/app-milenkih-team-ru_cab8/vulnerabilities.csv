@@ -1,9 +1,0 @@
-id,title,severity,timestamp,file
-vuln-0004,Production MAX bot token exposed in client-side environment file grants full bot API control and community IPI exfiltration,CRITICAL,2026-09-12 15:21:44 UTC,vulnerabilities/vuln-0004.md
-vuln-0001,Unauthenticated access to private member media (photos/videos) via /api/files and /api/video-poster,HIGH,2026-09-12 15:13:06 UTC,vulnerabilities/vuln-0001.md
-vuln-0002,Broken function-level authorization in /api/bot-notify-training allows any member to send spoofed moderator notifications,MEDIUM,2026-09-12 15:13:51 UTC,vulnerabilities/vuln-0002.md
-vuln-0003,Cross-user training history forgery via unrestricted `moderator_kicked_users` / `unbooked_users` writes (PocketBase `trainings` PATCH),MEDIUM,2026-09-12 15:19:49 UTC,vulnerabilities/vuln-0003.md
-vuln-0008,"Custom content-view route validation bypassed by direct collection write, allowing unbounded self-attributed metric rows",MEDIUM,2026-09-12 15:41:46 UTC,vulnerabilities/vuln-0008.md
-vuln-0005,Wildcard CORS on PocketBase API allows cross-origin reads with a bearer token,LOW,2026-09-12 15:23:20 UTC,vulnerabilities/vuln-0005.md
-vuln-0006,Session tokens survive refresh and no server-side logout exists,LOW,2026-09-12 15:24:52 UTC,vulnerabilities/vuln-0006.md
-vuln-0007,Broken object-level authorization on notifications collection allows any user to reassign someone else's notification (forged in-app notifications),LOW,2026-09-12 15:28:54 UTC,vulnerabilities/vuln-0007.md
