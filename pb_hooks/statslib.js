@@ -676,7 +676,11 @@ function getAchievementsNow() {
       var value = userValueForAchievement(
         sortOrder,
         user,
-        tournamentStatsMap[user.id] || { podiumCount: 0, firstPlaceCount: 0 }
+        tournamentStatsMap[user.id] || {
+          podiumCount: 0,
+          firstPlaceCount: 0,
+          participatedCount: 0
+        }
       );
       var progress = calcLevelFromValue(levels, value);
       userLevels.push({
