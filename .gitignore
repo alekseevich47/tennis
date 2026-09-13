@@ -32,6 +32,17 @@ client/.env
 # Temporary files
 *.tmp
 
+# Strix pentest artifacts
+strix_runs/
+
+# Graphify knowledge graphs (regenerate locally with `graphify update .`)
+graphify-out/
+client/graphify-out/
+**/graphify-out/
+
+# Achievement icon pack kept locally; icons served from PocketBase
+client/src/assets/ach/
+
 # Python cache
 __pycache__/
 *.pyc
