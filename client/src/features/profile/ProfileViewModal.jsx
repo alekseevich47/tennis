@@ -896,24 +896,26 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
           ) : (
             <div className="profile-view">
               <div className="profile-view-hero">
-                <FloatingAchievements userId={targetUserId} />
+                <div className="profile-view-float-band">
+                  <FloatingAchievements userId={targetUserId} />
 
-                <div className="avatar-wrapper-large">
-                  <Avatar user={displayUser} size="lg" alt="Большой аватар" />
+                  <div className="avatar-wrapper-large">
+                    <Avatar user={displayUser} size="lg" alt="Большой аватар" />
+                  </div>
+
+                  <h2 className="profile-user-name">
+                    <span>{displayName}</span>
+                    <span
+                      className="profile-rating-badge"
+                      onClick={handleRatingClick}
+                      onKeyDown={handleRatingKeyDown}
+                      role="button"
+                      tabIndex={0}
+                    >
+                      #{ratingPosition || '—'}
+                    </span>
+                  </h2>
                 </div>
-
-                <h2 className="profile-user-name">
-                  <span>{displayName}</span>
-                  <span
-                    className="profile-rating-badge"
-                    onClick={handleRatingClick}
-                    onKeyDown={handleRatingKeyDown}
-                    role="button"
-                    tabIndex={0}
-                  >
-                    #{ratingPosition || '—'}
-                  </span>
-                </h2>
 
                 <div className="profile-meta-info">
                   <p><strong>Дата рождения:</strong> {formatDate(displayUser?.birth_date) || 'Не указана'}</p>

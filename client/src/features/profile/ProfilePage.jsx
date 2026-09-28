@@ -465,23 +465,25 @@ function ProfilePage({
       ) : (
         <div className="profile-view">
           <div className="profile-view-hero">
-            <FloatingAchievements userId={user.id} />
+            <div className="profile-view-float-band">
+              <FloatingAchievements userId={user.id} />
 
-            <div className="avatar-wrapper-large">
-              <Avatar user={user} size="lg" alt="Большой аватар" />
+              <div className="avatar-wrapper-large">
+                <Avatar user={user} size="lg" alt="Большой аватар" />
+              </div>
+
+              <h2 className="profile-user-name">
+                {user.full_name}
+                <span
+                  className="profile-rating-badge"
+                  onClick={() => onTabChange?.(3)}
+                  role="button"
+                  tabIndex={0}
+                >
+                  #{ratingPosition || '—'}
+                </span>
+              </h2>
             </div>
-
-            <h2 className="profile-user-name">
-              {user.full_name}
-              <span
-                className="profile-rating-badge"
-                onClick={() => onTabChange?.(3)}
-                role="button"
-                tabIndex={0}
-              >
-                #{ratingPosition || '—'}
-              </span>
-            </h2>
 
             <div className="profile-meta-info">
               <p><strong>Дата рождения:</strong> {formatDate(user.birth_date) || 'Не указана'}</p>
