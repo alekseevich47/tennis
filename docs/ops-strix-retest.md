@@ -32,7 +32,7 @@
 ## LOW — CORS / logout / notifications
 - [ ] OPTIONS с `Origin: https://evil.example` — нет `ACAO: *` (или не отражает evil)
 - [ ] `POST /api/logout` → старый JWT больше не проходит на API
-- [ ] auth-refresh → предыдущий access token мёртв
+- [ ] auth-refresh **не** гасит предыдущий access token (ротация `tokenKey` только logout / бан — иначе 404 на PATCH)
 - [ ] User PATCH notification `{ recipient: otherId }` → 400/403; `{ is_read: true }` → 200
 
 PoC-файлы: `strix_runs/app-milenkih-team-ru_cab8/vulnerabilities/vuln-000N.md`

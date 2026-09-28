@@ -14,10 +14,8 @@ onRecordAuthRefreshRequest((e) => {
   if (e.record && e.record.getBool('is_banned')) {
     throw new ForbiddenError('Ваш аккаунт заблокирован');
   }
-  // Инвалидировать предыдущий JWT при каждом refresh (Strix LOW).
-  if (e.record) {
-    e.record.set('tokenKey', $security.randomString(50));
-  }
+  // Не ротировать tokenKey здесь: каждый refresh иначе гасит все старые JWT
+  // (гонка с PATCH онбординга/профиля → PB 404). Отзыв — /api/logout и бан.
   e.next();
 }, 'users');
 

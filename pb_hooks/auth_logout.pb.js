@@ -1,6 +1,6 @@
 // Server-side logout (Strix LOW: нет отзыва сессии).
 // Ротация tokenKey гасит ранее выданные JWT (как при бане в users_ban_auth.pb.js).
-// Refresh-invalidation — в users_ban_auth.pb.js (один handler на коллекцию).
+// auth-refresh tokenKey НЕ крутит — иначе гонка со старым Bearer на PATCH.
 
 routerAdd('POST', '/api/logout', (c) => {
   try {
