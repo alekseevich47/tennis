@@ -4,7 +4,7 @@ import { useMaxCloseGuard } from './hooks/useMaxCloseGuard';
 import { useSessionResetKey } from './hooks/useSessionResetKey';
 import { useOverlayClose } from './hooks/useOverlayClose';
 import { useSectionSwipe } from './hooks/useSectionSwipe';
-import { isUserBanned, isUserBotBlocked, isModerator, completeOnboarding } from './services/auth';
+import { isUserBanned, isUserBotBlocked, isModerator } from './services/auth';
 import {
   LazyAdminPanelPage,
   LazyCompetitionsPage,
@@ -549,11 +549,7 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
           <LazyOnboardingTutorial
             user={user}
             onUpdate={handleUserUpdate}
-            onComplete={async () => {
-              const updated = await completeOnboarding(user.id);
-              handleUserUpdate(updated);
-              setActiveTab(0);
-            }}
+            onComplete={() => setActiveTab(0)}
             onTabChange={setActiveTab}
           />
         </TabSuspense>

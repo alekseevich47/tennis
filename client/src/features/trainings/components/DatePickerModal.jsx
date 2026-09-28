@@ -10,10 +10,11 @@ import '../Trainings.css';
  *   isOpen: boolean,
  *   onClose: () => void,
  *   onConfirm: (date: Date) => void,
- *   defaultDate?: string | null
+ *   defaultDate?: string | null,
+ *   disabled?: import('@daypicker/react').Matcher | import('@daypicker/react').Matcher[]
  * }} props
  */
-function DatePickerModal({ isOpen, onClose, onConfirm, defaultDate = null }) {
+function DatePickerModal({ isOpen, onClose, onConfirm, defaultDate = null, disabled }) {
   const { alert } = useAlertDialog();
   const [selectedDate, setSelectedDate] = useState(undefined);
   const [displayAnchor, setDisplayAnchor] = useState(() => new Date());
@@ -53,6 +54,7 @@ function DatePickerModal({ isOpen, onClose, onConfirm, defaultDate = null }) {
           selectedDate={selectedDate}
           onSelectDate={setSelectedDate}
           initialDisplayMonth={displayAnchor}
+          disabled={disabled}
         />
         <p className="date-range-hint" aria-live="polite">
           {hint}

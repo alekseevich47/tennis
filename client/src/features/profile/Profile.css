@@ -1025,6 +1025,7 @@
   position: relative;
   isolation: isolate;
   margin-bottom: 20px;
+  padding: 8px 4px 4px;
 }
 
 .profile-view-hero > .avatar-wrapper-large,
@@ -1039,7 +1040,8 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  contain: layout style paint;
+  contain: layout style;
+  overflow: visible;
 }
 
 .floating-achievement-wrap {

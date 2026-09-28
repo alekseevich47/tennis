@@ -3,6 +3,10 @@
 var TRAINING_COUNTDOWN_TITLE = 'Не забыли? 😜';
 var TRAINING_COUNTDOWN_BODY =
   'А мы напоминаем, совсем скоро у Вас запланирована тренировка! Мы Вас будем ждать! Но если что-то пошло не по плану, обязательно сообщите нам.';
+/** Поздняя запись (уже в окне ≤4ч): отдельный копирайт, тот же state `countdown`. */
+var TRAINING_UPCOMING_TITLE = 'Ближайшая тренировка';
+var TRAINING_UPCOMING_BODY =
+  'Вы успели записаться — супер! Совсем скоро начинаем. Ждём вас на площадке, а если планы изменятся — обязательно дайте знать.';
 var TRAINING_FAREWELL_TITLE = 'Будем скучать! 💔';
 var TRAINING_FAREWELL_BODY =
   'Ваша запись на тренировку отменена. Не переживайте, главное — не терять настрой! Надеемся на скорую встречу. Выберите удобное время для следующего занятия, как только будете готовы.';
@@ -78,7 +82,11 @@ function findTrainingNotification(userId, trainingId) {
   return null;
 }
 
-function getStateFields(targetState) {
+/**
+ * @param {'countdown'|'farewell'|'completed'} targetState
+ * @param {'reminder'|'upcoming'} [countdownKind] — только для countdown: крон «Не забыли?» vs поздняя запись
+ */
+function getStateFields(targetState, countdownKind) {
   var tpl;
   try {
     tpl = require(__hooks + '/templatelib.js');
@@ -87,13 +95,17 @@ function getStateFields(targetState) {
   }
 
   if (targetState === 'countdown') {
-    var countdown = tpl ? tpl.resolve($app, 'app.training_countdown', {}) : null;
+    var isUpcoming = countdownKind === 'upcoming';
+    var templateKey = isUpcoming ? 'app.training_upcoming' : 'app.training_countdown';
+    var fallbackTitle = isUpcoming ? TRAINING_UPCOMING_TITLE : TRAINING_COUNTDOWN_TITLE;
+    var fallbackBody = isUpcoming ? TRAINING_UPCOMING_BODY : TRAINING_COUNTDOWN_BODY;
+    var countdown = tpl ? tpl.resolve($app, templateKey, {}) : null;
     if (countdown === null && tpl) {
       return null;
     }
     return {
-      title: (countdown && countdown.title) || TRAINING_COUNTDOWN_TITLE,
-      body: (countdown && countdown.body) || TRAINING_COUNTDOWN_BODY,
+      title: (countdown && countdown.title) || fallbackTitle,
+      body: (countdown && countdown.body) || fallbackBody,
       badge_dynamic_type: 'training_countdown',
       badge_text: '',
       click_action: 'open_training',
@@ -140,17 +152,18 @@ function applyStateFields(notification, fields, trainingId) {
 }
 
 /**
- * Find-or-transition-else-create уведомление «Не забыли?» на пару (user, training).
+ * Find-or-transition-else-create уведомление о тренировке на пару (user, training).
  * @param {'countdown'|'farewell'|'completed'} targetState
+ * @param {'reminder'|'upcoming'} [countdownKind] — `upcoming` при записи уже в окне ≤4ч
  * @returns {boolean} true если запись создана или обновлена
  */
-function upsertTrainingNotification(userId, trainingId, targetState) {
+function upsertTrainingNotification(userId, trainingId, targetState, countdownKind) {
   userId = relationId(userId);
   trainingId = relationId(trainingId);
   if (!userId || !trainingId || !targetState) return false;
 
   var existing = findTrainingNotification(userId, trainingId);
-  var fields = getStateFields(targetState);
+  var fields = getStateFields(targetState, countdownKind);
   if (!fields) return false;
 
   if (existing) {
