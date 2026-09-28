@@ -1025,12 +1025,17 @@
   position: relative;
   isolation: isolate;
   margin-bottom: 20px;
-  padding: 8px 4px 4px;
 }
 
-.profile-view-hero > .avatar-wrapper-large,
-.profile-view-hero > .profile-user-name,
-.profile-view-hero > .profile-meta-info {
+.profile-view-float-band {
+  position: relative;
+  isolation: isolate;
+  padding: 8px 4px 16px;
+  overflow: hidden;
+}
+
+.profile-view-float-band > .avatar-wrapper-large,
+.profile-view-float-band > .profile-user-name {
   position: relative;
   z-index: 1;
 }
@@ -1040,18 +1045,16 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  contain: layout style;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .floating-achievement-wrap {
   position: absolute;
+  top: 0;
+  left: 0;
   width: 32px;
   height: 32px;
   will-change: transform;
-  animation: floating-ach-x var(--float-x-duration, 6s) ease-in-out infinite alternate;
-  animation-delay: var(--float-delay-x, 0s);
-  animation-fill-mode: backwards;
 }
 
 .floating-achievement-icon {
@@ -1061,28 +1064,6 @@
   object-fit: contain;
   opacity: 0.25;
   pointer-events: none;
-  will-change: transform;
-  animation: floating-ach-y var(--float-y-duration, 8s) ease-in-out infinite alternate;
-  animation-delay: var(--float-delay-y, 0s);
-  animation-fill-mode: backwards;
-}
-
-@keyframes floating-ach-x {
-  from {
-    transform: translateX(-8px);
-  }
-  to {
-    transform: translateX(8px);
-  }
-}
-
-@keyframes floating-ach-y {
-  from {
-    transform: translateY(-6px);
-  }
-  to {
-    transform: translateY(6px);
-  }
 }
 
 .avatar-wrapper-large {

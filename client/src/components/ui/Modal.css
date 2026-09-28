@@ -18,6 +18,11 @@
   pointer-events: none;
 }
 
+/* Выше онбординга (9000–9003) и AvatarCrop (10050) */
+.ui-modal-overlay--above-onboarding {
+  z-index: 10060;
+}
+
 .ui-modal-content {
   position: relative;
   background: #ffffff;

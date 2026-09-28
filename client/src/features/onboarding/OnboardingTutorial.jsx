@@ -309,13 +309,22 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
       onComplete();
     } catch (err) {
       error('onboarding finish:', err);
+      setFinishing(false);
+      const status = err && typeof err === 'object' ? /** @type {{ status?: number, message?: string }} */ (err).status : undefined;
+      const detail =
+        status === 404
+          ? 'Сессия, возможно, устарела. Закройте мини-приложение и откройте снова, затем повторите.'
+          : status
+            ? `Не удалось завершить обучение (ошибка ${status}). Попробуйте ещё раз.`
+            : 'Не удалось завершить обучение. Попробуйте ещё раз.';
       await alert({
         title: 'Ошибка',
-        message: 'Не удалось завершить обучение. Попробуйте ещё раз.'
+        message: detail,
+        overlayClassName: 'ui-modal-overlay--above-onboarding'
       });
-    } finally {
-      setFinishing(false);
+      return;
     }
+    setFinishing(false);
   };
 
   const handleAvatarInputChange = (e) => {
@@ -347,14 +356,16 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
     if (!trimmedBirth) {
       await alert({
         title: 'Дата рождения',
-        message: 'Укажите дату рождения в формате дд.мм.гггг.'
+        message: 'Укажите дату рождения в формате дд.мм.гггг.',
+        overlayClassName: 'ui-modal-overlay--above-onboarding'
       });
       return;
     }
     if (!isDateInputOnOrBeforeToday(trimmedBirth)) {
       await alert({
         title: 'Дата рождения',
-        message: 'Дата рождения не может быть позже сегодняшнего дня.'
+        message: 'Дата рождения не может быть позже сегодняшнего дня.',
+        overlayClassName: 'ui-modal-overlay--above-onboarding'
       });
       return;
     }
@@ -402,7 +413,8 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
       error('onboarding profile save:', err);
       await alert({
         title: 'Ошибка',
-        message: 'Не удалось сохранить профиль. Попробуйте ещё раз.'
+        message: 'Не удалось сохранить профиль. Попробуйте ещё раз.',
+        overlayClassName: 'ui-modal-overlay--above-onboarding'
       });
     } finally {
       setSaving(false);
