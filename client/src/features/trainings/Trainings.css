@@ -1149,8 +1149,8 @@
 .membership-overview-table .table-header,
 .membership-overview-table .membership-player-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 56px 56px;
-  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) 48px 48px 48px;
+  gap: 10px;
   padding: 16px 14px;
 }
 
@@ -1186,13 +1186,15 @@
 }
 
 .membership-overview-table .table-header > :nth-child(2),
-.membership-overview-table .table-header > :nth-child(3) {
+.membership-overview-table .table-header > :nth-child(3),
+.membership-overview-table .table-header > :nth-child(4) {
   justify-content: flex-end;
   text-align: right;
 }
 
 .membership-overview-table .membership-player-row > :nth-child(2),
-.membership-overview-table .membership-player-row > :nth-child(3) {
+.membership-overview-table .membership-player-row > :nth-child(3),
+.membership-overview-table .membership-player-row > :nth-child(4) {
   text-align: right;
 }
 
@@ -1213,4 +1215,8 @@
   font-weight: 600;
   font-size: 14px;
   color: #212529;
+}
+
+.membership-col-num--unpaid {
+  color: #e53935;
 }
