@@ -92,7 +92,8 @@ function MembershipOverviewModal({ isOpen, onClose, currentUser }) {
       availableSessions: Number(player.available_sessions ?? 0),
       usedSessions: periodUsedSessionsCounts
         ? (periodUsedSessionsCounts.get(player.id) ?? 0)
-        : Number(player.used_sessions ?? 0)
+        : Number(player.used_sessions ?? 0),
+      unpaidSessions: Number(player.unpaid_sessions ?? 0)
     }));
   }, [players, periodUsedSessionsCounts]);
 
@@ -120,6 +121,14 @@ function MembershipOverviewModal({ isOpen, onClose, currentUser }) {
     if (sortField === 'used') {
       sorted.sort((a, b) =>
         sortDir === 'desc' ? b.usedSessions - a.usedSessions : a.usedSessions - b.usedSessions
+      );
+    }
+
+    if (sortField === 'unpaid') {
+      sorted.sort((a, b) =>
+        sortDir === 'desc'
+          ? b.unpaidSessions - a.unpaidSessions
+          : a.unpaidSessions - b.unpaidSessions
       );
     }
 
@@ -169,14 +178,14 @@ function MembershipOverviewModal({ isOpen, onClose, currentUser }) {
       <Modal
         isOpen={isOpen}
         onClose={onClose}
-        title="Абонемент"
+        title="Абонементы"
         size="tall"
         className="membership-overview-modal"
       >
         <div className="membership-search-row">
           <input
             type="text"
-            placeholder="Поиск игрока по имени…"
+            placeholder="Поиск участника по имени…"
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
             className="rating-search-input"
@@ -217,13 +226,16 @@ function MembershipOverviewModal({ isOpen, onClose, currentUser }) {
           <div className="players-table membership-overview-table">
             <div className="table-header" role="row">
               <button type="button" className="sortable" onClick={() => handleSort('name')}>
-                Игрок {renderSortIcon('name')}
+                Участники {renderSortIcon('name')}
               </button>
               <button type="button" className="sortable" onClick={() => handleSort('available')}>
                 Д/П {renderSortIcon('available')}
               </button>
               <button type="button" className="sortable" onClick={() => handleSort('used')}>
                 И/П {renderSortIcon('used')}
+              </button>
+              <button type="button" className="sortable" onClick={() => handleSort('unpaid')}>
+                Н/П {renderSortIcon('unpaid')}
               </button>
             </div>
             {filteredPlayers.map((player) => (
@@ -241,11 +253,20 @@ function MembershipOverviewModal({ isOpen, onClose, currentUser }) {
                 }}
               >
                 <div className="player-info">
-                  <Avatar user={player} size="md" alt={player.full_name || 'Игрок'} />
+                  <Avatar user={player} size="md" alt={player.full_name || 'Участник'} />
                   <div className="player-name">{player.full_name || 'Без имени'}</div>
                 </div>
                 <span className="membership-col-num">{player.availableSessions}</span>
                 <span className="membership-col-num">{player.usedSessions}</span>
+                <span
+                  className={
+                    player.unpaidSessions > 0
+                      ? 'membership-col-num membership-col-num--unpaid'
+                      : 'membership-col-num'
+                  }
+                >
+                  {player.unpaidSessions}
+                </span>
               </div>
             ))}
           </div>

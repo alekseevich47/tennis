@@ -167,7 +167,7 @@ function AppHeader({
         ) : null}
         {onMembershipClick ? (
           <IconButton
-            ariaLabel="Абонемент"
+            ariaLabel="Абонементы"
             variant="ghost"
             className={clsx(
               'header-membership-btn',
