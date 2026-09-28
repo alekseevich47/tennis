@@ -126,7 +126,7 @@ function FloatingAchievements({ userId }) {
 
     let last = performance.now();
 
-    const bounceCircle = (body, geom) => {
+    const bounceAvatar = (body, geom) => {
       const mx = body.x + ICON_HALF;
       const my = body.y + ICON_HALF;
       const dx = mx - geom.cx;
@@ -148,6 +148,49 @@ function FloatingAchievements({ userId }) {
       }
     };
 
+    /** Упругое отталкивание двух медалек (равная масса). */
+    const bounceMedals = (a, b) => {
+      const dx = b.x + ICON_HALF - (a.x + ICON_HALF);
+      const dy = b.y + ICON_HALF - (a.y + ICON_HALF);
+      const dist = Math.hypot(dx, dy);
+      const minDist = ICON_SIZE;
+      if (dist >= minDist || dist < 1e-6) return;
+
+      const nx = dx / dist;
+      const ny = dy / dist;
+      const overlap = (minDist - dist) / 2;
+      a.x -= nx * overlap;
+      a.y -= ny * overlap;
+      b.x += nx * overlap;
+      b.y += ny * overlap;
+
+      const vn = (a.vx - b.vx) * nx + (a.vy - b.vy) * ny;
+      if (vn <= 0) return;
+
+      a.vx -= vn * nx;
+      a.vy -= vn * ny;
+      b.vx += vn * nx;
+      b.vy += vn * ny;
+    };
+
+    const clampWalls = (body, geom) => {
+      if (body.x <= 0) {
+        body.x = 0;
+        body.vx = Math.abs(body.vx);
+      } else if (body.x >= geom.w - ICON_SIZE) {
+        body.x = geom.w - ICON_SIZE;
+        body.vx = -Math.abs(body.vx);
+      }
+
+      if (body.y <= 0) {
+        body.y = 0;
+        body.vy = Math.abs(body.vy);
+      } else if (body.y >= geom.h - ICON_SIZE) {
+        body.y = geom.h - ICON_SIZE;
+        body.vy = -Math.abs(body.vy);
+      }
+    };
+
     const tick = (now) => {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
@@ -157,28 +200,27 @@ function FloatingAchievements({ userId }) {
         return;
       }
 
-      for (const body of bodiesRef.current) {
+      const bodies = bodiesRef.current;
+      for (const body of bodies) {
         if (!body.el) continue;
         body.x += body.vx * dt;
         body.y += body.vy * dt;
+        clampWalls(body, geom);
+        bounceAvatar(body, geom);
+      }
 
-        if (body.x <= 0) {
-          body.x = 0;
-          body.vx = Math.abs(body.vx);
-        } else if (body.x >= geom.w - ICON_SIZE) {
-          body.x = geom.w - ICON_SIZE;
-          body.vx = -Math.abs(body.vx);
+      for (let i = 0; i < bodies.length; i++) {
+        if (!bodies[i].el) continue;
+        for (let j = i + 1; j < bodies.length; j++) {
+          if (!bodies[j].el) continue;
+          bounceMedals(bodies[i], bodies[j]);
         }
+      }
 
-        if (body.y <= 0) {
-          body.y = 0;
-          body.vy = Math.abs(body.vy);
-        } else if (body.y >= geom.h - ICON_SIZE) {
-          body.y = geom.h - ICON_SIZE;
-          body.vy = -Math.abs(body.vy);
-        }
-
-        bounceCircle(body, geom);
+      for (const body of bodies) {
+        if (!body.el) continue;
+        clampWalls(body, geom);
+        bounceAvatar(body, geom);
         body.el.style.transform = `translate3d(${body.x}px, ${body.y}px, 0)`;
       }
 
