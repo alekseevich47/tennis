@@ -177,6 +177,13 @@ export function parseDateDisplay(text) {
   return toDateInputValue(date);
 }
 
+/** YYYY-MM-DD: true если пусто или календарный день ≤ сегодня (локально). */
+export function isDateInputOnOrBeforeToday(value) {
+  const iso = String(value || '').slice(0, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return false;
+  return iso <= toDateInputValue(new Date());
+}
+
 /** «dd.mm.yyyy - dd.mm.yyyy» → { start, end } (YYYY-MM-DD) или null */
 export function parseDateRangeDisplay(text) {
   const trimmed = String(text || '').trim();

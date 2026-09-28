@@ -1,10 +1,16 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import AvatarCropModal from '../../components/AvatarCropModal';
 import Avatar from '../../components/ui/Avatar';
+import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { useOnboarding } from '../../hooks/useOnboarding';
 import { updateUserProfile } from '../../services/auth';
 import { compressImage } from '../../lib/compress';
+import {
+  isDateInputOnOrBeforeToday,
+  toDateInputValue
+} from '../../lib/datePickerUtils';
 import { error } from '../../lib/log';
+import MembershipStartDateField from '../profile/MembershipStartDateField';
 import './OnboardingTutorial.css';
 
 const DEFAULT_HAND = 'Правая';
@@ -140,6 +146,7 @@ function getStepSelectors(tourConfig) {
  */
 export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabChange }) {
   const { completeOnboarding, canEditName } = useOnboarding(user, onUpdate);
+  const { alert } = useAlertDialog();
   const [step, setStep] = useState(0);
   const [highlightRects, setHighlightRects] = useState(/** @type {{ top: number, left: number, width: number, height: number, primary: boolean }[]} */ ([]));
   const [tooltipAnchorRect, setTooltipAnchorRect] = useState(/** @type {{ top: number, left: number, width: number, height: number } | null} */ (null));
@@ -155,6 +162,8 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
   const [pendingAvatarFile, setPendingAvatarFile] = useState(null);
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const avatarInputRef = useRef(null);
+
+  const todayIso = useMemo(() => toDateInputValue(new Date()), []);
 
   const tourConfig = TOUR_STEPS[step];
   const isCardStep = CARD_STEPS.has(step);
@@ -297,9 +306,13 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
     try {
       await completeOnboarding();
       onTabChange(0);
-      await onComplete();
+      onComplete();
     } catch (err) {
       error('onboarding finish:', err);
+      await alert({
+        title: 'Ошибка',
+        message: 'Не удалось завершить обучение. Попробуйте ещё раз.'
+      });
     } finally {
       setFinishing(false);
     }
@@ -330,6 +343,22 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
     e.preventDefault();
     if (!user?.id || saving) return;
 
+    const trimmedBirth = normalizeDateInput(birthDate);
+    if (!trimmedBirth) {
+      await alert({
+        title: 'Дата рождения',
+        message: 'Укажите дату рождения в формате дд.мм.гггг.'
+      });
+      return;
+    }
+    if (!isDateInputOnOrBeforeToday(trimmedBirth)) {
+      await alert({
+        title: 'Дата рождения',
+        message: 'Дата рождения не может быть позже сегодняшнего дня.'
+      });
+      return;
+    }
+
     const trimmedName = fullName.trim();
     const currentName = (user.full_name || '').trim();
     const nameChanged = trimmedName !== currentName;
@@ -340,8 +369,8 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
       patch.name_set_in_onboarding = true;
     }
 
-    if (birthDate !== normalizeDateInput(user.birth_date)) {
-      patch.birth_date = birthDate || null;
+    if (trimmedBirth !== normalizeDateInput(user.birth_date)) {
+      patch.birth_date = trimmedBirth;
     }
 
     // Всегда пишем руку при сохранении онбординга (иначе дефолт «Правая» не уходит в БД).
@@ -371,6 +400,10 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
       setStep(2);
     } catch (err) {
       error('onboarding profile save:', err);
+      await alert({
+        title: 'Ошибка',
+        message: 'Не удалось сохранить профиль. Попробуйте ещё раз.'
+      });
     } finally {
       setSaving(false);
     }
@@ -508,15 +541,14 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
               />
             </div>
 
-            <div className="form-group">
-              <label htmlFor="onboarding-birth-date">Дата рождения</label>
-              <input
-                id="onboarding-birth-date"
-                type="date"
-                value={birthDate}
-                onChange={(e) => setBirthDate(e.target.value)}
-              />
-            </div>
+            <MembershipStartDateField
+              id="onboarding-birth-date"
+              label="Дата рождения"
+              value={birthDate}
+              onChange={setBirthDate}
+              required
+              maxDate={todayIso}
+            />
 
             <div className="form-group">
               <label htmlFor="onboarding-hand">Ведущая рука</label>

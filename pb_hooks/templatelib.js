@@ -143,9 +143,19 @@ var DEFAULTS = [
     key: 'app.training_countdown',
     channel: 'app',
     name: 'Напоминание о тренировке',
-    description: 'In-app «Не забыли?» при записи / за 4 часа до старта.',
+    description: 'In-app «Не забыли?» за ≤4 часа до старта (крон training_reminder_4h / restore).',
     title: 'Не забыли? 😜',
     body: 'А мы напоминаем, совсем скоро у Вас запланирована тренировка! Мы Вас будем ждать! Но если что-то пошло не по плану, обязательно сообщите нам.',
+    audience: 'user',
+    enabled: true
+  },
+  {
+    key: 'app.training_upcoming',
+    channel: 'app',
+    name: 'Ближайшая тренировка (поздняя запись)',
+    description: 'In-app при записи уже в окне ≤4ч до старта (lifecycle booked_users).',
+    title: 'Ближайшая тренировка',
+    body: 'Вы успели записаться — супер! Совсем скоро начинаем. Ждём вас на площадке, а если планы изменятся — обязательно дайте знать.',
     audience: 'user',
     enabled: true
   },

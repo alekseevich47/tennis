@@ -1,4 +1,5 @@
-// Жизненный цикл in-app уведомления «Не забыли?»: запись/снятие/отмена/восстановление тренировки.
+// Жизненный цикл in-app уведомления о тренировке: запись/снятие/отмена/восстановление.
+// Поздняя запись (≤4ч) → countdown + upcoming («Ближайшая тренировка»); крон 4h / restore → reminder.
 onRecordAfterUpdateSuccess((e) => {
   try {
     var lib = require(__hooks + '/notificationslib.js');
@@ -17,7 +18,8 @@ onRecordAfterUpdateSuccess((e) => {
     var addedBooked = lib.newlyAddedUserIds(oldBooked, newBooked);
     if (addedBooked.length && !record.getBool('is_deleted') && !record.getBool('is_cancelled')) {
       for (i = 0; i < addedBooked.length; i++) {
-        lib.upsertTrainingNotification(addedBooked[i], trainingId, 'countdown');
+        // Поздняя запись (создание только в окне ≤4ч) — отдельный копирайт «Ближайшая тренировка».
+        lib.upsertTrainingNotification(addedBooked[i], trainingId, 'countdown', 'upcoming');
       }
     }
 

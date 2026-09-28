@@ -27,7 +27,8 @@ function startOfDecadePage(date) {
  *   selectedDate?: Date | undefined,
  *   onSelectRange?: (range: import('@daypicker/react').DateRange | undefined) => void,
  *   onSelectDate?: (date: Date | undefined) => void,
- *   initialDisplayMonth?: Date
+ *   initialDisplayMonth?: Date,
+ *   disabled?: import('@daypicker/react').Matcher | import('@daypicker/react').Matcher[]
  * }} props
  */
 function DateRangePicker({
@@ -36,7 +37,8 @@ function DateRangePicker({
   selectedDate,
   onSelectRange,
   onSelectDate,
-  initialDisplayMonth = new Date()
+  initialDisplayMonth = new Date(),
+  disabled
 }) {
   const [view, setView] = useState('days');
   const [displayMonth, setDisplayMonth] = useState(initialDisplayMonth);
@@ -197,6 +199,7 @@ function DateRangePicker({
             onMonthChange={setDisplayMonth}
             selected={mode === 'single' ? selectedDate : selectedRange}
             onSelect={mode === 'single' ? onSelectDate : onSelectRange}
+            disabled={disabled}
             showOutsideDays
             hideNavigation
             components={{ MonthCaption: EmptyCaption, Nav: EmptyCaption }}

@@ -242,3 +242,45 @@ main.content-with-header.onboarding-scroll-locked {
 .app.onboarding-active .bottom-nav__pill {
   pointer-events: none;
 }
+
+.onboarding-form .membership-date-field-wrap {
+  position: relative;
+}
+
+.onboarding-form .membership-date-field-input {
+  width: 100%;
+  padding: 10px 40px 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  background: #fff;
+  color: #333;
+  outline: none;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.onboarding-form .membership-date-field-input:focus {
+  border-color: #007aff;
+}
+
+.onboarding-form .membership-date-field-calendar-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #007aff;
+  cursor: pointer;
+}
+
+.onboarding-form .membership-date-field-calendar-btn svg {
+  width: 18px;
+  height: 18px;
+}
