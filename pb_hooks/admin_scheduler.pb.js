@@ -1,6 +1,13 @@
 // Крон диспетчера запланированных рассылок/уведомлений + немедленная отправка («Сейчас»).
 
 cronAdd('dispatch_scheduled_items', '* * * * *', () => {
+  // Lock: MAX+TG + sleep при 429 могут тянуться >1 мин — без lock следующий тик
+  // снова берёт pending и шлёт дважды.
+  const st = $app.store();
+  const started = Number(st.get('dispatch_scheduled_lock') || 0);
+  if (started && Date.now() - started < 15 * 60 * 1000) return;
+  st.set('dispatch_scheduled_lock', Date.now());
+
   const adminlib = require(__hooks + '/adminlib.js');
   try {
     const filter = 'status = "pending" && scheduled_at <= @now';
@@ -28,6 +35,8 @@ cronAdd('dispatch_scheduled_items', '* * * * *', () => {
     }
   } catch (err) {
     console.log('[admin] dispatch cron: ' + (err && err.stack ? err.stack : err));
+  } finally {
+    st.remove('dispatch_scheduled_lock');
   }
 });
 

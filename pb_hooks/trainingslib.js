@@ -26,7 +26,33 @@ function isDailyLimitedMembership(membershipType) {
 /**
  * @param {core.App} app
  * @param {string} userId
- * @param {{ skipNotify?: boolean, wasUnpaid?: boolean }} [options]
+ * @param {number} delta
+ * @param {boolean} unpaid
+ * @param {number} balanceAfter
+ * @param {{ kind: string, trainingId?: string, trainingDate?: string, actor?: any } | undefined} ledger
+ */
+function logLedger(app, userId, delta, unpaid, balanceAfter, ledger) {
+  if (!ledger || !ledger.kind) return;
+  try {
+    require(__hooks + '/membershipledgerlib.js').logMovement(app, {
+      userId: userId,
+      delta: delta,
+      kind: ledger.kind,
+      unpaid: unpaid,
+      trainingId: ledger.trainingId,
+      trainingDate: ledger.trainingDate,
+      actor: ledger.actor,
+      balanceAfter: balanceAfter
+    });
+  } catch (err) {
+    console.log('[trainingslib] ledger: ' + err);
+  }
+}
+
+/**
+ * @param {core.App} app
+ * @param {string} userId
+ * @param {{ skipNotify?: boolean, wasUnpaid?: boolean, ledger?: { kind: string, trainingId?: string, trainingDate?: string, actor?: any } }} [options]
  */
 function restoreMembershipSession(app, userId, options) {
   var skipNotify = options && options.skipNotify;
@@ -50,6 +76,14 @@ function restoreMembershipSession(app, userId, options) {
     user.set('available_sessions', newAvailable);
   }
   app.save(user);
+  logLedger(
+    app,
+    userId,
+    (wasUnpaid || !isUnlimitedMembership(membershipType)) ? 1 : 0,
+    !!wasUnpaid,
+    newAvailable,
+    options && options.ledger
+  );
   if (!skipNotify) {
     try {
       var nlib = require(__hooks + '/notificationslib.js');
@@ -99,7 +133,13 @@ function finalizeCancelledTrainingRecord(training) {
       var uid = String(bookedUsers[i]);
       restoreMembershipSession($app, uid, {
         skipNotify: true,
-        wasUnpaid: !!unpaidSet[uid]
+        wasUnpaid: !!unpaidSet[uid],
+        ledger: {
+          kind: 'training_cancelled',
+          trainingId: training.id,
+          trainingDate: training.getString('date'),
+          actor: null
+        }
       });
       if (attendedSet[uid]) {
         try {
@@ -205,7 +245,7 @@ function hasDailyBookingSameDay(app, userId, trainingDate, trainingId) {
  * @param {boolean} isModerator
  * @param {string} trainingDate
  * @param {string} trainingId
- * @param {{ skipEligibilityChecks?: boolean }} [options]
+ * @param {{ skipEligibilityChecks?: boolean, ledger?: { kind: string, trainingId?: string, trainingDate?: string, actor?: any } }} [options]
  * @returns {boolean} true — запись ушла в unpaid_sessions
  */
 function consumeMembershipSessionTx(app, userId, isModerator, trainingDate, trainingId, options) {
@@ -249,6 +289,15 @@ function consumeMembershipSessionTx(app, userId, isModerator, trainingDate, trai
   var usedSessions = user.getFloat('used_sessions') || 0;
   user.set('used_sessions', usedSessions + 1);
   app.save(user);
+
+  logLedger(
+    app,
+    userId,
+    (wasUnpaid || !unlimited) ? -1 : 0,
+    wasUnpaid,
+    newAvailable,
+    options && options.ledger
+  );
 
   try {
     var nlib = require(__hooks + '/notificationslib.js');
@@ -494,6 +543,10 @@ function applyBookingSideEffects(original, record, auth) {
     attendedRemoved.length;
   if (!hasWork) return;
 
+  function ledgerCtx(kind) {
+    return { kind: kind, trainingId: trainingId, trainingDate: trainingDate, actor: auth || null };
+  }
+
   var unpaidOriginal = audit.newlyAdded([], original.get('unpaid_booked_users') || []);
   var unpaidSet = {};
   for (i = 0; i < unpaidOriginal.length; i++) {
@@ -513,7 +566,8 @@ function applyBookingSideEffects(original, record, auth) {
           var cancelUid = String(cancelBooked[i]);
           restoreMembershipSession(txApp, cancelUid, {
             skipNotify: true,
-            wasUnpaid: !!unpaidSet[cancelUid]
+            wasUnpaid: !!unpaidSet[cancelUid],
+            ledger: ledgerCtx('training_cancelled')
           });
           if (cancelAttendedSet[cancelBooked[i]]) {
             adjustAttendanceCountTx(txApp, cancelBooked[i], -1);
@@ -535,7 +589,7 @@ function applyBookingSideEffects(original, record, auth) {
             true,
             trainingDate,
             trainingId,
-            { skipEligibilityChecks: true }
+            { skipEligibilityChecks: true, ledger: ledgerCtx('training_restored') }
           );
           if (restoreWasUnpaid) restoreUnpaid.push(String(restoreBooked[i]));
         }
@@ -555,7 +609,8 @@ function applyBookingSideEffects(original, record, auth) {
         addUid,
         isModerator,
         trainingDate,
-        trainingId
+        trainingId,
+        { ledger: ledgerCtx('booking') }
       );
       if (addedUnpaid && nextUnpaid.indexOf(addUid) < 0) {
         nextUnpaid.push(addUid);
@@ -563,7 +618,10 @@ function applyBookingSideEffects(original, record, auth) {
     }
     for (i = 0; i < removed.length; i++) {
       var remUid = String(removed[i]);
-      restoreMembershipSession(txApp, remUid, { wasUnpaid: !!unpaidSet[remUid] });
+      restoreMembershipSession(txApp, remUid, {
+        wasUnpaid: !!unpaidSet[remUid],
+        ledger: ledgerCtx('unbook')
+      });
       nextUnpaid = nextUnpaid.filter(function (id) {
         return String(id) !== remUid;
       });

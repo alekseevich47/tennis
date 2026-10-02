@@ -1,6 +1,6 @@
 // @ts-check
 import pb from './pb';
-import { MAX_AUTH_URL } from '../config';
+import { MAX_AUTH_URL, TG_AUTH_URL } from '../config';
 import { log, error } from '../lib/log';
 /**
  * @typedef {Object} UserRecord
@@ -11,6 +11,7 @@ import { log, error } from '../lib/log';
  * @property {string | string[]} [avatar]
  * @property {string} [avatar_url]
  * @property {string} [max_id]
+ * @property {string} [tg_id] hidden; приходит только модератору (onRecordEnrich)
  * @property {string} [dominant_hand]
  * @property {number} [rating_points]
  * @property {number} [wins]
@@ -25,14 +26,15 @@ import { log, error } from '../lib/log';
  * @property {boolean} [name_set_in_onboarding]
  */
 
+// bot_blocked — агрегат: заблокированы боты во всех привязанных мессенджерах (MAX / Telegram).
 export const BOT_BLOCKED_APP_MESSAGE =
-  'Вы заблокировали или удалили бота в MAX. Для доступа к приложению снова нажмите «Открыть» в боте.';
+  'Вы заблокировали или удалили бота в мессенджере (MAX / Telegram). Для доступа к приложению снова запустите бота и нажмите «Открыть».';
 
 export const BOT_BLOCKED_BOOKING_MESSAGE =
-  'Невозможно записать: пользователь заблокировал бота в MAX, уведомления о тренировках недоступны.';
+  'Невозможно записать: пользователь заблокировал бота (MAX / Telegram), уведомления о тренировках недоступны.';
 
 export const BOT_BLOCKED_TOURNAMENT_MESSAGE =
-  'Нельзя выбрать: пользователь заблокировал бота в MAX.';
+  'Нельзя выбрать: пользователь заблокировал бота (MAX / Telegram).';
 
 const BAN_INFO_KEY = 'tennis_ban_info';
 
@@ -137,8 +139,30 @@ export async function refreshAuthUser(userId, signal) {
  * @returns {Promise<UserRecord | null>}
  */
 export async function initMaxAuth(initData, signal) {
+  return authWithInitData(MAX_AUTH_URL, 'MAX', initData, signal);
+}
+
+/**
+ * Инициализация авторизации через Telegram Mini Apps (`/api/tg-auth`, HMAC initData на сервере).
+ * @param {string} initData
+ * @param {AbortSignal} [signal]
+ * @returns {Promise<UserRecord | null>}
+ */
+export async function initTelegramAuth(initData, signal) {
+  return authWithInitData(TG_AUTH_URL, 'Telegram', initData, signal);
+}
+
+/**
+ * Общий обмен initData мессенджера на PocketBase token.
+ * @param {string} url
+ * @param {'MAX' | 'Telegram'} label
+ * @param {string} initData
+ * @param {AbortSignal} [signal]
+ * @returns {Promise<UserRecord | null>}
+ */
+async function authWithInitData(url, label, initData, signal) {
   try {
-    const response = await fetch(MAX_AUTH_URL, {
+    const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ initData }),
@@ -150,7 +174,10 @@ export async function initMaxAuth(initData, signal) {
         const data = await response.json().catch(() => ({}));
         return finalizeBannedUser(/** @type {UserRecord} */ (data));
       }
-      throw new Error('Сервер авторизации MAX вернул ошибку');
+      const err = new Error(`Сервер авторизации ${label} вернул ошибку`);
+      // @ts-expect-error status для fallback при устаревшем initData (useMaxAuth)
+      err.status = response.status;
+      throw err;
     }
 
     const data = await response.json();
@@ -165,7 +192,7 @@ export async function initMaxAuth(initData, signal) {
           if (isUserBanned(loggedUser)) return loggedUser;
         } catch (refreshErr) {
           if (refreshErr && /** @type {Error} */ (refreshErr).name === 'AbortError') throw refreshErr;
-          error('Ошибка обновления профиля после MAX auth:', refreshErr);
+          error(`Ошибка обновления профиля после ${label} auth:`, refreshErr);
         }
       } else if (isUserBanned(loggedUser)) {
         return finalizeBannedUser(loggedUser);
@@ -179,7 +206,7 @@ export async function initMaxAuth(initData, signal) {
     return data.user || null;
   } catch (err) {
     if (err && /** @type {Error} */ (err).name === 'AbortError') return null;
-    error('Ошибка initMaxAuth:', err);
+    error(`Ошибка авторизации ${label}:`, err);
     throw err;
   }
 }
@@ -313,11 +340,42 @@ export async function unclaimMaxAccount(targetUserId) {
 }
 
 /**
- * @param {string} [excludeUserId]
- * @returns {Promise<Array<{ id: string, full_name: string, max_id: string, avatar?: string, avatar_url?: string, email?: string, created?: string, rating_points?: number, available_sessions?: number }>>}
+ * Привязка tg_id к профилю (A) или объединение с дублем Telegram (B). Только moderator.
+ * @param {{ targetUserId: string, tgId?: string, tgUserId?: string }} payload
+ * @returns {Promise<{ success: boolean, mode: 'link'|'merge', deletedUserId?: string|null, user: UserRecord }>}
  */
-export async function listClaimCandidates(excludeUserId) {
-  const qs = excludeUserId ? `?exclude=${encodeURIComponent(excludeUserId)}` : '';
+export async function claimTgAccount(payload) {
+  return /** @type {Promise<{ success: boolean, mode: 'link'|'merge', deletedUserId?: string|null, user: UserRecord }>} */ (
+    pb.send('/api/users-claim-tg', {
+      method: 'POST',
+      body: payload
+    })
+  );
+}
+
+/**
+ * @param {string} targetUserId
+ * @returns {Promise<{ success: boolean, tgId: string, user: UserRecord }>}
+ */
+export async function unclaimTgAccount(targetUserId) {
+  return /** @type {Promise<{ success: boolean, tgId: string, user: UserRecord }>} */ (
+    pb.send('/api/users-unclaim-tg', {
+      method: 'POST',
+      body: { targetUserId }
+    })
+  );
+}
+
+/**
+ * @param {string} [excludeUserId]
+ * @param {'max' | 'tg'} [channel]
+ * @returns {Promise<Array<{ id: string, full_name: string, max_id: string, tg_id?: string, avatar?: string, avatar_url?: string, email?: string, created?: string, rating_points?: number, available_sessions?: number }>>}
+ */
+export async function listClaimCandidates(excludeUserId, channel = 'max') {
+  const params = new URLSearchParams();
+  if (excludeUserId) params.set('exclude', excludeUserId);
+  if (channel === 'tg') params.set('channel', 'tg');
+  const qs = params.toString() ? `?${params.toString()}` : '';
   const data = await pb.send(`/api/users-claim-candidates${qs}`, { method: 'GET' });
   return (data && data.candidates) || [];
 }

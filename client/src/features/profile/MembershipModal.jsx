@@ -3,7 +3,7 @@ import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
 import { useToast } from '../../components/ui/ToastContext';
 import { MAX_SELLER_URL } from '../../config';
-import { isModerator } from '../../services/auth';
+import { getCurrentUser, isModerator } from '../../services/auth';
 import pb from '../../services/pb';
 import { formatPostDate, pluralize } from '../../lib/format';
 import { error } from '../../lib/log';
@@ -13,6 +13,8 @@ import {
   openSellerChat
 } from '../shop/buyMessage';
 import MembershipEditModal from './MembershipEditModal';
+import MembershipHistory from './MembershipHistory';
+import TrainingDetailModal from '../trainings/TrainingDetailModal';
 import './Profile.css';
 import '../trainings/Trainings.css';
 
@@ -59,6 +61,9 @@ function formatFreezeLogEntry(entry, index, total) {
   return `${from} — ${to} (${days} ${dayLabel})`;
 }
 
+const TRAINING_EXPAND =
+  'booked_users,attended_users,unbooked_users,moderator_kicked_users,restore_insufficient_users';
+
 function MembershipModal({ isOpen, onClose, user, onMutated }) {
   const { showToast } = useToast();
   const [userSnapshot, setUserSnapshot] = useState(user);
@@ -75,6 +80,8 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
   const [frozenAt, setFrozenAt] = useState('');
   const [freezeLog, setFreezeLog] = useState([]);
   const [comment, setComment] = useState('');
+  const [ledgerRefreshKey, setLedgerRefreshKey] = useState(0);
+  const [selectedTraining, setSelectedTraining] = useState(/** @type {any | null} */ (null));
 
   useEffect(() => {
     if (user) {
@@ -124,6 +131,7 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
   useEffect(() => {
     if (!isOpen) {
       setEditMode(null);
+      setSelectedTraining(null);
       return;
     }
 
@@ -181,7 +189,41 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
     }
     onMutated?.(updated);
     setEditMode(null);
+    setLedgerRefreshKey((k) => k + 1);
   };
+
+  const handleOpenTraining = useCallback(
+    async (trainingId) => {
+      try {
+        const full = await pb.collection('trainings').getOne(trainingId, {
+          expand: TRAINING_EXPAND
+        });
+        setSelectedTraining(full);
+      } catch (err) {
+        if (err?.status === 404) {
+          showToast({ text: 'Тренировка удалена' });
+        } else {
+          error('open training from membership history:', err);
+        }
+      }
+    },
+    [showToast]
+  );
+
+  const handleTrainingMutated = useCallback(async () => {
+    if (selectedTraining?.id) {
+      try {
+        const full = await pb.collection('trainings').getOne(selectedTraining.id, {
+          expand: TRAINING_EXPAND
+        });
+        setSelectedTraining(full);
+      } catch {
+        /* ignore */
+      }
+    }
+    await fetchMembership();
+    setLedgerRefreshKey((k) => k + 1);
+  }, [selectedTraining?.id, fetchMembership]);
 
   const handleBuyClick = useCallback(() => {
     if (isMobileMaxPlatform()) {
@@ -361,6 +403,14 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
               </ul>
             </div>
           )}
+          {user?.id && (
+            <MembershipHistory
+              enabled={Boolean(isOpen)}
+              userId={user.id}
+              refreshKey={ledgerRefreshKey}
+              onOpenTraining={handleOpenTraining}
+            />
+          )}
           {moderator && comment && (
             <p className="membership-comment-display">
               <strong>Комментарий:</strong> {comment}
@@ -396,6 +446,15 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
         user={userSnapshot}
         mode={editMode}
         onMutated={handleMutated}
+      />
+
+      <TrainingDetailModal
+        isOpen={Boolean(selectedTraining)}
+        training={selectedTraining}
+        userIsModerator={moderator}
+        currentUser={getCurrentUser()}
+        onClose={() => setSelectedTraining(null)}
+        onMutated={handleTrainingMutated}
       />
     </>
   );

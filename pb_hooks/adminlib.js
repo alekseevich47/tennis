@@ -14,7 +14,22 @@ function resolveAudienceUserIds(record, options) {
   if (audience === 'all_except_banned') {
     filter = 'is_banned != true';
   } else if (forBroadcast) {
-    filter = 'max_id != "" && is_banned != true';
+    // Хотя бы один мессенджер (MAX или Telegram). Fallback max_id, если tg_id ещё нет в схеме.
+    try {
+      const users = $app.findRecordsByFilter(
+        'users',
+        '(max_id != "" || tg_id != "") && is_banned != true',
+        '',
+        0,
+        0
+      );
+      const ids = [];
+      for (let i = 0; i < users.length; i++) ids.push(users[i].id);
+      return ids;
+    } catch (err) {
+      console.log('[admin] tg_id filter unavailable, fallback max_id: ' + err);
+      filter = 'max_id != "" && is_banned != true';
+    }
   } else {
     filter = '';
   }
@@ -49,7 +64,15 @@ function dispatchScheduledBroadcast(record) {
           })()
         );
 
-    bot.broadcastToUserIds(userIds, text, attachments);
+    let tgMedia;
+    try {
+      const tg = require(__hooks + '/tgbotlib.js');
+      tgMedia = tg.isTgConfigured() ? tg.prepareBroadcastMedia(record) : undefined;
+    } catch (tgErr) {
+      console.log('[admin] tg media: ' + tgErr);
+    }
+
+    bot.broadcastToUserIds(userIds, text, attachments, tgMedia);
     record.set('status', 'sent');
     $app.save(record);
     console.log('[admin] broadcast sent: ' + record.id + ' → ' + userIds.length + ' users');

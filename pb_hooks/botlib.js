@@ -138,13 +138,85 @@ function sendBotMessage(maxId, text, attachments) {
   }
 }
 
-function getModeratorMaxIds() {
-  const mods = $app.findRecordsByFilter('users', 'role = "moderator" && max_id != ""', '', 0, 0);
-  const ids = [];
-  for (let i = 0; i < mods.length; i++) {
-    ids.push(mods[i].getString('max_id'));
+/** Фильтр «есть хотя бы один привязанный мессенджер» (MAX или Telegram). */
+const MESSENGER_LINKED_FILTER = '(max_id != "" || tg_id != "")';
+/** Fallback, если в live PB ещё нет поля tg_id (хуки раньше схемы). */
+const MESSENGER_LINKED_FILTER_LEGACY = 'max_id != ""';
+
+var _messengerFilterWarned = false;
+
+/**
+ * Пользователи с привязанным мессенджером.
+ * При отсутствии поля tg_id в схеме — fallback на max_id (не роняет MAX-рассылки).
+ * @param {string} [extraFilter] доп. условие через && (напр. 'is_banned != true')
+ * @returns {any[]}
+ */
+function findMessengerUsers(extraFilter) {
+  const extra = extraFilter ? ' && ' + extraFilter : '';
+  try {
+    return $app.findRecordsByFilter('users', MESSENGER_LINKED_FILTER + extra, '', 0, 0);
+  } catch (err) {
+    if (!_messengerFilterWarned) {
+      _messengerFilterWarned = true;
+      console.log('[bot] tg_id filter unavailable, fallback max_id: ' + err);
+    }
+    return $app.findRecordsByFilter('users', MESSENGER_LINKED_FILTER_LEGACY + extra, '', 0, 0);
   }
-  return ids;
+}
+
+/**
+ * Доставка сообщения пользователю во все привязанные мессенджеры (MAX + Telegram).
+ * MAX — как раньше (по max_id, без проверки блокировки); Telegram — если tg_id и канал не заблокирован.
+ * @param {any} user Record users
+ * @param {string} text MAX-markdown
+ * @param {{ maxAttachments?: any[], tgMedia?: any }} [opts]
+ */
+function sendToUser(user, text, opts) {
+  if (!user || !text) return;
+  const maxId = user.getString('max_id');
+  if (maxId) {
+    sendBotMessage(maxId, text, opts && opts.maxAttachments);
+  }
+  const tgId = user.getString('tg_id');
+  if (tgId && !user.getBool('tg_bot_blocked')) {
+    try {
+      const tg = require(__hooks + '/tgbotlib.js');
+      if (opts && opts.tgMedia) {
+        tg.sendTgMessageWithMedia(tgId, text, opts.tgMedia);
+      } else {
+        tg.sendTgMessage(tgId, text);
+      }
+    } catch (err) {
+      console.log('[bot] tg send: ' + err);
+    }
+  }
+}
+
+/**
+ * Агрегат bot_blocked = «все привязанные каналы заблокированы» (без каналов — false).
+ * Мутирует record, НЕ сохраняет (save — на вызывающей стороне).
+ * @param {any} user Record users
+ */
+function recomputeBotBlocked(user) {
+  if (!user) return;
+  const channels = [];
+  if (user.getString('max_id')) channels.push(user.getBool('max_bot_blocked'));
+  if (user.getString('tg_id')) channels.push(user.getBool('tg_bot_blocked'));
+  let blocked = channels.length > 0;
+  for (let i = 0; i < channels.length; i++) {
+    if (!channels[i]) {
+      blocked = false;
+      break;
+    }
+  }
+  const wasBlocked = user.getBool('bot_blocked');
+  if (blocked === wasBlocked) return;
+  user.set('bot_blocked', blocked);
+  user.set('bot_blocked_at', blocked ? new Date().toISOString() : '');
+}
+
+function getModeratorRecords() {
+  return findMessengerUsers('role = "moderator"');
 }
 
 const GMT7_OFFSET_MS = 7 * 60 * 60 * 1000;
@@ -165,9 +237,9 @@ function getLocalDateString(dayOffset) {
 }
 
 function notifyModerators(text) {
-  const ids = getModeratorMaxIds();
-  for (let i = 0; i < ids.length; i++) {
-    sendBotMessage(ids[i], text);
+  const mods = getModeratorRecords();
+  for (let i = 0; i < mods.length; i++) {
+    sendToUser(mods[i], text);
   }
 }
 
@@ -248,26 +320,30 @@ function sendTrainingRemindersForDate(dateStr) {
 
     try {
       const user = $app.findRecordById('users', userId);
-      const maxId = user.getString('max_id');
-      if (maxId) sendBotMessage(maxId, msg);
+      sendToUser(user, msg);
     } catch (_) {}
   }
 }
 
 function broadcastToAllUsers(text) {
-  const allUsers = $app.findRecordsByFilter('users', 'max_id != "" && is_banned != true', '', 0, 0);
+  const allUsers = findMessengerUsers('is_banned != true');
   for (let i = 0; i < allUsers.length; i++) {
-    sendBotMessage(allUsers[i].getString('max_id'), text);
+    sendToUser(allUsers[i], text);
   }
 }
 
-function broadcastToUserIds(userIds, text, attachments) {
+/**
+ * @param {string[]} userIds
+ * @param {string} text
+ * @param {any[]} [attachments] вложения MAX (upload token / url)
+ * @param {any} [tgMedia] контекст фото Telegram (tgbotlib.prepareBroadcastMedia)
+ */
+function broadcastToUserIds(userIds, text, attachments, tgMedia) {
   if (!userIds || !userIds.length) return;
   for (let i = 0; i < userIds.length; i++) {
     try {
       const user = $app.findRecordById('users', userIds[i]);
-      const maxId = user.getString('max_id');
-      if (maxId) sendBotMessage(maxId, text, attachments);
+      sendToUser(user, text, { maxAttachments: attachments, tgMedia: tgMedia });
     } catch (_) {}
   }
 }
@@ -423,6 +499,10 @@ function broadcastNewPublication() {
 
 module.exports = {
   sendBotMessage: sendBotMessage,
+  sendToUser: sendToUser,
+  recomputeBotBlocked: recomputeBotBlocked,
+  MESSENGER_LINKED_FILTER: MESSENGER_LINKED_FILTER,
+  findMessengerUsers: findMessengerUsers,
   notifyModerators: notifyModerators,
   formatDateTimeGmt7: formatDateTimeGmt7,
   getLocalDateString: getLocalDateString,

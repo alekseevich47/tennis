@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { closeTopOverlay } from '../lib/overlayStack';
 import { isSectionScrollAtTop, scrollSectionToTop } from '../lib/sectionScroll';
+import { getWebApp } from '../lib/messengerBridge';
 
 /**
  * @param {Element | null} el
@@ -26,7 +27,7 @@ function isEditableFocus(el) {
 /**
  * Повторно глушит нативный vertical-swipe закрытия MAX.
  * Свайп по шапке MAX SDK всё ещё может закрывать — отдельного API нет.
- * @param {typeof window.WebApp | undefined} webApp
+ * @param {import('../lib/messengerBridge').MessengerWebApp | undefined} webApp
  */
 function disableMaxVerticalSwipes(webApp) {
   Promise.resolve(webApp?.disableVerticalSwipes?.()).catch(() => {});
@@ -96,9 +97,7 @@ export function useMaxCloseGuard({
       // flush ошибок не блокирует закрытие
     }
 
-    const webApp = /** @type {{ disableClosingConfirmation?: () => void, close?: () => void } | undefined} */ (
-      window.WebApp
-    );
+    const webApp = getWebApp();
     try {
       webApp?.disableClosingConfirmation?.();
     } catch {
@@ -117,19 +116,8 @@ export function useMaxCloseGuard({
   useEffect(() => {
     if (!enabled) return undefined;
 
-    const webApp = /** @type {{
-      ready?: () => void,
-      enableClosingConfirmation?: () => void,
-      disableClosingConfirmation?: () => void,
-      enableVerticalSwipes?: () => void,
-      disableVerticalSwipes?: () => void,
-      BackButton?: {
-        show?: () => void,
-        hide?: () => void,
-        onClick?: (cb: () => void) => void,
-        offClick?: (cb: () => void) => void
-      }
-    } | undefined} */ (window.WebApp);
+    // MAX Bridge или Telegram.WebApp — API BackButton / closing confirmation / swipes совпадает.
+    const webApp = getWebApp();
 
     const handleBack = () => {
       if (confirmingRef.current) return;

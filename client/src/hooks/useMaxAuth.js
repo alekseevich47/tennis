@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import pb from '../services/pb';
 import {
   initMaxAuth,
+  initTelegramAuth,
   getCurrentUser,
   loadBanInfo,
   isUserBanned,
@@ -16,6 +17,7 @@ import { purgeAbandonedProducts } from '../services/catalog';
 import { warn, error } from '../lib/log';
 import { refreshMediaFileToken } from '../lib/media';
 import { mutate as mutateSWR } from 'swr';
+import { getMessenger } from '../lib/messengerBridge';
 /**
  * @typedef {import('../services/auth').UserRecord} UserRecord
  */
@@ -61,28 +63,66 @@ export function useMaxAuth() {
 
     (async () => {
       try {
-        const webApp = /** @type {{ ready?: () => void, initData?: string } | undefined} */ (
-          window
-        ).WebApp;
+        const { kind, webApp } = getMessenger();
         try {
           webApp?.ready?.();
         } catch {
           // ignore
+        }
+        if (kind === 'telegram') {
+          try {
+            webApp?.expand?.();
+          } catch {
+            // ignore
+          }
         }
 
         let initData = webApp?.initData || '';
         // Иногда Bridge отдаёт initData чуть позже ready().
         if (!initData) {
           await new Promise((resolve) => window.setTimeout(resolve, 50));
-          initData = webApp?.initData || '';
+          initData = getMessenger().webApp?.initData || '';
         }
 
         let loggedUser = null;
 
-        if (initData) {
+        if (initData && kind === 'telegram') {
+          try {
+            loggedUser = await initTelegramAuth(initData, controller.signal);
+          } catch (tgAuthErr) {
+            // Устаревший initData после reload (auth_date > 900 с) → локальная сессия.
+            const status = /** @type {{ status?: number }} */ (tgAuthErr)?.status;
+            if (status === 401 && pb.authStore.isValid && getCurrentUser()?.id) {
+              try {
+                loggedUser = await refreshAuthUser(getCurrentUser().id, controller.signal);
+              } catch (refreshErr) {
+                if (refreshErr && /** @type {Error} */ (refreshErr).name === 'AbortError') throw refreshErr;
+                throw tgAuthErr;
+              }
+            } else {
+              throw tgAuthErr;
+            }
+          }
+          // Разрешение боту писать в личку: только если ещё не true, версия ≥6.9, раз за сессию.
+          try {
+            const writeKey = 'tg_write_access_requested';
+            const allows = webApp?.initDataUnsafe?.user?.allows_write_to_pm;
+            if (
+              loggedUser?.id &&
+              allows !== true &&
+              webApp?.isVersionAtLeast?.('6.9') &&
+              sessionStorage.getItem(writeKey) !== '1'
+            ) {
+              sessionStorage.setItem(writeKey, '1');
+              webApp.requestWriteAccess?.();
+            }
+          } catch {
+            // ignore
+          }
+        } else if (initData) {
           loggedUser = await initMaxAuth(initData, controller.signal);
         } else {
-          warn('Запуск вне мессенджера MAX. Используем локальную сессию.');
+          warn('Запуск вне мессенджера (MAX / Telegram). Используем локальную сессию.');
           loggedUser = getCurrentUser();
           if (loggedUser?.id && pb.authStore.token) {
             try {

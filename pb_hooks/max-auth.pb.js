@@ -119,7 +119,13 @@ routerAdd("POST", "/api/max-auth", (c) => {
             user.set("can_comment", true);
             user.set("onboarding_completed", false);
             user.set("name_set_in_onboarding", false);
-            user.set("email", "max_" + maxId + "@max-app.local");
+            // После unclaim email max_<id>@… может остаться у другого профиля — суффикс при коллизии.
+            let email = "max_" + maxId + "@max-app.local";
+            try {
+                $app.findAuthRecordByEmail("users", email);
+                email = "max_" + maxId + "_" + $security.randomString(6).toLowerCase() + "@max-app.local";
+            } catch (_) {}
+            user.set("email", email);
             user.setPassword($security.randomString(30));
             $app.save(user);
         }

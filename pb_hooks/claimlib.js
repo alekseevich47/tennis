@@ -1,9 +1,72 @@
-// Claim / merge MAX: привязка max_id к ручному users и слияние дубля.
+// Claim / merge мессенджеров (MAX + Telegram): привязка id к ручному users и слияние дубля.
 // Файл без .pb.js — require() внутри хендлеров.
 
 function normalizeMaxId(value) {
   if (value == null) return '';
   return String(value).trim();
+}
+
+/** Telegram user id — только положительное число. */
+function normalizeTgId(value) {
+  if (value == null) return '';
+  var s = String(value).trim();
+  return /^\d{1,20}$/.test(s) ? s : '';
+}
+
+/** Конфигурация каналов claim. Тексты MAX — без изменений (обратная совместимость UI). */
+var CHANNELS = {
+  max: {
+    key: 'max',
+    field: 'max_id',
+    blockedField: 'max_bot_blocked',
+    blockedAtField: '',
+    detailsKey: 'maxId',
+    auditPrefix: 'profile.max',
+    normalize: normalizeMaxId,
+    msg: {
+      stubNotFound: 'MAX-аккаунт не найден',
+      stubNoId: 'У выбранного аккаунта нет max_id',
+      missingId: 'Укажите max_id или maxUserId',
+      otherLinked: 'У игрока уже привязан другой max_id. Сначала отвяжите.',
+      mismatch: 'max_id не совпадает с выбранным MAX-аккаунтом',
+      linked: ' привязал(а) MAX к профилю ',
+      merged: ' объединил(а) MAX-аккаунт с профилем ',
+      unlinked: ' отвязал(а) MAX от профиля '
+    }
+  },
+  tg: {
+    key: 'tg',
+    field: 'tg_id',
+    blockedField: 'tg_bot_blocked',
+    blockedAtField: 'tg_bot_blocked_at',
+    detailsKey: 'tgId',
+    auditPrefix: 'profile.tg',
+    normalize: normalizeTgId,
+    msg: {
+      stubNotFound: 'Telegram-аккаунт не найден',
+      stubNoId: 'У выбранного аккаунта нет tg_id',
+      missingId: 'Укажите tg_id или tgUserId',
+      otherLinked: 'У игрока уже привязан другой tg_id. Сначала отвяжите.',
+      mismatch: 'tg_id не совпадает с выбранным Telegram-аккаунтом',
+      linked: ' привязал(а) Telegram к профилю ',
+      merged: ' объединил(а) Telegram-аккаунт с профилем ',
+      unlinked: ' отвязал(а) Telegram от профиля '
+    }
+  }
+};
+
+function getChannel(key) {
+  var ch = CHANNELS[key === 'tg' ? 'tg' : 'max'];
+  return ch;
+}
+
+function recomputeBotBlocked(user) {
+  try {
+    var bot = require(__hooks + '/botlib.js');
+    bot.recomputeBotBlocked(user);
+  } catch (err) {
+    console.log('[claim] recomputeBotBlocked: ' + err);
+  }
 }
 
 function relationIds(value) {
@@ -40,9 +103,9 @@ function replaceInIdList(ids, fromId, toId) {
   return { changed: changed, ids: result };
 }
 
-function findByMaxId(app, maxId) {
+function findByChannelId(app, ch, id) {
   try {
-    return app.findFirstRecordByFilter('users', 'max_id = {:maxId}', { maxId: maxId });
+    return app.findFirstRecordByFilter('users', ch.field + ' = {:id}', { id: id });
   } catch (_) {
     return null;
   }
@@ -188,11 +251,46 @@ function copyStubFields(target, stub) {
   if (!(target.getString('avatar_url') || '') && (stub.getString('avatar_url') || '')) {
     target.set('avatar_url', stub.getString('avatar_url'));
   }
-  if (stub.getBool('bot_blocked') && !target.getBool('bot_blocked')) {
-    target.set('bot_blocked', true);
-    target.set('bot_blocked_at', stub.get('bot_blocked_at') || '');
-  }
+  // bot_blocked — агрегат по каналам; пересчитывается после переноса id (recomputeBotBlocked).
   mergeFavoriteProducts(target, stub);
+}
+
+/**
+ * Снимает с stub id всех мессенджеров (unique index) и возвращает список переносов.
+ * Конфликт (у target другой id того же канала) → BadRequest (транзакция откатится).
+ */
+function detachStubMessengers(target, stub) {
+  var transfers = [];
+  var keys = ['max', 'tg'];
+  for (var i = 0; i < keys.length; i++) {
+    var ch = CHANNELS[keys[i]];
+    var stubVal = ch.normalize(stub.getString(ch.field));
+    if (!stubVal) continue;
+    var targetVal = ch.normalize(target.getString(ch.field));
+    if (targetVal && targetVal !== stubVal) {
+      throw new BadRequestError(ch.msg.otherLinked);
+    }
+    transfers.push({
+      ch: ch,
+      value: stubVal,
+      hadTarget: !!targetVal,
+      blocked: stub.getBool(ch.blockedField),
+      blockedAt: ch.blockedAtField ? stub.get(ch.blockedAtField) || '' : ''
+    });
+    stub.set(ch.field, '');
+  }
+  return transfers;
+}
+
+function applyMessengerTransfers(target, transfers) {
+  for (var i = 0; i < transfers.length; i++) {
+    var t = transfers[i];
+    target.set(t.ch.field, t.value);
+    if (!t.hadTarget) {
+      target.set(t.ch.blockedField, t.blocked);
+      if (t.ch.blockedAtField) target.set(t.ch.blockedAtField, t.blockedAt);
+    }
+  }
 }
 
 function remapAllFromStub(app, fromId, toId) {
@@ -216,6 +314,7 @@ function remapAllFromStub(app, fromId, toId) {
   remapSingleField(app, 'gallery_comments', 'author', fromId, toId);
   remapSingleField(app, 'notifications', 'user', fromId, toId);
   remapSingleField(app, 'content_views', 'user', fromId, toId);
+  remapSingleField(app, 'membership_ledger', 'user', fromId, toId);
   remapSingleField(app, 'post_likes', 'user', fromId, toId, ['post']);
   remapSingleField(app, 'gallery_likes', 'user', fromId, toId, ['media_id']);
   remapSingleField(app, 'comment_likes', 'author', fromId, toId, ['comment']);
@@ -225,11 +324,14 @@ function remapAllFromStub(app, fromId, toId) {
 }
 
 /**
+ * Привязка (A) или слияние (B) аккаунта мессенджера.
  * @param {core.App} app
- * @param {{ targetUserId: string, maxId?: string, maxUserId?: string, actor?: object }} opts
+ * @param {'max'|'tg'} channelKey
+ * @param {{ targetUserId: string, channelId?: string, stubUserId?: string, actor?: object }} opts
  * @returns {{ mode: 'link'|'merge', user: core.Record, deletedUserId?: string }}
  */
-function claimMax(app, opts) {
+function claimMessenger(app, channelKey, opts) {
+  var ch = getChannel(channelKey);
   var targetUserId = String(opts.targetUserId || '');
   if (!targetUserId) {
     throw new BadRequestError('targetUserId обязателен');
@@ -242,58 +344,61 @@ function claimMax(app, opts) {
     throw new NotFoundError('Целевой пользователь не найден');
   }
 
-  var maxId = normalizeMaxId(opts.maxId);
+  var channelId = ch.normalize(opts.channelId);
   var stub = null;
 
-  if (opts.maxUserId) {
+  if (opts.stubUserId) {
     try {
-      stub = app.findRecordById('users', String(opts.maxUserId));
+      stub = app.findRecordById('users', String(opts.stubUserId));
     } catch (_) {
-      throw new NotFoundError('MAX-аккаунт не найден');
+      throw new NotFoundError(ch.msg.stubNotFound);
     }
     if (stub.id === target.id) {
       throw new BadRequestError('Нельзя привязать аккаунт к самому себе');
     }
-    maxId = normalizeMaxId(stub.getString('max_id'));
-    if (!maxId) {
-      throw new BadRequestError('У выбранного аккаунта нет max_id');
+    channelId = ch.normalize(stub.getString(ch.field));
+    if (!channelId) {
+      throw new BadRequestError(ch.msg.stubNoId);
     }
   }
 
-  if (!maxId) {
-    throw new BadRequestError('Укажите max_id или maxUserId');
+  if (!channelId) {
+    throw new BadRequestError(ch.msg.missingId);
   }
 
-  var existingMax = normalizeMaxId(target.getString('max_id'));
-  if (existingMax && existingMax !== maxId) {
-    throw new BadRequestError('У игрока уже привязан другой max_id. Сначала отвяжите.');
+  var existing = ch.normalize(target.getString(ch.field));
+  if (existing && existing !== channelId) {
+    throw new BadRequestError(ch.msg.otherLinked);
   }
-  if (existingMax === maxId && !stub) {
+  if (existing === channelId && !stub) {
     return { mode: 'link', user: target };
   }
 
-  var owner = findByMaxId(app, maxId);
+  var owner = findByChannelId(app, ch, channelId);
   if (owner && owner.id === target.id && !stub) {
     return { mode: 'link', user: target };
   }
 
-  // Вариант A: max_id свободен
+  // Вариант A: id свободен
   if (!owner && !stub) {
-    target.set('max_id', maxId);
+    target.set(ch.field, channelId);
+    target.set(ch.blockedField, false);
+    if (ch.blockedAtField) target.set(ch.blockedAtField, '');
+    recomputeBotBlocked(target);
     app.save(target);
-    logClaimAudit(app, opts.actor, target, 'link', maxId, null);
+    logClaimAudit(app, ch, opts.actor, target, 'link', channelId, null);
     return { mode: 'link', user: target };
   }
 
-  // Вариант B: max_id занят другим пользователем (или явно передан maxUserId)
+  // Вариант B: id занят другим пользователем (или явно передан stubUserId)
   if (!stub) {
     stub = owner;
   }
   if (!stub || stub.id === target.id) {
     throw new BadRequestError('Нечего объединять');
   }
-  if (normalizeMaxId(stub.getString('max_id')) !== maxId) {
-    throw new BadRequestError('max_id не совпадает с выбранным MAX-аккаунтом');
+  if (ch.normalize(stub.getString(ch.field)) !== channelId) {
+    throw new BadRequestError(ch.msg.mismatch);
   }
 
   var deletedUserId = stub.id;
@@ -306,19 +411,48 @@ function claimMax(app, opts) {
 
     copyStubFields(target, stub);
 
-    stub.set('max_id', '');
+    // Переносим id ВСЕХ мессенджеров stub (MAX и Telegram), сначала освобождая unique index.
+    var transfers = detachStubMessengers(target, stub);
     txApp.save(stub);
 
-    target.set('max_id', maxId);
+    applyMessengerTransfers(target, transfers);
+    recomputeBotBlocked(target);
     txApp.save(target);
 
     txApp.delete(stub);
   });
 
   target = app.findRecordById('users', targetUserId);
-  logClaimAudit(app, opts.actor, target, 'merge', maxId, deletedUserId);
+  logClaimAudit(app, ch, opts.actor, target, 'merge', channelId, deletedUserId);
 
   return { mode: 'merge', user: target, deletedUserId: deletedUserId };
+}
+
+/**
+ * @param {core.App} app
+ * @param {{ targetUserId: string, maxId?: string, maxUserId?: string, actor?: object }} opts
+ * @returns {{ mode: 'link'|'merge', user: core.Record, deletedUserId?: string }}
+ */
+function claimMax(app, opts) {
+  return claimMessenger(app, 'max', {
+    targetUserId: opts.targetUserId,
+    channelId: opts.maxId,
+    stubUserId: opts.maxUserId,
+    actor: opts.actor
+  });
+}
+
+/**
+ * @param {core.App} app
+ * @param {{ targetUserId: string, tgId?: string, tgUserId?: string, actor?: object }} opts
+ */
+function claimTg(app, opts) {
+  return claimMessenger(app, 'tg', {
+    targetUserId: opts.targetUserId,
+    channelId: opts.tgId,
+    stubUserId: opts.tgUserId,
+    actor: opts.actor
+  });
 }
 
 function actorDisplayName(subject) {
@@ -329,17 +463,18 @@ function actorDisplayName(subject) {
   return subject.label;
 }
 
-function logClaimAudit(app, actor, user, mode, maxId, deletedUserId) {
+function logClaimAudit(app, ch, actor, user, mode, channelId, deletedUserId) {
   try {
     var audit = require(__hooks + '/auditlib.js');
     var subject = actor ? audit.actorInfo(actor) : null;
     if (subject) subject.source = 'moderator';
     var targetLabel = user.getString('full_name') || 'Игрок';
-    var details = { mode: mode, maxId: maxId };
+    var details = { mode: mode };
+    details[ch.detailsKey] = channelId;
     if (deletedUserId) details.deletedUserId = deletedUserId;
     audit.logEvent(app, {
       category: 'profile',
-      action: 'profile.max.claim',
+      action: ch.auditPrefix + '.claim',
       actionKind: 'update',
       subject: subject,
       target: { id: user.id, label: targetLabel },
@@ -349,9 +484,7 @@ function logClaimAudit(app, actor, user, mode, maxId, deletedUserId) {
       details: details,
       summaryRu:
         actorDisplayName(subject) +
-        (mode === 'merge'
-          ? ' объединил(а) MAX-аккаунт с профилем '
-          : ' привязал(а) MAX к профилю ') +
+        (mode === 'merge' ? ch.msg.merged : ch.msg.linked) +
         targetLabel,
       severity: mode === 'merge' ? 'warning' : 'info'
     });
@@ -360,9 +493,12 @@ function logClaimAudit(app, actor, user, mode, maxId, deletedUserId) {
 
 /**
  * @param {core.App} app
+ * @param {'max'|'tg'} channelKey
  * @param {{ targetUserId: string, actor?: object }} opts
+ * @returns {{ user: core.Record, channelId: string }}
  */
-function unclaimMax(app, opts) {
+function unclaimMessenger(app, channelKey, opts) {
+  var ch = getChannel(channelKey);
   var targetUserId = String(opts.targetUserId || '');
   var target;
   try {
@@ -370,11 +506,14 @@ function unclaimMax(app, opts) {
   } catch (_) {
     throw new NotFoundError('Пользователь не найден');
   }
-  var prev = normalizeMaxId(target.getString('max_id'));
+  var prev = ch.normalize(target.getString(ch.field));
   if (!prev) {
-    return { user: target, maxId: '' };
+    return { user: target, channelId: '' };
   }
-  target.set('max_id', '');
+  target.set(ch.field, '');
+  target.set(ch.blockedField, false);
+  if (ch.blockedAtField) target.set(ch.blockedAtField, '');
+  recomputeBotBlocked(target);
   app.save(target);
 
   try {
@@ -382,39 +521,54 @@ function unclaimMax(app, opts) {
     var subject = opts.actor ? audit.actorInfo(opts.actor) : null;
     if (subject) subject.source = 'moderator';
     var targetLabel = target.getString('full_name') || 'Игрок';
+    var details = {};
+    details[ch.detailsKey] = prev;
     audit.logEvent(app, {
       category: 'profile',
-      action: 'profile.max.unclaim',
+      action: ch.auditPrefix + '.unclaim',
       actionKind: 'update',
       subject: subject,
       target: { id: target.id, label: targetLabel },
       objectType: 'user',
       objectId: target.id,
       objectLabel: targetLabel,
-      details: { maxId: prev },
-      summaryRu:
-        (subject && subject.label
-          ? subject.label.indexOf(' (') > -1
-            ? subject.label.slice(0, subject.label.indexOf(' ('))
-            : subject.label
-          : 'Модератор') +
-        ' отвязал(а) MAX от профиля ' +
-        targetLabel,
+      details: details,
+      summaryRu: actorDisplayName(subject) + ch.msg.unlinked + targetLabel,
       severity: 'info'
     });
   } catch (_) {}
 
-  return { user: target, maxId: prev };
+  return { user: target, channelId: prev };
 }
 
 /**
- * Кандидаты на merge (вариант B): пользователи с max_id.
+ * @param {core.App} app
+ * @param {{ targetUserId: string, actor?: object }} opts
+ */
+function unclaimMax(app, opts) {
+  var res = unclaimMessenger(app, 'max', opts);
+  return { user: res.user, maxId: res.channelId };
+}
+
+/**
+ * @param {core.App} app
+ * @param {{ targetUserId: string, actor?: object }} opts
+ */
+function unclaimTg(app, opts) {
+  var res = unclaimMessenger(app, 'tg', opts);
+  return { user: res.user, tgId: res.channelId };
+}
+
+/**
+ * Кандидаты на merge (вариант B): пользователи с id выбранного мессенджера.
  * @param {core.App} app
  * @param {string} excludeUserId
+ * @param {'max'|'tg'} [channelKey]
  * @returns {object[]}
  */
-function listClaimCandidates(app, excludeUserId) {
-  var filter = 'max_id != ""';
+function listClaimCandidates(app, excludeUserId, channelKey) {
+  var ch = getChannel(channelKey);
+  var filter = ch.field + ' != ""';
   var params = {};
   if (excludeUserId) {
     filter += ' && id != {:exclude}';
@@ -428,6 +582,7 @@ function listClaimCandidates(app, excludeUserId) {
       id: r.id,
       full_name: r.getString('full_name') || '',
       max_id: r.getString('max_id') || '',
+      tg_id: r.getString('tg_id') || '',
       avatar: r.get('avatar') || '',
       avatar_url: r.getString('avatar_url') || '',
       email: r.getString('email') || '',
@@ -443,11 +598,14 @@ function userToJson(user) {
   return {
     id: user.id,
     max_id: user.getString('max_id') || '',
+    tg_id: user.getString('tg_id') || '',
     full_name: user.getString('full_name') || '',
     avatar_url: user.getString('avatar_url') || '',
     avatar: user.get('avatar') || '',
     role: user.getString('role') || 'user',
     bot_blocked: user.getBool('bot_blocked'),
+    max_bot_blocked: user.getBool('max_bot_blocked'),
+    tg_bot_blocked: user.getBool('tg_bot_blocked'),
     is_visible: user.getBool('is_visible'),
     is_banned: user.getBool('is_banned'),
     can_comment: user.getBool('can_comment'),
@@ -474,7 +632,10 @@ function userToJson(user) {
 module.exports = {
   claimMax: claimMax,
   unclaimMax: unclaimMax,
+  claimTg: claimTg,
+  unclaimTg: unclaimTg,
   listClaimCandidates: listClaimCandidates,
   userToJson: userToJson,
-  normalizeMaxId: normalizeMaxId
+  normalizeMaxId: normalizeMaxId,
+  normalizeTgId: normalizeTgId
 };

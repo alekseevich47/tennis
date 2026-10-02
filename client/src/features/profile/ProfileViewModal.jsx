@@ -15,6 +15,7 @@ import { listCancelledTrainingsForUser } from '../../services/trainings';
 import {
   banUser,
   claimMaxAccount,
+  claimTgAccount,
   deleteUserAccount,
   hideFromRating,
   listClaimCandidates,
@@ -22,6 +23,7 @@ import {
   showInRating,
   unbanUser,
   unclaimMaxAccount,
+  unclaimTgAccount,
   unrestrictComments,
   updateUserProfile
 } from '../../services/auth';
@@ -139,6 +141,8 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
   const [banReason, setBanReason] = useState('');
   const [restrictReason, setRestrictReason] = useState('');
   const [claimDialogOpen, setClaimDialogOpen] = useState(false);
+  /** Канал диалога привязки: 'max' | 'tg'. Поля claimMaxId/claimMaxUserId — id выбранного канала. */
+  const [claimChannel, setClaimChannel] = useState(/** @type {'max' | 'tg'} */ ('max'));
   const [claimMaxId, setClaimMaxId] = useState('');
   const [claimMaxUserId, setClaimMaxUserId] = useState('');
   const [claimCandidates, setClaimCandidates] = useState([]);
@@ -152,6 +156,12 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
   const canManageProfile = Boolean(isOwnProfile || canEditSectionStartDate);
   const displayName = displayUser?.full_name || 'Профиль';
   const linkedMaxId = (displayUser?.max_id && String(displayUser.max_id).trim()) || '';
+  // tg_id hidden в схеме; приходит только модератору (pb_hooks/users_enrich_tg.pb.js).
+  const linkedTgId = (displayUser?.tg_id && String(displayUser.tg_id).trim()) || '';
+  const isTgClaim = claimChannel === 'tg';
+  const claimLinkedId = isTgClaim ? linkedTgId : linkedMaxId;
+  const claimLabel = isTgClaim ? 'Telegram' : 'MAX';
+  const claimIdField = isTgClaim ? 'tg_id' : 'max_id';
 
   const { data: cancelledTrainings, isLoading: cancelledLoading } = useSWR(
     isOpen && targetUserId ? ['cancelled-trainings', targetUserId] : null,
@@ -203,6 +213,7 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
       setBanReason('');
       setRestrictReason('');
       setClaimDialogOpen(false);
+      setClaimChannel('max');
       setClaimMaxId('');
       setClaimMaxUserId('');
       setClaimCandidates([]);
@@ -505,15 +516,18 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
     }
   };
 
-  const openClaimDialog = async () => {
+  const openClaimDialog = async (/** @type {'max' | 'tg'} */ channel = 'max') => {
+    const linkedId = channel === 'tg' ? linkedTgId : linkedMaxId;
     setMenuOpen(false);
-    setClaimMaxId(linkedMaxId);
+    setClaimChannel(channel);
+    setClaimMaxId(linkedId);
     setClaimMaxUserId('');
+    setClaimCandidates([]);
     setClaimDialogOpen(true);
-    if (linkedMaxId) return;
+    if (linkedId) return;
     setClaimLoading(true);
     try {
-      const candidates = await listClaimCandidates(targetUserId);
+      const candidates = await listClaimCandidates(targetUserId, channel);
       setClaimCandidates(candidates);
     } catch (err) {
       error('list claim candidates:', err);
@@ -527,13 +541,21 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
     setClaimMaxUserId(value);
     if (!value) return;
     const candidate = claimCandidates.find((item) => item.id === value);
-    if (candidate?.max_id) setClaimMaxId(String(candidate.max_id));
+    const candidateId = candidate?.[claimIdField];
+    if (candidateId) setClaimMaxId(String(candidateId));
   };
 
   const handleClaimConfirm = async () => {
-    const maxId = claimMaxId.trim();
-    if (!maxId && !claimMaxUserId) {
-      await alert({ title: 'Привязка MAX', message: 'Укажите max_id или выберите аккаунт MAX.' });
+    const channelId = claimMaxId.trim();
+    if (!channelId && !claimMaxUserId) {
+      await alert({
+        title: `Привязка ${claimLabel}`,
+        message: `Укажите ${claimIdField} или выберите аккаунт ${claimLabel}.`
+      });
+      return;
+    }
+    if (isTgClaim && channelId && !claimMaxUserId && !/^\d{1,20}$/.test(channelId)) {
+      await alert({ title: 'Привязка Telegram', message: 'tg_id — числовой ID пользователя Telegram.' });
       return;
     }
 
@@ -541,16 +563,16 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
       const confirmed = await confirm({
         title: 'Объединить аккаунты?',
         message:
-          'MAX-аккаунт будет слит с этим профилем и удалён. История (тренировки, комментарии и т.д.) перейдёт сюда.',
+          `${claimLabel}-аккаунт будет слит с этим профилем и удалён. История (тренировки, комментарии и т.д.) перейдёт сюда.`,
         confirmText: 'Объединить',
         cancelText: 'Отмена'
       });
       if (!confirmed) return;
     } else {
       const confirmed = await confirm({
-        title: 'Привязать MAX?',
+        title: `Привязать ${claimLabel}?`,
         message:
-          'Если max_id свободен — привяжем к этому профилю (вариант A). Если уже есть MAX-аккаунт с этим id — объединим и удалим дубль (вариант B).',
+          `Если ${claimIdField} свободен — привяжем к этому профилю (вариант A). Если уже есть ${claimLabel}-аккаунт с этим id — объединим и удалим дубль (вариант B).`,
         confirmText: 'Продолжить',
         cancelText: 'Отмена'
       });
@@ -559,25 +581,30 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
 
     setClaimSubmitting(true);
     try {
-      const result = await claimMaxAccount({
-        targetUserId,
-        ...(claimMaxUserId ? { maxUserId: claimMaxUserId } : { maxId })
-      });
+      const result = isTgClaim
+        ? await claimTgAccount({
+          targetUserId,
+          ...(claimMaxUserId ? { tgUserId: claimMaxUserId } : { tgId: channelId })
+        })
+        : await claimMaxAccount({
+          targetUserId,
+          ...(claimMaxUserId ? { maxUserId: claimMaxUserId } : { maxId: channelId })
+        });
       applyProfileMutation(result.user);
       setClaimDialogOpen(false);
       setClaimMaxId('');
       setClaimMaxUserId('');
       await alert({
-        title: result.mode === 'merge' ? 'Аккаунты объединены' : 'MAX привязан',
+        title: result.mode === 'merge' ? 'Аккаунты объединены' : `${claimLabel} привязан`,
         message:
           result.mode === 'merge'
-            ? 'Дубль MAX удалён, данные перенесены на этот профиль.'
-            : `Профиль привязан к max_id: ${result.user?.max_id || maxId}`
+            ? `Дубль ${claimLabel} удалён, данные перенесены на этот профиль.`
+            : `Профиль привязан к ${claimIdField}: ${result.user?.[claimIdField] || channelId}`
       });
     } catch (err) {
-      error('claim max:', err);
+      error(`claim ${claimChannel}:`, err);
       const message =
-        err?.response?.data?.error || err?.message || 'Не удалось привязать MAX.';
+        err?.response?.data?.error || err?.message || `Не удалось привязать ${claimLabel}.`;
       await alert({ title: 'Ошибка', message: String(message) });
     } finally {
       setClaimSubmitting(false);
@@ -586,8 +613,8 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
 
   const handleUnclaimConfirm = async () => {
     const confirmed = await confirm({
-      title: 'Отвязать MAX?',
-      message: `С профиля будет снят max_id ${linkedMaxId}. Пользователь сможет снова войти только после новой привязки.`,
+      title: `Отвязать ${claimLabel}?`,
+      message: `С профиля будет снят ${claimIdField} ${claimLinkedId}. Пользователь сможет снова войти через ${claimLabel} только после новой привязки.`,
       confirmText: 'Отвязать',
       cancelText: 'Отмена'
     });
@@ -595,15 +622,17 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
 
     setClaimSubmitting(true);
     try {
-      const result = await unclaimMaxAccount(targetUserId);
+      const result = isTgClaim
+        ? await unclaimTgAccount(targetUserId)
+        : await unclaimMaxAccount(targetUserId);
       applyProfileMutation(result.user);
       setClaimDialogOpen(false);
       setClaimMaxId('');
-      await alert({ title: 'MAX отвязан', message: 'Привязка снята.' });
+      await alert({ title: `${claimLabel} отвязан`, message: 'Привязка снята.' });
     } catch (err) {
-      error('unclaim max:', err);
+      error(`unclaim ${claimChannel}:`, err);
       const message =
-        err?.response?.data?.error || err?.message || 'Не удалось отвязать MAX.';
+        err?.response?.data?.error || err?.message || `Не удалось отвязать ${claimLabel}.`;
       await alert({ title: 'Ошибка', message: String(message) });
     } finally {
       setClaimSubmitting(false);
@@ -751,9 +780,18 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
                       type="button"
                       className="profile-menu-item profile-menu-item--divider"
                       role="menuitem"
-                      onClick={openClaimDialog}
+                      onClick={() => openClaimDialog('max')}
                     >
                       {linkedMaxId ? 'MAX: управление' : 'Привязать к MAX'}
+                    </button>
+
+                    <button
+                      type="button"
+                      className="profile-menu-item"
+                      role="menuitem"
+                      onClick={() => openClaimDialog('tg')}
+                    >
+                      {linkedTgId ? 'Telegram: управление' : 'Привязать к Telegram'}
                     </button>
 
                     <button
@@ -940,6 +978,25 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
                       )}
                     </p>
                   )}
+                  {canEditSectionStartDate && (
+                    <p>
+                      <strong>Telegram:</strong>{' '}
+                      {linkedTgId ? (
+                        <button
+                          type="button"
+                          className="profile-max-id-btn"
+                          onClick={() => {
+                            navigator.clipboard?.writeText(linkedTgId);
+                          }}
+                          title="Скопировать tg_id"
+                        >
+                          {linkedTgId}
+                        </button>
+                      ) : (
+                        <span className="profile-max-id-empty">не привязан</span>
+                      )}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -1102,7 +1159,7 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
           if (claimSubmitting) return;
           setClaimDialogOpen(false);
         }}
-        title={linkedMaxId ? 'Управление MAX' : 'Привязать к MAX'}
+        title={claimLinkedId ? `Управление ${claimLabel}` : `Привязать к ${claimLabel}`}
         footer={
           <div className="profile-reason-dialog-footer">
             <button
@@ -1113,7 +1170,7 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
             >
               Отмена
             </button>
-            {linkedMaxId ? (
+            {claimLinkedId ? (
               <button
                 type="button"
                 className="profile-reason-dialog-btn profile-reason-dialog-btn--danger"
@@ -1135,35 +1192,36 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
           </div>
         }
       >
-        {linkedMaxId ? (
+        {claimLinkedId ? (
           <p className="profile-claim-hint">
-            Сейчас привязан <strong>{linkedMaxId}</strong>. Отвязка нужна, чтобы привязать другой
-            max_id.
+            Сейчас привязан <strong>{claimLinkedId}</strong>. Отвязка нужна, чтобы привязать другой{' '}
+            {claimIdField}.
           </p>
         ) : (
           <div className="profile-claim-form">
             <p className="profile-claim-hint">
-              Вариант A: введите max_id до первого входа. Вариант B: выберите уже созданный
-              MAX-аккаунт — он будет слит с этим профилем и удалён.
+              Вариант A: введите {claimIdField} до первого входа. Вариант B: выберите уже созданный{' '}
+              {claimLabel}-аккаунт — он будет слит с этим профилем и удалён.
             </p>
-            <label className="profile-claim-label" htmlFor="profile-claim-max-id">
-              max_id
+            <label className="profile-claim-label" htmlFor="profile-claim-channel-id">
+              {claimIdField}
             </label>
             <input
-              id="profile-claim-max-id"
+              id="profile-claim-channel-id"
               className="profile-claim-input"
               type="text"
+              inputMode={isTgClaim ? 'numeric' : undefined}
               value={claimMaxId}
               onChange={(e) => {
                 setClaimMaxId(e.target.value);
                 setClaimMaxUserId('');
               }}
-              placeholder="ID пользователя в MAX"
+              placeholder={isTgClaim ? 'ID пользователя в Telegram' : 'ID пользователя в MAX'}
               autoComplete="off"
               disabled={claimSubmitting}
             />
             <label className="profile-claim-label" htmlFor="profile-claim-candidate">
-              Или аккаунт MAX
+              Или аккаунт {claimLabel}
             </label>
             {claimLoading ? (
               <Spinner label="Загрузка…" inline />
@@ -1177,12 +1235,12 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
               >
                 <option value="">
                   {claimCandidates.length === 0
-                    ? 'Нет аккаунтов с max_id'
+                    ? `Нет аккаунтов с ${claimIdField}`
                     : 'Не выбран'}
                 </option>
                 {claimCandidates.map((c) => (
                   <option key={c.id} value={c.id}>
-                    {(c.full_name || 'Без имени') + ` · ${c.max_id}`}
+                    {(c.full_name || 'Без имени') + ` · ${c[claimIdField] || ''}`}
                   </option>
                 ))}
               </select>

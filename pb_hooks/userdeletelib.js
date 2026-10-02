@@ -124,6 +124,7 @@ function detachUserEverywhere(app, userId) {
   deleteRecordsByField(app, 'gallery_likes', 'user', userId);
   deleteRecordsByField(app, 'notifications', 'user', userId);
   deleteRecordsByField(app, 'content_views', 'user', userId);
+  deleteRecordsByField(app, 'membership_ledger', 'user', userId);
   deleteRecordsByField(app, 'comments', 'author', userId);
   deleteRecordsByField(app, 'tournament_comments', 'author', userId);
   deleteRecordsByField(app, 'gallery_comments', 'author', userId);
@@ -155,6 +156,7 @@ function logDeleteAudit(app, actor, user) {
       objectLabel: targetLabel,
       details: {
         maxId: user.getString('max_id') || '',
+        tgId: user.getString('tg_id') || '',
         email: user.getString('email') || ''
       },
       summaryRu: actorName + ' удалил(а) аккаунт ' + targetLabel,

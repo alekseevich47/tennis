@@ -10,6 +10,7 @@ export default pb;
 
 export {
   initMaxAuth,
+  initTelegramAuth,
   getCurrentUser,
   isModerator,
   updateUserProfile
