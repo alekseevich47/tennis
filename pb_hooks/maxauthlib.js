@@ -137,7 +137,77 @@ function hmacSha256Hex(keyBytes, message) {
   return bytesToHex(wordsToBytes(sha256Bytes(outer)));
 }
 
+/**
+ * Валидация WebApp initData (Telegram Mini Apps; тот же алгоритм, что у MAX):
+ * secret_key = HMAC_SHA256(key="WebAppData", data=bot_token);
+ * hash = HMAC_SHA256(secret_key, data_check_string), где data_check_string —
+ * все поля кроме hash (в т.ч. signature), отсортированы, "key=value" через "\n".
+ * Используется tg-auth.pb.js; max-auth.pb.js сохраняет свою реализацию.
+ * @param {string} initData
+ * @param {string} botToken
+ * @param {number} maxAgeSec
+ * @returns {{ ok: true, fields: Object<string,string> } | { ok: false }}
+ */
+function verifyWebAppInitData(initData, botToken, maxAgeSec) {
+  if (!initData || !botToken || typeof initData !== 'string' || initData.length > 8192) {
+    return { ok: false };
+  }
+  var parts = initData.replace(/&&+/g, '&').split('&');
+  var pairs = [];
+  var fields = {};
+  var receivedHash = '';
+  var hashCount = 0;
+  for (var i = 0; i < parts.length; i++) {
+    var eq = parts[i].indexOf('=');
+    if (eq <= 0) continue;
+    var key = parts[i].substring(0, eq);
+    var value;
+    try {
+      value = decodeURIComponent(parts[i].substring(eq + 1).replace(/\+/g, '%20'));
+    } catch (_) {
+      return { ok: false };
+    }
+    if (key === 'hash') {
+      hashCount++;
+      receivedHash = value;
+      continue;
+    }
+    if (Object.prototype.hasOwnProperty.call(fields, key)) {
+      return { ok: false }; // дубликаты ключей — отказ
+    }
+    fields[key] = value;
+    pairs.push([key, value]);
+  }
+  if (hashCount !== 1 || !/^[0-9a-f]{64}$/i.test(receivedHash)) {
+    return { ok: false };
+  }
+
+  var authDate = parseInt(fields.auth_date, 10) || 0;
+  var nowSec = Math.floor(Date.now() / 1000);
+  if (!authDate || nowSec - authDate > maxAgeSec || authDate - nowSec > 60) {
+    return { ok: false };
+  }
+
+  pairs.sort(function (a, b) {
+    if (a[0] < b[0]) return -1;
+    if (a[0] > b[0]) return 1;
+    return 0;
+  });
+  var lines = [];
+  for (var j = 0; j < pairs.length; j++) {
+    lines.push(pairs[j][0] + '=' + pairs[j][1]);
+  }
+
+  var secretKeyHex = $security.hs256(botToken, 'WebAppData');
+  var signature = hmacSha256Hex(hexToBytes(secretKeyHex), lines.join('\n'));
+  if (!$security.equal(signature, receivedHash.toLowerCase())) {
+    return { ok: false };
+  }
+  return { ok: true, fields: fields };
+}
+
 module.exports = {
   hexToBytes: hexToBytes,
-  hmacSha256Hex: hmacSha256Hex
+  hmacSha256Hex: hmacSha256Hex,
+  verifyWebAppInitData: verifyWebAppInitData
 };

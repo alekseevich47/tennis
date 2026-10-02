@@ -11,7 +11,9 @@ ExecStart=/opt/pocketbase/pocketbase serve --http=127.0.0.1:8090 --dir=/opt/pock
 Restart=on-failure
 RestartSec=3
 LimitNOFILE=4096
-# Секреты — в /etc/systemd/system/pocketbase.service.d/override.conf (не в git)
+# Секреты — в /etc/systemd/system/pocketbase.service.d/override.conf (не в git):
+# MAX_BOT_TOKEN, MAX_BOT_WEBHOOK_SECRET, TG_BOT_TOKEN, TG_BOT_WEBHOOK_SECRET, TG_WEBAPP_URL, PB_PUBLIC_URL
+# CORS origins: app + web.max.ru (Mini App ходит со своего origin; web.telegram.org в --origins не нужен).
 
 [Install]
 WantedBy=multi-user.target

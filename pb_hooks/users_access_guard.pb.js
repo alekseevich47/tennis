@@ -9,6 +9,13 @@ onRecordCreateRequest((e) => {
   if (!guard.isPrivilegedAuth(e)) {
     guard.applyCreateDefaults(e.record);
   }
+  if (!guard.isSuperuserAuth(e)) {
+    // tg_id выставляют только tg-auth / claim ($app.save, не через API).
+    e.record.set('tg_id', '');
+    e.record.set('tg_bot_blocked', false);
+    e.record.set('tg_bot_blocked_at', '');
+    e.record.set('max_bot_blocked', false);
+  }
   e.next();
 }, 'users');
 
@@ -22,6 +29,10 @@ onRecordUpdateRequest((e) => {
         return;
       }
       guard.assertPrivilegedUpdateAllowed(original, e.record);
+    } else if (!guard.isSuperuserAuth(e)) {
+      // moderator: tg_id / флаги каналов — только через claim/webhook ($app.save).
+      var originalMod = e.record.original();
+      if (originalMod) guard.assertServerOnlyFieldsUnchanged(originalMod, e.record);
     }
     e.next();
   } catch (err) {

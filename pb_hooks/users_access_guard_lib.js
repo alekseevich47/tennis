@@ -36,6 +36,8 @@ var BOOL_FIELDS = {
   is_banned: true,
   membership_frozen: true,
   bot_blocked: true,
+  max_bot_blocked: true,
+  tg_bot_blocked: true,
   is_visible: true,
   can_comment: true,
   onboarding_completed: true,
@@ -109,6 +111,8 @@ function applyCreateDefaults(record) {
   record.set('membership_type', 'regular');
   record.set('membership_frozen', false);
   record.set('bot_blocked', false);
+  record.set('max_bot_blocked', false);
+  record.set('tg_bot_blocked', false);
 }
 
 /**
@@ -129,7 +133,9 @@ function assertPrivilegedUpdateAllowed(original, record) {
     'membership_end_date', 'membership_comment', 'membership_frozen', 'membership_frozen_at',
     'membership_freeze_log', 'membership_expiry_warn_for', 'membership_expired_notified_for',
     'freeze_expiry_warn_for', 'onboarding_completed', 'name_set_in_onboarding',
-    'favorite_products', 'bot_blocked', 'bot_blocked_at'
+    'favorite_products', 'bot_blocked', 'bot_blocked_at',
+    // Telegram / агрегат блокировок — только сервер (tg-auth, webhook, claim), не self-edit.
+    'tg_id', 'max_bot_blocked', 'tg_bot_blocked', 'tg_bot_blocked_at'
   ];
 
   for (var i = 0; i < schemaFields.length; i++) {
@@ -150,6 +156,44 @@ function assertPrivilegedUpdateAllowed(original, record) {
     }
     throw new ForbiddenError('Изменение поля "' + f + '" недоступно');
   }
+}
+
+/**
+ * Поля, которые меняет ТОЛЬКО сервер ($app.save из tg-auth / webhook / claim).
+ * Через API их не может PATCH-ить даже moderator (только superuser в Admin UI).
+ */
+var SERVER_ONLY_FIELDS = ['tg_id', 'max_bot_blocked', 'tg_bot_blocked', 'tg_bot_blocked_at'];
+
+/**
+ * @param {any} original
+ * @param {any} record
+ */
+function assertServerOnlyFieldsUnchanged(original, record) {
+  for (var i = 0; i < SERVER_ONLY_FIELDS.length; i++) {
+    var f = SERVER_ONLY_FIELDS[i];
+    if (fieldChanged(original, record, f)) {
+      throw new ForbiddenError('Изменение поля "' + f + '" недоступно');
+    }
+  }
+}
+
+/**
+ * @param {{ hasSuperuserAuth?: () => boolean, auth?: any }} e
+ * @returns {boolean}
+ */
+function isSuperuserAuth(e) {
+  try {
+    if (typeof e.hasSuperuserAuth === 'function' && e.hasSuperuserAuth()) return true;
+  } catch (_) { /* ignore */ }
+  var auth = e.auth;
+  if (!auth) return false;
+  try {
+    if (typeof auth.isSuperuser === 'function' && auth.isSuperuser()) return true;
+  } catch (_) { /* ignore */ }
+  try {
+    if (auth.collection && auth.collection().name === '_superusers') return true;
+  } catch (_) { /* ignore */ }
+  return false;
 }
 
 /**
@@ -179,5 +223,7 @@ function isPrivilegedAuth(e) {
 module.exports = {
   applyCreateDefaults: applyCreateDefaults,
   assertPrivilegedUpdateAllowed: assertPrivilegedUpdateAllowed,
-  isPrivilegedAuth: isPrivilegedAuth
+  assertServerOnlyFieldsUnchanged: assertServerOnlyFieldsUnchanged,
+  isPrivilegedAuth: isPrivilegedAuth,
+  isSuperuserAuth: isSuperuserAuth
 };

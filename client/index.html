@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=overlays-content" />
   <title>Секция Миленьких</title>
+  <!-- Telegram Mini Apps SDK (self-host; вне Telegram initData пуст — см. lib/messengerBridge.js). -->
+  <script src="%BASE_URL%telegram-web-app.js"></script>
   <!-- MAX SDK: без SRI — CDN не публикует стабильный hash; host pinned в CSP script-src (nginx-app.conf). -->
   <script src="https://st.max.ru/js/max-web-app.js"></script>
   <style>

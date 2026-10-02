@@ -441,11 +441,12 @@ routerAdd('POST', '/api/max-bot-webhook', (c) => {
             'max_id = {:maxId}',
             { maxId: maxUserId }
           );
-          if (user && user.getBool('bot_blocked')) {
-            user.set('bot_blocked', false);
-            user.set('bot_blocked_at', '');
+          // Канал MAX разблокирован → пересчёт агрегата bot_blocked (MAX + Telegram).
+          if (user && (user.getBool('max_bot_blocked') || user.getBool('bot_blocked'))) {
+            user.set('max_bot_blocked', false);
+            bot.recomputeBotBlocked(user);
             $app.save(user);
-            console.log('[bot] webhook bot_started: снят bot_blocked для max_id=' + maxUserId);
+            console.log('[bot] webhook bot_started: снят max_bot_blocked для max_id=' + maxUserId);
           }
         } catch (_) {
           // пользователь ещё не создан в PB — ок
@@ -462,10 +463,10 @@ routerAdd('POST', '/api/max-bot-webhook', (c) => {
             { maxId: maxUserId }
           );
           if (user) {
-            user.set('bot_blocked', true);
-            user.set('bot_blocked_at', new Date().toISOString());
+            user.set('max_bot_blocked', true);
+            bot.recomputeBotBlocked(user);
             $app.save(user);
-            console.log('[bot] webhook bot_stopped: bot_blocked для max_id=' + maxUserId);
+            console.log('[bot] webhook bot_stopped: max_bot_blocked для max_id=' + maxUserId);
           }
         } catch (err) {
           console.log('[bot] webhook bot_stopped: пользователь не найден max_id=' + maxUserId + ' ' + err);

@@ -395,6 +395,20 @@
       },
       {
         "autogeneratePattern": "",
+        "hidden": true,
+        "id": "text_tg_id_01",
+        "max": 0,
+        "min": 0,
+        "name": "tg_id",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
         "hidden": false,
         "id": "text1391834691",
         "max": 0,
@@ -666,6 +680,35 @@
       },
       {
         "hidden": false,
+        "id": "bool_max_bot_blocked_01",
+        "name": "max_bot_blocked",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "hidden": false,
+        "id": "bool_tg_bot_blocked_01",
+        "name": "tg_bot_blocked",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "hidden": false,
+        "id": "date_tg_bot_blocked_at_01",
+        "max": "",
+        "min": "",
+        "name": "tg_bot_blocked_at",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "date"
+      },
+      {
+        "hidden": false,
         "id": "autodate2990389176",
         "name": "created",
         "onCreate": true,
@@ -688,7 +731,8 @@
     "indexes": [
       "CREATE UNIQUE INDEX `idx_tokenKey__pb_users_auth_` ON `users` (`tokenKey`)",
       "CREATE UNIQUE INDEX `idx_email__pb_users_auth_` ON `users` (`email`) WHERE `email` != ''",
-      "CREATE UNIQUE INDEX `idx_users_max_id` ON `users` (`max_id`) WHERE `max_id` != ''"
+      "CREATE UNIQUE INDEX `idx_users_max_id` ON `users` (`max_id`) WHERE `max_id` != ''",
+      "CREATE UNIQUE INDEX `idx_users_tg_id` ON `users` (`tg_id`) WHERE `tg_id` != ''"
     ],
     "system": false,
     "authRule": "",
@@ -4246,6 +4290,169 @@
     ],
     "indexes": [
       "CREATE UNIQUE INDEX `idx_smt_key` ON `system_message_templates` (`key`)"
+    ],
+    "system": false
+  },
+  {
+    "id": "pbc_mledger00001",
+    "listRule": "@request.auth.id != \"\" && (user = @request.auth.id || @request.auth.role = \"moderator\")",
+    "viewRule": "@request.auth.id != \"\" && (user = @request.auth.id || @request.auth.role = \"moderator\")",
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "name": "membership_ledger",
+    "type": "base",
+    "fields": [
+      {
+        "autogeneratePattern": "[a-z0-9]{15}",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 15,
+        "min": 15,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "cascadeDelete": true,
+        "collectionId": "_pb_users_auth_",
+        "hidden": false,
+        "id": "relation_mledger_user",
+        "maxSelect": 1,
+        "minSelect": 0,
+        "name": "user",
+        "presentable": false,
+        "required": true,
+        "system": false,
+        "type": "relation"
+      },
+      {
+        "hidden": false,
+        "id": "number_mledger_delta",
+        "max": null,
+        "min": null,
+        "name": "delta",
+        "onlyInt": false,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text_mledger_kind",
+        "max": 32,
+        "min": 0,
+        "name": "kind",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": true,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "bool_mledger_unpaid",
+        "name": "unpaid",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text_mledger_training_id",
+        "max": 15,
+        "min": 0,
+        "name": "training_id",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "date_mledger_training_date",
+        "max": "",
+        "min": "",
+        "name": "training_date",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "date"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text_mledger_actor_id",
+        "max": 15,
+        "min": 0,
+        "name": "actor_id",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text_mledger_actor_name",
+        "max": 200,
+        "min": 0,
+        "name": "actor_name",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "number_mledger_balance",
+        "max": null,
+        "min": null,
+        "name": "balance_after",
+        "onlyInt": false,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      },
+      {
+        "hidden": false,
+        "id": "autodate2990389176",
+        "name": "created",
+        "onCreate": true,
+        "onUpdate": false,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      },
+      {
+        "hidden": false,
+        "id": "autodate3332085495",
+        "name": "updated",
+        "onCreate": true,
+        "onUpdate": true,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      }
+    ],
+    "indexes": [
+      "CREATE INDEX `idx_mledger_user_created` ON `membership_ledger` (\n  `user`,\n  `created`\n)"
     ],
     "system": false
   }

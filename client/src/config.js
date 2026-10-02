@@ -46,6 +46,11 @@ const MAX_AUTH_URL = resolvePublicUrl(
   `${PB_URL}/api/max-auth`
 );
 
+const TG_AUTH_URL = resolvePublicUrl(
+  import.meta.env.VITE_TG_AUTH_URL || '',
+  `${PB_URL}/api/tg-auth`
+);
+
 const MEDIA_BASE_URL = `${PB_URL}/api/files`;
 
 const MAX_APP_ID = import.meta.env.VITE_MAX_APP_ID || 'id420550689204_bot';
@@ -61,6 +66,22 @@ const MAX_SELLER_URL = (() => {
   return DEFAULT_MAX_SELLER_URL;
 })();
 
+/** Чат продавца в Telegram (для Mini App в Telegram). Только https://t.me/…; пусто → fallback на MAX. */
+const TG_SELLER_URL = (() => {
+  const fromEnv = String(import.meta.env.VITE_TG_SELLER_URL || '').trim();
+  if (/^https:\/\/t\.me\/[A-Za-z0-9_+/-]+$/i.test(fromEnv)) return fromEnv;
+  return '';
+})();
+
 const IS_DEV = import.meta.env.DEV;
 
-export { PB_URL, MAX_AUTH_URL, MEDIA_BASE_URL, MAX_APP_ID, MAX_SELLER_URL, IS_DEV };
+export {
+  PB_URL,
+  MAX_AUTH_URL,
+  TG_AUTH_URL,
+  MEDIA_BASE_URL,
+  MAX_APP_ID,
+  MAX_SELLER_URL,
+  TG_SELLER_URL,
+  IS_DEV
+};

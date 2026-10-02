@@ -63,9 +63,8 @@ function sendBotToUser(app, user, templateKey, vars) {
   var bot = require(__hooks + '/botlib.js');
   var resolved = tpl.resolve(app, templateKey, vars);
   if (!resolved || !resolved.body) return;
-  var maxId = user.getString('max_id');
-  if (!maxId) return;
-  bot.sendBotMessage(maxId, resolved.body);
+  // MAX + Telegram (каждый канал — только если привязан).
+  bot.sendToUser(user, resolved.body);
 }
 
 function sendBotToModerators(app, templateKey, vars) {
@@ -240,10 +239,25 @@ function processExpiryConvert(app) {
     if (endKey !== todayKey) continue;
     if (user.getString('membership_expired_notified_for') === endKey) continue;
 
+    var prevAvailable = user.getFloat('available_sessions') || 0;
     user.set('membership_type', 'one_time');
     user.set('available_sessions', 0);
     user.set('membership_expired_notified_for', endKey);
     app.save(user);
+
+    if (prevAvailable > 0) {
+      try {
+        require(__hooks + '/membershipledgerlib.js').logMovement(app, {
+          userId: user.id,
+          delta: -prevAvailable,
+          kind: 'expired',
+          actor: null,
+          balanceAfter: 0
+        });
+      } catch (ledgerErr) {
+        console.log('[membership] ledger expired: ' + ledgerErr);
+      }
+    }
 
     sendBotToUser(app, user, 'bot.membership_expired', {});
     var tpl = require(__hooks + '/templatelib.js');

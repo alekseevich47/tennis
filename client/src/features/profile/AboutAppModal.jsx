@@ -1,6 +1,7 @@
 import React from 'react';
 import Modal from '../../components/ui/Modal';
 import { APP_DISPLAY_VERSION } from '../../lib/appVersion';
+import { openExternalLink } from '../../lib/messengerBridge';
 
 const DEVELOPER_SITE = 'https://loomixx.ru';
 const DEVELOPER_EMAIL = 'loomixx.dev@ya.ru';
@@ -11,12 +12,7 @@ const VK_CHAT_URL = 'https://vk.me/alekseevich';
  * @param {string} url
  */
 function openExternalUrl(url) {
-  const webApp = window.WebApp;
-  if (webApp?.openLink) {
-    webApp.openLink(url);
-    return;
-  }
-  window.open(url, '_blank', 'noopener,noreferrer');
+  openExternalLink(url);
 }
 
 /**
