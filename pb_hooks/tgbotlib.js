@@ -15,6 +15,16 @@ function isTgConfigured() {
   return !!getTgToken();
 }
 
+/**
+ * Исходящие TG-уведомления (sendMessage/фото). По умолчанию ВЫКЛ:
+ * с RF VPS api.telegram.org таймаутится (~8 с) и блокирует хуки PB (комменты/посты/тренировки).
+ * TG_BOT_TOKEN остаётся для /api/tg-auth (Mini App). Включить доставку: TG_NOTIFY_ENABLED=1.
+ */
+function isTgNotifyEnabled() {
+  var v = String($os.getenv('TG_NOTIFY_ENABLED') || '0').trim().toLowerCase();
+  return v === '1' || v === 'true' || v === 'on' || v === 'yes';
+}
+
 /** Только цифры (Telegram user id, допускается отрицательный chat id). */
 function normalizeTgId(value) {
   if (value == null) return '';
@@ -137,7 +147,7 @@ function splitForTelegram(text, limit) {
  */
 function callApi(method, body, opts) {
   var token = getTgToken();
-  if (!token) return { ok: false, status: 0, json: {} };
+  if (!token || !isTgNotifyEnabled()) return { ok: false, status: 0, json: {} };
   var timeout = (opts && opts.timeout) || 8;
   var contentType = (opts && opts.contentType) || 'application/json';
   var isJson = contentType.indexOf('application/json') === 0;
@@ -195,7 +205,7 @@ function isParseError(result) {
  */
 function sendTgMessage(tgId, text, opts) {
   var chatId = normalizeTgId(tgId);
-  if (!chatId || !text || !isTgConfigured()) return false;
+  if (!chatId || !text || !isTgConfigured() || !isTgNotifyEnabled()) return false;
   var chunks = splitForTelegram(text, TG_TEXT_LIMIT);
   if (!chunks.length) return false;
   var anyOk = false;
@@ -371,7 +381,7 @@ function sendTgPhotos(chatId, media, captionHtml) {
  */
 function sendTgMessageWithMedia(tgId, text, media) {
   var chatId = normalizeTgId(tgId);
-  if (!chatId || !isTgConfigured()) return false;
+  if (!chatId || !isTgConfigured() || !isTgNotifyEnabled()) return false;
   if (!media || !media.files || !media.files.length) {
     return sendTgMessage(chatId, text);
   }
@@ -430,6 +440,7 @@ function markTgBlocked(tgId, blocked) {
 
 module.exports = {
   isTgConfigured: isTgConfigured,
+  isTgNotifyEnabled: isTgNotifyEnabled,
   normalizeTgId: normalizeTgId,
   maxMarkdownToTelegramHtml: maxMarkdownToTelegramHtml,
   sendTgMessage: sendTgMessage,

@@ -13,6 +13,7 @@ RestartSec=3
 LimitNOFILE=4096
 # Секреты — в /etc/systemd/system/pocketbase.service.d/override.conf (не в git):
 # MAX_BOT_TOKEN, MAX_BOT_WEBHOOK_SECRET, TG_BOT_TOKEN, TG_BOT_WEBHOOK_SECRET, TG_WEBAPP_URL, PB_PUBLIC_URL
+# TG_NOTIFY_ENABLED=1 — включить исходящие TG-уведомления (по умолчанию выкл.: RF VPS ↔ api.telegram.org).
 # CORS origins: app + web.max.ru (Mini App ходит со своего origin; web.telegram.org в --origins не нужен).
 
 [Install]
