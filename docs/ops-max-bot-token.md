@@ -21,6 +21,9 @@ Environment=TG_BOT_TOKEN=…
 Environment=TG_BOT_WEBHOOK_SECRET=…   # [A-Za-z0-9_-], ≥32 символа
 Environment=TG_WEBAPP_URL=https://app.milenkih-team.ru/
 Environment=PB_PUBLIC_URL=https://app.milenkih-team.ru
+# Исходящие TG-уведомления по умолчанию ВЫКЛ (таймауты api.telegram.org с RF VPS).
+# Mini App / tg-auth работают с TG_BOT_TOKEN без этого флага.
+# Environment=TG_NOTIFY_ENABLED=1
 ```
 
 После правки: `sudo systemctl daemon-reload && sudo systemctl restart pocketbase`.

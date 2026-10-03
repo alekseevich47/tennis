@@ -181,6 +181,8 @@ function sendToUser(user, text, opts) {
   if (tgId && !user.getBool('tg_bot_blocked')) {
     try {
       const tg = require(__hooks + '/tgbotlib.js');
+      // isTgNotifyEnabled=false → мгновенный no-op (не ждём api.telegram.org).
+      if (!tg.isTgNotifyEnabled || !tg.isTgNotifyEnabled()) return;
       if (opts && opts.tgMedia) {
         tg.sendTgMessageWithMedia(tgId, text, opts.tgMedia);
       } else {

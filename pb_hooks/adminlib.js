@@ -67,7 +67,9 @@ function dispatchScheduledBroadcast(record) {
     let tgMedia;
     try {
       const tg = require(__hooks + '/tgbotlib.js');
-      tgMedia = tg.isTgConfigured() ? tg.prepareBroadcastMedia(record) : undefined;
+      tgMedia = (tg.isTgConfigured() && tg.isTgNotifyEnabled && tg.isTgNotifyEnabled())
+        ? tg.prepareBroadcastMedia(record)
+        : undefined;
     } catch (tgErr) {
       console.log('[admin] tg media: ' + tgErr);
     }

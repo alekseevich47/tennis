@@ -90,7 +90,7 @@ function AppInner() {
   if (isLoading) {
     return (
       <div className="app-boot">
-        <Spinner label="Загрузка профиля MAX..." />
+        <Spinner label="Загрузка профиля..." />
       </div>
     );
   }
