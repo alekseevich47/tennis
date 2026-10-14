@@ -1,0 +1,142 @@
+.legal-consent-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 12px 0 4px;
+  width: 100%;
+}
+
+.legal-consent-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.legal-consent-checkbox {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: #007aff;
+  cursor: pointer;
+}
+
+.legal-consent-label {
+  font-size: 13px;
+  line-height: 1.45;
+  color: #444;
+}
+
+.legal-consent-link {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #007aff;
+  font: inherit;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.legal-consent-link:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.legal-consent-link:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.legal-doc-modal {
+  max-width: min(520px, calc(100vw - 24px));
+}
+
+.legal-doc-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: left;
+  padding-bottom: 8px;
+}
+
+.legal-doc-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.legal-doc-heading {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a1a;
+  line-height: 1.35;
+}
+
+.legal-doc-paragraph {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #444;
+}
+
+.about-app-legal {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-top: 8px;
+  padding-top: 14px;
+  border-top: 1px solid #ececec;
+}
+
+.about-app-legal__title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.about-app-legal__btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin: 0;
+  padding: 10px 0;
+  border: none;
+  background: none;
+  font-size: 15px;
+  font-weight: 500;
+  color: #007aff;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.about-app-legal__btn:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.about-app-legal__arrow {
+  flex-shrink: 0;
+  margin-left: 8px;
+  color: #888;
+  font-weight: 400;
+}
+
+/* Поверх bottom-sheet «О приложении» (Modal z-index 2000) */
+.ui-modal-overlay--above-about-app {
+  z-index: 2200;
+}

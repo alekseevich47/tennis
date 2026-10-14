@@ -285,6 +285,16 @@ var DEFAULTS = [
     body: 'упомянула Вас в посте',
     audience: 'user',
     enabled: true
+  },
+  {
+    key: 'app.player_birthday',
+    channel: 'app',
+    name: 'День рождения игрока',
+    description: 'In-app всем (кроме забаненных) в день рождения видимого игрока (cron birthday_notify, GMT+7). {{player}} — HTML-чип упоминания.',
+    title: 'День рождения!',
+    body: 'Сегодня у {{player}} день рождения! Поздравляем тебя, {{first_name}}! Желаем здоровья, ярких матчей и отличного настроения на корте!',
+    audience: 'user',
+    enabled: true
   }
 ];
 
