@@ -1,5 +1,5 @@
 // @ts-check
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { LEGAL_DOCUMENTS } from './legalDocuments';
 import LegalDocumentModal from './LegalDocumentModal';
 import './LegalConsentFields.css';
@@ -15,7 +15,8 @@ import './LegalConsentFields.css';
  *   onChange: (next: LegalConsentState) => void,
  *   disabled?: boolean,
  *   modalOverlayClassName?: string,
- *   idPrefix?: string
+ *   idPrefix?: string,
+ *   onDocumentOpenChange?: (isOpen: boolean) => void
  * }} props
  */
 export default function LegalConsentFields({
@@ -23,9 +24,19 @@ export default function LegalConsentFields({
   onChange,
   disabled = false,
   modalOverlayClassName,
-  idPrefix = 'legal'
+  idPrefix = 'legal',
+  onDocumentOpenChange
 }) {
   const [openDocId, setOpenDocId] = useState(/** @type {LegalDocId | null} */ (null));
+
+  const setOpenDoc = (/** @type {LegalDocId | null} */ id) => {
+    setOpenDocId(id);
+    onDocumentOpenChange?.(Boolean(id));
+  };
+
+  useEffect(() => {
+    return () => onDocumentOpenChange?.(false);
+  }, [onDocumentOpenChange]);
 
   /**
    * @param {LegalDocId} id
@@ -72,7 +83,7 @@ export default function LegalConsentFields({
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    setOpenDocId(doc.id);
+                    setOpenDoc(doc.id);
                   }}
                 >
                   {doc.checkboxLink}
@@ -86,7 +97,7 @@ export default function LegalConsentFields({
       <LegalDocumentModal
         docId={openDocId}
         isOpen={Boolean(openDocId)}
-        onClose={() => setOpenDocId(null)}
+        onClose={() => setOpenDoc(null)}
         overlayClassName={modalOverlayClassName}
       />
     </>
