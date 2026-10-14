@@ -168,6 +168,8 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
     privacy: Boolean(user?.privacy_accepted),
     publicity: Boolean(user?.publicity_accepted)
   }));
+  const [legalDocOpen, setLegalDocOpen] = useState(false);
+  const profileCardRef = useRef(/** @type {HTMLDivElement | null} */ (null));
 
   const todayIso = useMemo(() => toDateInputValue(new Date()), []);
 
@@ -294,6 +296,19 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
   useEffect(() => {
     setFullName(user?.full_name || '');
   }, [user?.full_name]);
+
+  // Modal locks document.body; fixed `.onboarding-card` scrolls independently — freeze it while legal doc is open.
+  useEffect(() => {
+    const card = profileCardRef.current;
+    if (!card || !legalDocOpen) return undefined;
+    const scrollTop = card.scrollTop;
+    card.classList.add('onboarding-card--scroll-locked');
+    card.scrollTop = scrollTop;
+    return () => {
+      card.classList.remove('onboarding-card--scroll-locked');
+      card.scrollTop = scrollTop;
+    };
+  }, [legalDocOpen]);
 
   useEffect(() => {
     if (!avatarFile) {
@@ -552,7 +567,12 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
       )}
 
       {step === 1 && !cropModalOpen && (
-        <div className="onboarding-card" role="dialog" aria-modal="true">
+        <div
+          ref={profileCardRef}
+          className={`onboarding-card${legalDocOpen ? ' onboarding-card--scroll-locked' : ''}`}
+          role="dialog"
+          aria-modal="true"
+        >
           <h2>Ваш профиль</h2>
           <p className="onboarding-hint">
             {canEditName
@@ -625,6 +645,7 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
               onChange={setLegalConsent}
               disabled={saving}
               modalOverlayClassName="ui-modal-overlay--above-onboarding"
+              onDocumentOpenChange={setLegalDocOpen}
             />
 
             <button
