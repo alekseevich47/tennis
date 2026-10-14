@@ -99,7 +99,6 @@ export default function AboutAppModal({ isOpen, onClose }) {
           </div>
 
           <div className="about-app-legal">
-            <p className="about-app-legal__title">Документы</p>
             {LEGAL_DOCUMENTS.map((doc) => (
               <button
                 key={doc.id}
