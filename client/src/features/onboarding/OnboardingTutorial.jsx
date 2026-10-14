@@ -12,6 +12,7 @@ import {
 import { error } from '../../lib/log';
 import MembershipStartDateField from '../profile/MembershipStartDateField';
 import LegalConsentFields, { areLegalConsentsAccepted } from '../legal/LegalConsentFields';
+import OnboardingCardScroll from './OnboardingCardScroll';
 import './OnboardingTutorial.css';
 
 const DEFAULT_HAND = 'Правая';
@@ -168,12 +169,6 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
     privacy: Boolean(user?.privacy_accepted),
     publicity: Boolean(user?.publicity_accepted)
   }));
-  const [legalDocOpen, setLegalDocOpen] = useState(false);
-  const [scrollbarExpanded, setScrollbarExpanded] = useState(false);
-  const profileScrollRef = useRef(/** @type {HTMLDivElement | null} */ (null));
-  const scrollbarHoverRef = useRef(false);
-  const scrollbarIdleTimerRef = useRef(/** @type {ReturnType<typeof setTimeout> | null} */ (null));
-
   const todayIso = useMemo(() => toDateInputValue(new Date()), []);
 
   const tourConfig = TOUR_STEPS[step];
@@ -299,79 +294,6 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
   useEffect(() => {
     setFullName(user?.full_name || '');
   }, [user?.full_name]);
-
-  // Не меняем overflow при открытии соглашения — иначе пропадает scrollbar-gutter и карточка смещается.
-  useEffect(() => {
-    const scroller = profileScrollRef.current;
-    if (!scroller || !legalDocOpen) return undefined;
-    const lockedTop = scroller.scrollTop;
-    const freeze = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-    };
-    const keepScroll = () => {
-      if (scroller.scrollTop !== lockedTop) scroller.scrollTop = lockedTop;
-    };
-    scroller.addEventListener('wheel', freeze, { passive: false });
-    scroller.addEventListener('touchmove', freeze, { passive: false });
-    scroller.addEventListener('scroll', keepScroll, { passive: true });
-    return () => {
-      scroller.removeEventListener('wheel', freeze);
-      scroller.removeEventListener('touchmove', freeze);
-      scroller.removeEventListener('scroll', keepScroll);
-      scroller.scrollTop = lockedTop;
-    };
-  }, [legalDocOpen]);
-
-  // Тонкий скроллбар → шире при hover / во время скролла; через 1с после скролла обратно (если нет hover).
-  useEffect(() => {
-    if (step !== 1) {
-      setScrollbarExpanded(false);
-      return undefined;
-    }
-    const scroller = profileScrollRef.current;
-    if (!scroller) return undefined;
-
-    const clearIdle = () => {
-      if (scrollbarIdleTimerRef.current) {
-        clearTimeout(scrollbarIdleTimerRef.current);
-        scrollbarIdleTimerRef.current = null;
-      }
-    };
-
-    const scheduleCollapse = () => {
-      clearIdle();
-      scrollbarIdleTimerRef.current = setTimeout(() => {
-        scrollbarIdleTimerRef.current = null;
-        if (!scrollbarHoverRef.current) setScrollbarExpanded(false);
-      }, 1000);
-    };
-
-    const onEnter = () => {
-      scrollbarHoverRef.current = true;
-      clearIdle();
-      setScrollbarExpanded(true);
-    };
-    const onLeave = () => {
-      scrollbarHoverRef.current = false;
-      scheduleCollapse();
-    };
-    const onScroll = () => {
-      setScrollbarExpanded(true);
-      if (!scrollbarHoverRef.current) scheduleCollapse();
-    };
-
-    scroller.addEventListener('mouseenter', onEnter);
-    scroller.addEventListener('mouseleave', onLeave);
-    scroller.addEventListener('scroll', onScroll, { passive: true });
-    return () => {
-      clearIdle();
-      scrollbarHoverRef.current = false;
-      scroller.removeEventListener('mouseenter', onEnter);
-      scroller.removeEventListener('mouseleave', onLeave);
-      scroller.removeEventListener('scroll', onScroll);
-    };
-  }, [step]);
 
   useEffect(() => {
     if (!avatarFile) {
@@ -619,7 +541,7 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
 
       {step === 0 && (
         <div className="onboarding-card onboarding-card--welcome" role="dialog" aria-modal="true">
-          <div className="onboarding-card__scroll">
+          <OnboardingCardScroll>
             <h2>Вас приветствует Секция Миленьких! 🏓</h2>
             <p>Мы рады, что Вы с нами. Давайте познакомимся!</p>
             <div className="onboarding-card-actions">
@@ -627,22 +549,13 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
                 Далее
               </button>
             </div>
-          </div>
+          </OnboardingCardScroll>
         </div>
       )}
 
       {step === 1 && !cropModalOpen && (
         <div className="onboarding-card" role="dialog" aria-modal="true">
-          <div
-            ref={profileScrollRef}
-            className={[
-              'onboarding-card__scroll',
-              scrollbarExpanded ? 'onboarding-card__scroll--scrollbar-expanded' : '',
-              legalDocOpen ? 'onboarding-card__scroll--locked' : ''
-            ]
-              .filter(Boolean)
-              .join(' ')}
-          >
+          <OnboardingCardScroll>
           <h2>Ваш профиль</h2>
           <p className="onboarding-hint">
             {canEditName
@@ -715,7 +628,6 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
               onChange={setLegalConsent}
               disabled={saving}
               modalOverlayClassName="ui-modal-overlay--above-onboarding"
-              onDocumentOpenChange={setLegalDocOpen}
             />
 
             <button
@@ -727,7 +639,7 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
               {saving ? 'Сохраняем...' : 'Сохранить и продолжить'}
             </button>
           </form>
-          </div>
+          </OnboardingCardScroll>
         </div>
       )}
 
@@ -750,7 +662,7 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
 
       {step === 8 && (
         <div className="onboarding-card onboarding-card--welcome" role="dialog" aria-modal="true">
-          <div className="onboarding-card__scroll">
+          <OnboardingCardScroll>
             <h2>Всё готово! Добро пожаловать в Секцию Миленьких 🏓</h2>
             <div className="onboarding-card-actions">
               <button
@@ -762,7 +674,7 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
                 {finishing ? 'Загрузка...' : 'Начать'}
               </button>
             </div>
-          </div>
+          </OnboardingCardScroll>
         </div>
       )}
 
