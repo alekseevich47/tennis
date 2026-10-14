@@ -71,6 +71,12 @@
   word-break: break-word;
 }
 
+/* Чип игрока в body (день рождения / admin rich-text) — на линии текста */
+.notification-card__body .post-mention--user {
+  vertical-align: middle;
+  font-size: inherit;
+}
+
 .notification-card__meta {
   display: flex;
   flex-direction: column;

@@ -11,6 +11,7 @@ import {
 } from '../../lib/datePickerUtils';
 import { error } from '../../lib/log';
 import MembershipStartDateField from '../profile/MembershipStartDateField';
+import LegalConsentFields, { areLegalConsentsAccepted } from '../legal/LegalConsentFields';
 import './OnboardingTutorial.css';
 
 const DEFAULT_HAND = 'Правая';
@@ -162,6 +163,11 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
   const [pendingAvatarFile, setPendingAvatarFile] = useState(null);
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const avatarInputRef = useRef(null);
+  const [legalConsent, setLegalConsent] = useState(() => ({
+    terms: Boolean(user?.terms_accepted),
+    privacy: Boolean(user?.privacy_accepted),
+    publicity: Boolean(user?.publicity_accepted)
+  }));
 
   const todayIso = useMemo(() => toDateInputValue(new Date()), []);
 
@@ -302,6 +308,22 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
 
   const handleFinish = async () => {
     if (finishing) return;
+
+    const consentsOnUser = areLegalConsentsAccepted({
+      terms: Boolean(user?.terms_accepted),
+      privacy: Boolean(user?.privacy_accepted),
+      publicity: Boolean(user?.publicity_accepted)
+    });
+    if (!consentsOnUser) {
+      setStep(1);
+      await alert({
+        title: 'Согласия',
+        message: 'Сначала сохраните профиль и отметьте все обязательные согласия.',
+        overlayClassName: 'ui-modal-overlay--above-onboarding'
+      });
+      return;
+    }
+
     setFinishing(true);
     try {
       await completeOnboarding();
@@ -311,12 +333,19 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
       error('onboarding finish:', err);
       setFinishing(false);
       const status = err && typeof err === 'object' ? /** @type {{ status?: number, message?: string }} */ (err).status : undefined;
+      const message =
+        err && typeof err === 'object' && typeof /** @type {{ message?: string }} */ (err).message === 'string'
+          ? /** @type {{ message?: string }} */ (err).message
+          : '';
       const detail =
         status === 404
           ? 'Сессия, возможно, устарела. Закройте мини-приложение и откройте снова, затем повторите.'
+          : /соглас/i.test(message)
+            ? 'Необходимо принять пользовательское соглашение и согласия на обработку данных. Вернитесь к шагу профиля.'
           : status
             ? `Не удалось завершить обучение (ошибка ${status}). Попробуйте ещё раз.`
             : 'Не удалось завершить обучение. Попробуйте ещё раз.';
+      if (/соглас/i.test(message)) setStep(1);
       await alert({
         title: 'Ошибка',
         message: detail,
@@ -370,6 +399,15 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
       return;
     }
 
+    if (!areLegalConsentsAccepted(legalConsent)) {
+      await alert({
+        title: 'Согласия',
+        message: 'Отметьте все обязательные согласия, чтобы продолжить. Тексты открываются по синим ссылкам.',
+        overlayClassName: 'ui-modal-overlay--above-onboarding'
+      });
+      return;
+    }
+
     const trimmedName = fullName.trim();
     const currentName = (user.full_name || '').trim();
     const nameChanged = trimmedName !== currentName;
@@ -386,6 +424,12 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
 
     // Всегда пишем руку при сохранении онбординга (иначе дефолт «Правая» не уходит в БД).
     patch.dominant_hand = dominantHand;
+
+    // Юридические флаги — только true (отзыв через администрацию, не снятием галочки в PATCH).
+    patch.terms_accepted = true;
+    patch.privacy_accepted = true;
+    patch.publicity_accepted = true;
+    patch.legal_accepted_at = todayIso;
 
     if (Object.keys(patch).length === 0 && !avatarFile) {
       setStep(2);
@@ -575,7 +619,20 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
               </select>
             </div>
 
-            <button type="submit" className="onboarding-btn onboarding-btn--primary" disabled={saving} style={{ width: '100%', marginTop: 8 }}>
+            <LegalConsentFields
+              idPrefix="onboarding-legal"
+              value={legalConsent}
+              onChange={setLegalConsent}
+              disabled={saving}
+              modalOverlayClassName="ui-modal-overlay--above-onboarding"
+            />
+
+            <button
+              type="submit"
+              className="onboarding-btn onboarding-btn--primary"
+              disabled={saving || !areLegalConsentsAccepted(legalConsent)}
+              style={{ width: '100%', marginTop: 8 }}
+            >
               {saving ? 'Сохраняем...' : 'Сохранить и продолжить'}
             </button>
           </form>
@@ -617,7 +674,7 @@ export default function OnboardingTutorial({ user, onUpdate, onComplete, onTabCh
 
       {showNav && (
         <nav className="onboarding-nav" aria-label="Навигация по обучению">
-          {step > 2 ? (
+          {step > 1 ? (
             <button type="button" className="onboarding-btn onboarding-btn--secondary" onClick={goBack}>
               Назад
             </button>

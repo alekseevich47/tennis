@@ -646,6 +646,44 @@
         "type": "bool"
       },
       {
+        "hidden": false,
+        "id": "bool_terms_accepted_01",
+        "name": "terms_accepted",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "hidden": false,
+        "id": "bool_privacy_accepted_01",
+        "name": "privacy_accepted",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "hidden": false,
+        "id": "bool_publicity_accepted_01",
+        "name": "publicity_accepted",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "hidden": false,
+        "id": "date_legal_accepted_at_01",
+        "max": "",
+        "min": "",
+        "name": "legal_accepted_at",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "date"
+      },
+      {
         "cascadeDelete": false,
         "collectionId": "pbc_4092854851",
         "hidden": false,

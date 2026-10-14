@@ -4,6 +4,9 @@ onRecordCreateRequest((e) => {
   e.record.set('can_comment', true);
   e.record.set('onboarding_completed', false);
   e.record.set('name_set_in_onboarding', false);
+  e.record.set('terms_accepted', false);
+  e.record.set('privacy_accepted', false);
+  e.record.set('publicity_accepted', false);
   e.next();
 }, 'users');
 
@@ -16,6 +19,15 @@ onRecordCreate((e) => {
   }
   if (!e.record.get('name_set_in_onboarding')) {
     e.record.set('name_set_in_onboarding', false);
+  }
+  if (!e.record.get('terms_accepted')) {
+    e.record.set('terms_accepted', false);
+  }
+  if (!e.record.get('privacy_accepted')) {
+    e.record.set('privacy_accepted', false);
+  }
+  if (!e.record.get('publicity_accepted')) {
+    e.record.set('publicity_accepted', false);
   }
   e.next();
 }, 'users');

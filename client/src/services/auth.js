@@ -24,6 +24,10 @@ import { log, error } from '../lib/log';
  * @property {string} [comment_restriction_reason]
  * @property {boolean} [onboarding_completed]
  * @property {boolean} [name_set_in_onboarding]
+ * @property {boolean} [terms_accepted]
+ * @property {boolean} [privacy_accepted]
+ * @property {boolean} [publicity_accepted]
+ * @property {string} [legal_accepted_at]
  */
 
 // bot_blocked — агрегат: заблокированы боты во всех привязанных мессенджерах (MAX / Telegram).
