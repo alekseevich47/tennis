@@ -141,14 +141,14 @@ function Modal({
       const node = dialogRef.current;
       if (!node) return;
       const focusable = node.querySelector(FOCUSABLE_SELECTORS);
-      if (focusable) focusable.focus();
-      else node.focus();
+      if (focusable) focusable.focus({ preventScroll: true });
+      else node.focus({ preventScroll: true });
     });
 
     return () => {
       body.style.overflow = previousOverflow;
       const prev = previousActiveRef.current;
-      if (prev && typeof prev.focus === 'function') prev.focus();
+      if (prev && typeof prev.focus === 'function') prev.focus({ preventScroll: true });
     };
   }, [isOpen, closing]);
 
