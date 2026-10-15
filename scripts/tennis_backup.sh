@@ -114,65 +114,67 @@ kind_label() {
   esac
 }
 
-# Собирает строки: sortkey|disp|cloud|KIND|id
-# id = filename or backup_dir or "storage-mirror"
+# kinds: all | db | full | storage  (через запятую тоже ок)
+# Не использовать rclone lsl по storage/ — на облаке с тысячами файлов зависает.
 collect_entries_for_cloud() {
   local cloud="$1"
+  local kinds="${2:-all}"
   local root
   root="$(cloud_root "$cloud")" || return 0
   local f key disp
+  local want_db=0 want_full=0 want_storage=0
 
-  while IFS= read -r f; do
-    [[ -n "$f" ]] || continue
-    key=$(stamp_sort_key "$f")
-    disp=$(format_stamp_display "$f")
-    printf '%s|%s|%s|DB|%s\n' "$key" "$disp" "$cloud" "$f"
-  done < <(rclone lsf "${root%/}/db/" --files-only 2>/dev/null | grep -E '^data_.*\.db\.gz$' || true)
+  case ",$kinds," in
+    *,all,*) want_db=1; want_full=1; want_storage=1 ;;
+    *)
+      [[ ",$kinds," == *",db,"* ]] && want_db=1
+      [[ ",$kinds," == *",full,"* ]] && want_full=1
+      [[ ",$kinds," == *",storage,"* ]] && want_storage=1
+      ;;
+  esac
 
-  while IFS= read -r f; do
-    [[ -n "$f" ]] || continue
-    key=$(stamp_sort_key "$f")
-    disp=$(format_stamp_display "$f")
-    printf '%s|%s|%s|FULL|%s\n' "$key" "$disp" "$cloud" "$f"
-  done < <(rclone lsf "${root%/}/full/" --dirs-only 2>/dev/null | sed 's/\///' | grep -E '^backup_' || true)
+  if [[ "$want_db" -eq 1 ]]; then
+    while IFS= read -r f; do
+      [[ -n "$f" ]] || continue
+      key=$(stamp_sort_key "$f")
+      disp=$(format_stamp_display "$f")
+      printf '%s|%s|%s|DB|%s\n' "$key" "$disp" "$cloud" "$f"
+    done < <(rclone lsf "${root%/}/db/" --files-only 2>/dev/null | grep -E '^data_.*\.db\.gz$' || true)
+  fi
 
-  # legacy full
-  while IFS= read -r f; do
-    [[ -n "$f" ]] || continue
-    key=$(stamp_sort_key "$f")
-    disp=$(format_stamp_display "$f")
-    printf '%s|%s|%s|FULL|%s\n' "$key" "$disp" "$cloud" "$f"
-  done < <(rclone lsf "${root%/}/" --dirs-only 2>/dev/null | sed 's/\///' | grep -E '^backup_' || true)
+  if [[ "$want_full" -eq 1 ]]; then
+    while IFS= read -r f; do
+      [[ -n "$f" ]] || continue
+      key=$(stamp_sort_key "$f")
+      disp=$(format_stamp_display "$f")
+      printf '%s|%s|%s|FULL|%s\n' "$key" "$disp" "$cloud" "$f"
+    done < <(rclone lsf "${root%/}/full/" --dirs-only 2>/dev/null | sed 's/\///' | grep -E '^backup_' || true)
 
-  # STORAGE — зеркало (одна актуальная копия); время = newest file если есть
-  local newest=""
-  newest=$(rclone lsl "${root%/}/storage" --max-depth 8 2>/dev/null | awk 'NF>=4 {print $2"_"$3}' | sort -r | head -n1 || true)
-  if [[ -n "$newest" ]]; then
-    # rclone lsl date looks like 2026-10-15 08:30:01.000000000 — normalize
-    local ymd hms
-    ymd=$(echo "$newest" | cut -d_ -f1)
-    hms=$(echo "$newest" | cut -d_ -f2 | cut -d. -f1)
-    if [[ "$ymd" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] && [[ -n "$hms" ]]; then
-      local stamp="${ymd}_${hms//:/-}"
-      key=$(stamp_sort_key "$stamp")
-      disp=$(format_stamp_display "$stamp")
-      printf '%s|%s|%s|STORAGE|storage-mirror\n' "$key" "$disp" "$cloud"
-    else
+    while IFS= read -r f; do
+      [[ -n "$f" ]] || continue
+      key=$(stamp_sort_key "$f")
+      disp=$(format_stamp_display "$f")
+      printf '%s|%s|%s|FULL|%s\n' "$key" "$disp" "$cloud" "$f"
+    done < <(rclone lsf "${root%/}/" --dirs-only 2>/dev/null | sed 's/\///' | grep -E '^backup_' || true)
+  fi
+
+  if [[ "$want_storage" -eq 1 ]]; then
+    # Только факт наличия каталога (max-depth 1) — без обхода дерева файлов
+    if rclone lsf "${root%/}/storage" --max-depth 1 2>/dev/null | head -n1 | grep -q .; then
       printf '00000000000000|зеркало (актуальное)|%s|STORAGE|storage-mirror\n' "$cloud"
     fi
-  elif rclone lsf "${root%/}/storage/" --dirs-only 2>/dev/null | head -n1 | grep -q .; then
-    printf '00000000000000|зеркало (актуальное)|%s|STORAGE|storage-mirror\n' "$cloud"
   fi
 }
 
 collect_entries() {
   local mode="$1" # yandex|vk|both
+  local kinds="${2:-all}"
   case "$mode" in
-    yandex) collect_entries_for_cloud yandex ;;
-    vk) collect_entries_for_cloud vk ;;
+    yandex) collect_entries_for_cloud yandex "$kinds" ;;
+    vk) collect_entries_for_cloud vk "$kinds" ;;
     both)
-      collect_entries_for_cloud yandex
-      collect_entries_for_cloud vk
+      collect_entries_for_cloud yandex "$kinds"
+      collect_entries_for_cloud vk "$kinds"
       ;;
   esac
 }
@@ -222,19 +224,16 @@ menu_restore() {
 
   echo ""
   echo "Снимки ($(kind_label "$kind"), $(color_cloud "$cloud")):"
+  echo "Загрузка списка…" >&2
   local -a lines=()
   local -a ids=()
   local line key disp cld k id
   while IFS= read -r line; do
     [[ -n "$line" ]] || continue
     IFS='|' read -r key disp cld k id <<<"$line"
-    case "$kind" in
-      db) [[ "$k" == "DB" ]] || continue ;;
-      full) [[ "$k" == "FULL" ]] || continue ;;
-    esac
     lines+=("$line")
     ids+=("$id")
-  done < <(collect_entries_for_cloud "$cloud" | sort -t'|' -k1,1r)
+  done < <(collect_entries_for_cloud "$cloud" "$kind" | sort -t'|' -k1,1r)
 
   if [[ ${#lines[@]} -eq 0 ]]; then
     echo "Снимки не найдены."
@@ -285,13 +284,14 @@ menu_view() {
   cloud=$(ask_cloud 1) || return 0
   echo ""
   echo "${C_BOLD}Архив бэкапов${C_RESET}"
+  echo "Загрузка списка (DB + FULL + STORAGE-метка)…" >&2
   echo ""
 
   local -a all=()
   while IFS= read -r line; do
     [[ -n "$line" ]] || continue
     all+=("$line")
-  done < <(collect_entries "$cloud" | sort -t'|' -k1,1r)
+  done < <(collect_entries "$cloud" "all" | sort -t'|' -k1,1r)
 
   if [[ ${#all[@]} -eq 0 ]]; then
     echo "Бэкапы не найдены."

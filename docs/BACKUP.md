@@ -71,7 +71,15 @@ sudo /opt/tennis/scripts/backup_full.sh --force
 sudo REMOTE_ROOT=mailru:tennis_backup bash /opt/tennis/scripts/restore_db.sh
 ```
 
-Админка: «Бэкап БД» / «Бэкап медиа» → `admin_backup_runner.sh` → in-app колокольчик; partial remote FAIL → ещё MAX ops-алерт.
+Кнопки бэкапа в админке приложения **убраны** — только меню/cron на сервере. Partial remote FAIL → MAX ops-алерт.
+
+### Retention
+
+| Слой | Что чистится |
+|------|----------------|
+| **DB** | Оставить newest **96** (`DB_KEEP_COUNT`) + удалить старше **14d** (`DB_MAX_AGE`) |
+| **FULL** | Удалить старше **14d** (`FULL_MAX_AGE`) |
+| **STORAGE** | Только зеркало `sync` — **нет** истории и нет prune по 14 дням |
 
 ## RPO
 
