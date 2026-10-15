@@ -305,16 +305,28 @@ menu_view() {
   done
 
   echo ""
+  read -rp "Enter — в меню… " _
+}
+
+# 5 последних по всем облакам (для главного меню)
+print_recent_backups_footer() {
+  echo "================="
   echo "${C_BOLD}Последний бэкап (5 последних):${C_RESET}"
-  local n=0
-  for line in "${all[@]}"; do
-    [[ $n -lt 5 ]] || break
+  local -a recent=()
+  local line key disp cld k id n=0
+  while IFS= read -r line; do
+    [[ -n "$line" ]] || continue
+    recent+=("$line")
+  done < <(collect_entries both "all" | sort -t'|' -k1,1r | head -n 5)
+
+  if [[ ${#recent[@]} -eq 0 ]]; then
+    echo "  (нет снимков)"
+    return 0
+  fi
+  for line in "${recent[@]}"; do
     IFS='|' read -r key disp cld k id <<<"$line"
     print_entry_line "$disp" "$cld" "$k" "  "
-    n=$((n + 1))
   done
-  echo ""
-  read -rp "Enter — в меню… " _
 }
 
 main_menu() {
@@ -325,6 +337,7 @@ main_menu() {
     echo "  [2] Загрузка бэкапа (restore на сервер)"
     echo "  [3] Просмотр архива бэкапов"
     echo "  [q] Выход"
+    print_recent_backups_footer
     read -rp "> " m
     case "$m" in
       1) menu_create ;;
