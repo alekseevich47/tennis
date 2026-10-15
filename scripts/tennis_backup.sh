@@ -14,7 +14,8 @@ C_BLUE=$'\033[34m'
 C_BOLD=$'\033[1m'
 C_DIM=$'\033[2m'
 
-if [[ ! -t 1 ]]; then
+# Цвета по TTY stdin (stdout часто в $(…) при выборе меню).
+if [[ ! -t 0 ]]; then
   C_RESET= C_RED= C_BLUE= C_BOLD= C_DIM=
 fi
 
@@ -56,50 +57,51 @@ print_entry_line() {
   printf '%s%s  %s  %s%s\n' "$prefix" "$disp" "$(color_cloud "$cloud")" "$kind" "$C_RESET"
 }
 
+# UI в stderr — иначе cloud=$(ask_cloud) захватывает пункты меню вместо «yandex».
 ask_cloud() {
   # $1 allow_both=1|0
   local allow_both="${1:-1}"
-  echo ""
-  echo "Облако:"
-  echo "  [1] Yandex"
-  echo "  [2] VK (Mail Cloud)"
+  echo "" >&2
+  echo "Облако:" >&2
+  echo "  [1] Yandex" >&2
+  echo "  [2] VK (Mail Cloud)" >&2
   if [[ "$allow_both" == "1" ]]; then
-    echo "  [3] оба"
+    echo "  [3] оба" >&2
   fi
-  echo "  [q] назад"
+  echo "  [q] назад" >&2
   while true; do
-    read -rp "> " c
+    read -rp "> " c </dev/tty || return 1
     case "$c" in
-      1) echo yandex; return 0 ;;
-      2) echo vk; return 0 ;;
+      1) printf '%s\n' yandex; return 0 ;;
+      2) printf '%s\n' vk; return 0 ;;
       3)
         if [[ "$allow_both" == "1" ]]; then
-          echo both
+          printf '%s\n' both
           return 0
         fi
         ;;
       q|Q) return 1 ;;
     esac
-    echo "Неверный выбор."
+    echo "Неверный выбор." >&2
   done
 }
 
 ask_kind() {
-  echo ""
-  echo "Тип бэкапа:"
-  echo "  [1] DB"
-  echo "  [2] STORAGE"
-  echo "  [3] FULL"
-  echo "  [q] назад"
+  echo "" >&2
+  echo "Тип бэкапа:" >&2
+  echo "  [1] DB" >&2
+  echo "  [2] STORAGE" >&2
+  echo "  [3] FULL" >&2
+  echo "  [q] назад" >&2
   while true; do
-    read -rp "> " c
+    read -rp "> " c </dev/tty || return 1
     case "$c" in
-      1) echo db; return 0 ;;
-      2) echo storage; return 0 ;;
-      3) echo full; return 0 ;;
+      1) printf '%s\n' db; return 0 ;;
+      2) printf '%s\n' storage; return 0 ;;
+      3) printf '%s\n' full; return 0 ;;
       q|Q) return 1 ;;
     esac
-    echo "Неверный выбор."
+    echo "Неверный выбор." >&2
   done
 }
 
