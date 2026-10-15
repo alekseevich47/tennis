@@ -122,7 +122,7 @@ function detachUserEverywhere(app, userId) {
   deleteRecordsByField(app, 'comment_likes', 'author', userId);
   deleteRecordsByField(app, 'post_likes', 'user', userId);
   deleteRecordsByField(app, 'gallery_likes', 'user', userId);
-  deleteRecordsByField(app, 'notifications', 'user', userId);
+  deleteRecordsByField(app, 'notifications', 'recipient', userId);
   deleteRecordsByField(app, 'content_views', 'user', userId);
   deleteRecordsByField(app, 'membership_ledger', 'user', userId);
   deleteRecordsByField(app, 'comments', 'author', userId);

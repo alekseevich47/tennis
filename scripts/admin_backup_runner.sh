@@ -12,10 +12,10 @@ SCRIPTS="${APP_DIR}/scripts"
 
 case "$TYPE" in
   db)
-    SCRIPT="$SCRIPTS/backup_db_to_yandex.sh"
+    SCRIPT="$SCRIPTS/backup_db.sh"
     ;;
   media)
-    SCRIPT="$SCRIPTS/backup_storage_to_yandex.sh"
+    SCRIPT="$SCRIPTS/backup_storage.sh"
     ;;
   *)
     echo "usage: $0 db|media [notify_url]" >&2

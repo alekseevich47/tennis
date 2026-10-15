@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Суточный бэкап pb_data/storage/ на все REMOTE_ROOTS (зеркало).
+# Суточный бэкап pb_data/storage/ на все REMOTE_ROOTS (зеркало STORAGE).
 # Cron: 00:00 МСК. Без --force пропускает, если нет файлов новее последнего успешного бэкапа.
 # Успех = ≥1 remote OK; при любом FAIL — MAX ops-алерт.
 set -euo pipefail

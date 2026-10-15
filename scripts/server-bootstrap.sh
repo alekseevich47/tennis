@@ -208,7 +208,7 @@ curl -sS -X POST "https://botapi.max.ru/subscriptions" \
   || true
 
 # Бэкапы: cron + sudoers (кнопки админки). rclone remote «yandex» настроить вручную.
-# Инструкция: $APP_DIR/scripts/BACKUP.md
+# Инструкция: $APP_DIR/docs/BACKUP.md ; меню: $APP_DIR/scripts/tennis_backup.sh
 if [[ -x "$APP_DIR/scripts/install_backup_cron.sh" ]]; then
   "$APP_DIR/scripts/install_backup_cron.sh" || true
 fi

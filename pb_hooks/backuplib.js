@@ -106,13 +106,13 @@ function resolveScript(type) {
   var dir = scriptsDir();
   if (type === 'db') {
     return {
-      script: $filepath.join(dir, 'backup_db_to_yandex.sh'),
+      script: $filepath.join(dir, 'backup_db.sh'),
       logFile: manualLogFile('db')
     };
   }
   if (type === 'media') {
     return {
-      script: $filepath.join(dir, 'backup_storage_to_yandex.sh'),
+      script: $filepath.join(dir, 'backup_storage.sh'),
       logFile: manualLogFile('media')
     };
   }
