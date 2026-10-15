@@ -12,7 +12,7 @@ RESTORE_TMP="$BACKUP_DIR/restore_db_tmp"
 rm -rf "$RESTORE_TMP"
 mkdir -p "$RESTORE_TMP"
 
-echo "=== Список DB-бэкапов на Яндекс.Диске ==="
+echo "=== Список DB-бэкапов ($REMOTE_DB) ==="
 mapfile -t BACKUPS < <(rclone lsf "$REMOTE_DB/" --files-only 2>/dev/null | grep -E '^data_.*\.db\.gz$' | sort -r || true)
 
 if [[ ${#BACKUPS[@]} -eq 0 ]]; then

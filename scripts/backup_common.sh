@@ -5,9 +5,33 @@ set -euo pipefail
 
 PB_DATA_DIR="${PB_DATA_DIR:-/opt/pocketbase/pb_data}"
 BACKUP_DIR="${BACKUP_DIR:-/opt/tennis/backups}"
-REMOTE_ROOT="${REMOTE_ROOT:-yandex:tennis_backup}"
+APP_DIR="${APP_DIR:-/opt/tennis}"
 PB_SERVICE="${PB_SERVICE:-pocketbase}"
 PB_USER="${PB_USER:-pocketbase}"
+
+# REMOTE_ROOT для restore; явный env не перетираем после backup_remotes.env
+_REMOTE_ROOT_WAS_SET=0
+if [[ -n "${REMOTE_ROOT:-}" ]]; then
+  _REMOTE_ROOT_WAS_SET=1
+fi
+REMOTE_ROOT="${REMOTE_ROOT:-yandex:tennis_backup}"
+
+_BACKUP_COMMON_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+OPS_ALERT_SCRIPT="${OPS_ALERT_SCRIPT:-$_BACKUP_COMMON_DIR/ops_alert_max.sh}"
+
+# Опционально: /etc/tennis/backup_remotes.env или config/backup_remotes.env
+# REMOTE_ROOTS=yandex:tennis_backup,mailru:tennis_backup
+for _br in /etc/tennis/backup_remotes.env "$APP_DIR/config/backup_remotes.env"; do
+  if [[ -f "$_br" ]]; then
+    # shellcheck disable=SC1090
+    set -a
+    # shellcheck source=/dev/null
+    source "$_br"
+    set +a
+    break
+  fi
+done
+unset _br
 
 STATE_DIR="$BACKUP_DIR/state"
 LOCKS_DIR="$BACKUP_DIR/locks"
@@ -16,6 +40,135 @@ TIMESTAMP="${TIMESTAMP:-$(date +"%Y-%m-%d_%H-%M-%S")}"
 RCLONE_FLAGS=(--transfers 1 --checkers 1 --buffer-size 0M)
 
 mkdir -p "$BACKUP_DIR" "$STATE_DIR" "$LOCKS_DIR"
+
+# Список remote roots (по одному на строку). Успех upload = ≥1 OK; алерт если любой FAIL.
+backup_remote_roots() {
+  local raw="${REMOTE_ROOTS:-}"
+  if [[ -z "$raw" ]]; then
+    raw="${REMOTE_ROOT:-yandex:tennis_backup}"
+  fi
+  raw="${raw//,/ }"
+  local r
+  for r in $raw; do
+    r="${r#"${r%%[![:space:]]*}"}"
+    r="${r%"${r##*[![:space:]]}"}"
+    [[ -n "$r" ]] || continue
+    printf '%s\n' "$r"
+  done
+}
+
+# Первый remote — для restore по умолчанию и совместимости.
+primary_remote_root() {
+  backup_remote_roots | head -n 1
+}
+
+if [[ "$_REMOTE_ROOT_WAS_SET" -eq 0 ]] && [[ -n "${REMOTE_ROOTS:-}" ]]; then
+  REMOTE_ROOT="$(primary_remote_root)"
+fi
+unset _REMOTE_ROOT_WAS_SET
+
+ops_alert_backup() {
+  local msg="${1:-}"
+  [[ -n "$msg" ]] || return 0
+  if [[ ! -x "$OPS_ALERT_SCRIPT" ]] && [[ ! -f "$OPS_ALERT_SCRIPT" ]]; then
+    echo "[backup] ops alert script missing: $OPS_ALERT_SCRIPT" >&2
+    return 0
+  fi
+  bash "$OPS_ALERT_SCRIPT" "$msg" || true
+}
+
+# Копирует src в <remote>/<rel>/ на каждый remote.
+# Exit 0 если ≥1 OK; 1 если все FAIL. При любом FAIL — MAX ops-алерт.
+rclone_mirror_copy() {
+  local src="$1"
+  local rel="$2"
+  local ok=0
+  local fail=0
+  local -a ok_names=()
+  local -a fail_names=()
+  local root dest
+
+  while IFS= read -r root; do
+    [[ -n "$root" ]] || continue
+    dest="${root%/}/${rel}"
+    if [[ "$DRY_RUN" -eq 1 ]]; then
+      echo "[dry-run] rclone copy $src -> $dest/"
+      ok=$((ok + 1))
+      ok_names+=("$root")
+      continue
+    fi
+    if rclone copy "$src" "$dest/" "${RCLONE_FLAGS[@]}"; then
+      echo "[backup] upload OK -> $dest/"
+      ok=$((ok + 1))
+      ok_names+=("$root")
+    else
+      echo "[backup] upload FAIL -> $dest/" >&2
+      fail=$((fail + 1))
+      fail_names+=("$root")
+    fi
+  done < <(backup_remote_roots)
+
+  if [[ "$fail" -gt 0 ]]; then
+    local msg
+    if [[ "$ok" -eq 0 ]]; then
+      msg="tennis backup ($rel): FAILED on ALL remotes: ${fail_names[*]}"
+    else
+      msg="tennis backup ($rel): partial — OK: ${ok_names[*]}; FAIL: ${fail_names[*]}"
+    fi
+    echo "[backup] $msg" >&2
+    if [[ "$DRY_RUN" -eq 0 ]]; then
+      ops_alert_backup "$msg"
+    fi
+  fi
+
+  [[ "$ok" -gt 0 ]]
+}
+
+# sync src → <remote>/<rel>/ на каждый remote. Политика как у rclone_mirror_copy.
+rclone_mirror_sync() {
+  local src="$1"
+  local rel="$2"
+  local ok=0
+  local fail=0
+  local -a ok_names=()
+  local -a fail_names=()
+  local root dest
+
+  while IFS= read -r root; do
+    [[ -n "$root" ]] || continue
+    dest="${root%/}/${rel}"
+    if [[ "$DRY_RUN" -eq 1 ]]; then
+      echo "[dry-run] rclone sync $src -> $dest/"
+      ok=$((ok + 1))
+      ok_names+=("$root")
+      continue
+    fi
+    if rclone sync "$src" "$dest/" "${RCLONE_FLAGS[@]}"; then
+      echo "[backup] sync OK -> $dest/"
+      ok=$((ok + 1))
+      ok_names+=("$root")
+    else
+      echo "[backup] sync FAIL -> $dest/" >&2
+      fail=$((fail + 1))
+      fail_names+=("$root")
+    fi
+  done < <(backup_remote_roots)
+
+  if [[ "$fail" -gt 0 ]]; then
+    local msg
+    if [[ "$ok" -eq 0 ]]; then
+      msg="tennis backup ($rel): FAILED on ALL remotes: ${fail_names[*]}"
+    else
+      msg="tennis backup ($rel): partial — OK: ${ok_names[*]}; FAIL: ${fail_names[*]}"
+    fi
+    echo "[backup] $msg" >&2
+    if [[ "$DRY_RUN" -eq 0 ]]; then
+      ops_alert_backup "$msg"
+    fi
+  fi
+
+  [[ "$ok" -gt 0 ]]
+}
 
 FORCE=0
 DRY_RUN=0

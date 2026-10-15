@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Полный weekly-архив: консистентная БД + storage/ → Яндекс.Диск (full/).
+# Полный weekly-архив: консистентная БД + storage/ → все REMOTE_ROOTS (full/).
+# Успех = ≥1 remote OK; при любом FAIL — MAX ops-алерт.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -8,7 +9,6 @@ source "$SCRIPT_DIR/backup_common.sh"
 
 backup_parse_args "$@"
 
-REMOTE_FULL="$REMOTE_ROOT/full"
 FULL_MAX_AGE="${FULL_MAX_AGE:-14d}"
 
 run_full_backup() {
@@ -54,16 +54,28 @@ run_full_backup() {
   echo "[backup-full] splitting to 15MB parts…"
   split -b 15m "$zip_path" "$split_dir/part_"
 
-  echo "[backup-full] uploading to $REMOTE_FULL/backup_$stamp/"
-  rclone_copy "$split_dir/" "$REMOTE_FULL/backup_$stamp/"
+  echo "[backup-full] uploading to remotes (full/backup_$stamp/):"
+  backup_remote_roots | sed 's/^/  - /'
+
+  if ! rclone_mirror_copy "$split_dir/" "full/backup_$stamp"; then
+    echo "[backup-full] all remotes failed" >&2
+    rm -rf "$work_dir" "$split_dir"
+    rm -f "$zip_path"
+    return 1
+  fi
 
   rm -rf "$work_dir" "$split_dir"
   rm -f "$zip_path"
 
   if [[ "$DRY_RUN" -eq 0 ]]; then
-    echo "[backup-full] pruning full/ older than $FULL_MAX_AGE…"
-    rclone delete "$REMOTE_FULL/" --min-age "$FULL_MAX_AGE" || true
-    rclone rmdirs "$REMOTE_FULL/" --leave-root || true
+    local root
+    while IFS= read -r root; do
+      [[ -n "$root" ]] || continue
+      local remote_full="${root%/}/full"
+      echo "[backup-full] prune $remote_full/ older than $FULL_MAX_AGE…"
+      rclone delete "$remote_full/" --min-age "$FULL_MAX_AGE" || true
+      rclone rmdirs "$remote_full/" --leave-root || true
+    done < <(backup_remote_roots)
   fi
 
   echo "[backup-full] done: full/backup_$stamp/"
