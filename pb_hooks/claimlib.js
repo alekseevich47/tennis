@@ -312,7 +312,7 @@ function remapAllFromStub(app, fromId, toId) {
   remapSingleField(app, 'comments', 'author', fromId, toId);
   remapSingleField(app, 'tournament_comments', 'author', fromId, toId);
   remapSingleField(app, 'gallery_comments', 'author', fromId, toId);
-  remapSingleField(app, 'notifications', 'user', fromId, toId);
+  remapSingleField(app, 'notifications', 'recipient', fromId, toId);
   remapSingleField(app, 'content_views', 'user', fromId, toId);
   remapSingleField(app, 'membership_ledger', 'user', fromId, toId);
   remapSingleField(app, 'post_likes', 'user', fromId, toId, ['post']);

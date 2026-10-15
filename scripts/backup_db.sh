@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Частый бэкап только data.db (+ auxiliary.db) на все REMOTE_ROOTS (Yandex / Mail Cloud …).
+# Частый бэкап только data.db (+ auxiliary.db) на все REMOTE_ROOTS (Yandex / VK …).
 # Cron: каждые 15 мин. Без --force пропускает тик, если БД не менялась.
 # Успех = ≥1 remote OK; при любом FAIL — MAX ops-алерт.
 set -euo pipefail

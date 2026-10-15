@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Восстановление data.db (и auxiliary.db) из tennis_backup/db/ на Яндекс.Диске.
+# Восстановление data.db (+ auxiliary.db) из <REMOTE_ROOT>/db/.
+# Интерактивно или: RESTORE_SELECTED=data_….db.gz RESTORE_CONFIRM=y
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -20,27 +21,43 @@ if [[ ${#BACKUPS[@]} -eq 0 ]]; then
   exit 1
 fi
 
-echo "Доступные снимки БД:"
-for i in "${!BACKUPS[@]}"; do
-  echo "  [$i] ${BACKUPS[$i]}"
-done
-
-SELECTED=""
-while true; do
-  read -rp "Номер бэкапа (или 'q' — отмена): " CHOICE
-  if [[ "$CHOICE" == "q" ]]; then
-    echo "Отменено."
-    exit 0
+SELECTED="${RESTORE_SELECTED:-}"
+if [[ -z "$SELECTED" ]]; then
+  echo "Доступные снимки БД:"
+  for i in "${!BACKUPS[@]}"; do
+    echo "  [$i] ${BACKUPS[$i]}"
+  done
+  while true; do
+    read -rp "Номер бэкапа (или 'q' — отмена): " CHOICE
+    if [[ "$CHOICE" == "q" ]]; then
+      echo "Отменено."
+      exit 0
+    fi
+    if [[ "$CHOICE" =~ ^[0-9]+$ ]] && [[ "$CHOICE" -lt ${#BACKUPS[@]} ]]; then
+      SELECTED="${BACKUPS[$CHOICE]}"
+      break
+    fi
+    echo "Неверный ввод."
+  done
+else
+  found=0
+  for f in "${BACKUPS[@]}"; do
+    if [[ "$f" == "$SELECTED" ]]; then
+      found=1
+      break
+    fi
+  done
+  if [[ "$found" -ne 1 ]]; then
+    echo "RESTORE_SELECTED не найден в remote: $SELECTED" >&2
+    exit 1
   fi
-  if [[ "$CHOICE" =~ ^[0-9]+$ ]] && [[ "$CHOICE" -lt ${#BACKUPS[@]} ]]; then
-    SELECTED="${BACKUPS[$CHOICE]}"
-    break
-  fi
-  echo "Неверный ввод."
-done
+fi
 
 echo "Выбран: $SELECTED"
-read -rp "Текущий data.db будет заменён. Продолжить? (y/n): " CONFIRM
+CONFIRM="${RESTORE_CONFIRM:-}"
+if [[ -z "$CONFIRM" ]]; then
+  read -rp "Текущий data.db будет заменён. Продолжить? (y/n): " CONFIRM
+fi
 if [[ "$CONFIRM" != "y" ]]; then
   echo "Отменено."
   exit 0
@@ -50,7 +67,6 @@ echo "=== Скачивание ==="
 rclone copy "$REMOTE_DB/$SELECTED" "$RESTORE_TMP/" "${RCLONE_FLAGS[@]}" -P
 
 AUX_NAME="auxiliary_${SELECTED#data_}"
-# optional companion file
 rclone copy "$REMOTE_DB/$AUX_NAME" "$RESTORE_TMP/" "${RCLONE_FLAGS[@]}" 2>/dev/null || true
 
 gunzip -c "$RESTORE_TMP/$SELECTED" >"$RESTORE_TMP/data.db"

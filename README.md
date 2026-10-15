@@ -306,4 +306,4 @@ erDiagram
 - [MAX Bridge API](https://dev.max.ru/docs/webapps/bridge)
 - [PocketBase JS SDK](https://pocketbase.io/docs/api-records/)
 - Внутренний аудит: [`AUDIT.md`](AUDIT.md)
-- Бэкапы и восстановление: [`scripts/BACKUP.md`](scripts/BACKUP.md)
+- Бэкапы и восстановление: [`docs/BACKUP.md`](docs/BACKUP.md) (`sudo bash scripts/tennis_backup.sh`)

@@ -9,11 +9,17 @@ APP_DIR="${APP_DIR:-/opt/tennis}"
 PB_SERVICE="${PB_SERVICE:-pocketbase}"
 PB_USER="${PB_USER:-pocketbase}"
 
-# REMOTE_ROOT для restore; явный env не перетираем после backup_remotes.env
+# Явный env REMOTE_ROOT / REMOTE_ROOTS не перетираем файлом backup_remotes.env
 _REMOTE_ROOT_WAS_SET=0
+_REMOTE_ROOTS_WAS_SET=0
 if [[ -n "${REMOTE_ROOT:-}" ]]; then
   _REMOTE_ROOT_WAS_SET=1
 fi
+if [[ -n "${REMOTE_ROOTS:-}" ]]; then
+  _REMOTE_ROOTS_WAS_SET=1
+fi
+_SAVED_REMOTE_ROOT="${REMOTE_ROOT:-}"
+_SAVED_REMOTE_ROOTS="${REMOTE_ROOTS:-}"
 REMOTE_ROOT="${REMOTE_ROOT:-yandex:tennis_backup}"
 
 _BACKUP_COMMON_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -21,6 +27,7 @@ OPS_ALERT_SCRIPT="${OPS_ALERT_SCRIPT:-$_BACKUP_COMMON_DIR/ops_alert_max.sh}"
 
 # Опционально: /etc/tennis/backup_remotes.env или config/backup_remotes.env
 # REMOTE_ROOTS=yandex:tennis_backup,mailru:tennis_backup
+# CLOUD_YANDEX=… CLOUD_VK=mailru:tennis_backup
 for _br in /etc/tennis/backup_remotes.env "$APP_DIR/config/backup_remotes.env"; do
   if [[ -f "$_br" ]]; then
     # shellcheck disable=SC1090
@@ -32,6 +39,14 @@ for _br in /etc/tennis/backup_remotes.env "$APP_DIR/config/backup_remotes.env"; 
   fi
 done
 unset _br
+
+if [[ "$_REMOTE_ROOT_WAS_SET" -eq 1 ]]; then
+  REMOTE_ROOT="$_SAVED_REMOTE_ROOT"
+fi
+if [[ "$_REMOTE_ROOTS_WAS_SET" -eq 1 ]]; then
+  REMOTE_ROOTS="$_SAVED_REMOTE_ROOTS"
+fi
+unset _SAVED_REMOTE_ROOT _SAVED_REMOTE_ROOTS
 
 STATE_DIR="$BACKUP_DIR/state"
 LOCKS_DIR="$BACKUP_DIR/locks"
@@ -60,6 +75,48 @@ backup_remote_roots() {
 # Первый remote — для restore по умолчанию и совместимости.
 primary_remote_root() {
   backup_remote_roots | head -n 1
+}
+
+# Облака в UI: yandex / vk (Mail Cloud). rclone: CLOUD_YANDEX / CLOUD_VK или дефолты.
+CLOUD_YANDEX="${CLOUD_YANDEX:-yandex:tennis_backup}"
+CLOUD_VK="${CLOUD_VK:-mailru:tennis_backup}"
+
+cloud_root() {
+  case "${1:-}" in
+    yandex) printf '%s' "$CLOUD_YANDEX" ;;
+    vk|mailru) printf '%s' "$CLOUD_VK" ;;
+    *)
+      echo "cloud_root: unknown cloud '$1' (yandex|vk)" >&2
+      return 1
+      ;;
+  esac
+}
+
+# cloud id для remote root path (yandex:… → yandex, mailru:… → vk)
+cloud_id_for_root() {
+  local root="${1:-}"
+  local name="${root%%:*}"
+  case "$name" in
+    yandex) echo yandex ;;
+    mailru|vk) echo vk ;;
+    *) echo "$name" ;;
+  esac
+}
+
+# REMOTE_ROOTS для выбора: yandex | vk | both
+set_remote_roots_for_cloud() {
+  case "${1:-}" in
+    yandex) REMOTE_ROOTS="$(cloud_root yandex)" ;;
+    vk) REMOTE_ROOTS="$(cloud_root vk)" ;;
+    both|all|оба)
+      REMOTE_ROOTS="$(cloud_root yandex),$(cloud_root vk)"
+      ;;
+    *)
+      echo "set_remote_roots_for_cloud: use yandex|vk|both" >&2
+      return 1
+      ;;
+  esac
+  REMOTE_ROOT="$(primary_remote_root)"
 }
 
 if [[ "$_REMOTE_ROOT_WAS_SET" -eq 0 ]] && [[ -n "${REMOTE_ROOTS:-}" ]]; then

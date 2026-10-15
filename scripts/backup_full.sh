@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Полный weekly-архив: консистентная БД + storage/ → все REMOTE_ROOTS (full/).
+# Полный weekly-архив: консистентная БД + storage/ → REMOTE_ROOTS (full/).
 # Успех = ≥1 remote OK; при любом FAIL — MAX ops-алерт.
 set -euo pipefail
 
