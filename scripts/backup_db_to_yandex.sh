@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Частый бэкап только data.db (+ auxiliary.db) на Яндекс.Диск.
+# Частый бэкап только data.db (+ auxiliary.db) на все REMOTE_ROOTS (Yandex / Mail Cloud …).
 # Cron: каждые 15 мин. Без --force пропускает тик, если БД не менялась.
+# Успех = ≥1 remote OK; при любом FAIL — MAX ops-алерт.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -9,9 +10,22 @@ source "$SCRIPT_DIR/backup_common.sh"
 
 backup_parse_args "$@"
 
-REMOTE_DB="$REMOTE_ROOT/db"
 DB_KEEP_COUNT="${DB_KEEP_COUNT:-96}"
 DB_MAX_AGE="${DB_MAX_AGE:-14d}"
+
+prune_db_on_remote() {
+  local remote_db="$1"
+  mapfile -t remote_files < <(rclone lsf "$remote_db/" --files-only 2>/dev/null | grep -E '^data_.*\.db\.gz$' | sort -r || true)
+  if [[ ${#remote_files[@]} -gt $DB_KEEP_COUNT ]]; then
+    local i
+    for ((i = DB_KEEP_COUNT; i < ${#remote_files[@]}; i++)); do
+      rclone deletefile "$remote_db/${remote_files[$i]}" || true
+      local aux="auxiliary_${remote_files[$i]#data_}"
+      rclone deletefile "$remote_db/$aux" 2>/dev/null || true
+    done
+  fi
+  rclone delete "$remote_db/" --min-age "$DB_MAX_AGE" || true
+}
 
 run_db_backup() {
   if [[ "$FORCE" -eq 0 ]] && db_unchanged_since_last_backup; then
@@ -35,22 +49,22 @@ run_db_backup() {
     rm -f "$tmp_dir/auxiliary.db"
   fi
 
-  echo "[backup-db] uploading to $REMOTE_DB/"
-  rclone_copy "$tmp_dir/" "$REMOTE_DB/"
+  echo "[backup-db] uploading to remotes:"
+  backup_remote_roots | sed 's/^/  - /'
+
+  if ! rclone_mirror_copy "$tmp_dir/" "db"; then
+    echo "[backup-db] all remotes failed" >&2
+    return 1
+  fi
 
   if [[ "$DRY_RUN" -eq 0 ]]; then
     save_db_fingerprint
-    # Keep newest N by name (timestamp sorts lexicographically)
-    mapfile -t remote_files < <(rclone lsf "$REMOTE_DB/" --files-only 2>/dev/null | grep -E '^data_.*\.db\.gz$' | sort -r || true)
-    if [[ ${#remote_files[@]} -gt $DB_KEEP_COUNT ]]; then
-      local i
-      for ((i = DB_KEEP_COUNT; i < ${#remote_files[@]}; i++)); do
-        rclone deletefile "$REMOTE_DB/${remote_files[$i]}" || true
-        local aux="auxiliary_${remote_files[$i]#data_}"
-        rclone deletefile "$REMOTE_DB/$aux" 2>/dev/null || true
-      done
-    fi
-    rclone delete "$REMOTE_DB/" --min-age "$DB_MAX_AGE" || true
+    local root
+    while IFS= read -r root; do
+      [[ -n "$root" ]] || continue
+      echo "[backup-db] prune ${root%/}/db/"
+      prune_db_on_remote "${root%/}/db" || true
+    done < <(backup_remote_roots)
   fi
 
   echo "[backup-db] done: data_${TIMESTAMP}.db.gz"
