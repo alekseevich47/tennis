@@ -114,7 +114,7 @@ export function openSellerChat(url) {
 }
 
 /**
- * Диплинк личного чата в MAX по user_id (dev.max.ru/docs-api — max://user/user_id).
+ * Mention-диплинк личного чата (dev.max.ru docs-api text-formatting: max://user/user_id).
  * @param {string | number | null | undefined} maxId
  * @returns {string}
  */
@@ -124,50 +124,92 @@ export function buildMaxUserChatUrl(maxId) {
 }
 
 /**
+ * Открыть max:// схему нативным обработчиком клиента.
+ * Нельзя через openMaxLink / openLink: Bridge принимает только https://max.ru/…;
+ * иначе max:// уходит «наружу» → «Ссылка устарела» / no-op на desktop.
+ * Текст якоря = имя из профиля MAX (как в mention-разметке бота).
  * @param {string} url
+ * @param {string} [displayName]
+ * @returns {boolean}
  */
-export function openMaxDeepLink(url) {
+function openMaxCustomScheme(url, displayName) {
   const href = String(url || '').trim();
-  // Telegram SDK openLink принимает только https — max:// бросает ошибку.
-  if (isTelegramApp() && /^max:\/\//i.test(href)) return;
+  if (!href || !/^max:\/\//i.test(href)) return false;
+  if (isTelegramApp()) return false;
+
+  const label = String(displayName ?? '').trim() || 'Пользователь';
+
+  try {
+    const iframe = document.createElement('iframe');
+    iframe.setAttribute('src', href);
+    iframe.setAttribute('aria-hidden', 'true');
+    iframe.style.cssText = 'display:none;width:0;height:0;border:0;position:absolute';
+    document.body.appendChild(iframe);
+    window.setTimeout(() => {
+      try {
+        iframe.remove();
+      } catch {
+        // ignore
+      }
+    }, 1500);
+  } catch {
+    // ignore
+  }
+
+  try {
+    const a = document.createElement('a');
+    a.setAttribute('href', href);
+    a.textContent = label;
+    a.rel = 'noopener';
+    a.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0;pointer-events:none';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  } catch {
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * https://max.ru/… — openMaxLink; max:// — только custom-scheme (не Bridge).
+ * @param {string} url
+ * @param {string} [displayName]
+ */
+export function openMaxDeepLink(url, displayName) {
+  const href = String(url || '').trim();
+  if (!href) return;
+
+  if (/^max:\/\//i.test(href)) {
+    openMaxCustomScheme(href, displayName);
+    return;
+  }
+
+  if (isTelegramApp() && !/^https?:\/\//i.test(href)) return;
+
   const webApp = getWebApp();
-  if (webApp?.openMaxLink) {
+  if (/^https?:\/\/(www\.)?max\.ru\//i.test(href) && webApp?.openMaxLink) {
     webApp.openMaxLink(href);
     return;
   }
   if (webApp?.openLink) {
     webApp.openLink(href);
+    return;
   }
+  window.open(href, '_blank', 'noopener,noreferrer');
 }
 
 /**
  * Личный чат с пользователем MAX по max_id (user_id).
- * Desktop/web: краткий disableClosingConfirmation — как у openSellerChat.
  * @param {string | number | null | undefined} maxId
+ * @param {string} [displayName] полное имя из профиля (для mention-якоря)
+ * @returns {boolean}
  */
-export function openMaxUserChat(maxId) {
+export function openMaxUserChat(maxId, displayName) {
   const url = buildMaxUserChatUrl(maxId);
-  if (!url) return;
-
-  const webApp = getWebApp();
-  if (!isMobileMaxPlatform() && webApp?.disableClosingConfirmation) {
-    try {
-      webApp.disableClosingConfirmation();
-    } catch {
-      // ignore
-    }
-    openMaxDeepLink(url);
-    window.setTimeout(() => {
-      try {
-        webApp.enableClosingConfirmation?.();
-      } catch {
-        // ignore
-      }
-    }, 1200);
-    return;
-  }
-
-  openMaxDeepLink(url);
+  if (!url) return false;
+  return openMaxCustomScheme(url, displayName);
 }
 
 export { BUY_TOAST_TEXT, BUY_MOBILE_TOAST_ACTION_LABEL };

@@ -130,6 +130,7 @@
   color: #007aff;
   font: inherit;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .profile-max-id-empty {
