@@ -38,6 +38,7 @@ import MembershipModal from './MembershipModal';
 import ProfileSingleDateField from './ProfileSingleDateField';
 import ProfileTrainingsSearch, { filterProfileTrainings } from './ProfileTrainingsSearch';
 import { useKeepForModalClose } from '../../hooks/useKeepForModalClose';
+import { openMaxUserChat } from '../shop/buyMessage';
 import './Profile.css';
 
 const DEFAULT_HAND = 'Правая';
@@ -966,10 +967,8 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
                         <button
                           type="button"
                           className="profile-max-id-btn"
-                          onClick={() => {
-                            navigator.clipboard?.writeText(linkedMaxId);
-                          }}
-                          title="Скопировать max_id"
+                          onClick={() => openMaxUserChat(linkedMaxId)}
+                          title="Открыть чат в MAX"
                         >
                           {linkedMaxId}
                         </button>

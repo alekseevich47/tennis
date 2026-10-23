@@ -141,11 +141,33 @@ export function openMaxDeepLink(url) {
 }
 
 /**
+ * Личный чат с пользователем MAX по max_id (user_id).
+ * Desktop/web: краткий disableClosingConfirmation — как у openSellerChat.
  * @param {string | number | null | undefined} maxId
  */
 export function openMaxUserChat(maxId) {
   const url = buildMaxUserChatUrl(maxId);
-  if (url) openMaxDeepLink(url);
+  if (!url) return;
+
+  const webApp = getWebApp();
+  if (!isMobileMaxPlatform() && webApp?.disableClosingConfirmation) {
+    try {
+      webApp.disableClosingConfirmation();
+    } catch {
+      // ignore
+    }
+    openMaxDeepLink(url);
+    window.setTimeout(() => {
+      try {
+        webApp.enableClosingConfirmation?.();
+      } catch {
+        // ignore
+      }
+    }, 1200);
+    return;
+  }
+
+  openMaxDeepLink(url);
 }
 
 export { BUY_TOAST_TEXT, BUY_MOBILE_TOAST_ACTION_LABEL };
