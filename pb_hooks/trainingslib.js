@@ -669,11 +669,8 @@ function unbookNotStartedForUser(app, userId, options) {
   }
 
   var bot = require(__hooks + '/botlib.js');
-  var userName = 'Игрок';
-  try {
-    var u = app.findRecordById('users', uid);
-    userName = u.getString('full_name') || 'Игрок';
-  } catch (_) {}
+  var userName = options.userName || 'Игрок';
+  // не findRecordById('users') — в API-контексте на стенде зависает
 
   var causeLabel = cause === 'membership_stop'
     ? 'из-за остановки абонемента'

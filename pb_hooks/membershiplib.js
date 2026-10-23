@@ -53,7 +53,10 @@ function chargeFreezeDays(elapsedMs) {
 }
 
 function getFreezeUsedDays(user) {
-  return Math.max(0, Math.floor(Number(user.getFloat('membership_freeze_used_days')) || 0));
+  if (user && user.getFloat) {
+    return Math.max(0, Math.floor(Number(user.getFloat('membership_freeze_used_days')) || 0));
+  }
+  return Math.max(0, Math.floor(Number(user && user.membership_freeze_used_days) || 0));
 }
 
 function remainingFreezeDays(user) {
@@ -65,24 +68,9 @@ function fail(msg) {
   throw new Error(String(msg || 'membership error'));
 }
 
-/**
- * Читать json-поле только через getString (JSON.parse строки).
- * Никогда не JSON.stringify(record.get(...)) — Go-значение в goja → panic.
- */
-function readFreezeLog(user) {
-  var s = '';
-  try {
-    s = user.getString('membership_freeze_log') || '';
-  } catch (err) {
-    console.log('[membership] getString freeze_log: ' + err);
-    return [];
-  }
-  if (!s || s === 'null' || s === '[]') return [];
-  return parseFreezeLogString(s);
-}
-
 function parseFreezeLogString(asString) {
   try {
+    if (!asString || asString === 'null' || asString === '[]') return [];
     var log = JSON.parse(asString);
     if (!Array.isArray(log)) return [];
     var out = [];
@@ -90,18 +78,18 @@ function parseFreezeLogString(asString) {
     for (i = 0; i < log.length; i++) {
       var e = log[i];
       if (!e || typeof e !== 'object') continue;
-      var row = {
+      var entry = {
         kind: e.kind ? String(e.kind) : 'freeze',
         frozen_at: e.frozen_at ? String(e.frozen_at) : '',
         unfrozen_at: e.unfrozen_at ? String(e.unfrozen_at) : ''
       };
       if (e.days_charged != null && e.days_charged !== '') {
-        row.days_charged = Number(e.days_charged);
+        entry.days_charged = Number(e.days_charged);
       }
-      if (e.planned_until) row.planned_until = String(e.planned_until);
-      if (e.by_id) row.by_id = String(e.by_id);
-      if (e.by_name) row.by_name = String(e.by_name);
-      out.push(row);
+      if (e.planned_until) entry.planned_until = String(e.planned_until);
+      if (e.by_id) entry.by_id = String(e.by_id);
+      if (e.by_name) entry.by_name = String(e.by_name);
+      out.push(entry);
     }
     return out;
   } catch (_) {
@@ -109,63 +97,156 @@ function parseFreezeLogString(asString) {
   }
 }
 
-/** @deprecated use readFreezeLog(user) */
-function parseFreezeLog(raw) {
-  if (raw == null || raw === '') return [];
-  if (typeof raw === 'string') return parseFreezeLogString(raw);
-  // не трогаем Go-объект через stringify
-  return [];
-}
-
-function setFreezeLog(user, log) {
+function serializeFreezeLog(log) {
   var plain = [];
   try {
     var i;
     for (i = 0; i < (log || []).length; i++) {
       var e = log[i] || {};
-      var row = {
+      var entry = {
         kind: e.kind ? String(e.kind) : 'freeze',
         frozen_at: e.frozen_at ? String(e.frozen_at) : '',
         unfrozen_at: e.unfrozen_at ? String(e.unfrozen_at) : ''
       };
       if (e.days_charged != null && e.days_charged !== '') {
-        row.days_charged = Number(e.days_charged);
+        entry.days_charged = Number(e.days_charged);
       }
-      if (e.planned_until) row.planned_until = String(e.planned_until);
-      if (e.by_id) row.by_id = String(e.by_id);
-      if (e.by_name) row.by_name = String(e.by_name);
-      plain.push(row);
+      if (e.planned_until) entry.planned_until = String(e.planned_until);
+      if (e.by_id) entry.by_id = String(e.by_id);
+      if (e.by_name) entry.by_name = String(e.by_name);
+      plain.push(entry);
     }
   } catch (_) {
     plain = [];
   }
-  // строка безопаснее для json-поля в goja, чем Go/JS hybrid array
-  user.set('membership_freeze_log', JSON.stringify(plain));
+  return JSON.stringify(plain);
 }
 
-function saveUserRecord(app, user, label) {
+/**
+ * findRecordById('users') в routerAdd на стенде зависает — только SQL.
+ */
+function loadUserRow(app, userId) {
+  console.log('[membership] sql load ' + userId);
+  var row = new DynamicModel({
+    id: '',
+    full_name: '',
+    membership_type: '',
+    membership_start_date: '',
+    membership_end_date: '',
+    membership_frozen: false,
+    membership_frozen_at: '',
+    membership_freeze_planned_until: '',
+    membership_freeze_used_days: 0,
+    membership_freeze_log: '',
+    membership_stopped: false,
+    membership_stopped_at: '',
+    available_sessions: 0,
+    used_sessions: 0,
+    unpaid_sessions: 0,
+    membership_comment: '',
+    max_id: '',
+    tg_id: '',
+    tg_bot_blocked: false
+  });
   try {
-    app.save(user);
+    app.db().newQuery(
+      'SELECT id, full_name, membership_type, membership_start_date, membership_end_date, ' +
+        'membership_frozen, membership_frozen_at, membership_freeze_planned_until, ' +
+        'membership_freeze_used_days, membership_freeze_log, membership_stopped, membership_stopped_at, ' +
+        'available_sessions, used_sessions, unpaid_sessions, membership_comment, ' +
+        'max_id, tg_id, tg_bot_blocked ' +
+        'FROM users WHERE id = {:id}'
+    ).bind({ id: String(userId) }).one(row);
   } catch (err) {
-    console.log('[membership] save ' + (label || 'user') + ': ' + err);
+    console.log('[membership] sql load err: ' + err);
+    fail('Пользователь не найден');
+  }
+  console.log('[membership] sql load ok');
+  return row;
+}
+
+function sqlExec(app, sql, bind, label) {
+  try {
+    console.log('[membership] sql ' + (label || 'exec'));
+    app.db().newQuery(sql).bind(bind || {}).execute();
+    console.log('[membership] sql ' + (label || 'exec') + ' ok');
+  } catch (err) {
+    console.log('[membership] sql ' + (label || 'exec') + ' err: ' + err);
     fail('Не удалось сохранить абонемент: ' + String(err));
   }
 }
 
-/** best-effort: флаги уже сохранены, лог не должен ломать операцию */
-function tryUpdateFreezeLog(app, user, mutator, label) {
+function trySqlFreezeLog(app, userId, currentLogStr, mutator, label) {
   try {
-    var log = readFreezeLog(user);
+    var log = parseFreezeLogString(currentLogStr || '');
     mutator(log);
-    setFreezeLog(user, log);
-    app.save(user);
+    sqlExec(
+      app,
+      'UPDATE users SET membership_freeze_log = {:log} WHERE id = {:id}',
+      { log: serializeFreezeLog(log), id: String(userId) },
+      'freeze_log_' + (label || '')
+    );
   } catch (err) {
     console.log('[membership] freeze_log ' + (label || '') + ' skipped: ' + err);
   }
 }
 
+function rowAsUser(row) {
+  return {
+    id: row.id,
+    getString: function (f) {
+      var v = row[f];
+      return v == null ? '' : String(v);
+    },
+    getBool: function (f) {
+      return !!row[f];
+    },
+    getFloat: function (f) {
+      return Number(row[f]) || 0;
+    },
+    get: function (f) {
+      return row[f];
+    }
+  };
+}
+
+function snapshotFromRow(row) {
+  return {
+    id: row.id,
+    membership_type: row.membership_type || 'regular',
+    membership_start_date: row.membership_start_date || '',
+    membership_end_date: row.membership_end_date || '',
+    membership_frozen: !!row.membership_frozen,
+    membership_frozen_at: row.membership_frozen_at || '',
+    membership_freeze_planned_until: row.membership_freeze_planned_until || '',
+    membership_freeze_used_days: Math.max(0, Math.floor(Number(row.membership_freeze_used_days) || 0)),
+    membership_freeze_log: parseFreezeLogString(row.membership_freeze_log || ''),
+    membership_stopped: !!row.membership_stopped,
+    membership_stopped_at: row.membership_stopped_at || '',
+    available_sessions: Number(row.available_sessions) || 0,
+    used_sessions: Number(row.used_sessions) || 0,
+    unpaid_sessions: Number(row.unpaid_sessions) || 0,
+    membership_comment: row.membership_comment || ''
+  };
+}
+
+function resolveUserId(opts) {
+  if (opts && opts.targetUserId) return String(opts.targetUserId);
+  if (opts && opts.target && opts.target.id) return String(opts.target.id);
+  return '';
+}
+
+function addDaysToEndDateStr(endStr, days) {
+  if (!days || days < 1 || !endStr) return endStr || '';
+  var end = parsePbDate(endStr);
+  if (!end || isNaN(end.getTime())) return endStr;
+  end.setUTCDate(end.getUTCDate() + days);
+  return end.toISOString().slice(0, 10);
+}
+
 function membershipType(user) {
-  return user.getString('membership_type') || 'regular';
+  if (user && user.getString) return user.getString('membership_type') || 'regular';
+  return (user && user.membership_type) || 'regular';
 }
 
 function canFreezeType(type) {
@@ -309,6 +390,11 @@ function logSubscriptionAudit(app, payload) {
 }
 
 function userSnapshotFields(user) {
+  if (user && !user.getString) return snapshotFromRow(user);
+  var logStr = '';
+  try {
+    logStr = user.getString('membership_freeze_log') || '';
+  } catch (_) {}
   return {
     id: user.id,
     membership_type: membershipType(user),
@@ -318,7 +404,7 @@ function userSnapshotFields(user) {
     membership_frozen_at: user.getString('membership_frozen_at') || '',
     membership_freeze_planned_until: user.getString('membership_freeze_planned_until') || '',
     membership_freeze_used_days: getFreezeUsedDays(user),
-    membership_freeze_log: readFreezeLog(user),
+    membership_freeze_log: parseFreezeLogString(logStr),
     membership_stopped: user.getBool('membership_stopped'),
     membership_stopped_at: user.getString('membership_stopped_at') || '',
     available_sessions: user.getFloat('available_sessions') || 0,
@@ -348,44 +434,43 @@ function resetFreezeBudgetIfStartChanged(original, record) {
 
 function freezeUser(app, opts) {
   opts = opts || {};
-  var user = opts.target;
   var actor = opts.actor;
-  console.log('[membership] freezeUser begin');
-  if (!user) fail('Пользователь не найден');
-  var type = membershipType(user);
+  var userId = resolveUserId(opts);
+  console.log('[membership] freezeUser begin id=' + userId);
+  if (!userId) fail('Пользователь не найден');
+
+  var row = loadUserRow(app, userId);
+  var type = row.membership_type || 'regular';
   if (!canFreezeType(type)) {
     fail('Заморозка доступна только для обычного и годового абонемента');
   }
-  if (user.getBool('membership_stopped')) {
-    fail('Абонемент остановлен. Сначала запустите абонемент.');
-  }
-  if (user.getBool('membership_frozen')) {
-    fail('Абонемент уже заморожен');
-  }
-  var remaining = remainingFreezeDays(user);
-  if (remaining < 1) {
-    fail('Лимит заморозки на этот абонемент исчерпан (30 дней)');
-  }
+  if (row.membership_stopped) fail('Абонемент остановлен. Сначала запустите абонемент.');
+  if (row.membership_frozen) fail('Абонемент уже заморожен');
+  var remaining = remainingFreezeDays(row);
+  if (remaining < 1) fail('Лимит заморозки на этот абонемент исчерпан (30 дней)');
 
   var now = opts.now ? new Date(opts.now) : new Date();
   var frozenAtIso = now.toISOString();
-  var planned = new Date(now.getTime() + remaining * DAY_MS);
-  var plannedIso = planned.toISOString();
-  var name = user.getString('full_name') || 'Игрок';
+  var plannedIso = new Date(now.getTime() + remaining * DAY_MS).toISOString();
+  var name = row.full_name || 'Игрок';
   var actorName = actorLabel(actor);
   var fromLabel = formatDateTimeGmt7(frozenAtIso);
   var toLabel = formatDateTimeGmt7(plannedIso);
   var daysLabel = String(remaining);
 
-  user.set('membership_frozen', true);
-  user.set('membership_frozen_at', frozenAtIso);
-  user.set('membership_freeze_planned_until', plannedIso);
-  user.set('freeze_expiry_warn_for', '');
-  user.set('freeze_tomorrow_warn_for', '');
-  saveUserRecord(app, user, 'freeze');
-  console.log('[membership] freezeUser flags saved');
+  sqlExec(
+    app,
+    'UPDATE users SET membership_frozen = true, membership_frozen_at = {:frozenAt}, ' +
+      'membership_freeze_planned_until = {:planned}, freeze_expiry_warn_for = \'\', ' +
+      'freeze_tomorrow_warn_for = \'\' WHERE id = {:id}',
+    { frozenAt: frozenAtIso, planned: plannedIso, id: userId },
+    'freeze'
+  );
+  row.membership_frozen = true;
+  row.membership_frozen_at = frozenAtIso;
+  row.membership_freeze_planned_until = plannedIso;
 
-  tryUpdateFreezeLog(app, user, function (log) {
+  trySqlFreezeLog(app, userId, row.membership_freeze_log, function (log) {
     log.push({
       kind: 'freeze',
       frozen_at: frozenAtIso,
@@ -396,12 +481,13 @@ function freezeUser(app, opts) {
     });
   }, 'freeze');
 
+  var user = rowAsUser(row);
   var unbooked = [];
   try {
-    var trainingsLib = require(__hooks + '/trainingslib.js');
-    unbooked = trainingsLib.unbookNotStartedForUser(app, user.id, {
+    unbooked = require(__hooks + '/trainingslib.js').unbookNotStartedForUser(app, userId, {
       cause: 'membership_freeze',
-      actor: actor
+      actor: actor,
+      userName: name
     }) || [];
   } catch (unbookErr) {
     console.log('[membership] freeze unbook: ' + unbookErr);
@@ -418,11 +504,11 @@ function freezeUser(app, opts) {
     };
     sendBotToUser(app, user, 'bot.membership_freeze', varsUser);
     sendBotToModerators(app, 'bot.membership_freeze_mod', varsMod);
-    createAppNotification(app, user.id, 'app.membership_freeze', varsUser, {
+    createAppNotification(app, userId, 'app.membership_freeze', varsUser, {
       meta: { kind: 'membership_freeze' }
     });
     notifyModsApp(app, 'app.membership_freeze_mod', varsMod, {
-      meta: { kind: 'membership_freeze', targetUserId: user.id }
+      meta: { kind: 'membership_freeze', targetUserId: userId }
     });
   } catch (notifyErr) {
     console.log('[membership] freeze notify: ' + notifyErr);
@@ -432,16 +518,16 @@ function freezeUser(app, opts) {
   try {
     var audit = require(__hooks + '/auditlib.js');
     subject = audit.actorInfo(actor);
-    if (subject) subject.source = actorId(actor) === String(user.id) ? 'self' : 'moderator';
+    if (subject) subject.source = actorId(actor) === userId ? 'self' : 'moderator';
   } catch (_) {}
   logSubscriptionAudit(app, {
     category: 'subscription',
     action: 'subscription.freeze.set',
     actionKind: 'update',
     subject: subject,
-    target: { id: user.id, label: name },
+    target: { id: userId, label: name },
     objectType: 'user',
-    objectId: user.id,
+    objectId: userId,
     objectLabel: name,
     effectiveAt: frozenAtIso,
     details: {
@@ -454,48 +540,58 @@ function freezeUser(app, opts) {
     severity: 'info'
   });
 
-  return userSnapshotFields(user);
+  try {
+    row = loadUserRow(app, userId);
+  } catch (_) {}
+  return snapshotFromRow(row);
 }
 
 function unfreezeUser(app, opts) {
   opts = opts || {};
-  var user = opts.target;
   var actor = opts.actor;
   var reason = opts.reason || 'manual';
-  console.log('[membership] unfreezeUser begin reason=' + reason);
-  if (!user) fail('Пользователь не найден');
-  if (!user.getBool('membership_frozen')) {
-    if (reason === 'stop_override') return userSnapshotFields(user);
+  var userId = resolveUserId(opts);
+  console.log('[membership] unfreezeUser begin id=' + userId + ' reason=' + reason);
+  if (!userId) fail('Пользователь не найден');
+
+  var row = loadUserRow(app, userId);
+  if (!row.membership_frozen) {
+    if (reason === 'stop_override') return snapshotFromRow(row);
     fail('Абонемент не заморожен');
   }
 
-  var frozenAt = parsePbDate(user.getString('membership_frozen_at'));
+  var frozenAt = parsePbDate(row.membership_frozen_at);
   var now = opts.now ? new Date(opts.now) : new Date();
   var elapsed = frozenAt && !isNaN(frozenAt.getTime())
     ? now.getTime() - frozenAt.getTime()
     : DAY_MS;
-  var remaining = remainingFreezeDays(user);
+  var remaining = remainingFreezeDays(row);
   var days = Math.min(remaining, chargeFreezeDays(elapsed));
   if (days < 1) days = 1;
 
-  var used = getFreezeUsedDays(user) + days;
+  var used = getFreezeUsedDays(row) + days;
   if (used > FREEZE_BUDGET_DAYS) {
-    days = Math.max(0, FREEZE_BUDGET_DAYS - getFreezeUsedDays(user));
+    days = Math.max(0, FREEZE_BUDGET_DAYS - getFreezeUsedDays(row));
     used = FREEZE_BUDGET_DAYS;
   }
 
-  addDaysToEndDate(user, days);
+  var newEnd = addDaysToEndDateStr(row.membership_end_date, days);
+  sqlExec(
+    app,
+    'UPDATE users SET membership_freeze_used_days = {:used}, membership_frozen = false, ' +
+      'membership_frozen_at = \'\', membership_freeze_planned_until = \'\', ' +
+      'freeze_expiry_warn_for = \'\', freeze_tomorrow_warn_for = \'\', ' +
+      'membership_end_date = {:endDate} WHERE id = {:id}',
+    { used: used, endDate: newEnd || row.membership_end_date || '', id: userId },
+    'unfreeze'
+  );
+  row.membership_freeze_used_days = used;
+  row.membership_frozen = false;
+  row.membership_frozen_at = '';
+  row.membership_freeze_planned_until = '';
+  row.membership_end_date = newEnd || row.membership_end_date;
 
-  user.set('membership_freeze_used_days', used);
-  user.set('membership_frozen', false);
-  user.set('membership_frozen_at', '');
-  user.set('membership_freeze_planned_until', '');
-  user.set('freeze_expiry_warn_for', '');
-  user.set('freeze_tomorrow_warn_for', '');
-  saveUserRecord(app, user, 'unfreeze');
-  console.log('[membership] unfreezeUser flags saved days=' + days);
-
-  tryUpdateFreezeLog(app, user, function (log) {
+  trySqlFreezeLog(app, userId, row.membership_freeze_log, function (log) {
     if (log.length > 0) {
       var last = log[log.length - 1];
       if (last && !last.unfrozen_at) {
@@ -506,18 +602,22 @@ function unfreezeUser(app, opts) {
     }
   }, 'unfreeze');
 
-  var name = user.getString('full_name') || 'Игрок';
+  var name = row.full_name || 'Игрок';
   var actorName = actorLabel(actor);
-  var skipNotify = reason === 'stop_override';
-  if (!skipNotify) {
-    sendBotToUser(app, user, 'bot.membership_unfreeze', {});
-    sendBotToModerators(app, 'bot.membership_unfreeze_mod', { name: name });
-    createAppNotification(app, user.id, 'app.membership_unfreeze', {}, {
-      meta: { kind: 'membership_unfreeze' }
-    });
-    notifyModsApp(app, 'app.membership_unfreeze_mod', { name: name }, {
-      meta: { kind: 'membership_unfreeze', targetUserId: user.id }
-    });
+  var user = rowAsUser(row);
+  if (reason !== 'stop_override') {
+    try {
+      sendBotToUser(app, user, 'bot.membership_unfreeze', {});
+      sendBotToModerators(app, 'bot.membership_unfreeze_mod', { name: name });
+      createAppNotification(app, userId, 'app.membership_unfreeze', {}, {
+        meta: { kind: 'membership_unfreeze' }
+      });
+      notifyModsApp(app, 'app.membership_unfreeze_mod', { name: name }, {
+        meta: { kind: 'membership_unfreeze', targetUserId: userId }
+      });
+    } catch (notifyErr) {
+      console.log('[membership] unfreeze notify: ' + notifyErr);
+    }
   }
 
   var subject = null;
@@ -527,7 +627,7 @@ function unfreezeUser(app, opts) {
     if (subject) {
       subject.source = reason === 'auto'
         ? 'system'
-        : (actorId(actor) === String(user.id) ? 'self' : 'moderator');
+        : (actorId(actor) === userId ? 'self' : 'moderator');
     }
   } catch (_) {}
   logSubscriptionAudit(app, {
@@ -536,9 +636,9 @@ function unfreezeUser(app, opts) {
     actionKind: 'update',
     subject: subject,
     subjectSource: reason === 'auto' ? 'system' : undefined,
-    target: { id: user.id, label: name },
+    target: { id: userId, label: name },
     objectType: 'user',
-    objectId: user.id,
+    objectId: userId,
     objectLabel: name,
     details: {
       frozenDays: days,
@@ -552,39 +652,46 @@ function unfreezeUser(app, opts) {
     severity: 'info'
   });
 
-  return userSnapshotFields(user);
+  try {
+    row = loadUserRow(app, userId);
+  } catch (_) {}
+  return snapshotFromRow(row);
 }
 
 function stopUser(app, opts) {
   opts = opts || {};
-  var user = opts.target;
   var actor = opts.actor;
-  console.log('[membership] stopUser begin');
-  if (!user) fail('Пользователь не найден');
-  var type = membershipType(user);
+  var userId = resolveUserId(opts);
+  console.log('[membership] stopUser begin id=' + userId);
+  if (!userId) fail('Пользователь не найден');
+
+  var row = loadUserRow(app, userId);
+  var type = row.membership_type || 'regular';
   if (!canStopType(type)) {
     fail('Остановка доступна для обычного, корпоративного и годового абонемента');
   }
-  if (user.getBool('membership_stopped')) {
-    fail('Абонемент уже остановлен');
-  }
+  if (row.membership_stopped) fail('Абонемент уже остановлен');
 
-  if (user.getBool('membership_frozen')) {
-    // тот же record после save — не findRecordById (на стенде зависает)
-    unfreezeUser(app, { target: user, actor: actor, reason: 'stop_override' });
+  if (row.membership_frozen) {
+    unfreezeUser(app, { targetUserId: userId, actor: actor, reason: 'stop_override' });
+    row = loadUserRow(app, userId);
   }
 
   var now = opts.now ? new Date(opts.now) : new Date();
   var stoppedAtIso = now.toISOString();
-  var name = user.getString('full_name') || 'Игрок';
+  var name = row.full_name || 'Игрок';
   var actorName = actorLabel(actor);
 
-  user.set('membership_stopped', true);
-  user.set('membership_stopped_at', stoppedAtIso);
-  saveUserRecord(app, user, 'stop');
-  console.log('[membership] stopUser flags saved');
+  sqlExec(
+    app,
+    'UPDATE users SET membership_stopped = true, membership_stopped_at = {:at} WHERE id = {:id}',
+    { at: stoppedAtIso, id: userId },
+    'stop'
+  );
+  row.membership_stopped = true;
+  row.membership_stopped_at = stoppedAtIso;
 
-  tryUpdateFreezeLog(app, user, function (log) {
+  trySqlFreezeLog(app, userId, row.membership_freeze_log, function (log) {
     log.push({
       kind: 'stop',
       frozen_at: stoppedAtIso,
@@ -594,12 +701,13 @@ function stopUser(app, opts) {
     });
   }, 'stop');
 
+  var user = rowAsUser(row);
   var unbooked = [];
   try {
-    var trainingsLib = require(__hooks + '/trainingslib.js');
-    unbooked = trainingsLib.unbookNotStartedForUser(app, user.id, {
+    unbooked = require(__hooks + '/trainingslib.js').unbookNotStartedForUser(app, userId, {
       cause: 'membership_stop',
-      actor: actor
+      actor: actor,
+      userName: name
     }) || [];
   } catch (unbookErr) {
     console.log('[membership] stop unbook: ' + unbookErr);
@@ -611,11 +719,11 @@ function stopUser(app, opts) {
     var varsMod = { name: name, from: fromLabel, actor: actorName };
     sendBotToUser(app, user, 'bot.membership_stop', varsUser);
     sendBotToModerators(app, 'bot.membership_stop_mod', varsMod);
-    createAppNotification(app, user.id, 'app.membership_stop', varsUser, {
+    createAppNotification(app, userId, 'app.membership_stop', varsUser, {
       meta: { kind: 'membership_stop' }
     });
     notifyModsApp(app, 'app.membership_stop_mod', varsMod, {
-      meta: { kind: 'membership_stop', targetUserId: user.id }
+      meta: { kind: 'membership_stop', targetUserId: userId }
     });
   } catch (notifyErr) {
     console.log('[membership] stop notify: ' + notifyErr);
@@ -632,9 +740,9 @@ function stopUser(app, opts) {
     action: 'subscription.stop.set',
     actionKind: 'update',
     subject: subject,
-    target: { id: user.id, label: name },
+    target: { id: userId, label: name },
     objectType: 'user',
-    objectId: user.id,
+    objectId: userId,
     objectLabel: name,
     effectiveAt: stoppedAtIso,
     details: { unbookedTrainingIds: unbooked, actorName: actorName },
@@ -642,33 +750,42 @@ function stopUser(app, opts) {
     severity: 'info'
   });
 
-  return userSnapshotFields(user);
+  try {
+    row = loadUserRow(app, userId);
+  } catch (_) {}
+  return snapshotFromRow(row);
 }
 
 function startUser(app, opts) {
   opts = opts || {};
-  var user = opts.target;
   var actor = opts.actor;
-  console.log('[membership] startUser begin stopped=' + (user && user.getBool('membership_stopped')));
-  if (!user) fail('Пользователь не найден');
-  if (!user.getBool('membership_stopped')) {
-    fail('Абонемент не остановлен');
-  }
+  var userId = resolveUserId(opts);
+  console.log('[membership] startUser begin id=' + userId);
+  if (!userId) fail('Пользователь не найден');
 
-  var stoppedAt = parsePbDate(user.getString('membership_stopped_at'));
+  var row = loadUserRow(app, userId);
+  if (!row.membership_stopped) fail('Абонемент не остановлен');
+
+  var stoppedAt = parsePbDate(row.membership_stopped_at);
   var now = opts.now ? new Date(opts.now) : new Date();
   var elapsed = stoppedAt && !isNaN(stoppedAt.getTime())
     ? now.getTime() - stoppedAt.getTime()
     : DAY_MS;
   var days = chargeFreezeDays(elapsed);
-  addDaysToEndDate(user, days);
+  var newEnd = addDaysToEndDateStr(row.membership_end_date, days);
 
-  user.set('membership_stopped', false);
-  user.set('membership_stopped_at', '');
-  saveUserRecord(app, user, 'start');
-  console.log('[membership] startUser flags saved days=' + days);
+  sqlExec(
+    app,
+    'UPDATE users SET membership_stopped = false, membership_stopped_at = \'\', ' +
+      'membership_end_date = {:endDate} WHERE id = {:id}',
+    { endDate: newEnd || row.membership_end_date || '', id: userId },
+    'start'
+  );
+  row.membership_stopped = false;
+  row.membership_stopped_at = '';
+  row.membership_end_date = newEnd || row.membership_end_date;
 
-  tryUpdateFreezeLog(app, user, function (log) {
+  trySqlFreezeLog(app, userId, row.membership_freeze_log, function (log) {
     if (log.length > 0) {
       var last = log[log.length - 1];
       if (last && !last.unfrozen_at && last.kind === 'stop') {
@@ -678,16 +795,17 @@ function startUser(app, opts) {
     }
   }, 'start');
 
-  var name = user.getString('full_name') || 'Игрок';
+  var name = row.full_name || 'Игрок';
   var actorName = actorLabel(actor);
+  var user = rowAsUser(row);
   try {
     sendBotToUser(app, user, 'bot.membership_start', {});
     sendBotToModerators(app, 'bot.membership_start_mod', { name: name });
-    createAppNotification(app, user.id, 'app.membership_start', {}, {
+    createAppNotification(app, userId, 'app.membership_start', {}, {
       meta: { kind: 'membership_start' }
     });
     notifyModsApp(app, 'app.membership_start_mod', { name: name }, {
-      meta: { kind: 'membership_start', targetUserId: user.id }
+      meta: { kind: 'membership_start', targetUserId: userId }
     });
   } catch (notifyErr) {
     console.log('[membership] start notify: ' + notifyErr);
@@ -704,16 +822,19 @@ function startUser(app, opts) {
     action: 'subscription.stop.unset',
     actionKind: 'update',
     subject: subject,
-    target: { id: user.id, label: name },
+    target: { id: userId, label: name },
     objectType: 'user',
-    objectId: user.id,
+    objectId: userId,
     objectLabel: name,
     details: { frozenDays: days, actorName: actorName },
     summaryRu: actorName + ' запустил(а) абонемент ' + name + ' (+' + days + ' дн.)',
     severity: 'info'
   });
 
-  return userSnapshotFields(user);
+  try {
+    row = loadUserRow(app, userId);
+  } catch (_) {}
+  return snapshotFromRow(row);
 }
 
 function processFreezeWarnings(app) {
@@ -811,7 +932,7 @@ function processAutoUnfreeze(app) {
       } else if (now < planned.getTime()) {
         continue;
       }
-      unfreezeUser(app, { target: user, actor: null, reason: 'auto' });
+      unfreezeUser(app, { targetUserId: user.id, actor: null, reason: 'auto' });
     } catch (err) {
       console.log('[membership] auto-unfreeze: ' + err);
     }
