@@ -60,14 +60,29 @@ function remainingFreezeDays(user) {
   return Math.max(0, FREEZE_BUDGET_DAYS - getFreezeUsedDays(user));
 }
 
+/** Обычный Error — BadRequestError из lib в goja часто обходит try/catch роутера. */
+function fail(msg) {
+  throw new Error(String(msg || 'membership error'));
+}
+
 /**
- * Plain JS-массив для goja: Record.get(json) даёт Go-значение —
- * push/set без clone → opaque 400 на $app.save.
+ * Читать json-поле только через getString (JSON.parse строки).
+ * Никогда не JSON.stringify(record.get(...)) — Go-значение в goja → panic.
  */
-function parseFreezeLog(raw) {
+function readFreezeLog(user) {
+  var s = '';
   try {
-    if (raw == null || raw === '') return [];
-    var asString = typeof raw === 'string' ? raw : JSON.stringify(raw);
+    s = user.getString('membership_freeze_log') || '';
+  } catch (err) {
+    console.log('[membership] getString freeze_log: ' + err);
+    return [];
+  }
+  if (!s || s === 'null' || s === '[]') return [];
+  return parseFreezeLogString(s);
+}
+
+function parseFreezeLogString(asString) {
+  try {
     var log = JSON.parse(asString);
     if (!Array.isArray(log)) return [];
     var out = [];
@@ -94,14 +109,38 @@ function parseFreezeLog(raw) {
   }
 }
 
+/** @deprecated use readFreezeLog(user) */
+function parseFreezeLog(raw) {
+  if (raw == null || raw === '') return [];
+  if (typeof raw === 'string') return parseFreezeLogString(raw);
+  // не трогаем Go-объект через stringify
+  return [];
+}
+
 function setFreezeLog(user, log) {
-  var plain;
+  var plain = [];
   try {
-    plain = JSON.parse(JSON.stringify(log || []));
+    var i;
+    for (i = 0; i < (log || []).length; i++) {
+      var e = log[i] || {};
+      var row = {
+        kind: e.kind ? String(e.kind) : 'freeze',
+        frozen_at: e.frozen_at ? String(e.frozen_at) : '',
+        unfrozen_at: e.unfrozen_at ? String(e.unfrozen_at) : ''
+      };
+      if (e.days_charged != null && e.days_charged !== '') {
+        row.days_charged = Number(e.days_charged);
+      }
+      if (e.planned_until) row.planned_until = String(e.planned_until);
+      if (e.by_id) row.by_id = String(e.by_id);
+      if (e.by_name) row.by_name = String(e.by_name);
+      plain.push(row);
+    }
   } catch (_) {
     plain = [];
   }
-  user.set('membership_freeze_log', plain);
+  // строка безопаснее для json-поля в goja, чем Go/JS hybrid array
+  user.set('membership_freeze_log', JSON.stringify(plain));
 }
 
 function saveUserRecord(app, user, label) {
@@ -109,7 +148,19 @@ function saveUserRecord(app, user, label) {
     app.save(user);
   } catch (err) {
     console.log('[membership] save ' + (label || 'user') + ': ' + err);
-    throw new BadRequestError('Не удалось сохранить абонемент: ' + String(err));
+    fail('Не удалось сохранить абонемент: ' + String(err));
+  }
+}
+
+/** best-effort: флаги уже сохранены, лог не должен ломать операцию */
+function tryUpdateFreezeLog(app, user, mutator, label) {
+  try {
+    var log = readFreezeLog(user);
+    mutator(log);
+    setFreezeLog(user, log);
+    app.save(user);
+  } catch (err) {
+    console.log('[membership] freeze_log ' + (label || '') + ' skipped: ' + err);
   }
 }
 
@@ -267,7 +318,7 @@ function userSnapshotFields(user) {
     membership_frozen_at: user.getString('membership_frozen_at') || '',
     membership_freeze_planned_until: user.getString('membership_freeze_planned_until') || '',
     membership_freeze_used_days: getFreezeUsedDays(user),
-    membership_freeze_log: parseFreezeLog(user.get('membership_freeze_log')),
+    membership_freeze_log: readFreezeLog(user),
     membership_stopped: user.getBool('membership_stopped'),
     membership_stopped_at: user.getString('membership_stopped_at') || '',
     available_sessions: user.getFloat('available_sessions') || 0,
@@ -299,20 +350,21 @@ function freezeUser(app, opts) {
   opts = opts || {};
   var user = opts.target;
   var actor = opts.actor;
-  if (!user) throw new BadRequestError('Пользователь не найден');
+  console.log('[membership] freezeUser begin');
+  if (!user) fail('Пользователь не найден');
   var type = membershipType(user);
   if (!canFreezeType(type)) {
-    throw new BadRequestError('Заморозка доступна только для обычного и годового абонемента');
+    fail('Заморозка доступна только для обычного и годового абонемента');
   }
   if (user.getBool('membership_stopped')) {
-    throw new BadRequestError('Абонемент остановлен. Сначала запустите абонемент.');
+    fail('Абонемент остановлен. Сначала запустите абонемент.');
   }
   if (user.getBool('membership_frozen')) {
-    throw new BadRequestError('Абонемент уже заморожен');
+    fail('Абонемент уже заморожен');
   }
   var remaining = remainingFreezeDays(user);
   if (remaining < 1) {
-    throw new BadRequestError('Лимит заморозки на этот абонемент исчерпан (30 дней)');
+    fail('Лимит заморозки на этот абонемент исчерпан (30 дней)');
   }
 
   var now = opts.now ? new Date(opts.now) : new Date();
@@ -325,46 +377,56 @@ function freezeUser(app, opts) {
   var toLabel = formatDateTimeGmt7(plannedIso);
   var daysLabel = String(remaining);
 
-  var log = parseFreezeLog(user.get('membership_freeze_log'));
-  log.push({
-    kind: 'freeze',
-    frozen_at: frozenAtIso,
-    unfrozen_at: '',
-    planned_until: plannedIso,
-    by_id: actorId(actor),
-    by_name: actorName
-  });
-
-  setFreezeLog(user, log);
   user.set('membership_frozen', true);
   user.set('membership_frozen_at', frozenAtIso);
   user.set('membership_freeze_planned_until', plannedIso);
   user.set('freeze_expiry_warn_for', '');
   user.set('freeze_tomorrow_warn_for', '');
   saveUserRecord(app, user, 'freeze');
+  console.log('[membership] freezeUser flags saved');
 
-  var trainingsLib = require(__hooks + '/trainingslib.js');
-  var unbooked = trainingsLib.unbookNotStartedForUser(app, user.id, {
-    cause: 'membership_freeze',
-    actor: actor
-  });
+  tryUpdateFreezeLog(app, user, function (log) {
+    log.push({
+      kind: 'freeze',
+      frozen_at: frozenAtIso,
+      unfrozen_at: '',
+      planned_until: plannedIso,
+      by_id: actorId(actor),
+      by_name: actorName
+    });
+  }, 'freeze');
 
-  var varsUser = { days: daysLabel, from: fromLabel, to: toLabel };
-  var varsMod = {
-    name: name,
-    days: daysLabel,
-    from: fromLabel,
-    to: toLabel,
-    actor: actorName
-  };
-  sendBotToUser(app, user, 'bot.membership_freeze', varsUser);
-  sendBotToModerators(app, 'bot.membership_freeze_mod', varsMod);
-  createAppNotification(app, user.id, 'app.membership_freeze', varsUser, {
-    meta: { kind: 'membership_freeze' }
-  });
-  notifyModsApp(app, 'app.membership_freeze_mod', varsMod, {
-    meta: { kind: 'membership_freeze', targetUserId: user.id }
-  });
+  var unbooked = [];
+  try {
+    var trainingsLib = require(__hooks + '/trainingslib.js');
+    unbooked = trainingsLib.unbookNotStartedForUser(app, user.id, {
+      cause: 'membership_freeze',
+      actor: actor
+    }) || [];
+  } catch (unbookErr) {
+    console.log('[membership] freeze unbook: ' + unbookErr);
+  }
+
+  try {
+    var varsUser = { days: daysLabel, from: fromLabel, to: toLabel };
+    var varsMod = {
+      name: name,
+      days: daysLabel,
+      from: fromLabel,
+      to: toLabel,
+      actor: actorName
+    };
+    sendBotToUser(app, user, 'bot.membership_freeze', varsUser);
+    sendBotToModerators(app, 'bot.membership_freeze_mod', varsMod);
+    createAppNotification(app, user.id, 'app.membership_freeze', varsUser, {
+      meta: { kind: 'membership_freeze' }
+    });
+    notifyModsApp(app, 'app.membership_freeze_mod', varsMod, {
+      meta: { kind: 'membership_freeze', targetUserId: user.id }
+    });
+  } catch (notifyErr) {
+    console.log('[membership] freeze notify: ' + notifyErr);
+  }
 
   var subject = null;
   try {
@@ -385,7 +447,7 @@ function freezeUser(app, opts) {
     details: {
       days: remaining,
       plannedUntil: plannedIso,
-      unbookedTrainingIds: unbooked || [],
+      unbookedTrainingIds: unbooked,
       actorName: actorName
     },
     summaryRu: actorName + ' заморозил(а) абонемент ' + name + ' на ' + remaining + ' дн.',
@@ -400,10 +462,11 @@ function unfreezeUser(app, opts) {
   var user = opts.target;
   var actor = opts.actor;
   var reason = opts.reason || 'manual';
-  if (!user) throw new BadRequestError('Пользователь не найден');
+  console.log('[membership] unfreezeUser begin reason=' + reason);
+  if (!user) fail('Пользователь не найден');
   if (!user.getBool('membership_frozen')) {
     if (reason === 'stop_override') return userSnapshotFields(user);
-    throw new BadRequestError('Абонемент не заморожен');
+    fail('Абонемент не заморожен');
   }
 
   var frozenAt = parsePbDate(user.getString('membership_frozen_at'));
@@ -423,17 +486,6 @@ function unfreezeUser(app, opts) {
 
   addDaysToEndDate(user, days);
 
-  var log = parseFreezeLog(user.get('membership_freeze_log'));
-  if (log.length > 0) {
-    var last = log[log.length - 1];
-    if (last && !last.unfrozen_at) {
-      last.unfrozen_at = now.toISOString();
-      last.days_charged = days;
-      if (!last.kind) last.kind = 'freeze';
-    }
-  }
-
-  setFreezeLog(user, log);
   user.set('membership_freeze_used_days', used);
   user.set('membership_frozen', false);
   user.set('membership_frozen_at', '');
@@ -441,6 +493,18 @@ function unfreezeUser(app, opts) {
   user.set('freeze_expiry_warn_for', '');
   user.set('freeze_tomorrow_warn_for', '');
   saveUserRecord(app, user, 'unfreeze');
+  console.log('[membership] unfreezeUser flags saved days=' + days);
+
+  tryUpdateFreezeLog(app, user, function (log) {
+    if (log.length > 0) {
+      var last = log[log.length - 1];
+      if (last && !last.unfrozen_at) {
+        last.unfrozen_at = now.toISOString();
+        last.days_charged = days;
+        if (!last.kind) last.kind = 'freeze';
+      }
+    }
+  }, 'unfreeze');
 
   var name = user.getString('full_name') || 'Игрок';
   var actorName = actorLabel(actor);
@@ -495,13 +559,14 @@ function stopUser(app, opts) {
   opts = opts || {};
   var user = opts.target;
   var actor = opts.actor;
-  if (!user) throw new BadRequestError('Пользователь не найден');
+  console.log('[membership] stopUser begin');
+  if (!user) fail('Пользователь не найден');
   var type = membershipType(user);
   if (!canStopType(type)) {
-    throw new BadRequestError('Остановка доступна для обычного, корпоративного и годового абонемента');
+    fail('Остановка доступна для обычного, корпоративного и годового абонемента');
   }
   if (user.getBool('membership_stopped')) {
-    throw new BadRequestError('Абонемент уже остановлен');
+    fail('Абонемент уже остановлен');
   }
 
   if (user.getBool('membership_frozen')) {
@@ -516,37 +581,47 @@ function stopUser(app, opts) {
   var name = user.getString('full_name') || 'Игрок';
   var actorName = actorLabel(actor);
 
-  var log = parseFreezeLog(user.get('membership_freeze_log'));
-  log.push({
-    kind: 'stop',
-    frozen_at: stoppedAtIso,
-    unfrozen_at: '',
-    by_id: actorId(actor),
-    by_name: actorName
-  });
-
-  setFreezeLog(user, log);
   user.set('membership_stopped', true);
   user.set('membership_stopped_at', stoppedAtIso);
   saveUserRecord(app, user, 'stop');
+  console.log('[membership] stopUser flags saved');
 
-  var trainingsLib = require(__hooks + '/trainingslib.js');
-  var unbooked = trainingsLib.unbookNotStartedForUser(app, user.id, {
-    cause: 'membership_stop',
-    actor: actor
-  });
+  tryUpdateFreezeLog(app, user, function (log) {
+    log.push({
+      kind: 'stop',
+      frozen_at: stoppedAtIso,
+      unfrozen_at: '',
+      by_id: actorId(actor),
+      by_name: actorName
+    });
+  }, 'stop');
 
-  var fromLabel = formatDateTimeGmt7(stoppedAtIso);
-  var varsUser = { from: fromLabel };
-  var varsMod = { name: name, from: fromLabel, actor: actorName };
-  sendBotToUser(app, user, 'bot.membership_stop', varsUser);
-  sendBotToModerators(app, 'bot.membership_stop_mod', varsMod);
-  createAppNotification(app, user.id, 'app.membership_stop', varsUser, {
-    meta: { kind: 'membership_stop' }
-  });
-  notifyModsApp(app, 'app.membership_stop_mod', varsMod, {
-    meta: { kind: 'membership_stop', targetUserId: user.id }
-  });
+  var unbooked = [];
+  try {
+    var trainingsLib = require(__hooks + '/trainingslib.js');
+    unbooked = trainingsLib.unbookNotStartedForUser(app, user.id, {
+      cause: 'membership_stop',
+      actor: actor
+    }) || [];
+  } catch (unbookErr) {
+    console.log('[membership] stop unbook: ' + unbookErr);
+  }
+
+  try {
+    var fromLabel = formatDateTimeGmt7(stoppedAtIso);
+    var varsUser = { from: fromLabel };
+    var varsMod = { name: name, from: fromLabel, actor: actorName };
+    sendBotToUser(app, user, 'bot.membership_stop', varsUser);
+    sendBotToModerators(app, 'bot.membership_stop_mod', varsMod);
+    createAppNotification(app, user.id, 'app.membership_stop', varsUser, {
+      meta: { kind: 'membership_stop' }
+    });
+    notifyModsApp(app, 'app.membership_stop_mod', varsMod, {
+      meta: { kind: 'membership_stop', targetUserId: user.id }
+    });
+  } catch (notifyErr) {
+    console.log('[membership] stop notify: ' + notifyErr);
+  }
 
   var subject = null;
   try {
@@ -564,7 +639,7 @@ function stopUser(app, opts) {
     objectId: user.id,
     objectLabel: name,
     effectiveAt: stoppedAtIso,
-    details: { unbookedTrainingIds: unbooked || [], actorName: actorName },
+    details: { unbookedTrainingIds: unbooked, actorName: actorName },
     summaryRu: actorName + ' остановил(а) абонемент ' + name,
     severity: 'info'
   });
@@ -576,9 +651,10 @@ function startUser(app, opts) {
   opts = opts || {};
   var user = opts.target;
   var actor = opts.actor;
-  if (!user) throw new BadRequestError('Пользователь не найден');
+  console.log('[membership] startUser begin stopped=' + (user && user.getBool('membership_stopped')));
+  if (!user) fail('Пользователь не найден');
   if (!user.getBool('membership_stopped')) {
-    throw new BadRequestError('Абонемент не остановлен');
+    fail('Абонемент не остановлен');
   }
 
   var stoppedAt = parsePbDate(user.getString('membership_stopped_at'));
@@ -589,30 +665,35 @@ function startUser(app, opts) {
   var days = chargeFreezeDays(elapsed);
   addDaysToEndDate(user, days);
 
-  var log = parseFreezeLog(user.get('membership_freeze_log'));
-  if (log.length > 0) {
-    var last = log[log.length - 1];
-    if (last && !last.unfrozen_at && last.kind === 'stop') {
-      last.unfrozen_at = now.toISOString();
-      last.days_charged = days;
-    }
-  }
-
-  setFreezeLog(user, log);
   user.set('membership_stopped', false);
   user.set('membership_stopped_at', '');
   saveUserRecord(app, user, 'start');
+  console.log('[membership] startUser flags saved days=' + days);
+
+  tryUpdateFreezeLog(app, user, function (log) {
+    if (log.length > 0) {
+      var last = log[log.length - 1];
+      if (last && !last.unfrozen_at && last.kind === 'stop') {
+        last.unfrozen_at = now.toISOString();
+        last.days_charged = days;
+      }
+    }
+  }, 'start');
 
   var name = user.getString('full_name') || 'Игрок';
   var actorName = actorLabel(actor);
-  sendBotToUser(app, user, 'bot.membership_start', {});
-  sendBotToModerators(app, 'bot.membership_start_mod', { name: name });
-  createAppNotification(app, user.id, 'app.membership_start', {}, {
-    meta: { kind: 'membership_start' }
-  });
-  notifyModsApp(app, 'app.membership_start_mod', { name: name }, {
-    meta: { kind: 'membership_start', targetUserId: user.id }
-  });
+  try {
+    sendBotToUser(app, user, 'bot.membership_start', {});
+    sendBotToModerators(app, 'bot.membership_start_mod', { name: name });
+    createAppNotification(app, user.id, 'app.membership_start', {}, {
+      meta: { kind: 'membership_start' }
+    });
+    notifyModsApp(app, 'app.membership_start_mod', { name: name }, {
+      meta: { kind: 'membership_start', targetUserId: user.id }
+    });
+  } catch (notifyErr) {
+    console.log('[membership] start notify: ' + notifyErr);
+  }
 
   var subject = null;
   try {

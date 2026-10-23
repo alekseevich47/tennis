@@ -60,6 +60,16 @@ routerAdd('POST', '/api/membership-freeze', (c) => {
   }
 
   try {
+    console.log(
+      '[membership-freeze] action=' +
+        action +
+        ' user=' +
+        targetUserId +
+        ' frozen=' +
+        target.getBool('membership_frozen') +
+        ' stopped=' +
+        target.getBool('membership_stopped')
+    );
     const lib = require(__hooks + '/membershiplib.js');
     let snapshot;
     if (action === 'freeze') {
@@ -67,10 +77,11 @@ routerAdd('POST', '/api/membership-freeze', (c) => {
     } else {
       snapshot = lib.unfreezeUser($app, { target: target, actor: auth, reason: 'manual' });
     }
+    console.log('[membership-freeze] ok');
     return c.json(200, { ok: true, user: snapshot });
   } catch (err) {
     const message = errMessage(err);
-    console.log('[membership-freeze] ' + message);
+    console.log('[membership-freeze] catch: ' + message);
     return apiError(c, errStatus(err), message);
   }
 });
@@ -102,6 +113,16 @@ routerAdd('POST', '/api/membership-stop', (c) => {
   }
 
   try {
+    console.log(
+      '[membership-stop] action=' +
+        action +
+        ' user=' +
+        targetUserId +
+        ' stopped=' +
+        target.getBool('membership_stopped') +
+        ' frozen=' +
+        target.getBool('membership_frozen')
+    );
     const lib = require(__hooks + '/membershiplib.js');
     let snapshot;
     if (action === 'stop') {
@@ -109,10 +130,11 @@ routerAdd('POST', '/api/membership-stop', (c) => {
     } else {
       snapshot = lib.startUser($app, { target: target, actor: auth });
     }
+    console.log('[membership-stop] ok');
     return c.json(200, { ok: true, user: snapshot });
   } catch (err) {
     const message = errMessage(err);
-    console.log('[membership-stop] ' + message);
+    console.log('[membership-stop] catch: ' + message);
     return apiError(c, errStatus(err), message);
   }
 });
