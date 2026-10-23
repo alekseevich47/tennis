@@ -38,7 +38,7 @@ import MembershipModal from './MembershipModal';
 import ProfileSingleDateField from './ProfileSingleDateField';
 import ProfileTrainingsSearch, { filterProfileTrainings } from './ProfileTrainingsSearch';
 import { useKeepForModalClose } from '../../hooks/useKeepForModalClose';
-import { openMaxUserChat } from '../shop/buyMessage';
+import { buildMaxUserChatUrl, openMaxUserChat } from '../shop/buyMessage';
 import './Profile.css';
 
 const DEFAULT_HAND = 'Правая';
@@ -964,14 +964,18 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
                     <p>
                       <strong>MAX:</strong>{' '}
                       {linkedMaxId ? (
-                        <button
-                          type="button"
+                        <a
                           className="profile-max-id-btn"
-                          onClick={() => openMaxUserChat(linkedMaxId)}
+                          href={buildMaxUserChatUrl(linkedMaxId)}
                           title="Открыть чат в MAX"
+                          onClick={(e) => {
+                            // Реальный gesture + custom-scheme opener (не openMaxLink).
+                            e.preventDefault();
+                            openMaxUserChat(linkedMaxId, displayName);
+                          }}
                         >
                           {linkedMaxId}
-                        </button>
+                        </a>
                       ) : (
                         <span className="profile-max-id-empty">не привязан</span>
                       )}
