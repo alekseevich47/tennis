@@ -375,8 +375,15 @@
   width: 100%;
 }
 
+/* content padding 24px снизу даёт лишний зазор под кнопкой */
+.membership-modal.ui-modal-content {
+  padding-bottom: 10px;
+}
+
 .membership-modal .ui-modal-footer {
   overflow: hidden;
+  padding: 10px 0 2px;
+  border-top: 1px solid #eee;
   transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.28s ease,
     max-height 0.32s ease, padding 0.32s ease, margin 0.32s ease;
   transform: translateY(0);

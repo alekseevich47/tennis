@@ -60,13 +60,57 @@ function remainingFreezeDays(user) {
   return Math.max(0, FREEZE_BUDGET_DAYS - getFreezeUsedDays(user));
 }
 
+/**
+ * Plain JS-массив для goja: Record.get(json) даёт Go-значение —
+ * push/set без clone → opaque 400 на $app.save.
+ */
 function parseFreezeLog(raw) {
-  var log = raw;
-  if (typeof log === 'string') {
-    try { log = JSON.parse(log); } catch (_) { log = []; }
+  try {
+    if (raw == null || raw === '') return [];
+    var asString = typeof raw === 'string' ? raw : JSON.stringify(raw);
+    var log = JSON.parse(asString);
+    if (!Array.isArray(log)) return [];
+    var out = [];
+    var i;
+    for (i = 0; i < log.length; i++) {
+      var e = log[i];
+      if (!e || typeof e !== 'object') continue;
+      var row = {
+        kind: e.kind ? String(e.kind) : 'freeze',
+        frozen_at: e.frozen_at ? String(e.frozen_at) : '',
+        unfrozen_at: e.unfrozen_at ? String(e.unfrozen_at) : ''
+      };
+      if (e.days_charged != null && e.days_charged !== '') {
+        row.days_charged = Number(e.days_charged);
+      }
+      if (e.planned_until) row.planned_until = String(e.planned_until);
+      if (e.by_id) row.by_id = String(e.by_id);
+      if (e.by_name) row.by_name = String(e.by_name);
+      out.push(row);
+    }
+    return out;
+  } catch (_) {
+    return [];
   }
-  if (!Array.isArray(log)) log = [];
-  return log;
+}
+
+function setFreezeLog(user, log) {
+  var plain;
+  try {
+    plain = JSON.parse(JSON.stringify(log || []));
+  } catch (_) {
+    plain = [];
+  }
+  user.set('membership_freeze_log', plain);
+}
+
+function saveUserRecord(app, user, label) {
+  try {
+    app.save(user);
+  } catch (err) {
+    console.log('[membership] save ' + (label || 'user') + ': ' + err);
+    throw new BadRequestError('Не удалось сохранить абонемент: ' + String(err));
+  }
 }
 
 function membershipType(user) {
@@ -184,7 +228,11 @@ function createAppNotification(app, userId, templateKey, vars, extra) {
     n.set('meta', extra.meta);
   }
   n.set('is_read', false);
-  app.save(n);
+  try {
+    app.save(n);
+  } catch (err) {
+    console.log('[membership] notify save: ' + err);
+  }
 }
 
 function notifyModsApp(app, templateKey, vars, extra) {
@@ -281,19 +329,19 @@ function freezeUser(app, opts) {
   log.push({
     kind: 'freeze',
     frozen_at: frozenAtIso,
-    unfrozen_at: null,
+    unfrozen_at: '',
     planned_until: plannedIso,
     by_id: actorId(actor),
     by_name: actorName
   });
 
-  user.set('membership_freeze_log', log);
+  setFreezeLog(user, log);
   user.set('membership_frozen', true);
   user.set('membership_frozen_at', frozenAtIso);
   user.set('membership_freeze_planned_until', plannedIso);
   user.set('freeze_expiry_warn_for', '');
   user.set('freeze_tomorrow_warn_for', '');
-  app.save(user);
+  saveUserRecord(app, user, 'freeze');
 
   var trainingsLib = require(__hooks + '/trainingslib.js');
   var unbooked = trainingsLib.unbookNotStartedForUser(app, user.id, {
@@ -385,14 +433,14 @@ function unfreezeUser(app, opts) {
     }
   }
 
-  user.set('membership_freeze_log', log);
+  setFreezeLog(user, log);
   user.set('membership_freeze_used_days', used);
   user.set('membership_frozen', false);
   user.set('membership_frozen_at', '');
   user.set('membership_freeze_planned_until', '');
   user.set('freeze_expiry_warn_for', '');
   user.set('freeze_tomorrow_warn_for', '');
-  app.save(user);
+  saveUserRecord(app, user, 'unfreeze');
 
   var name = user.getString('full_name') || 'Игрок';
   var actorName = actorLabel(actor);
@@ -472,15 +520,15 @@ function stopUser(app, opts) {
   log.push({
     kind: 'stop',
     frozen_at: stoppedAtIso,
-    unfrozen_at: null,
+    unfrozen_at: '',
     by_id: actorId(actor),
     by_name: actorName
   });
 
-  user.set('membership_freeze_log', log);
+  setFreezeLog(user, log);
   user.set('membership_stopped', true);
   user.set('membership_stopped_at', stoppedAtIso);
-  app.save(user);
+  saveUserRecord(app, user, 'stop');
 
   var trainingsLib = require(__hooks + '/trainingslib.js');
   var unbooked = trainingsLib.unbookNotStartedForUser(app, user.id, {
@@ -550,10 +598,10 @@ function startUser(app, opts) {
     }
   }
 
-  user.set('membership_freeze_log', log);
+  setFreezeLog(user, log);
   user.set('membership_stopped', false);
   user.set('membership_stopped_at', '');
-  app.save(user);
+  saveUserRecord(app, user, 'start');
 
   var name = user.getString('full_name') || 'Игрок';
   var actorName = actorLabel(actor);
