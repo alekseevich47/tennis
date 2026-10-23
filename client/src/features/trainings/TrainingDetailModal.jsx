@@ -115,7 +115,10 @@ function TrainingDetailModal({
         await alert({ title: 'Запись невозможна', message: BOT_BLOCKED_BOOKING_MESSAGE });
         return;
       }
-      if (/** @type {{ code?: string }} */ (err).code === 'MEMBERSHIP_FROZEN') {
+      if (
+        /** @type {{ code?: string }} */ (err).code === 'MEMBERSHIP_FROZEN' ||
+        /** @type {{ code?: string }} */ (err).code === 'MEMBERSHIP_STOPPED'
+      ) {
         await alert({ title: 'Запись невозможна', message: /** @type {Error} */ (err).message });
         return;
       }

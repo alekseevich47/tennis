@@ -78,10 +78,19 @@ var DEFAULTS = [
   {
     key: 'bot.membership_freeze',
     channel: 'bot',
-    name: 'Заморозка абонемента',
-    description: 'Участнику при заморозке абонемента модератором.',
-    body: 'Ваш абонемент был заморожен на 1 месяц.',
+    name: 'Заморозка абонемента (участник)',
+    description: 'Участнику при заморозке абонемента.',
+    body: 'Ваш абонемент заморожен на {{days}} дн. с {{from}} до {{to}}.',
     audience: 'user',
+    enabled: true
+  },
+  {
+    key: 'bot.membership_freeze_mod',
+    channel: 'bot',
+    name: 'Заморозка абонемента (модератор)',
+    description: 'Модераторам при заморозке абонемента участника.',
+    body: 'Абонемент *{{name}}* заморожен на {{days}} дн. с {{from}} до {{to}} (заморозил: *{{actor}}*)',
+    audience: 'moderator',
     enabled: true
   },
   {
@@ -89,7 +98,7 @@ var DEFAULTS = [
     channel: 'bot',
     name: 'Скоро конец заморозки (участник)',
     description: 'Участнику за 7 дней до автоснятия заморозки.',
-    body: 'Действие заморозки Вашего абонемента заканчивается через 1 неделю!',
+    body: 'Заморозка вашего абонемента будет остановлена через 7 дней, а именно {{until}}',
     audience: 'user',
     enabled: true
   },
@@ -98,7 +107,79 @@ var DEFAULTS = [
     channel: 'bot',
     name: 'Скоро конец заморозки (модератор)',
     description: 'Модераторам за 7 дней до автоснятия заморозки участника.',
-    body: '*{{name}}* действие заморозки абонемента заканчивается *{{date}}*',
+    body: 'Заморозка абонемента *{{name}}* будет остановлена через 7 дней ({{until}})',
+    audience: 'moderator',
+    enabled: true
+  },
+  {
+    key: 'bot.membership_freeze_tomorrow_user',
+    channel: 'bot',
+    name: 'Завтра конец заморозки (участник)',
+    description: 'Участнику за календарный день до конца заморозки (с 08:00 GMT+7).',
+    body: 'Завтра действие заморозки вашего абонемента будет окончено ({{until}}).',
+    audience: 'user',
+    enabled: true
+  },
+  {
+    key: 'bot.membership_freeze_tomorrow_mod',
+    channel: 'bot',
+    name: 'Завтра конец заморозки (модератор)',
+    description: 'Модераторам за календарный день до конца заморозки участника.',
+    body: 'Завтра заморозка абонемента *{{name}}* будет окончена ({{until}}).',
+    audience: 'moderator',
+    enabled: true
+  },
+  {
+    key: 'bot.membership_unfreeze',
+    channel: 'bot',
+    name: 'Разморозка абонемента (участник)',
+    description: 'Участнику при окончании или досрочной разморозке.',
+    body: 'Заморозка Вашего абонемента окончена.',
+    audience: 'user',
+    enabled: true
+  },
+  {
+    key: 'bot.membership_unfreeze_mod',
+    channel: 'bot',
+    name: 'Разморозка абонемента (модератор)',
+    description: 'Модераторам при разморозке абонемента участника.',
+    body: 'Абонемент *{{name}}* разморожен.',
+    audience: 'moderator',
+    enabled: true
+  },
+  {
+    key: 'bot.membership_stop',
+    channel: 'bot',
+    name: 'Остановка абонемента (участник)',
+    description: 'Участнику при остановке абонемента модератором.',
+    body: 'Ваш абонемент остановлен с {{from}}. Запись на тренировки недоступна.',
+    audience: 'user',
+    enabled: true
+  },
+  {
+    key: 'bot.membership_stop_mod',
+    channel: 'bot',
+    name: 'Остановка абонемента (модератор)',
+    description: 'Модераторам при остановке абонемента.',
+    body: 'Абонемент *{{name}}* остановлен с {{from}} (остановил: *{{actor}}*)',
+    audience: 'moderator',
+    enabled: true
+  },
+  {
+    key: 'bot.membership_start',
+    channel: 'bot',
+    name: 'Запуск абонемента (участник)',
+    description: 'Участнику при снятии остановки абонемента.',
+    body: 'Остановка Вашего абонемента снята. Можно снова записываться на тренировки.',
+    audience: 'user',
+    enabled: true
+  },
+  {
+    key: 'bot.membership_start_mod',
+    channel: 'bot',
+    name: 'Запуск абонемента (модератор)',
+    description: 'Модераторам при запуске абонемента участника.',
+    body: 'Абонемент *{{name}}* снова активен.',
     audience: 'moderator',
     enabled: true
   },
@@ -226,6 +307,138 @@ var DEFAULTS = [
     enabled: true
   },
   {
+    key: 'app.membership_freeze',
+    channel: 'app',
+    name: 'Заморозка абонемента',
+    description: 'In-app участнику при заморозке.',
+    title: 'Абонемент заморожен',
+    body: 'Ваш абонемент заморожен на {{days}} дн. с {{from}} до {{to}}.',
+    action_label: 'Абонемент',
+    audience: 'user',
+    enabled: true
+  },
+  {
+    key: 'app.membership_freeze_mod',
+    channel: 'app',
+    name: 'Заморозка абонемента (модератор)',
+    description: 'In-app модераторам при заморозке участника.',
+    title: 'Заморозка абонемента',
+    body: '{{name}}: заморожен на {{days}} дн. с {{from}} до {{to}} ({{actor}})',
+    action_label: 'Абонемент',
+    audience: 'moderator',
+    enabled: true
+  },
+  {
+    key: 'app.membership_freeze_warn',
+    channel: 'app',
+    name: 'Скоро конец заморозки',
+    description: 'In-app за 7 дней до автоснятия заморозки.',
+    title: 'Скоро конец заморозки',
+    body: 'Заморозка будет остановлена через 7 дней: {{until}}',
+    action_label: 'Абонемент',
+    audience: 'user',
+    enabled: true
+  },
+  {
+    key: 'app.membership_freeze_warn_mod',
+    channel: 'app',
+    name: 'Скоро конец заморозки (модератор)',
+    description: 'In-app модераторам за 7 дней до автоснятия.',
+    title: 'Скоро конец заморозки',
+    body: '{{name}}: заморозка до {{until}}',
+    action_label: 'Абонемент',
+    audience: 'moderator',
+    enabled: true
+  },
+  {
+    key: 'app.membership_freeze_tomorrow',
+    channel: 'app',
+    name: 'Завтра конец заморозки',
+    description: 'In-app за день до конца заморозки (с 08:00 GMT+7).',
+    title: 'Завтра конец заморозки',
+    body: 'Завтра действие заморозки будет окончено ({{until}}).',
+    action_label: 'Абонемент',
+    audience: 'user',
+    enabled: true
+  },
+  {
+    key: 'app.membership_freeze_tomorrow_mod',
+    channel: 'app',
+    name: 'Завтра конец заморозки (модератор)',
+    description: 'In-app модераторам за день до конца заморозки.',
+    title: 'Завтра конец заморозки',
+    body: '{{name}}: завтра конец заморозки ({{until}}).',
+    action_label: 'Абонемент',
+    audience: 'moderator',
+    enabled: true
+  },
+  {
+    key: 'app.membership_unfreeze',
+    channel: 'app',
+    name: 'Разморозка абонемента',
+    description: 'In-app при окончании заморозки.',
+    title: 'Заморозка окончена',
+    body: 'Заморозка Вашего абонемента окончена.',
+    action_label: 'Абонемент',
+    audience: 'user',
+    enabled: true
+  },
+  {
+    key: 'app.membership_unfreeze_mod',
+    channel: 'app',
+    name: 'Разморозка абонемента (модератор)',
+    description: 'In-app модераторам при разморозке.',
+    title: 'Абонемент разморожен',
+    body: 'Абонемент {{name}} разморожен.',
+    action_label: 'Абонемент',
+    audience: 'moderator',
+    enabled: true
+  },
+  {
+    key: 'app.membership_stop',
+    channel: 'app',
+    name: 'Остановка абонемента',
+    description: 'In-app при остановке абонемента модератором.',
+    title: 'Абонемент остановлен',
+    body: 'Ваш абонемент остановлен с {{from}}. Запись недоступна.',
+    action_label: 'Абонемент',
+    audience: 'user',
+    enabled: true
+  },
+  {
+    key: 'app.membership_stop_mod',
+    channel: 'app',
+    name: 'Остановка абонемента (модератор)',
+    description: 'In-app модераторам при остановке.',
+    title: 'Абонемент остановлен',
+    body: '{{name}}: остановлен с {{from}} ({{actor}})',
+    action_label: 'Абонемент',
+    audience: 'moderator',
+    enabled: true
+  },
+  {
+    key: 'app.membership_start',
+    channel: 'app',
+    name: 'Запуск абонемента',
+    description: 'In-app при снятии остановки.',
+    title: 'Абонемент снова активен',
+    body: 'Остановка Вашего абонемента снята. Можно записываться на тренировки.',
+    action_label: 'Абонемент',
+    audience: 'user',
+    enabled: true
+  },
+  {
+    key: 'app.membership_start_mod',
+    channel: 'app',
+    name: 'Запуск абонемента (модератор)',
+    description: 'In-app модераторам при запуске абонемента.',
+    title: 'Абонемент запущен',
+    body: 'Абонемент {{name}} снова активен.',
+    action_label: 'Абонемент',
+    audience: 'moderator',
+    enabled: true
+  },
+  {
     key: 'app.membership_expiry_warn',
     channel: 'app',
     name: 'Скоро конец абонемента',
@@ -324,6 +537,29 @@ function collectionExists(app) {
   }
 }
 
+/** Ключи freeze/stop — синхронизируем body/title с DEFAULTS при bootstrap (новые тексты ТЗ). */
+var MEMBERSHIP_TEMPLATE_SYNC_PREFIXES = [
+  'bot.membership_freeze',
+  'bot.membership_unfreeze',
+  'bot.membership_stop',
+  'bot.membership_start',
+  'app.membership_freeze',
+  'app.membership_unfreeze',
+  'app.membership_stop',
+  'app.membership_start'
+];
+
+function shouldSyncMembershipTemplate(key) {
+  var i;
+  for (i = 0; i < MEMBERSHIP_TEMPLATE_SYNC_PREFIXES.length; i++) {
+    if (key === MEMBERSHIP_TEMPLATE_SYNC_PREFIXES[i] ||
+        key.indexOf(MEMBERSHIP_TEMPLATE_SYNC_PREFIXES[i]) === 0) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function ensureSystemTemplates(app) {
   if (!collectionExists(app)) return;
   var col;
@@ -343,7 +579,21 @@ function ensureSystemTemplates(app) {
     } catch (_) {
       existing = null;
     }
-    if (existing) continue;
+    if (existing) {
+      if (shouldSyncMembershipTemplate(d.key)) {
+        try {
+          existing.set('name', d.name);
+          existing.set('description', d.description || '');
+          existing.set('title', d.title || '');
+          existing.set('body', d.body || '');
+          existing.set('action_label', d.action_label || '');
+          app.save(existing);
+        } catch (syncErr) {
+          console.log('[templatelib] sync ' + d.key + ': ' + syncErr);
+        }
+      }
+      continue;
+    }
     try {
       var rec = new Record(col);
       rec.set('key', d.key);

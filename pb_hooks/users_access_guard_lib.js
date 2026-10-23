@@ -31,15 +31,35 @@ var IGNORE_FIELDS = {
   updated: true,
   tokenKey: true,
   verified: true,
+  // JSON/warn — сравниваем отдельно в assertMembershipLifecycleFieldsUnchanged
+  // (избегаем JSON.stringify в goja для прочих путей).
   membership_freeze_log: true,
   membership_expiry_warn_for: true,
   membership_expired_notified_for: true,
-  freeze_expiry_warn_for: true
+  freeze_expiry_warn_for: true,
+  freeze_tomorrow_warn_for: true
 };
+
+/**
+ * Freeze/stop lifecycle — только API ($app.save) или superuser Admin UI.
+ * Обычный user и moderator не могут PATCH эти поля напрямую.
+ */
+var MEMBERSHIP_LIFECYCLE_FIELDS = [
+  'membership_frozen',
+  'membership_frozen_at',
+  'membership_freeze_log',
+  'membership_freeze_used_days',
+  'membership_freeze_planned_until',
+  'membership_stopped',
+  'membership_stopped_at',
+  'freeze_expiry_warn_for',
+  'freeze_tomorrow_warn_for'
+];
 
 var BOOL_FIELDS = {
   is_banned: true,
   membership_frozen: true,
+  membership_stopped: true,
   bot_blocked: true,
   max_bot_blocked: true,
   tg_bot_blocked: true,
@@ -67,7 +87,8 @@ var NUMBER_FIELDS = {
   attendance_count: true,
   rating_points: true,
   wins: true,
-  losses: true
+  losses: true,
+  membership_freeze_used_days: true
 };
 
 /** Relation multi: сравниваем только id, без JSON.stringify (goja/Proxy). */
@@ -125,6 +146,8 @@ function applyCreateDefaults(record) {
   record.set('rating_points', 0);
   record.set('membership_type', 'regular');
   record.set('membership_frozen', false);
+  record.set('membership_stopped', false);
+  record.set('membership_freeze_used_days', 0);
   record.set('bot_blocked', false);
   record.set('max_bot_blocked', false);
   record.set('tg_bot_blocked', false);
@@ -146,8 +169,11 @@ function assertPrivilegedUpdateAllowed(original, record) {
     'attendance_count', 'available_sessions', 'used_sessions', 'unpaid_sessions',
     'birth_date', 'section_start_date', 'membership_type', 'membership_start_date',
     'membership_end_date', 'membership_comment', 'membership_frozen', 'membership_frozen_at',
-    'membership_freeze_log', 'membership_expiry_warn_for', 'membership_expired_notified_for',
-    'freeze_expiry_warn_for', 'onboarding_completed', 'name_set_in_onboarding',
+    'membership_freeze_log', 'membership_freeze_used_days', 'membership_freeze_planned_until',
+    'membership_stopped', 'membership_stopped_at',
+    'membership_expiry_warn_for', 'membership_expired_notified_for',
+    'freeze_expiry_warn_for', 'freeze_tomorrow_warn_for',
+    'onboarding_completed', 'name_set_in_onboarding',
     'terms_accepted', 'privacy_accepted', 'publicity_accepted', 'legal_accepted_at',
     'favorite_products', 'bot_blocked', 'bot_blocked_at',
     // Telegram / агрегат блокировок — только сервер (tg-auth, webhook, claim), не self-edit.
@@ -208,6 +234,37 @@ function assertPrivilegedUpdateAllowed(original, record) {
  */
 var SERVER_ONLY_FIELDS = ['tg_id', 'max_bot_blocked', 'tg_bot_blocked', 'tg_bot_blocked_at'];
 
+function freezeLogKey(raw) {
+  try {
+    if (raw == null) return '';
+    if (typeof raw === 'string') return raw;
+    return JSON.stringify(raw);
+  } catch (_) {
+    return String(raw || '');
+  }
+}
+
+/**
+ * Freeze/stop lifecycle fields — только /api/membership-freeze|stop или superuser.
+ * @param {any} original
+ * @param {any} record
+ */
+function assertMembershipLifecycleFieldsUnchanged(original, record) {
+  var i;
+  for (i = 0; i < MEMBERSHIP_LIFECYCLE_FIELDS.length; i++) {
+    var f = MEMBERSHIP_LIFECYCLE_FIELDS[i];
+    if (f === 'membership_freeze_log') {
+      if (freezeLogKey(original.get(f)) !== freezeLogKey(record.get(f))) {
+        throw new ForbiddenError('Изменение поля "' + f + '" недоступно (используйте API заморозки)');
+      }
+      continue;
+    }
+    if (fieldChanged(original, record, f)) {
+      throw new ForbiddenError('Изменение поля "' + f + '" недоступно (используйте API заморозки)');
+    }
+  }
+}
+
 /**
  * @param {any} original
  * @param {any} record
@@ -218,6 +275,21 @@ function assertServerOnlyFieldsUnchanged(original, record) {
     if (fieldChanged(original, record, f)) {
       throw new ForbiddenError('Изменение поля "' + f + '" недоступно');
     }
+  }
+}
+
+/**
+ * При смене membership_start_date сбрасывает бюджет freeze (на record до save).
+ * @param {any} original
+ * @param {any} record
+ */
+function maybeResetFreezeBudgetOnStartDateChange(original, record) {
+  if (!original || !record) return;
+  try {
+    var lib = require(__hooks + '/membershiplib.js');
+    lib.resetFreezeBudgetIfStartChanged(original, record);
+  } catch (err) {
+    console.log('[users-access-guard] freeze budget reset: ' + err);
   }
 }
 
@@ -268,6 +340,8 @@ module.exports = {
   applyCreateDefaults: applyCreateDefaults,
   assertPrivilegedUpdateAllowed: assertPrivilegedUpdateAllowed,
   assertServerOnlyFieldsUnchanged: assertServerOnlyFieldsUnchanged,
+  assertMembershipLifecycleFieldsUnchanged: assertMembershipLifecycleFieldsUnchanged,
+  maybeResetFreezeBudgetOnStartDateChange: maybeResetFreezeBudgetOnStartDateChange,
   isPrivilegedAuth: isPrivilegedAuth,
   isSuperuserAuth: isSuperuserAuth
 };

@@ -5,7 +5,11 @@ import pb from '../../../services/pb';
 import { error } from '../../../lib/log';
 
 function isUserBookingDisabled(user) {
-  return user.bot_blocked === true || user.membership_frozen === true;
+  return (
+    user.bot_blocked === true ||
+    user.membership_frozen === true ||
+    user.membership_stopped === true
+  );
 }
 
 /**
@@ -39,7 +43,7 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
     setErrorMessage('');
 
     pb.collection('users').getFullList({
-      fields: 'id,full_name,avatar,avatar_url,available_sessions,membership_type,membership_frozen,bot_blocked',
+      fields: 'id,full_name,avatar,avatar_url,available_sessions,membership_type,membership_frozen,membership_stopped,bot_blocked',
       sort: 'full_name'
     })
       .then((nextUsers) => {
@@ -73,13 +77,18 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
                 ...user,
                 bot_blocked: record.bot_blocked,
                 membership_frozen: record.membership_frozen,
+                membership_stopped: record.membership_stopped,
                 available_sessions: record.available_sessions,
                 membership_type: record.membership_type
               }
             : user
         )
       );
-      if (record.bot_blocked === true || record.membership_frozen === true) {
+      if (
+        record.bot_blocked === true ||
+        record.membership_frozen === true ||
+        record.membership_stopped === true
+      ) {
         setSelectedIds((prev) => {
           if (!prev.has(record.id)) return prev;
           const next = new Set(prev);
@@ -178,8 +187,13 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
           ) : (
             filteredUsers.map((user) => {
               const isFrozen = user.membership_frozen === true;
+              const isStopped = user.membership_stopped === true;
               const isBotBlocked = user.bot_blocked === true;
               const isDisabled = isUserBookingDisabled(user);
+              let statusSuffix = '';
+              if (isBotBlocked) statusSuffix = ' — заблокировал бота';
+              else if (isStopped) statusSuffix = ' — абонемент остановлен';
+              else if (isFrozen) statusSuffix = ' — абонемент заморожен';
 
               return (
               <label
@@ -200,8 +214,7 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
                 />
                 <span>
                   {user.full_name || 'Теннисист'}
-                  {isBotBlocked ? ' — заблокировал бота' : ''}
-                  {!isBotBlocked && isFrozen ? ' — абонемент заморожен' : ''}
+                  {statusSuffix}
                 </span>
               </label>
               );

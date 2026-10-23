@@ -222,6 +222,7 @@ export function useMaxAuth() {
         if (!prev) return prev;
         if (
           prev.membership_frozen !== record.membership_frozen ||
+          prev.membership_stopped !== record.membership_stopped ||
           prev.can_comment !== record.can_comment ||
           prev.bot_blocked !== record.bot_blocked ||
           prev.bot_blocked_at !== record.bot_blocked_at

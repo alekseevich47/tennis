@@ -628,6 +628,63 @@
         "type": "text"
       },
       {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text_freeze_tomorrow_warn_for_01",
+        "max": 0,
+        "min": 0,
+        "name": "freeze_tomorrow_warn_for",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "bool_membership_stopped_01",
+        "name": "membership_stopped",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "hidden": false,
+        "id": "date_membership_stopped_at_01",
+        "max": "",
+        "min": "",
+        "name": "membership_stopped_at",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "date"
+      },
+      {
+        "hidden": false,
+        "id": "number_membership_freeze_used_days_01",
+        "max": null,
+        "min": 0,
+        "name": "membership_freeze_used_days",
+        "onlyInt": true,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      },
+      {
+        "hidden": false,
+        "id": "date_membership_freeze_planned_until_01",
+        "max": "",
+        "min": "",
+        "name": "membership_freeze_planned_until",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "date"
+      },
+      {
         "hidden": false,
         "id": "bool4248919572",
         "name": "onboarding_completed",

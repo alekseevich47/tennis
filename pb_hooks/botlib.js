@@ -108,12 +108,15 @@ function htmlToMaxMarkdown(html) {
   return s.replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
 }
 
+/**
+ * @returns {boolean} true — HTTP < 300
+ */
 function sendBotMessage(maxId, text, attachments) {
-  if (!maxId) return;
+  if (!maxId) return false;
   const token = $os.getenv('MAX_BOT_TOKEN');
   if (!token) {
     console.log('[bot] MAX_BOT_TOKEN не задан — сообщение не отправлено');
-    return;
+    return false;
   }
   try {
     const body = { text: text, format: 'markdown' };
@@ -132,10 +135,35 @@ function sendBotMessage(maxId, text, attachments) {
     });
     if (res.statusCode >= 300) {
       console.log('[bot] MAX API ' + res.statusCode + ': ' + res.raw);
+      return false;
     }
+    return true;
   } catch (err) {
     console.log('[bot] ошибка отправки: ' + err);
+    return false;
   }
+}
+
+/**
+ * Mention-ссылка на пользователя (docs-api: [Имя](max://user/id)).
+ * Работает только в нативном чате бота — WebView Mini App max:// не открывает.
+ * @param {string|number} toMaxId получатель (обычно модератор)
+ * @param {string|number} targetMaxId user_id игрока
+ * @param {string} [displayName]
+ * @returns {boolean}
+ */
+function sendUserChatMention(toMaxId, targetMaxId, displayName) {
+  const id = String(targetMaxId || '').trim();
+  if (!toMaxId || !id) return false;
+  const label =
+    String(displayName || '')
+      .replace(/[\[\]()\\]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim() || 'Пользователь';
+  const text =
+    'Открыть чат с игроком: [' + label + '](max://user/' + id + ')\n' +
+    '_Нажмите на имя выше._';
+  return sendBotMessage(toMaxId, text);
 }
 
 /** Фильтр «есть хотя бы один привязанный мессенджер» (MAX или Telegram). */
@@ -501,6 +529,7 @@ function broadcastNewPublication() {
 
 module.exports = {
   sendBotMessage: sendBotMessage,
+  sendUserChatMention: sendUserChatMention,
   sendToUser: sendToUser,
   recomputeBotBlocked: recomputeBotBlocked,
   MESSENGER_LINKED_FILTER: MESSENGER_LINKED_FILTER,

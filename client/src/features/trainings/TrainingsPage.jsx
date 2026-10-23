@@ -64,6 +64,7 @@ function TrainingsPage({
     if (!user) return false;
     if (user.bot_blocked === true) return false;
     if (user.membership_frozen === true) return false;
+    if (user.membership_stopped === true) return false;
     return true;
   }, [user]);
   const { data: trainings, isLoading, mutate } = useTrainings();
@@ -183,6 +184,12 @@ function TrainingsPage({
         showToast({ text: BOT_BLOCKED_BOOKING_MESSAGE });
         return;
       }
+      if (user?.membership_stopped === true) {
+        showToast({
+          text: 'Ваш абонемент остановлен. Запись на тренировку недоступна.'
+        });
+        return;
+      }
       if (user?.membership_frozen === true) {
         showToast({
           text: 'Ваш абонемент заморожен. Запись на тренировку недоступна.'
@@ -207,7 +214,7 @@ function TrainingsPage({
         });
       }
     },
-    [user?.id, user?.bot_blocked, user?.membership_frozen, mutate, alert, showToast]
+    [user?.id, user?.bot_blocked, user?.membership_frozen, user?.membership_stopped, mutate, alert, showToast]
   );
 
   const handleCancelBooking = useCallback(
@@ -374,7 +381,10 @@ function TrainingsPage({
           await alert({ title: 'Запись невозможна', message: BOT_BLOCKED_BOOKING_MESSAGE });
           return;
         }
-        if (/** @type {{ code?: string }} */ (err).code === 'MEMBERSHIP_FROZEN') {
+        if (
+          /** @type {{ code?: string }} */ (err).code === 'MEMBERSHIP_FROZEN' ||
+          /** @type {{ code?: string }} */ (err).code === 'MEMBERSHIP_STOPPED'
+        ) {
           await alert({ title: 'Запись невозможна', message: /** @type {Error} */ (err).message });
           return;
         }

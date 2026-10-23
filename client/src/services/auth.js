@@ -399,6 +399,21 @@ export async function deleteUserAccount(targetUserId) {
 }
 
 /**
+ * Модератор: бот присылает mention-ссылку на игрока (max://user/…) в чат MAX.
+ * Дальше клиент открывает бота через https://max.ru/{MAX_APP_ID}.
+ * @param {string} targetUserId
+ * @returns {Promise<{ success: boolean, targetMaxId: string }>}
+ */
+export async function requestOpenMaxUserChat(targetUserId) {
+  return /** @type {Promise<{ success: boolean, targetMaxId: string }>} */ (
+    pb.send('/api/users-open-max-chat', {
+      method: 'POST',
+      body: { targetUserId }
+    })
+  );
+}
+
+/**
  * Безопасное обновление профиля + actualisation через authRefresh (исправляет C10).
  * @param {string} userId
  * @param {Partial<UserRecord> | FormData} patch
