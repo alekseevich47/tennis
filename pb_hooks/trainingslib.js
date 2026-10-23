@@ -264,6 +264,9 @@ function consumeMembershipSessionTx(app, userId, isModerator, trainingDate, trai
     if (user.getBool('membership_frozen')) {
       throw new BadRequestError('Абонемент пользователя заморожен. Запись невозможна.');
     }
+    if (user.getBool('membership_stopped')) {
+      throw new BadRequestError('Абонемент пользователя остановлен. Запись невозможна.');
+    }
   }
 
   var membershipType = user.getString('membership_type') || 'regular';
@@ -636,6 +639,158 @@ function applyBookingSideEffects(original, record, auth) {
   });
 }
 
+/**
+ * Снять пользователя со всех ещё не начавшихся тренировок (date > now).
+ * $app.save не вызывает onRecordUpdateRequest — сессии возвращаем вручную.
+ * @param {core.App} app
+ * @param {string} userId
+ * @param {{ cause?: 'membership_freeze'|'membership_stop', actor?: any }} [options]
+ * @returns {string[]} id тренировок
+ */
+function unbookNotStartedForUser(app, userId, options) {
+  options = options || {};
+  var cause = options.cause || 'membership_freeze';
+  var actor = options.actor || null;
+  var uid = String(userId);
+  var now = Date.now();
+  var resultIds = [];
+  var trainings;
+  try {
+    trainings = app.findRecordsByFilter(
+      'trainings',
+      'is_cancelled != true && booked_users ?~ "' + uid + '"',
+      '',
+      0,
+      0
+    );
+  } catch (err) {
+    console.log('[trainingslib] unbookNotStarted find: ' + err);
+    return resultIds;
+  }
+
+  var bot = require(__hooks + '/botlib.js');
+  var userName = 'Игрок';
+  try {
+    var u = app.findRecordById('users', uid);
+    userName = u.getString('full_name') || 'Игрок';
+  } catch (_) {}
+
+  var causeLabel = cause === 'membership_stop'
+    ? 'из-за остановки абонемента'
+    : 'из-за заморозки абонемента';
+
+  var i;
+  for (i = 0; i < trainings.length; i++) {
+    var training = trainings[i];
+    var start = parsePbDate(training.getString('date'));
+    if (!start || isNaN(start.getTime()) || start.getTime() <= now) continue;
+
+    var booked = training.get('booked_users') || [];
+    var nextBooked = [];
+    var j;
+    var found = false;
+    for (j = 0; j < booked.length; j++) {
+      var bid = '';
+      try {
+        if (typeof booked[j] === 'string') bid = booked[j];
+        else if (booked[j] && booked[j].id) bid = String(booked[j].id);
+        else bid = String(booked[j]);
+      } catch (_) {
+        bid = String(booked[j]);
+      }
+      if (bid === uid) {
+        found = true;
+        continue;
+      }
+      nextBooked.push(bid);
+    }
+    if (!found) continue;
+
+    var unbooked = training.get('unbooked_users') || [];
+    var nextUnbooked = [];
+    var hasUnbooked = false;
+    for (j = 0; j < unbooked.length; j++) {
+      var unId = '';
+      try {
+        if (typeof unbooked[j] === 'string') unId = unbooked[j];
+        else if (unbooked[j] && unbooked[j].id) unId = String(unbooked[j].id);
+        else unId = String(unbooked[j]);
+      } catch (_) {
+        unId = String(unbooked[j]);
+      }
+      if (unId === uid) hasUnbooked = true;
+      nextUnbooked.push(unId);
+    }
+    if (!hasUnbooked) nextUnbooked.push(uid);
+
+    var unpaidBooked = training.get('unpaid_booked_users') || [];
+    var wasUnpaid = false;
+    var nextUnpaid = [];
+    for (j = 0; j < unpaidBooked.length; j++) {
+      var upId = '';
+      try {
+        if (typeof unpaidBooked[j] === 'string') upId = unpaidBooked[j];
+        else if (unpaidBooked[j] && unpaidBooked[j].id) upId = String(unpaidBooked[j].id);
+        else upId = String(unpaidBooked[j]);
+      } catch (_) {
+        upId = String(unpaidBooked[j]);
+      }
+      if (upId === uid) {
+        wasUnpaid = true;
+        continue;
+      }
+      nextUnpaid.push(upId);
+    }
+
+    training.set('booked_users', nextBooked);
+    training.set('unbooked_users', nextUnbooked);
+    training.set('unpaid_booked_users', nextUnpaid);
+    try {
+      app.save(training);
+    } catch (saveErr) {
+      console.log('[trainingslib] unbookNotStarted save: ' + saveErr);
+      continue;
+    }
+
+    restoreMembershipSession(app, uid, {
+      wasUnpaid: wasUnpaid,
+      skipNotify: true,
+      ledger: {
+        kind: 'unbook',
+        trainingId: training.id,
+        trainingDate: training.getString('date') || '',
+        actor: actor
+      }
+    });
+
+    resultIds.push(training.id);
+
+    try {
+      var dateFormatted = bot.formatDateTimeGmt7(training.getString('date'));
+      var isTournament = training.getString('type') === 'tournament';
+      var typeGen = isTournament ? 'турнира' : 'тренировки';
+      var text = '*' + userName + '* снят(а) с ' + typeGen + ' *' + dateFormatted +
+        '* ' + causeLabel + '. Всего записано: ' + nextBooked.length + '.';
+      var settings = null;
+      try {
+        settings = app.findFirstRecordByFilter('notification_settings', '');
+      } catch (_) {}
+      if (!settings || settings.getBool('training_booking_enabled') !== false) {
+        bot.notifyModerators(text);
+      }
+    } catch (notifyErr) {
+      console.log('[trainingslib] unbookNotStarted notify: ' + notifyErr);
+    }
+
+    try {
+      var nlib = require(__hooks + '/notificationslib.js');
+      nlib.upsertTrainingNotification(uid, training.id, 'farewell');
+    } catch (_) {}
+  }
+
+  return resultIds;
+}
+
 module.exports = {
   FINALIZE_GRACE_MS: FINALIZE_GRACE_MS,
   finalizeCancelledTrainingRecord: finalizeCancelledTrainingRecord,
@@ -644,6 +799,8 @@ module.exports = {
   assertTrainingUpdateAllowed: assertTrainingUpdateAllowed,
   applyBookingSideEffects: applyBookingSideEffects,
   withSkipBookingSideEffects: withSkipBookingSideEffects,
+  restoreMembershipSession: restoreMembershipSession,
+  unbookNotStartedForUser: unbookNotStartedForUser,
   // backward-compat alias (если кто-то ещё require'ит старое имя)
   validateBookingAdditions: function (original, record) {
     applyBookingSideEffects(original, record, null);

@@ -1,5 +1,6 @@
-import { TG_SELLER_URL } from '../../config';
+import { MAX_APP_ID, TG_SELLER_URL } from '../../config';
 import { getWebApp, isMobilePlatform, isTelegramApp } from '../../lib/messengerBridge';
+import { requestOpenMaxUserChat } from '../../services/auth';
 
 const BUY_TOAST_TEXT =
   'Текст о товаре сохранён в буфер обмена. Вставьте его в чат к администратору.';
@@ -114,7 +115,7 @@ export function openSellerChat(url) {
 }
 
 /**
- * Mention-диплинк личного чата (dev.max.ru docs-api text-formatting: max://user/user_id).
+ * Mention-диплинк (docs-api). В Mini App WebView не открывается — только в нативном чате бота.
  * @param {string | number | null | undefined} maxId
  * @returns {string}
  */
@@ -123,69 +124,20 @@ export function buildMaxUserChatUrl(maxId) {
   return id ? `max://user/${id}` : '';
 }
 
-/**
- * Открыть max:// схему нативным обработчиком клиента.
- * Нельзя через openMaxLink / openLink: Bridge принимает только https://max.ru/…;
- * иначе max:// уходит «наружу» → «Ссылка устарела» / no-op на desktop.
- * Текст якоря = имя из профиля MAX (как в mention-разметке бота).
- * @param {string} url
- * @param {string} [displayName]
- * @returns {boolean}
- */
-function openMaxCustomScheme(url, displayName) {
-  const href = String(url || '').trim();
-  if (!href || !/^max:\/\//i.test(href)) return false;
-  if (isTelegramApp()) return false;
-
-  const label = String(displayName ?? '').trim() || 'Пользователь';
-
-  try {
-    const iframe = document.createElement('iframe');
-    iframe.setAttribute('src', href);
-    iframe.setAttribute('aria-hidden', 'true');
-    iframe.style.cssText = 'display:none;width:0;height:0;border:0;position:absolute';
-    document.body.appendChild(iframe);
-    window.setTimeout(() => {
-      try {
-        iframe.remove();
-      } catch {
-        // ignore
-      }
-    }, 1500);
-  } catch {
-    // ignore
-  }
-
-  try {
-    const a = document.createElement('a');
-    a.setAttribute('href', href);
-    a.textContent = label;
-    a.rel = 'noopener';
-    a.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0;pointer-events:none';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  } catch {
-    return false;
-  }
-
-  return true;
+/** Чат с ботом мини-приложения (https — для openMaxLink). */
+export function buildMaxBotChatUrl() {
+  const bot = String(MAX_APP_ID || '').trim();
+  return bot ? `https://max.ru/${bot}` : '';
 }
 
 /**
- * https://max.ru/… — openMaxLink; max:// — только custom-scheme (не Bridge).
+ * https://max.ru/… → openMaxLink. max:// из WebView не открывать (Bridge/браузер глушат).
  * @param {string} url
- * @param {string} [displayName]
  */
-export function openMaxDeepLink(url, displayName) {
+export function openMaxDeepLink(url) {
   const href = String(url || '').trim();
   if (!href) return;
-
-  if (/^max:\/\//i.test(href)) {
-    openMaxCustomScheme(href, displayName);
-    return;
-  }
-
+  if (/^max:\/\//i.test(href)) return;
   if (isTelegramApp() && !/^https?:\/\//i.test(href)) return;
 
   const webApp = getWebApp();
@@ -201,15 +153,33 @@ export function openMaxDeepLink(url, displayName) {
 }
 
 /**
- * Личный чат с пользователем MAX по max_id (user_id).
+ * Личный чат с игроком по max_id: бот шлёт mention модератору, затем openMaxLink на бота.
+ * WebView не умеет max:// (Network: provisional headers / «Ссылка устарела»).
  * @param {string | number | null | undefined} maxId
- * @param {string} [displayName] полное имя из профиля (для mention-якоря)
- * @returns {boolean}
+ * @param {string} [_displayName] зарезервировано; имя берёт сервер из users.full_name
+ * @param {{ targetUserId: string }} opts PocketBase id профиля игрока
+ * @returns {Promise<void>}
  */
-export function openMaxUserChat(maxId, displayName) {
-  const url = buildMaxUserChatUrl(maxId);
-  if (!url) return false;
-  return openMaxCustomScheme(url, displayName);
+export async function openMaxUserChat(maxId, _displayName, opts) {
+  const targetUserId = String(opts?.targetUserId || '').trim();
+  if (!targetUserId) {
+    throw new Error('Не указан профиль игрока');
+  }
+  if (isTelegramApp()) {
+    throw new Error('Открытие чата MAX недоступно в Telegram');
+  }
+  if (!String(maxId ?? '').trim()) {
+    throw new Error('У игрока нет max_id');
+  }
+
+  await requestOpenMaxUserChat(targetUserId);
+
+  const botUrl = buildMaxBotChatUrl();
+  if (!botUrl) {
+    throw new Error('Не задан MAX_APP_ID бота');
+  }
+  // Тот же путь, что «Связаться» / продавец — https://max.ru/… через openMaxLink.
+  openSellerChat(botUrl);
 }
 
 export { BUY_TOAST_TEXT, BUY_MOBILE_TOAST_ACTION_LABEL };

@@ -348,6 +348,58 @@
   font-style: italic;
 }
 
+.membership-modal-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.membership-edit-circle-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #007aff !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+.membership-edit-circle-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.membership-modal-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.membership-modal .ui-modal-footer {
+  overflow: hidden;
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.28s ease,
+    max-height 0.32s ease, padding 0.32s ease, margin 0.32s ease;
+  transform: translateY(0);
+  opacity: 1;
+  max-height: 200px;
+}
+
+.membership-modal--footer-hidden .ui-modal-footer {
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none;
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .membership-modal .ui-modal-footer {
+    transition: none;
+  }
+}
+
 .membership-freeze-btn {
   display: block;
   width: 100%;
@@ -376,9 +428,13 @@
   background: #d3f9d8;
 }
 
-.membership-freeze-btn:disabled {
-  opacity: 0.6;
+.membership-freeze-btn:disabled,
+.membership-freeze-btn--disabled-grey:disabled {
+  opacity: 1;
   cursor: not-allowed;
+  border-color: #c5c5c7;
+  background: #e5e5ea;
+  color: #8e8e93;
 }
 
 .membership-buy-btn {

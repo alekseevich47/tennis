@@ -22,17 +22,25 @@ onRecordCreateRequest((e) => {
 onRecordUpdateRequest((e) => {
   try {
     var guard = require(__hooks + '/users_access_guard_lib.js');
+    var original = e.record.original();
     if (!guard.isPrivilegedAuth(e)) {
-      var original = e.record.original();
       if (!original) {
         e.next();
         return;
       }
       guard.assertPrivilegedUpdateAllowed(original, e.record);
+      // freeze/stop log и т.п. в IGNORE — явный запрет lifecycle PATCH.
+      guard.assertMembershipLifecycleFieldsUnchanged(original, e.record);
     } else if (!guard.isSuperuserAuth(e)) {
       // moderator: tg_id / флаги каналов — только через claim/webhook ($app.save).
-      var originalMod = e.record.original();
-      if (originalMod) guard.assertServerOnlyFieldsUnchanged(originalMod, e.record);
+      // freeze/stop — только /api/membership-freeze|stop ($app.save).
+      if (original) {
+        guard.assertServerOnlyFieldsUnchanged(original, e.record);
+        guard.assertMembershipLifecycleFieldsUnchanged(original, e.record);
+        guard.maybeResetFreezeBudgetOnStartDateChange(original, e.record);
+      }
+    } else if (original) {
+      guard.maybeResetFreezeBudgetOnStartDateChange(original, e.record);
     }
     e.next();
   } catch (err) {

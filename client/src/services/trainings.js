@@ -652,9 +652,15 @@ export async function bookUserToTraining(training, userId, targetUser, { overrid
       throw new Error('Нет свободных мест');
     }
     const targetUserData = await pb.collection('users').getOne(userId, {
-      fields: 'membership_frozen,membership_type',
+      fields: 'membership_frozen,membership_stopped,membership_type',
       requestKey: null
     });
+    if (targetUserData.membership_stopped) {
+      throw Object.assign(
+        new Error('Абонемент пользователя остановлен. Запись невозможна.'),
+        { code: 'MEMBERSHIP_STOPPED' }
+      );
+    }
     if (targetUserData.membership_frozen) {
       throw Object.assign(
         new Error('Абонемент пользователя заморожен. Запись невозможна.'),
@@ -702,11 +708,17 @@ export async function bookUsersToTraining(training, userIds, targetUsers = [], {
     if (nextUserIds.length > 0) {
       const statusUsers = await pb.collection('users').getFullList({
         filter: nextUserIds.map((id) => `id = "${id}"`).join(' || '),
-        fields: 'id,membership_frozen,bot_blocked',
+        fields: 'id,membership_frozen,membership_stopped,bot_blocked',
         requestKey: null
       });
       if (statusUsers.some((u) => u.bot_blocked === true)) {
         throw Object.assign(new Error(BOT_BLOCKED_BOOKING_MESSAGE), { code: 'BOT_BLOCKED' });
+      }
+      if (statusUsers.some((u) => u.membership_stopped)) {
+        throw Object.assign(
+          new Error('Абонемент пользователя остановлен. Запись невозможна.'),
+          { code: 'MEMBERSHIP_STOPPED' }
+        );
       }
       if (statusUsers.some((u) => u.membership_frozen)) {
         throw Object.assign(

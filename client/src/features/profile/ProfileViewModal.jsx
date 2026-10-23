@@ -38,7 +38,7 @@ import MembershipModal from './MembershipModal';
 import ProfileSingleDateField from './ProfileSingleDateField';
 import ProfileTrainingsSearch, { filterProfileTrainings } from './ProfileTrainingsSearch';
 import { useKeepForModalClose } from '../../hooks/useKeepForModalClose';
-import { buildMaxUserChatUrl, openMaxUserChat } from '../shop/buyMessage';
+import { openMaxUserChat } from '../shop/buyMessage';
 import './Profile.css';
 
 const DEFAULT_HAND = 'Правая';
@@ -149,6 +149,7 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
   const [claimCandidates, setClaimCandidates] = useState([]);
   const [claimLoading, setClaimLoading] = useState(false);
   const [claimSubmitting, setClaimSubmitting] = useState(false);
+  const [openMaxChatLoading, setOpenMaxChatLoading] = useState(false);
 
   const targetUserId = targetUser?.id;
   const currentUserId = currentUser?.id;
@@ -514,6 +515,21 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
     } catch (err) {
       error('restrict comments:', err);
       await alert({ title: 'Ошибка', message: 'Не удалось ограничить комментарии.' });
+    }
+  };
+
+  const handleOpenMaxChat = async () => {
+    if (!linkedMaxId || !targetUserId || openMaxChatLoading) return;
+    setOpenMaxChatLoading(true);
+    try {
+      await openMaxUserChat(linkedMaxId, displayName, { targetUserId });
+    } catch (err) {
+      error('open max user chat:', err);
+      const message =
+        err?.response?.data?.error || err?.message || 'Не удалось открыть чат в MAX.';
+      await alert({ title: 'Ошибка', message: String(message) });
+    } finally {
+      setOpenMaxChatLoading(false);
     }
   };
 
@@ -964,18 +980,15 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
                     <p>
                       <strong>MAX:</strong>{' '}
                       {linkedMaxId ? (
-                        <a
+                        <button
+                          type="button"
                           className="profile-max-id-btn"
-                          href={buildMaxUserChatUrl(linkedMaxId)}
+                          disabled={openMaxChatLoading}
+                          onClick={handleOpenMaxChat}
                           title="Открыть чат в MAX"
-                          onClick={(e) => {
-                            // Реальный gesture + custom-scheme opener (не openMaxLink).
-                            e.preventDefault();
-                            openMaxUserChat(linkedMaxId, displayName);
-                          }}
                         >
-                          {linkedMaxId}
-                        </a>
+                          {openMaxChatLoading ? '…' : linkedMaxId}
+                        </button>
                       ) : (
                         <span className="profile-max-id-empty">не привязан</span>
                       )}
