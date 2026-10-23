@@ -1,13 +1,5 @@
 // API заморозки / остановки абонемента (только через сервер, не PATCH users).
 
-function loadTargetUser(userId) {
-  try {
-    return $app.findRecordById('users', userId);
-  } catch (_) {
-    return null;
-  }
-}
-
 function errMessage(err) {
   try {
     if (err && err.message) return String(err.message);
@@ -32,11 +24,24 @@ function apiError(c, status, message) {
   return c.json(status, { status: status, message: message, data: {} });
 }
 
-function safeBool(record, field) {
+/**
+ * Не делать findRecordById(users, auth.id) — на стенде зависает (SQLite/auth).
+ * Self → сам auth; чужой → findRecordById.
+ */
+function resolveTargetUser(auth, targetUserId) {
+  var tid = String(targetUserId || '');
+  if (auth && String(auth.id) === tid) {
+    console.log('[membership] resolve=self');
+    return auth;
+  }
+  console.log('[membership] resolve=find begin id=' + tid);
   try {
-    return record.getBool(field) ? '1' : '0';
-  } catch (e) {
-    return 'err:' + errMessage(e);
+    var rec = $app.findRecordById('users', tid);
+    console.log('[membership] resolve=find done');
+    return rec;
+  } catch (err) {
+    console.log('[membership] resolve=find err: ' + errMessage(err));
+    return null;
   }
 }
 
@@ -49,7 +54,7 @@ routerAdd('POST', '/api/membership-freeze', (c) => {
     if (!auth) {
       return apiError(c, 401, 'Unauthorized');
     }
-    console.log('[membership-freeze] step=auth ok');
+    console.log('[membership-freeze] step=auth ok id=' + auth.id);
 
     var body = info.body || {};
     var action = String(body.action || '');
@@ -72,16 +77,11 @@ routerAdd('POST', '/api/membership-freeze', (c) => {
       return apiError(c, 400, 'Invalid action');
     }
 
-    var target = loadTargetUser(targetUserId);
+    var target = resolveTargetUser(auth, targetUserId);
     if (!target) {
       return apiError(c, 404, 'User not found');
     }
-    console.log(
-      '[membership-freeze] step=target frozen=' +
-        safeBool(target, 'membership_frozen') +
-        ' stopped=' +
-        safeBool(target, 'membership_stopped')
-    );
+    console.log('[membership-freeze] step=target ok');
 
     console.log('[membership-freeze] step=require');
     var lib = require(__hooks + '/membershiplib.js');
@@ -110,7 +110,7 @@ routerAdd('POST', '/api/membership-stop', (c) => {
     if (!auth) {
       return apiError(c, 401, 'Unauthorized');
     }
-    console.log('[membership-stop] step=auth ok');
+    console.log('[membership-stop] step=auth ok id=' + auth.id);
 
     var role = '';
     try {
@@ -134,16 +134,11 @@ routerAdd('POST', '/api/membership-stop', (c) => {
       return apiError(c, 400, 'Invalid action');
     }
 
-    var target = loadTargetUser(targetUserId);
+    var target = resolveTargetUser(auth, targetUserId);
     if (!target) {
       return apiError(c, 404, 'User not found');
     }
-    console.log(
-      '[membership-stop] step=target stopped=' +
-        safeBool(target, 'membership_stopped') +
-        ' frozen=' +
-        safeBool(target, 'membership_frozen')
-    );
+    console.log('[membership-stop] step=target ok');
 
     console.log('[membership-stop] step=require');
     var lib = require(__hooks + '/membershiplib.js');
