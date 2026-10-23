@@ -570,10 +570,8 @@ function stopUser(app, opts) {
   }
 
   if (user.getBool('membership_frozen')) {
+    // тот же record после save — не findRecordById (на стенде зависает)
     unfreezeUser(app, { target: user, actor: actor, reason: 'stop_override' });
-    try {
-      user = app.findRecordById('users', user.id);
-    } catch (_) {}
   }
 
   var now = opts.now ? new Date(opts.now) : new Date();
