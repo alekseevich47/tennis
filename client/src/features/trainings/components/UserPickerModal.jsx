@@ -16,11 +16,21 @@ function isUserBookingDisabled(user) {
  * @param {{
  *   isOpen: boolean,
  *   onClose: () => void,
- *   onConfirm: (userIds: string[], users?: Array<{ id: string, full_name?: string }>) => void | Promise<void>,
- *   excludeIds?: string[]
+ *   onConfirm: (userIds: string[], users?: Array<{ id: string, full_name?: string, avatar?: string, avatar_url?: string }>) => void | Promise<void>,
+ *   excludeIds?: string[],
+ *   initialSelectedIds?: string[],
+ *   variant?: 'booking' | 'coaches'
  * }} props
  */
-function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
+function UserPickerModal({
+  isOpen,
+  onClose,
+  onConfirm,
+  excludeIds = [],
+  initialSelectedIds = [],
+  variant = 'booking'
+}) {
+  const isCoaches = variant === 'coaches';
   const searchId = useId();
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState('');
@@ -38,6 +48,8 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
       return undefined;
     }
 
+    setSelectedIds(new Set(initialSelectedIds));
+
     let cancelled = false;
     setLoading(true);
     setErrorMessage('');
@@ -53,7 +65,11 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
         if (cancelled) return;
         error('load users:', err);
         setUsers([]);
-        setErrorMessage('Не удалось загрузить список игроков.');
+        setErrorMessage(
+          isCoaches
+            ? 'Не удалось загрузить список пользователей.'
+            : 'Не удалось загрузить список игроков.'
+        );
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -62,10 +78,12 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
     return () => {
       cancelled = true;
     };
-  }, [isOpen]);
+    // initialSelectedIds captured on open; omit from deps to avoid resetting mid-session
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, isCoaches]);
 
   useEffect(() => {
-    if (!isOpen) return undefined;
+    if (!isOpen || isCoaches) return undefined;
 
     const unsubscribe = pb.collection('users').subscribe('*', (event) => {
       if (event.action !== 'update' || !event.record) return;
@@ -101,7 +119,7 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
     return () => {
       void unsubscribe;
     };
-  }, [isOpen]);
+  }, [isOpen, isCoaches]);
 
   const excludedUserIds = useMemo(() => new Set(excludeIds), [excludeIds]);
   const filteredUsers = useMemo(() => {
@@ -111,6 +129,8 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
       const fullName = user.full_name || '';
       return !query || fullName.toLowerCase().includes(query);
     });
+    if (isCoaches) return matched;
+
     const available = [];
     const disabled = [];
     for (const user of matched) {
@@ -118,7 +138,7 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
       else available.push(user);
     }
     return [...available, ...disabled];
-  }, [excludedUserIds, search, users]);
+  }, [excludedUserIds, isCoaches, search, users]);
 
   const selectedCount = selectedIds.size;
 
@@ -133,7 +153,8 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
   };
 
   const handleConfirm = async () => {
-    if (selectedIds.size === 0 || confirming) return;
+    if (confirming) return;
+    if (!isCoaches && selectedIds.size === 0) return;
     setConfirming(true);
     try {
       const selectedUserIds = Array.from(selectedIds);
@@ -151,16 +172,20 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Выберите игроков"
+      title={isCoaches ? 'Выберите тренеров' : 'Выберите игроков'}
       size="tall"
       footer={
         <button
           type="button"
           className="submit-btn-full user-picker-confirm-btn"
-          disabled={selectedCount === 0 || confirming}
+          disabled={(!isCoaches && selectedCount === 0) || confirming}
           onClick={handleConfirm}
         >
-          {confirming ? 'Записываем...' : `Записать (${selectedCount})`}
+          {confirming
+            ? (isCoaches ? 'Добавляем...' : 'Записываем...')
+            : (isCoaches
+              ? (selectedCount === 0 ? 'Очистить список' : `Добавить (${selectedCount})`)
+              : `Записать (${selectedCount})`)}
         </button>
       }
     >
@@ -179,7 +204,9 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
 
         <div className="user-picker-list" aria-live="polite">
           {loading ? (
-            <p className="user-picker-status">Загружаем игроков...</p>
+            <p className="user-picker-status">
+              {isCoaches ? 'Загружаем пользователей...' : 'Загружаем игроков...'}
+            </p>
           ) : errorMessage ? (
             <p className="user-picker-status user-picker-status-error">{errorMessage}</p>
           ) : filteredUsers.length === 0 ? (
@@ -189,11 +216,13 @@ function UserPickerModal({ isOpen, onClose, onConfirm, excludeIds = [] }) {
               const isFrozen = user.membership_frozen === true;
               const isStopped = user.membership_stopped === true;
               const isBotBlocked = user.bot_blocked === true;
-              const isDisabled = isUserBookingDisabled(user);
+              const isDisabled = !isCoaches && isUserBookingDisabled(user);
               let statusSuffix = '';
-              if (isBotBlocked) statusSuffix = ' — заблокировал бота';
-              else if (isStopped) statusSuffix = ' — абонемент остановлен';
-              else if (isFrozen) statusSuffix = ' — абонемент заморожен';
+              if (!isCoaches) {
+                if (isBotBlocked) statusSuffix = ' — заблокировал бота';
+                else if (isStopped) statusSuffix = ' — абонемент остановлен';
+                else if (isFrozen) statusSuffix = ' — абонемент заморожен';
+              }
 
               return (
               <label

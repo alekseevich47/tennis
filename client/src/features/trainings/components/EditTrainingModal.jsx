@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Modal from '../../../components/ui/Modal';
 import { useAlertDialog } from '../../../components/ui/AlertDialog';
 import { error } from '../../../lib/log';
 import { updateTraining } from '../../../services/trainings';
+import TrainingCoachesField from './TrainingCoachesField';
 
 const INITIAL_FORM = {
   date: '',
@@ -19,6 +20,20 @@ function toDateTimeLocalValue(value) {
   if (Number.isNaN(date.getTime())) return '';
   const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
   return localDate.toISOString().slice(0, 16);
+}
+
+function getCoachesFromTraining(training) {
+  const expanded = training?.expand?.coaches;
+  if (Array.isArray(expanded) && expanded.length > 0) {
+    return expanded.map((u) => ({
+      id: u.id,
+      full_name: u.full_name,
+      avatar: u.avatar,
+      avatar_url: u.avatar_url
+    }));
+  }
+  const ids = Array.isArray(training?.coaches) ? training.coaches : [];
+  return ids.map((id) => ({ id: String(id), full_name: 'Тренер' }));
 }
 
 function getFormFromTraining(training) {
@@ -61,13 +76,28 @@ function getPatchFromTraining(training) {
   };
 }
 
-function buildTrainingPatch(training, form) {
+function sameIdList(a, b) {
+  const left = [...(a || [])].map(String).sort();
+  const right = [...(b || [])].map(String).sort();
+  if (left.length !== right.length) return false;
+  return left.every((id, i) => id === right[i]);
+}
+
+function buildTrainingPatch(training, form, activeCoachIds) {
   const nextValues = getPatchFromForm(form);
   const currentValues = getPatchFromTraining(training);
-
-  return Object.fromEntries(
+  const patch = Object.fromEntries(
     Object.entries(nextValues).filter(([key, value]) => value !== currentValues[key])
   );
+
+  const currentCoachIds = Array.isArray(training?.coaches)
+    ? training.coaches.map(String)
+    : [];
+  if (!sameIdList(currentCoachIds, activeCoachIds)) {
+    patch.coaches = activeCoachIds;
+  }
+
+  return patch;
 }
 
 /**
@@ -80,12 +110,17 @@ function buildTrainingPatch(training, form) {
  */
 function EditTrainingModal({ isOpen, training, onClose, onSaved }) {
   const [form, setForm] = useState(INITIAL_FORM);
+  const [coachPool, setCoachPool] = useState(/** @type {Array<{ id: string, full_name?: string }>} */ ([]));
+  const [activeCoachIds, setActiveCoachIds] = useState(/** @type {string[]} */ ([]));
   const [submitting, setSubmitting] = useState(false);
   const { alert } = useAlertDialog();
 
   useEffect(() => {
     if (isOpen) {
       setForm(getFormFromTraining(training));
+      const pool = getCoachesFromTraining(training);
+      setCoachPool(pool);
+      setActiveCoachIds(pool.map((u) => u.id));
     }
   }, [isOpen, training]);
 
@@ -94,8 +129,16 @@ function EditTrainingModal({ isOpen, training, onClose, onSaved }) {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
+  const handleCoachesChange = useCallback(({ coachPool: nextPool, activeCoachIds: nextActive }) => {
+    setCoachPool(nextPool);
+    setActiveCoachIds(nextActive);
+  }, []);
+
   const handleClose = () => {
     setForm(getFormFromTraining(training));
+    const pool = getCoachesFromTraining(training);
+    setCoachPool(pool);
+    setActiveCoachIds(pool.map((u) => u.id));
     onClose();
   };
 
@@ -105,7 +148,7 @@ function EditTrainingModal({ isOpen, training, onClose, onSaved }) {
 
     setSubmitting(true);
     try {
-      const patch = buildTrainingPatch(training, form);
+      const patch = buildTrainingPatch(training, form, activeCoachIds);
       if (Object.keys(patch).length === 0) {
         await alert({ title: 'Без изменений', message: 'Поля тренировки не изменились.' });
         return;
@@ -176,6 +219,12 @@ function EditTrainingModal({ isOpen, training, onClose, onSaved }) {
             required
           />
         </div>
+
+        <TrainingCoachesField
+          coachPool={coachPool}
+          activeCoachIds={activeCoachIds}
+          onChange={handleCoachesChange}
+        />
 
         <div className="form-group-row">
           <label htmlFor="edit-training-description">Описание</label>

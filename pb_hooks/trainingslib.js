@@ -416,7 +416,7 @@ var TRAINING_COMPARE_FIELDS = [
   'date', 'duration', 'type', 'max_slots', 'location', 'description',
   'is_deleted', 'is_closed', 'is_cancelled', 'delete_pending_at',
   'booked_users', 'attended_users', 'unbooked_users', 'unpaid_booked_users',
-  'moderator_kicked_users', 'restore_insufficient_users',
+  'moderator_kicked_users', 'restore_insufficient_users', 'coaches',
   'reminder_4h_sent', 'completion_notified'
 ];
 
@@ -430,7 +430,7 @@ function trainingFieldChanged(original, record, f) {
   }
   if (f === 'booked_users' || f === 'attended_users' || f === 'unbooked_users' ||
       f === 'unpaid_booked_users' || f === 'moderator_kicked_users' ||
-      f === 'restore_insufficient_users') {
+      f === 'restore_insufficient_users' || f === 'coaches') {
     var aRel = original.get(f);
     var bRel = record.get(f);
     var aS = '';

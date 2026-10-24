@@ -741,9 +741,6 @@ function freezeUser(app, opts) {
     createAppNotification(app, userId, 'app.membership_freeze', varsUser, {
       meta: { kind: 'membership_freeze' }
     });
-    notifyModsApp(app, 'app.membership_freeze_mod', varsMod, {
-      meta: { kind: 'membership_freeze', targetUserId: userId }
-    });
   } catch (notifyErr) {
     console.log('[membership] freeze notify: ' + notifyErr);
   }
@@ -835,9 +832,6 @@ function unfreezeUser(app, opts) {
       sendBotToModerators(app, 'bot.membership_unfreeze_mod', { name: name });
       createAppNotification(app, userId, 'app.membership_unfreeze', {}, {
         meta: { kind: 'membership_unfreeze' }
-      });
-      notifyModsApp(app, 'app.membership_unfreeze_mod', { name: name }, {
-        meta: { kind: 'membership_unfreeze', targetUserId: userId }
       });
     } catch (notifyErr) {
       console.log('[membership] unfreeze notify: ' + notifyErr);

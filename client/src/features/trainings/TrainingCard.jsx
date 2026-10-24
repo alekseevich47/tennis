@@ -97,29 +97,23 @@ function TrainingCard({
         <span className="card-row-time">{formatTimeRange(training.date, training.duration)}</span>
         <span className="card-row-type-label">
           {training.type === 'group' ? 'Тренировка' : 'Турнир секции'}
+          <span className="card-row-slots-text">
+            {' '}
+            ({totalBooked}/{hasLimit ? Math.max(0, (training.max_slots || 0) - totalBooked) : '∞'})
+          </span>
         </span>
       </div>
 
       <div className="card-actions-info-col">
         <div className="card-slots-row">
-          {!isFull && (
-            <span
-              className={clsx(
-                'card-status-badge',
-                effectivelyClosed ? 'card-status-badge--closed' : 'card-status-badge--open'
-              )}
-            >
-              {hasEnded ? 'Тренировка завершена' : (isClosed ? 'Запись закрыта' : 'Запись открыта')}
-            </span>
-          )}
-          {hasLimit && (
-            <>
-              <span className="card-slots-counter">
-                {totalBooked} / {training.max_slots} мест
-              </span>
-              {isFull && <span className="card-slots-badge-full">Мест нет</span>}
-            </>
-          )}
+          <span
+            className={clsx(
+              'card-status-badge',
+              effectivelyClosed ? 'card-status-badge--closed' : 'card-status-badge--open'
+            )}
+          >
+            {hasEnded ? 'Тренировка завершена' : (isClosed ? 'Запись закрыта' : 'Запись открыта')}
+          </span>
         </div>
 
         <div className="card-buttons-wrapper">

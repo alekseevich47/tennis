@@ -163,9 +163,19 @@ function TrainingDetailModal({
         showCloseButton={false}
       >
         <div className="detail-header-row">
-          <span className="detail-badge-type">
-            {training.type === 'group' ? 'Групповой сбор' : 'Турнирная сетка'}
-          </span>
+          <div className="detail-header-type-col">
+            <span className="detail-badge-type">
+              {training.type === 'group' ? 'Групповой сбор' : 'Турнирная сетка'}
+            </span>
+            <span
+              className={clsx(
+                'card-status-badge',
+                effectivelyClosed ? 'card-status-badge--closed' : 'card-status-badge--open'
+              )}
+            >
+              {hasEnded ? 'Тренировка завершена' : effectivelyClosed ? 'Запись закрыта' : 'Запись открыта'}
+            </span>
+          </div>
           <div className="detail-header-actions">
             {userIsModerator && !training.is_deleted && (
               <>
@@ -245,6 +255,25 @@ function TrainingDetailModal({
           </button>
         )}
 
+        {Array.isArray(training.expand?.coaches) && training.expand.coaches.length > 0 && (
+          <div className="detail-coaches-section">
+            <h3 className="detail-coaches-title">Тренерский состав</h3>
+            <div className="detail-coaches-row">
+              {training.expand.coaches.map((coach) => (
+                <div key={coach.id} className="detail-coach-item">
+                  <Avatar
+                    user={coach}
+                    size="sm"
+                    className="detail-coach-avatar"
+                    alt={coach.full_name || 'Тренер'}
+                  />
+                  <span className="detail-coach-name">{coach.full_name || 'Тренер'}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {training.description && (
           <div className="detail-desc-box">
             <h3>Описание от организатора</h3>
@@ -253,26 +282,14 @@ function TrainingDetailModal({
         )}
 
         <div className="detail-participants-section">
-          <div className="detail-booking-status-row">
-            {!isFull && (
-              <span
-                className={clsx(
-                  'card-status-badge',
-                  effectivelyClosed ? 'card-status-badge--closed' : 'card-status-badge--open'
-                )}
-              >
-                {hasEnded ? 'Тренировка завершена' : effectivelyClosed ? 'Запись закрыта' : 'Запись открыта'}
+          {hasLimit && (
+            <div className="detail-booking-status-row">
+              <span className="card-slots-counter">
+                {bookedUserIds.length} / {training.max_slots} мест
               </span>
-            )}
-            {hasLimit && (
-              <>
-                <span className="card-slots-counter">
-                  {bookedUserIds.length} / {training.max_slots} мест
-                </span>
-                {isFull && <span className="card-slots-badge-full">Мест нет</span>}
-              </>
-            )}
-          </div>
+              {isFull && <span className="card-slots-badge-full">Мест нет</span>}
+            </div>
+          )}
           <h3>
             Записанные игроки ({bookedUserIds.length})
             {userIsModerator && (

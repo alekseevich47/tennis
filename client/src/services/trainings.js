@@ -44,6 +44,7 @@ async function notifyTrainingBot(payload) {
  * @property {string[]} [attended_users]
  * @property {string[]} [moderator_kicked_users]
  * @property {string[]} [restore_insufficient_users]
+ * @property {string[]} [coaches]
  * @property {Record<string, unknown>} [expand]
  */
 
@@ -300,7 +301,7 @@ export async function listTrainings({ signal } = {}) {
     return /** @type {TrainingRecord[]} */ (await pb.collection('trainings').getFullList({
       sort: 'date',
       filter: isModerator() ? '' : 'is_deleted != true',
-      expand: 'booked_users,attended_users,unbooked_users,moderator_kicked_users,restore_insufficient_users',
+      expand: 'booked_users,attended_users,unbooked_users,moderator_kicked_users,restore_insufficient_users,coaches',
       requestKey: null,
       signal
     }));

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import { createTraining } from '../../services/trainings';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { error } from '../../lib/log';
+import TrainingCoachesField from './components/TrainingCoachesField';
 
 const DEFAULT_LOCATION = 'ул. Тухачевского, 31/3';
 
@@ -26,6 +27,8 @@ const INITIAL_FORM = {
  */
 function CreateTrainingModal({ isOpen, onClose, selectedDate, onCreated }) {
   const [form, setForm] = useState(INITIAL_FORM);
+  const [coachPool, setCoachPool] = useState(/** @type {Array<{ id: string, full_name?: string }>} */ ([]));
+  const [activeCoachIds, setActiveCoachIds] = useState(/** @type {string[]} */ ([]));
   const [submitting, setSubmitting] = useState(false);
   const { alert } = useAlertDialog();
 
@@ -34,8 +37,19 @@ function CreateTrainingModal({ isOpen, onClose, selectedDate, onCreated }) {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleClose = () => {
+  const handleCoachesChange = useCallback(({ coachPool: nextPool, activeCoachIds: nextActive }) => {
+    setCoachPool(nextPool);
+    setActiveCoachIds(nextActive);
+  }, []);
+
+  const resetForm = () => {
     setForm(INITIAL_FORM);
+    setCoachPool([]);
+    setActiveCoachIds([]);
+  };
+
+  const handleClose = () => {
+    resetForm();
     onClose();
   };
 
@@ -58,10 +72,11 @@ function CreateTrainingModal({ isOpen, onClose, selectedDate, onCreated }) {
         max_slots: form.maxSlots ? parseInt(String(form.maxSlots), 10) : null,
         location: finalLocation,
         description: form.description,
-        booked_users: []
+        booked_users: [],
+        coaches: activeCoachIds
       });
 
-      setForm(INITIAL_FORM);
+      resetForm();
       onCreated();
       await alert({ title: 'Готово', message: 'Тренировка добавлена в расписание.' });
     } catch (err) {
@@ -141,6 +156,12 @@ function CreateTrainingModal({ isOpen, onClose, selectedDate, onCreated }) {
             />
           </div>
         )}
+
+        <TrainingCoachesField
+          coachPool={coachPool}
+          activeCoachIds={activeCoachIds}
+          onChange={handleCoachesChange}
+        />
 
         <div className="form-group-row">
           <label htmlFor="training-description">Описание</label>
