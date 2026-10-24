@@ -43,16 +43,23 @@ function logMovement(app, p) {
     record.set('delta', delta);
     record.set('kind', kind);
     record.set('unpaid', !!p.unpaid);
-    record.set('within_daily_limit', withinDailyLimit);
     if (p.trainingId) record.set('training_id', String(p.trainingId));
-    if (p.trainingType) record.set('training_type', String(p.trainingType));
     if (p.trainingDate) record.set('training_date', p.trainingDate);
-    if (p.relatedLedgerId) record.set('related_ledger_id', String(p.relatedLedgerId));
     if (p.actor && p.actor.id) {
       record.set('actor_id', String(p.actor.id));
       record.set('actor_name', actorFullName(p.actor));
     }
     if (p.balanceAfter != null) record.set('balance_after', Number(p.balanceAfter) || 0);
+    // Опциональные поля (могут отсутствовать до import schema) — не валим запись.
+    try {
+      if (withinDailyLimit) record.set('within_daily_limit', true);
+    } catch (_) {}
+    try {
+      if (p.trainingType) record.set('training_type', String(p.trainingType));
+    } catch (_) {}
+    try {
+      if (p.relatedLedgerId) record.set('related_ledger_id', String(p.relatedLedgerId));
+    } catch (_) {}
     app.save(record);
     return record;
   } catch (err) {
