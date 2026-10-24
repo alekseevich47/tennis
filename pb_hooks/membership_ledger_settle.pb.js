@@ -1,6 +1,6 @@
 // Списание долга (mod only).
-// users — только SQL (findRecordById(users) в routerAdd на стенде зависает).
-// ledger — findRecordById + SQL UPDATE/INSERT базовых колонок (без training_type/related_*).
+// Не трогаем Record.get('user') / getString на relation — в goja зависает.
+// ledger + users: только SQL (как freeze/stop).
 
 var BOOKING_KINDS = {
   booking: true,
@@ -32,6 +32,37 @@ function sqlExecOrThrow(sql, bind, label) {
     console.log('[membership-settle-debt] sql ' + label + ' err: ' + errMessage(err));
     throw new Error('SQL ' + label + ': ' + errMessage(err));
   }
+}
+
+function loadLedgerSql(ledgerId) {
+  console.log('[membership-settle-debt] sql load ledger ' + ledgerId);
+  var row = new DynamicModel({
+    id: '',
+    user_id: '',
+    kind: '',
+    unpaid: false,
+    training_id: '',
+    training_date: ''
+  });
+  try {
+    // user — reserved; алиас user_id, не трогаем Record API
+    $app.db().newQuery(
+      'SELECT id, "user" AS user_id, kind, unpaid, training_id, training_date ' +
+        'FROM membership_ledger WHERE id = {:id}'
+    ).bind({ id: String(ledgerId) }).one(row);
+  } catch (err) {
+    console.log('[membership-settle-debt] sql load ledger err: ' + errMessage(err));
+    return null;
+  }
+  console.log(
+    '[membership-settle-debt] sql load ledger ok kind=' +
+      row.kind +
+      ' unpaid=' +
+      row.unpaid +
+      ' user=' +
+      row.user_id
+  );
+  return row;
 }
 
 function loadUserSessions(userId) {
@@ -76,15 +107,15 @@ function insertSettleBase(p) {
   var nowIso = new Date().toISOString();
   sqlExecOrThrow(
     'INSERT INTO membership_ledger (' +
-      'id, user, delta, kind, unpaid, training_id, training_date, ' +
+      'id, "user", delta, kind, unpaid, training_id, training_date, ' +
       'actor_id, actor_name, balance_after, created, updated' +
       ') VALUES (' +
-      '{:id}, {:user}, 0, {:kind}, false, {:tid}, {:tdate}, ' +
+      '{:id}, {:uid}, 0, {:kind}, false, {:tid}, {:tdate}, ' +
       '{:actorId}, {:actorName}, {:bal}, {:created}, {:updated}' +
       ')',
     {
       id: id,
-      user: p.userId,
+      uid: p.userId,
       kind: 'debt_settle',
       tid: p.trainingId || '',
       tdate: p.trainingDate || '',
@@ -102,25 +133,20 @@ function insertSettleBase(p) {
 function findSettleIdsByTraining(userId, trainingId) {
   var ids = [];
   if (!userId || !trainingId) return ids;
-  console.log('[membership-settle-debt] find settle training=' + trainingId);
+  console.log('[membership-settle-debt] sql find settle');
   try {
-    var rows = $app.findRecordsByFilter(
-      'membership_ledger',
-      'kind = "debt_settle" && user = "' +
-        String(userId) +
-        '" && training_id = "' +
-        String(trainingId) +
-        '"',
-      '-created',
-      5,
-      0
-    );
-    var i;
-    for (i = 0; i < (rows || []).length; i++) {
-      ids.push(String(rows[i].id));
-    }
+    var dm = new DynamicModel({ id: '' });
+    $app.db().newQuery(
+      'SELECT id FROM membership_ledger WHERE kind = {:kind} AND "user" = {:uid} ' +
+        'AND training_id = {:tid} ORDER BY created DESC LIMIT 1'
+    ).bind({
+      kind: 'debt_settle',
+      uid: String(userId),
+      tid: String(trainingId)
+    }).one(dm);
+    if (dm.id) ids.push(String(dm.id));
   } catch (err) {
-    console.log('[membership-settle-debt] find settle err: ' + errMessage(err));
+    console.log('[membership-settle-debt] sql find settle err: ' + errMessage(err));
   }
   return ids;
 }
@@ -156,45 +182,25 @@ routerAdd('POST', '/api/membership-ledger-settle-debt', (c) => {
 
     if (!ledgerId) return apiError(c, 400, 'Missing ledgerId');
 
-    console.log('[membership-settle-debt] step=find ledger');
-    var entry;
-    try {
-      entry = $app.findRecordById('membership_ledger', ledgerId);
-    } catch (findErr) {
-      console.log('[membership-settle-debt] find ledger err: ' + errMessage(findErr));
+    var entry = loadLedgerSql(ledgerId);
+    if (!entry || !entry.id) {
       return apiError(c, 404, 'Запись истории не найдена');
     }
-    console.log('[membership-settle-debt] step=ledger ok');
 
-    var entryUserId = '';
-    try {
-      entryUserId = String(entry.getString('user') || entry.get('user') || '');
-    } catch (_) {
-      entryUserId = String(entry.get('user') || '');
-    }
+    var entryUserId = String(entry.user_id || '');
     if (!entryUserId) return apiError(c, 400, 'Некорректная запись ledger');
     if (bodyUserId && bodyUserId !== entryUserId) {
       return apiError(c, 400, 'userId не совпадает с владельцем записи');
     }
 
-    var kind = String(entry.getString('kind') || '');
+    var kind = String(entry.kind || '');
     if (!BOOKING_KINDS[kind]) {
       return apiError(c, 400, 'Списание долга доступно только для записей на тренировку');
     }
 
-    var entryUnpaid = false;
-    try {
-      entryUnpaid = !!entry.getBool('unpaid');
-    } catch (_) {
-      entryUnpaid = !!entry.get('unpaid');
-    }
-
-    var trainingId = '';
-    var trainingDate = '';
-    try {
-      trainingId = String(entry.getString('training_id') || '');
-      trainingDate = String(entry.getString('training_date') || '');
-    } catch (_) {}
+    var entryUnpaid = !!entry.unpaid;
+    var trainingId = String(entry.training_id || '');
+    var trainingDate = String(entry.training_date || '');
 
     var sessions = loadUserSessions(entryUserId);
     var unpaidSessions = sessions.unpaid;
