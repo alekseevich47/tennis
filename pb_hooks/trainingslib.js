@@ -52,6 +52,30 @@ function logLedger(app, userId, delta, unpaid, balanceAfter, ledger) {
 }
 
 /**
+ * Возврат долговой записи (unbook/cancel/freeze/stop): исходная booking-строка с долгом
+ * перестаёт быть «неоплаченной» (UI: зелёный кружок). Только SQL, id — безопасный скаляр.
+ * @param {core.App} app
+ * @param {string} userId
+ * @param {string|undefined} trainingId
+ */
+function clearReturnedDebtBooking(app, userId, trainingId) {
+  if (!userId || !trainingId) return;
+  try {
+    var row = new DynamicModel({ id: '' });
+    app.db().newQuery(
+      'SELECT id FROM membership_ledger WHERE "user" = {:uid} AND training_id = {:tid} ' +
+        'AND kind IN (\'booking\', \'training_restored\') AND unpaid = true ' +
+        'ORDER BY created DESC, id DESC LIMIT 1'
+    ).bind({ uid: String(userId), tid: String(trainingId) }).one(row);
+    if (!row.id) return;
+    app.db().newQuery('UPDATE membership_ledger SET unpaid = false WHERE id = {:id}')
+      .bind({ id: String(row.id) }).execute();
+  } catch (_) {
+    // нет строки или иная ошибка — не ломаем возврат сессии
+  }
+}
+
+/**
  * @param {core.App} app
  * @param {string} userId
  * @param {{ skipNotify?: boolean, wasUnpaid?: boolean, ledger?: { kind: string, trainingId?: string, trainingType?: string, trainingDate?: string, actor?: any, withinDailyLimit?: boolean } }} [options]
@@ -82,6 +106,9 @@ function restoreMembershipSession(app, userId, options) {
   var ledger = options && options.ledger ? Object.assign({}, options.ledger) : null;
   if (ledger && unlimited && !wasUnpaid) {
     ledger.withinDailyLimit = true;
+  }
+  if (wasUnpaid && ledger) {
+    clearReturnedDebtBooking(app, userId, ledger.trainingId);
   }
   logLedger(
     app,
@@ -214,14 +241,22 @@ function isReadyToFinalizePendingDelete(training, graceMs) {
 var BOT_BLOCKED_BOOKING_MESSAGE =
   'Невозможно записать: пользователь заблокировал бота в MAX, уведомления о тренировках недоступны.';
 
+/** Формат дат в PB-БД: 'YYYY-MM-DD HH:MM:SS.sssZ' (с пробелом; 'T' ломает строковое сравнение). */
+function toPbDateString(d) {
+  return d.toISOString().replace('T', ' ');
+}
+
+/** Границы календарного дня GMT+7 (лимит «1 в день» для annual/corporate). */
 function dayBoundsIso(dateStr) {
   var day = parsePbDate(dateStr);
   if (!day || isNaN(day.getTime())) return null;
-  var dayStart = new Date(day);
-  dayStart.setHours(0, 0, 0, 0);
-  var dayEnd = new Date(day);
-  dayEnd.setHours(23, 59, 59, 999);
-  return { from: dayStart.toISOString(), to: dayEnd.toISOString() };
+  var OFFSET = 7 * 60 * 60 * 1000;
+  var DAY = 24 * 60 * 60 * 1000;
+  var startMs = Math.floor((day.getTime() + OFFSET) / DAY) * DAY - OFFSET;
+  return {
+    from: toPbDateString(new Date(startMs)),
+    to: toPbDateString(new Date(startMs + DAY - 1))
+  };
 }
 
 /**

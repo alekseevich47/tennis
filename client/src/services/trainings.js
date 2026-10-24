@@ -197,33 +197,58 @@ function buildBookedUsersPatch(training, nextBookedUsers, addedUserIds) {
   return patch;
 }
 
+const GMT7_OFFSET_MS = 7 * 60 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
 /**
- * Проверить лимит годового абонемента: не более одной записи в день.
- * @param {string} userId
+ * Границы календарного дня GMT+7 для даты тренировки (Date → pb.filter форматирует как в БД).
  * @param {string} trainingDate
- * @returns {Promise<boolean>} true — лимит уже исчерпан
+ * @returns {{ from: Date, to: Date } | null}
  */
-async function checkAnnualDailyLimit(userId, trainingDate) {
-  const user = await pb.collection('users').getOne(userId, {
-    fields: 'membership_type',
+function dayBoundsGmt7(trainingDate) {
+  const d = new Date(String(trainingDate).replace(' ', 'T'));
+  if (Number.isNaN(d.getTime())) return null;
+  const shifted = d.getTime() + GMT7_OFFSET_MS;
+  const dayStartUtcMs = Math.floor(shifted / DAY_MS) * DAY_MS - GMT7_OFFSET_MS;
+  return { from: new Date(dayStartUtcMs), to: new Date(dayStartUtcMs + DAY_MS - 1) };
+}
+
+/**
+ * Пользователи annual/corporate, у которых на этот день (GMT+7) уже есть другая запись:
+ * новая будет сверх лимита «1 в день» и оплачивается отдельно (в долг).
+ * Только подсказка для confirm — решение о долге принимает сервер.
+ *
+ * @param {string[]} userIds
+ * @param {string} trainingDate
+ * @param {string} trainingId
+ * @returns {Promise<string[]>} id пользователей сверх лимита
+ */
+export async function findUsersOverDailyLimit(userIds, trainingDate, trainingId) {
+  const ids = Array.from(new Set((userIds || []).filter(Boolean)));
+  const bounds = dayBoundsGmt7(trainingDate);
+  if (!ids.length || !bounds) return [];
+
+  const users = await pb.collection('users').getFullList({
+    filter: ids.map((id) => pb.filter('id = {:id}', { id })).join(' || '),
+    fields: 'id,membership_type',
     requestKey: null
   });
-  if (user.membership_type !== 'annual') return false;
+  const limited = users.filter((u) => isUnlimitedMembership(u.membership_type)).map((u) => u.id);
 
-  const day = new Date(trainingDate);
-  const dayStart = new Date(day);
-  dayStart.setHours(0, 0, 0, 0);
-  const dayEnd = new Date(day);
-  dayEnd.setHours(23, 59, 59, 999);
-
-  const result = await pb.collection('trainings').getList(1, 1, {
-    filter: pb.filter(
-      'date >= {:from} && date <= {:to} && booked_users ?~ {:uid} && is_deleted != true',
-      { from: dayStart.toISOString(), to: dayEnd.toISOString(), uid: userId }
-    ),
-    requestKey: null
-  });
-  return result.totalItems > 0;
+  const over = [];
+  for (const uid of limited) {
+    const res = await pb.collection('trainings').getList(1, 1, {
+      filter: pb.filter(
+        'date >= {:from} && date <= {:to} && booked_users ?~ {:uid} && id != {:tid} && is_deleted != true',
+        { from: bounds.from, to: bounds.to, uid, tid: trainingId }
+      ),
+      fields: 'id',
+      skipTotal: false,
+      requestKey: null
+    });
+    if (res.totalItems > 0) over.push(uid);
+  }
+  return over;
 }
 
 /**

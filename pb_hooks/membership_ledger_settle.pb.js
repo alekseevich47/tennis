@@ -64,7 +64,8 @@ routerAdd('POST', '/api/membership-ledger-settle-debt', (c) => {
     // Связь settle ↔ booking: related_ledger_id (если схема импортирована) + тег в actor_name.
     var actorTag = actorName + ' #' + ledgerId;
 
-    var nowIso = new Date().toISOString();
+    // Формат PB-БД с пробелом: 'T' ломает сортировку по created (строки всплывали наверх).
+    var nowIso = new Date().toISOString().replace('T', ' ');
     var result = { unpaid: unpaidSessions };
 
     if (paid) {

@@ -183,6 +183,18 @@ function MembershipHistory({ enabled, userId, refreshKey, onOpenTraining, onSett
 
   const itemsById = useMemo(() => new Map(items.map((e) => [String(e.id), e])), [items]);
 
+  // Долг «возвращён» (отмена записи / freeze / stop / отмена тренировки): есть возвратная
+  // строка с unpaid по той же тренировке → исходная запись зелёная, но не кликабельная.
+  const returnedDebtTrainingIds = useMemo(() => {
+    const set = new Set();
+    for (const entry of items) {
+      if (entry.unpaid && Number(entry.delta) > 0 && entry.training_id) {
+        set.add(String(entry.training_id));
+      }
+    }
+    return set;
+  }, [items]);
+
   const handleDebtToggle = useCallback(
     async (entry, paid) => {
       if (!moderator || !entry?.id || busyId) return;
@@ -230,10 +242,16 @@ function MembershipHistory({ enabled, userId, refreshKey, onOpenTraining, onSett
               ? 'membership-ledger-amount--plus'
               : 'membership-ledger-amount--minus';
 
+            const isSettled = settledRelatedIds.has(String(entry.id));
+            const isReturned =
+              !entry.unpaid &&
+              !isSettled &&
+              Boolean(entry.training_id) &&
+              returnedDebtTrainingIds.has(String(entry.training_id));
             const showDebtDot =
-              BOOKING_DEBT_KINDS.has(entry.kind) &&
-              (entry.unpaid || settledRelatedIds.has(String(entry.id)));
-            const debtPaid = !entry.unpaid && settledRelatedIds.has(String(entry.id));
+              BOOKING_DEBT_KINDS.has(entry.kind) && (entry.unpaid || isSettled || isReturned);
+            const debtPaid = !entry.unpaid && (isSettled || isReturned);
+            const dotInteractive = moderator && !isReturned;
 
             return (
               <li
@@ -249,13 +267,19 @@ function MembershipHistory({ enabled, userId, refreshKey, onOpenTraining, onSett
                       debtPaid
                         ? 'membership-ledger-debt-dot--paid'
                         : 'membership-ledger-debt-dot--unpaid',
-                      !moderator && 'membership-ledger-debt-dot--readonly'
+                      !dotInteractive && 'membership-ledger-debt-dot--readonly'
                     )}
-                    aria-label={debtPaid ? 'Отменить списание долга' : 'Списать долг'}
-                    disabled={!moderator || busyId === entry.id}
-                    tabIndex={moderator ? 0 : -1}
+                    aria-label={
+                      isReturned
+                        ? 'Долг возвращён'
+                        : debtPaid
+                          ? 'Отменить списание долга'
+                          : 'Списать долг'
+                    }
+                    disabled={!dotInteractive || busyId === entry.id}
+                    tabIndex={dotInteractive ? 0 : -1}
                     onClick={() => {
-                      if (!moderator) return;
+                      if (!dotInteractive) return;
                       void handleDebtToggle(entry, !debtPaid);
                     }}
                   />

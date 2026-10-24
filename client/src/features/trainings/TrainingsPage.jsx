@@ -9,6 +9,7 @@ import {
   bookUsersToTraining,
   cancelTrainingBooking,
   closeTraining,
+  findUsersOverDailyLimit,
   readPendingDeleteTrainingIds,
   readShowDeletedTrainingsPreference,
   removePendingDeleteTrainingId,
@@ -197,6 +198,19 @@ function TrainingsPage({
         return;
       }
       try {
+        if (user?.id) {
+          const over = await findUsersOverDailyLimit([user.id], training.date, training.id);
+          if (over.length > 0) {
+            const ok = await confirm({
+              title: 'Сверх лимита',
+              message:
+                'Это занятие не входит в лимит (1 тренировка в день) и должно быть оплачено отдельно. Записаться?',
+              confirmText: 'Записаться',
+              cancelText: 'Отмена'
+            });
+            if (!ok) return;
+          }
+        }
         await bookTraining(training, user?.id);
         mutate();
         showToast({
@@ -214,7 +228,7 @@ function TrainingsPage({
         });
       }
     },
-    [user?.id, user?.bot_blocked, user?.membership_frozen, user?.membership_stopped, mutate, alert, showToast]
+    [user?.id, user?.bot_blocked, user?.membership_frozen, user?.membership_stopped, mutate, alert, confirm, showToast]
   );
 
   const handleCancelBooking = useCallback(
@@ -373,6 +387,23 @@ function TrainingsPage({
     async (userIds, selectedUsers) => {
       if (!bookingTraining) return;
       try {
+        const over = await findUsersOverDailyLimit(
+          userIds,
+          bookingTraining.date,
+          bookingTraining.id
+        );
+        if (over.length > 0) {
+          const names = over
+            .map((id) => (selectedUsers || []).find((u) => u.id === id)?.full_name || 'Игрок')
+            .join(', ');
+          const ok = await confirm({
+            title: 'Сверх лимита',
+            message: `Для: ${names}. Это занятие не входит в лимит (1 тренировка в день) и должно быть оплачено отдельно. Записать?`,
+            confirmText: 'Записать',
+            cancelText: 'Отмена'
+          });
+          if (!ok) return;
+        }
         await bookUsersToTraining(bookingTraining, userIds, selectedUsers);
         mutate();
         setBookingTraining(null);

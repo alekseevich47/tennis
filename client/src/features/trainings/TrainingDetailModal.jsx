@@ -7,6 +7,7 @@ import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { formatCardDate, formatTimeRange, hasTimeRangeEnded } from '../../lib/format';
 import {
   bookUsersToTraining,
+  findUsersOverDailyLimit,
   markAttendance,
   removeUsersFromTraining,
   unmarkAttendance
@@ -107,6 +108,19 @@ function TrainingDetailModal({
 
   const handleConfirmBookingUsers = async (selectedUserIds, selectedUsers) => {
     try {
+      const over = await findUsersOverDailyLimit(selectedUserIds, training.date, training.id);
+      if (over.length > 0) {
+        const names = over
+          .map((id) => (selectedUsers || []).find((u) => u.id === id)?.full_name || 'Игрок')
+          .join(', ');
+        const ok = await confirm({
+          title: 'Сверх лимита',
+          message: `Для: ${names}. Это занятие не входит в лимит (1 тренировка в день) и должно быть оплачено отдельно. Записать?`,
+          confirmText: 'Записать',
+          cancelText: 'Отмена'
+        });
+        if (!ok) return;
+      }
       await bookUsersToTraining(training, selectedUserIds, selectedUsers);
       onMutated();
       setIsUserPickerOpen(false);

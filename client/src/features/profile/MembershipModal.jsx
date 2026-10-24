@@ -217,7 +217,8 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
       }
 
       const fresh = await pb.collection('users').getOne(user.id, {
-        fields: fields.join(',')
+        fields: fields.join(','),
+        requestKey: null
       });
       applyMembership(fresh);
     } catch (err) {

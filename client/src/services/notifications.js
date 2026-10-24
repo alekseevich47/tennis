@@ -33,7 +33,9 @@ const SESSIONS_LEFT_COPY = {
 export async function listNotifications(userId) {
   return pb.collection('notifications').getFullList({
     filter: pb.filter('recipient = {:uid}', { uid: userId }),
-    sort: '-created'
+    sort: '-created',
+    // Параллельные refetch (realtime + mutate) не должны автоотменять друг друга.
+    requestKey: null
   });
 }
 
