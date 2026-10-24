@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
 import Avatar from '../../components/ui/Avatar';
+import MembershipDebtDot from '../../components/ui/MembershipDebtDot';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { formatCardDate, formatTimeRange, hasTimeRangeEnded } from '../../lib/format';
 import {
@@ -12,6 +13,11 @@ import {
   removeUsersFromTraining,
   unmarkAttendance
 } from '../../services/trainings';
+import {
+  buildTrainingDebtByUser,
+  fetchTrainingDebtLedgers,
+  settleMembershipDebt
+} from '../../services/membershipLedger';
 import { BOT_BLOCKED_BOOKING_MESSAGE } from '../../services/auth';
 import { error } from '../../lib/log';
 import UserPickerModal from './components/UserPickerModal';
@@ -46,20 +52,48 @@ function TrainingDetailModal({
   const { confirm, alert } = useAlertDialog();
   const [isUserPickerOpen, setIsUserPickerOpen] = useState(false);
   const [viewingPlayer, setViewingPlayer] = useState(null);
+  /** @type {[Map<string, { ledgerId: string, debtPaid: boolean, readonly: boolean }>, Function]} */
+  const [debtByUser, setDebtByUser] = useState(() => new Map());
+  const [debtBusyUserId, setDebtBusyUserId] = useState(/** @type {string | null} */ (null));
+  const debtRequestIdRef = useRef(0);
+
+  const reloadTrainingDebts = useCallback(async (trainingId) => {
+    if (!trainingId) {
+      setDebtByUser(new Map());
+      return;
+    }
+    const requestId = ++debtRequestIdRef.current;
+    try {
+      const items = await fetchTrainingDebtLedgers(trainingId);
+      if (requestId !== debtRequestIdRef.current) return;
+      setDebtByUser(buildTrainingDebtByUser(items));
+    } catch (err) {
+      if (requestId !== debtRequestIdRef.current) return;
+      error('fetch training debt ledgers:', err);
+      setDebtByUser(new Map());
+    }
+  }, []);
 
   useEffect(() => {
     if (!isOpen) {
       setIsUserPickerOpen(false);
       setViewingPlayer(null);
+      setDebtBusyUserId(null);
+      debtRequestIdRef.current += 1;
+      setDebtByUser(new Map());
+      return;
     }
-  }, [isOpen]);
+    if (!userIsModerator || !trainingProp?.id) return;
+    void reloadTrainingDebts(trainingProp.id);
+  }, [isOpen, userIsModerator, trainingProp?.id, reloadTrainingDebts]);
 
   const handleProfileMutated = useCallback(
     (updatedPlayer) => {
       if (updatedPlayer?.id) setViewingPlayer(updatedPlayer);
       onMutated();
+      if (trainingProp?.id) void reloadTrainingDebts(trainingProp.id);
     },
-    [onMutated]
+    [onMutated, trainingProp?.id, reloadTrainingDebts]
   );
 
   if (!training) return null;
@@ -86,9 +120,29 @@ function TrainingDetailModal({
     try {
       await removeUsersFromTraining(training, [userId]);
       onMutated();
+      void reloadTrainingDebts(training.id);
     } catch (err) {
       error('kick player:', err);
       await alert({ title: 'Ошибка', message: 'Не удалось исключить участника.' });
+    }
+  };
+
+  const handleDebtToggle = async (playerId, debt) => {
+    if (!debt?.ledgerId || debt.readonly || debtBusyUserId) return;
+    setDebtBusyUserId(playerId);
+    try {
+      await settleMembershipDebt({
+        ledgerId: debt.ledgerId,
+        paid: !debt.debtPaid,
+        userId: playerId
+      });
+      onMutated();
+      await reloadTrainingDebts(training.id);
+    } catch (err) {
+      error('settle training debt:', err);
+      await alert({ title: 'Ошибка', message: 'Не удалось обновить статус оплаты.' });
+    } finally {
+      setDebtBusyUserId(null);
     }
   };
 
@@ -123,6 +177,7 @@ function TrainingDetailModal({
       }
       await bookUsersToTraining(training, selectedUserIds, selectedUsers);
       onMutated();
+      void reloadTrainingDebts(training.id);
       setIsUserPickerOpen(false);
     } catch (err) {
       if (/** @type {{ code?: string }} */ (err).code === 'BOT_BLOCKED') {
@@ -309,43 +364,75 @@ function TrainingDetailModal({
             {!training.expand?.booked_users || training.expand.booked_users.length === 0 ? (
               <p className="no-players-text">На эту тренировку пока никто не записался.</p>
             ) : (
-              training.expand.booked_users.map((player) => (
-                <div key={player.id} className="player-list-row">
-                  <div className="player-meta-left">
+              training.expand.booked_users.map((player) => {
+                const debt = debtByUser.get(player.id);
+                return (
+                  <div key={player.id} className="player-list-row">
+                    <div className="player-meta-left">
+                      {userIsModerator && !training.is_deleted && (
+                        <input
+                          type="checkbox"
+                          className="attendance-checkbox"
+                          checked={training.attended_users?.includes(player.id) || false}
+                          aria-label={`Отметить посещение: ${player.full_name || 'Теннисист'}`}
+                          onChange={(event) =>
+                            handleAttendanceChange(player.id, event.target.checked)
+                          }
+                        />
+                      )}
+                      <button
+                        type="button"
+                        className="training-player-profile-link"
+                        onClick={() => setViewingPlayer(player)}
+                      >
+                        <Avatar
+                          user={player}
+                          size="sm"
+                          className="training-player-avatar"
+                          alt={player.full_name || 'Теннисист'}
+                        />
+                        <span className="player-name-label">
+                          {player.full_name || 'Теннисист'}
+                        </span>
+                      </button>
+                    </div>
                     {userIsModerator && !training.is_deleted && (
-                      <input
-                        type="checkbox"
-                        className="attendance-checkbox"
-                        checked={training.attended_users?.includes(player.id) || false}
-                        aria-label={`Отметить посещение: ${player.full_name || 'Теннисист'}`}
-                        onChange={(event) => handleAttendanceChange(player.id, event.target.checked)}
-                      />
+                      <div className="player-row-actions">
+                        {debt && (
+                          <MembershipDebtDot
+                            paid={debt.debtPaid}
+                            readonly={debt.readonly}
+                            disabled={debtBusyUserId === player.id}
+                            ariaLabel={
+                              debt.readonly
+                                ? 'Долг возвращён'
+                                : debt.debtPaid
+                                  ? 'Отменить списание долга'
+                                  : 'Списать долг'
+                            }
+                            onClick={
+                              debt.readonly
+                                ? undefined
+                                : () => {
+                                    void handleDebtToggle(player.id, debt);
+                                  }
+                            }
+                          />
+                        )}
+                        <IconButton
+                          ariaLabel={`Отменить запись: ${player.full_name || 'Теннисист'}`}
+                          variant="danger"
+                          size="sm"
+                          className="kick-player-btn"
+                          onClick={() => handleKick(player.id)}
+                        >
+                          <span aria-hidden="true">✕</span>
+                        </IconButton>
+                      </div>
                     )}
-                    <button
-                      type="button"
-                      className="training-player-profile-link"
-                      onClick={() => setViewingPlayer(player)}
-                    >
-                      <Avatar
-                        user={player}
-                        size="sm"
-                        className="training-player-avatar"
-                        alt={player.full_name || 'Теннисист'}
-                      />
-                      <span className="player-name-label">{player.full_name || 'Теннисист'}</span>
-                    </button>
                   </div>
-                  {userIsModerator && !training.is_deleted && (
-                    <button
-                      type="button"
-                      className="kick-player-btn"
-                      onClick={() => handleKick(player.id)}
-                    >
-                      Отменить запись
-                    </button>
-                  )}
-                </div>
-              ))
+                );
+              })
             )}
           </div>
           {userIsModerator && unbookedPlayers.length > 0 && (

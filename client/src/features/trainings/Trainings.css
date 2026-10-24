@@ -786,15 +786,17 @@
   color: var(--color-text-secondary, #8b98a5);
 }
 
+.player-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
 .kick-player-btn {
-  background: none;
-  border: none;
-  color: #e63946;
-  font-size: 12px;
+  font-size: 18px;
   font-weight: 600;
-  cursor: pointer;
-  text-decoration: underline;
-  min-height: 44px;
+  color: #e63946;
 }
 
 .form-group-row {

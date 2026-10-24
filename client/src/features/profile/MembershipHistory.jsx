@@ -1,9 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
-import { fetchMembershipLedger, settleMembershipDebt } from '../../services/membershipLedger';
+import {
+  fetchMembershipLedger,
+  relatedLedgerIdFromEntry,
+  settleMembershipDebt
+} from '../../services/membershipLedger';
 import { isModerator } from '../../services/auth';
 import { formatDateTimeShort, formatPostDate } from '../../lib/format';
 import { error } from '../../lib/log';
+import MembershipDebtDot from '../../components/ui/MembershipDebtDot';
 
 const PER_PAGE = 20;
 
@@ -15,14 +20,6 @@ const TRAINING_KIND_LABELS = {
 };
 
 const BOOKING_DEBT_KINDS = new Set(['booking', 'training_restored']);
-
-/** related_ledger_id или суффикс ` #ledgerId` в actor_name (стенд без колонки related). */
-function relatedLedgerIdFromEntry(entry) {
-  if (entry?.related_ledger_id) return String(entry.related_ledger_id);
-  const name = String(entry?.actor_name || '');
-  const m = name.match(/#([a-z0-9]{15})\s*$/i);
-  return m ? m[1] : '';
-}
 
 function displayActorName(actorName) {
   return String(actorName || '').replace(/\s*#[a-z0-9]{15}\s*$/i, '').trim() || 'Модератор';
@@ -260,28 +257,25 @@ function MembershipHistory({ enabled, userId, refreshKey, onOpenTraining, onSett
                 style={{ '--i': index % PER_PAGE }}
               >
                 {showDebtDot && (
-                  <button
-                    type="button"
-                    className={clsx(
-                      'membership-ledger-debt-dot',
-                      debtPaid
-                        ? 'membership-ledger-debt-dot--paid'
-                        : 'membership-ledger-debt-dot--unpaid',
-                      !dotInteractive && 'membership-ledger-debt-dot--readonly'
-                    )}
-                    aria-label={
+                  <MembershipDebtDot
+                    className="membership-ledger-debt-dot--ledger"
+                    paid={debtPaid}
+                    readonly={!dotInteractive}
+                    disabled={busyId === entry.id}
+                    ariaLabel={
                       isReturned
                         ? 'Долг возвращён'
                         : debtPaid
                           ? 'Отменить списание долга'
                           : 'Списать долг'
                     }
-                    disabled={!dotInteractive || busyId === entry.id}
-                    tabIndex={dotInteractive ? 0 : -1}
-                    onClick={() => {
-                      if (!dotInteractive) return;
-                      void handleDebtToggle(entry, !debtPaid);
-                    }}
+                    onClick={
+                      dotInteractive
+                        ? () => {
+                            void handleDebtToggle(entry, !debtPaid);
+                          }
+                        : undefined
+                    }
                   />
                 )}
                 <span className="membership-ledger-time">{formatPostDate(entry.created)}</span>
