@@ -1,36 +1,14 @@
 // API заморозки / остановки абонемента.
 // Без findRecordById('users') — на стенде зависает; мутации через SQL в membershiplib.
-
-function errMessage(err) {
-  try {
-    if (err && err.message) return String(err.message);
-  } catch (_) {}
-  try {
-    return String(err);
-  } catch (_) {
-    return 'Unknown error';
-  }
-}
-
-function errStatus(err) {
-  try {
-    var s = err && err.status;
-    if (s >= 400 && s < 600) return s;
-  } catch (_) {}
-  return 400;
-}
-
-function apiError(c, status, message) {
-  console.log('[membership-api] ' + status + ' ' + message);
-  return c.json(status, { status: status, message: message, data: {} });
-}
+// Хелперы — в membershipapilib.js (top-level из .pb.js хендлеру недоступны).
 
 routerAdd('POST', '/api/membership-freeze', (c) => {
+  var api = require(__hooks + '/membershipapilib.js');
   console.log('[membership-freeze] hit');
   try {
     var info = c.requestInfo();
     var auth = info.auth;
-    if (!auth) return apiError(c, 401, 'Unauthorized');
+    if (!auth) return api.apiError(c, 401, 'Unauthorized');
 
     var body = info.body || {};
     var action = String(body.action || '');
@@ -38,7 +16,7 @@ routerAdd('POST', '/api/membership-freeze', (c) => {
     try {
       isMod = auth.getString('role') === 'moderator';
     } catch (roleErr) {
-      return apiError(c, 400, 'role read: ' + errMessage(roleErr));
+      return api.apiError(c, 400, 'role read: ' + api.errMessage(roleErr));
     }
     var targetUserId = body.userId || auth.id;
     if (!isMod) targetUserId = auth.id;
@@ -47,9 +25,9 @@ routerAdd('POST', '/api/membership-freeze', (c) => {
       '[membership-freeze] action=' + action + ' user=' + targetUserId + ' auth=' + auth.id
     );
 
-    if (!targetUserId) return apiError(c, 400, 'Missing userId');
+    if (!targetUserId) return api.apiError(c, 400, 'Missing userId');
     if (action !== 'freeze' && action !== 'unfreeze') {
-      return apiError(c, 400, 'Invalid action');
+      return api.apiError(c, 400, 'Invalid action');
     }
 
     var lib = require(__hooks + '/membershiplib.js');
@@ -66,26 +44,27 @@ routerAdd('POST', '/api/membership-freeze', (c) => {
     console.log('[membership-freeze] ok');
     return c.json(200, { ok: true, user: snapshot });
   } catch (err) {
-    var message = errMessage(err);
+    var message = api.errMessage(err);
     console.log('[membership-freeze] catch: ' + message);
-    return apiError(c, errStatus(err), message);
+    return api.apiError(c, api.errStatus(err), message);
   }
 });
 
 routerAdd('POST', '/api/membership-stop', (c) => {
+  var api = require(__hooks + '/membershipapilib.js');
   console.log('[membership-stop] hit');
   try {
     var info = c.requestInfo();
     var auth = info.auth;
-    if (!auth) return apiError(c, 401, 'Unauthorized');
+    if (!auth) return api.apiError(c, 401, 'Unauthorized');
 
     var role = '';
     try {
       role = auth.getString('role');
     } catch (roleErr) {
-      return apiError(c, 400, 'role read: ' + errMessage(roleErr));
+      return api.apiError(c, 400, 'role read: ' + api.errMessage(roleErr));
     }
-    if (role !== 'moderator') return apiError(c, 403, 'Forbidden');
+    if (role !== 'moderator') return api.apiError(c, 403, 'Forbidden');
 
     var body = info.body || {};
     var action = String(body.action || '');
@@ -94,9 +73,9 @@ routerAdd('POST', '/api/membership-stop', (c) => {
       '[membership-stop] action=' + action + ' user=' + targetUserId + ' auth=' + auth.id
     );
 
-    if (!targetUserId) return apiError(c, 400, 'Missing userId');
+    if (!targetUserId) return api.apiError(c, 400, 'Missing userId');
     if (action !== 'stop' && action !== 'start') {
-      return apiError(c, 400, 'Invalid action');
+      return api.apiError(c, 400, 'Invalid action');
     }
 
     var lib = require(__hooks + '/membershiplib.js');
@@ -109,9 +88,9 @@ routerAdd('POST', '/api/membership-stop', (c) => {
     console.log('[membership-stop] ok');
     return c.json(200, { ok: true, user: snapshot });
   } catch (err) {
-    var message = errMessage(err);
+    var message = api.errMessage(err);
     console.log('[membership-stop] catch: ' + message);
-    return apiError(c, errStatus(err), message);
+    return api.apiError(c, api.errStatus(err), message);
   }
 });
 

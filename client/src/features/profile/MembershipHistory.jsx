@@ -61,7 +61,7 @@ function trainingLabel(trainingType, trainingDate) {
  *   onOpenTraining: (trainingId: string) => void
  * }} props
  */
-function LedgerDescription({ entry, ownerId, onOpenTraining }) {
+function LedgerDescription({ entry, ownerId, onOpenTraining, relatedEntry }) {
   const isPlus = Number(entry.delta) > 0;
   const actorName = displayActorName(entry.actor_name);
   const byOther = Boolean(entry.actor_id) && entry.actor_id !== ownerId;
@@ -80,7 +80,10 @@ function LedgerDescription({ entry, ownerId, onOpenTraining }) {
     return (
       <>
         Списание долга
-        {actorName ? `: ${actorName}` : ''}
+        {relatedEntry?.training_date
+          ? `: ${trainingLabel(relatedEntry.training_type, relatedEntry.training_date)}`
+          : ''}
+        {actorName ? ` (${actorName})` : ''}
       </>
     );
   }
@@ -178,6 +181,8 @@ function MembershipHistory({ enabled, userId, refreshKey, onOpenTraining, onSett
     return set;
   }, [items]);
 
+  const itemsById = useMemo(() => new Map(items.map((e) => [String(e.id), e])), [items]);
+
   const handleDebtToggle = useCallback(
     async (entry, paid) => {
       if (!moderator || !entry?.id || busyId) return;
@@ -264,6 +269,11 @@ function MembershipHistory({ enabled, userId, refreshKey, onOpenTraining, onSett
                     entry={entry}
                     ownerId={userId}
                     onOpenTraining={onOpenTraining}
+                    relatedEntry={
+                      entry.kind === 'debt_settle'
+                        ? itemsById.get(relatedLedgerIdFromEntry(entry))
+                        : undefined
+                    }
                   />
                 </span>
               </li>
