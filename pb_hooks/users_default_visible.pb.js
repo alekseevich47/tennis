@@ -1,6 +1,7 @@
 // API create
 onRecordCreateRequest((e) => {
   e.record.set('is_visible', true);
+  e.record.set('is_coach', false);
   e.record.set('can_comment', true);
   e.record.set('onboarding_completed', false);
   e.record.set('name_set_in_onboarding', false);
@@ -13,6 +14,7 @@ onRecordCreateRequest((e) => {
 // $app.save / внутренние create (max-auth) — CreateRequest не вызывается
 onRecordCreate((e) => {
   e.record.set('is_visible', true);
+  e.record.set('is_coach', false);
   e.record.set('can_comment', true);
   if (!e.record.get('onboarding_completed')) {
     e.record.set('onboarding_completed', false);

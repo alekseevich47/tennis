@@ -1,6 +1,7 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import { createTraining } from '../../services/trainings';
+import { listCoachUsers } from '../../services/users';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { error } from '../../lib/log';
 import TrainingCoachesField from './components/TrainingCoachesField';
@@ -18,6 +19,18 @@ const INITIAL_FORM = {
 };
 
 /**
+ * @param {import('../../services/users').UserRecord} user
+ */
+function toCoachUser(user) {
+  return {
+    id: user.id,
+    full_name: user.full_name,
+    avatar: user.avatar,
+    avatar_url: user.avatar_url
+  };
+}
+
+/**
  * @param {{
  *   isOpen: boolean,
  *   onClose: () => void,
@@ -31,6 +44,29 @@ function CreateTrainingModal({ isOpen, onClose, selectedDate, onCreated }) {
   const [activeCoachIds, setActiveCoachIds] = useState(/** @type {string[]} */ ([]));
   const [submitting, setSubmitting] = useState(false);
   const { alert } = useAlertDialog();
+
+  useEffect(() => {
+    if (!isOpen) return undefined;
+
+    let cancelled = false;
+    listCoachUsers()
+      .then((coaches) => {
+        if (cancelled) return;
+        const pool = coaches.map(toCoachUser);
+        setCoachPool(pool);
+        setActiveCoachIds(pool.map((u) => u.id));
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        error('load global coaches:', err);
+        setCoachPool([]);
+        setActiveCoachIds([]);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen]);
 
   const updateField = (key) => (e) => {
     const value = e.target.value;

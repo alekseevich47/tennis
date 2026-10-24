@@ -1,5 +1,8 @@
 import React, { useCallback, useState } from 'react';
 import Avatar from '../../../components/ui/Avatar';
+import { useAlertDialog } from '../../../components/ui/AlertDialog';
+import { error } from '../../../lib/log';
+import { syncCoachUsers } from '../../../services/users';
 import UserPickerModal from './UserPickerModal';
 
 /**
@@ -15,23 +18,35 @@ import UserPickerModal from './UserPickerModal';
  */
 function TrainingCoachesField({ coachPool, activeCoachIds, onChange }) {
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+  const { alert } = useAlertDialog();
   const activeSet = new Set(activeCoachIds);
 
   const handlePickerConfirm = useCallback(
-    (userIds, users = []) => {
-      const prevPoolIds = new Set(coachPool.map((u) => u.id));
-      const prevActive = new Set(activeCoachIds);
-      const nextActive = new Set();
-      for (const id of userIds) {
-        if (prevActive.has(id) || !prevPoolIds.has(id)) nextActive.add(id);
+    async (userIds, users = []) => {
+      if (syncing) return;
+      setSyncing(true);
+      try {
+        await syncCoachUsers(userIds);
+        const prevPoolIds = new Set(coachPool.map((u) => u.id));
+        const prevActive = new Set(activeCoachIds);
+        const nextActive = new Set();
+        for (const id of userIds) {
+          if (prevActive.has(id) || !prevPoolIds.has(id)) nextActive.add(id);
+        }
+        onChange({
+          coachPool: users,
+          activeCoachIds: Array.from(nextActive)
+        });
+        setPickerOpen(false);
+      } catch (err) {
+        error('sync coaches:', err);
+        await alert({ title: 'Ошибка', message: 'Не удалось сохранить список тренеров.' });
+      } finally {
+        setSyncing(false);
       }
-      onChange({
-        coachPool: users,
-        activeCoachIds: Array.from(nextActive)
-      });
-      setPickerOpen(false);
     },
-    [activeCoachIds, coachPool, onChange]
+    [activeCoachIds, alert, coachPool, onChange, syncing]
   );
 
   const handleToggleActive = useCallback(
@@ -52,6 +67,7 @@ function TrainingCoachesField({ coachPool, activeCoachIds, onChange }) {
           type="button"
           className="training-coaches-field__add"
           aria-label="Добавить тренеров"
+          disabled={syncing}
           onClick={() => setPickerOpen(true)}
         >
           +

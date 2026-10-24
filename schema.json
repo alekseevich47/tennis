@@ -220,6 +220,15 @@
       },
       {
         "hidden": false,
+        "id": "bool_is_coach_01",
+        "name": "is_coach",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "hidden": false,
         "id": "bool3405807721",
         "name": "is_banned",
         "presentable": false,

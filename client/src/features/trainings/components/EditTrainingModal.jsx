@@ -3,6 +3,7 @@ import Modal from '../../../components/ui/Modal';
 import { useAlertDialog } from '../../../components/ui/AlertDialog';
 import { error } from '../../../lib/log';
 import { updateTraining } from '../../../services/trainings';
+import { listCoachUsers } from '../../../services/users';
 import TrainingCoachesField from './TrainingCoachesField';
 
 const INITIAL_FORM = {
@@ -34,6 +35,22 @@ function getCoachesFromTraining(training) {
   }
   const ids = Array.isArray(training?.coaches) ? training.coaches : [];
   return ids.map((id) => ({ id: String(id), full_name: 'Тренер' }));
+}
+
+/**
+ * @param {Array<{ id: string, full_name?: string, avatar?: string, avatar_url?: string }>} globalCoaches
+ * @param {Array<{ id: string, full_name?: string, avatar?: string, avatar_url?: string }>} trainingCoaches
+ */
+function mergeCoachPool(globalCoaches, trainingCoaches) {
+  const byId = new Map();
+  for (const coach of globalCoaches) byId.set(String(coach.id), coach);
+  for (const coach of trainingCoaches) {
+    const id = String(coach.id);
+    if (!byId.has(id)) byId.set(id, coach);
+  }
+  return Array.from(byId.values()).sort((a, b) =>
+    String(a.full_name || '').localeCompare(String(b.full_name || ''), 'ru')
+  );
 }
 
 function getFormFromTraining(training) {
@@ -116,12 +133,34 @@ function EditTrainingModal({ isOpen, training, onClose, onSaved }) {
   const { alert } = useAlertDialog();
 
   useEffect(() => {
-    if (isOpen) {
-      setForm(getFormFromTraining(training));
-      const pool = getCoachesFromTraining(training);
-      setCoachPool(pool);
-      setActiveCoachIds(pool.map((u) => u.id));
-    }
+    if (!isOpen) return undefined;
+
+    setForm(getFormFromTraining(training));
+    const trainingCoaches = getCoachesFromTraining(training);
+    const trainingIds = trainingCoaches.map((u) => String(u.id));
+    setActiveCoachIds(trainingIds);
+
+    let cancelled = false;
+    listCoachUsers()
+      .then((global) => {
+        if (cancelled) return;
+        const globalPool = global.map((u) => ({
+          id: u.id,
+          full_name: u.full_name,
+          avatar: u.avatar,
+          avatar_url: u.avatar_url
+        }));
+        setCoachPool(mergeCoachPool(globalPool, trainingCoaches));
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        error('load global coaches:', err);
+        setCoachPool(trainingCoaches);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [isOpen, training]);
 
   const updateField = (key) => (e) => {
@@ -136,9 +175,8 @@ function EditTrainingModal({ isOpen, training, onClose, onSaved }) {
 
   const handleClose = () => {
     setForm(getFormFromTraining(training));
-    const pool = getCoachesFromTraining(training);
-    setCoachPool(pool);
-    setActiveCoachIds(pool.map((u) => u.id));
+    setCoachPool([]);
+    setActiveCoachIds([]);
     onClose();
   };
 

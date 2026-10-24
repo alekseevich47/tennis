@@ -66,6 +66,7 @@ var BOOL_FIELDS = {
   max_bot_blocked: true,
   tg_bot_blocked: true,
   is_visible: true,
+  is_coach: true,
   can_comment: true,
   onboarding_completed: true,
   name_set_in_onboarding: true,
@@ -139,6 +140,7 @@ function fieldChanged(original, record, f) {
 function applyCreateDefaults(record) {
   record.set('role', 'user');
   record.set('is_banned', false);
+  record.set('is_coach', false);
   record.set('ban_reason', '');
   record.set('banned_at', '');
   record.set('available_sessions', 0);
@@ -165,7 +167,7 @@ function assertPrivilegedUpdateAllowed(original, record) {
     !original.getBool('onboarding_completed') && record.getBool('onboarding_completed');
 
   var schemaFields = [
-    'full_name', 'is_visible', 'is_banned', 'ban_reason', 'banned_at', 'can_comment',
+    'full_name', 'is_visible', 'is_coach', 'is_banned', 'ban_reason', 'banned_at', 'can_comment',
     'comment_restriction_reason', 'password', 'email', 'emailVisibility', 'verified',
     'avatar', 'rating_points', 'role', 'max_id', 'dominant_hand', 'avatar_url',
     'attendance_count', 'available_sessions', 'used_sessions', 'unpaid_sessions',
