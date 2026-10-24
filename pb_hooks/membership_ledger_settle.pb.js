@@ -1,6 +1,5 @@
-// Списание долга (mod only). Только SQL.
-// DynamicModel: не читать date-поля напрямую — CAST AS TEXT в отдельном запросе.
-// Не использовать findRecordById(users) / Record.get(relation).
+// Списание долга (mod only). Только SQL по безопасным скалярам.
+// Не читать training_date / relation через DynamicModel — goja зависает на стенде.
 
 var BOOKING_KINDS = {
   booking: true,
@@ -42,26 +41,8 @@ function newId() {
   }
 }
 
-/** training_id / training_date только как TEXT — иначе goja зависает на date. */
-function loadTrainingSnapshot(ledgerId) {
-  var out = { trainingId: '', trainingDate: '' };
-  try {
-    var row = new DynamicModel({ tid: '', tdate: '' });
-    $app.db().newQuery(
-      'SELECT COALESCE(training_id, \'\') AS tid, ' +
-        'COALESCE(CAST(training_date AS TEXT), \'\') AS tdate ' +
-        'FROM membership_ledger WHERE id = {:id}'
-    ).bind({ id: String(ledgerId) }).one(row);
-    out.trainingId = String(row.tid || '');
-    out.trainingDate = String(row.tdate || '');
-  } catch (err) {
-    console.log('[membership-settle-debt] training snapshot err: ' + errMessage(err));
-  }
-  return out;
-}
-
 routerAdd('POST', '/api/membership-ledger-settle-debt', (c) => {
-  console.log('[membership-settle-debt] hit v7');
+  console.log('[membership-settle-debt] hit v8');
   try {
     var info = c.requestInfo();
     var auth = info.auth;
@@ -91,7 +72,6 @@ routerAdd('POST', '/api/membership-ledger-settle-debt', (c) => {
     if (!ledgerId) return apiError(c, 400, 'Missing ledgerId');
     if (!bodyUserId) return apiError(c, 400, 'Missing userId');
 
-    // Только скаляры без date — kind/unpaid/id
     var entry = new DynamicModel({
       id: '',
       kind: '',
@@ -117,13 +97,7 @@ routerAdd('POST', '/api/membership-ledger-settle-debt', (c) => {
       return apiError(c, 400, 'Списание долга доступно только для записей на тренировку');
     }
 
-    var snap = loadTrainingSnapshot(ledgerId);
-    var trainingId = snap.trainingId;
-    var trainingDate = snap.trainingDate;
-    console.log('[membership-settle-debt] training tid=' + trainingId);
-
-    var entryUserId = bodyUserId;
-
+    console.log('[membership-settle-debt] before-user');
     var sessions = new DynamicModel({
       unpaid_sessions: 0,
       available_sessions: 0
@@ -131,21 +105,26 @@ routerAdd('POST', '/api/membership-ledger-settle-debt', (c) => {
     try {
       $app.db().newQuery(
         'SELECT unpaid_sessions, available_sessions FROM users WHERE id = {:id}'
-      ).bind({ id: entryUserId }).one(sessions);
+      ).bind({ id: bodyUserId }).one(sessions);
     } catch (err) {
       console.log('[membership-settle-debt] user query err: ' + errMessage(err));
       return apiError(c, 404, 'Пользователь не найден');
     }
-    console.log('[membership-settle-debt] user ok');
 
     var unpaidSessions = Math.max(0, Math.floor(Number(sessions.unpaid_sessions) || 0));
     var balanceAfter = Math.max(0, Number(sessions.available_sessions) || 0);
+    console.log(
+      '[membership-settle-debt] user ok unpaid=' + unpaidSessions + ' bal=' + balanceAfter
+    );
 
     var actorName = 'Модератор';
     try {
       var n = auth.getString('full_name') || '';
       if (n) actorName = n;
     } catch (_) {}
+
+    // related ledger id кладём в actor_name суффиксом — без колонки related_ledger_id
+    var actorTag = actorName + ' #' + ledgerId;
 
     if (paid) {
       if (!entryUnpaid) return apiError(c, 400, 'Долг уже списан');
@@ -159,29 +138,26 @@ routerAdd('POST', '/api/membership-ledger-settle-debt', (c) => {
       unpaidSessions = Math.max(0, unpaidSessions - 1);
       sqlExecOrThrow(
         'UPDATE users SET unpaid_sessions = {:n} WHERE id = {:id}',
-        { n: unpaidSessions, id: entryUserId },
+        { n: unpaidSessions, id: bodyUserId },
         'dec_unpaid'
       );
 
       var settleId = newId();
       var nowIso = new Date().toISOString();
-      // training_date: пустая строка безопаснее, чем сырой date из DynamicModel
       sqlExecOrThrow(
         'INSERT INTO membership_ledger (' +
-          'id, "user", delta, kind, unpaid, training_id, training_date, ' +
+          'id, "user", delta, kind, unpaid, training_id, ' +
           'actor_id, actor_name, balance_after, created, updated' +
           ') VALUES (' +
-          '{:id}, {:uid}, 0, {:kind}, false, {:tid}, {:tdate}, ' +
+          '{:id}, {:uid}, 0, {:kind}, false, \'\', ' +
           '{:actorId}, {:actorName}, {:bal}, {:created}, {:updated}' +
           ')',
         {
           id: settleId,
-          uid: entryUserId,
+          uid: bodyUserId,
           kind: 'debt_settle',
-          tid: trainingId,
-          tdate: trainingDate || '',
           actorId: authId,
-          actorName: actorName,
+          actorName: actorTag,
           bal: balanceAfter,
           created: nowIso,
           updated: nowIso
@@ -195,11 +171,11 @@ routerAdd('POST', '/api/membership-ledger-settle-debt', (c) => {
       try {
         $app.db().newQuery(
           'SELECT id FROM membership_ledger WHERE kind = {:kind} AND "user" = {:uid} ' +
-            'AND training_id = {:tid} ORDER BY created DESC LIMIT 1'
+            'AND actor_name LIKE {:tag} ORDER BY created DESC LIMIT 1'
         ).bind({
           kind: 'debt_settle',
-          uid: entryUserId,
-          tid: trainingId
+          uid: bodyUserId,
+          tag: '%#' + ledgerId
         }).one(settleRow);
       } catch (err) {
         console.log('[membership-settle-debt] find settle err: ' + errMessage(err));
@@ -216,7 +192,7 @@ routerAdd('POST', '/api/membership-ledger-settle-debt', (c) => {
       unpaidSessions = unpaidSessions + 1;
       sqlExecOrThrow(
         'UPDATE users SET unpaid_sessions = {:n} WHERE id = {:id}',
-        { n: unpaidSessions, id: entryUserId },
+        { n: unpaidSessions, id: bodyUserId },
         'inc_unpaid'
       );
 

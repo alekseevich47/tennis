@@ -16,6 +16,18 @@ const TRAINING_KIND_LABELS = {
 
 const BOOKING_DEBT_KINDS = new Set(['booking', 'training_restored']);
 
+/** related_ledger_id или суффикс ` #ledgerId` в actor_name (стенд без колонки related). */
+function relatedLedgerIdFromEntry(entry) {
+  if (entry?.related_ledger_id) return String(entry.related_ledger_id);
+  const name = String(entry?.actor_name || '');
+  const m = name.match(/#([a-z0-9]{15})\s*$/i);
+  return m ? m[1] : '';
+}
+
+function displayActorName(actorName) {
+  return String(actorName || '').replace(/\s*#[a-z0-9]{15}\s*$/i, '').trim() || 'Модератор';
+}
+
 /**
  * @param {number} delta
  * @param {boolean} withinDailyLimit
@@ -51,7 +63,7 @@ function trainingLabel(trainingType, trainingDate) {
  */
 function LedgerDescription({ entry, ownerId, onOpenTraining }) {
   const isPlus = Number(entry.delta) > 0;
-  const actorName = entry.actor_name || 'Модератор';
+  const actorName = displayActorName(entry.actor_name);
   const byOther = Boolean(entry.actor_id) && entry.actor_id !== ownerId;
   const unpaidNote = entry.unpaid ? (isPlus ? ' (долг снят)' : ' (в долг)') : '';
 
@@ -67,8 +79,8 @@ function LedgerDescription({ entry, ownerId, onOpenTraining }) {
   if (entry.kind === 'debt_settle') {
     return (
       <>
-        Списание долга: {trainingLabel(entry.training_type, entry.training_date)}
-        {actorName ? ` (${actorName})` : ''}
+        Списание долга
+        {actorName ? `: ${actorName}` : ''}
       </>
     );
   }
@@ -159,9 +171,9 @@ function MembershipHistory({ enabled, userId, refreshKey, onOpenTraining, onSett
   const settledRelatedIds = useMemo(() => {
     const set = new Set();
     for (const entry of items) {
-      if (entry.kind === 'debt_settle' && entry.related_ledger_id) {
-        set.add(String(entry.related_ledger_id));
-      }
+      if (entry.kind !== 'debt_settle') continue;
+      const related = relatedLedgerIdFromEntry(entry);
+      if (related) set.add(related);
     }
     return set;
   }, [items]);
