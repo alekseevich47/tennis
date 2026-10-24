@@ -586,6 +586,16 @@
         "type": "json"
       },
       {
+        "hidden": false,
+        "id": "json_membership_period_log_01",
+        "maxSize": 0,
+        "name": "membership_period_log",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "json"
+      },
+      {
         "autogeneratePattern": "",
         "hidden": false,
         "id": "text_membership_expiry_warn_for_01",
@@ -4461,12 +4471,35 @@
         "type": "bool"
       },
       {
+        "hidden": false,
+        "id": "bool_mledger_within_daily_limit",
+        "name": "within_daily_limit",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
         "autogeneratePattern": "",
         "hidden": false,
         "id": "text_mledger_training_id",
         "max": 15,
         "min": 0,
         "name": "training_id",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text_mledger_training_type",
+        "max": 32,
+        "min": 0,
+        "name": "training_type",
         "pattern": "",
         "presentable": false,
         "primaryKey": false,
@@ -4484,6 +4517,20 @@
         "required": false,
         "system": false,
         "type": "date"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text_mledger_related_ledger_id",
+        "max": 15,
+        "min": 0,
+        "name": "related_ledger_id",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
       },
       {
         "autogeneratePattern": "",
@@ -4547,7 +4594,8 @@
       }
     ],
     "indexes": [
-      "CREATE INDEX `idx_mledger_user_created` ON `membership_ledger` (\n  `user`,\n  `created`\n)"
+      "CREATE INDEX `idx_mledger_user_created` ON `membership_ledger` (\n  `user`,\n  `created`\n)",
+      "CREATE INDEX `idx_mledger_related` ON `membership_ledger` (`related_ledger_id`)"
     ],
     "system": false
   }

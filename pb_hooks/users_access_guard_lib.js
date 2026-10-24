@@ -34,6 +34,7 @@ var IGNORE_FIELDS = {
   // JSON/warn — сравниваем отдельно в assertMembershipLifecycleFieldsUnchanged
   // (избегаем JSON.stringify в goja для прочих путей).
   membership_freeze_log: true,
+  membership_period_log: true,
   membership_expiry_warn_for: true,
   membership_expired_notified_for: true,
   freeze_expiry_warn_for: true,
@@ -48,6 +49,7 @@ var MEMBERSHIP_LIFECYCLE_FIELDS = [
   'membership_frozen',
   'membership_frozen_at',
   'membership_freeze_log',
+  'membership_period_log',
   'membership_freeze_used_days',
   'membership_freeze_planned_until',
   'membership_stopped',
@@ -169,7 +171,8 @@ function assertPrivilegedUpdateAllowed(original, record) {
     'attendance_count', 'available_sessions', 'used_sessions', 'unpaid_sessions',
     'birth_date', 'section_start_date', 'membership_type', 'membership_start_date',
     'membership_end_date', 'membership_comment', 'membership_frozen', 'membership_frozen_at',
-    'membership_freeze_log', 'membership_freeze_used_days', 'membership_freeze_planned_until',
+    'membership_freeze_log', 'membership_period_log', 'membership_freeze_used_days',
+    'membership_freeze_planned_until',
     'membership_stopped', 'membership_stopped_at',
     'membership_expiry_warn_for', 'membership_expired_notified_for',
     'freeze_expiry_warn_for', 'freeze_tomorrow_warn_for',
@@ -253,9 +256,13 @@ function assertMembershipLifecycleFieldsUnchanged(original, record) {
   var i;
   for (i = 0; i < MEMBERSHIP_LIFECYCLE_FIELDS.length; i++) {
     var f = MEMBERSHIP_LIFECYCLE_FIELDS[i];
-    if (f === 'membership_freeze_log') {
+    if (f === 'membership_freeze_log' || f === 'membership_period_log') {
       if (freezeLogKey(original.get(f)) !== freezeLogKey(record.get(f))) {
-        throw new ForbiddenError('Изменение поля "' + f + '" недоступно (используйте API заморозки)');
+        throw new ForbiddenError(
+          f === 'membership_period_log'
+            ? 'Изменение поля "' + f + '" недоступно'
+            : 'Изменение поля "' + f + '" недоступно (используйте API заморозки)'
+        );
       }
       continue;
     }
@@ -290,6 +297,22 @@ function maybeResetFreezeBudgetOnStartDateChange(original, record) {
     lib.resetFreezeBudgetIfStartChanged(original, record);
   } catch (err) {
     console.log('[users-access-guard] freeze budget reset: ' + err);
+  }
+}
+
+/**
+ * Смена type/дат: period_log + сброс freeze/stop при типе без поддержки.
+ * @param {any} original
+ * @param {any} record
+ * @param {any} [actor]
+ */
+function maybeApplyMembershipEditSideEffects(original, record, actor) {
+  if (!original || !record) return;
+  try {
+    var lib = require(__hooks + '/membershiplib.js');
+    lib.applyMembershipEditSideEffects(original, record, actor || null);
+  } catch (err) {
+    console.log('[users-access-guard] membership edit side effects: ' + err);
   }
 }
 
@@ -342,6 +365,7 @@ module.exports = {
   assertServerOnlyFieldsUnchanged: assertServerOnlyFieldsUnchanged,
   assertMembershipLifecycleFieldsUnchanged: assertMembershipLifecycleFieldsUnchanged,
   maybeResetFreezeBudgetOnStartDateChange: maybeResetFreezeBudgetOnStartDateChange,
+  maybeApplyMembershipEditSideEffects: maybeApplyMembershipEditSideEffects,
   isPrivilegedAuth: isPrivilegedAuth,
   isSuperuserAuth: isSuperuserAuth
 };
