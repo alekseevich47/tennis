@@ -12,12 +12,13 @@
 .membership-ledger-debt-dot--unpaid {
   background: #e53935;
   box-shadow: 0 0 0 0 rgba(229, 57, 53, 0.55);
-  animation: membership-debt-pulse 1.6s ease-out infinite;
+  animation: membership-debt-pulse-unpaid 1.6s ease-out infinite;
 }
 
 .membership-ledger-debt-dot--paid {
   background: #34c759;
-  box-shadow: 0 0 6px rgba(52, 199, 89, 0.45);
+  box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.55);
+  animation: membership-debt-pulse-paid 1.6s ease-out infinite;
 }
 
 .membership-ledger-debt-dot--readonly {
@@ -28,10 +29,9 @@
 .membership-ledger-debt-dot:disabled {
   opacity: 0.6;
   cursor: default;
-  animation: none;
 }
 
-@keyframes membership-debt-pulse {
+@keyframes membership-debt-pulse-unpaid {
   0% {
     transform: scale(1);
     box-shadow: 0 0 0 0 rgba(229, 57, 53, 0.55);
@@ -46,9 +46,32 @@
   }
 }
 
+@keyframes membership-debt-pulse-paid {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.55);
+  }
+  55% {
+    transform: scale(1.22);
+    box-shadow: 0 0 10px 4px rgba(52, 199, 89, 0.35);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(52, 199, 89, 0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .membership-ledger-debt-dot--unpaid {
+  .membership-ledger-debt-dot--unpaid,
+  .membership-ledger-debt-dot--paid {
     animation: none;
+  }
+
+  .membership-ledger-debt-dot--unpaid {
     box-shadow: 0 0 6px rgba(229, 57, 53, 0.5);
+  }
+
+  .membership-ledger-debt-dot--paid {
+    box-shadow: 0 0 6px rgba(52, 199, 89, 0.45);
   }
 }
