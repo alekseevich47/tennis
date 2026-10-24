@@ -856,6 +856,64 @@ function unbookNotStartedForUser(app, userId, options) {
   return resultIds;
 }
 
+/** relation-поле может вернуть строки id или объекты {id} — нормализуем к строкам. */
+function normalizeRelationIds(arr) {
+  var out = [];
+  var i;
+  for (i = 0; i < (arr || []).length; i++) {
+    var v = arr[i];
+    var id;
+    try {
+      if (typeof v === 'string') id = v;
+      else if (v && v.id) id = String(v.id);
+      else id = String(v);
+    } catch (_) {
+      id = String(v);
+    }
+    out.push(id);
+  }
+  return out;
+}
+
+/**
+ * Синхронизация training.unpaid_booked_users после списания/возврата долга через
+ * settle-debt API (membership_ledger_settle.pb.js). findRecordById('trainings') —
+ * безопасен на этом стенде (в отличие от findRecordById('users'), который зависает);
+ * используется так же read-only в notificationslib.js / bot_notifications.pb.js.
+ * Не бросает — ошибка не должна откатывать уже применённое списание долга в ledger.
+ * @param {core.App} app
+ * @param {string} trainingId
+ * @param {string} userId
+ * @param {boolean} isUnpaid — true: пометить в долг (undo списания); false: долг погашен
+ */
+function setTrainingUnpaidFlag(app, trainingId, userId, isUnpaid) {
+  if (!trainingId || !userId) return;
+  try {
+    var training = app.findRecordById('trainings', trainingId);
+    var current = normalizeRelationIds(training.get('unpaid_booked_users') || []);
+    var uid = String(userId);
+    var has = current.indexOf(uid) >= 0;
+
+    if (isUnpaid) {
+      // Возврат долга назад (undo): помечаем в долг, только если бронь ещё активна.
+      var booked = normalizeRelationIds(training.get('booked_users') || []);
+      if (booked.indexOf(uid) < 0) return;
+      if (has) return;
+      current.push(uid);
+    } else {
+      if (!has) return;
+      current = current.filter(function (id) {
+        return id !== uid;
+      });
+    }
+
+    training.set('unpaid_booked_users', current);
+    app.save(training);
+  } catch (err) {
+    console.log('[trainingslib] setTrainingUnpaidFlag: ' + err);
+  }
+}
+
 module.exports = {
   FINALIZE_GRACE_MS: FINALIZE_GRACE_MS,
   finalizeCancelledTrainingRecord: finalizeCancelledTrainingRecord,
@@ -866,6 +924,7 @@ module.exports = {
   withSkipBookingSideEffects: withSkipBookingSideEffects,
   restoreMembershipSession: restoreMembershipSession,
   unbookNotStartedForUser: unbookNotStartedForUser,
+  setTrainingUnpaidFlag: setTrainingUnpaidFlag,
   // backward-compat alias (если кто-то ещё require'ит старое имя)
   validateBookingAdditions: function (original, record) {
     applyBookingSideEffects(original, record, null);

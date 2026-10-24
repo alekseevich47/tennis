@@ -108,6 +108,20 @@ routerAdd('POST', '/api/membership-ledger-settle-debt', (c) => {
           ).bind(params).execute();
         }
       });
+
+      // Оплаченная бронь: синхронизируем training.unpaid_booked_users (используется
+      // при unbook/cancel/freeze/stop для решения — вернуть сессию или только снять долг).
+      // Вне SQL-транзакции выше: это отдельная Record-мутация ($app.save), а не txApp.
+      try {
+        require(__hooks + '/trainingslib.js').setTrainingUnpaidFlag(
+          $app,
+          trainingId,
+          userId,
+          false
+        );
+      } catch (syncErr) {
+        console.log('[membership-settle-debt] training unpaid sync: ' + syncErr);
+      }
     } else {
       if (entryUnpaid) return api.apiError(c, 400, 'Долг ещё не списан');
 
@@ -141,6 +155,17 @@ routerAdd('POST', '/api/membership-ledger-settle-debt', (c) => {
         db.newQuery('DELETE FROM membership_ledger WHERE id = {:id}')
           .bind({ id: String(settle.id) }).execute();
       });
+
+      try {
+        require(__hooks + '/trainingslib.js').setTrainingUnpaidFlag(
+          $app,
+          trainingId,
+          userId,
+          true
+        );
+      } catch (syncErr) {
+        console.log('[membership-settle-debt] training unpaid sync: ' + syncErr);
+      }
     }
 
     console.log('[membership-settle-debt] ok unpaid_sessions=' + result.unpaid);
