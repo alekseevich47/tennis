@@ -38,9 +38,11 @@ onRecordUpdateRequest((e) => {
         guard.assertServerOnlyFieldsUnchanged(original, e.record);
         guard.assertMembershipLifecycleFieldsUnchanged(original, e.record);
         guard.maybeResetFreezeBudgetOnStartDateChange(original, e.record);
+        guard.maybeApplyMembershipEditSideEffects(original, e.record, e.auth);
       }
     } else if (original) {
       guard.maybeResetFreezeBudgetOnStartDateChange(original, e.record);
+      guard.maybeApplyMembershipEditSideEffects(original, e.record, e.auth);
     }
     e.next();
   } catch (err) {

@@ -21,6 +21,7 @@ import {
 } from '../shop/buyMessage';
 import MembershipEditModal from './MembershipEditModal';
 import MembershipHistory from './MembershipHistory';
+import CollapsibleHistorySection from './CollapsibleHistorySection';
 import TrainingDetailModal from '../trainings/TrainingDetailModal';
 import './Profile.css';
 import '../trainings/Trainings.css';
@@ -41,7 +42,7 @@ function getMembershipTypeLabel(type) {
   return 'Обычный';
 }
 
-function parseFreezeLog(raw) {
+function parseJsonLog(raw) {
   if (!raw) return [];
   if (Array.isArray(raw)) return raw;
   try {
@@ -52,17 +53,21 @@ function parseFreezeLog(raw) {
   }
 }
 
+/**
+ * @param {any} entry
+ * @param {number} index
+ * @param {number} total
+ */
 function formatFreezeLogEntry(entry, index, total) {
-  const kind = entry.kind === 'stop' ? 'стоп' : 'фриз';
   const from = formatMembershipDate(entry.frozen_at);
   const isActive = !entry.unfrozen_at && index === total - 1;
 
   if (isActive) {
-    return `[${kind}] ${from} — по сей день (активна)`;
+    return `${from} — активна`;
   }
 
   if (!entry.unfrozen_at) {
-    return `[${kind}] ${from} — —`;
+    return `${from} — —`;
   }
 
   const to = formatMembershipDate(entry.unfrozen_at);
@@ -77,7 +82,54 @@ function formatFreezeLogEntry(entry, index, total) {
           )
         );
   const dayLabel = pluralize(days, 'день', 'дня', 'дней');
-  return `[${kind}] ${from} — ${to} (${days} ${dayLabel})`;
+  return `${from} — ${to} (${days} ${dayLabel})`;
+}
+
+/**
+ * @param {any[]} periodLog
+ * @param {{ type: string, start: string, end: string }} current
+ */
+function buildPeriodHistoryItems(periodLog, current) {
+  const items = periodLog.map((entry) => ({
+    type: entry.type || 'regular',
+    start: entry.start || '',
+    end: entry.end || '',
+    closed: Boolean(entry.closed_at)
+  }));
+
+  const last = items[items.length - 1];
+  const sameOpen =
+    last &&
+    !last.closed &&
+    last.type === current.type &&
+    last.start === current.start &&
+    last.end === current.end;
+
+  if (!sameOpen && (current.type || current.start || current.end)) {
+    items.push({
+      type: current.type,
+      start: current.start,
+      end: current.end,
+      closed: false
+    });
+  }
+
+  return items;
+}
+
+/**
+ * @param {{ type: string, start: string, end: string, closed: boolean }} entry
+ */
+function formatPeriodEntry(entry) {
+  const label = getMembershipTypeLabel(entry.type);
+  const from = entry.start ? formatMembershipDate(entry.start) : '—';
+  if (!entry.closed && !entry.end) {
+    return `${label}: ${from} — по н.в.`;
+  }
+  if (!entry.closed) {
+    return `${label}: ${from} — ${entry.end ? formatMembershipDate(entry.end) : 'по н.в.'}`;
+  }
+  return `${label}: ${from} — ${entry.end ? formatMembershipDate(entry.end) : '—'}`;
 }
 
 const TRAINING_EXPAND =
@@ -103,6 +155,7 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
   const [stopped, setStopped] = useState(false);
   const [stoppedAt, setStoppedAt] = useState('');
   const [freezeLog, setFreezeLog] = useState([]);
+  const [periodLog, setPeriodLog] = useState([]);
   const [comment, setComment] = useState('');
   const [ledgerRefreshKey, setLedgerRefreshKey] = useState(0);
   const [selectedTraining, setSelectedTraining] = useState(/** @type {any | null} */ (null));
@@ -131,7 +184,8 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
       setFreezeUsedDays(Number(record.membership_freeze_used_days ?? 0));
       setStopped(Boolean(record.membership_stopped));
       setStoppedAt(record.membership_stopped_at || '');
-      setFreezeLog(parseFreezeLog(record.membership_freeze_log));
+      setFreezeLog(parseJsonLog(record.membership_freeze_log));
+      setPeriodLog(parseJsonLog(record.membership_period_log));
       if (moderator && record.membership_comment != null) {
         setComment(record.membership_comment || '');
       }
@@ -154,6 +208,7 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
         'membership_freeze_planned_until',
         'membership_freeze_used_days',
         'membership_freeze_log',
+        'membership_period_log',
         'membership_stopped',
         'membership_stopped_at'
       ];
@@ -190,6 +245,7 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
       membership_freeze_planned_until: user?.membership_freeze_planned_until,
       membership_freeze_used_days: user?.membership_freeze_used_days,
       membership_freeze_log: user?.membership_freeze_log,
+      membership_period_log: user?.membership_period_log,
       membership_stopped: user?.membership_stopped,
       membership_stopped_at: user?.membership_stopped_at,
       membership_comment: user?.membership_comment
@@ -491,19 +547,46 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
               {plannedUntil ? ` до ${formatPostDate(plannedUntil)}` : ''}
             </p>
           )}
-          {freezeLog.length > 0 && (
-            <div className="membership-freeze-history">
-              <p>
-                <strong>История заморозок / остановок:</strong>
-              </p>
-              <ul className="membership-freeze-history-list">
-                {freezeLog.map((entry, index) => (
-                  <li key={`${entry.kind || 'freeze'}-${entry.frozen_at}-${index}`}>
-                    {formatFreezeLogEntry(entry, index, freezeLog.length)}
+          {(() => {
+            const periodItems = buildPeriodHistoryItems(periodLog, {
+              type: membershipType,
+              start: startDate,
+              end: endDate
+            });
+            if (!periodItems.length) return null;
+            return (
+              <CollapsibleHistorySection
+                title="История абонементов:"
+                items={periodItems.map((entry, index) => (
+                  <li key={`period-${entry.type}-${entry.start}-${index}`} className="membership-history-row">
+                    <span className="membership-history-row__text">{formatPeriodEntry(entry)}</span>
                   </li>
                 ))}
-              </ul>
-            </div>
+              />
+            );
+          })()}
+          {freezeLog.length > 0 && (
+            <CollapsibleHistorySection
+              title="История заморозок / остановок:"
+              items={freezeLog.map((entry, index) => (
+                <li
+                  key={`${entry.kind || 'freeze'}-${entry.frozen_at}-${index}`}
+                  className="membership-history-row"
+                >
+                  <span
+                    className={
+                      entry.kind === 'stop'
+                        ? 'membership-history-dot membership-history-dot--stop'
+                        : 'membership-history-dot membership-history-dot--freeze'
+                    }
+                    aria-hidden="true"
+                  />
+                  <span className="membership-history-row__text">
+                    {formatFreezeLogEntry(entry, index, freezeLog.length)}
+                  </span>
+                </li>
+              ))}
+            />
           )}
           {user?.id && (
             <MembershipHistory
@@ -511,6 +594,10 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
               userId={user.id}
               refreshKey={ledgerRefreshKey}
               onOpenTraining={handleOpenTraining}
+              onSettled={() => {
+                void fetchMembership();
+                onMutated?.();
+              }}
             />
           )}
           {moderator && comment && (

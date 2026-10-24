@@ -47,6 +47,111 @@ function formatDateTimeGmt7(isoOrDate) {
   return bot.formatDateTimeGmt7(isoOrDate);
 }
 
+/** Только дата дд.мм.гггг в GMT+7 (бот/app плейсхолдеры from/to/until). */
+function formatDateGmt7DdMmYyyy(isoOrDate) {
+  var d = isoOrDate instanceof Date ? isoOrDate : parsePbDate(isoOrDate);
+  if (!d || isNaN(d.getTime())) return '';
+  var shifted = new Date(d.getTime() + GMT7_OFFSET_MS);
+  return pad2(shifted.getUTCDate()) + '.' + pad2(shifted.getUTCMonth() + 1) + '.' + shifted.getUTCFullYear();
+}
+
+function parsePeriodLogString(asString) {
+  try {
+    if (!asString || asString === 'null' || asString === '[]') return [];
+    var log = typeof asString === 'string' ? JSON.parse(asString) : asString;
+    if (!Array.isArray(log)) return [];
+    var out = [];
+    var i;
+    for (i = 0; i < log.length; i++) {
+      var e = log[i];
+      if (!e || typeof e !== 'object') continue;
+      var entry = {
+        type: e.type ? String(e.type) : 'regular',
+        start: e.start ? String(e.start) : '',
+        end: e.end ? String(e.end) : ''
+      };
+      if (e.closed_at) entry.closed_at = String(e.closed_at);
+      if (e.by_id) entry.by_id = String(e.by_id);
+      if (e.by_name) entry.by_name = String(e.by_name);
+      out.push(entry);
+    }
+    return out;
+  } catch (_) {
+    return [];
+  }
+}
+
+function serializePeriodLog(log) {
+  var plain = [];
+  try {
+    var i;
+    for (i = 0; i < (log || []).length; i++) {
+      var e = log[i] || {};
+      var entry = {
+        type: e.type ? String(e.type) : 'regular',
+        start: e.start ? String(e.start) : '',
+        end: e.end ? String(e.end) : ''
+      };
+      if (e.closed_at) entry.closed_at = String(e.closed_at);
+      if (e.by_id) entry.by_id = String(e.by_id);
+      if (e.by_name) entry.by_name = String(e.by_name);
+      plain.push(entry);
+    }
+  } catch (_) {
+    plain = [];
+  }
+  return plain;
+}
+
+function closeOpenPeriodSegments(log, closedAtIso) {
+  var i;
+  for (i = 0; i < log.length; i++) {
+    if (log[i] && !log[i].closed_at) {
+      log[i].closed_at = closedAtIso || new Date().toISOString();
+    }
+  }
+}
+
+function hasSameDayFreezeCharge(log, dayKey) {
+  if (!log || !log.length || !dayKey) return false;
+  var i;
+  for (i = 0; i < log.length; i++) {
+    var e = log[i];
+    if (!e || e.kind === 'stop') continue;
+    if (!(Number(e.days_charged) > 0)) continue;
+    var unf = e.unfrozen_at ? parsePbDate(e.unfrozen_at) : null;
+    var fr = e.frozen_at ? parsePbDate(e.frozen_at) : null;
+    var unfKey = unf && !isNaN(unf.getTime()) ? toDateKeyGmt7(unf) : '';
+    var frKey = fr && !isNaN(fr.getTime()) ? toDateKeyGmt7(fr) : '';
+    if (unfKey === dayKey || frKey === dayKey) return true;
+  }
+  return false;
+}
+
+/**
+ * Бюджет freeze при unfreeze: same-day GMT+7 ≤ 1 день суммарно.
+ */
+function computeUnfreezeChargeDays(row, frozenAt, now) {
+  var remaining = remainingFreezeDays(row);
+  var dayKey = toDateKeyGmt7(now);
+  var frozenKey = frozenAt && !isNaN(frozenAt.getTime()) ? toDateKeyGmt7(frozenAt) : '';
+  var days;
+  if (frozenKey && frozenKey === dayKey) {
+    days = hasSameDayFreezeCharge(parseFreezeLogString(row.membership_freeze_log || ''), dayKey) ? 0 : 1;
+  } else {
+    var elapsed = frozenAt && !isNaN(frozenAt.getTime())
+      ? now.getTime() - frozenAt.getTime()
+      : DAY_MS;
+    days = Math.min(remaining, chargeFreezeDays(elapsed));
+    if (days < 1) days = 1;
+  }
+  var usedBase = getFreezeUsedDays(row);
+  if (days > 0 && usedBase + days > FREEZE_BUDGET_DAYS) {
+    days = Math.max(0, FREEZE_BUDGET_DAYS - usedBase);
+  }
+  return days;
+}
+
 function chargeFreezeDays(elapsedMs) {
   if (!elapsedMs || elapsedMs <= 0) return 1;
   return Math.max(1, Math.ceil(elapsedMs / DAY_MS));
@@ -432,6 +537,135 @@ function resetFreezeBudgetIfStartChanged(original, record) {
   return true;
 }
 
+function readPeriodLogFromRecord(record) {
+  try {
+    var raw = record.getString('membership_period_log');
+    if (raw) return parsePeriodLogString(raw);
+  } catch (_) {}
+  try {
+    return parsePeriodLogString(record.get('membership_period_log'));
+  } catch (_) {
+    return [];
+  }
+}
+
+/**
+ * Clear freeze/stop flags + close open freeze_log when type loses capability.
+ * @param {any} record
+ * @param {string} newType
+ * @param {Date} [now]
+ */
+function clearFreezeStopForType(record, newType, now) {
+  var clearFreeze = !canFreezeType(newType);
+  var clearStop = !canStopType(newType);
+  if (!clearFreeze && !clearStop) return;
+
+  var nowIso = (now || new Date()).toISOString();
+  if (clearFreeze) {
+    record.set('membership_frozen', false);
+    record.set('membership_frozen_at', '');
+    record.set('membership_freeze_planned_until', '');
+    record.set('membership_freeze_used_days', 0);
+    record.set('freeze_expiry_warn_for', '');
+    record.set('freeze_tomorrow_warn_for', '');
+  }
+  if (clearStop) {
+    record.set('membership_stopped', false);
+    record.set('membership_stopped_at', '');
+  }
+
+  var log = parseFreezeLogString(
+    (function () {
+      try {
+        var s = record.getString('membership_freeze_log');
+        if (s) return s;
+      } catch (_) {}
+      try {
+        return JSON.stringify(record.get('membership_freeze_log') || []);
+      } catch (_) {
+        return '[]';
+      }
+    })()
+  );
+  var i;
+  var changed = false;
+  for (i = 0; i < log.length; i++) {
+    var e = log[i];
+    if (!e || e.unfrozen_at) continue;
+    if (clearFreeze && e.kind !== 'stop') {
+      e.unfrozen_at = nowIso;
+      if (e.days_charged == null) e.days_charged = 0;
+      changed = true;
+    }
+    if (clearStop && e.kind === 'stop') {
+      e.unfrozen_at = nowIso;
+      if (e.days_charged == null) e.days_charged = 0;
+      changed = true;
+    }
+  }
+  if (changed) {
+    record.set('membership_freeze_log', log);
+  }
+}
+
+/**
+ * period_log + clear freeze/stop при смене type/дат (mod/superuser UpdateRequest).
+ * @param {any} original
+ * @param {any} record
+ * @param {any} [actor]
+ */
+function applyMembershipEditSideEffects(original, record, actor) {
+  if (!original || !record) return;
+  var oldType = String(original.getString('membership_type') || 'regular');
+  var newType = String(record.getString('membership_type') || 'regular');
+  var oldStart = String(original.getString('membership_start_date') || '');
+  var newStart = String(record.getString('membership_start_date') || '');
+  var oldEnd = String(original.getString('membership_end_date') || '');
+  var newEnd = String(record.getString('membership_end_date') || '');
+  var typeChanged = oldType !== newType;
+  var datesChanged = oldStart !== newStart || oldEnd !== newEnd;
+  if (!typeChanged && !datesChanged) return;
+
+  var now = new Date();
+  var nowIso = now.toISOString();
+
+  if (typeChanged) {
+    clearFreezeStopForType(record, newType, now);
+  }
+
+  var log = readPeriodLogFromRecord(original);
+  if (!log.length) {
+    log = readPeriodLogFromRecord(record);
+  }
+  closeOpenPeriodSegments(log, nowIso);
+  log.push({
+    type: newType,
+    start: newStart,
+    end: newEnd,
+    by_id: actorId(actor),
+    by_name: actorLabel(actor)
+  });
+  record.set('membership_period_log', serializePeriodLog(log));
+}
+
+/**
+ * Закрыть/открыть сегмент при expiry → one_time.
+ * @param {any} user
+ */
+function appendExpiryPeriodLog(user) {
+  var nowIso = new Date().toISOString();
+  var log = readPeriodLogFromRecord(user);
+  closeOpenPeriodSegments(log, nowIso);
+  log.push({
+    type: 'one_time',
+    start: '',
+    end: '',
+    by_id: '',
+    by_name: 'system'
+  });
+  user.set('membership_period_log', serializePeriodLog(log));
+}
+
 function freezeUser(app, opts) {
   opts = opts || {};
   var actor = opts.actor;
@@ -454,8 +688,8 @@ function freezeUser(app, opts) {
   var plannedIso = new Date(now.getTime() + remaining * DAY_MS).toISOString();
   var name = row.full_name || 'Игрок';
   var actorName = actorLabel(actor);
-  var fromLabel = formatDateTimeGmt7(frozenAtIso);
-  var toLabel = formatDateTimeGmt7(plannedIso);
+  var fromLabel = formatDateGmt7DdMmYyyy(frozenAtIso);
+  var toLabel = formatDateGmt7DdMmYyyy(plannedIso);
   var daysLabel = String(remaining);
 
   sqlExec(
@@ -562,18 +796,8 @@ function unfreezeUser(app, opts) {
 
   var frozenAt = parsePbDate(row.membership_frozen_at);
   var now = opts.now ? new Date(opts.now) : new Date();
-  var elapsed = frozenAt && !isNaN(frozenAt.getTime())
-    ? now.getTime() - frozenAt.getTime()
-    : DAY_MS;
-  var remaining = remainingFreezeDays(row);
-  var days = Math.min(remaining, chargeFreezeDays(elapsed));
-  if (days < 1) days = 1;
-
+  var days = computeUnfreezeChargeDays(row, frozenAt, now);
   var used = getFreezeUsedDays(row) + days;
-  if (used > FREEZE_BUDGET_DAYS) {
-    days = Math.max(0, FREEZE_BUDGET_DAYS - getFreezeUsedDays(row));
-    used = FREEZE_BUDGET_DAYS;
-  }
 
   var newEnd = addDaysToEndDateStr(row.membership_end_date, days);
   sqlExec(
@@ -714,7 +938,7 @@ function stopUser(app, opts) {
   }
 
   try {
-    var fromLabel = formatDateTimeGmt7(stoppedAtIso);
+    var fromLabel = formatDateGmt7DdMmYyyy(stoppedAtIso);
     var varsUser = { from: fromLabel };
     var varsMod = { name: name, from: fromLabel, actor: actorName };
     sendBotToUser(app, user, 'bot.membership_stop', varsUser);
@@ -861,7 +1085,7 @@ function processFreezeWarnings(app) {
     if (msLeft < 0) continue;
 
     var name = user.getString('full_name') || 'Игрок';
-    var untilLabel = formatDateTimeGmt7(planned.toISOString());
+    var untilLabel = formatDateGmt7DdMmYyyy(planned.toISOString());
     var plannedKey = toDateKeyGmt7(planned);
     var todayKey = toDateKeyGmt7(nowDate);
     var tomorrowKey = toDateKeyGmt7(new Date(nowDate.getTime() + DAY_MS));
@@ -1003,6 +1227,12 @@ function processExpiryConvert(app) {
     user.set('membership_type', 'one_time');
     user.set('available_sessions', 0);
     user.set('membership_expired_notified_for', endKey);
+    try {
+      clearFreezeStopForType(user, 'one_time', now);
+      appendExpiryPeriodLog(user);
+    } catch (periodErr) {
+      console.log('[membership] expiry period_log: ' + periodErr);
+    }
     app.save(user);
 
     if (prevAvailable > 0) {
@@ -1036,8 +1266,8 @@ function notifyFreeze(app, userId) {
     var user = app.findRecordById('users', userId);
     sendBotToUser(app, user, 'bot.membership_freeze', {
       days: String(remainingFreezeDays(user) || FREEZE_BUDGET_DAYS),
-      from: formatDateTimeGmt7(new Date().toISOString()),
-      to: formatDateTimeGmt7(new Date(Date.now() + remainingFreezeDays(user) * DAY_MS).toISOString())
+      from: formatDateGmt7DdMmYyyy(new Date().toISOString()),
+      to: formatDateGmt7DdMmYyyy(new Date(Date.now() + remainingFreezeDays(user) * DAY_MS).toISOString())
     });
   } catch (_) {}
 }
@@ -1071,6 +1301,7 @@ module.exports = {
   notifyFreeze: notifyFreeze,
   notifyTopUp: notifyTopUp,
   formatDayMonthBoldRu: formatDayMonthBoldRu,
+  formatDateGmt7DdMmYyyy: formatDateGmt7DdMmYyyy,
   freezeUser: freezeUser,
   unfreezeUser: unfreezeUser,
   stopUser: stopUser,
@@ -1078,6 +1309,8 @@ module.exports = {
   userSnapshotFields: userSnapshotFields,
   resetFreezeBudgetIfStartChanged: resetFreezeBudgetIfStartChanged,
   applyFreezeBudgetReset: applyFreezeBudgetReset,
+  applyMembershipEditSideEffects: applyMembershipEditSideEffects,
   canFreezeType: canFreezeType,
-  canStopType: canStopType
+  canStopType: canStopType,
+  parsePeriodLogString: parsePeriodLogString
 };

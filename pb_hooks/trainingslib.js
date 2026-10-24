@@ -29,7 +29,7 @@ function isDailyLimitedMembership(membershipType) {
  * @param {number} delta
  * @param {boolean} unpaid
  * @param {number} balanceAfter
- * @param {{ kind: string, trainingId?: string, trainingDate?: string, actor?: any } | undefined} ledger
+ * @param {{ kind: string, trainingId?: string, trainingType?: string, trainingDate?: string, actor?: any, withinDailyLimit?: boolean } | undefined} ledger
  */
 function logLedger(app, userId, delta, unpaid, balanceAfter, ledger) {
   if (!ledger || !ledger.kind) return;
@@ -39,7 +39,9 @@ function logLedger(app, userId, delta, unpaid, balanceAfter, ledger) {
       delta: delta,
       kind: ledger.kind,
       unpaid: unpaid,
+      withinDailyLimit: !!ledger.withinDailyLimit,
       trainingId: ledger.trainingId,
+      trainingType: ledger.trainingType,
       trainingDate: ledger.trainingDate,
       actor: ledger.actor,
       balanceAfter: balanceAfter
@@ -52,7 +54,7 @@ function logLedger(app, userId, delta, unpaid, balanceAfter, ledger) {
 /**
  * @param {core.App} app
  * @param {string} userId
- * @param {{ skipNotify?: boolean, wasUnpaid?: boolean, ledger?: { kind: string, trainingId?: string, trainingDate?: string, actor?: any } }} [options]
+ * @param {{ skipNotify?: boolean, wasUnpaid?: boolean, ledger?: { kind: string, trainingId?: string, trainingType?: string, trainingDate?: string, actor?: any, withinDailyLimit?: boolean } }} [options]
  */
 function restoreMembershipSession(app, userId, options) {
   var skipNotify = options && options.skipNotify;
@@ -64,6 +66,7 @@ function restoreMembershipSession(app, userId, options) {
     return;
   }
   var membershipType = user.getString('membership_type') || 'regular';
+  var unlimited = isUnlimitedMembership(membershipType);
   var usedSessions = user.getFloat('used_sessions') || 0;
   var previousAvailable = user.getFloat('available_sessions') || 0;
   var unpaidSessions = user.getFloat('unpaid_sessions') || 0;
@@ -71,18 +74,22 @@ function restoreMembershipSession(app, userId, options) {
   var newAvailable = previousAvailable;
   if (wasUnpaid) {
     user.set('unpaid_sessions', Math.max(0, unpaidSessions - 1));
-  } else if (!isUnlimitedMembership(membershipType)) {
+  } else if (!unlimited) {
     newAvailable = previousAvailable + 1;
     user.set('available_sessions', newAvailable);
   }
   app.save(user);
+  var ledger = options && options.ledger ? Object.assign({}, options.ledger) : null;
+  if (ledger && unlimited && !wasUnpaid) {
+    ledger.withinDailyLimit = true;
+  }
   logLedger(
     app,
     userId,
-    (wasUnpaid || !isUnlimitedMembership(membershipType)) ? 1 : 0,
+    (wasUnpaid || !unlimited) ? 1 : 0,
     !!wasUnpaid,
     newAvailable,
-    options && options.ledger
+    ledger
   );
   if (!skipNotify) {
     try {
@@ -137,6 +144,7 @@ function finalizeCancelledTrainingRecord(training) {
         ledger: {
           kind: 'training_cancelled',
           trainingId: training.id,
+          trainingType: training.getString('type') || '',
           trainingDate: training.getString('date'),
           actor: null
         }
@@ -245,7 +253,7 @@ function hasDailyBookingSameDay(app, userId, trainingDate, trainingId) {
  * @param {boolean} isModerator
  * @param {string} trainingDate
  * @param {string} trainingId
- * @param {{ skipEligibilityChecks?: boolean, ledger?: { kind: string, trainingId?: string, trainingDate?: string, actor?: any } }} [options]
+ * @param {{ skipEligibilityChecks?: boolean, ledger?: { kind: string, trainingId?: string, trainingType?: string, trainingDate?: string, actor?: any, withinDailyLimit?: boolean } }} [options]
  * @returns {boolean} true — запись ушла в unpaid_sessions
  */
 function consumeMembershipSessionTx(app, userId, isModerator, trainingDate, trainingId, options) {
@@ -274,24 +282,35 @@ function consumeMembershipSessionTx(app, userId, isModerator, trainingDate, trai
   var previousAvailable = user.getFloat('available_sessions') || 0;
   var unpaidSessions = user.getFloat('unpaid_sessions') || 0;
   var wasUnpaid = false;
+  var withinDailyLimit = false;
   var newAvailable = previousAvailable;
 
   if (unlimited) {
     if (isDailyLimitedMembership(membershipType) && hasDailyBookingSameDay(app, userId, trainingDate, trainingId)) {
       wasUnpaid = true;
+      withinDailyLimit = false;
       user.set('unpaid_sessions', unpaidSessions + 1);
+    } else {
+      withinDailyLimit = true;
     }
   } else if (previousAvailable > 0) {
     newAvailable = previousAvailable - 1;
     user.set('available_sessions', newAvailable);
-  } else {
+  } else if (membershipType === 'one_time') {
     wasUnpaid = true;
     user.set('unpaid_sessions', unpaidSessions + 1);
+  } else {
+    throw new BadRequestError('Нет доступных посещений');
   }
 
   var usedSessions = user.getFloat('used_sessions') || 0;
   user.set('used_sessions', usedSessions + 1);
   app.save(user);
+
+  var ledger = options && options.ledger ? Object.assign({}, options.ledger) : null;
+  if (ledger && withinDailyLimit) {
+    ledger.withinDailyLimit = true;
+  }
 
   logLedger(
     app,
@@ -299,7 +318,7 @@ function consumeMembershipSessionTx(app, userId, isModerator, trainingDate, trai
     (wasUnpaid || !unlimited) ? -1 : 0,
     wasUnpaid,
     newAvailable,
-    options && options.ledger
+    ledger
   );
 
   try {
@@ -546,8 +565,21 @@ function applyBookingSideEffects(original, record, auth) {
     attendedRemoved.length;
   if (!hasWork) return;
 
+  var trainingType = '';
+  try {
+    trainingType = String(record.getString('type') || original.getString('type') || '');
+  } catch (_) {
+    trainingType = '';
+  }
+
   function ledgerCtx(kind) {
-    return { kind: kind, trainingId: trainingId, trainingDate: trainingDate, actor: auth || null };
+    return {
+      kind: kind,
+      trainingId: trainingId,
+      trainingType: trainingType,
+      trainingDate: trainingDate,
+      actor: auth || null
+    };
   }
 
   var unpaidOriginal = audit.newlyAdded([], original.get('unpaid_booked_users') || []);
@@ -755,6 +787,7 @@ function unbookNotStartedForUser(app, userId, options) {
       ledger: {
         kind: 'unbook',
         trainingId: training.id,
+        trainingType: training.getString('type') || '',
         trainingDate: training.getString('date') || '',
         actor: actor
       }

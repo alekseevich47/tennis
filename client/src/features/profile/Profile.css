@@ -203,25 +203,82 @@
   color: #e53935;
 }
 
-.membership-freeze-history {
-  margin-top: 4px;
+.membership-history-section {
+  margin-top: 8px;
 }
 
-.membership-freeze-history-list {
+.membership-history-section__toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.membership-history-section__toggle:disabled {
+  cursor: default;
+}
+
+.membership-history-section__chevron {
+  color: #8e8e93;
+  font-size: 12px;
+}
+
+.membership-history-section__panel {
+  overflow: hidden;
+  transition: opacity 200ms ease;
+}
+
+.membership-history-section__panel--collapsed {
+  opacity: 0.95;
+}
+
+.membership-history-section__list {
+  list-style: none;
   margin: 4px 0 0;
-  padding-left: 18px;
+  padding: 0;
   color: #495057;
   font-size: 14px;
 }
 
-.membership-freeze-history-list li {
-  margin-bottom: 2px;
+.membership-history-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.membership-history-dot {
+  flex: 0 0 auto;
+  width: 9px;
+  height: 9px;
+  margin-top: 5px;
+  border-radius: 50%;
+}
+
+.membership-history-dot--freeze {
+  background: #215091;
+}
+
+.membership-history-dot--stop {
+  background: #a01a1a;
+}
+
+.membership-history-row__text {
+  min-width: 0;
+  flex: 1;
 }
 
 .membership-ledger {
   --ledger-plus: #34c759;
   --ledger-minus: #e53935;
-  margin-top: 4px;
+  margin-top: 8px;
 }
 
 .membership-ledger-list {
@@ -233,14 +290,45 @@
 }
 
 .membership-ledger-item {
+  position: relative;
   display: grid;
   grid-template-columns: auto auto 1fr;
   column-gap: 8px;
   align-items: baseline;
-  padding: 4px 0;
+  padding: 4px 18px 4px 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   animation: membership-ledger-in 260ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
   animation-delay: calc(var(--i, 0) * 30ms);
+}
+
+.membership-ledger-debt-dot {
+  position: absolute;
+  top: 6px;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.membership-ledger-debt-dot--unpaid {
+  background: #e53935;
+}
+
+.membership-ledger-debt-dot--paid {
+  background: #34c759;
+}
+
+.membership-ledger-debt-dot--readonly {
+  pointer-events: none;
+  cursor: default;
+}
+
+.membership-ledger-debt-dot:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
 
 .membership-ledger-item:last-child {
@@ -340,6 +428,10 @@
   .membership-ledger-item,
   .membership-ledger-skeleton {
     animation: none;
+  }
+
+  .membership-history-section__panel {
+    transition: none;
   }
 }
 

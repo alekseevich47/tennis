@@ -7,8 +7,11 @@ const LEDGER_FIELDS = [
   'delta',
   'kind',
   'unpaid',
+  'within_daily_limit',
   'training_id',
+  'training_type',
   'training_date',
+  'related_ledger_id',
   'actor_id',
   'actor_name'
 ].join(',');
@@ -26,5 +29,16 @@ export async function fetchMembershipLedger(userId, page = 1, perPage = 20) {
     fields: LEDGER_FIELDS,
     skipTotal: false,
     requestKey: null
+  });
+}
+
+/**
+ * Списание / откат долга по строке ledger (только moderator).
+ * @param {{ ledgerId: string, paid: boolean, userId?: string }} payload
+ */
+export async function settleMembershipDebt(payload) {
+  return pb.send('/api/membership-ledger-settle-debt', {
+    method: 'POST',
+    body: payload
   });
 }

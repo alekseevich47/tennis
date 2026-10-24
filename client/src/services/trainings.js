@@ -138,12 +138,14 @@ function isUnlimitedMembership(membershipType) {
 }
 
 /**
+ * Regular без available — нельзя в долг; one_time — можно; annual/corporate — всегда.
  * @param {string} userId
  * @returns {Promise<boolean>}
  */
 async function hasAvailableMembershipSession(userId) {
   const user = await fetchMembershipSessionInfo(userId);
   if (isUnlimitedMembership(user.membership_type)) return true;
+  if (user.membership_type === 'one_time') return true;
   return (user.available_sessions || 0) > 0;
 }
 
@@ -612,6 +614,7 @@ export async function bookTraining(training, userId) {
   try {
     if (!userId) throw new Error('Не авторизован');
     await assertNotBotBlocked(userId);
+    await assertMembershipSessionAvailable(userId);
     const current = training.booked_users || [];
     if (current.includes(userId)) throw new Error('Вы уже записаны на эту тренировку');
     if (training.max_slots && current.length >= training.max_slots) {
@@ -652,7 +655,7 @@ export async function bookUserToTraining(training, userId, targetUser, { overrid
       throw new Error('Нет свободных мест');
     }
     const targetUserData = await pb.collection('users').getOne(userId, {
-      fields: 'membership_frozen,membership_stopped,membership_type',
+      fields: 'membership_frozen,membership_stopped,membership_type,available_sessions',
       requestKey: null
     });
     if (targetUserData.membership_stopped) {
@@ -666,6 +669,14 @@ export async function bookUserToTraining(training, userId, targetUser, { overrid
         new Error('Абонемент пользователя заморожен. Запись невозможна.'),
         { code: 'MEMBERSHIP_FROZEN' }
       );
+    }
+    const mType = targetUserData.membership_type || 'regular';
+    if (
+      mType !== 'one_time' &&
+      !isUnlimitedMembership(mType) &&
+      !(Number(targetUserData.available_sessions) > 0)
+    ) {
+      throw Object.assign(new Error('Нет доступных посещений'), { code: 'NO_AVAILABLE_SESSIONS' });
     }
     const record = /** @type {TrainingRecord} */ (
       await pb.collection('trainings').update(
@@ -708,7 +719,7 @@ export async function bookUsersToTraining(training, userIds, targetUsers = [], {
     if (nextUserIds.length > 0) {
       const statusUsers = await pb.collection('users').getFullList({
         filter: nextUserIds.map((id) => `id = "${id}"`).join(' || '),
-        fields: 'id,membership_frozen,membership_stopped,bot_blocked',
+        fields: 'id,membership_frozen,membership_stopped,bot_blocked,membership_type,available_sessions',
         requestKey: null
       });
       if (statusUsers.some((u) => u.bot_blocked === true)) {
@@ -725,6 +736,15 @@ export async function bookUsersToTraining(training, userIds, targetUsers = [], {
           new Error('Абонемент пользователя заморожен. Запись невозможна.'),
           { code: 'MEMBERSHIP_FROZEN' }
         );
+      }
+      if (
+        statusUsers.some((u) => {
+          const t = u.membership_type || 'regular';
+          if (t === 'one_time' || isUnlimitedMembership(t)) return false;
+          return !(Number(u.available_sessions) > 0);
+        })
+      ) {
+        throw Object.assign(new Error('Нет доступных посещений'), { code: 'NO_AVAILABLE_SESSIONS' });
       }
     }
 
