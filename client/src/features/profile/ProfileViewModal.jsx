@@ -324,8 +324,11 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
     if (!targetUserId) return;
 
     if (updated) {
-      setDisplayUser(updated);
-      onMutated?.(updated);
+      // Partial membership snapshot: merge в display, не replace (иначе теряются имя/аватар).
+      if (updated.id && String(updated.id) !== String(targetUserId)) return;
+      const merged = { ...(displayUser || {}), ...updated, id: targetUserId };
+      setDisplayUser(merged);
+      onMutated?.(merged);
       return;
     }
 

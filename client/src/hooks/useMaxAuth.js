@@ -245,9 +245,23 @@ export function useMaxAuth() {
 
   // Стабильная ссылка: иначе App handleUserUpdate меняется каждый рендер →
   // ProfilePage useEffect([user.id, onUpdate]) → бесконечный getOne.
+  // Поддерживает updater `(prev) => next` (как React setState) — для merge
+  // partial membership snapshot без потери onboarding_completed и прочих полей.
   const setUserSafe = useCallback(
-    (/** @type {UserRecord | null} */ nextUser) => {
-      applyUser(nextUser);
+    (/** @type {UserRecord | null | ((prev: UserRecord | null) => UserRecord | null)} */ next) => {
+      if (typeof next === 'function') {
+        setUser((prev) => {
+          const nextUser = next(prev);
+          if (isUserBanned(nextUser)) {
+            bannedRef.current = nextUser;
+          } else {
+            bannedRef.current = null;
+          }
+          return nextUser;
+        });
+        return;
+      }
+      applyUser(next);
     },
     [applyUser]
   );

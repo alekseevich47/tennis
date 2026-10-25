@@ -349,8 +349,15 @@ function AppMain({ user, setUser, flushBeforeCloseRef, onBeforeClose }) {
     };
   }, [flushPendingDeletes]);
 
+  // Merge, не replace: freeze/stop API отдаёт snapshotFromRow (только membership_*),
+  // replace ронял onboarding_completed → повторный онбординг. Чужой id не подменяет сессию.
   const handleUserUpdate = useCallback((updated) => {
-    setUser(updated);
+    if (!updated) return;
+    setUser((prev) => {
+      if (!prev) return updated;
+      if (updated.id && prev.id && String(updated.id) !== String(prev.id)) return prev;
+      return { ...prev, ...updated };
+    });
   }, [setUser]);
 
   // Тяжёлый TrainingsPage монтируем на следующий кадр после переключения на «Запись»,

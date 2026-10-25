@@ -221,7 +221,9 @@ function ProfilePage({
     if (!user?.id) return;
 
     if (updated) {
-      onUpdate?.(updated);
+      // snapshotFromRow / lifecycle — partial; чужой id в auth-сессию не пускаем.
+      if (updated.id && String(updated.id) !== String(user.id)) return;
+      onUpdate?.({ ...user, ...updated });
       return;
     }
 
