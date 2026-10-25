@@ -2,6 +2,8 @@
 import pb from './pb';
 import { MAX_AUTH_URL, TG_AUTH_URL } from '../config';
 import { log, error } from '../lib/log';
+import { getWebApp } from '../lib/messengerBridge';
+import { APP_BUILD, APP_DISPLAY_VERSION } from '../lib/appVersion';
 /**
  * @typedef {Object} UserRecord
  * @property {string} [id]
@@ -166,10 +168,16 @@ export async function initTelegramAuth(initData, signal) {
  */
 async function authWithInitData(url, label, initData, signal) {
   try {
+    const platform = String(getWebApp()?.platform || '').slice(0, 64);
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ initData }),
+      body: JSON.stringify({
+        initData,
+        platform,
+        appVersion: APP_DISPLAY_VERSION || '',
+        appBuild: APP_BUILD || ''
+      }),
       signal
     });
 

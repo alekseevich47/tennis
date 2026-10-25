@@ -42,6 +42,25 @@ const COMMENT_SECTION_LABELS = {
 
 const COMMENT_OBJECT_TYPES = ['comment', 'tournament_comment', 'gallery_comment'];
 
+/** @type {Record<string, string>} */
+const AUTH_CHANNEL_LABELS = {
+  max: 'MAX',
+  telegram: 'Telegram'
+};
+
+/** @type {Record<string, string>} */
+const AUTH_FAIL_REASON_LABELS = {
+  missing_init_data: 'нет initData',
+  auth_not_configured: 'сервер не настроен',
+  invalid_signature: 'неверная подпись',
+  auth_date_expired: 'устаревший initData',
+  missing_user_data: 'нет данных пользователя',
+  invalid_user_id: 'нет id пользователя',
+  is_bot: 'бот',
+  banned: 'аккаунт заблокирован',
+  server_error: 'ошибка сервера'
+};
+
 /**
  * @typedef {{ label: string, value: string, copyValue?: string }} AuditDetailItem
  */
@@ -192,10 +211,65 @@ function resolveCommentMeta(entry) {
 /**
  * @param {import('pocketbase').RecordModel} entry
  */
+/**
+ * @param {import('pocketbase').RecordModel} entry
+ * @returns {AuditDetailItem[] | null}
+ */
+function resolveAuthMeta(entry) {
+  if (entry.category !== 'auth') return null;
+  const details =
+    entry.details && typeof entry.details === 'object' ? /** @type {Record<string, unknown>} */ (entry.details) : {};
+  const channel = details.channel != null ? String(details.channel) : '';
+  const maxId = details.maxId != null && details.maxId !== '' ? String(details.maxId) : '';
+  const tgId = details.tgId != null && details.tgId !== '' ? String(details.tgId) : '';
+  const firstName = details.firstNameRaw != null ? String(details.firstNameRaw) : '';
+  const lastName = details.lastNameRaw != null ? String(details.lastNameRaw) : '';
+  const messengerName = [firstName, lastName].filter(Boolean).join(' ').trim();
+  const failReason = details.failReason != null ? String(details.failReason) : '';
+  const ip = details.ip != null && details.ip !== '' ? String(details.ip) : '';
+  const platform = details.platform != null && details.platform !== '' ? String(details.platform) : '';
+  const appVersion = details.appVersion != null && details.appVersion !== '' ? String(details.appVersion) : '';
+  const appBuild = details.appBuild != null && details.appBuild !== '' ? String(details.appBuild) : '';
+  const versionLabel = [appVersion, appBuild ? `(${appBuild})` : ''].filter(Boolean).join(' ').trim();
+
+  /** @type {AuditDetailItem[]} */
+  const items = [
+    {
+      label: 'Канал',
+      value: AUTH_CHANNEL_LABELS[channel] || channel || '—'
+    },
+    {
+      label: 'Тип входа',
+      value: failReason
+        ? 'отказ'
+        : details.isNewUser === true
+          ? 'новый аккаунт'
+          : 'повторный вход'
+    }
+  ];
+  if (maxId) items.push({ label: 'MAX ID', value: maxId, copyValue: maxId });
+  if (tgId) items.push({ label: 'Telegram ID', value: tgId, copyValue: tgId });
+  if (messengerName) {
+    items.push({ label: 'Имя в мессенджере', value: messengerName, copyValue: messengerName });
+  }
+  if (failReason) {
+    items.push({
+      label: 'Причина отказа',
+      value: AUTH_FAIL_REASON_LABELS[failReason] || failReason
+    });
+  }
+  if (ip) items.push({ label: 'IP', value: ip, copyValue: ip });
+  if (platform) items.push({ label: 'Платформа', value: platform });
+  if (versionLabel) items.push({ label: 'Версия приложения', value: versionLabel });
+  return items;
+}
+
 export function formatAuditEventDetails(entry) {
   const role = resolveSubjectRole(entry);
   const commentMeta = resolveCommentMeta(entry);
+  const authMeta = resolveAuthMeta(entry);
   const isComment = commentMeta != null;
+  const isAuth = authMeta != null;
   const objectTypeLabel = isComment
     ? (COMMENT_TYPE_LABELS[entry.object_type] || entry.object_type || '—')
     : (OBJECT_TYPE_LABELS[entry.object_type] || entry.object_type || '—');
@@ -223,36 +297,51 @@ export function formatAuditEventDetails(entry) {
         { label: 'Источник', value: subjectSource }
       ]
     },
-    {
-      title: 'Над чем / кем',
-      items: [
-        { label: 'Тип объекта', value: objectTypeLabel },
-        ...(!isComment
-          ? [{ label: 'Объект', value: entry.object_label || entry.object_id || '—' }]
-          : []),
-        ...(productArticle ? [{ label: 'Артикул', value: productArticle }] : []),
-        ...(trainingId ? [{ label: 'ID тренировки', value: trainingId }] : []),
-        ...(commentMeta?.commentId
-          ? [{ label: 'ID объекта', value: commentMeta.commentId, copyValue: commentMeta.commentId }]
-          : []),
-        ...(commentMeta?.publicationLabel
-          ? [{ label: 'Публикация', value: commentMeta.publicationLabel }]
-          : []),
-        ...(commentMeta?.publicationId
-          ? [{ label: 'ID публикации', value: commentMeta.publicationId, copyValue: commentMeta.publicationId }]
-          : []),
-        ...(commentMeta?.text ? [{ label: 'Текст комментария', value: commentMeta.text }] : []),
-        ...(commentMeta?.authorName
-          ? [{ label: 'Автор комментария', value: commentMeta.authorName }]
-          : []),
-        ...(commentMeta?.authorId
-          ? [{ label: 'ID автора', value: commentMeta.authorId, copyValue: commentMeta.authorId }]
-          : []),
-        ...(!isComment && entry.target_label
-          ? [{ label: 'Цель', value: entry.target_label }]
-          : [])
-      ]
-    },
+    ...(isAuth
+      ? [
+          {
+            title: 'Вход',
+            items: authMeta
+          }
+        ]
+      : [
+          {
+            title: 'Над чем / кем',
+            items: [
+              { label: 'Тип объекта', value: objectTypeLabel },
+              ...(!isComment
+                ? [{ label: 'Объект', value: entry.object_label || entry.object_id || '—' }]
+                : []),
+              ...(productArticle ? [{ label: 'Артикул', value: productArticle }] : []),
+              ...(trainingId ? [{ label: 'ID тренировки', value: trainingId }] : []),
+              ...(commentMeta?.commentId
+                ? [{ label: 'ID объекта', value: commentMeta.commentId, copyValue: commentMeta.commentId }]
+                : []),
+              ...(commentMeta?.publicationLabel
+                ? [{ label: 'Публикация', value: commentMeta.publicationLabel }]
+                : []),
+              ...(commentMeta?.publicationId
+                ? [
+                    {
+                      label: 'ID публикации',
+                      value: commentMeta.publicationId,
+                      copyValue: commentMeta.publicationId
+                    }
+                  ]
+                : []),
+              ...(commentMeta?.text ? [{ label: 'Текст комментария', value: commentMeta.text }] : []),
+              ...(commentMeta?.authorName
+                ? [{ label: 'Автор комментария', value: commentMeta.authorName }]
+                : []),
+              ...(commentMeta?.authorId
+                ? [{ label: 'ID автора', value: commentMeta.authorId, copyValue: commentMeta.authorId }]
+                : []),
+              ...(!isComment && entry.target_label
+                ? [{ label: 'Цель', value: entry.target_label }]
+                : [])
+            ]
+          }
+        ]),
     {
       title: 'Когда',
       items: [
@@ -276,7 +365,10 @@ export function formatAuditEventDetails(entry) {
   }
 
   const details =
-    entry.details && typeof entry.details === 'object' && Object.keys(entry.details).length > 0
+    !isAuth &&
+    entry.details &&
+    typeof entry.details === 'object' &&
+    Object.keys(entry.details).length > 0
       ? entry.details
       : null;
 

@@ -22,7 +22,8 @@ export const AUDIT_EVENT_CATEGORIES = [
   { value: 'gallery', label: 'Галерея', color: '#af52de' },
   { value: 'profile', label: 'Профиль', color: '#5ac8fa' },
   { value: 'subscription', label: 'Абонемент', color: '#00c7be' },
-  { value: 'admin', label: 'Админ-панель', color: '#ff3b30' }
+  { value: 'admin', label: 'Админ-панель', color: '#ff3b30' },
+  { value: 'auth', label: 'Вход', color: '#636366' }
 ];
 
 export const AUDIT_OBJECT_TYPES = [

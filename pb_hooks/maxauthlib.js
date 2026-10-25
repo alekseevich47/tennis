@@ -146,11 +146,11 @@ function hmacSha256Hex(keyBytes, message) {
  * @param {string} initData
  * @param {string} botToken
  * @param {number} maxAgeSec
- * @returns {{ ok: true, fields: Object<string,string> } | { ok: false }}
+ * @returns {{ ok: true, fields: Object<string,string> } | { ok: false, reason?: string }}
  */
 function verifyWebAppInitData(initData, botToken, maxAgeSec) {
   if (!initData || !botToken || typeof initData !== 'string' || initData.length > 8192) {
-    return { ok: false };
+    return { ok: false, reason: 'invalid_signature' };
   }
   var parts = initData.replace(/&&+/g, '&').split('&');
   var pairs = [];
@@ -165,7 +165,7 @@ function verifyWebAppInitData(initData, botToken, maxAgeSec) {
     try {
       value = decodeURIComponent(parts[i].substring(eq + 1).replace(/\+/g, '%20'));
     } catch (_) {
-      return { ok: false };
+      return { ok: false, reason: 'invalid_signature' };
     }
     if (key === 'hash') {
       hashCount++;
@@ -173,19 +173,19 @@ function verifyWebAppInitData(initData, botToken, maxAgeSec) {
       continue;
     }
     if (Object.prototype.hasOwnProperty.call(fields, key)) {
-      return { ok: false }; // дубликаты ключей — отказ
+      return { ok: false, reason: 'invalid_signature' }; // дубликаты ключей — отказ
     }
     fields[key] = value;
     pairs.push([key, value]);
   }
   if (hashCount !== 1 || !/^[0-9a-f]{64}$/i.test(receivedHash)) {
-    return { ok: false };
+    return { ok: false, reason: 'invalid_signature' };
   }
 
   var authDate = parseInt(fields.auth_date, 10) || 0;
   var nowSec = Math.floor(Date.now() / 1000);
   if (!authDate || nowSec - authDate > maxAgeSec || authDate - nowSec > 60) {
-    return { ok: false };
+    return { ok: false, reason: 'auth_date_expired' };
   }
 
   pairs.sort(function (a, b) {
@@ -201,7 +201,7 @@ function verifyWebAppInitData(initData, botToken, maxAgeSec) {
   var secretKeyHex = $security.hs256(botToken, 'WebAppData');
   var signature = hmacSha256Hex(hexToBytes(secretKeyHex), lines.join('\n'));
   if (!$security.equal(signature, receivedHash.toLowerCase())) {
-    return { ok: false };
+    return { ok: false, reason: 'invalid_signature' };
   }
   return { ok: true, fields: fields };
 }

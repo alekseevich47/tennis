@@ -1,16 +1,31 @@
 routerAdd("POST", "/api/max-auth", (c) => {
+    const authAudit = require(__hooks + '/auth_audit_lib.js');
+    const info = c.requestInfo();
+    const body = info.body || {};
+    const channel = 'max';
+
     try {
         const maxAuthCrypto = require(__hooks + '/maxauthlib.js');
-        const info = c.requestInfo();
-        const body = info.body || {};
 
         const initData = body.initData || "";
         if (!initData) {
+            authAudit.logAuthAttempt($app, c, {
+                channel: channel,
+                body: body,
+                action: 'auth.denied',
+                failReason: 'missing_init_data'
+            });
             return c.json(400, { "error": "initData property is missing in JSON payload" });
         }
 
         const botToken = $os.getenv("MAX_BOT_TOKEN");
         if (!botToken) {
+            authAudit.logAuthAttempt($app, c, {
+                channel: channel,
+                body: body,
+                action: 'auth.denied',
+                failReason: 'auth_not_configured'
+            });
             return c.json(500, { "error": "Auth not configured" });
         }
 
@@ -34,6 +49,12 @@ routerAdd("POST", "/api/max-auth", (c) => {
             pairs.push([key, decodeURIComponent(rawVal)]);
         }
         if (hashCount !== 1 || !receivedHash) {
+            authAudit.logAuthAttempt($app, c, {
+                channel: channel,
+                body: body,
+                action: 'auth.denied',
+                failReason: 'invalid_signature'
+            });
             return c.json(401, { "error": "invalid signature" });
         }
 
@@ -55,6 +76,12 @@ routerAdd("POST", "/api/max-auth", (c) => {
 
         var nowSec = Math.floor(Date.now() / 1000);
         if (!authDate || Math.abs(nowSec - authDate) > 300) {
+            authAudit.logAuthAttempt($app, c, {
+                channel: channel,
+                body: body,
+                action: 'auth.denied',
+                failReason: 'auth_date_expired'
+            });
             return c.json(401, { "error": "invalid signature" });
         }
 
@@ -65,6 +92,12 @@ routerAdd("POST", "/api/max-auth", (c) => {
             launchParams
         );
         if (!$security.equal(signature, receivedHash)) {
+            authAudit.logAuthAttempt($app, c, {
+                channel: channel,
+                body: body,
+                action: 'auth.denied',
+                failReason: 'invalid_signature'
+            });
             return c.json(401, { "error": "invalid signature" });
         }
 
@@ -78,6 +111,12 @@ routerAdd("POST", "/api/max-auth", (c) => {
         }
 
         if (!userRawEncoded) {
+            authAudit.logAuthAttempt($app, c, {
+                channel: channel,
+                body: body,
+                action: 'auth.denied',
+                failReason: 'missing_user_data'
+            });
             return c.json(400, { "error": "User data object not found in initData string" });
         }
 
@@ -86,6 +125,12 @@ routerAdd("POST", "/api/max-auth", (c) => {
 
         const maxId = String(userData.user_id || userData.id || "");
         if (!maxId || maxId === "undefined") {
+            authAudit.logAuthAttempt($app, c, {
+                channel: channel,
+                body: body,
+                action: 'auth.denied',
+                failReason: 'invalid_user_id'
+            });
             return c.json(400, { "error": "Valid user id property not found in user object" });
         }
 
@@ -96,6 +141,7 @@ routerAdd("POST", "/api/max-auth", (c) => {
         // Извлекаем URL аватарки из объекта User мессенджера MAX
         const maxAvatarUrl = userData.photo_url || userData.avatar || "";
 
+        let isNewUser = false;
         let user;
         try {
             user = $app.findFirstRecordByFilter("users", "max_id = {:maxId}", { maxId: maxId });
@@ -107,6 +153,7 @@ routerAdd("POST", "/api/max-auth", (c) => {
             $app.save(user);
 
         } catch (e) {
+            isNewUser = true;
             const collection = $app.findCollectionByNameOrId("users");
             user = new Record(collection);
             user.set("max_id", maxId);
@@ -130,13 +177,39 @@ routerAdd("POST", "/api/max-auth", (c) => {
             $app.save(user);
         }
 
+        const appFullName = user.getString("full_name") || fullName;
+
         if (user.getBool('is_banned')) {
+            authAudit.logAuthAttempt($app, c, {
+                channel: channel,
+                body: body,
+                action: 'auth.denied',
+                userId: user.id,
+                fullName: appFullName,
+                maxId: maxId,
+                firstNameRaw: firstName,
+                lastNameRaw: lastName,
+                isNewUser: isNewUser,
+                failReason: 'banned'
+            });
             return c.json(403, {
                 "error": "Ваш аккаунт заблокирован",
                 "ban_reason": user.get("ban_reason") || "",
                 "banned_at": user.get("banned_at") || ""
             });
         }
+
+        authAudit.logAuthAttempt($app, c, {
+            channel: channel,
+            body: body,
+            action: isNewUser ? 'auth.register' : 'auth.login',
+            userId: user.id,
+            fullName: appFullName,
+            maxId: maxId,
+            firstNameRaw: firstName,
+            lastNameRaw: lastName,
+            isNewUser: isNewUser
+        });
 
         // В PocketBase v0.23+ токен генерируется из самой записи Record
         const token = user.newAuthToken();
@@ -159,6 +232,12 @@ routerAdd("POST", "/api/max-auth", (c) => {
         });
 
     } catch (error) {
+        authAudit.logAuthAttempt($app, c, {
+            channel: channel,
+            body: body,
+            action: 'auth.denied',
+            failReason: 'server_error'
+        });
         return c.json(500, { "error": "Server auth exception: " + error.message });
     }
 });
