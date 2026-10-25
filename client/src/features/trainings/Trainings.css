@@ -609,6 +609,15 @@
   position: static;
 }
 
+.detail-header-actions .training-detail-close {
+  color: #1a1a1a;
+}
+
+.detail-header-actions .training-detail-close:hover:not(:disabled) {
+  color: #000000;
+  background: rgba(0, 0, 0, 0.06);
+}
+
 .detail-header-actions .btn-edit,
 .detail-header-actions .btn-delete-trash {
   background: transparent !important;

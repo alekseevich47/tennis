@@ -77,7 +77,11 @@ function FeedPage({
   const [hiddenMediaKey, setHiddenMediaKey] = useState(null);
   const [deletedPostIds, setDeletedPostIds] = useState([]);
   const [viewingPlayer, setViewingPlayer] = useState(null);
-  const [selectedTraining, setSelectedTraining] = useState(/** @type {any | null} */ (null));
+  const [selectedTrainingId, setSelectedTrainingId] = useState(/** @type {string | null} */ (null));
+  const selectedTraining = useMemo(() => {
+    if (!selectedTrainingId || !trainings) return null;
+    return trainings.find((t) => t.id === selectedTrainingId) || null;
+  }, [selectedTrainingId, trainings]);
   const [contextMenuState, setContextMenuState] = useState(
     /** @type {{ postId: string, anchorPoint: { x: number, y: number } } | null} */ (null)
   );
@@ -412,7 +416,7 @@ function FeedPage({
               user={user}
               trainings={trainings}
               mutateTrainings={mutateTrainings}
-              onOpenTraining={setSelectedTraining}
+              onOpenTraining={(training) => setSelectedTrainingId(training?.id ?? null)}
             />
           )}
 
@@ -523,8 +527,8 @@ function FeedPage({
       />
 
       <TrainingDetailModal
-        isOpen={Boolean(selectedTraining)}
-        onClose={() => setSelectedTraining(null)}
+        isOpen={Boolean(selectedTrainingId)}
+        onClose={() => setSelectedTrainingId(null)}
         training={selectedTraining}
         userIsModerator={userIsModerator}
         currentUser={user}

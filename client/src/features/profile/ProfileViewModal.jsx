@@ -120,7 +120,11 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
   const menuDropdownRef = useRef(null);
   const { data: trainings, isLoading: trainingsLoading, mutate: mutateTrainings } = useTrainings();
   const [membershipOpen, setMembershipOpen] = useState(false);
-  const [selectedTraining, setSelectedTraining] = useState(/** @type {any | null} */ (null));
+  const [selectedTrainingId, setSelectedTrainingId] = useState(/** @type {string | null} */ (null));
+  const selectedTraining = useMemo(() => {
+    if (!selectedTrainingId || !trainings) return null;
+    return trainings.find((t) => t.id === selectedTrainingId) || null;
+  }, [selectedTrainingId, trainings]);
   const [displayUser, setDisplayUser] = useState(targetUser || null);
   const [isEditing, setIsEditing] = useState(false);
   const [fullName, setFullName] = useState(targetUser?.full_name || '');
@@ -1032,7 +1036,7 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
                   trainings={trainings}
                   currentUserId={currentUserId}
                   mutateTrainings={mutateTrainings}
-                  onOpenTraining={setSelectedTraining}
+                  onOpenTraining={(training) => setSelectedTrainingId(training?.id ?? null)}
                 />
               )}
 
@@ -1103,8 +1107,8 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
       />
 
       <TrainingDetailModal
-        isOpen={Boolean(selectedTraining)}
-        onClose={() => setSelectedTraining(null)}
+        isOpen={Boolean(selectedTrainingId)}
+        onClose={() => setSelectedTrainingId(null)}
         training={selectedTraining}
         userIsModerator={canEditSectionStartDate}
         currentUser={currentUser}

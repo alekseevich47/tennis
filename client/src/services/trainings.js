@@ -870,8 +870,9 @@ export async function markAttendance(training, userId) {
     if (!userId) throw new Error('Не выбран пользователь');
     const current = training.attended_users || [];
     if (current.includes(userId)) return training;
+    // `attended_users+` — атомарный append, без гонки на устаревшем массиве из пропса.
     return /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
-      attended_users: [...current, userId]
+      'attended_users+': userId
     }));
   } catch (err) {
     throw err;
@@ -888,7 +889,7 @@ export async function unmarkAttendance(training, userId) {
     const current = training.attended_users || [];
     if (!current.includes(userId)) return training;
     return /** @type {TrainingRecord} */ (await pb.collection('trainings').update(training.id, {
-      attended_users: current.filter((id) => id !== userId)
+      'attended_users-': userId
     }));
   } catch (err) {
     throw err;

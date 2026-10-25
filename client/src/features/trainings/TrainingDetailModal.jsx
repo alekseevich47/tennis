@@ -56,6 +56,15 @@ function TrainingDetailModal({
   const [debtByUser, setDebtByUser] = useState(() => new Map());
   const [debtBusyUserId, setDebtBusyUserId] = useState(/** @type {string | null} */ (null));
   const debtRequestIdRef = useRef(0);
+  /** Локальный optimistic-набор явки: родители со snapshot-пропом иначе не ререндерят чекбоксы. */
+  const attendedKey = (trainingProp?.attended_users || []).join(',');
+  const [attendedIds, setAttendedIds] = useState(
+    () => new Set(/** @type {string[]} */ (trainingProp?.attended_users || []))
+  );
+
+  useEffect(() => {
+    setAttendedIds(new Set(/** @type {string[]} */ (trainingProp?.attended_users || [])));
+  }, [trainingProp?.id, attendedKey]);
 
   const reloadTrainingDebts = useCallback(async (trainingId) => {
     if (!trainingId) {
@@ -147,6 +156,12 @@ function TrainingDetailModal({
   };
 
   const handleAttendanceChange = async (playerId, checked) => {
+    setAttendedIds((prev) => {
+      const next = new Set(prev);
+      if (checked) next.add(playerId);
+      else next.delete(playerId);
+      return next;
+    });
     try {
       if (checked) {
         await markAttendance(training, playerId);
@@ -155,6 +170,7 @@ function TrainingDetailModal({
       }
       onMutated();
     } catch (err) {
+      setAttendedIds(new Set(/** @type {string[]} */ (training.attended_users || [])));
       error('toggle attendance:', err);
       await alert({ title: 'Ошибка', message: 'Не удалось обновить посещаемость.' });
     }
@@ -234,14 +250,13 @@ function TrainingDetailModal({
           <div className="detail-header-actions">
             {userIsModerator && !training.is_deleted && (
               <>
-                {!hasEnded && (
+                {onToggleClose && !hasEnded && (
                   <IconButton
                     ariaLabel={training.is_closed ? 'Открыть запись на тренировку' : 'Закрыть запись на тренировку'}
                     variant="ghost"
                     size="sm"
                     className={clsx('action-circle-btn btn-stop', training.is_closed && 'btn-stop-play')}
-                    disabled={!onToggleClose}
-                    onClick={() => onToggleClose?.(training)}
+                    onClick={() => onToggleClose(training)}
                   >
                     {training.is_closed ? (
                       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -252,40 +267,42 @@ function TrainingDetailModal({
                     )}
                   </IconButton>
                 )}
-                <IconButton
-                  ariaLabel="Редактировать тренировку"
-                  variant="ghost"
-                  size="sm"
-                  className="action-circle-btn btn-edit"
-                  disabled={!onEdit}
-                  onClick={() => onEdit?.(training)}
-                >
-                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                    <path d="M4 20h4.2L19.3 8.9a2 2 0 0 0 0-2.8l-1.4-1.4a2 2 0 0 0-2.8 0L4 15.8V20Z" />
-                    <path d="m13.7 6.1 4.2 4.2" />
-                  </svg>
-                </IconButton>
-                <IconButton
-                  ariaLabel="Удалить тренировку"
-                  variant="ghost"
-                  size="sm"
-                  className="action-circle-btn btn-delete-trash"
-                  disabled={!onDelete}
-                  onClick={() => onDelete?.(training.id)}
-                >
-                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                    <path d="M4 7h16" />
-                    <path d="M10 11v6" />
-                    <path d="M14 11v6" />
-                    <path d="M6 7l1 13h10l1-13" />
-                    <path d="M9 7V4h6v3" />
-                  </svg>
-                </IconButton>
+                {onEdit && (
+                  <IconButton
+                    ariaLabel="Редактировать тренировку"
+                    variant="ghost"
+                    size="sm"
+                    className="action-circle-btn btn-edit"
+                    onClick={() => onEdit(training)}
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <path d="M4 20h4.2L19.3 8.9a2 2 0 0 0 0-2.8l-1.4-1.4a2 2 0 0 0-2.8 0L4 15.8V20Z" />
+                      <path d="m13.7 6.1 4.2 4.2" />
+                    </svg>
+                  </IconButton>
+                )}
+                {onDelete && (
+                  <IconButton
+                    ariaLabel="Удалить тренировку"
+                    variant="ghost"
+                    size="sm"
+                    className="action-circle-btn btn-delete-trash"
+                    onClick={() => onDelete(training.id)}
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <path d="M4 7h16" />
+                      <path d="M10 11v6" />
+                      <path d="M14 11v6" />
+                      <path d="M6 7l1 13h10l1-13" />
+                      <path d="M9 7V4h6v3" />
+                    </svg>
+                  </IconButton>
+                )}
               </>
             )}
             <IconButton
               type="button"
-              className="ui-modal-close"
+              className="ui-modal-close training-detail-close"
               ariaLabel="Закрыть"
               onClick={onClose}
             >
@@ -373,7 +390,7 @@ function TrainingDetailModal({
                         <input
                           type="checkbox"
                           className="attendance-checkbox"
-                          checked={training.attended_users?.includes(player.id) || false}
+                          checked={attendedIds.has(player.id)}
                           aria-label={`Отметить посещение: ${player.full_name || 'Теннисист'}`}
                           onChange={(event) =>
                             handleAttendanceChange(player.id, event.target.checked)

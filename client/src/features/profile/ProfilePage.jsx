@@ -133,7 +133,11 @@ function ProfilePage({
   const [trainingsExpanded, setTrainingsExpanded] = useState(false);
   const [searchDate, setSearchDate] = useState('');
   const [trainingsDateRange, setTrainingsDateRange] = useState(null);
-  const [selectedTraining, setSelectedTraining] = useState(/** @type {any | null} */ (null));
+  const [selectedTrainingId, setSelectedTrainingId] = useState(/** @type {string | null} */ (null));
+  const selectedTraining = useMemo(() => {
+    if (!selectedTrainingId || !trainings) return null;
+    return trainings.find((t) => t.id === selectedTrainingId) || null;
+  }, [selectedTrainingId, trainings]);
 
   const handleContactUs = useCallback(() => {
     if (isMobileMaxPlatform()) {
@@ -512,7 +516,7 @@ function ProfilePage({
             trainings={trainings}
             currentUserId={user.id}
             mutateTrainings={mutateTrainings}
-            onOpenTraining={setSelectedTraining}
+            onOpenTraining={(training) => setSelectedTrainingId(training?.id ?? null)}
           />
 
           <div className="profile-trainings-block">
@@ -597,8 +601,8 @@ function ProfilePage({
       />
 
       <TrainingDetailModal
-        isOpen={Boolean(selectedTraining)}
-        onClose={() => setSelectedTraining(null)}
+        isOpen={Boolean(selectedTrainingId)}
+        onClose={() => setSelectedTrainingId(null)}
         training={selectedTraining}
         userIsModerator={isModerator()}
         currentUser={user}
