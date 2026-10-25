@@ -460,9 +460,11 @@ function ProfilePage({
             />
           ) : null}
 
-          <button type="submit" className="save-profile-btn" disabled={saving}>
-            {saving ? 'Сохраняем...' : 'Сохранить'}
-          </button>
+          <div className="profile-edit-form__actions">
+            <button type="submit" className="save-profile-btn" disabled={saving}>
+              {saving ? 'Сохраняем...' : 'Сохранить'}
+            </button>
+          </div>
         </form>
       ) : (
         <div className="profile-view">

@@ -1195,6 +1195,16 @@
   gap: 16px;
 }
 
+.profile-edit-form__actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  margin-top: 4px;
+  padding: 12px 0 calc(8px + env(safe-area-inset-bottom, 0px));
+  background: #ffffff;
+  box-shadow: 0 -10px 18px -12px rgba(15, 23, 42, 0.18);
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
@@ -1225,6 +1235,8 @@
 }
 
 .save-profile-btn {
+  display: block;
+  width: 100%;
   background: #ff5722;
   color: white;
   border: none;
@@ -1233,7 +1245,7 @@
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  margin-top: 10px;
+  margin: 0;
   min-height: 44px;
   transition: background 0.2s;
 }
