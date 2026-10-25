@@ -74,10 +74,71 @@
   background: linear-gradient(180deg, #f5f9ff 0%, #ffffff 42%);
 }
 
+.feed-upcoming-card__header {
+  position: relative;
+  padding-right: 44px;
+  align-items: flex-start;
+}
+
 .feed-upcoming-card__subtitle {
   font-size: 12px;
   font-weight: 500;
   color: #007aff;
+}
+
+.feed-upcoming-card__expand {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  background: rgba(0, 122, 255, 0.08);
+  color: #007aff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.28s ease, transform 0.28s ease;
+}
+
+.feed-upcoming-card__expand:hover {
+  background: rgba(0, 122, 255, 0.14);
+}
+
+.feed-upcoming-card__expand:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: 2px;
+}
+
+.feed-upcoming-card__expand-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 6px);
+  grid-template-rows: repeat(2, 6px);
+  gap: 3px;
+  transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1), gap 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.feed-upcoming-card__expand-grid i {
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 1.5px;
+  background: currentColor;
+  transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1), border-radius 0.38s ease;
+}
+
+.feed-upcoming-card__expand--open {
+  background: rgba(0, 122, 255, 0.16);
+}
+
+.feed-upcoming-card__expand--open .feed-upcoming-card__expand-grid {
+  transform: rotate(90deg);
+  gap: 5px;
 }
 
 .feed-upcoming-card__list {
@@ -89,6 +150,91 @@
 
 .feed-upcoming-card__list .training-row-card {
   margin: 0;
+}
+
+.feed-upcoming-card__extra {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.feed-upcoming-card__extra--open {
+  grid-template-rows: 1fr;
+}
+
+.feed-upcoming-card__extra-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.feed-upcoming-card__extra-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 0;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition:
+    opacity 0.32s ease,
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    padding-top 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.feed-upcoming-card__extra--open .feed-upcoming-card__extra-list {
+  padding-top: 10px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.feed-upcoming-card .card-row-date,
+.feed-upcoming-card .card-row-type-label {
+  white-space: nowrap;
+}
+
+.feed-upcoming-card .card-actions-info-col {
+  align-items: stretch;
+  min-width: 7.75rem;
+  flex-shrink: 0;
+}
+
+.feed-upcoming-card .card-slots-row {
+  display: block;
+  width: 100%;
+}
+
+.feed-upcoming-card .card-countdown-badge--feed {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+  max-width: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.feed-upcoming-card .card-buttons-wrapper {
+  width: 100%;
+}
+
+.feed-upcoming-card .training-action-text-btn--cancel {
+  width: 100%;
+  justify-content: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feed-upcoming-card__expand,
+  .feed-upcoming-card__expand-grid,
+  .feed-upcoming-card__expand-grid i,
+  .feed-upcoming-card__extra,
+  .feed-upcoming-card__extra-list {
+    transition: none;
+  }
 }
 
 /* Клик по PinnedBanner → после scrollIntoView подсветка ~1.5s (только фон, без синей окантовки) */

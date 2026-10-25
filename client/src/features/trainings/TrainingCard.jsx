@@ -3,10 +3,10 @@ import clsx from 'clsx';
 import IconButton from '../../components/ui/IconButton';
 import Spinner from '../../components/ui/Spinner';
 import { formatCardDate, formatTimeRange, hasTimeRangeEnded } from '../../lib/format';
-import { formatTrainingCountdownBadge } from '../notifications/notificationBadges';
+import { formatFeedScheduleBadge } from '../profile/upcomingTrainings';
 import { isModerator } from '../../services/auth';
 
-const COUNTDOWN_TICK_MS = 30_000;
+const COUNTDOWN_TICK_MS = 1_000;
 
 /**
  * @param {{
@@ -101,8 +101,8 @@ function TrainingCard({
     return () => window.clearInterval(id);
   }, [showCountdown, training.id, training.date]);
 
-  const countdownLabel = showCountdown
-    ? formatTrainingCountdownBadge(training, new Date(nowTick), userId)
+  const scheduleBadge = showCountdown
+    ? formatFeedScheduleBadge(training, new Date(nowTick))
     : null;
 
   return (
@@ -131,10 +131,17 @@ function TrainingCard({
       </div>
 
       <div className="card-actions-info-col">
-        {showCountdown && countdownLabel ? (
+        {showCountdown && scheduleBadge ? (
           <div className="card-slots-row">
-            <span className="card-countdown-badge" aria-live="polite">
-              {countdownLabel}
+            <span
+              className={clsx(
+                'card-countdown-badge',
+                'card-countdown-badge--feed',
+                scheduleBadge.kind === 'tomorrow' && 'card-countdown-badge--tomorrow'
+              )}
+              aria-live="polite"
+            >
+              {scheduleBadge.label}
             </span>
           </div>
         ) : !hideStatusBadge ? (
