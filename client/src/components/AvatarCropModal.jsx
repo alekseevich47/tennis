@@ -6,6 +6,7 @@ import {
   clamp,
   getTouchDistance
 } from '../lib/gestures';
+import { error } from '../lib/log';
 import './AvatarCropModal.css';
 
 const OUTPUT_SIZE = 400;
@@ -64,12 +65,20 @@ function AvatarCropModal({ isOpen, file, onConfirm, onCancel }) {
     lastY: 0
   });
 
+  const [stageEl, setStageEl] = useState(null);
   const [image, setImage] = useState(null);
   const [imageError, setImageError] = useState(false);
   const [viewport, setViewport] = useState({ width: 0, height: 0 });
   const [scale, setScale] = useState(MIN_SCALE);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [isExporting, setIsExporting] = useState(false);
+
+  // Callback ref: Modal монтирует children отложенно (mounted=false → null),
+  // поэтому обычный useEffect([isOpen]) видит stageRef=null и не вешает ResizeObserver.
+  const setStageRefs = useCallback((node) => {
+    stageRef.current = node;
+    setStageEl(node);
+  }, []);
 
   useEffect(() => {
     scaleRef.current = scale;
@@ -189,12 +198,10 @@ function AvatarCropModal({ isOpen, file, onConfirm, onCancel }) {
   }, [file, isOpen, setTransform]);
 
   useEffect(() => {
-    if (!isOpen) return undefined;
+    if (!isOpen || !stageEl) return undefined;
 
     const updateViewport = () => {
-      const stage = stageRef.current;
-      if (!stage) return;
-      const rect = stage.getBoundingClientRect();
+      const rect = stageEl.getBoundingClientRect();
       setViewport({
         width: Math.max(0, rect.width),
         height: Math.max(0, rect.height)
@@ -209,9 +216,9 @@ function AvatarCropModal({ isOpen, file, onConfirm, onCancel }) {
     }
 
     const observer = new ResizeObserver(updateViewport);
-    if (stageRef.current) observer.observe(stageRef.current);
+    observer.observe(stageEl);
     return () => observer.disconnect();
-  }, [isOpen]);
+  }, [isOpen, stageEl]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -373,7 +380,10 @@ function AvatarCropModal({ isOpen, file, onConfirm, onCancel }) {
       scaleRef.current,
       offsetRef.current
     );
-    if (!placement) return;
+    if (!placement) {
+      error('AvatarCropModal: empty viewport on confirm', currentViewport);
+      return;
+    }
 
     const sourceSize = placement.diameter / placement.displayScale;
     const sourceX = clamp(
@@ -432,7 +442,7 @@ function AvatarCropModal({ isOpen, file, onConfirm, onCancel }) {
     >
       <div className="avatar-crop-shell">
         <div
-          ref={stageRef}
+          ref={setStageRefs}
           className="avatar-crop-stage"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
