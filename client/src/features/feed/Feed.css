@@ -69,6 +69,28 @@
   transition: background-color 0.35s ease;
 }
 
+.feed-upcoming-card {
+  border-color: #d6e6ff;
+  background: linear-gradient(180deg, #f5f9ff 0%, #ffffff 42%);
+}
+
+.feed-upcoming-card__subtitle {
+  font-size: 12px;
+  font-weight: 500;
+  color: #007aff;
+}
+
+.feed-upcoming-card__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.feed-upcoming-card__list .training-row-card {
+  margin: 0;
+}
+
 /* Клик по PinnedBanner → после scrollIntoView подсветка ~1.5s (только фон, без синей окантовки) */
 .feed-card.feed-card--pin-focus {
   background-color: #e8f2ff;
@@ -2917,8 +2939,15 @@ button.post-card-like:hover:not(:disabled) {
   margin-bottom: 16px;
 }
 
+.post-detail-like-bar {
+  display: flex;
+  align-items: center;
+  margin: 4px 0 0;
+  padding: 2px 0 2px;
+}
+
 .modal-comments-section h3 {
-  margin: 20px 0 10px 0;
+  margin: 12px 0 10px 0;
   font-size: 15px;
   border-top: 1px solid #eee;
   padding-top: 14px;

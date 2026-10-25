@@ -15,22 +15,6 @@ function clientMeta(body) {
   };
 }
 
-function clientIp(c) {
-  try {
-    if (c && typeof c.realIP === 'function') {
-      var ip = c.realIP();
-      if (ip) return String(ip);
-    }
-  } catch (_) {}
-  try {
-    if (c && typeof c.remoteIP === 'function') {
-      var rip = c.remoteIP();
-      if (rip) return String(rip);
-    }
-  } catch (_) {}
-  return '';
-}
-
 function userAgent(c) {
   try {
     if (c && c.request && c.request.header) {
@@ -93,7 +77,6 @@ function logAuthAttempt(app, c, opts) {
       firstNameRaw: opts.firstNameRaw ? String(opts.firstNameRaw) : '',
       lastNameRaw: opts.lastNameRaw ? String(opts.lastNameRaw) : '',
       isNewUser: opts.isNewUser === true,
-      ip: clientIp(c),
       userAgent: userAgent(c),
       platform: meta.platform,
       appVersion: meta.appVersion,
@@ -144,6 +127,5 @@ function logAuthAttempt(app, c, opts) {
 module.exports = {
   logAuthAttempt: logAuthAttempt,
   clientMeta: clientMeta,
-  clientIp: clientIp,
   FAIL_SUMMARY: FAIL_SUMMARY
 };

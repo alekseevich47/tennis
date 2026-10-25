@@ -4,6 +4,7 @@ import IconButton from '../../components/ui/IconButton';
 import ModalFloatingCloseButton from '../../components/ui/ModalFloatingCloseButton';
 import PostMedia from './PostMedia';
 import PostContentHtml from './PostContentHtml';
+import PostCardLike from './PostCardLike';
 import CommentEditInlineForm from './CommentEditInlineForm';
 import CommentComposeForm from './CommentComposeForm';
 import CommentListItem from './CommentListItem';
@@ -505,6 +506,10 @@ function PostDetailModal({
             content={post.content || post.text}
           />
         ) : null}
+
+        <div className="post-detail-like-bar" aria-label="Лайки публикации">
+          <PostCardLike postId={post.id} user={user} />
+        </div>
 
         <div className="modal-comments-section">
           <h3>

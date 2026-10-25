@@ -826,6 +826,27 @@
   line-height: 1;
 }
 
+.profile-upcoming-block {
+  margin-bottom: 24px;
+}
+
+.profile-upcoming-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 12px;
+  color: #1a1a1a;
+}
+
+.profile-upcoming-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.profile-upcoming-list .training-row-card {
+  cursor: pointer;
+}
+
 .profile-trainings-toggle {
   display: flex;
   align-items: center;

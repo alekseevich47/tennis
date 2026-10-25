@@ -1,9 +1,12 @@
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import clsx from 'clsx';
 import IconButton from '../../components/ui/IconButton';
 import Spinner from '../../components/ui/Spinner';
 import { formatCardDate, formatTimeRange, hasTimeRangeEnded } from '../../lib/format';
+import { formatTrainingCountdownBadge } from '../notifications/notificationBadges';
 import { isModerator } from '../../services/auth';
+
+const COUNTDOWN_TICK_MS = 30_000;
 
 /**
  * @param {{
@@ -16,7 +19,12 @@ import { isModerator } from '../../services/auth';
  *   onCancelBooking: (training: any) => void,
  *   onToggleClose?: (training: any) => void,
  *   onRestore?: (trainingId: string) => void,
- *   canSelfBook?: boolean
+ *   canSelfBook?: boolean,
+ *   hideStatusBadge?: boolean,
+ *   hideSlots?: boolean,
+ *   showCountdown?: boolean,
+ *   cancelOnly?: boolean,
+ *   cancelDisabled?: boolean
  * }} props
  */
 function TrainingCard({
@@ -29,7 +37,12 @@ function TrainingCard({
   onCancelBooking,
   onToggleClose,
   onRestore,
-  canSelfBook = true
+  canSelfBook = true,
+  hideStatusBadge = false,
+  hideSlots = false,
+  showCountdown = false,
+  cancelOnly = false,
+  cancelDisabled = false
 }) {
   const userIsModerator = isModerator();
   const handleOpen = useCallback(() => onOpen(training), [onOpen, training]);
@@ -81,6 +94,17 @@ function TrainingCard({
   const effectivelyClosed = isClosed || hasEnded;
   const isBookingLocked = effectivelyClosed;
 
+  const [nowTick, setNowTick] = useState(() => Date.now());
+  useEffect(() => {
+    if (!showCountdown) return undefined;
+    const id = window.setInterval(() => setNowTick(Date.now()), COUNTDOWN_TICK_MS);
+    return () => window.clearInterval(id);
+  }, [showCountdown, training.id, training.date]);
+
+  const countdownLabel = showCountdown
+    ? formatTrainingCountdownBadge(training, new Date(nowTick), userId)
+    : null;
+
   return (
     <div
       className={clsx('training-row-card', `neon-border-${training.type}`, {
@@ -97,27 +121,48 @@ function TrainingCard({
         <span className="card-row-time">{formatTimeRange(training.date, training.duration)}</span>
         <span className="card-row-type-label">
           {training.type === 'group' ? 'Тренировка' : 'Турнир секции'}
-          <span className="card-row-slots-text">
-            {' '}
-            ({totalBooked}/{hasLimit ? Math.max(0, (training.max_slots || 0) - totalBooked) : '∞'})
-          </span>
+          {!hideSlots && (
+            <span className="card-row-slots-text">
+              {' '}
+              ({totalBooked}/{hasLimit ? Math.max(0, (training.max_slots || 0) - totalBooked) : '∞'})
+            </span>
+          )}
         </span>
       </div>
 
       <div className="card-actions-info-col">
-        <div className="card-slots-row">
-          <span
-            className={clsx(
-              'card-status-badge',
-              effectivelyClosed ? 'card-status-badge--closed' : 'card-status-badge--open'
-            )}
-          >
-            {hasEnded ? 'Тренировка завершена' : (isClosed ? 'Запись закрыта' : 'Запись открыта')}
-          </span>
-        </div>
+        {showCountdown && countdownLabel ? (
+          <div className="card-slots-row">
+            <span className="card-countdown-badge" aria-live="polite">
+              {countdownLabel}
+            </span>
+          </div>
+        ) : !hideStatusBadge ? (
+          <div className="card-slots-row">
+            <span
+              className={clsx(
+                'card-status-badge',
+                effectivelyClosed ? 'card-status-badge--closed' : 'card-status-badge--open'
+              )}
+            >
+              {hasEnded ? 'Тренировка завершена' : (isClosed ? 'Запись закрыта' : 'Запись открыта')}
+            </span>
+          </div>
+        ) : null}
 
         <div className="card-buttons-wrapper">
-          {training.is_deleted && userIsModerator ? (
+          {cancelOnly ? (
+            isUserBooked ? (
+              <button
+                type="button"
+                className="training-action-text-btn training-action-text-btn--cancel"
+                disabled={cancelDisabled}
+                onClick={handleCancel}
+              >
+                Снять запись
+              </button>
+            ) : null
+          ) : training.is_deleted && userIsModerator ? (
             isDeleting ? (
               <div className="restore-button-spinner" onClick={(e) => e.stopPropagation()}>
                 <Spinner label="Удаляем..." inline />
@@ -165,7 +210,7 @@ function TrainingCard({
             </IconButton>
           )}
 
-          {userIsModerator && !training.is_deleted && !hasEnded && (
+          {!cancelOnly && userIsModerator && !training.is_deleted && !hasEnded && (
             <>
               <IconButton
                 ariaLabel={training.is_closed ? 'Открыть запись на тренировку' : 'Закрыть запись на тренировку'}

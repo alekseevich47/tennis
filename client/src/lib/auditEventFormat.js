@@ -226,7 +226,6 @@ function resolveAuthMeta(entry) {
   const lastName = details.lastNameRaw != null ? String(details.lastNameRaw) : '';
   const messengerName = [firstName, lastName].filter(Boolean).join(' ').trim();
   const failReason = details.failReason != null ? String(details.failReason) : '';
-  const ip = details.ip != null && details.ip !== '' ? String(details.ip) : '';
   const platform = details.platform != null && details.platform !== '' ? String(details.platform) : '';
   const appVersion = details.appVersion != null && details.appVersion !== '' ? String(details.appVersion) : '';
   const appBuild = details.appBuild != null && details.appBuild !== '' ? String(details.appBuild) : '';
@@ -258,7 +257,6 @@ function resolveAuthMeta(entry) {
       value: AUTH_FAIL_REASON_LABELS[failReason] || failReason
     });
   }
-  if (ip) items.push({ label: 'IP', value: ip, copyValue: ip });
   if (platform) items.push({ label: 'Платформа', value: platform });
   if (versionLabel) items.push({ label: 'Версия приложения', value: versionLabel });
   return items;

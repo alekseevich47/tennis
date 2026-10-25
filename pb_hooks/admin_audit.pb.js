@@ -253,20 +253,36 @@ onRecordUpdateRequest((e) => {
       training_created_enabled: 'Создание тренировки',
       training_edited_enabled: 'Изменение тренировки',
       training_deleted_enabled: 'Отмена тренировки',
+      training_restored_enabled: 'Восстановление тренировки',
+      training_status_enabled: 'Открытие/закрытие записи',
       training_booking_enabled: 'Запись участников',
       comments_notification_enabled: 'Уведомления о комментариях',
       posts_created_enabled: 'Создание постов (лента)',
-      tournament_posts_created_enabled: 'Создание постов (турнир)'
+      tournament_posts_created_enabled: 'Создание постов (турнир)',
+      user_registered_enabled: 'Регистрация участника',
+      welcome_enabled: 'Приветствие в боте',
+      membership_freeze_enabled: 'Заморозка абонемента',
+      membership_stop_enabled: 'Остановка/запуск абонемента',
+      membership_expiry_enabled: 'Окончание абонемента',
+      membership_topup_enabled: 'Начисление посещений'
     };
     var settingFields = [
       'training_reminder_enabled',
       'training_created_enabled',
       'training_edited_enabled',
       'training_deleted_enabled',
+      'training_restored_enabled',
+      'training_status_enabled',
       'training_booking_enabled',
       'comments_notification_enabled',
       'posts_created_enabled',
-      'tournament_posts_created_enabled'
+      'tournament_posts_created_enabled',
+      'user_registered_enabled',
+      'welcome_enabled',
+      'membership_freeze_enabled',
+      'membership_stop_enabled',
+      'membership_expiry_enabled',
+      'membership_topup_enabled'
     ];
 
     var name = 'Модератор';

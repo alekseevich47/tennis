@@ -527,6 +527,22 @@ function broadcastNewPublication() {
   }
 }
 
+/**
+ * Глобальный гейт бот-уведомлений по полю notification_settings.
+ * Нет записи / ошибка чтения → true (fail-open, как прежние проверки).
+ * Явный false → не слать.
+ */
+function isBotNotifyEnabled(field) {
+  if (!field) return true;
+  try {
+    var settings = $app.findFirstRecordByFilter('notification_settings', '');
+    if (!settings) return true;
+    return settings.getBool(field) !== false;
+  } catch (_) {
+    return true;
+  }
+}
+
 module.exports = {
   sendBotMessage: sendBotMessage,
   sendUserChatMention: sendUserChatMention,
@@ -545,5 +561,6 @@ module.exports = {
   buildPublicFileAttachments: buildPublicFileAttachments,
   buildBroadcastImageAttachments: buildBroadcastImageAttachments,
   htmlToMaxMarkdown: htmlToMaxMarkdown,
+  isBotNotifyEnabled: isBotNotifyEnabled,
   PB_PUBLIC_BASE: PB_PUBLIC_BASE
 };

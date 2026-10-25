@@ -29,9 +29,12 @@ routerAdd('POST', '/api/tg-bot-webhook', (c) => {
       if (tgId && /^\/start(\s|@|$)/.test(text)) {
         tg.markTgBlocked(tgId, false);
         try {
-          const tpl = require(__hooks + '/templatelib.js');
-          const resolved = tpl.resolve($app, 'bot.welcome', {});
-          if (resolved && resolved.body) tg.sendWelcome(tgId, resolved.body);
+          const bot = require(__hooks + '/botlib.js');
+          if (bot.isBotNotifyEnabled('welcome_enabled')) {
+            const tpl = require(__hooks + '/templatelib.js');
+            const resolved = tpl.resolve($app, 'bot.welcome', {});
+            if (resolved && resolved.body) tg.sendWelcome(tgId, resolved.body);
+          }
         } catch (err) {
           console.log('[tg] webhook welcome: ' + err);
         }

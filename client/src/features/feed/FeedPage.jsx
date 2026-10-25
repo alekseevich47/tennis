@@ -13,10 +13,14 @@ import PostContextMenu from './PostContextMenu';
 import CreatePostModal from './CreatePostModal';
 import EditPostModal from './EditPostModal';
 import PostDetailModal from './PostDetailModal';
+import FeedUpcomingTrainingsCard from './FeedUpcomingTrainingsCard';
 import FullscreenImageViewer from './FullscreenImageViewer';
 import ProfileViewModal from '../profile/ProfileViewModal';
+import { getTodayTomorrowBookings } from '../profile/upcomingTrainings';
+import TrainingDetailModal from '../trainings/TrainingDetailModal';
 import ScrollToTopButton from '../../components/ui/ScrollToTopButton';
 import { useSectionScroll } from '../../hooks/useSectionScroll';
+import { useTrainings } from '../../hooks/useTrainings';
 import { useRegisterAddAction } from '../../context/AddActionContext';
 import { useMentionNav } from '../../context/MentionNavContext';
 import { error } from '../../lib/log';
@@ -58,6 +62,7 @@ function FeedPage({
 }) {
   const userIsModerator = isModerator();
   const { data: posts, isLoading, mutate } = usePosts({ includeDeleted: userIsModerator });
+  const { data: trainings, mutate: mutateTrainings } = useTrainings();
 
   useEffect(() => {
     prefetchLazyTabPages();
@@ -72,6 +77,7 @@ function FeedPage({
   const [hiddenMediaKey, setHiddenMediaKey] = useState(null);
   const [deletedPostIds, setDeletedPostIds] = useState([]);
   const [viewingPlayer, setViewingPlayer] = useState(null);
+  const [selectedTraining, setSelectedTraining] = useState(/** @type {any | null} */ (null));
   const [contextMenuState, setContextMenuState] = useState(
     /** @type {{ postId: string, anchorPoint: { x: number, y: number } } | null} */ (null)
   );
@@ -140,6 +146,11 @@ function FeedPage({
   }, [visiblePosts, searchQuery]);
 
   const isSearchActive = searchQuery.trim().length > 0;
+
+  const hasUpcomingTrainings = useMemo(
+    () => Boolean(user?.id && getTodayTomorrowBookings(trainings, user.id).length > 0),
+    [trainings, user?.id]
+  );
 
   const handleDeletePost = useCallback(
     async (postId) => {
@@ -396,7 +407,16 @@ function FeedPage({
         >
           {isLoading && <FeedListSkeleton />}
 
-          {!isLoading && filteredPosts.length === 0 && (
+          {!isLoading && !isSearchActive && (
+            <FeedUpcomingTrainingsCard
+              user={user}
+              trainings={trainings}
+              mutateTrainings={mutateTrainings}
+              onOpenTraining={setSelectedTraining}
+            />
+          )}
+
+          {!isLoading && filteredPosts.length === 0 && (isSearchActive || !hasUpcomingTrainings) && (
             <EmptyState
               title={isSearchActive ? 'Ничего не найдено' : 'Пока ничего нет'}
               description={
@@ -500,6 +520,17 @@ function FeedPage({
         onClose={() => setViewingPlayer(null)}
         targetUser={viewingPlayer}
         currentUser={user}
+      />
+
+      <TrainingDetailModal
+        isOpen={Boolean(selectedTraining)}
+        onClose={() => setSelectedTraining(null)}
+        training={selectedTraining}
+        userIsModerator={userIsModerator}
+        currentUser={user}
+        onMutated={() => {
+          void mutateTrainings();
+        }}
       />
 
       <ScrollToTopButton scrollRef={containerRef} />

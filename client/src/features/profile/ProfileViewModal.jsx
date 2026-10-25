@@ -37,6 +37,8 @@ import MembershipIcon from '../../components/ui/MembershipIcon';
 import MembershipModal from './MembershipModal';
 import ProfileSingleDateField from './ProfileSingleDateField';
 import ProfileTrainingsSearch, { filterProfileTrainings } from './ProfileTrainingsSearch';
+import UpcomingTrainingsBlock from './UpcomingTrainingsBlock';
+import TrainingDetailModal from '../trainings/TrainingDetailModal';
 import { useKeepForModalClose } from '../../hooks/useKeepForModalClose';
 import { openMaxUserChat } from '../shop/buyMessage';
 import './Profile.css';
@@ -116,8 +118,9 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
   const avatarInputRef = useRef(null);
   const menuBtnRef = useRef(null);
   const menuDropdownRef = useRef(null);
-  const { data: trainings, isLoading: trainingsLoading } = useTrainings();
+  const { data: trainings, isLoading: trainingsLoading, mutate: mutateTrainings } = useTrainings();
   const [membershipOpen, setMembershipOpen] = useState(false);
+  const [selectedTraining, setSelectedTraining] = useState(/** @type {any | null} */ (null));
   const [displayUser, setDisplayUser] = useState(targetUser || null);
   const [isEditing, setIsEditing] = useState(false);
   const [fullName, setFullName] = useState(targetUser?.full_name || '');
@@ -1023,6 +1026,16 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
 
               <AchievementsBlock userId={targetUserId} collapsible />
 
+              {canManageProfile && targetUserId && (
+                <UpcomingTrainingsBlock
+                  userId={targetUserId}
+                  trainings={trainings}
+                  currentUserId={currentUserId}
+                  mutateTrainings={mutateTrainings}
+                  onOpenTraining={setSelectedTraining}
+                />
+              )}
+
               <div className="profile-trainings-block">
                 <button
                   type="button"
@@ -1087,6 +1100,17 @@ function ProfileViewModal({ isOpen, onClose, targetUser: targetUserProp, current
         onClose={() => setMembershipOpen(false)}
         user={displayUser}
         onMutated={handleMembershipMutated}
+      />
+
+      <TrainingDetailModal
+        isOpen={Boolean(selectedTraining)}
+        onClose={() => setSelectedTraining(null)}
+        training={selectedTraining}
+        userIsModerator={canEditSectionStartDate}
+        currentUser={currentUser}
+        onMutated={() => {
+          void mutateTrainings();
+        }}
       />
 
       <AvatarCropModal

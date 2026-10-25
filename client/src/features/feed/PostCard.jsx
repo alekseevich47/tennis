@@ -3,8 +3,8 @@ import clsx from 'clsx';
 import PostMedia from './PostMedia';
 import PostContentHtml from './PostContentHtml';
 import CommentsPreview from './CommentsPreview';
+import PostCardLike from './PostCardLike';
 import sectionAvatarUrl from '../../assets/sm-avatar.png';
-import { usePostLikes } from '../../hooks/usePostLikes';
 import { usePostViewTracker } from '../../hooks/usePostViewTracker';
 import { formatCommentTime } from '../../lib/format';
 import { LongPressRing, useLongPress } from '../../lib/longPress';
@@ -18,47 +18,6 @@ function readComments(post) {
   const list = post.expand['comments(post)'];
   if (!list) return [];
   return Array.isArray(list) ? list : [list];
-}
-
-function PostCardLike({ postId, user }) {
-  const { count, isLiked, toggle } = usePostLikes(postId);
-  const userId = user?.id;
-  const liked = isLiked(userId);
-
-  const icon = (
-    <>
-      <span className="post-card-like__icon" aria-hidden="true">
-        {liked ? '♥' : '♡'}
-      </span>
-      <span className="post-card-like__count">{count}</span>
-    </>
-  );
-
-  if (!userId) {
-    return (
-      <div className="post-card-like post-card-like--readonly" aria-label={`Лайков: ${count}`}>
-        {icon}
-      </div>
-    );
-  }
-
-  return (
-    <button
-      type="button"
-      className={clsx('post-card-like', liked && 'post-card-like--liked')}
-      onPointerDown={(event) => event.stopPropagation()}
-      onPointerUp={(event) => event.stopPropagation()}
-      onClick={(event) => {
-        event.stopPropagation();
-        event.preventDefault();
-        toggle(postId, userId);
-      }}
-      aria-pressed={liked}
-      aria-label={liked ? 'Убрать лайк' : 'Поставить лайк'}
-    >
-      {icon}
-    </button>
-  );
 }
 
 /**

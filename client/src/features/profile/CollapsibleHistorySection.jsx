@@ -4,7 +4,8 @@ import clsx from 'clsx';
 const PREVIEW_COUNT = 3;
 
 /**
- * Сворачиваемая история: свёрнуто — последние N строк, развёрнуто — все.
+ * Сворачиваемая история: список сверху-вниз (новые → старые);
+ * свёрнуто — первые N строк, развёрнуто — все.
  *
  * @param {{
  *   title: string,
@@ -27,7 +28,7 @@ function CollapsibleHistorySection({
   if (!total) return null;
 
   const canCollapse = total > PREVIEW_COUNT;
-  const visible = !canCollapse || expanded ? items : items.slice(-PREVIEW_COUNT);
+  const visible = !canCollapse || expanded ? items : items.slice(0, PREVIEW_COUNT);
 
   return (
     <div className={clsx('membership-history-section', className)}>

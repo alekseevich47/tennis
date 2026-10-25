@@ -129,6 +129,7 @@ function restoreMembershipSession(app, userId, options) {
 function notifyTrainingCancelled(training) {
   var tpl = require(__hooks + '/templatelib.js');
   var bot = require(__hooks + '/botlib.js');
+  if (!bot.isBotNotifyEnabled('training_deleted_enabled')) return;
   var typeWord = training.getString('type') === 'tournament' ? 'турнир' : 'тренировка';
   var dateFormatted = bot.formatDateTimeGmt7(training.getString('date'));
   var resolved = tpl.resolve($app, 'bot.training_cancelled', {

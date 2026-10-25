@@ -239,9 +239,21 @@
   background: #e9ecef;
 }
 
-.card-status-badge--cancelled {
+.card-status-badge--fullname {
   color: #c92a2a;
   background: #ffe3e3;
+}
+
+.card-countdown-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 8px;
+  color: #007aff;
+  background: #eef5ff;
+  text-align: right;
+  max-width: 11.5rem;
+  line-height: 1.25;
 }
 
 .card-slots-counter {

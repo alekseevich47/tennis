@@ -30,6 +30,8 @@ import AboutAppModal from './AboutAppModal';
 import MembershipModal from './MembershipModal';
 import ProfileSingleDateField from './ProfileSingleDateField';
 import ProfileTrainingsSearch, { filterProfileTrainings } from './ProfileTrainingsSearch';
+import UpcomingTrainingsBlock from './UpcomingTrainingsBlock';
+import TrainingDetailModal from '../trainings/TrainingDetailModal';
 import './Profile.css';
 
 const DEFAULT_HAND = 'Правая';
@@ -108,7 +110,7 @@ function ProfilePage({
   const { alert } = useAlertDialog();
   const { showToast } = useToast();
   const { data: players } = usePlayers();
-  const { data: trainings, isLoading: trainingsLoading } = useTrainings();
+  const { data: trainings, isLoading: trainingsLoading, mutate: mutateTrainings } = useTrainings();
   const { data: cancelledTrainings, isLoading: cancelledLoading } = useSWR(
     user?.id ? ['cancelled-trainings', user.id] : null,
     () => listCancelledTrainingsForUser(user.id)
@@ -131,6 +133,7 @@ function ProfilePage({
   const [trainingsExpanded, setTrainingsExpanded] = useState(false);
   const [searchDate, setSearchDate] = useState('');
   const [trainingsDateRange, setTrainingsDateRange] = useState(null);
+  const [selectedTraining, setSelectedTraining] = useState(/** @type {any | null} */ (null));
 
   const handleContactUs = useCallback(() => {
     if (isMobileMaxPlatform()) {
@@ -504,6 +507,14 @@ function ProfilePage({
             onFocusHandled={onAchievementsFocusHandled}
           />
 
+          <UpcomingTrainingsBlock
+            userId={user.id}
+            trainings={trainings}
+            currentUserId={user.id}
+            mutateTrainings={mutateTrainings}
+            onOpenTraining={setSelectedTraining}
+          />
+
           <div className="profile-trainings-block">
             <button
               type="button"
@@ -583,6 +594,17 @@ function ProfilePage({
         onClose={() => setMembershipOpen(false)}
         user={user}
         onMutated={handleMembershipMutated}
+      />
+
+      <TrainingDetailModal
+        isOpen={Boolean(selectedTraining)}
+        onClose={() => setSelectedTraining(null)}
+        training={selectedTraining}
+        userIsModerator={isModerator()}
+        currentUser={user}
+        onMutated={() => {
+          void mutateTrainings();
+        }}
       />
 
       <AboutAppModal

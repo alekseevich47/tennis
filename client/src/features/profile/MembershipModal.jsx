@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Modal from '../../components/ui/Modal';
 import IconButton from '../../components/ui/IconButton';
 import { useAlertDialog } from '../../components/ui/AlertDialog';
 import { useToast } from '../../components/ui/ToastContext';
 import { MAX_SELLER_URL } from '../../config';
-import { isModerator } from '../../services/auth';
+import { getCurrentUser, isModerator } from '../../services/auth';
 import pb from '../../services/pb';
 import {
   freezeMembership,
@@ -12,6 +12,7 @@ import {
   stopMembership,
   startMembership
 } from '../../services/membershipLifecycle';
+import { useTrainings } from '../../hooks/useTrainings';
 import { formatPostDate, pluralize } from '../../lib/format';
 import { error } from '../../lib/log';
 import {
@@ -23,6 +24,7 @@ import MembershipEditModal from './MembershipEditModal';
 import MembershipHistory from './MembershipHistory';
 import CollapsibleHistorySection from './CollapsibleHistorySection';
 import TrainingDetailModal from '../trainings/TrainingDetailModal';
+import { countUpcomingBookings } from './upcomingTrainings';
 import './Profile.css';
 import '../trainings/Trainings.css';
 
@@ -55,12 +57,10 @@ function parseJsonLog(raw) {
 
 /**
  * @param {any} entry
- * @param {number} index
- * @param {number} total
+ * @param {boolean} isActive
  */
-function formatFreezeLogEntry(entry, index, total) {
+function formatFreezeLogEntry(entry, isActive) {
   const from = formatMembershipDate(entry.frozen_at);
-  const isActive = !entry.unfrozen_at && index === total - 1;
 
   if (isActive) {
     return `${from} — активна`;
@@ -83,6 +83,25 @@ function formatFreezeLogEntry(entry, index, total) {
         );
   const dayLabel = pluralize(days, 'день', 'дня', 'дней');
   return `${from} — ${to} (${days} ${dayLabel})`;
+}
+
+/**
+ * Лог хронологически (старые → новые); активна последняя незакрытая запись.
+ * @param {any[]} freezeLog
+ * @returns {{ entry: any, isActive: boolean, key: string }[]}
+ */
+function buildFreezeHistoryItemsNewestFirst(freezeLog) {
+  let lastOpenIndex = -1;
+  for (let i = 0; i < freezeLog.length; i += 1) {
+    if (!freezeLog[i]?.unfrozen_at) lastOpenIndex = i;
+  }
+  return freezeLog
+    .map((entry, index) => ({
+      entry,
+      isActive: index === lastOpenIndex && !entry.unfrozen_at,
+      key: `${entry.kind || 'freeze'}-${entry.frozen_at}-${index}`
+    }))
+    .reverse();
 }
 
 /**
@@ -138,10 +157,19 @@ const TRAINING_EXPAND =
 function MembershipModal({ isOpen, onClose, user, onMutated }) {
   const { showToast } = useToast();
   const { alert, confirm } = useAlertDialog();
+  const { data: trainings } = useTrainings();
   const [userSnapshot, setUserSnapshot] = useState(user);
   const [editMode, setEditMode] = useState(null);
   const [busy, setBusy] = useState(false);
   const moderator = isModerator();
+  const currentUserId = getCurrentUser()?.id;
+  const canSeeUpcomingBookings = Boolean(
+    moderator || (user?.id && currentUserId && user.id === currentUserId)
+  );
+  const upcomingBookingsCount = useMemo(
+    () => (canSeeUpcomingBookings ? countUpcomingBookings(trainings, user?.id) : 0),
+    [canSeeUpcomingBookings, trainings, user?.id]
+  );
   const [availableSessions, setAvailableSessions] = useState(0);
   const [usedSessions, setUsedSessions] = useState(0);
   const [unpaidSessions, setUnpaidSessions] = useState(0);
@@ -520,6 +548,11 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
           <p>
             <strong>Использовано:</strong> {usedSessions}
           </p>
+          {canSeeUpcomingBookings && (
+            <p>
+              <strong>Пред. запись:</strong> {upcomingBookingsCount}
+            </p>
+          )}
           {unpaidSessions > 0 && (
             <p className="membership-unpaid-notice">
               <strong>Неоплачено:</strong> {unpaidSessions}
@@ -553,7 +586,7 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
               type: membershipType,
               start: startDate,
               end: endDate
-            });
+            }).reverse();
             if (!periodItems.length) return null;
             return (
               <CollapsibleHistorySection
@@ -569,11 +602,8 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
           {freezeLog.length > 0 && (
             <CollapsibleHistorySection
               title="История заморозок / остановок:"
-              items={freezeLog.map((entry, index) => (
-                <li
-                  key={`${entry.kind || 'freeze'}-${entry.frozen_at}-${index}`}
-                  className="membership-history-row"
-                >
+              items={buildFreezeHistoryItemsNewestFirst(freezeLog).map(({ entry, isActive, key }) => (
+                <li key={key} className="membership-history-row">
                   <span
                     className={
                       entry.kind === 'stop'
@@ -583,7 +613,7 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
                     aria-hidden="true"
                   />
                   <span className="membership-history-row__text">
-                    {formatFreezeLogEntry(entry, index, freezeLog.length)}
+                    {formatFreezeLogEntry(entry, isActive)}
                   </span>
                 </li>
               ))}

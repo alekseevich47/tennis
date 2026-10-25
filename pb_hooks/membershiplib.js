@@ -426,17 +426,41 @@ function getEffectiveEndDate(user) {
   return end;
 }
 
+/** template key → notification_settings field (абонементные бот-сообщения). */
+var MEMBERSHIP_BOT_SETTING = {
+  'bot.membership_freeze': 'membership_freeze_enabled',
+  'bot.membership_freeze_mod': 'membership_freeze_enabled',
+  'bot.membership_freeze_warn_user': 'membership_freeze_enabled',
+  'bot.membership_freeze_warn_mod': 'membership_freeze_enabled',
+  'bot.membership_freeze_tomorrow_user': 'membership_freeze_enabled',
+  'bot.membership_freeze_tomorrow_mod': 'membership_freeze_enabled',
+  'bot.membership_unfreeze': 'membership_freeze_enabled',
+  'bot.membership_unfreeze_mod': 'membership_freeze_enabled',
+  'bot.membership_stop': 'membership_stop_enabled',
+  'bot.membership_stop_mod': 'membership_stop_enabled',
+  'bot.membership_start': 'membership_stop_enabled',
+  'bot.membership_start_mod': 'membership_stop_enabled',
+  'bot.membership_expiry_warn_user': 'membership_expiry_enabled',
+  'bot.membership_expiry_warn_mod': 'membership_expiry_enabled',
+  'bot.membership_expired': 'membership_expiry_enabled',
+  'bot.membership_topup': 'membership_topup_enabled'
+};
+
 function sendBotToUser(app, user, templateKey, vars) {
-  var tpl = require(__hooks + '/templatelib.js');
   var bot = require(__hooks + '/botlib.js');
+  var settingField = MEMBERSHIP_BOT_SETTING[templateKey];
+  if (settingField && !bot.isBotNotifyEnabled(settingField)) return;
+  var tpl = require(__hooks + '/templatelib.js');
   var resolved = tpl.resolve(app, templateKey, vars);
   if (!resolved || !resolved.body) return;
   bot.sendToUser(user, resolved.body);
 }
 
 function sendBotToModerators(app, templateKey, vars) {
-  var tpl = require(__hooks + '/templatelib.js');
   var bot = require(__hooks + '/botlib.js');
+  var settingField = MEMBERSHIP_BOT_SETTING[templateKey];
+  if (settingField && !bot.isBotNotifyEnabled(settingField)) return;
+  var tpl = require(__hooks + '/templatelib.js');
   var resolved = tpl.resolve(app, templateKey, vars);
   if (!resolved || !resolved.body) return;
   bot.notifyModerators(resolved.body);

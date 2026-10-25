@@ -6,6 +6,10 @@ onRecordAfterCreateSuccess((e) => {
   const bot = require(__hooks + '/botlib.js');
   const tpl = require(__hooks + '/templatelib.js');
   try {
+    if (!bot.isBotNotifyEnabled('user_registered_enabled')) {
+      e.next();
+      return;
+    }
     const user = e.record;
     const name = user.getString('full_name') || 'Игрок';
     const time = bot.formatDateTimeGmt7(user.getString('created') || new Date().toISOString());
@@ -150,6 +154,9 @@ routerAdd('POST', '/api/bot-notify-training-status', (c) => {
     status: statusWord
   });
   if (!resolved || !resolved.body) {
+    return c.json(200, { success: true, skipped: true });
+  }
+  if (!bot.isBotNotifyEnabled('training_status_enabled')) {
     return c.json(200, { success: true, skipped: true });
   }
 
@@ -384,6 +391,9 @@ routerAdd('POST', '/api/bot-notify-training-restored', (c) => {
   if (!resolved || !resolved.body) {
     return c.json(200, { success: true, skipped: true });
   }
+  if (!bot.isBotNotifyEnabled('training_restored_enabled')) {
+    return c.json(200, { success: true, skipped: true });
+  }
 
   try {
     bot.broadcastToAllUsers(resolved.body);
@@ -432,7 +442,8 @@ routerAdd('POST', '/api/max-bot-webhook', (c) => {
 
     if (updateType === 'bot_started') {
       if (maxUserId) {
-        if (WELCOME_TEXT) {
+        // Приветствие гейтится тумблером; снятие max_bot_blocked — всегда.
+        if (WELCOME_TEXT && bot.isBotNotifyEnabled('welcome_enabled')) {
           bot.sendBotMessage(maxUserId, WELCOME_TEXT);
         }
         try {
