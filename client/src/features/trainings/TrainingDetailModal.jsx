@@ -9,7 +9,9 @@ import { formatCardDate, formatTimeRange, hasTimeRangeEnded } from '../../lib/fo
 import {
   bookUsersToTraining,
   findUsersOverDailyLimit,
+  isNoAvailableSessionsError,
   markAttendance,
+  NO_AVAILABLE_SESSIONS_MESSAGE,
   removeUsersFromTraining,
   unmarkAttendance
 } from '../../services/trainings';
@@ -19,6 +21,8 @@ import {
   settleMembershipDebt
 } from '../../services/membershipLedger';
 import { BOT_BLOCKED_BOOKING_MESSAGE } from '../../services/auth';
+import { MAX_SELLER_URL } from '../../config';
+import { openSellerChat } from '../shop/buyMessage';
 import { error } from '../../lib/log';
 import UserPickerModal from './components/UserPickerModal';
 import ProfileViewModal from '../profile/ProfileViewModal';
@@ -208,6 +212,16 @@ function TrainingDetailModal({
         return;
       }
       error('book users to training:', err);
+      if (isNoAvailableSessionsError(err)) {
+        await alert({
+          title: 'Ошибка',
+          message: NO_AVAILABLE_SESSIONS_MESSAGE,
+          actionText: 'Написать тренеру',
+          actionVariant: 'dark',
+          onAction: () => openSellerChat(MAX_SELLER_URL)
+        });
+        return;
+      }
       await alert({
         title: 'Ошибка',
         message: /** @type {Error} */ (err).message || 'Не удалось записать игрока.'

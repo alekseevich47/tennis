@@ -7,6 +7,23 @@ import { hasTimeRangeEnded } from '../lib/format';
 export const PENDING_DELETE_TRAININGS_KEY = 'pending_delete_trainings';
 export const SHOW_DELETED_TRAININGS_KEY = 'trainings_show_deleted_moderator';
 
+/** Сообщение preflight/сервера при regular без available_sessions. */
+export const NO_AVAILABLE_SESSIONS_MESSAGE =
+  'Нет доступных посещений. Обратитесь к тренеру.';
+
+/**
+ * @param {unknown} err
+ * @returns {boolean}
+ */
+export function isNoAvailableSessionsError(err) {
+  const e = /** @type {{ code?: string, message?: string, response?: { message?: string } }} */ (
+    err
+  );
+  if (e?.code === 'NO_AVAILABLE_SESSIONS') return true;
+  const msg = String(e?.message || e?.response?.message || '');
+  return msg.includes('Нет доступных посещений');
+}
+
 /**
  * Уведомить модераторов через MAX Bot API (pb_hooks/bot_notifications.pb.js).
  * Роль модератора определяется на сервере из auth, не из body.
@@ -157,7 +174,9 @@ async function hasAvailableMembershipSession(userId) {
  */
 async function assertMembershipSessionAvailable(userId) {
   if (!(await hasAvailableMembershipSession(userId))) {
-    throw Object.assign(new Error('Нет доступных посещений'), { code: 'NO_AVAILABLE_SESSIONS' });
+    throw Object.assign(new Error(NO_AVAILABLE_SESSIONS_MESSAGE), {
+      code: 'NO_AVAILABLE_SESSIONS'
+    });
   }
 }
 
@@ -702,7 +721,9 @@ export async function bookUserToTraining(training, userId, targetUser, { overrid
       !isUnlimitedMembership(mType) &&
       !(Number(targetUserData.available_sessions) > 0)
     ) {
-      throw Object.assign(new Error('Нет доступных посещений'), { code: 'NO_AVAILABLE_SESSIONS' });
+      throw Object.assign(new Error(NO_AVAILABLE_SESSIONS_MESSAGE), {
+        code: 'NO_AVAILABLE_SESSIONS'
+      });
     }
     const record = /** @type {TrainingRecord} */ (
       await pb.collection('trainings').update(
@@ -770,7 +791,9 @@ export async function bookUsersToTraining(training, userIds, targetUsers = [], {
           return !(Number(u.available_sessions) > 0);
         })
       ) {
-        throw Object.assign(new Error('Нет доступных посещений'), { code: 'NO_AVAILABLE_SESSIONS' });
+        throw Object.assign(new Error(NO_AVAILABLE_SESSIONS_MESSAGE), {
+          code: 'NO_AVAILABLE_SESSIONS'
+        });
       }
     }
 

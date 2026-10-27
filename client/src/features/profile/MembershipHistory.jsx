@@ -62,8 +62,6 @@ function LedgerDescription({ entry, ownerId, onOpenTraining, relatedEntry }) {
   const isPlus = Number(entry.delta) > 0;
   const actorName = displayActorName(entry.actor_name);
   const byOther = Boolean(entry.actor_id) && entry.actor_id !== ownerId;
-  const unpaidNote = entry.unpaid ? (isPlus ? ' (долг снят)' : ' (в долг)') : '';
-
   if (entry.kind === 'manual_add') {
     return <>Добавил: {actorName}</>;
   }
@@ -86,7 +84,14 @@ function LedgerDescription({ entry, ownerId, onOpenTraining, relatedEntry }) {
   }
 
   const kindLabel = TRAINING_KIND_LABELS[entry.kind] || 'Тренировка';
-  const actorVerb = entry.unpaid && !isPlus ? 'записал' : isPlus ? 'вернул' : 'списал';
+  const actorVerb = entry.unpaid && !isPlus ? 'записал в долг' : isPlus ? 'вернул' : 'записал';
+  // При чужом актёре «записал в долг» уже в глаголе — не дублировать «(в долг)».
+  const unpaidNote =
+    entry.unpaid && !(byOther && !isPlus)
+      ? isPlus
+        ? ' (долг снят)'
+        : ' (в долг)'
+      : '';
 
   return (
     <>

@@ -12,6 +12,10 @@
   justify-content: center;
 }
 
+.ui-alert-actions--stack {
+  flex-direction: column;
+}
+
 .ui-alert-btn {
   flex: 1;
   border: none;
@@ -21,6 +25,20 @@
   font-weight: 600;
   cursor: pointer;
   min-height: 44px;
+}
+
+.ui-alert-actions--stack .ui-alert-btn {
+  flex: none;
+  width: 100%;
+}
+
+.ui-alert-btn--dark {
+  background: #17171b;
+  color: #ffffff;
+}
+
+.ui-alert-btn--dark:hover {
+  background: #2a2a2e;
 }
 
 .ui-alert-btn--confirm {

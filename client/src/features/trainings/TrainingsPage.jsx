@@ -10,6 +10,8 @@ import {
   cancelTrainingBooking,
   closeTraining,
   findUsersOverDailyLimit,
+  isNoAvailableSessionsError,
+  NO_AVAILABLE_SESSIONS_MESSAGE,
   readPendingDeleteTrainingIds,
   readShowDeletedTrainingsPreference,
   removePendingDeleteTrainingId,
@@ -18,6 +20,8 @@ import {
   restoreTraining,
   softDeleteTraining
 } from '../../services/trainings';
+import { MAX_SELLER_URL } from '../../config';
+import { openSellerChat } from '../shop/buyMessage';
 import EmptyState from '../../components/ui/EmptyState';
 import IconButton from '../../components/ui/IconButton';
 import PullToRefresh from '../../components/ui/PullToRefresh';
@@ -222,6 +226,16 @@ function TrainingsPage({
           return;
         }
         error('book training:', err);
+        if (isNoAvailableSessionsError(err)) {
+          await alert({
+            title: 'Ошибка',
+            message: NO_AVAILABLE_SESSIONS_MESSAGE,
+            actionText: 'Написать тренеру',
+            actionVariant: 'dark',
+            onAction: () => openSellerChat(MAX_SELLER_URL)
+          });
+          return;
+        }
         await alert({
           title: 'Ошибка',
           message: /** @type {Error} */ (err).message || 'Не удалось записаться.'
@@ -420,6 +434,16 @@ function TrainingsPage({
           return;
         }
         error('book users to training:', err);
+        if (isNoAvailableSessionsError(err)) {
+          await alert({
+            title: 'Ошибка',
+            message: NO_AVAILABLE_SESSIONS_MESSAGE,
+            actionText: 'Написать тренеру',
+            actionVariant: 'dark',
+            onAction: () => openSellerChat(MAX_SELLER_URL)
+          });
+          return;
+        }
         await alert({
           title: 'Ошибка',
           message: /** @type {Error} */ (err).message || 'Не удалось записать игрока.'

@@ -337,7 +337,7 @@ function consumeMembershipSessionTx(app, userId, isModerator, trainingDate, trai
     wasUnpaid = true;
     user.set('unpaid_sessions', unpaidSessions + 1);
   } else {
-    throw new BadRequestError('Нет доступных посещений');
+    throw new BadRequestError('Нет доступных посещений. Обратитесь к тренеру.');
   }
 
   var usedSessions = user.getFloat('used_sessions') || 0;

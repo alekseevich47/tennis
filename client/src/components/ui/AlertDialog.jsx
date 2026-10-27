@@ -18,9 +18,12 @@ const INITIAL_STATE = {
   confirmText: 'Понятно',
   cancelText: 'Отмена',
   confirmVariant: 'primary', // 'primary' | 'danger'
+  actionText: undefined,
+  actionVariant: 'dark', // 'dark'
   overlayClassName: undefined,
   onConfirm: undefined,
-  onCancel: undefined
+  onCancel: undefined,
+  onAction: undefined
 };
 
 /**
@@ -35,7 +38,15 @@ export function AlertDialogProvider({ children }) {
   }, []);
 
   const alert = useCallback(
-    ({ title = 'Уведомление', message, confirmText = 'Понятно', overlayClassName } = {}) =>
+    ({
+      title = 'Уведомление',
+      message,
+      confirmText = 'Понятно',
+      actionText,
+      actionVariant = 'dark',
+      onAction,
+      overlayClassName
+    } = {}) =>
       new Promise((resolve) => {
         setState({
           ...INITIAL_STATE,
@@ -44,7 +55,19 @@ export function AlertDialogProvider({ children }) {
           message: message || '',
           variant: 'alert',
           confirmText,
+          actionText: actionText || undefined,
+          actionVariant,
           overlayClassName,
+          onAction: actionText
+            ? () => {
+                close();
+                try {
+                  onAction?.();
+                } finally {
+                  resolve(true);
+                }
+              }
+            : undefined,
           onConfirm: () => {
             close();
             resolve(true);
@@ -104,7 +127,13 @@ export function AlertDialogProvider({ children }) {
       >
         <p className="ui-alert-message">{state.message}</p>
 
-        <div className="ui-alert-actions">
+        <div
+          className={
+            state.variant === 'alert' && state.actionText
+              ? 'ui-alert-actions ui-alert-actions--stack'
+              : 'ui-alert-actions'
+          }
+        >
           {state.variant === 'confirm' && (
             <button
               type="button"
@@ -112,6 +141,17 @@ export function AlertDialogProvider({ children }) {
               onClick={state.onCancel}
             >
               {state.cancelText}
+            </button>
+          )}
+          {state.variant === 'alert' && state.actionText && (
+            <button
+              type="button"
+              className={`ui-alert-btn${
+                state.actionVariant === 'dark' ? ' ui-alert-btn--dark' : ''
+              }`}
+              onClick={state.onAction}
+            >
+              {state.actionText}
             </button>
           )}
           <button
@@ -131,7 +171,15 @@ export function AlertDialogProvider({ children }) {
 
 /**
  * @returns {{
- *   alert: (opts?: { title?: string, message?: string, confirmText?: string, overlayClassName?: string }) => Promise<true>,
+ *   alert: (opts?: {
+ *     title?: string,
+ *     message?: string,
+ *     confirmText?: string,
+ *     actionText?: string,
+ *     actionVariant?: 'dark',
+ *     onAction?: () => void,
+ *     overlayClassName?: string
+ *   }) => Promise<true>,
  *   confirm: (opts?: { title?: string, message?: string, confirmText?: string, cancelText?: string, confirmVariant?: 'primary' | 'danger', overlayClassName?: string }) => Promise<boolean>
  * }}
  */
