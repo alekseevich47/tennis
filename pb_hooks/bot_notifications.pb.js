@@ -39,9 +39,8 @@ routerAdd('POST', '/api/bot-notify-training', (c) => {
   const actorId = body.actorId;
   // Роль только из auth, не из body (API5 / spoofed moderator notifications).
   const actorIsModerator = auth.getString('role') === 'moderator';
-  const totalBookedCount = body.totalBookedCount;
 
-  if (!event || !userIds.length || !trainingId || !actorId || totalBookedCount == null) {
+  if (!event || !userIds.length || !trainingId || !actorId) {
     return c.json(400, { error: 'Missing required fields' });
   }
   if (actorId !== auth.id) {
@@ -63,11 +62,15 @@ routerAdd('POST', '/api/bot-notify-training', (c) => {
     return c.json(404, { error: 'Training not found' });
   }
 
+  // Count только с сервера — body.totalBookedCount игнорируем (injection).
+  const bookedUsers = training.get('booked_users') || [];
+  const totalBookedCount = Array.isArray(bookedUsers) ? bookedUsers.length : 0;
+
   const targetNames = [];
   for (let i = 0; i < userIds.length; i++) {
     try {
       const u = $app.findRecordById('users', userIds[i]);
-      targetNames.push(u.getString('full_name') || 'Игрок');
+      targetNames.push(bot.escapeMaxMarkdown(u.getString('full_name') || 'Игрок'));
     } catch (_) {
       targetNames.push('Игрок');
     }
@@ -79,7 +82,9 @@ routerAdd('POST', '/api/bot-notify-training', (c) => {
     actorUser = $app.findRecordById('users', actorId);
   } catch (_) {}
 
-  const actorName = actorUser ? (actorUser.getString('full_name') || 'Игрок') : 'Игрок';
+  const actorName = bot.escapeMaxMarkdown(
+    actorUser ? (actorUser.getString('full_name') || 'Игрок') : 'Игрок'
+  );
   const dateFormatted = bot.formatDateTimeGmt7(training.getString('date'));
   const isTournament = training.getString('type') === 'tournament';
   const typeAcc = isTournament ? 'турнир' : 'тренировку';

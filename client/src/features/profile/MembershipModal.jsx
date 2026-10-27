@@ -405,7 +405,8 @@ function MembershipModal({ isOpen, onClose, user, onMutated }) {
       message:
         `Записи на ещё не начавшиеся тренировки будут сняты, посещения вернутся.\n` +
         `Остаток бюджета заморозки: ${remainingFreeze} из ${FREEZE_BUDGET_DAYS} ${pluralize(FREEZE_BUDGET_DAYS, 'день', 'дня', 'дней')}.\n` +
-        `Плановая длительность — до ${remainingFreeze} ${pluralize(remainingFreeze, 'дня', 'дней', 'дней')}.`,
+        `Плановая длительность — до ${remainingFreeze} ${pluralize(remainingFreeze, 'дня', 'дней', 'дней')}.\n` +
+        `Продление срока — целыми днями фактической паузы; короче суток не списывает бюджет и не продлевает абонемент.`,
       confirmText: 'Заморозить',
       cancelText: 'Отмена'
     });

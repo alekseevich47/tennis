@@ -12,8 +12,8 @@ import { APP_BUILD, APP_DISPLAY_VERSION } from '../lib/appVersion';
  * @property {string} [email]
  * @property {string | string[]} [avatar]
  * @property {string} [avatar_url]
- * @property {string} [max_id]
- * @property {string} [tg_id] hidden; приходит только модератору (onRecordEnrich)
+ * @property {string} [max_id] schema-hidden; в API owner|moderator (users_field_visibility)
+ * @property {string} [tg_id] schema-hidden; в API только moderator (users_enrich_tg)
  * @property {string} [dominant_hand]
  * @property {number} [rating_points]
  * @property {number} [wins]

@@ -129,7 +129,8 @@ function hasSameDayFreezeCharge(log, dayKey) {
 }
 
 /**
- * Бюджет freeze при unfreeze: same-day GMT+7 ≤ 1 день суммарно.
+ * Бюджет freeze при unfreeze: same-day GMT+7 ≤ 1 день суммарно;
+ * иначе floor(elapsed) целых дней (пауза < суток → 0, без минимума 1).
  */
 function computeUnfreezeChargeDays(row, frozenAt, now) {
   var remaining = remainingFreezeDays(row);
@@ -141,9 +142,8 @@ function computeUnfreezeChargeDays(row, frozenAt, now) {
   } else {
     var elapsed = frozenAt && !isNaN(frozenAt.getTime())
       ? now.getTime() - frozenAt.getTime()
-      : DAY_MS;
+      : 0;
     days = Math.min(remaining, chargeFreezeDays(elapsed));
-    if (days < 1) days = 1;
   }
   var usedBase = getFreezeUsedDays(row);
   if (days > 0 && usedBase + days > FREEZE_BUDGET_DAYS) {
@@ -152,7 +152,14 @@ function computeUnfreezeChargeDays(row, frozenAt, now) {
   return days;
 }
 
+/** Freeze: только целые прошедшие сутки (floor), без минимума 1. */
 function chargeFreezeDays(elapsedMs) {
+  if (!elapsedMs || elapsedMs <= 0) return 0;
+  return Math.floor(elapsedMs / DAY_MS);
+}
+
+/** Stop→start: ceil + min 1 (компенсация полной остановки, не freeze-бюджет). */
+function chargeStopDays(elapsedMs) {
   if (!elapsedMs || elapsedMs <= 0) return 1;
   return Math.max(1, Math.ceil(elapsedMs / DAY_MS));
 }
@@ -1013,7 +1020,7 @@ function startUser(app, opts) {
   var elapsed = stoppedAt && !isNaN(stoppedAt.getTime())
     ? now.getTime() - stoppedAt.getTime()
     : DAY_MS;
-  var days = chargeFreezeDays(elapsed);
+  var days = chargeStopDays(elapsed);
   var newEnd = addDaysToEndDateStr(row.membership_end_date, days);
 
   sqlExec(
@@ -1313,6 +1320,7 @@ module.exports = {
   FREEZE_MAX_MS: FREEZE_MAX_MS,
   FREEZE_BUDGET_DAYS: FREEZE_BUDGET_DAYS,
   chargeFreezeDays: chargeFreezeDays,
+  chargeStopDays: chargeStopDays,
   remainingFreezeDays: remainingFreezeDays,
   getEffectiveEndDate: getEffectiveEndDate,
   runMembershipLifecycle: runMembershipLifecycle,

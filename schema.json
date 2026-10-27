@@ -390,7 +390,7 @@
       },
       {
         "autogeneratePattern": "",
-        "hidden": false,
+        "hidden": true,
         "id": "text2524018571",
         "max": 0,
         "min": 0,
@@ -565,7 +565,7 @@
         "type": "text"
       },
       {
-        "hidden": false,
+        "hidden": true,
         "id": "bool442734268",
         "name": "membership_frozen",
         "presentable": false,
@@ -574,7 +574,7 @@
         "type": "bool"
       },
       {
-        "hidden": false,
+        "hidden": true,
         "id": "date2362131788",
         "max": "",
         "min": "",
@@ -585,7 +585,7 @@
         "type": "date"
       },
       {
-        "hidden": false,
+        "hidden": true,
         "id": "json1524298993",
         "maxSize": 0,
         "name": "membership_freeze_log",
@@ -595,7 +595,7 @@
         "type": "json"
       },
       {
-        "hidden": false,
+        "hidden": true,
         "id": "json_membership_period_log_01",
         "maxSize": 0,
         "name": "membership_period_log",
@@ -606,7 +606,7 @@
       },
       {
         "autogeneratePattern": "",
-        "hidden": false,
+        "hidden": true,
         "id": "text_membership_expiry_warn_for_01",
         "max": 0,
         "min": 0,
@@ -620,7 +620,7 @@
       },
       {
         "autogeneratePattern": "",
-        "hidden": false,
+        "hidden": true,
         "id": "text_membership_expired_notified_for_01",
         "max": 0,
         "min": 0,
@@ -634,7 +634,7 @@
       },
       {
         "autogeneratePattern": "",
-        "hidden": false,
+        "hidden": true,
         "id": "text_freeze_expiry_warn_for_01",
         "max": 0,
         "min": 0,
@@ -648,7 +648,7 @@
       },
       {
         "autogeneratePattern": "",
-        "hidden": false,
+        "hidden": true,
         "id": "text_freeze_tomorrow_warn_for_01",
         "max": 0,
         "min": 0,
@@ -661,7 +661,7 @@
         "type": "text"
       },
       {
-        "hidden": false,
+        "hidden": true,
         "id": "bool_membership_stopped_01",
         "name": "membership_stopped",
         "presentable": false,
@@ -670,7 +670,7 @@
         "type": "bool"
       },
       {
-        "hidden": false,
+        "hidden": true,
         "id": "date_membership_stopped_at_01",
         "max": "",
         "min": "",
@@ -681,7 +681,7 @@
         "type": "date"
       },
       {
-        "hidden": false,
+        "hidden": true,
         "id": "number_membership_freeze_used_days_01",
         "max": null,
         "min": 0,
@@ -693,7 +693,7 @@
         "type": "number"
       },
       {
-        "hidden": false,
+        "hidden": true,
         "id": "date_membership_freeze_planned_until_01",
         "max": "",
         "min": "",
@@ -1410,7 +1410,7 @@
         ],
         "name": "icon",
         "presentable": false,
-        "protected": false,
+        "protected": true,
         "required": false,
         "system": false,
         "thumbs": [
@@ -4704,6 +4704,83 @@
     "indexes": [
       "CREATE INDEX `idx_mledger_user_created` ON `membership_ledger` (\n  `user`,\n  `created`\n)",
       "CREATE INDEX `idx_mledger_related` ON `membership_ledger` (`related_ledger_id`)"
+    ],
+    "system": false
+  },
+  {
+    "id": "pbc_trainings_bookings01",
+    "listRule": null,
+    "viewRule": null,
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "name": "trainings_bookings",
+    "type": "base",
+    "fields": [
+      {
+        "autogeneratePattern": "[a-z0-9]{15}",
+        "hidden": false,
+        "id": "text_tb_id",
+        "max": 15,
+        "min": 15,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "cascadeDelete": true,
+        "collectionId": "pbc_49784232",
+        "hidden": false,
+        "id": "relation_tb_training",
+        "maxSelect": 1,
+        "minSelect": 0,
+        "name": "training",
+        "presentable": false,
+        "required": true,
+        "system": false,
+        "type": "relation"
+      },
+      {
+        "cascadeDelete": true,
+        "collectionId": "_pb_users_auth_",
+        "hidden": false,
+        "id": "relation_tb_user",
+        "maxSelect": 1,
+        "minSelect": 0,
+        "name": "user",
+        "presentable": false,
+        "required": true,
+        "system": false,
+        "type": "relation"
+      },
+      {
+        "hidden": false,
+        "id": "autodate_tb_created",
+        "name": "created",
+        "onCreate": true,
+        "onUpdate": false,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      },
+      {
+        "hidden": false,
+        "id": "autodate_tb_updated",
+        "name": "updated",
+        "onCreate": true,
+        "onUpdate": true,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      }
+    ],
+    "indexes": [
+      "CREATE UNIQUE INDEX idx_trainings_bookings_training_user ON \trainings_bookings (\n  \training,\n  user\n)",
+      "CREATE INDEX idx_trainings_bookings_user ON \trainings_bookings (user)"
     ],
     "system": false
   }

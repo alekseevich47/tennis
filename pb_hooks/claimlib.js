@@ -315,6 +315,8 @@ function remapAllFromStub(app, fromId, toId) {
   remapSingleField(app, 'notifications', 'recipient', fromId, toId);
   remapSingleField(app, 'content_views', 'user', fromId, toId);
   remapSingleField(app, 'membership_ledger', 'user', fromId, toId);
+  // UNIQUE(training,user): при конфликте удаляем stub-строку (to уже записан).
+  remapSingleField(app, 'trainings_bookings', 'user', fromId, toId, ['training']);
   remapSingleField(app, 'post_likes', 'user', fromId, toId, ['post']);
   remapSingleField(app, 'gallery_likes', 'user', fromId, toId, ['media_id']);
   remapSingleField(app, 'comment_likes', 'author', fromId, toId, ['comment']);

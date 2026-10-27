@@ -186,6 +186,7 @@ function finalizeCancelledTrainingRecord(training) {
         } catch (_) {}
       }
     }
+    clearTrainingsBookingsForTraining($app, training.id);
   }
 
   training.set('is_cancelled', true);
@@ -467,12 +468,247 @@ function assertTrainingUpdateAllowed(original, record, auth) {
     var f = TRAINING_COMPARE_FIELDS[i];
     if (!trainingFieldChanged(original, record, f)) continue;
     if (TRAINING_USER_EDITABLE[f]) continue;
-    // trainings_auto_close может выставить is_closed на том же UpdateRequest до/вместе с записью.
+    // auto_close на UpdateRequest выставляет is_closed только для уже начавшихся —
+    // закрытие будущей тренировки non-mod запрещено (Strix medium).
     if (f === 'is_closed' && !original.getBool('is_closed') && record.getBool('is_closed')) {
-      continue;
+      var dateStr = original.getString('date') || record.getString('date');
+      var started = false;
+      if (dateStr) {
+        var startAt = new Date(String(dateStr).replace(' ', 'T'));
+        started = !isNaN(startAt.getTime()) && startAt <= new Date();
+      }
+      if (started) continue;
     }
     throw new ForbiddenError('Изменение поля "' + f + '" недоступно');
   }
+}
+
+/** UNIQUE(training,user) conflict → уже есть бронь (идемпотентный add). */
+function isBookingUniqueConflict(err) {
+  var msg = String((err && err.message) || err || '').toLowerCase();
+  if (msg.indexOf('unique') >= 0) return true;
+  if (msg.indexOf('validation_not_unique') >= 0) return true;
+  try {
+    var data = err && (err.data || (err.response && err.response.data));
+    if (data) {
+      var keys = ['training', 'user', 'id'];
+      for (var i = 0; i < keys.length; i++) {
+        var cell = data[keys[i]];
+        if (cell && String(cell.code || '') === 'validation_not_unique') return true;
+      }
+    }
+  } catch (_) { /* ignore */ }
+  return false;
+}
+
+/**
+ * @param {core.App} app
+ * @param {string} trainingId
+ * @returns {number}
+ */
+function countTrainingsBookings(app, trainingId) {
+  var row = new DynamicModel({ n: 0 });
+  app.db().newQuery(
+    'SELECT COUNT(*) as n FROM trainings_bookings WHERE training = {:tid}'
+  ).bind({ tid: String(trainingId) }).one(row);
+  return Number(row.n) || 0;
+}
+
+/**
+ * @param {core.App} app
+ * @param {string} trainingId
+ * @returns {string[]}
+ */
+function listTrainingsBookingUserIds(app, trainingId) {
+  var rows = [];
+  try {
+    rows = app.findRecordsByFilter(
+      'trainings_bookings',
+      'training = "' + String(trainingId).replace(/"/g, '') + '"',
+      'created',
+      0,
+      0
+    ) || [];
+  } catch (err) {
+    console.log('[trainingslib] listTrainingsBookingUserIds: ' + err);
+    return [];
+  }
+  var out = [];
+  for (var i = 0; i < rows.length; i++) {
+    out.push(String(rows[i].getString('user') || rows[i].get('user') || ''));
+  }
+  return out.filter(Boolean);
+}
+
+/**
+ * Backfill INSERT OR IGNORE из denormalized booked_users (миграция / догон).
+ * @param {core.App} app
+ * @param {string} trainingId
+ * @param {string[]} userIds
+ */
+function backfillTrainingsBookings(app, trainingId, userIds) {
+  var ids = normalizeRelationIds(userIds || []);
+  if (!ids.length) return;
+  var collection;
+  try {
+    collection = app.findCollectionByNameOrId('trainings_bookings');
+  } catch (err) {
+    console.log('[trainingslib] trainings_bookings missing: ' + err);
+    return;
+  }
+  for (var i = 0; i < ids.length; i++) {
+    var uid = String(ids[i]);
+    if (!uid) continue;
+    try {
+      var existing = app.findFirstRecordByFilter(
+        'trainings_bookings',
+        'training = "' + String(trainingId).replace(/"/g, '') +
+          '" && user = "' + uid.replace(/"/g, '') + '"'
+      );
+      if (existing) continue;
+    } catch (_) { /* not found — создаём */ }
+    try {
+      var rec = new Record(collection);
+      rec.set('training', String(trainingId));
+      rec.set('user', uid);
+      app.save(rec);
+    } catch (saveErr) {
+      if (!isBookingUniqueConflict(saveErr)) {
+        console.log('[trainingslib] backfill booking: ' + saveErr);
+      }
+    }
+  }
+}
+
+/**
+ * Атомарный claim слота: UNIQUE + post-insert capacity (Strix 3.3/3.5).
+ * @returns {'inserted'|'exists'}
+ */
+function claimTrainingsBooking(app, trainingId, userId, maxSlots) {
+  var tid = String(trainingId);
+  var uid = String(userId);
+  try {
+    var already = app.findFirstRecordByFilter(
+      'trainings_bookings',
+      'training = "' + tid.replace(/"/g, '') + '" && user = "' + uid.replace(/"/g, '') + '"'
+    );
+    if (already) return 'exists';
+  } catch (_) { /* not found */ }
+
+  var collection = app.findCollectionByNameOrId('trainings_bookings');
+  var rec = new Record(collection);
+  rec.set('training', tid);
+  rec.set('user', uid);
+  try {
+    app.save(rec);
+  } catch (err) {
+    if (isBookingUniqueConflict(err)) return 'exists';
+    throw err;
+  }
+
+  var count = countTrainingsBookings(app, tid);
+  if (maxSlots > 0 && count > maxSlots) {
+    try { app.delete(rec); } catch (_) { /* ignore */ }
+    throw new BadRequestError('Нет свободных мест');
+  }
+  return 'inserted';
+}
+
+/**
+ * Удаление брони; false = уже не было (идемпотентный unbook, Strix 3.4).
+ * @returns {boolean}
+ */
+function releaseTrainingsBooking(app, trainingId, userId) {
+  var tid = String(trainingId).replace(/"/g, '');
+  var uid = String(userId).replace(/"/g, '');
+  var row;
+  try {
+    row = app.findFirstRecordByFilter(
+      'trainings_bookings',
+      'training = "' + tid + '" && user = "' + uid + '"'
+    );
+  } catch (_) {
+    return false;
+  }
+  if (!row) return false;
+  try {
+    app.delete(row);
+    return true;
+  } catch (err) {
+    console.log('[trainingslib] releaseTrainingsBooking: ' + err);
+    return false;
+  }
+}
+
+/**
+ * Удалить все брони тренировки (финальная отмена).
+ * @param {core.App} app
+ * @param {string} trainingId
+ */
+function clearTrainingsBookingsForTraining(app, trainingId) {
+  var tid = String(trainingId).replace(/"/g, '');
+  var rows;
+  try {
+    rows = app.findRecordsByFilter('trainings_bookings', 'training = "' + tid + '"', '', 0, 0) || [];
+  } catch (_) {
+    return;
+  }
+  for (var i = 0; i < rows.length; i++) {
+    try { app.delete(rows[i]); } catch (_) { /* ignore */ }
+  }
+}
+
+/**
+ * Подтянуть denormalized booked_users к таблице (heal после гонки last-write-wins).
+ * @param {core.App} app
+ * @param {core.Record} training
+ * @returns {boolean} true если массив изменили
+ */
+function syncBookedUsersFromBookingsTable(app, training) {
+  if (!training || !training.id) return false;
+  var current = normalizeRelationIds(training.get('booked_users') || []);
+  var fromTable = listTrainingsBookingUserIds(app, training.id);
+  // Таблица ещё пуста (до bootstrap) — догоняем из массива, не затираем кэш.
+  if (!fromTable.length && current.length) {
+    backfillTrainingsBookings(app, training.id, current);
+    return false;
+  }
+  if (fromTable.length === current.length) {
+    var set = {};
+    for (var i = 0; i < current.length; i++) set[current[i]] = true;
+    var same = true;
+    for (var j = 0; j < fromTable.length; j++) {
+      if (!set[fromTable[j]]) { same = false; break; }
+    }
+    if (same) return false;
+  }
+  training.set('booked_users', fromTable);
+  return true;
+}
+
+/**
+ * Одноразовая/bootstrap миграция: booked_users → trainings_bookings (INSERT OR IGNORE).
+ * @param {core.App} app
+ * @returns {{ trainings: number, insertedApprox: number }}
+ */
+function syncAllTrainingsBookingsFromArrays(app) {
+  var trainings = [];
+  try {
+    trainings = app.findRecordsByFilter('trainings', '', '', 0, 0) || [];
+  } catch (err) {
+    console.log('[trainingslib] syncAll find trainings: ' + err);
+    return { trainings: 0, insertedApprox: 0 };
+  }
+  var n = 0;
+  for (var i = 0; i < trainings.length; i++) {
+    var booked = normalizeRelationIds(trainings[i].get('booked_users') || []);
+    if (!booked.length) continue;
+    var before = countTrainingsBookings(app, trainings[i].id);
+    backfillTrainingsBookings(app, trainings[i].id, booked);
+    var after = countTrainingsBookings(app, trainings[i].id);
+    n += Math.max(0, after - before);
+  }
+  return { trainings: trainings.length, insertedApprox: n };
 }
 
 function applyBookingSideEffects(original, record, auth) {
@@ -499,6 +735,25 @@ function applyBookingSideEffects(original, record, auth) {
   // посещаемость — только модератор. Без обхода через cancel/restore transition.
   // auth == null: внутренний/system вызов (skipBooking / compat) — не режем.
   if (auth && !isModerator) {
+    // Temporal / state guards (Strix): нельзя записаться на cancelled/closed/ended
+    // и нельзя снять запись после окончания (возврат сессии).
+    if (added.length || removed.length) {
+      if (record.getBool('is_cancelled') || original.getBool('is_cancelled')) {
+        throw new ForbiddenError('Тренировка отменена');
+      }
+      var endedForGuard = hasTimeRangeEnded(
+        original.getString('date') || record.getString('date'),
+        original.getFloat('duration') || record.getFloat('duration') || 0
+      );
+      if (added.length) {
+        if (record.getBool('is_closed') || original.getBool('is_closed') || endedForGuard) {
+          throw new ForbiddenError('Запись закрыта или тренировка уже прошла');
+        }
+      }
+      if (removed.length && endedForGuard) {
+        throw new ForbiddenError('Тренировка уже завершилась — отмена записи недоступна');
+      }
+    }
     var relationChecks = [
       { added: added, removed: removed, selfOnly: true, labelAdd: 'Можно записать только себя', labelRem: 'Можно снять с записи только себя' },
       {
@@ -555,11 +810,14 @@ function applyBookingSideEffects(original, record, auth) {
     }
   }
 
-  // Лимит мест (как раньше в validateBookingAdditions)
+  // Лимит мест — источник правды trainings_bookings (пере-чек внутри TX, Strix 3.3/3.5).
+  // Ранний отказ по клиентскому снимку — только быстрый fail; гонки закрывает claimTrainingsBooking.
   var maxSlots = record.getFloat('max_slots') || 0;
-  var bookedCount = audit.newlyAdded([], record.get('booked_users')).length;
-  if (maxSlots > 0 && bookedCount > maxSlots) {
-    throw new BadRequestError('Нет свободных мест');
+  if (maxSlots > 0 && added.length) {
+    var tentativeCount = audit.newlyAdded([], record.get('booked_users')).length;
+    if (tentativeCount > maxSlots) {
+      throw new BadRequestError('Нет свободных мест');
+    }
   }
 
   // Повторная запись: снять добавленных из kicked/insufficient (сервер, не client PATCH).
@@ -625,13 +883,23 @@ function applyBookingSideEffects(original, record, auth) {
   }
 
   $app.runInTransaction(function (txApp) {
+    // Догон таблицы из текущего booked_users (после import / до bootstrap).
+    backfillTrainingsBookings(
+      txApp,
+      trainingId,
+      audit.newlyAdded([], original.get('booked_users') || [])
+    );
+
     if (isCancelTransition) {
       if (!ended) {
-        var cancelBooked = audit.newlyAdded([], original.get('booked_users'));
+        var cancelBooked = listTrainingsBookingUserIds(txApp, trainingId);
+        if (!cancelBooked.length) {
+          cancelBooked = audit.newlyAdded([], original.get('booked_users'));
+        }
         var cancelAttended = audit.newlyAdded([], original.get('attended_users'));
         var cancelAttendedSet = {};
         for (i = 0; i < cancelAttended.length; i++) {
-          cancelAttendedSet[cancelAttended[i]] = true;
+          cancelAttendedSet[String(cancelAttended[i])] = true;
         }
         for (i = 0; i < cancelBooked.length; i++) {
           var cancelUid = String(cancelBooked[i]);
@@ -640,8 +908,8 @@ function applyBookingSideEffects(original, record, auth) {
             wasUnpaid: !!unpaidSet[cancelUid],
             ledger: ledgerCtx('training_cancelled')
           });
-          if (cancelAttendedSet[cancelBooked[i]]) {
-            adjustAttendanceCountTx(txApp, cancelBooked[i], -1);
+          if (cancelAttendedSet[cancelUid]) {
+            adjustAttendanceCountTx(txApp, cancelUid, -1);
           }
         }
       }
@@ -650,7 +918,11 @@ function applyBookingSideEffects(original, record, auth) {
 
     if (isRestoreTransition) {
       if (!ended) {
-        var restoreBooked = audit.newlyAdded([], record.get('booked_users'));
+        var restoreBooked = listTrainingsBookingUserIds(txApp, trainingId);
+        if (!restoreBooked.length) {
+          restoreBooked = audit.newlyAdded([], record.get('booked_users'));
+          backfillTrainingsBookings(txApp, trainingId, restoreBooked);
+        }
         var restoreAttended = audit.newlyAdded([], record.get('attended_users'));
         var restoreUnpaid = [];
         for (i = 0; i < restoreBooked.length; i++) {
@@ -675,6 +947,11 @@ function applyBookingSideEffects(original, record, auth) {
     var nextUnpaid = unpaidOriginal.slice();
     for (i = 0; i < added.length; i++) {
       var addUid = String(added[i]);
+      var claim = claimTrainingsBooking(txApp, trainingId, addUid, maxSlots);
+      if (claim === 'exists') {
+        // Уже в таблице — не списываем сессию повторно (гонка / retry).
+        continue;
+      }
       var addedUnpaid = consumeMembershipSessionTx(
         txApp,
         addUid,
@@ -689,6 +966,10 @@ function applyBookingSideEffects(original, record, auth) {
     }
     for (i = 0; i < removed.length; i++) {
       var remUid = String(removed[i]);
+      // Идемпотентный unbook: refund только если строка брони реально удалена (Strix 3.4).
+      if (!releaseTrainingsBooking(txApp, trainingId, remUid)) {
+        continue;
+      }
       restoreMembershipSession(txApp, remUid, {
         wasUnpaid: !!unpaidSet[remUid],
         ledger: ledgerCtx('unbook')
@@ -698,6 +979,10 @@ function applyBookingSideEffects(original, record, auth) {
       });
     }
     record.set('unpaid_booked_users', nextUnpaid);
+    // booked_users = проекция таблицы (не клиентский RMW-снимок).
+    if (added.length || removed.length) {
+      record.set('booked_users', listTrainingsBookingUserIds(txApp, trainingId));
+    }
     for (i = 0; i < attendedAdded.length; i++) {
       adjustAttendanceCountTx(txApp, attendedAdded[i], 1);
     }
@@ -807,6 +1092,13 @@ function unbookNotStartedForUser(app, userId, options) {
       nextUnpaid.push(upId);
     }
 
+    // $app.save минует UpdateRequest — release + sync вручную (Strix 3.4).
+    if (!releaseTrainingsBooking(app, training.id, uid)) {
+      // Уже снята в таблице — не дублируем refund; подтянем массив.
+      syncBookedUsersFromBookingsTable(app, training);
+      try { app.save(training); } catch (_) {}
+      continue;
+    }
     training.set('booked_users', nextBooked);
     training.set('unbooked_users', nextUnbooked);
     training.set('unpaid_booked_users', nextUnpaid);
@@ -926,6 +1218,13 @@ module.exports = {
   restoreMembershipSession: restoreMembershipSession,
   unbookNotStartedForUser: unbookNotStartedForUser,
   setTrainingUnpaidFlag: setTrainingUnpaidFlag,
+  backfillTrainingsBookings: backfillTrainingsBookings,
+  claimTrainingsBooking: claimTrainingsBooking,
+  releaseTrainingsBooking: releaseTrainingsBooking,
+  clearTrainingsBookingsForTraining: clearTrainingsBookingsForTraining,
+  listTrainingsBookingUserIds: listTrainingsBookingUserIds,
+  syncBookedUsersFromBookingsTable: syncBookedUsersFromBookingsTable,
+  syncAllTrainingsBookingsFromArrays: syncAllTrainingsBookingsFromArrays,
   // backward-compat alias (если кто-то ещё require'ит старое имя)
   validateBookingAdditions: function (original, record) {
     applyBookingSideEffects(original, record, null);

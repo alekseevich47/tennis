@@ -3,14 +3,19 @@
 
 const PB_PUBLIC_BASE = $os.getenv('PB_PUBLIC_URL') || 'https://urban42.online/tt';
 
+/** Экранирование спецсимволов markdown MAX Bot API (* _ [ ] ( ) и \\). */
+function escapeMaxMarkdown(s) {
+  return String(s == null ? '' : s).replace(/([\\*_\[\]()])/g, '\\$1');
+}
+
 /**
  * HTML из PostRichTextField → markdown MAX Bot API (*bold*, _italic_).
- * Plain-text без тегов возвращается как есть (обратная совместимость).
+ * Plain-text без тегов экранируется (защита от injection в bot-сообщениях).
  */
 function htmlToMaxMarkdown(html) {
   if (!html) return '';
   var s = String(html);
-  if (s.indexOf('<') === -1) return s;
+  if (s.indexOf('<') === -1) return escapeMaxMarkdown(s);
 
   function decodeEntities(value) {
     return String(value)
@@ -305,7 +310,7 @@ function getCommentPostInfo(collection, comment) {
 
 function buildCommentBotMessage(comment, collection, actionVerb) {
   const authorId = comment.getString('author');
-  const text = htmlToMaxMarkdown(comment.getString('text'));
+  const text = escapeMaxMarkdown(htmlToMaxMarkdown(comment.getString('text')));
   const info = getCommentPostInfo(collection, comment);
 
   let authorName = 'Игрок';
@@ -313,6 +318,7 @@ function buildCommentBotMessage(comment, collection, actionVerb) {
     const author = $app.findRecordById('users', authorId);
     if (author) authorName = author.getString('full_name') || 'Игрок';
   } catch (_) {}
+  authorName = escapeMaxMarkdown(authorName);
 
   const time = formatDateTimeGmt7(new Date().toISOString());
   return '*' + authorName + '* ' + actionVerb + ' комментарий: "' + text + '"' +
@@ -561,6 +567,7 @@ module.exports = {
   buildPublicFileAttachments: buildPublicFileAttachments,
   buildBroadcastImageAttachments: buildBroadcastImageAttachments,
   htmlToMaxMarkdown: htmlToMaxMarkdown,
+  escapeMaxMarkdown: escapeMaxMarkdown,
   isBotNotifyEnabled: isBotNotifyEnabled,
   PB_PUBLIC_BASE: PB_PUBLIC_BASE
 };

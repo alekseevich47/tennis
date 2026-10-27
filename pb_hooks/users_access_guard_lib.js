@@ -338,6 +338,90 @@ function isSuperuserAuth(e) {
 }
 
 /**
+ * Поля users, которые не-owner / не-moderator не должны видеть в API/realtime.
+ * Часть помечена hidden в schema (filter-oracle); остальные режутся только через record.hide.
+ */
+var PRIVATE_VIEW_FIELDS = [
+  'available_sessions',
+  'used_sessions',
+  'unpaid_sessions',
+  'membership_type',
+  'membership_start_date',
+  'membership_end_date',
+  'membership_comment',
+  'membership_frozen',
+  'membership_frozen_at',
+  'membership_freeze_log',
+  'membership_period_log',
+  'membership_freeze_used_days',
+  'membership_freeze_planned_until',
+  'membership_stopped',
+  'membership_stopped_at',
+  'membership_expiry_warn_for',
+  'membership_expired_notified_for',
+  'freeze_expiry_warn_for',
+  'freeze_tomorrow_warn_for',
+  'max_id',
+  'ban_reason',
+  'banned_at',
+  'comment_restriction_reason'
+];
+
+/**
+ * Schema-hidden приватные поля: unhide только owner|moderator.
+ * Не включать сюда поля, которые moderator PATCH-ит через collection API
+ * (PB снимает hidden из body для non-superuser) — available_sessions, ban_reason и т.п.
+ * tg_id — отдельно в users_enrich_tg.pb.js (только moderator, не owner).
+ */
+var SCHEMA_HIDDEN_PRIVATE_FIELDS = [
+  'max_id',
+  'membership_frozen',
+  'membership_frozen_at',
+  'membership_freeze_log',
+  'membership_period_log',
+  'membership_freeze_used_days',
+  'membership_freeze_planned_until',
+  'membership_stopped',
+  'membership_stopped_at',
+  'membership_expiry_warn_for',
+  'membership_expired_notified_for',
+  'freeze_expiry_warn_for',
+  'freeze_tomorrow_warn_for'
+];
+
+/**
+ * Field-level read ACL для users (onRecordEnrich).
+ * Owner и moderator видят приватные поля; остальные — hide.
+ * @param {any} record
+ * @param {string} viewerId
+ * @param {boolean} isModerator
+ */
+function maskPrivateFieldsForViewer(record, viewerId, isModerator) {
+  if (!record) return;
+
+  var recordId = '';
+  try {
+    recordId = String(record.id || (typeof record.getId === 'function' ? record.getId() : '') || '');
+  } catch (_) {
+    recordId = '';
+  }
+
+  var isOwner = Boolean(viewerId && recordId && String(viewerId) === recordId);
+
+  var i;
+  if (isModerator || isOwner) {
+    for (i = 0; i < SCHEMA_HIDDEN_PRIVATE_FIELDS.length; i++) {
+      try { record.unhide(SCHEMA_HIDDEN_PRIVATE_FIELDS[i]); } catch (_) { /* ignore */ }
+    }
+    return;
+  }
+
+  for (i = 0; i < PRIVATE_VIEW_FIELDS.length; i++) {
+    try { record.hide(PRIVATE_VIEW_FIELDS[i]); } catch (_) { /* ignore */ }
+  }
+}
+
+/**
  * Superuser (Admin UI /_/) или moderator из коллекции users.
  * @param {{ hasSuperuserAuth?: () => boolean, auth?: any }} e
  * @returns {boolean}
@@ -368,6 +452,9 @@ module.exports = {
   assertMembershipLifecycleFieldsUnchanged: assertMembershipLifecycleFieldsUnchanged,
   maybeResetFreezeBudgetOnStartDateChange: maybeResetFreezeBudgetOnStartDateChange,
   maybeApplyMembershipEditSideEffects: maybeApplyMembershipEditSideEffects,
+  maskPrivateFieldsForViewer: maskPrivateFieldsForViewer,
+  PRIVATE_VIEW_FIELDS: PRIVATE_VIEW_FIELDS,
+  SCHEMA_HIDDEN_PRIVATE_FIELDS: SCHEMA_HIDDEN_PRIVATE_FIELDS,
   isPrivilegedAuth: isPrivilegedAuth,
   isSuperuserAuth: isSuperuserAuth
 };

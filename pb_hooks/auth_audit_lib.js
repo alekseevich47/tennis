@@ -116,7 +116,8 @@ function logAuthAttempt(app, c, opts) {
       objectLabel: opts.fullName || '',
       details: details,
       summaryRu: summary,
-      severity: isError ? 'error' : 'info',
+      // audit_events.severity: info|warning|critical — 'error' fails validation → denied never persisted
+      severity: isError ? 'warning' : 'info',
       isError: isError
     });
   } catch (err) {
