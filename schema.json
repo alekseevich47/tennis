@@ -4779,8 +4779,8 @@
       }
     ],
     "indexes": [
-      "CREATE UNIQUE INDEX idx_trainings_bookings_training_user ON \trainings_bookings (\n  \training,\n  user\n)",
-      "CREATE INDEX idx_trainings_bookings_user ON \trainings_bookings (user)"
+      "CREATE UNIQUE INDEX `idx_trainings_bookings_training_user` ON `trainings_bookings` (\n  `training`,\n  `user`\n)",
+      "CREATE INDEX `idx_trainings_bookings_user` ON `trainings_bookings` (`user`)"
     ],
     "system": false
   }
