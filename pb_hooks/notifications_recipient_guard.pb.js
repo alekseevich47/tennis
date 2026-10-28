@@ -1,4 +1,4 @@
-// Freeze notifications.recipient on update (Strix LOW: BOLA reassignment).
+// Freeze notifications.recipient on update.
 // Schema updateRule also blocks body recipient change; hook is defense in depth.
 
 onRecordUpdateRequest((e) => {

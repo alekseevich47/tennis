@@ -1,6 +1,6 @@
 // Одноразовая ротация tokenKey у всех users (отзыв JWT после утечки MAX_BOT_TOKEN).
 // Запуск ТОЛЬКО с env OPS_ROTATE_ALL_TOKEN_KEYS=1, затем убрать env и restart.
-// См. docs/ops-max-bot-token.md
+// Ops: после ротации bot token — см. локальный runbook / systemd override.
 
 onBootstrap((e) => {
   e.next();
