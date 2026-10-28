@@ -469,7 +469,7 @@ function assertTrainingUpdateAllowed(original, record, auth) {
     if (!trainingFieldChanged(original, record, f)) continue;
     if (TRAINING_USER_EDITABLE[f]) continue;
     // auto_close на UpdateRequest выставляет is_closed только для уже начавшихся —
-    // закрытие будущей тренировки non-mod запрещено (Strix medium).
+    // закрытие будущей тренировки non-mod запрещено.
     if (f === 'is_closed' && !original.getBool('is_closed') && record.getBool('is_closed')) {
       var dateStr = original.getString('date') || record.getString('date');
       var started = false;
@@ -581,7 +581,7 @@ function backfillTrainingsBookings(app, trainingId, userIds) {
 }
 
 /**
- * Атомарный claim слота: UNIQUE + post-insert capacity (Strix 3.3/3.5).
+ * Атомарный claim слота: UNIQUE + post-insert capacity.
  * @returns {'inserted'|'exists'}
  */
 function claimTrainingsBooking(app, trainingId, userId, maxSlots) {
@@ -615,7 +615,7 @@ function claimTrainingsBooking(app, trainingId, userId, maxSlots) {
 }
 
 /**
- * Удаление брони; false = уже не было (идемпотентный unbook, Strix 3.4).
+ * Удаление брони; false = уже не было (идемпотентный unbook, 3.4).
  * @returns {boolean}
  */
 function releaseTrainingsBooking(app, trainingId, userId) {
@@ -735,7 +735,7 @@ function applyBookingSideEffects(original, record, auth) {
   // посещаемость — только модератор. Без обхода через cancel/restore transition.
   // auth == null: внутренний/system вызов (skipBooking / compat) — не режем.
   if (auth && !isModerator) {
-    // Temporal / state guards (Strix): нельзя записаться на cancelled/closed/ended
+    // Temporal / state guards: нельзя записаться на cancelled/closed/ended
     // и нельзя снять запись после окончания (возврат сессии).
     if (added.length || removed.length) {
       if (record.getBool('is_cancelled') || original.getBool('is_cancelled')) {
@@ -810,7 +810,7 @@ function applyBookingSideEffects(original, record, auth) {
     }
   }
 
-  // Лимит мест — источник правды trainings_bookings (пере-чек внутри TX, Strix 3.3/3.5).
+  // Лимит мест — источник правды trainings_bookings (пере-чек внутри TX, 3.3/3.5).
   // Ранний отказ по клиентскому снимку — только быстрый fail; гонки закрывает claimTrainingsBooking.
   var maxSlots = record.getFloat('max_slots') || 0;
   if (maxSlots > 0 && added.length) {
@@ -966,7 +966,7 @@ function applyBookingSideEffects(original, record, auth) {
     }
     for (i = 0; i < removed.length; i++) {
       var remUid = String(removed[i]);
-      // Идемпотентный unbook: refund только если строка брони реально удалена (Strix 3.4).
+      // Идемпотентный unbook: refund только если строка брони реально удалена.
       if (!releaseTrainingsBooking(txApp, trainingId, remUid)) {
         continue;
       }
@@ -1092,7 +1092,7 @@ function unbookNotStartedForUser(app, userId, options) {
       nextUnpaid.push(upId);
     }
 
-    // $app.save минует UpdateRequest — release + sync вручную (Strix 3.4).
+    // $app.save минует UpdateRequest — release + sync вручную.
     if (!releaseTrainingsBooking(app, training.id, uid)) {
       // Уже снята в таблице — не дублируем refund; подтянем массив.
       syncBookedUsersFromBookingsTable(app, training);

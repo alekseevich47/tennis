@@ -1,4 +1,4 @@
-// Server-side logout (Strix LOW: нет отзыва сессии).
+// Server-side logout.
 // Ротация tokenKey гасит ранее выданные JWT (как при бане в users_ban_auth.pb.js).
 // auth-refresh tokenKey НЕ крутит — иначе гонка со старым Bearer на PATCH.
 

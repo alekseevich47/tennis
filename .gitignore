@@ -26,11 +26,11 @@ client/.env
 *.swp
 *.swo
 
-# Cursor IDE / agent (local only)
+# Local IDE / editor config (not published)
 .cursor/
 .cursorignore
 
-# Project docs (local only; not published)
+# Local project docs (not published)
 docs/
 
 # Logs
@@ -41,10 +41,12 @@ docs/
 # Accidental path literal from Windows TEMP (never track)
 %TEMP%/
 
-# Strix pentest artifacts
+# Local security-test / scan artifacts
 strix_runs/
+scripts/strix-retest.sh
+scripts/_cf5a_retest.py
 
-# Graphify knowledge graphs (regenerate locally with `graphify update .`)
+# Local code-graph cache
 graphify-out/
 client/graphify-out/
 **/graphify-out/

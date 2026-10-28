@@ -1,5 +1,5 @@
 // Миграция denormalized trainings.booked_users → атомарная trainings_bookings.
-// Источник правды для capacity/idempotency — таблица (Strix 3.3–3.5).
+// Источник правды для capacity/idempotency — таблица.
 // API rules коллекции = null (только $app.save из хуков).
 
 onBootstrap((e) => {
