@@ -26,11 +26,20 @@ client/.env
 *.swp
 *.swo
 
+# Cursor IDE / agent (local only)
+.cursor/
+.cursorignore
+
+# Project docs (local only; not published)
+docs/
+
 # Logs
 *.log
 
 # Temporary files
 *.tmp
+# Accidental path literal from Windows TEMP (never track)
+%TEMP%/
 
 # Strix pentest artifacts
 strix_runs/
