@@ -55,3 +55,6 @@ htmlcov/
 *.tar.xz
 *.tar.zst
 ```
+
+# Local (not published)
+README.md
