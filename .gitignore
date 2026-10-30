@@ -32,6 +32,7 @@ client/.env
 
 # Local project docs (not published)
 docs/
+README.md
 
 # Logs
 *.log
