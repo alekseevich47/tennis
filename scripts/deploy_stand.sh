@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Выкат тестового стенда tennis.loomixx.ru:
-#   git pull test-deploy-cursor → сборка клиента (base /) → /var/www/tennis → restart pocketbase-tennis
+#   git reset origin/test → сборка клиента (base /) → /var/www/tennis → restart pocketbase-tennis
 #
 # Запуск на app: sudo /opt/tennis/scripts/deploy_stand.sh
 #
@@ -9,7 +9,7 @@
 set -euo pipefail
 
 APP_DIR="${APP_DIR:-/opt/tennis}"
-BRANCH="${DEPLOY_BRANCH:-test-deploy-cursor}"
+BRANCH="${DEPLOY_BRANCH:-test}"
 STATIC_DIR="${STATIC_DIR:-/var/www/tennis}"
 PB_SERVICE="${PB_SERVICE:-pocketbase-tennis}"
 
@@ -17,7 +17,7 @@ cd "$APP_DIR"
 
 git fetch origin "$BRANCH"
 git checkout "$BRANCH"
-git pull --ff-only origin "$BRANCH"
+git reset --hard "origin/$BRANCH"
 
 if [[ ! -f "$APP_DIR/client/.env" ]]; then
   echo "Нет $APP_DIR/client/.env — скопируйте config/env.prod.example и подставьте URL стенда"

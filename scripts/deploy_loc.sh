@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Локальный promote: test-deploy-cursor → deploy_prod → push на origin.
+# Локальный promote: test → deploy_prod → push на origin.
 # Запуск из корня репозитория: ./scripts/deploy_loc.sh
 #
 # Порядок:
 #   1. checkout deploy_prod
 #   2. pull --ff-only   (подтянуть удалённый deploy_prod)
-#   3. merge test-deploy-cursor
+#   3. merge test
 #   4. push origin deploy_prod
 #
 # НЕ push до merge и НЕ pull после merge — иначе remote не участвует в merge
@@ -13,7 +13,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-SOURCE_BRANCH="${SOURCE_BRANCH:-test-deploy-cursor}"
+SOURCE_BRANCH="${SOURCE_BRANCH:-test}"
 TARGET_BRANCH="${TARGET_BRANCH:-deploy_prod}"
 
 cd "$ROOT"
